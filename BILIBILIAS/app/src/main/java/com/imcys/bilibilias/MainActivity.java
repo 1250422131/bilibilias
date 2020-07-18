@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     String StrPd = sj(StrGx, "『", "』");
                     final String StrNr = sj(StrGx, "《", "》");
                     final String StrUrl = sj(StrGx, "【", "】");
-                    if (StrPd.equals("0.2")) {
+                    if (StrPd.equals("0.3")) {
                     } else {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -125,94 +125,47 @@ public class MainActivity extends AppCompatActivity {
                     //先检测av是否具备，因为av接口更为苛刻
                     if (bvid.contains("av")) {
                         //过滤掉多余的东西
-                        bvid = bvid.replaceAll("av", "");
-                        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
-                    } else {
-                        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?bvid=" + bvid);
-                    }
-                } else {
-                    name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
-                }
-                ImageUrl = sj(name, "pic\":\"", "\",");
-                Title = sj(name, "title\":\"", "\",");
-                aid = sj(name, "\"aid\":", ",\"");
-                bvid = sj(name, "\"bvid\":\"", "\",");
-                System.out.println(aid);
-                name = sj(name, "cid\":", ",\"");
-                System.out.println(ImageUrl);
-                //判断传入参数
-                if (name.equals("") || bvid.equals("")) {
-                    //这里是判断一下番剧的数据
-                    //获取番剧页面源码
-                    String ep = HttpUtils.doGet(bvid);
-                    //截取需要的部分
-                    String epStr = sj(ep, "<script>window.__INITIAL_STATE__=", "</script>");
-                    ;
-                    Title = sj(epStr, "\"h1Title\":\"", "\",");
-                    //再单独切出aid，bvid，图片链接这些东西
-                    epStr = sj(epStr, "epInfo", "parentNode.removeChild");
-                    System.out.println(epStr);
-                    aid = sj(epStr, "aid\":", ",\"");
-                    bvid = sj(epStr, "bvid\":\"BV", "\",");
-                    ImageUrl = sj(epStr, "bangumi\",\"cover\":\"", "\",");
-                    //图片需要转码
-                    ImageUrl = "http:" + unicodeDecode(ImageUrl);
-                    //截取标题 截取cid
-                    name = sj(epStr, "cid\":", ",\"");
-                    //判断下这个截取的数据是不是空的
-                    if (bvid.equals("") || aid.equals("")) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //关闭弹窗，提示失败
-                                pd2.cancel();
-                                Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        //定位组件
-                        LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
-                        ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
-                        ImageView1 = (ImageView) findViewById(R.id.ImageView1);
-                        TextView1 = (TextView) findViewById(R.id.TextView1);
-
-                        final Bitmap bitmap = returnBitMap(ImageUrl);
-                        //显示番剧图片
-                        ImageView1.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                // TODO Auto-generated method stub
-                                TextView1.setText(Title);
-                                ImageView1.setImageBitmap(bitmap);
-                                LinearLayout1.setVisibility(View.GONE);
-                                ScrollView1.setVisibility(View.VISIBLE);
-                            }
-                        });
-                        //输出视频下载地址
-                        jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
-                        pd2.cancel();
-                    }
-                } else {
-                    //控件定位
-                    LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
-                    ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
-                    ImageView1 = (ImageView) findViewById(R.id.ImageView1);
-                    TextView1 = (TextView) findViewById(R.id.TextView1);
-
-                    final Bitmap bitmap = returnBitMap(ImageUrl);
-                    //显示番剧图片
-                    ImageView1.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            TextView1.setText(Title);
-                            ImageView1.setImageBitmap(bitmap);
-                            LinearLayout1.setVisibility(View.GONE);
-                            ScrollView1.setVisibility(View.VISIBLE);
+                        //判断这是不是一个链接
+                        if(bvid.contains("https")||bvid.contains("http")){
+                            //给特殊的方法处理判断，传导这个链接进去 即为公共解析
+                            public_jx(bvid);
+                        }else {
+                            //如果不是，就直接让接口解析
+                            bvid = bvid.replaceAll("av", "");
+                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+                            abvGo(name);
                         }
-                    });
-                    jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
-                    pd2.cancel();
+                    } else if(bvid.contains("bv")||bvid.contains("BV")) {
+                        //有BV也有链接头
+                        if(bvid.contains("https")||bvid.contains("http")){
+                            //给特殊的方法处理判断，传导这个链接进去 即为公共解析
+                            public_jx(bvid);
+                        }else{
+                            //相反没有携带则就是BV编号
+                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?bvid=" + bvid);
+                            abvGo(name);
+                        }
+                    }else
+                        {
+                            //AV/BV都没有，则可能是番剧的或者是手机分享的av，bv链接
+                            //给番剧接口处理即可,这里先判断是不是手机分享地址
+                            if(bvid.contains("https://b23.tv/")){
+                                //这里来看看是不是番剧
+                                if(bvid.contains("ep")){
+                                    epGo(bvid);
+                                }else{
+                                    //如果不是则一定是视频地址
+                                    public_jx(bvid);
+                                }
+                            }else {
+                                //如果都不是那就应该是电脑番剧链接
+                                epGo(bvid);
+                            }
+                        }
+                } else {
+                    //全数字一定是av
+                    name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+                    abvGo(name);
                 }
             }catch (Exception e) {
                 runOnUiThread(new Runnable() {
@@ -498,9 +451,108 @@ public class MainActivity extends AppCompatActivity {
         }
         return flag;
     }
+
+    //av和bv解析方法
+    private void abvGo(String name){
+        ImageUrl = sj(name, "pic\":\"", "\",");
+        Title = sj(name, "title\":\"", "\",");
+        aid = sj(name, "\"aid\":", ",\"");
+        bvid = sj(name, "\"bvid\":\"", "\",");
+        System.out.println(aid);
+        name = sj(name, "cid\":", ",\"");
+        System.out.println(ImageUrl);
+        if (name.equals("") || bvid.equals("")) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //关闭弹窗，提示失败
+                    pd2.cancel();
+                    Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            //控件定位
+            LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+            ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+            ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+            TextView1 = (TextView) findViewById(R.id.TextView1);
+
+            final Bitmap bitmap = returnBitMap(ImageUrl);
+            //显示番剧图片
+            ImageView1.post(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    TextView1.setText(Title);
+                    ImageView1.setImageBitmap(bitmap);
+                    LinearLayout1.setVisibility(View.GONE);
+                    ScrollView1.setVisibility(View.VISIBLE);
+                }
+            });
+            jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
+            pd2.cancel();
+        }
+    }
+
+    //番剧单独解析方法
+    private void epGo(String name){
+        //这里是判断一下番剧的数据
+        //获取番剧页面源码
+        String ep = HttpUtils.doGet(name);
+        //截取需要的部分
+        String epStr = sj(ep, "<script>window.__INITIAL_STATE__=", "</script>");
+        ;
+        Title = sj(epStr, "\"h1Title\":\"", "\",");
+        //再单独切出aid，bvid，图片链接这些东西
+        epStr = sj(epStr, "epInfo", "parentNode.removeChild");
+        System.out.println(epStr);
+        aid = sj(epStr, "aid\":", ",\"");
+        bvid = sj(epStr, "bvid\":\"BV", "\",");
+        ImageUrl = sj(epStr, "bangumi\",\"cover\":\"", "\",");
+        //图片需要转码
+        ImageUrl = "http:" + unicodeDecode(ImageUrl);
+        //截取标题 截取cid
+        name = sj(epStr, "cid\":", ",\"");
+        //判断下这个截取的数据是不是空的
+        if (bvid.equals("") || aid.equals("")) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //关闭弹窗，提示失败
+                    pd2.cancel();
+                    Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            //定位组件
+            LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+            ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+            ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+            TextView1 = (TextView) findViewById(R.id.TextView1);
+
+            final Bitmap bitmap = returnBitMap(ImageUrl);
+            //显示番剧图片
+            ImageView1.post(new Runnable() {
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    TextView1.setText(Title);
+                    ImageView1.setImageBitmap(bitmap);
+                    LinearLayout1.setVisibility(View.GONE);
+                    ScrollView1.setVisibility(View.VISIBLE);
+                }
+            });
+            //输出视频下载地址
+            jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
+            pd2.cancel();
+        }
+    }
+
+    private void public_jx(String name){
+        name = HttpUtils.doGet(name);
+        bvid = sj(name,"href=\"https://www.bilibili.com/video/av","/\">");
+        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+        abvGo(name);
+    }
 }
-
-
-
-
 
