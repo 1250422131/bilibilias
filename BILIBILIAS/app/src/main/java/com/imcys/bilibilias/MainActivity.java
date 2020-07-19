@@ -56,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private String bvid;
     private String jxUrl;
     private String aid;
+    private String up;
     private ImageView ImageView1;
     private TextView TextView1;
+    private TextView TextView2;
     private Callback.Cancelable cancelable;
     private String StrData;
 
@@ -458,6 +460,7 @@ public class MainActivity extends AppCompatActivity {
         Title = sj(name, "title\":\"", "\",");
         aid = sj(name, "\"aid\":", ",\"");
         bvid = sj(name, "\"bvid\":\"", "\",");
+        up = sj(name, "\"name\":\"", "\",");
         System.out.println(aid);
         name = sj(name, "cid\":", ",\"");
         System.out.println(ImageUrl);
@@ -476,6 +479,7 @@ public class MainActivity extends AppCompatActivity {
             ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
             ImageView1 = (ImageView) findViewById(R.id.ImageView1);
             TextView1 = (TextView) findViewById(R.id.TextView1);
+            TextView2 = (TextView) findViewById(R.id.UP);
 
             final Bitmap bitmap = returnBitMap(ImageUrl);
             //显示番剧图片
@@ -484,6 +488,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     // TODO Auto-generated method stub
                     TextView1.setText(Title);
+                    TextView2.setText(up);
                     ImageView1.setImageBitmap(bitmap);
                     LinearLayout1.setVisibility(View.GONE);
                     ScrollView1.setVisibility(View.VISIBLE);
@@ -540,6 +545,7 @@ public class MainActivity extends AppCompatActivity {
                     ImageView1.setImageBitmap(bitmap);
                     LinearLayout1.setVisibility(View.GONE);
                     ScrollView1.setVisibility(View.VISIBLE);
+                    TextView2.setVisibility(View.GONE);
                 }
             });
             //输出视频下载地址
@@ -555,4 +561,8 @@ public class MainActivity extends AppCompatActivity {
         abvGo(name);
     }
 }
+
+
+
+
 
