@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -80,12 +81,11 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频储存地址\n/storage/emulated/0/Android/\ndata/com.imcys.bilibilias/哔哩哔哩封面/\n\nbv编号是bv后面的编号，不要带bv"/>
+            android:text="视频储存地址\n/storage/emulated/0/Android/\ndata/com.imcys.bilibilias/哔哩哔哩封面/v"/>
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/ScrollView1"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -159,6 +159,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="标题">
+            </TextView>
+
+            <TextView
+                android:id="@+id/UP"
+                android:layout_margin="5dp"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UP主">
             </TextView>
 
             <TextView
