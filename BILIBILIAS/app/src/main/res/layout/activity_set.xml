@@ -103,7 +103,7 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="视频储存地址\n/storage/emulated/0/Android/\ndata/com.imcys.bilibilias/哔哩哔哩封面/"/>
+                    android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

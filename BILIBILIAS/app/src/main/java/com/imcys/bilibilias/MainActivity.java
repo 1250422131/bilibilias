@@ -7,14 +7,18 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     String StrPd = sj(StrGx, "『", "』");
                     final String StrNr = sj(StrGx, "《", "》");
                     final String StrUrl = sj(StrGx, "【", "】");
-                    if (StrPd.equals("0.3")) {
+                    if (StrPd.equals("0.4")) {
                     } else {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -199,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         new bvUrl().start();
     }
 
+
     //下载函数
     public class download extends Thread {
         @Override
@@ -213,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
             params.addHeader("referer"," https://www.bilibili.com/video/av"+aid+"/");
             params.setAutoResume(true);//设置是否在下载是自动断点续传
             params.setAutoRename(false);//设置是否根据头信息自动命名文件
-            params.setSaveFilePath("/storage/emulated/0/Android/data/com.imcys.bilibilias/哔哩哔哩封面/"+ type +aid+".flv");
+            params.setSaveFilePath(getExternalFilesDir("哔哩哔哩封面").toString()+ type +aid+".flv");//设置下载地址
             params.setExecutor(new PriorityExecutor(2, true));//自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
             params.setCancelFast(true);//是否可以被立即停止.
             //下面的回调都是在主线程中运行的,这里设置的带进度的回调
@@ -301,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(MainActivity.this,SetActivity.class);
         startActivity(intent);
     }
+
 
     //下载进度对话框
     private void initProgressDialog() {
@@ -425,6 +431,7 @@ public class MainActivity extends AppCompatActivity {
         return outBuffer.toString();
     }
 
+
     //权限获取方法
     private void checkPermission() {
         mPermissionList.clear();
@@ -534,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
             ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
             ImageView1 = (ImageView) findViewById(R.id.ImageView1);
             TextView1 = (TextView) findViewById(R.id.TextView1);
-
+            TextView2 = (TextView) findViewById(R.id.UP);
             final Bitmap bitmap = returnBitMap(ImageUrl);
             //显示番剧图片
             ImageView1.post(new Runnable() {
@@ -560,6 +567,10 @@ public class MainActivity extends AppCompatActivity {
         name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
         abvGo(name);
     }
+
+
+
+
 }
 
 
