@@ -7,7 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -81,10 +80,11 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频储存地址\n/storage/emulated/0/Android/\ndata/com.imcys.bilibilias/哔哩哔哩封面/v"/>
+            android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/"/>
     </LinearLayout>
 
     <ScrollView
+        android:visibility="gone"
         android:id="@+id/ScrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
