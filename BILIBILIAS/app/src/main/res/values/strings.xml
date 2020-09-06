@@ -2,4 +2,14 @@
     <string name="app_name">BILIBILI AS</string>
     <string name="app_Js">我是哔哩哔哩的萌新杰少\n这个程序的话是我第一个真正意义上的处女作\n显然我之前是用IAPP写程序的，那么现在我终于可以用Java写了非常有意义！！！</string>
     <string name="app_Ky">需要遵守下面协议\nGNU General Public License\nGNU通用公共许可证</string>
+    <string name="main_login_new">刷新页面</string>
+    <string name="main_login">完成登录</string>
+    <string name="main_GoTriple">三连</string>
+    <string name="main_GoAdd">投币(1)</string>
+    <string name="main_GoLike">点赞</string>
+    <string name="BILIBILI_MXJS">哔哩哔哩萌新杰少开发</string>
+    <string name="main_goSet">关于</string>
+    <string name="main_login_1">登录</string>
+    <string name="n_n_android_data_com_imcys_bilibilias_files">视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/</string>
+    <string name="live">直播相关</string>
 </resources>
