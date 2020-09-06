@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
@@ -67,12 +69,33 @@
         </Button>
 
         <Button
+            android:onClick="goLive"
+            android:background="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:text="@string/live"
+            android:layout_margin="10dp"
+            android:layout_gravity="center">
+        </Button>
+
+        <Button
             android:onClick="goSet"
             android:background="@color/colorPrimaryDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:text="关于"
+            android:text="@string/main_goSet"
+            android:layout_margin="10dp"
+            android:layout_gravity="center">
+        </Button>
+        <Button
+            android:onClick="NewLogin"
+            android:background="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:text="@string/main_login_1"
             android:layout_margin="10dp"
             android:layout_gravity="center">
         </Button>
@@ -80,8 +103,9 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/"/>
+            android:text="@string/n_n_android_data_com_imcys_bilibilias_files"/>
     </LinearLayout>
+    </ScrollView>
 
     <ScrollView
         android:visibility="gone"
@@ -177,8 +201,140 @@
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="哔哩哔哩萌新杰少开发">
+                android:text="@string/BILIBILI_MXJS">
             </TextView>
+
+        <LinearLayout
+            android:layout_margin="5dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginLeft="100dp"
+
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="子集视频选择 ">
+            </TextView>
+            <Spinner
+                android:id="@+id/Main_Spinner1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+            </Spinner>
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginLeft="100dp"
+
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="视频清晰选择 ">
+                </TextView>
+                <Spinner
+                    android:id="@+id/Main_Spinner2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                </Spinner>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginLeft="100dp"
+
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="下载格式选择 ">
+                </TextView>
+                <Spinner
+                    android:id="@+id/Main_Spinner3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                </Spinner>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <androidx.cardview.widget.CardView
+                    android:layout_weight="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <Button
+                            android:onClick="goLike"
+                            android:background="@color/colorPrimaryDark"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="#FFFFFF"
+                            android:text="@string/main_GoLike"
+                            android:layout_gravity="center">
+                        </Button>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_weight="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <Button
+                            android:onClick="GoAdd"
+                            android:background="@color/colorPrimaryDark"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="#FFFFFF"
+                            android:text="@string/main_GoAdd"
+                            android:layout_gravity="center">
+                        </Button>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_weight="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <Button
+                            android:onClick="GoTriple"
+                            android:background="@color/colorPrimaryDark"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="#FFFFFF"
+                            android:text="@string/main_GoTriple"
+                            android:layout_gravity="center">
+                        </Button>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
             <androidx.cardview.widget.CardView
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -195,79 +351,57 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:textColor="#FFFFFF"
-                        android:text="1080P"
+                        android:text="下载视频"
                         android:layout_gravity="center">
                     </Button>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <Button
-                        android:background="@color/colorPrimaryDark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textColor="#FFFFFF"
-                        android:text="720P"
-                        android:onClick="onBvUrl2"
-                        android:layout_gravity="center">
-
-                    </Button>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <Button
-                        android:background="@color/colorPrimaryDark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textColor="#FFFFFF"
-                        android:text="480P"
-                        android:onClick="onBvUrl3"
-                        android:layout_gravity="center">
-                    </Button>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <Button
-                        android:background="@color/colorPrimaryDark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textColor="#FFFFFF"
-                        android:text="360P"
-                        android:onClick="onBvUrl4"
-                        android:layout_gravity="center">
-
-                    </Button>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
+
+    <ScrollView
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        android:id="@+id/WebLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <WebView
+                android:id="@+id/WebView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/main_login"
+                    android:onClick="UpLogin"
+                    android:layout_gravity="center">
+                </Button>
+                <Button
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/main_login_new"
+                    android:onClick="UpLoginNew"
+                    android:layout_gravity="center">
+                </Button>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

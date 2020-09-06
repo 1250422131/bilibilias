@@ -7,30 +7,40 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
 import android.graphics.Path;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.xutils.common.Callback;
 import org.xutils.common.task.PriorityExecutor;
+import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -43,6 +53,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +80,20 @@ public class MainActivity extends AppCompatActivity {
     private TextView TextView2;
     private Callback.Cancelable cancelable;
     private String StrData;
+    private String cookie;
+    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php";
+    private String oauthKey;
+    private String toKen;
+    private String csrf;
+    private String URL;
+    private List<String> list = new ArrayList<String>();
+    private List<String> listVideo = new ArrayList<String>();
+    private List<String> listCode = new ArrayList<String>();
+    private Spinner mProSpinner = null;
+    private String cid;
+    private String qn;
+    private String fnval;
+    private String videoType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,50 +103,83 @@ public class MainActivity extends AppCompatActivity {
 
         //检测动态权限
         checkPermission();
-
         //更新检测
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String StrGx = HttpUtils.doGet("https://ycx.mxjs.xyz/sqv8/app/bilibilias.php");
-                if (StrGx.equals("")) {
-                }
-                else {
-                    String StrPd = sj(StrGx, "『", "』");
-                    final String StrNr = sj(StrGx, "《", "》");
-                    final String StrUrl = sj(StrGx, "【", "】");
-                    if (StrPd.equals("0.4")) {
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String StrGx = HttpUtils.doGet(GxUrl,cookie);
+                    System.out.println(StrGx);
+                    if (!GxUrl.equals("https://api.misakaloli.com/app/bilibilias.php")) {
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                                        .setTitle("有新版本了")
-                                        .setMessage(StrNr)
-                                        .setPositiveButton("下载新版本", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Uri uri = Uri.parse(StrUrl);
-                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                                startActivity(intent);
-                                            }
-                                        })
-                                        .setNegativeButton("取消", null)
-                                        .setNeutralButton(null, null)
-                                        .create();
-                                dialog.show();
-                            }
-                        });
+                        String StrPd = sj(StrGx, "『", "』");
+                        final String StrNr = sj(StrGx, "《", "》");
+                        final String StrUrl = sj(StrGx, "【", "】");
+                        if (StrPd.equals("0.8")) {
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                            .setTitle("有新版本了")
+                                            .setMessage(StrNr)
+                                            .setPositiveButton("下载新版本", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Uri uri = Uri.parse(StrUrl);
+                                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                                    startActivity(intent);
+                                                }
+                                            })
+                                            .setNegativeButton("取消", null)
+                                            .setNeutralButton(null, null)
+                                            .create();
+                                    dialog.setCanceledOnTouchOutside(false);
+                                    dialog.show();
+                                }
+                            });
+                        }
                     }
                 }
+            }).start();
+        }catch (Exception e) {
+
+        }
+        //公告声明
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String StrGx = HttpUtils.doGet(GxUrl,cookie);
+                    final String Gg = sj(StrGx, "『公告区", "』");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("最新公告")
+                                    .setMessage(Gg)
+                                    .setPositiveButton("使用本程序代表同意上述内容", null)
+                                    .setNeutralButton(null, null)
+                                    .create();
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
+                        }
+                    });
+                }
             }
-        }).start();
+            ).start();
+        }catch (Exception e) {
+        }
     }
+
 
 
     public class bvUrl extends Thread {
         @Override
         public void run() {
+            list = new ArrayList<String>();
+            listVideo = new ArrayList<String>();
+            listCode = new ArrayList<String>();
             /*修什么BUG？？？写个try罩住 【手动滑稽】
             哈哈好吧，这里实际上是我有点懒了，不想再分析空指针也就是其中有必需值为空时提示解析失败
             所以最快的方法就是罩住，我以后一定改写一下
@@ -138,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                         }else {
                             //如果不是，就直接让接口解析
                             bvid = bvid.replaceAll("av", "");
-                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid,cookie);
                             abvGo(name);
                         }
                     } else if(bvid.contains("bv")||bvid.contains("BV")) {
@@ -148,38 +209,40 @@ public class MainActivity extends AppCompatActivity {
                             public_jx(bvid);
                         }else{
                             //相反没有携带则就是BV编号
-                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?bvid=" + bvid);
+                            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?bvid=" + bvid,cookie);
                             abvGo(name);
                         }
                     }else
-                        {
-                            //AV/BV都没有，则可能是番剧的或者是手机分享的av，bv链接
-                            //给番剧接口处理即可,这里先判断是不是手机分享地址
-                            if(bvid.contains("https://b23.tv/")){
-                                //这里来看看是不是番剧
-                                if(bvid.contains("ep")){
-                                    epGo(bvid);
-                                }else{
-                                    //如果不是则一定是视频地址
-                                    public_jx(bvid);
-                                }
-                            }else {
-                                //如果都不是那就应该是电脑番剧链接
+                    {
+                        //AV/BV都没有，则可能是番剧的或者是手机分享的av，bv链接
+                        //给番剧接口处理即可,这里先判断是不是手机分享地址
+                        if(bvid.contains("https://b23.tv/")){
+                            //这里来看看是不是番剧
+                            if(bvid.contains("ep")){
                                 epGo(bvid);
+                            }else{
+                                //如果不是则一定是视频地址
+                                public_jx(bvid);
                             }
+                        }else {
+                            //如果都不是那就应该是电脑番剧链接
+                            epGo(bvid);
                         }
+                    }
                 } else {
                     //全数字一定是av
-                    name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+                    System.out.println("错误提示");
+                    name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid,cookie);
                     abvGo(name);
                 }
             }catch (Exception e) {
+                System.out.println(e);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         //关闭弹窗，提示失败
                         pd2.cancel();
-                        Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "看起来没有解析到-1", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -188,11 +251,55 @@ public class MainActivity extends AppCompatActivity {
 
 
     //查询按键1
-    public void onBvUrl(View view) {
+    public void onBvUrl(View view) throws IOException {
         pd2 = ProgressDialog.show(MainActivity.this, "提示", "正在拉取数据");
-        EditText EditText1 = (EditText) findViewById(R.id.EditText1);
-        bvid = EditText1.getText().toString();
-        new bvUrl().start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EditText EditText1 = (EditText) findViewById(R.id.EditText1);
+                bvid = EditText1.getText().toString();
+                String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"token.txt";
+                String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"csrf.txt";
+                String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"cookie.txt";
+                try {
+                    csrf = BilibiliPost.fileRead(csrfPath);
+                    toKen = BilibiliPost.fileRead(ToKenPath);
+                    cookie = BilibiliPost.fileRead(CookiePath);
+                    System.out.println(toKen);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String likeStr = HttpUtils.doGet("http://passport.bilibili.com/qrcode/getLoginUrl","");
+                System.out.println(likeStr);
+                URL = sj(likeStr,"url\":\"","\",\"");
+                oauthKey = sj(likeStr,"oauthKey\":\"","\"");
+                System.out.println(URL);
+               String pd = BilibiliPost.nav(toKen);
+               if(pd.equals("0")){
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           new bvUrl().start();
+                       }
+                   });
+               }else{
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           init("https://api.misakaloli.com/app/bilibiliasLogin.php?URL="+URL);
+                           WebView webView1 = (WebView)findViewById(R.id.WebView1);
+                           webView1.setWebChromeClient(new WebChromeClient());
+                           webView1.setWebViewClient(new NewWebViewClient());
+                           ScrollView webLayout = (ScrollView)findViewById(R.id.WebLayout);
+                           webLayout.setVisibility(View.VISIBLE);
+                           pd2.cancel();
+                           Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                       }
+                   });
+               }
+            }
+        }).start();
+
     }
 
     //第二个页面
@@ -208,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
     public class download extends Thread {
         @Override
         public void run() {
-            StrData = HttpUtils.doGet(jxUrl);
+            StrData = HttpUtils.doGet(jxUrl,cookie);
             System.out.println(jxUrl);
             StrData = sj(StrData,"url\":\"","\",");
             StrData = unicodeDecode(StrData);
@@ -216,9 +323,10 @@ public class MainActivity extends AppCompatActivity {
             //检测突破
             params.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
             params.addHeader("referer"," https://www.bilibili.com/video/av"+aid+"/");
+            params.addHeader("Cookie",cookie);
             params.setAutoResume(true);//设置是否在下载是自动断点续传
             params.setAutoRename(false);//设置是否根据头信息自动命名文件
-            params.setSaveFilePath(getExternalFilesDir("哔哩哔哩封面").toString()+ type +aid+".flv");//设置下载地址
+            params.setSaveFilePath(getExternalFilesDir("哔哩哔哩视频").toString()+"/"+ type +aid+"."+ videoType);//设置下载地址
             params.setExecutor(new PriorityExecutor(2, true));//自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
             params.setCancelFast(true);//是否可以被立即停止.
             //下面的回调都是在主线程中运行的,这里设置的带进度的回调
@@ -275,36 +383,21 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onBvUrl1(View view) {
         type = "1080格式";
-        jxUrl = jxUrl + "&qn=80";
         initProgressDialog();
         new download().start();
     }
 
-    public void onBvUrl2(View view) {
-        type = "720格式";
-        jxUrl = jxUrl + "&qn=64";
-        initProgressDialog();
-        new download().start();
-    }
-
-    public void onBvUrl3(View view) {
-        type = "460格式";
-        jxUrl = jxUrl + "&qn=32";
-        initProgressDialog();
-        new download().start();
-    }
-
-    public void onBvUrl4(View view) {
-        type = "320格式";
-        jxUrl = jxUrl + "&qn=16";
-        initProgressDialog();
-        new download().start();
-    }
 
     public void goSet(View view){
         Intent intent= new Intent();
         intent.setClass(MainActivity.this,SetActivity.class);
         startActivity(intent);
+    }
+
+    public void goLive(View view){
+        Intent intent= new Intent();
+        intent.setClass(MainActivity.this,LiveActivity.class);
+        MainActivity.this.startActivity(intent);
     }
 
 
@@ -462,58 +555,126 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //av和bv解析方法
-    private void abvGo(String name){
+    private void abvGo(String name) throws JSONException {
         ImageUrl = sj(name, "pic\":\"", "\",");
         Title = sj(name, "title\":\"", "\",");
         aid = sj(name, "\"aid\":", ",\"");
         bvid = sj(name, "\"bvid\":\"", "\",");
         up = sj(name, "\"name\":\"", "\",");
         System.out.println(aid);
-        name = sj(name, "cid\":", ",\"");
-        System.out.println(ImageUrl);
-        if (name.equals("") || bvid.equals("")) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //关闭弹窗，提示失败
-                    pd2.cancel();
-                    Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }else{
-            //控件定位
-            LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
-            ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
-            ImageView1 = (ImageView) findViewById(R.id.ImageView1);
-            TextView1 = (TextView) findViewById(R.id.TextView1);
-            TextView2 = (TextView) findViewById(R.id.UP);
 
-            final Bitmap bitmap = returnBitMap(ImageUrl);
-            //显示番剧图片
-            ImageView1.post(new Runnable() {
-                @Override
-                public void run() {
-                    // TODO Auto-generated method stub
-                    TextView1.setText(Title);
-                    TextView2.setText(up);
-                    ImageView1.setImageBitmap(bitmap);
-                    LinearLayout1.setVisibility(View.GONE);
-                    ScrollView1.setVisibility(View.VISIBLE);
-                }
-            });
-            jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
-            pd2.cancel();
+        JSONObject json = new JSONObject(name);
+        JSONObject data = json.getJSONObject("data");
+        JSONArray pages = data.getJSONArray("pages");
+        System.out.println(pages);
+        name = sj(name, "cid\":", ",\"");
+        //初步获取视频分辨率
+        jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json&fourk=1";
+        String jsonStr = HttpUtils.doGet(jxUrl,cookie);
+        System.out.println(jsonStr);
+        //分辨率解析列表展示
+        JSONObject jsonVideo = new JSONObject(jsonStr);
+        JSONObject dataStr = jsonVideo.getJSONObject("data");
+        JSONArray pagesVideo = dataStr.getJSONArray("accept_description");
+        for(int i=0;i<pagesVideo.length();i++)
+        {
+            listVideo.add(pagesVideo.getString(i));
+        }
+
+        if(pages.length()==1){
+            list.add(name);
+            System.out.println(ImageUrl);
+            if (name.equals("") || bvid.equals("")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //关闭弹窗，提示失败
+                        pd2.cancel();
+                        Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                //控件定位
+                LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+                ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+                ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+                TextView1 = (TextView) findViewById(R.id.TextView1);
+                TextView2 = (TextView) findViewById(R.id.UP);
+
+                final Bitmap bitmap = returnBitMap(ImageUrl);
+                //显示番剧图片
+                ImageView1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        TextView1.setText(Title);
+                        TextView2.setText(up);
+                        ListArray(list);
+                        ListArrayVideo(listVideo);
+                        listCode.add("flv");
+                        listCode.add("mp4");
+                        ListArrayCode(listCode);
+                        ImageView1.setImageBitmap(bitmap);
+                        LinearLayout1.setVisibility(View.GONE);
+                        ScrollView1.setVisibility(View.VISIBLE);
+                    }
+                });
+                pd2.cancel();
+            }
+        }else{
+            for(int i=0;i<pages.length();i++)
+            {
+                JSONObject honor = pages.getJSONObject(i);
+                String cid1 = honor.getString("cid");
+                list.add(cid1);
+            }
+            if (name.equals("") || bvid.equals("")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //关闭弹窗，提示失败
+                        pd2.cancel();
+                        Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                //控件定位
+                LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+                ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+                ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+                TextView1 = (TextView) findViewById(R.id.TextView1);
+                TextView2 = (TextView) findViewById(R.id.UP);
+
+                final Bitmap bitmap = returnBitMap(ImageUrl);
+                //显示番剧图片
+                ImageView1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        TextView1.setText(Title);
+                        TextView2.setText(up);
+                        ListArray(list);
+                        ListArrayVideo(listVideo);
+                        listCode.add("flv");
+                        listCode.add("mp4");
+                        ListArrayCode(listCode);
+                        ImageView1.setImageBitmap(bitmap);
+                        LinearLayout1.setVisibility(View.GONE);
+                        ScrollView1.setVisibility(View.VISIBLE);
+                    }
+                });
+                pd2.cancel();
+            }
         }
     }
 
     //番剧单独解析方法
-    private void epGo(String name){
+    private void epGo(String name) throws JSONException {
         //这里是判断一下番剧的数据
         //获取番剧页面源码
-        String ep = HttpUtils.doGet(name);
+        String ep = HttpUtils.doGet(name,cookie);
         //截取需要的部分
         String epStr = sj(ep, "<script>window.__INITIAL_STATE__=", "</script>");
-        ;
         Title = sj(epStr, "\"h1Title\":\"", "\",");
         //再单独切出aid，bvid，图片链接这些东西
         epStr = sj(epStr, "epInfo", "parentNode.removeChild");
@@ -525,6 +686,18 @@ public class MainActivity extends AppCompatActivity {
         ImageUrl = "http:" + unicodeDecode(ImageUrl);
         //截取标题 截取cid
         name = sj(epStr, "cid\":", ",\"");
+        //初步获取视频分辨率
+        jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json&fourk=1";
+        String jsonStr = HttpUtils.doGet(jxUrl,cookie);
+        System.out.println(jsonStr);
+        //分辨率解析列表展示
+        JSONObject jsonVideo = new JSONObject(jsonStr);
+        JSONObject dataStr = jsonVideo.getJSONObject("data");
+        JSONArray pagesVideo = dataStr.getJSONArray("accept_description");
+        for(int i=0;i<pagesVideo.length();i++)
+        {
+            listVideo.add(pagesVideo.getString(i));
+        }
         //判断下这个截取的数据是不是空的
         if (bvid.equals("") || aid.equals("")) {
             runOnUiThread(new Runnable() {
@@ -553,25 +726,389 @@ public class MainActivity extends AppCompatActivity {
                     LinearLayout1.setVisibility(View.GONE);
                     ScrollView1.setVisibility(View.VISIBLE);
                     TextView2.setVisibility(View.GONE);
+                    ListArrayVideo(listVideo);
+                    listCode.add("flv");
+                    listCode.add("mp4");
+                    ListArrayCode(listCode);
                 }
             });
-            //输出视频下载地址
-            jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json";
             pd2.cancel();
         }
     }
 
-    private void public_jx(String name){
-        name = HttpUtils.doGet(name);
+    private void public_jx(String name) throws JSONException {
+        name = HttpUtils.doGet(name,cookie);
         bvid = sj(name,"href=\"https://www.bilibili.com/video/av","/\">");
-        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid);
+        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid,cookie);
         abvGo(name);
     }
 
 
+    //下面是一些对视频点赞/投币等操作
 
+    //点赞
+    public void  goLike(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String pd = BilibiliPost.Like(bvid,toKen,csrf);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(pd.equals("0")){
+                            Toast.makeText(getApplicationContext(), "点赞成功", Toast.LENGTH_SHORT).show();
+                        }else if(pd.equals("65006")){
+                            Toast.makeText(getApplicationContext(), "我的妈天瓜子，不能重复点赞的", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(), "点赞失败了", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    //投币方法
+    public void  GoAdd(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String pd = BilibiliPost.add(bvid,"1",toKen,csrf);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(pd.equals("0")){
+                            Toast.makeText(getApplicationContext(), "投币成功", Toast.LENGTH_SHORT).show();
+                        }else if(pd.equals("-104")){
+                            Toast.makeText(getApplicationContext(), "出大问题，大佬你似乎没硬币了，这下惨了", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(), "投币失败了", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    //三连方法
+    public void  GoTriple(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String pd = BilibiliPost.triple(bvid,toKen,csrf);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(pd.equals("0")){
+                            Toast.makeText(getApplicationContext(), "三连成功感谢推荐", Toast.LENGTH_SHORT).show();
+                        }else if(pd.equals("-101")){
+                            Toast.makeText(getApplicationContext(), "出大问题，登录出问题了", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(), "三连失败了", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void init(String LoginUrl){
+        WebView webView1 = (WebView)findViewById(R.id.WebView1);
+        //WebView加载web资源
+        webView1.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
+
+        webView1.getSettings().setJavaScriptEnabled(true);//是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+
+        webView1.getSettings().setSupportZoom(true);//是否可以缩放，默认true
+
+        webView1.getSettings().setBuiltInZoomControls(false);//是否显示缩放按钮，默认false
+
+        webView1.getSettings().setUseWideViewPort(true);//设置此属性，可任意比例缩放。大视图模式
+
+        webView1.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
+
+        webView1.getSettings().setAppCacheEnabled(true);//是否使用缓存
+
+        webView1.getSettings().setDomStorageEnabled(true);//DOM Storage 重点是设置这个
+
+        webView1.getSettings().setAllowFileAccess(false);
+
+        webView1.loadUrl(LoginUrl);
+        //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
+        webView1.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // TODO Auto-generated method stub
+                //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
+                view.loadUrl(url);
+                return true;
+            }
+        });
+    }
+
+    public void NewLogin(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String likeStr = HttpUtils.doGet("http://passport.bilibili.com/qrcode/getLoginUrl","");
+                System.out.println(likeStr);
+                URL = sj(likeStr,"url\":\"","\",\"");
+                oauthKey = sj(likeStr,"oauthKey\":\"","\"");
+                System.out.println(URL);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        init("https://api.misakaloli.com/app/bilibiliasLogin.php?URL="+URL);
+                        WebView webView1 = (WebView)findViewById(R.id.WebView1);
+                        webView1.setWebChromeClient(new WebChromeClient());
+                        webView1.setWebViewClient(new NewWebViewClient());
+                        ScrollView webLayout = (ScrollView)findViewById(R.id.WebLayout);
+                        webLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    public void  UpLogin(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    cookie = HttpUtils.getCookie("oauthKey=" + oauthKey,"http://passport.bilibili.com/qrcode/getLoginInfo");
+                    System.out.println(cookie);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if(cookie.length()>45){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            toKen ="SESSDATA="+sj(cookie,"SESSDATA=",";");
+                            csrf = sj(cookie,"bili_jct=",";");
+                            System.out.println(toKen);
+                            String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"cookie.txt";
+                            String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"token.txt";
+                            String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"csrf.txt";
+                            try {
+                                BilibiliPost.fileWrite(CookiePath,cookie);
+                                BilibiliPost.fileWrite(ToKenPath,toKen);
+                                BilibiliPost.fileWrite(csrfPath,csrf);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            ScrollView webLayout = (ScrollView)findViewById(R.id.WebLayout);
+                            webLayout.setVisibility(View.GONE);
+                            Toast.makeText(getApplicationContext(), "登录成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "未登录", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void  UpLoginNew(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String likeStr = HttpUtils.doGet("http://passport.bilibili.com/qrcode/getLoginUrl","");
+                System.out.println(likeStr);
+                URL = sj(likeStr,"url\":\"","\",\"");
+                oauthKey = sj(likeStr,"oauthKey\":\"","\"");
+                System.out.println(URL);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "刷新完成", Toast.LENGTH_SHORT).show();
+                        init("https://api.misakaloli.com/app/bilibiliasLogin.php?URL="+URL);
+                        WebView webView1 = (WebView)findViewById(R.id.WebView1);
+                        webView1.setWebChromeClient(new WebChromeClient());
+                        webView1.setWebViewClient(new NewWebViewClient());
+                        ScrollView webLayout = (ScrollView)findViewById(R.id.WebLayout);
+                        webLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    class NewWebViewClient extends WebViewClient{
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            //添加Cookie获取操作
+            CookieManager cookieManager = CookieManager.getInstance();
+            /*
+            cookie = cookieManager.getCookie(url);
+            System.out.println(cookie);
+
+             */
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //返回值是true的时候WebView打开，为false则系统浏览器或第三方浏览器打开。
+            //如果要下载页面中的游戏或者继续点击网页中的链接进入下一个网页的话，重写此方法下，不然就会跳到手机自带的浏览器了，而不继续在你这个webview里面展现了
+            view.loadUrl(url);
+            return true;
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+        }
+
+    }
+
+    public void ListArray(List<String> arrayStrings){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,arrayStrings);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        final Spinner spinner = findViewById(R.id.Main_Spinner1);
+        spinner.setAdapter(adapter);
+        //给Spinner添加事件监听
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            //当选中某一个数据项时触发该方法
+            /*
+             * parent接收的是被选择的数据项所属的 Spinner对象，
+             * view参数接收的是显示被选择的数据项的TextView对象
+             * position接收的是被选择的数据项在适配器中的位置
+             * id被选择的数据项的行号
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,int position, long id) {
+                //System.out.println(spinner==parent);//true
+                //System.out.println(view);
+                //String data = adapter.getItem(position);//从适配器中获取被选择的数据项
+                //String data = list.get(position);//从集合中获取被选择的数据项
+                String data = (String)spinner.getItemAtPosition(position);//从spinner中获取被选择的数据
+                cid = data;
+                jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+    }
+
+    public void ListArrayVideo(List<String> arrayStrings){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,arrayStrings);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        final Spinner spinner = findViewById(R.id.Main_Spinner2);
+        spinner.setAdapter(adapter);
+        //给Spinner添加事件监听
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            //当选中某一个数据项时触发该方法
+            /*
+             * parent接收的是被选择的数据项所属的 Spinner对象，
+             * view参数接收的是显示被选择的数据项的TextView对象
+             * position接收的是被选择的数据项在适配器中的位置
+             * id被选择的数据项的行号
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,int position, long id) {
+                //System.out.println(spinner==parent);//true
+                //System.out.println(view);
+                //String data = adapter.getItem(position);//从适配器中获取被选择的数据项
+                //String data = list.get(position);//从集合中获取被选择的数据项
+                String data = (String)spinner.getItemAtPosition(position);//从spinner中获取被选择的数据
+                Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
+                if(data.equals("高清 1080P+")){
+                    type = "高清 1080P+";
+                    qn = "112";
+                }else if(data.equals("高清 1080P")){
+                    type = "高清 1080P";
+                    qn = "80";
+                }else if(data.equals("高清 720P")){
+                    type = "高清 720P";
+                    qn = "64";
+                }else if(data.equals("清晰 480P")){
+                    type = "清晰 480P";
+                    qn = "32";
+                }else if(data.equals("流畅 360P")){
+                    type = "流畅 360P";
+                    qn = "16";
+                }else if(data.equals("高清 1080P60")){
+                    type = "高清 1080P60";
+                    qn = "116";
+                }else if(data.equals("高清 720P60")){
+                    type = "高清 720P60";
+                    qn = "74";
+                }else if(data.equals("超清 4K")){
+                    type = "超清 4K";
+                    qn = "120";
+                }
+                jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+    }
+
+    public void ListArrayCode(List<String> arrayStrings){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,arrayStrings);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        final Spinner spinner = findViewById(R.id.Main_Spinner3);
+        spinner.setAdapter(adapter);
+        //给Spinner添加事件监听
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            //当选中某一个数据项时触发该方法
+            /*
+             * parent接收的是被选择的数据项所属的 Spinner对象，
+             * view参数接收的是显示被选择的数据项的TextView对象
+             * position接收的是被选择的数据项在适配器中的位置
+             * id被选择的数据项的行号
+             */
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,int position, long id) {
+                //System.out.println(spinner==parent);//true
+                //System.out.println(view);
+                //String data = adapter.getItem(position);//从适配器中获取被选择的数据项
+                //String data = list.get(position);//从集合中获取被选择的数据项
+                String data = (String)spinner.getItemAtPosition(position);//从spinner中获取被选择的数据
+                fnval = data ;
+                if (fnval.equals("flv")){
+                    videoType = "flv";
+                    fnval = "0";
+                }else if(fnval.equals("mp4")){
+                    videoType = "mp4";
+                    fnval = "1";
+                }else{
+                    videoType = "flv";
+                    fnval = "2";
+                }
+                jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+    }
 
 }
+
+
 
 
 

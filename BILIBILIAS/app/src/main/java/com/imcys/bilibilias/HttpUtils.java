@@ -15,6 +15,9 @@ import java.net.URL;
 public class HttpUtils {
 
     private static final int TIMEOUT_IN_MILLIONS = 5000;
+    private static String key;
+    private static String cookieVal;
+    private static String sessionId;
 
     public interface CallBack {
         void onRequestComplete(String result);
@@ -31,7 +34,7 @@ public class HttpUtils {
         new Thread() {
             public void run() {
                 try {
-                    String result = doGet(urlStr);
+                    String result = doGet(urlStr,"");
                     if (callBack != null) {
                         callBack.onRequestComplete(result);
                     }
@@ -58,7 +61,7 @@ public class HttpUtils {
         new Thread() {
             public void run() {
                 try {
-                    String result = doPost(urlStr, params);
+                    String result = doPost(urlStr, params,"");
                     if (callBack != null) {
                         callBack.onRequestComplete(result);
                     }
@@ -80,7 +83,7 @@ public class HttpUtils {
      * @return
      * @throws Exception
      */
-    public static String doGet(String urlStr) {
+    public static String doGet(String urlStr,String Cookie) {
         URL url = null;
         HttpURLConnection conn = null;
         InputStream is = null;
@@ -90,10 +93,15 @@ public class HttpUtils {
             conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(TIMEOUT_IN_MILLIONS);
             conn.setConnectTimeout(TIMEOUT_IN_MILLIONS);
+
             conn.setRequestMethod("GET");
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+            conn.setRequestProperty("Content-type", "Keep-Alive");
+            conn.setRequestProperty("accept", "text/html");
+            conn.setRequestProperty("Accept-Charset", "utf-8");  //设置编码语言
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36");
+            conn.setRequestProperty("cookie", Cookie);
             if (conn.getResponseCode() == 200) {
                 is = conn.getInputStream();
                 baos = new ByteArrayOutputStream();
@@ -137,7 +145,7 @@ public class HttpUtils {
      * @return 所代表远程资源的响应结果
      * @throws Exception
      */
-    public static String doPost(String url, String param) {
+    public static String doPost(String url, String param,String Cookie) {
         PrintWriter out = null;
         BufferedReader in = null;
         String result = "";
@@ -150,8 +158,8 @@ public class HttpUtils {
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
+            conn.setRequestProperty("cookie", Cookie);
             conn.setRequestProperty("charset", "utf-8");
             conn.setUseCaches(false);
             // 发送POST请求必须设置如下两行
@@ -159,7 +167,9 @@ public class HttpUtils {
             conn.setDoInput(true);
             conn.setReadTimeout(TIMEOUT_IN_MILLIONS);
             conn.setConnectTimeout(TIMEOUT_IN_MILLIONS);
-
+            String sessionId = "";
+            String cookieVal = "";
+            String key = null;
             if (param != null && !param.trim().equals("")) {
                 // 获取URLConnection对象对应的输出流
                 out = new PrintWriter(conn.getOutputStream());
@@ -168,6 +178,7 @@ public class HttpUtils {
                 // flush输出流的缓冲
                 out.flush();
             }
+
             // 定义BufferedReader输入流来读取URL的响应
             in = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()));
@@ -178,6 +189,7 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         // 使用finally块来关闭输出流、输入流
         finally {
             try {
@@ -193,6 +205,40 @@ public class HttpUtils {
         }
         return result;
     }
+
+
+    /**
+     * post方式请求 获取ck
+     * @param loginAction
+     * @return
+     * @throws Exception
+     */
+    public static String getCookie(String param,String loginAction) throws Exception{
+        //登录
+        URL url = new URL(loginAction);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        OutputStream out = conn.getOutputStream();
+        out.write(param.getBytes());
+        out.flush();
+        out.close();
+        String sessionId = "";
+        String cookieVal = "";
+        String key = null;
+        //取cookie
+        for(int i = 1; (key = conn.getHeaderFieldKey(i)) != null; i++){
+            if(key.equalsIgnoreCase("set-cookie")){
+                cookieVal = conn.getHeaderField(i);
+                cookieVal = cookieVal.substring(0, cookieVal.indexOf(";"));
+                sessionId = sessionId + cookieVal + ";";
+            }
+        }
+        return sessionId;
+    }
+
+
 
 
     /**
