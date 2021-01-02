@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="关于"
+            app:title="设置"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
@@ -27,13 +27,70 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <TextView
+                    android:textStyle="bold"
+                    android:layout_margin="12dp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="下载设置"/>
+                <LinearLayout
+                    android:background="#FFFFFF"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="断点下载"/>
+                    <LinearLayout
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <Switch
+                            android:onClick="SetDd"
+                            android:id="@+id/Set_Switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DCDCDC"/>
+                <LinearLayout
+                    android:background="#FFFFFF"
+                    android:onClick="SetDLPath"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="下载路径点击设置"/>
+                    <TextView
+                        android:id="@+id/Set_SPath"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="默认路径"/>
+                </LinearLayout>
+                <TextView
+                    android:textStyle="bold"
                     android:layout_margin="12dp"
                     android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="关于作者"/>
                 <LinearLayout
+                    android:background="#FFFFFF"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -44,10 +101,13 @@
                         android:text="@string/app_Js"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#C0C0C0"/>
+                    android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="#FFFFFF"
                     android:onClick="GoBz"
                     android:id="@+id/set_LinearLayout1"
                     android:orientation="horizontal"
@@ -59,17 +119,15 @@
                         android:layout_height="wrap_content"
                         android:text="哔哩哔哩个人主页"/>
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#C0C0C0"/>
                 <TextView
+                    android:textStyle="bold"
                     android:layout_margin="12dp"
                     android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="开源及声明"/>
                 <LinearLayout
+                    android:background="#FFFFFF"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -80,10 +138,13 @@
                         android:text="@string/app_Ky"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#C0C0C0"/>
+                    android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="#FFFFFF"
                     android:onClick="GoGithub"
                     android:id="@+id/set_LinearLayout2"
                     android:orientation="horizontal"
@@ -95,15 +156,33 @@
                         android:layout_height="wrap_content"
                         android:text="github地址"/>
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#C0C0C0"/>
                 <TextView
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/"/>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="10dp"
+                    android:layout_margin="10dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <Button
+                            android:onClick="UserExit"
+                            android:textStyle="bold"
+                            android:background="#FFFFFF"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/colorAccent"
+                            android:text="退出登录"
+                            android:layout_gravity="center">
+                        </Button>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -37,6 +37,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.imcys.bilibilias.user.UserActivity;
+
 import org.json.JSONException;
 import org.xutils.common.Callback;
 import org.xutils.common.task.PriorityExecutor;
@@ -45,14 +47,21 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 
 import org.json.JSONArray;
@@ -80,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView TextView2;
     private Callback.Cancelable cancelable;
     private String StrData;
-    private String cookie;
-    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php";
+    public static String cookie;
+    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php?type=json&edition=1.0";
     private String oauthKey;
     private String toKen;
     private String csrf;
@@ -94,15 +103,68 @@ public class MainActivity extends AppCompatActivity {
     private String qn;
     private String fnval;
     private String videoType;
+    private static int LJ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         x.view().inject(this);//绑定注解
-
         //检测动态权限
         checkPermission();
+
+        try{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String StrGx = HttpUtils.doGet(GxUrl,cookie);
+                    try {
+                        JSONObject jsonGxStr = new JSONObject(StrGx);
+                        final String MD5 = jsonGxStr.getString("APKMD5");
+                        final String CRC =  jsonGxStr.getString("APKToKenCR");
+                        final String SHA = jsonGxStr.getString("APKToKen");
+                        final String ID = jsonGxStr.getString("ID");
+                        final String sha = apkVerifyWithSHA(MainActivity.this,SHA);
+                        System.out.println(sha);
+                        System.out.println(SHA);
+                        final String md5 = apkVerifyWithMD5(MainActivity.this,MD5);
+                        System.out.println(md5);
+                        System.out.println(MD5);
+                        final String crc = apkVerifyWithCRC(MainActivity.this,CRC);
+                        System.out.println(crc);
+                        System.out.println(CRC);
+                        if (ID.equals("1")){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!sha.equals(SHA)){
+                                        ScrollView ScrollView_Main = (ScrollView)findViewById(R.id.Home_MainLayout);
+                                        ScrollView_Main.setVisibility(View.GONE);
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                    }else if(!md5.equals(MD5)){
+                                        ScrollView ScrollView_Main = (ScrollView)findViewById(R.id.Home_MainLayout);
+                                        ScrollView_Main.setVisibility(View.GONE);
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                    }else if(!crc.equals(CRC)){
+                                        ScrollView ScrollView_Main = (ScrollView)findViewById(R.id.Home_MainLayout);
+                                        ScrollView_Main.setVisibility(View.GONE);
+                                        android.os.Process.killProcess(android.os.Process.myPid());
+                                    }
+                                }
+                            });
+                        }else{
+                            String fs = HttpUtils.doGet("https://api.misakaloli.com/app/bilibilias.php?type=json&edition=1.0&SHA="+sha+"&MD5="+md5+"&CRC="+crc+"lj="+LJ,cookie);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         //更新检测
         try {
             new Thread(new Runnable() {
@@ -110,34 +172,41 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     String StrGx = HttpUtils.doGet(GxUrl,cookie);
                     System.out.println(StrGx);
-                    if (!GxUrl.equals("https://api.misakaloli.com/app/bilibilias.php")) {
+                    if (!GxUrl.equals("https://api.misakaloli.com/app/bilibilias.php?type=json&edition=0.9.1")) {
                     } else {
-                        String StrPd = sj(StrGx, "『", "』");
-                        final String StrNr = sj(StrGx, "《", "》");
-                        final String StrUrl = sj(StrGx, "【", "】");
-                        if (StrPd.equals("0.8")) {
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                                            .setTitle("有新版本了")
-                                            .setMessage(StrNr)
-                                            .setPositiveButton("下载新版本", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    Uri uri = Uri.parse(StrUrl);
-                                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                                    startActivity(intent);
-                                                }
-                                            })
-                                            .setNegativeButton("取消", null)
-                                            .setNeutralButton(null, null)
-                                            .create();
-                                    dialog.setCanceledOnTouchOutside(false);
-                                    dialog.show();
-                                }
-                            });
+                        JSONObject jsonGxStr = null;
+                        String StrPd = null;
+                        try {
+                            jsonGxStr = new JSONObject(StrGx);
+                            StrPd = jsonGxStr.getString("edition");
+                            final String StrNr = jsonGxStr.getString("gxnotice");
+                            final String StrUrl = jsonGxStr.getString("url");
+                            if (StrPd.equals("1.0")) {
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                                .setTitle("有新版本了")
+                                                .setMessage(StrNr)
+                                                .setPositiveButton("下载新版本", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        Uri uri = Uri.parse(StrUrl);
+                                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                                        startActivity(intent);
+                                                    }
+                                                })
+                                                .setNegativeButton("取消", null)
+                                                .setNeutralButton(null, null)
+                                                .create();
+                                        dialog.setCanceledOnTouchOutside(false);
+                                        dialog.show();
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -151,20 +220,25 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     final String StrGx = HttpUtils.doGet(GxUrl,cookie);
-                    final String Gg = sj(StrGx, "『公告区", "』");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle("最新公告")
-                                    .setMessage(Gg)
-                                    .setPositiveButton("使用本程序代表同意上述内容", null)
-                                    .setNeutralButton(null, null)
-                                    .create();
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.show();
-                        }
-                    });
+                    try {
+                        JSONObject jsonGxStr = new JSONObject(StrGx);
+                        final String Gg = jsonGxStr.getString("notice");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("最新公告")
+                                        .setMessage(Gg)
+                                        .setPositiveButton("使用本程序代表同意上述内容", null)
+                                        .setNeutralButton(null, null)
+                                        .create();
+                                dialog.setCanceledOnTouchOutside(false);
+                                dialog.show();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             ).start();
@@ -390,7 +464,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void goSet(View view){
         Intent intent= new Intent();
-        intent.setClass(MainActivity.this,SetActivity.class);
+        cookie = "10086";
+        intent.setClass(MainActivity.this, UserActivity.class);
         startActivity(intent);
     }
 
@@ -684,8 +759,15 @@ public class MainActivity extends AppCompatActivity {
         ImageUrl = sj(epStr, "bangumi\",\"cover\":\"", "\",");
         //图片需要转码
         ImageUrl = "http:" + unicodeDecode(ImageUrl);
+        //番剧列表化
+        String epJson = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + aid,cookie);
+        JSONObject json = new JSONObject(epJson);
+        JSONObject data = json.getJSONObject("data");
+        JSONArray pages = data.getJSONArray("pages");
+        System.out.println(pages);
         //截取标题 截取cid
         name = sj(epStr, "cid\":", ",\"");
+        cid = name;
         //初步获取视频分辨率
         jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + name + "&bvid=" + bvid + "&type=json&fourk=1";
         String jsonStr = HttpUtils.doGet(jxUrl,cookie);
@@ -699,40 +781,87 @@ public class MainActivity extends AppCompatActivity {
             listVideo.add(pagesVideo.getString(i));
         }
         //判断下这个截取的数据是不是空的
-        if (bvid.equals("") || aid.equals("")) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //关闭弹窗，提示失败
-                    pd2.cancel();
-                    Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            //定位组件
-            LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
-            ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
-            ImageView1 = (ImageView) findViewById(R.id.ImageView1);
-            TextView1 = (TextView) findViewById(R.id.TextView1);
-            TextView2 = (TextView) findViewById(R.id.UP);
-            final Bitmap bitmap = returnBitMap(ImageUrl);
-            //显示番剧图片
-            ImageView1.post(new Runnable() {
-                @Override
-                public void run() {
-                    // TODO Auto-generated method stub
-                    TextView1.setText(Title);
-                    ImageView1.setImageBitmap(bitmap);
-                    LinearLayout1.setVisibility(View.GONE);
-                    ScrollView1.setVisibility(View.VISIBLE);
-                    TextView2.setVisibility(View.GONE);
-                    ListArrayVideo(listVideo);
-                    listCode.add("flv");
-                    listCode.add("mp4");
-                    ListArrayCode(listCode);
-                }
-            });
-            pd2.cancel();
+        if(pages.length()==1) {
+            list.add(name);
+            if (bvid.equals("") || aid.equals("")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //关闭弹窗，提示失败
+                        pd2.cancel();
+                        Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                //定位组件
+                LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+                ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+                ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+                TextView1 = (TextView) findViewById(R.id.TextView1);
+                TextView2 = (TextView) findViewById(R.id.UP);
+                final Bitmap bitmap = returnBitMap(ImageUrl);
+                //显示番剧图片
+                ImageView1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        TextView1.setText(Title);
+                        ImageView1.setImageBitmap(bitmap);
+                        LinearLayout1.setVisibility(View.GONE);
+                        ScrollView1.setVisibility(View.VISIBLE);
+                        TextView2.setVisibility(View.GONE);
+                        ListArray(list);
+                        ListArrayVideo(listVideo);
+                        listCode.add("flv");
+                        listCode.add("mp4");
+                        ListArrayCode(listCode);
+                    }
+                });
+                pd2.cancel();
+            }
+        }else{
+            for(int i=0;i<pages.length();i++)
+            {
+                JSONObject honor = pages.getJSONObject(i);
+                String cid1 = honor.getString("cid");
+                list.add(cid1);
+            }
+            if (bvid.equals("") || aid.equals("")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //关闭弹窗，提示失败
+                        pd2.cancel();
+                        Toast.makeText(getApplicationContext(), "看起来没有解析到", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                //定位组件
+                LinearLayout1 = (LinearLayout) findViewById(R.id.LinearLayout1);
+                ScrollView1 = (ScrollView) findViewById(R.id.ScrollView1);
+                ImageView1 = (ImageView) findViewById(R.id.ImageView1);
+                TextView1 = (TextView) findViewById(R.id.TextView1);
+                TextView2 = (TextView) findViewById(R.id.UP);
+                final Bitmap bitmap = returnBitMap(ImageUrl);
+                //显示番剧图片
+                ImageView1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+                        TextView1.setText(Title);
+                        ImageView1.setImageBitmap(bitmap);
+                        LinearLayout1.setVisibility(View.GONE);
+                        ScrollView1.setVisibility(View.VISIBLE);
+                        TextView2.setVisibility(View.GONE);
+                        ListArray(list);
+                        ListArrayVideo(listVideo);
+                        listCode.add("flv");
+                        listCode.add("mp4");
+                        ListArrayCode(listCode);
+                    }
+                });
+                pd2.cancel();
+            }
         }
     }
 
@@ -1104,6 +1233,88 @@ public class MainActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
+    }
+
+    //底层程序加固
+
+
+    /**
+     * 通过检查签名文件classes.dex文件的哈希值来判断代码文件是否被篡改
+     *
+     * @param orginalSHA 原始Apk包的SHA-1值
+     */
+    public static String apkVerifyWithSHA(Context context, String orginalSHA) {
+        String apkPath = context.getPackageCodePath(); // 获取Apk包存储路径
+        try {
+            MessageDigest dexDigest = MessageDigest.getInstance("SHA-1");
+            byte[] bytes = new byte[1024];
+            int byteCount;
+            FileInputStream fis = new FileInputStream(new File(apkPath)); // 读取apk文件
+            while ((byteCount = fis.read(bytes)) != -1) {
+                dexDigest.update(bytes, 0, byteCount);
+            }
+            BigInteger bigInteger = new BigInteger(1, dexDigest.digest()); // 计算apk文件的哈希值
+            String sha = bigInteger.toString(16);
+            fis.close();
+            return sha;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 通过检查apk包的MD5摘要值来判断代码文件是否被篡改
+     *
+     * @param orginalMD5 原始Apk包的MD5值
+     */
+    public static String  apkVerifyWithMD5(Context context, String orginalMD5) {
+        String apkPath = context.getPackageCodePath(); // 获取Apk包存储路径
+        System.out.println("路径长度");
+        System.out.println(apkPath.length());
+        LJ = apkPath.length();
+        try {
+            MessageDigest dexDigest = MessageDigest.getInstance("MD5");
+            byte[] bytes = new byte[1024];
+            int byteCount;
+            FileInputStream fis = new FileInputStream(new File(apkPath)); // 读取apk文件
+            while ((byteCount = fis.read(bytes)) != -1) {
+                dexDigest.update(bytes, 0, byteCount);
+            }
+            BigInteger bigInteger = new BigInteger(1, dexDigest.digest()); // 计算apk文件的哈希值
+            String sha = bigInteger.toString(16);
+            fis.close();
+            return sha;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 通过检查classes.dex文件的CRC32摘要值来判断文件是否被篡改
+     *
+     * @param orginalCRC 原始classes.dex文件的CRC值
+     */
+    public static String apkVerifyWithCRC(Context context, String orginalCRC) {
+        String apkPath = context.getPackageCodePath(); // 获取Apk包存储路径
+        try {
+            ZipFile zipFile = new ZipFile(apkPath);
+            ZipEntry dexEntry = zipFile.getEntry("classes.dex"); // 读取ZIP包中的classes.dex文件
+            String dexCRC = String.valueOf(dexEntry.getCrc()); // 得到classes.dex文件的CRC值
+            return dexCRC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
