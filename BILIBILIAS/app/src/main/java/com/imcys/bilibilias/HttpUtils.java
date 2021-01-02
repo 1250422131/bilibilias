@@ -12,6 +12,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+
 public class HttpUtils {
 
     private static final int TIMEOUT_IN_MILLIONS = 5000;
@@ -76,6 +79,7 @@ public class HttpUtils {
 
     }
 
+
     /**
      * Get请求，获得返回数据
      *
@@ -88,6 +92,7 @@ public class HttpUtils {
         HttpURLConnection conn = null;
         InputStream is = null;
         ByteArrayOutputStream baos = null;
+        System.out.println(urlStr);
         try {
             url = new URL(urlStr);
             conn = (HttpURLConnection) url.openConnection();
@@ -100,14 +105,13 @@ public class HttpUtils {
             conn.setRequestProperty("Content-type", "Keep-Alive");
             conn.setRequestProperty("accept", "text/html");
             conn.setRequestProperty("Accept-Charset", "utf-8");  //设置编码语言
-            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36");
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
             conn.setRequestProperty("cookie", Cookie);
             if (conn.getResponseCode() == 200) {
                 is = conn.getInputStream();
                 baos = new ByteArrayOutputStream();
                 int len = -1;
                 byte[] buf = new byte[128];
-
                 while ((len = is.read(buf)) != -1) {
                     baos.write(buf, 0, len);
                 }
@@ -331,4 +335,6 @@ public class HttpUtils {
         }
         return result;
     }
+
+
 }

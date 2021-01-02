@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/Live_LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -73,7 +73,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/Live_ScrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -154,14 +154,7 @@
                 android:text="待更新">
             </TextView>
 
-            <TextView
-                android:layout_margin="5dp"
-                android:textSize="18sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/BILIBILI_MXJS">
-            </TextView>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

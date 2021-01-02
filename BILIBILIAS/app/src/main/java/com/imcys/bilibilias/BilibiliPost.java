@@ -1,14 +1,26 @@
 package com.imcys.bilibilias;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 public class BilibiliPost {
+
+    private static JSONObject JsonStr;
 
     /**
      * 点赞操作
@@ -23,18 +35,36 @@ public class BilibiliPost {
                 Bvid = Bvid.replaceAll("av", "");
                 String likeStr = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like","aid="+ Bvid +"&like=1&csrf="+csrf,toKen);
                 System.out.println(likeStr);
-                String pd = sj(likeStr,"\"code\"",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(likeStr);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }else{
                 String likeStr = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like","bvid="+ Bvid +"&like=1&csrf="+csrf,toKen);
                 System.out.println(likeStr);
-                String pd = sj(likeStr,"\"code\":",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(likeStr);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }
         }else{
             String likeStr = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like","aid="+ Bvid +"&like=1&csrf="+csrf,toKen);
             System.out.println(likeStr);
-            String pd = sj(likeStr,"\"code\"",",");
+            String pd = null;
+            try {
+                JsonStr = new JSONObject(likeStr);
+                pd = JsonStr.getString("code");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return pd;
         }
     }
@@ -53,18 +83,36 @@ public class BilibiliPost {
                 Bvid = Bvid.replaceAll("av", "");
                 String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/coin/add","aid="+ Bvid +"&multiply="+multiply+"&csrf="+csrf,toKen);
                 System.out.println(Str);
-                String pd = sj(Str,"\"code\"",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(Str);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }else{
                 String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/coin/add","bvid="+ Bvid +"&multiply="+multiply+"&csrf="+csrf,toKen);
                 System.out.println(Str);
-                String pd = sj(Str,"\"code\":",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(Str);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }
         }else{
             String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/coin/add","aid="+ Bvid +"&multiply="+multiply+"&csrf="+csrf,toKen);
             System.out.println(Str);
-            String pd = sj(Str,"\"code\"",",");
+            String pd = null;
+            try {
+                JsonStr = new JSONObject(Str);
+                pd = JsonStr.getString("code");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return pd;
         }
     }
@@ -82,18 +130,36 @@ public class BilibiliPost {
                 Bvid = Bvid.replaceAll("av", "");
                 String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like/triple","aid="+ Bvid +"&csrf="+csrf,toKen);
                 System.out.println(Str);
-                String pd = sj(Str,"\"code\"",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(Str);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }else{
                 String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like/triple","bvid="+ Bvid +"&csrf="+csrf,toKen);
                 System.out.println(Str);
-                String pd = sj(Str,"\"code\":",",");
+                String pd = null;
+                try {
+                    JsonStr = new JSONObject(Str);
+                    pd = JsonStr.getString("code");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return pd;
             }
         }else{
             String Str = HttpUtils.doPost("http://api.bilibili.com/x/web-interface/archive/like/triple","aid="+ Bvid +"&csrf="+csrf,toKen);
             System.out.println(Str);
-            String pd = sj(Str,"\"code\"",",");
+            String pd = null;
+            try {
+                JsonStr = new JSONObject(Str);
+                pd = JsonStr.getString("code");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return pd;
         }
     }
@@ -101,12 +167,36 @@ public class BilibiliPost {
     public static String nav(String toKen){
         String Str = HttpUtils.doGet("http://api.bilibili.com/x/web-interface/nav",toKen);
         System.out.println(Str);
-        String pd = sj(Str,"\"code\":",",");
+        String pd = null;
+        try {
+            JsonStr = new JSONObject(Str);
+            pd = JsonStr.getString("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return pd;
     }
 
 
-    //下面是文件读写
+    //下面是文件读写删改
+
+    /**
+     * 删除单个文件
+     * @param   sPath    被删除文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteFile(String sPath) {
+        boolean flag = false;
+        File file = new File(sPath);
+        // 路径为文件且不为空则进行删除
+        if (file.isFile() && file.exists()) {
+            file.delete();
+            flag = true;
+        }
+        return flag;
+    }
+
+
     public static String fileRead(String path) throws IOException {
         File file = new File(path);
         if(!file.exists()){
@@ -165,4 +255,29 @@ public class BilibiliPost {
         }
         return "";
     }
+
+    //图片加载方法
+    public static Bitmap returnBitMap(String url) {
+        java.net.URL myFileUrl = null;
+        Bitmap bitmap = null;
+        try {
+            myFileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+
+
 }

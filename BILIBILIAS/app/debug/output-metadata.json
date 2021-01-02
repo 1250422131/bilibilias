@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.imcys.bilibilias",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "properties": [],
+      "versionCode": 102,
+      "versionName": "1.0.2",
+      "enabled": true,
+      "outputFile": "app-debug.apk"
+    }
+  ]
+}

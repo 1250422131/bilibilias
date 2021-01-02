@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     <ScrollView
+        android:id="@+id/ScrollView_Main"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <LinearLayout
@@ -108,7 +110,7 @@
     </ScrollView>
 
     <ScrollView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/ScrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -211,7 +213,6 @@
             android:layout_height="wrap_content">
             <TextView
                 android:layout_marginLeft="100dp"
-
                 android:textSize="18sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -221,7 +222,7 @@
             <Spinner
                 android:id="@+id/Main_Spinner1"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
             </Spinner>
         </LinearLayout>
 
@@ -242,7 +243,7 @@
                 <Spinner
                     android:id="@+id/Main_Spinner2"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
                 </Spinner>
             </LinearLayout>
 
@@ -268,73 +269,73 @@
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
-                    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:onClick="goLike"
+                        android:background="@color/colorPrimaryDark"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <Button
-                            android:onClick="goLike"
-                            android:background="@color/colorPrimaryDark"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
-                            android:text="@string/main_GoLike"
-                            android:layout_gravity="center">
-                        </Button>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
-                    <LinearLayout
+                        android:layout_height="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:text="@string/main_GoLike"
+                        android:layout_gravity="center">
+                    </Button>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:onClick="GoAdd"
+                        android:background="@color/colorPrimaryDark"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <Button
-                            android:onClick="GoAdd"
-                            android:background="@color/colorPrimaryDark"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
-                            android:text="@string/main_GoAdd"
-                            android:layout_gravity="center">
-                        </Button>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
-                    <LinearLayout
+                        android:layout_height="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:text="@string/main_GoAdd"
+                        android:layout_gravity="center">
+                    </Button>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:onClick="GoTriple"
+                        android:background="@color/colorPrimaryDark"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <Button
-                            android:onClick="GoTriple"
-                            android:background="@color/colorPrimaryDark"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
-                            android:text="@string/main_GoTriple"
-                            android:layout_gravity="center">
-                        </Button>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+                        android:layout_height="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:text="@string/main_GoTriple"
+                        android:layout_gravity="center">
+                    </Button>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
             <androidx.cardview.widget.CardView
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
