@@ -1,31 +1,43 @@
 package com.imcys.bilibilias.user;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.LinearLayout;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
-import com.imcys.bilibilias.HomeActivity;
 import com.imcys.bilibilias.R;
 import com.imcys.bilibilias.SetActivity;
+import com.imcys.bilibilias.home.NewHomeActivity;
+import com.imcys.bilibilias.home.VersionActivity;
 
 
 public class AboutActivity extends AppCompatActivity {
 
     private String cookie;
     private String csrf;
+    private static final int PUSH_NOTIFICATION_ID = (0x001);
+    private static final String PUSH_CHANNEL_ID = "PUSH_NOTIFY_ID";
+    private static final String PUSH_CHANNEL_NAME = "PUSH_NOTIFY_NAME";
+    private static String fileName = "/data/data/com.imcys.bilibilias/cache";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("关于软件");
+
     }
+
 
     public void goSet(View view){
         Intent intent= new Intent();
@@ -48,6 +60,27 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
+    public void Privacy(View view){
+        LinearLayout lLayout = new LinearLayout(this);
+        lLayout.setOrientation(LinearLayout.VERTICAL);
+        WebView Privacy = new WebView(AboutActivity.this);
+        Privacy.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
+        Privacy.getSettings().setJavaScriptEnabled(true);//是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+        Privacy.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
+        Privacy.getSettings().setDomStorageEnabled(true);//DOM Storage 重点是设置这个
+        Privacy.getSettings().setAllowFileAccess(false);
+        Privacy.loadUrl("https://docs.qq.com/doc/DVWdlb2hSWFlJaUFk");
+        LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1500);//这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
+        lLayout.addView(Privacy, lParams);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(AboutActivity.this);
+        builder.setView(lLayout);
+        builder.setCancelable(false);
+        builder.setTitle("隐私政策");
+        builder.setPositiveButton("使用程序代表同意协议", null);
+        builder.show();
+
+    }
+
     public void goQQQun(View view){
         joinQQGroup("g9z43_X-5QfTsFtZcP4-VCIQ8i-Sbjgw");
     }
@@ -57,6 +90,32 @@ public class AboutActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
+
+
+    public void showNotifictionIcon(View view) {
+        String id = "my_channel_01";
+        String name="我是渠道名字";
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification notification = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(mChannel);
+            notification = new Notification.Builder(this)
+                    .setChannelId(id)
+                    .setContentTitle("有新解析情况")
+                    .setContentText("点击查看AV10086最新内容")
+                    .setSmallIcon(R.mipmap.ic_launcher).build();
+        } else {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setContentTitle("有新解析情况")
+                    .setContentText("点击查看AV10086最新内容")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setOngoing(true);
+            notification = notificationBuilder.build();
+        }
+        notificationManager.notify(111123, notification);
+    }
+
     /****************
      *
      * 发起添加群流程。群号：哔哩哔哩萌新交流群(703180724) 的 key 为： g9z43_X-5QfTsFtZcP4-VCIQ8i-Sbjgw

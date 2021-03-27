@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/app_widget_user"
+    android:minHeight="100dp"
+    android:minWidth="200dp"
+    android:previewImage="@mipmap/ic_launcher"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen|keyguard">
+
+    <!--
+    android:minWidth : 最小宽度
+    android:minHeight ： 最小高度
+    android:updatePeriodMillis ： 更新widget的时间间隔(ms)，"86400000"为1个小时，值小于30分钟时，会被设置为30分钟。可以用 service、AlarmManager、Timer 控制。
+    android:previewImage ： 预览图片，拖动小部件到桌面时有个预览图
+    android:initialLayout ： 加载到桌面时对应的布局文件
+    android:resizeMode ： 拉伸的方向。horizontal表示可以水平拉伸，vertical表示可以竖直拉伸
+    android:widgetCategory ： 被显示的位置。home_screen：将widget添加到桌面，keyguard：widget可以被添加到锁屏界面。
+    android:initialKeyguardLayout ： 加载到锁屏界面时对应的布局文件
+     -->
+</appwidget-provider>

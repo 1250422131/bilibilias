@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="设置"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
+            android:theme="?attr/actionBarTheme"
+            app:title="设置"
+            app:titleTextColor="#FFFFFF" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -26,160 +27,217 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#FFFFFF"
                 android:orientation="vertical">
 
                 <TextView
-                    android:textStyle="bold"
-                    android:layout_margin="12dp"
-                    android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="下载设置"/>
+                    android:layout_margin="12dp"
+                    android:text="下载设置"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
-                    android:background="#FFFFFF"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="断点下载"/>
+                        android:layout_gravity="center"
+                        android:layout_margin="12dp"
+                        android:layout_weight="1"
+                        android:text="断点下载"
+                        android:textColor="#000000" />
+
                     <LinearLayout
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp">
+
                         <Switch
-                            android:onClick="SetDd"
                             android:id="@+id/Set_Switch"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:onClick="SetDd"
+                            tools:ignore="UseSwitchCompatOrMaterialXml" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#DCDCDC"/>
-                <LinearLayout
+                    android:layout_height="wrap_content"
                     android:background="#FFFFFF"
                     android:onClick="SetDLPath"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="下载路径点击设置"/>
+                        android:layout_margin="12dp"
+                        android:text="下载路径点击设置"
+                        android:textColor="#000000" />
+
                     <TextView
                         android:id="@+id/Set_SPath"
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="默认路径"/>
+                        android:layout_margin="12dp"
+                        android:text="默认路径" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:onClick="goClearCache"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="缓存清理"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/Set_CacheTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="6MB" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:onClick="setDownloadMethod"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="下载方式"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:id="@+id/Set_Download_Method"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:text="弹窗下载" />
+                </LinearLayout>
+
+
                 <TextView
-                    android:textStyle="bold"
-                    android:layout_margin="12dp"
-                    android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="关于作者"/>
+                    android:layout_margin="12dp"
+                    android:text="关于作者"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
-                    android:background="#FFFFFF"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/app_Js"/>
+                        android:layout_margin="12dp"
+                        android:text="@string/app_Js"
+                        android:textColor="#000000" />
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:id="@+id/set_LinearLayout1"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#DCDCDC"/>
-                <LinearLayout
+                    android:layout_height="wrap_content"
                     android:background="#FFFFFF"
                     android:onClick="GoBz"
-                    android:id="@+id/set_LinearLayout1"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="哔哩哔哩个人主页"/>
+                        android:layout_margin="12dp"
+                        android:text="哔哩哔哩个人主页"
+                        android:textColor="#000000" />
                 </LinearLayout>
+
                 <TextView
-                    android:textStyle="bold"
-                    android:layout_margin="12dp"
-                    android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="开源及声明"/>
+                    android:layout_margin="12dp"
+                    android:text="开源及声明"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
-                    android:background="#FFFFFF"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/app_Ky"/>
+                        android:layout_margin="12dp"
+                        android:text="@string/app_Ky"
+                        android:textColor="#000000" />
                 </LinearLayout>
+
                 <LinearLayout
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:id="@+id/set_LinearLayout2"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#DCDCDC"/>
-                <LinearLayout
+                    android:layout_height="wrap_content"
                     android:background="#FFFFFF"
                     android:onClick="GoGithub"
-                    android:id="@+id/set_LinearLayout2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:orientation="horizontal">
+
                     <TextView
-                        android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="github地址"/>
+                        android:layout_margin="12dp"
+                        android:text="github地址"
+                        android:textColor="#000000" />
                 </LinearLayout>
+
                 <TextView
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/"/>
+                    android:layout_gravity="center"
+                    android:text="视频储存地址\n依次进入文件夹“/”分割依次顺序\n/Android/data/com.imcys.bilibilias/files/哔哩哔哩视频/" />
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="10dp"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    app:cardCornerRadius="10dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <Button
-                            android:onClick="UserExit"
-                            android:textStyle="bold"
-                            android:background="#FFFFFF"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorAccent"
+                            android:layout_gravity="center"
+                            android:background="#FFFFFF"
+                            android:onClick="UserExit"
                             android:text="退出登录"
-                            android:layout_gravity="center">
-                        </Button>
+                            android:textColor="@color/colorAccent"
+                            android:textStyle="bold"></Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 

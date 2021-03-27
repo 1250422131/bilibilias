@@ -12,8 +12,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
 
 public class HttpUtils {
 
@@ -118,7 +116,7 @@ public class HttpUtils {
                 baos.flush();
                 return baos.toString();
             } else {
-                throw new RuntimeException(" responseCode is not 200 ... ");
+                throw new RuntimeException(conn.getResponseCode() + " responseCode is not 200 ... ");
             }
 
         } catch (Exception e) {
@@ -165,6 +163,7 @@ public class HttpUtils {
             conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
             conn.setRequestProperty("cookie", Cookie);
             conn.setRequestProperty("charset", "utf-8");
+            conn.setRequestProperty("referer","https://www.bilibili.com/bangumi/play/ep93415");
             conn.setUseCaches(false);
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);

@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 
-
 android {
     compileSdkVersion 29
     buildToolsVersion "30.0.0"
@@ -10,8 +9,9 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 108
-        versionName "1.0.8"
+        multiDexEnabled true
+        versionCode 111
+        versionName "1.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -20,7 +20,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true  //移除无用资源
+            zipAlignEnabled true //Zipalign优化
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -30,37 +32,49 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
 }
+
 
 
 allprojects {
     repositories {
         google()
+        maven { url 'https://jitpack.io' }
     }
 }
 
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-
-
-    implementation 'cn.jzvd:jiaozivideoplayer:7.4.2'
-    //bugLy
-    //implementation 'com.tencent.bugly:crashreport:3.3.1' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-    implementation 'com.tencent.bugly:crashreport_upgrade:1.2.0'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如1.2.0
-    implementation 'com.tencent.bugly:nativecrashreport:2.2.0' //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
-
-    implementation 'com.scwang.wave:MultiWaveHeader:1.0.0-alpha-1'
+    //百度SDK
+    implementation 'com.baidu.mobstat:mtj-sdk:4.0.3.5'
+    //轮播图
+    implementation 'com.youth.banner:banner:1.4.9'
+    //播放器
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
+    implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
+    //文件选择器
+    implementation 'com.github.supertaohaili:FileChooser:1.0.9'
+    //B站烈焰弹幕使
+    implementation 'com.github.ctiao:dfm:0.4.2'
+    //网络请求
     implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    //图片依赖
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
+    //网络请求
     implementation 'org.xutils:xutils:3.8.12'
+    //MultiDex -> 为了解决 Caused by: com.android.tools.r8.utils.b: Cannot fit requested classes in a single dex file (# methods: 67286 > 65536)
+    //android:name="androidx.multidex.MultiDexApplication"
+    //implementation "androidx.multidex:multidex:2.0.1"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    testImplementation 'junit:junit:4.12'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.drawerlayout:drawerlayout:1.0.0'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 }

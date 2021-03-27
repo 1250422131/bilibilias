@@ -12,8 +12,8 @@
                motion:motionTarget="@+id/imageView"
                motion:framePosition="48"
                motion:keyPositionType="parentRelative"
-               motion:percentX="-0.116"
-               motion:percentY="0.518" />
+               motion:percentX="0.94"
+               motion:percentY="0.529" />
        </KeyFrameSet>
     </Transition>
 

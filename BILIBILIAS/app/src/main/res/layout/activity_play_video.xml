@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:background="#FFFFFF"
+        android:id="@+id/Play_Video_PlayerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+        <master.flame.danmaku.ui.widget.DanmakuView
+            android:id="@+id/Play_Video_DanmakuView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </master.flame.danmaku.ui.widget.DanmakuView>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

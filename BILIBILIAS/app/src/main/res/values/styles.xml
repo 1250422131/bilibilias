@@ -1,16 +1,23 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowToggle</item>
+    </style>
+    <style name="AppTheme.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle">
+    <item name="color">@android:color/white</item>
     </style>
 
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">#E91E63</item>
         <item name="colorControlActivated">#E91E63</item>
     </style>
+
+    
+
 
 
 

@@ -4,9 +4,9 @@ package com.imcys.bilibilias.as;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.imcys.bilibilias.BilibiliPost;
@@ -35,25 +35,24 @@ public class RankingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_ranking);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("热榜视频");
-
+        //加载标题
+        newTool();
 
         pd2 = ProgressDialog.show(RankingActivity.this, "提示", "正在拉取用户数据");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"csrf.txt";
-                String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString()+"/"+"cookie.txt";
+                String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
+                String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
                 try {
                     csrf = BilibiliPost.fileRead(csrfPath);
                     cookie = BilibiliPost.fileRead(CookiePath);
-                    String rankingData = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all",cookie);
+                    String rankingData = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all", cookie);
                     JSONObject rankingJson = new JSONObject(rankingData);
                     rankingJson = rankingJson.getJSONObject("data");
                     JSONArray rankingArray = rankingJson.getJSONArray("list");
 
-                    for (int i = 0; i<rankingArray.length();i++){
+                    for (int i = 0; i < rankingArray.length(); i++) {
                         JSONObject rankingJsonData = rankingArray.getJSONObject(i);
                         JSONObject videoJson = rankingJsonData.getJSONObject("stat");
                         String Title = rankingJsonData.getString("title");
@@ -62,7 +61,7 @@ public class RankingActivity extends AppCompatActivity {
                         String Dm = videoJson.getString("danmaku");
                         String bvid = rankingJsonData.getString("bvid");
                         String aid = rankingJsonData.getString("aid");
-                        UserVideo VideoListData = new UserVideo(Title,bvid,aid,pic,play,Dm, RankingActivity.this);
+                        UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, RankingActivity.this);
                         fruitList.add(VideoListData);
                     }
 
@@ -74,7 +73,7 @@ public class RankingActivity extends AppCompatActivity {
                     public void run() {
                         //执行刷新
                         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.As_Video_Ranking);
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(RankingActivity.this);
+                        GridLayoutManager layoutManager = new GridLayoutManager(RankingActivity.this, 2);
                         recyclerView.setLayoutManager(layoutManager);
                         UserVideoAdapter adapter = new UserVideoAdapter(fruitList);
                         recyclerView.setAdapter(adapter);
@@ -84,6 +83,11 @@ public class RankingActivity extends AppCompatActivity {
             }
 
         }).start();
+    }
+
+    private void newTool(){
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.Total_Toolbar);
+        mToolbar.setTitle("热门视频");
     }
 
 }
