@@ -11,14 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            app:title="关于程序"
+            app:titleTextColor="#FFFFFF"
+            android:background="?colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <androidx.cardview.widget.CardView
-            app:cardCornerRadius="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="40dp"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
+
                 android:src="@mipmap/ic_launcher"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
@@ -27,7 +34,7 @@
 
         <TextView
             android:layout_gravity="center"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
             android:text="BILIBILI AS"
@@ -40,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="1.0.8" />
+            android:text="1.1.1" />
 
         <androidx.cardview.widget.CardView
             app:cardCornerRadius="10dp"
@@ -54,6 +61,7 @@
 
 
                 <LinearLayout
+                    android:onClick="showNotifictionIcon"
                     android:visibility="gone"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -86,15 +94,16 @@
                     android:layout_height="1dp"
                     android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="?android:attr/selectableItemBackground"
                     android:onClick="goSet"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="40dp">
 
                     <TextView
                         android:textStyle="bold"
                         android:layout_margin="10dp"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
@@ -105,7 +114,7 @@
                     <TextView
                         android:textStyle="bold"
                         android:layout_gravity="center"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,15 +127,16 @@
                     android:layout_height="1dp"
                     android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="?android:attr/selectableItemBackground"
                     android:onClick="goWj"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="40dp">
 
                     <TextView
                         android:textStyle="bold"
                         android:layout_margin="10dp"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
@@ -137,7 +147,7 @@
                     <TextView
                         android:textStyle="bold"
                         android:layout_gravity="center"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,15 +160,49 @@
                     android:layout_height="1dp"
                     android:background="#DCDCDC"/>
                 <LinearLayout
-                    android:onClick="goBiliBili"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:onClick="Privacy"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="40dp">
 
                     <TextView
                         android:textStyle="bold"
                         android:layout_margin="10dp"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="隐私政策" />
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=">" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DCDCDC"/>
+                <LinearLayout
+                    android:background="?android:attr/selectableItemBackground"
+                    android:onClick="goBiliBili"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp">
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:layout_margin="10dp"
+                        android:textSize="15sp"
                         android:layout_gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
@@ -169,7 +213,7 @@
                     <TextView
                         android:textStyle="bold"
                         android:layout_gravity="center"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -182,15 +226,16 @@
                     android:layout_height="1dp"
                     android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="?android:attr/selectableItemBackground"
                     android:onClick="goBiliBiliASUrl"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="40dp">
 
                     <TextView
                         android:textStyle="bold"
                         android:layout_margin="10dp"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
@@ -201,7 +246,7 @@
                     <TextView
                         android:textStyle="bold"
                         android:layout_gravity="center"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -214,15 +259,16 @@
                     android:layout_height="1dp"
                     android:background="#DCDCDC"/>
                 <LinearLayout
+                    android:background="?android:attr/selectableItemBackground"
                     android:onClick="goQQQun"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp">
+                    android:layout_height="40dp">
 
                     <TextView
                         android:textStyle="bold"
                         android:layout_margin="10dp"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_gravity="center"
                         android:textColor="@color/colorPrimary"
                         android:layout_width="wrap_content"
@@ -233,7 +279,7 @@
                     <TextView
                         android:textStyle="bold"
                         android:layout_gravity="center"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:layout_margin="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -1,108 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <ScrollView
-        android:visibility="visible"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
+
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?colorPrimary"
+                app:title="BILIBILI AS"
+                app:titleTextColor="#FFFFFF" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                android:layout_margin="10dp">
+                app:cardElevation="2dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="horizontal">
+
                     <EditText
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
                         android:id="@+id/As_EditText1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:hint="请输入BV/AV号或者番剧链接"
                         android:singleLine="true"
                         android:theme="@style/MyEditText"
-                        android:hint="请输入BV/AV号或者番剧链接"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-                    </EditText>
+                        android:importantForAutofill="no"
+                        tools:ignore="TextFields" />
+
                     <Button
-                        android:onClick="onBvUrl"
-                        android:background="?colorAccent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:layout_gravity="right"
+                        android:background="?colorAccent"
+                        android:onClick="onBvUrl"
                         android:text="解析"
-                        android:layout_gravity="right">
-                    </Button>
+                        android:textColor="#FFFFFF" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
 
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
+                android:layout_margin="5dp"
                 app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                android:layout_margin="5dp">
-                <LinearLayout
+                app:cardElevation="2dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
                     <cn.jzvd.JzvdStd
                         android:id="@+id/As_VideoPlayer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                     </cn.jzvd.JzvdStd>
-                    <ImageView
-                        android:visibility="gone"
-                        android:id="@+id/As_ImageView"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/bilibili"
+
+                    <master.flame.danmaku.ui.widget.DanmakuView
+                        android:id="@+id/As_DanmakuView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+                    </master.flame.danmaku.ui.widget.DanmakuView>
+
+                    <ImageView
+                        android:id="@+id/As_ImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bilibili"
+                        android:visibility="gone">
                     </ImageView>
-                </LinearLayout>
+                </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
                         <TextView
                             android:id="@+id/As_Title"
-                            android:layout_margin="5dp"
-                            android:textSize="18sp"
-                            android:textColor="?colorAccent"
                             android:layout_width="wrap_content"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:text="标题" />
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:text="标题"
+                            android:textColor="?colorAccent"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/As_UP"
-                            android:layout_margin="5dp"
                             android:layout_width="wrap_content"
-                            android:gravity="right|center_vertical"
                             android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:gravity="right|center_vertical"
                             android:text="UP主" />
                     </LinearLayout>
 
@@ -110,204 +135,277 @@
             </androidx.cardview.widget.CardView>
 
 
-
             <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
                 <TextView
-                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="子集视频选择 ">
+                    android:text="子集视频选择 "
+                    android:textSize="18sp">
+
                 </TextView>
+
                 <Spinner
                     android:id="@+id/As_Main_Spinner1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
+
                 </Spinner>
             </LinearLayout>
+
             <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
                 <TextView
-                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="视频清晰度选择">
+                    android:text="视频清晰度选择"
+                    android:textSize="18sp">
+
                 </TextView>
+
                 <Spinner
                     android:id="@+id/As_Main_Spinner2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
+
                 </Spinner>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
                 <TextView
-                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="下载格式选择 ">
+                    android:text="下载格式选择 "
+                    android:textSize="18sp">
+
                 </TextView>
+
                 <Spinner
                     android:id="@+id/As_Main_Spinner3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
+
                 </Spinner>
             </LinearLayout>
+
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
                         <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="?colorAccent"
                             android:onClick="goLike"
-                            android:background="?colorAccent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
                             android:text="@string/main_GoLike"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <Button
-                            android:onClick="GoAdd"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:background="?colorAccent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
+                            android:onClick="GoAdd"
                             android:text="@string/main_GoAdd"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <Button
-                            android:onClick="GoTriple"
-                            android:background="@color/colorAccent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
+                            android:layout_gravity="center"
+                            android:background="@color/colorAccent"
+                            android:onClick="GoTriple"
                             android:text="@string/main_GoTriple"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
                         <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="?colorAccent"
                             android:onClick="barrageGet"
-                            android:background="?colorAccent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
                             android:text="下载弹幕"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <Button
-                            android:onClick="onBvUrl1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:background="?colorAccent"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
+                            android:onClick="onBvUrl1"
                             android:text="下载视频"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
                 <androidx.cardview.widget.CardView
-                    android:layout_weight="2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="10dp">
+                    app:cardElevation="2dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <Button
-                            android:onClick="FMDownload"
-                            android:background="@color/colorAccent"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:textColor="#FFFFFF"
+                            android:layout_gravity="center"
+                            android:background="@color/colorAccent"
+                            android:onClick="FMDownload"
                             android:text="下载封面"
-                            android:layout_gravity="center">
+                            android:textColor="#FFFFFF">
+
                         </Button>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/As_batchDownload_LinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="2"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@color/colorAccent"
+                            android:onClick="batchDownloadVideo"
+                            android:text="批量下载"
+                            android:textColor="#FFFFFF">
+
+                        </Button>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/As_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:ignore="MissingConstraints" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

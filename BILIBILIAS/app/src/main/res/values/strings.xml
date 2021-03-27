@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BILIBILI AS</string>
-    <string name="app_Js">我是哔哩哔哩的萌新杰少\n这个程序的话是我第一个真正意义上的处女作\n显然我之前是用IAPP写程序的，那么现在我终于可以用Java写了非常有意义！！！</string>
+    <string name="app_Js">我是哔哩哔哩的萌新杰少\n高中生开发者，编程是兴趣爱好\n学了一点皮毛，为了实际应用，写下了这个程序。\n帮助大家更好的缓存视频。</string>
     <string name="app_Ky">需要遵守下面协议\nGNU General Public License\nGNU通用公共许可证</string>
     <string name="main_login_new">刷新页面</string>
     <string name="main_login">完成登录</string>

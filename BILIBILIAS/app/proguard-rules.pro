@@ -20,11 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#bugly的防混淆配置
--dontwarn com.tencent.bugly.**
--keep public class com.tencent.bugly.**{*;}
-
-
+ #中文混淆
+-classobfuscationdictionary ./proguard-class.txt
+-packageobfuscationdictionary ./proguard-package.txt
+-obfuscationdictionary ./proguard-package.txt
 ############################################
 #
 # 复制的混淆
@@ -64,11 +63,24 @@
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 
 
+
+# 百度统计
+-keep class com.baidu.mobstat.** { *; }
+-keep class com.baidu.bottom.** { *; }
+
+# 饺子播放器
+-keep public class cn.jzvd.JZMediaSystem {*; }
+-keep public class cn.jzvd.demo.CustomMedia.CustomMedia {*; }
+-keep public class cn.jzvd.demo.CustomMedia.JZMediaIjk {*; }
+-keep public class cn.jzvd.demo.CustomMedia.JZMediaSystemAssertFolder {*; }
+
+
 #############################################
 #
 # Android开发中一些需要保留的公共部分
 #
 #############################################
+
 
 # 保留我们使用的四大组件，自定义的Application等等这些类不被混淆
 # 因为这些子类都有可能被外部调用
