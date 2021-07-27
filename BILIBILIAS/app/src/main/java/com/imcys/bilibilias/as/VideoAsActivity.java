@@ -1,22 +1,32 @@
 package com.imcys.bilibilias.as;
 
-import android.app.DownloadManager;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.graphics.Typeface;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
@@ -24,29 +34,50 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 
+import com.baidu.mobstat.StatService;
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import com.imcys.bilibilias.AppFilePathUtils;
 import com.imcys.bilibilias.BilibiliPost;
 import com.imcys.bilibilias.HttpUtils;
 import com.imcys.bilibilias.R;
 import com.imcys.bilibilias.SetActivity;
+import com.imcys.bilibilias.as.video.AsPagerAdapter;
+import com.imcys.bilibilias.as.video.JZPlay;
+import com.imcys.bilibilias.as.video.VideoComment;
+import com.imcys.bilibilias.as.video.VideoRecommend;
+import com.imcys.bilibilias.fileUriUtils;
 import com.imcys.bilibilias.home.NewHomeActivity;
 import com.imcys.bilibilias.home.VerificationUtils;
-import com.imcys.bilibilias.home.VersionActivity;
-import com.imcys.bilibilias.user.AboutActivity;
+
 import com.imcys.bilibilias.user.UserActivity;
+import com.kongzue.dialogx.dialogs.InputDialog;
+import com.kongzue.dialogx.dialogs.MessageDialog;
+import com.kongzue.dialogx.interfaces.OnBindView;
+import com.kongzue.dialogx.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialogx.interfaces.OnInputDialogButtonClickListener;
 
 
 import org.json.JSONArray;
@@ -67,15 +98,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import cn.jzvd.JZDataSource;
@@ -99,6 +134,9 @@ import master.flame.danmaku.danmaku.parser.android.BiliDanmukuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
 
 
+import static org.xutils.common.util.DensityUtil.dip2px;
+
+
 public class VideoAsActivity extends AppCompatActivity {
 
 
@@ -112,13 +150,13 @@ public class VideoAsActivity extends AppCompatActivity {
     private String ImageUrl;
     private String type;
     private String Title;
-    private String bvid;
+    public static String bvid;
     private String jxUrl;
-    private String aid;
+    public static String aid;
     private String up;
     private String upName;
     private String tName;
-    private String Mid;
+    public String Mid;
     private String Copyright;
     private String DownloadMethod;
     private boolean dashState = false;
@@ -142,22 +180,43 @@ public class VideoAsActivity extends AppCompatActivity {
     private List<String> listVideo = new ArrayList<String>();
     private List<String> listCode = new ArrayList<String>();
     private List<String> listVideoName = new ArrayList<String>();
+    private List<String> listBatch = new ArrayList<String>();
     private Spinner mProSpinner = null;
     private String cid;
     private String qn;
     private String fnval;
     private String videoType;
-    private String mid;
-    private JzvdStd jzVideoPlayerStandard;
+    public String mid;
+    private JZPlay jzVideoPlayerStandard;
     private String VideoJson;
     private BaseDanmakuParser mParser;//解析器对象
     private IDanmakuView mDanmakuView;
     private DanmakuContext mContext;
+    private SharedPreferences sharedPreferences;
+    private ProgressBar progressBar;
+    private MessageDialog mMessageDialog;
+    private String upFace;
+    private int playVolume;
+    private int barrageVolume;
+    private int upMid = 0;
+
+    //导入视频参数
+    private int VideoId;
+    private String displayDesc;
+    private String channelId;
+    private NotificationCompat.Builder notification;
+    private NotificationManagerCompat notificationManager;
+    private Uri SAF_Video;
+    private Uri SAF_Index;
+    private Uri SAF_Entry;
+    private Uri SAF_Audio;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_dl);
+
         context = getApplicationContext();
         intent = getIntent();
         csrf = intent.getStringExtra("csrf");
@@ -165,18 +224,25 @@ public class VideoAsActivity extends AppCompatActivity {
         mid = intent.getStringExtra("mid");
         cookie = intent.getStringExtra("cookie");
         //获取下载方式 后台/前台
-        SharedPreferences sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
-        DownloadMethod = sharedPreferences.getString("DownloadMethod", "");
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        DownloadMethod = sharedPreferences.getString("DownloadMethod", "1");
+        //setDownloadMethod
 
         //饺子播放器
-        jzVideoPlayerStandard = (JzvdStd) findViewById(R.id.As_VideoPlayer);
+        jzVideoPlayerStandard = findViewById(R.id.As_VideoPlayer);
+
+
         Glide.with(this)
                 .load("https://s3.ax1x.com/2020/12/13/rmtGX6.jpg")
                 .into(jzVideoPlayerStandard.posterImageView);
 
         //弹幕控件实例化
         danmakuView = (DanmakuView) findViewById(R.id.As_DanmakuView);
-        //调用发送弹幕
+        //控件着色
+        //ImageView imageView = findViewById(R.id.As_search);
+        //Drawable drawable = imageView.getDrawable();
+        //Drawable wrap = DrawableCompat.wrap(drawable);
+        //DrawableCompat.setTint(wrap, getResources().getColor(R.color.colorAccent));
 
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -207,17 +273,23 @@ public class VideoAsActivity extends AppCompatActivity {
             pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在拉取数据");
             // uri 就相当于 web 页面中的链接
             Uri uri = intent.getData();
+            List<String> UrlPathList = uri.getPathSegments();
             String scheme = uri.getScheme();
             String host = uri.getHost();
             int port = uri.getPort();
             String path = uri.getPath();
+
             // System.out.println("scheme=" + scheme + ",host=" + host+ ",port=" + port + ",path=" + path+ ",query=" + uri.getQuery()+ ",key1=" + key1 + "，key2=" + key2);
-            bvid = uri.getQueryParameter("video");
+            //拦截B站数据获取
+            if (host.equals("m.bilibili.com")) {
+                bvid = UrlPathList.get(1);
+            } else {
+                bvid = uri.getQueryParameter("video");
+            }
             String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "token.txt";
             String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
             String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
             try {
-                bvid = uri.getQueryParameter("video");
                 csrf = BilibiliPost.fileRead(csrfPath);
                 toKen = BilibiliPost.fileRead(ToKenPath);
                 cookie = BilibiliPost.fileRead(CookiePath);
@@ -226,7 +298,100 @@ public class VideoAsActivity extends AppCompatActivity {
             }
             new bvUrl().start();
         }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.As_Toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
         UserVideoAs();
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.as_menu, menu);
+        //Toolbar的搜索框
+        MenuItem searchItem = menu.findItem(R.id.as_toolbar_search);
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+        }
+        SearchView finalSearchView = searchView;
+        searchView.setIconified(false);
+        //searchView 的 textView 控件绑定
+        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = (TextView) searchView.findViewById(id);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
+
+        searchView.setQueryHint("输入AV/BV/EP/SS或链接");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //折合SearchView
+                if (query.length() > 0) {
+                    //折合SearchView
+                    finalSearchView.setIconified(true);
+                }
+                pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在拉取数据");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditText EditText1 = (EditText) findViewById(R.id.As_EditText1);
+                        bvid = query;
+                        System.out.println(URL);
+                        String pd = BilibiliPost.nav(toKen);
+                        //判断登录是否正常
+                        if (pd.equals("0")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new bvUrl().start();
+                                }
+                            });
+                        }
+                    }
+                }).start();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //设置Menu点击事件
+        super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+            case R.id.as_toolbar_goLike:
+                if (aid != null) {
+                    goLike();
+                }
+                break;
+            case R.id.as_toolbar_GoAdd:
+                if (aid != null) {
+                    GoAdd();
+                }
+                break;
+            case R.id.as_toolbar_GoTriple:
+                if (aid != null) {
+                    GoTriple();
+                }
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
+
     }
 
 
@@ -241,11 +406,36 @@ public class VideoAsActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        StatService.onPause(this);
         super.onPause();
         if (danmakuView != null && danmakuView.isPrepared()) {
             danmakuView.pause();
         }
         Jzvd.releaseAllVideos();
+        //播放历史上报
+        if (sharedPreferences.getBoolean("PlayReport", true)) {
+            TextView currentTimeTextView = findViewById(R.id.current);
+            BilibiliPost.AddVideoReport(aid, cid, currentTimeTextView.getText().toString(), csrf, cookie);
+        }
+
+
+    }
+
+
+    private void TabLoad() {
+        TabLayout mTabLayout = (TabLayout) findViewById(R.id.As_TabLayout);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.As_ViewPager);
+        ArrayList<String> tabList = new ArrayList<>();
+        ArrayList<Fragment> fragments = new ArrayList<>();
+        tabList.add("推荐视频");
+        tabList.add("视频评论");
+        VideoComment mVideoComment = new VideoComment();
+        VideoRecommend mVideoRecommend = new VideoRecommend();
+        fragments.add(mVideoRecommend);
+        fragments.add(mVideoComment);
+        AsPagerAdapter myAssetPathFetcher = new AsPagerAdapter(getSupportFragmentManager(), fragments, tabList);
+        mViewPager.setAdapter(myAssetPathFetcher);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
 
@@ -279,6 +469,18 @@ public class VideoAsActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void goUp(View view) {
+        if (upMid != 0) {
+            Intent intent = new Intent();
+            intent.setClass(VideoAsActivity.this, UserActivity.class);
+            intent.putExtra("cookie", cookie);
+            intent.putExtra("mid", upMid + "");
+            intent.putExtra("UP", "1");
+            startActivity(intent);
+        }
+
+    }
+
     //下面来做解析
     public class bvUrl extends Thread {
         @Override
@@ -296,7 +498,7 @@ public class VideoAsActivity extends AppCompatActivity {
                 //定位数据
                 //判断下这是不是个纯bv号
                 if (isENChar(bvid)) {
-                    if (bvid.contains("https") || bvid.contains("http") || bvid.contains("bilibili.com") || bvid.contains("https://b23.tv/")) {
+                    if (bvid.substring(0, 5).contains("https") || bvid.substring(0, 5).contains("http") || bvid.contains("bilibili.com") | bvid.contains("https://b23.tv/")) {
                         //输入一个视频链接，直接给截取公共解析
                         //这个方案存在问题，当输入错误链接异常时可能无法及时停止解析
                         if (bvid.contains("ep") || bvid.contains("EP")) {
@@ -304,7 +506,7 @@ public class VideoAsActivity extends AppCompatActivity {
                         } else {
                             public_jx(bvid);
                         }
-                    } else if (bvid.contains("av") || bvid.contains("AV")) {
+                    } else if (bvid.substring(0, 2).contains("av") || bvid.substring(0, 2).contains("AV")) {
                         //过滤掉多余的东西
                         if (bvid.contains("AV")) {
                             bvid = bvid.replaceAll("AV", "");
@@ -314,16 +516,16 @@ public class VideoAsActivity extends AppCompatActivity {
                         }
                         name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid, cookie);
                         abvGo(name);
-                    } else if (bvid.contains("bv") || bvid.contains("BV")) {
+                    } else if (bvid.substring(0, 2).contains("bv") || bvid.substring(0, 2).contains("BV")) {
                         name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?bvid=" + bvid, cookie);
                         abvGo(name);
-                    } else if (bvid.contains("ss") || bvid.contains("SS")) {
+                    } else if (bvid.substring(0, 2).contains("ss") || bvid.substring(0, 2).contains("SS")) {
                         //输入一个ss的番剧链接，为了准确
-                        if (!bvid.contains("https") && !bvid.contains("http")) {
+                        if (!bvid.substring(0, 5).contains("https") && !bvid.contains("http")) {
                             bvid = "https://www.bilibili.com/bangumi/play/" + bvid;
                         }
                         public_jx(bvid);
-                    } else if (bvid.contains("ep") || bvid.contains("EP")) {
+                    } else if (bvid.substring(0, 2).contains("ep") || bvid.substring(0, 2).contains("EP")) {
                         bvid = "https://www.bilibili.com/bangumi/play/" + bvid;
                         epGo(bvid);
                     } else {
@@ -338,7 +540,6 @@ public class VideoAsActivity extends AppCompatActivity {
                     }
                 } else {
                     //全数字一定是av
-                    System.out.println("错误提示");
                     name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid, cookie);
                     abvGo(name);
                 }
@@ -394,9 +595,9 @@ public class VideoAsActivity extends AppCompatActivity {
                             .timeout(5000)
                             .execute();
                     String DMXml = response.body().replace("</d>", "</d>\n");
-                    DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/Path.txt");
-                    DLPath = DLPath + Title + type + cid + ".xml";
-                    BilibiliPost.fileWrite(DLPath, DMXml);
+                    String DownloadPath = sharedPreferences.getString("DownloadPath", getString(R.string.DownloadPath));
+                    DownloadPath = DownloadPath + Title + type + cid + ".xml";
+                    BilibiliPost.fileWrite(DownloadPath, DMXml);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -504,6 +705,11 @@ public class VideoAsActivity extends AppCompatActivity {
         JSONArray pages = data.getJSONArray("pages");
         JSONObject UPNameJson = data.getJSONObject("owner");
         final String UPUser = UPNameJson.getString("name");
+        JSONObject videoStat = data.getJSONObject("stat");
+        upMid = UPNameJson.getInt("mid");
+        upFace = UPNameJson.getString("face");
+        playVolume = videoStat.getInt("view");
+        barrageVolume = videoStat.getInt("danmaku");
         upName = UPUser;
         String VideoDesc = data.getString("desc");
         System.out.println(pages);
@@ -551,6 +757,7 @@ public class VideoAsActivity extends AppCompatActivity {
         } else {
             videoView();
         }
+
     }
 
     //番剧单独解析方法
@@ -578,6 +785,11 @@ public class VideoAsActivity extends AppCompatActivity {
         JSONObject data = json.getJSONObject("data");
         tName = data.getString("tname");
         JSONObject UPNameJson = data.getJSONObject("owner");
+        JSONObject videoStat = data.getJSONObject("stat");
+        upMid = UPNameJson.getInt("mid");
+        upFace = UPNameJson.getString("face");
+        playVolume = videoStat.getInt("view");
+        barrageVolume = videoStat.getInt("danmaku");
         final String UPUser = UPNameJson.getString("name");
         upName = UPUser;
         String VideoDesc = data.getString("desc");
@@ -630,6 +842,7 @@ public class VideoAsActivity extends AppCompatActivity {
             //加载显示数据
             epView();
         }
+
     }
 
     private void videoView() {
@@ -638,6 +851,9 @@ public class VideoAsActivity extends AppCompatActivity {
         ImageView1 = (ImageView) findViewById(R.id.As_ImageView);
         TextView1 = (TextView) findViewById(R.id.As_Title);
         TextView2 = (TextView) findViewById(R.id.As_UP);
+        TextView PlayText = (TextView) findViewById(R.id.As_Play);
+        TextView DanMuText = (TextView) findViewById(R.id.As_DanMu);
+        ImageView FaceImage = (ImageView) findViewById(R.id.As_Up_Face);
         final Bitmap bitmap = returnBitMap(ImageUrl);
         //显示番剧图片
         StrData = HttpUtils.doGet(jxUrl + "&fnval=1", cookie);
@@ -648,22 +864,28 @@ public class VideoAsActivity extends AppCompatActivity {
         ImageView1.post(new Runnable() {
             @Override
             public void run() {
+                //加载推荐
+                TabLoad();
                 // TODO Auto-generated method stub
                 TextView1.setText(Title);
                 TextView2.setText(upName);
+                //设置UP主信息
+                Glide.with(VideoAsActivity.this).load(upFace).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(FaceImage);
+                PlayText.setText(" 播放:" + VerificationUtils.DigitalConversion(playVolume) + " ");
+                DanMuText.setText(" 弹幕:" + VerificationUtils.DigitalConversion(barrageVolume) + " ");
                 ImageView1.setImageBitmap(bitmap);
                 ListArray(list);
                 ListArrayVideo(listVideo);
                 listCode.add("mp4");
-                listCode.add("flv");
                 listCode.add("mp4【音频视频分离下载最快】");
+                listCode.add("flv");
                 ListArrayCode(listCode);
 
                 JZDataSource jzDataSource = new JZDataSource(StrData, Title);
                 jzDataSource.headerMap.put("Cookie", cookie);
                 jzDataSource.headerMap.put("Referer", "https://www.bilibili.com/video/av" + aid + "/");
                 jzDataSource.headerMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                jzVideoPlayerStandard = (JzvdStd) findViewById(R.id.As_VideoPlayer);
+                jzVideoPlayerStandard = (JZPlay) findViewById(R.id.As_VideoPlayer);
                 jzVideoPlayerStandard.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL);
                 Glide.with(VideoAsActivity.this).load(ImageUrl).into(jzVideoPlayerStandard.posterImageView);
                 //判断是否展示批量下载按钮
@@ -686,6 +908,9 @@ public class VideoAsActivity extends AppCompatActivity {
         ImageView1 = (ImageView) findViewById(R.id.As_ImageView);
         TextView1 = (TextView) findViewById(R.id.As_Title);
         TextView2 = (TextView) findViewById(R.id.As_UP);
+        TextView PlayText = (TextView) findViewById(R.id.As_Play);
+        TextView DanMuText = (TextView) findViewById(R.id.As_DanMu);
+        ImageView FaceImage = (ImageView) findViewById(R.id.As_Up_Face);
         final Bitmap bitmap = returnBitMap(ImageUrl);
         //显示番剧图片
         StrData = HttpUtils.doGet(jxUrl + "&fnval=1", cookie);
@@ -696,22 +921,29 @@ public class VideoAsActivity extends AppCompatActivity {
         ImageView1.post(new Runnable() {
             @Override
             public void run() {
+                //加载推荐
+                TabLoad();
                 // TODO Auto-generated method stub
                 TextView1.setText(Title);
                 TextView2.setText(upName);
+                //设置UP主信息
+                Glide.with(VideoAsActivity.this).load(upFace).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(FaceImage);
+                PlayText.setText(" 播放:" + playVolume + " ");
+                DanMuText.setText(" 弹幕:" + barrageVolume + " ");
                 ImageView1.setImageBitmap(bitmap);
                 ListArray(list);
                 ListArrayVideo(listVideo);
                 listCode.add("mp4");
-                listCode.add("flv");
                 listCode.add("mp4【音频视频分离下载最快】");
+                listCode.add("flv");
                 ListArrayCode(listCode);
 
+                //JZ
                 JZDataSource jzDataSource = new JZDataSource(StrData, Title);
                 jzDataSource.headerMap.put("Cookie", cookie);
                 jzDataSource.headerMap.put("Referer", "https://www.bilibili.com/video/av" + aid + "/");
                 jzDataSource.headerMap.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
-                jzVideoPlayerStandard = (JzvdStd) findViewById(R.id.As_VideoPlayer);
+                jzVideoPlayerStandard = (JZPlay) findViewById(R.id.As_VideoPlayer);
                 jzVideoPlayerStandard.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL);
                 Glide.with(VideoAsActivity.this).load(ImageUrl).into(jzVideoPlayerStandard.posterImageView);
                 //判断是否展示批量下载按钮
@@ -729,17 +961,87 @@ public class VideoAsActivity extends AppCompatActivity {
 
     private void public_jx(String name) throws JSONException {
         name = HttpUtils.doGet(name, cookie);
-        name = sj(name, "<script>window.__INITIAL_STATE__=", "</script>");
-        bvid = sj(name, "aid\":", ",");
-        name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid, cookie);
-        abvGo(name);
+        //String newEpUrl = sj(name, "<script type=\"application/ld+json\">", "</script>");
+        name = sj(name, "<script>window.__INITIAL_STATE__=", ";(function");
+
+        if (name.contains("couponSelected")) {
+            String finalName = name;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject epJson = null;
+                    try {
+                        epJson = new JSONObject(finalName);
+                        JSONArray epArray = epJson.getJSONArray("epList");
+                        List<String> epAsAidArray = new ArrayList<String>();
+                        List<String> epAsSetArray = new ArrayList<String>();
+                        epAsSetArray.clear();
+                        epAsAidArray.clear();
+                        final String[] names = new String[epArray.length()];
+                        for (int i = 0; i < epArray.length(); i++) {
+                            JSONObject VideoData = epArray.getJSONObject(i);
+                            int avid = VideoData.getInt("aid");
+                            String titleFormat = VideoData.getString("titleFormat");
+                            String longTitle = VideoData.getString("longTitle");
+                            String badge = VideoData.getString("badge");
+                            names[i] = titleFormat + " " + longTitle + " " + badge;
+                            epAsAidArray.add(avid + "");
+                        }
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(VideoAsActivity.this);
+                        builder.setTitle("请选择解析的子集");
+                        //设置Dialog为多选框，且无默认选项（null）
+                        builder.setMultiChoiceItems(names, null, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            //设置点击事件：如果选中则添加进choose，如果取消或者未选择则移出choose
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                if (isChecked) {
+                                    epAsSetArray.add(epAsAidArray.get(which));
+                                } else {
+                                    epAsSetArray.remove(epAsAidArray.get(which));
+                                }
+                            }
+                        });
+                        //设置正面按钮以及点击事件（土司显示choose内容）
+                        builder.setNegativeButton("取消", null);
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(VideoAsActivity.this, "选取完成", Toast.LENGTH_SHORT).show();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + epAsSetArray.get(0), cookie);
+                                        try {
+                                            abvGo(name);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+                            }
+                        });
+                        builder.show();//显示Dialog对话框
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        } else {
+            bvid = sj(name, "aid\":", ",");
+            name = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + bvid, cookie);
+            abvGo(name);
+        }
+
+
     }
 
 
     //下面是一些对视频点赞/投币等操作
 
     //点赞
-    public void goLike(View view) {
+    private void goLike() {
+        danmakuView.removeAllDanmakus(true);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -761,7 +1063,7 @@ public class VideoAsActivity extends AppCompatActivity {
     }
 
     //投币方法
-    public void GoAdd(View view) {
+    private void GoAdd() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -783,7 +1085,7 @@ public class VideoAsActivity extends AppCompatActivity {
     }
 
     //三连方法
-    public void GoTriple(View view) {
+    private void GoTriple() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -822,11 +1124,29 @@ public class VideoAsActivity extends AppCompatActivity {
                     try {
                         VideoJson = new JSONObject(StrData);
                         VideoJson = VideoJson.getJSONObject("data");
+                        JSONArray supportFormats = VideoJson.getJSONArray("support_formats");
                         VideoJson = VideoJson.getJSONObject("dash");
                         JSONArray AudioArray = VideoJson.getJSONArray("audio");
                         JSONArray VideoArray = VideoJson.getJSONArray("video");
-                        JSONObject AudioUrl = AudioArray.getJSONObject(0);
                         JSONObject VideoUrl = VideoArray.getJSONObject(0);
+                        for (int i = 0; i < VideoArray.length(); i++) {
+                            VideoUrl = VideoArray.getJSONObject(i);
+                            VideoId = VideoUrl.getInt("id");
+                            if (qn.equals(VideoId + "")) {
+                                VideoUrl = VideoArray.getJSONObject(i);
+                                i = VideoArray.length();
+                            }
+                        }
+                        for (int i = 0; i < supportFormats.length(); i++) {
+
+                            JSONObject displayDescJson = supportFormats.getJSONObject(i);
+                            if (qn.equals(displayDescJson.getInt("quality") + "")) {
+                                displayDesc = displayDescJson.getString("display_desc");
+                                i = supportFormats.length();
+                            }
+                        }
+
+                        JSONObject AudioUrl = AudioArray.getJSONObject(0);
                         dashUrlList[0] = AudioUrl.getString("baseUrl");
                         dashUrlList[1] = VideoUrl.getString("baseUrl");
                         StrData = dashUrlList[0];
@@ -835,8 +1155,9 @@ public class VideoAsActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    StrData = HttpUtils.doGet(jxUrl, cookie);
+                    //StrData = HttpUtils.doGet(jxUrl, cookie);
                     try {
+                        //视频参数1
                         JSONObject VideoJson = new JSONObject(StrData);
                         VideoJson = VideoJson.getJSONObject("data");
                         JSONArray VideoArray = VideoJson.getJSONArray("durl");
@@ -856,71 +1177,69 @@ public class VideoAsActivity extends AppCompatActivity {
             params.addHeader("referer", "https://www.bilibili.com/video/av" + aid + "/");
             params.addHeader("Cookie", cookie);
             //获取断点配置
-            try {
-                DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/断点续传设置.txt");
-                //设置是否在下载是自动断点续传
-                params.setAutoResume(DLPath.equals("1"));//设置是否在下载是自动断点续传
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //DownloadPath
+            boolean AutoResume = sharedPreferences.getBoolean("dl_switch", true);
+            String DownloadPath = sharedPreferences.getString("DownloadPath", getString(R.string.DownloadPath));
+            String DownloadName = fileRename(sharedPreferences.getString("DownloadName", "P{P}-{P_TITLE}-{CID}.{VIDEO_TYPE}"));
+            params.setAutoResume(AutoResume);//设置是否在下载是自动断点续传
             params.setAutoRename(false);//设置是否根据头信息自动命名文件
-            try {
-                //获取下载路径
-                DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/Path.txt");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            DLPath = DownloadPath;
+            Log.e("命名规则", DownloadName);
+
             if (dashState) {
                 if (dashCount == 1) {
-                    DLPath = DLPath + bvid + "/" + listVideoName.get(batchFor - 1) + "-" + type + ".aac";
+                    DLPath = DLPath + DownloadName + "_.aac";
                     dashAudioPath = DLPath;
                 } else {
-                    DLPath = DLPath + bvid + "/" + listVideoName.get(batchFor - 1) + "-" + type + ".mp4";
+                    DLPath = DLPath + DownloadName + "_.mp4";
                     dashVideoPath = DLPath;
                 }
             } else {
-                DLPath = DLPath + bvid + "/" + "P" + batchFor + "-" + listVideoName.get(batchFor - 1) + "-" + type + "." + videoType;
+                DLPath = DLPath + DownloadName;
                 dashVideoPath = DLPath;
             }
             params.setSaveFilePath(DLPath);//设置下载地址
-            params.setExecutor(new PriorityExecutor(2, true));//自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
+            params.setExecutor(new PriorityExecutor(3, true));//自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
             params.setCancelFast(true);//是否可以被立即停止.
             //下面的回调都是在主线程中运行的,这里设置的带进度的回调
             cancelable = x.http().get(params, new Callback.ProgressCallback<File>() {
                 @Override
                 public void onCancelled(CancelledException arg0) {
                     Log.i("tag", "取消" + Thread.currentThread().getName());
-                    Toast.makeText(getApplicationContext(), "取消了下载", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "下载已取消", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onError(Throwable arg0, boolean arg1) {
                     Log.i("tag", "onError: 失败" + Thread.currentThread().getName());
                     Toast.makeText(getApplicationContext(), "下载失败", Toast.LENGTH_SHORT).show();
-                    progressDialog.dismiss();
+                    mMessageDialog.dismiss();
                 }
 
                 @Override
                 public void onFinished() {
                     Log.i("tag", "完成,每次取消下载也会执行该方法" + Thread.currentThread().getName());
-                    progressDialog.dismiss();
+                    mMessageDialog.dismiss();
                 }
 
                 @Override
                 public void onSuccess(File arg0) {
                     Log.i("tag", "下载成功的时候执行" + Thread.currentThread().getName());
-                    Toast.makeText(getApplicationContext(), "下载完成", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Title + batchFor + "下载完成", Toast.LENGTH_SHORT).show();
+                    setProgressBar("下载完成", 100, batchFor);
+
                     progressDialog.dismiss();
                     //判断是否有批量下载
                     if (batchIF) {
-                        if (batchFor < list.size()) {
+                        if (batchFor < listBatch.size()) {
                             progressDialog.dismiss();
-                            String data = list.get(batchFor);
+                            String data = listBatch.get(batchFor);
                             cid = sj(data, "[", "]");
                             batchFor = batchFor + 1;
                             jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
                             System.out.println(jxUrl);
                             initProgressDialog();
+                            newProgressBar(Title, batchFor);
                             new download().start();
                         }
                         //判断是否有分离下载
@@ -928,38 +1247,21 @@ public class VideoAsActivity extends AppCompatActivity {
                         dashState = false;
                         dashCount = 0;
                         runOnUiThread(() -> {
-                            AlertDialog aldg;
-                            AlertDialog.Builder adBd = new AlertDialog.Builder(VideoAsActivity.this);
-                            adBd.setTitle("缓存合并");
-                            adBd.setMessage("请等待2秒后点击合并\n\nBILIBILI AS可以为您直接提供缓存合并，请问是否需要合并视频，严禁视频二次发布！！！\n并不能保证每次合并都成功，有技术障碍。");
-                            adBd.setPositiveButton("缓存合并", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                                        ProgressDialog hbDialog = ProgressDialog.show(VideoAsActivity.this, "提示", "正在合并文件");
-                                        new Thread(() -> {
-                                            try {
-                                                Thread.sleep(2000);
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
-                                            MediaExtractorUtils.startComposeTrack(dashVideoPath, dashAudioPath, dashVideoPath + "_合并" + ".mp4");
-                                            runOnUiThread(() -> {
-                                                hbDialog.cancel();
-                                                Toast.makeText(VideoAsActivity.this, "合并完成", Toast.LENGTH_SHORT).show();
-                                            });
-                                        }).start();
-                                    }
-                                }
-                            });
-                            adBd.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            aldg = adBd.create();
-                            aldg.show();
+                            MessageDialog.build()
+                                    .setTitle("导入提示")
+                                    .setMessage("嘿！这是一个新的实验室功能，我们将把你下载的音频和视频导入哔哩哔哩缓存列表，以此带来更好的播放观看体验，请选择")
+                                    //设置按钮文本并设置回调
+                                    .setOkButton("导入B站", new OnDialogButtonClickListener<MessageDialog>() {
+                                        @Override
+                                        public boolean onClick(MessageDialog baseDialog, View v) {
+                                            videoImport();
+                                            return false;
+                                        }
+                                    })
+                                    .setCancelButton("不导入", null).show();
                         });
+
+
                     } else if (dashState) {
                         initProgressDialog();
                         new download().start();
@@ -972,8 +1274,9 @@ public class VideoAsActivity extends AppCompatActivity {
                     if (isDownloading) {
                         double videoFileMb = (double) (total / 1048576);
                         double videoFileMbDl = (double) (current / 1048576);
-                        progressDialog.setMessage("视频大小" + videoFileMb + "MB\n" + "当前下载" + videoFileMbDl + "MB\n" + "当前下载地址\n" + DLPath + "\n进入设置页面设置下载地址");
-                        progressDialog.setProgress((int) (current * 100 / total));
+                        mMessageDialog.setMessage("视频大小" + videoFileMb + "MB\n" + "当前下载" + videoFileMbDl + "MB\n" + "当前下载地址\n" + DLPath + "\n进入设置页面设置下载地址");
+                        progressBar.setProgress((int) (current * 100 / total));
+                        setProgressBar(Title + batchFor, (int) (current * 100 / total), batchFor);
                         Log.i("tag", "下载中,会不断的进行回调:" + Thread.currentThread().getName());
                     }
                 }
@@ -981,7 +1284,28 @@ public class VideoAsActivity extends AppCompatActivity {
                 @Override
                 public void onStarted() {
                     Log.i("tag", "开始下载的时候执行" + Thread.currentThread().getName());
-                    progressDialog.show();
+                    mMessageDialog = MessageDialog.show("下载提示", "当前下载地址\n" + DLPath + "\n进入设置页面设置下载地址", "暂停", "隐藏下载")
+                            //设置自定义布局
+                            //空白不可取消
+                            .setCancelable(false)
+                            .setCustomView(new OnBindView<MessageDialog>(progressBar) {
+                                @Override
+                                public void onBind(MessageDialog dialog, View v) {
+                                    //添加布局边距
+                                    dialog.getDialogImpl().boxCustom.setPadding(dip2px(20), dip2px(10), dip2px(20), dip2px(10));
+                                }
+                            })
+                            .setOkButton(new OnDialogButtonClickListener<MessageDialog>() {
+                                @Override
+                                public boolean onClick(MessageDialog baseDialog, View v) {
+                                    //点击取消正在下载的操作
+                                    //结束循环
+                                    batchIF = false;
+                                    batchFor = 1;
+                                    cancelable.cancel();
+                                    return false;
+                                }
+                            });
                 }
 
                 @Override
@@ -993,15 +1317,432 @@ public class VideoAsActivity extends AppCompatActivity {
         }
     }
 
+    //初始化进度
+    private void newProgressBar(String Name, int ID) {
+        Intent intent = new Intent(this, VideoAsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        channelId = createNotificationChannel("BILIBILIAS_ProgressBar_ID" + ID, "BILIBILIAS_ProgressBar_Name" + ID, NotificationManager.IMPORTANCE_HIGH);
+        notification = new NotificationCompat.Builder(this, channelId)
+                .setContentTitle("下载通知")
+                .setContentText(Name)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
+        // Issue the initial notification with zero progress
+        int PROGRESS_MAX = 100;
+        int PROGRESS_CURRENT = 0;
+        notification.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+        notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(ID, notification.build());
+    }
+
+    private void setProgressBar(String Name, int progress, int ID) {
+        //更新
+        notification.setContentText(Name).setProgress(100, progress, false);
+        notificationManager.notify(ID, notification.build());
+    }
+
+
+    private String createNotificationChannel(String channelID, String channelNAME, int level) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel(channelID, channelNAME, level);
+            manager.createNotificationChannel(channel);
+            return channelID;
+        } else {
+            return null;
+        }
+    }
+
+
+    private String fileRename(String DownloadName) {
+        DownloadName = DownloadName.replace("{AV}", aid);
+        DownloadName = DownloadName.replace("{BV}", bvid);
+        DownloadName = DownloadName.replace("{P_TITLE}", listVideoName.get(batchFor - 1));
+        DownloadName = DownloadName.replace("{CID}", cid);
+        DownloadName = DownloadName.replace("{VIDEO_TYPE}", videoType);
+        DownloadName = DownloadName.replace("{P}", batchFor + "");
+        DownloadName = DownloadName.replace("{TITLE}", Title);
+        DownloadName = DownloadName.replace("{TYPE}", type);
+        DownloadName = DownloadName.replaceAll("/", " ");
+        return DownloadName;
+    }
+
+    //视频缓存导入
+    private void videoImport() {
+        pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在获取必要数据");
+        new Thread(() -> {
+            String FMJsonStr = HttpUtils.doGet("http://api.bilibili.com/x/web-interface/view?bvid=" + bvid, cookie);
+            String FMUrl = null;
+            String VideoData = HttpUtils.doGet("https://api.bilibili.com/x/player/pagelist?bvid=" + bvid + "&jsonp=jsonp", cookie);
+            try {
+                JSONObject newVideoJson = new JSONObject(VideoData);
+                JSONArray newVideoArray = newVideoJson.getJSONArray("data");
+                newVideoJson = newVideoArray.getJSONObject(0);
+                JSONObject dimensionJson = newVideoJson.getJSONObject("dimension");
+                int height = dimensionJson.getInt("height");
+                int width = dimensionJson.getInt("width");
+                int cid = newVideoJson.getInt("cid");
+                String VideoEntry = getString(R.string.VideoEntry);
+                String VideoIndex = getString(R.string.VideoIndex);
+                VideoEntry = VideoEntry.replace("AID编号", aid);
+                VideoEntry = VideoEntry.replace("BVID编号", bvid);
+                VideoEntry = VideoEntry.replace("CID编号", cid + "");
+                VideoEntry = VideoEntry.replace("下载标题", Title + ".mp4");
+                VideoEntry = VideoEntry.replace("文件名称", Title + ".mp4");
+                VideoEntry = VideoEntry.replace("标题", Title);
+                VideoEntry = VideoEntry.replace("高度", height + "");
+                VideoEntry = VideoEntry.replace("宽度", width + "");
+                VideoEntry = VideoEntry.replace("QN编码", qn + "");
+                VideoEntry = VideoEntry.replace("下载子标题", listVideoName.get(batchFor - 1) + ".mp4");
+
+                //封面获取
+                JSONObject FMJson = new JSONObject(FMJsonStr);
+                FMJson = FMJson.getJSONObject("data");
+                FMUrl = FMJson.getString("pic");
+                FMUrl = FMUrl.replace("/", "\\/");
+
+
+                String ImportPath = sharedPreferences.getString("setting_set_Import", "/storage/emulated/0/Android/data/");
+
+
+                //储存本地信息
+                int dashAudioSize = AppFilePathUtils.getFileSize(dashAudioPath);
+                int dashVideoSize = AppFilePathUtils.getFileSize(dashVideoPath);
+                VideoEntry = VideoEntry.replace("封面地址", FMUrl);
+                VideoEntry = VideoEntry.replace("下载大小", dashVideoSize + "");
+                VideoIndex = VideoIndex.replace("视频大小", dashVideoSize + "");
+                VideoEntry = VideoEntry.replace("清晰度", displayDesc + "");
+                VideoIndex = VideoIndex.replace("QN编码", qn + "");
+                VideoIndex = VideoIndex.replace("音频大小", dashAudioSize + "");
+
+                BilibiliPost.fileWrite(getExternalFilesDir("哔哩哔哩视频").toString() + "/导入模板/entry.json", VideoEntry);
+                BilibiliPost.fileWrite(getExternalFilesDir("哔哩哔哩视频").toString() + "/导入模板/index.json", VideoIndex);
+
+                //文件移动
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    //安卓Q开始切换储存模式
+                    pd2.cancel();
+                    MessageDialog.build()
+                            .setTitle("权限申请")
+                            .setMessage("请务必点击授权访问，这个是为了导入文件，安卓10开始必须要授权data目录权限。\n\n如果你没有阅读新版本导入介绍，请务必先阅读，否则导入将失败。")
+                            //设置按钮文本并设置回调
+                            .setOkButton("授权访问", new OnDialogButtonClickListener<MessageDialog>() {
+                                @Override
+                                public boolean onClick(MessageDialog baseDialog, View v) {
+                                    fileUriUtils.startFor("/storage/emulated/0/Android/data/", VideoAsActivity.this, 3);
+                                    return false;
+                                }
+                            })
+                            .setOtherButton("导入教程", new OnDialogButtonClickListener<MessageDialog>() {
+                                @Override
+                                public boolean onClick(MessageDialog baseDialog, View v) {
+                                    Uri uri = Uri.parse("https://support.qq.com/products/337496/faqs/99945");
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                    startActivity(intent);
+                                    return true;
+                                }
+                            })
+                            .setCancelButton("取消", null).show();
+                } else {
+                    pd2.cancel();
+                    String finalVideoEntry = VideoEntry;
+                    String finalVideoIndex = VideoIndex;
+                    MessageDialog.build()
+                            .setTitle("路径锁定")
+                            .setMessage("请点击确认，并且输入你需要替换的缓存目录的AV编号。\n\n如果你不明白在说什么，请点击导入教程，否则不按规定会导入失败")
+                            //设置按钮文本并设置回调
+                            .setOkButton("确定", new OnDialogButtonClickListener<MessageDialog>() {
+                                @Override
+                                public boolean onClick(MessageDialog baseDialog, View v) {
+                                    new InputDialog("被替换缓存视频AV编号", "请输入要替换的视频缓存的对应缓存文件夹AV编号", "确定", "取消", null)
+                                            .setCancelable(false)
+                                            .setInputHintText("10086")
+                                            .setOkButton((baseDialog1, v1, inputStr) -> {
+                                                pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在复制文件");
+                                                new Thread(() -> {
+                                                    String videoStr = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/view?aid=" + inputStr, cookie);
+                                                    try {
+                                                        JSONObject videoJson = new JSONObject(videoStr);
+                                                        videoJson = videoJson.getJSONObject("data");
+                                                        int mCid = videoJson.getInt("cid");
+                                                        runOnUiThread(() -> {
+                                                            //Android10以下走普通渠道
+                                                            try {
+                                                                BilibiliPost.fileWrite("/storage/emulated/0/Android/data/tv.danmaku.bili/download/" + inputStr + "/" + "c_" + mCid + "/entry.json", finalVideoEntry);
+                                                                BilibiliPost.fileWrite("/storage/emulated/0/Android/data/tv.danmaku.bili/download/" + inputStr + "/" + "c_" + mCid + "/" + qn + "/index.json", finalVideoIndex);
+                                                            } catch (IOException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            AppFilePathUtils.copyFile(getExternalFilesDir("哔哩哔哩视频").toString() + "/DM.xml", "/storage/emulated/0/Android/data/tv.danmaku.bili/download/" + inputStr + "/" + "c_" + cid + "/danmaku.xml");
+                                                            AppFilePathUtils.copyFile(dashVideoPath, "/storage/emulated/0/Android/data/tv.danmaku.bili/download/" + inputStr + "/" + "c_" + mCid + "/" + qn + "/video.m4s");
+                                                            AppFilePathUtils.copyFile(dashAudioPath, "/storage/emulated/0/Android/data/tv.danmaku.bili/download/" + inputStr + "/" + "c_" + mCid + "/" + qn + "/audio.m4s");
+                                                            boolean ImportDelete = sharedPreferences.getBoolean("ImportDelete", false);
+                                                            if (ImportDelete) {
+                                                                BilibiliPost.deleteFile(dashVideoPath);
+                                                                BilibiliPost.deleteFile(dashAudioPath);
+                                                            }
+                                                            Toast.makeText(getApplicationContext(), "复制完成", Toast.LENGTH_SHORT).show();
+                                                            pd2.cancel();
+                                                        });
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }).start();
+                                                return false;
+                                            })
+                                            .show();
+                                    return false;
+
+                                }
+                            })
+                            .setOtherButton("导入教程", (baseDialog, v) -> {
+                                Uri uri = Uri.parse("https://support.qq.com/products/337496/faqs/99945");
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                                return true;
+                            })
+                            .setCancelButton("取消", null).show();
+
+
+                }
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+
+            runOnUiThread(() -> {
+                pd2.cancel();
+                Toast.makeText(getApplicationContext(), "获取完成", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+
+    }
+
+
+    //返回授权状态
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        //使用resultdata.getdata ( )提取该URI
+        super.onActivityResult(requestCode, resultCode, resultData);
+        int AndroidR_File_ID = 1;
+        int SetDlPath_ID = 2;
+        int SetAvid_ID = 3;
+        int Set_Video = 4;
+        int Set_Audio = 5;
+        int Set_Entry = 6;
+        int Set_Index = 7;
+        int Set_Danmaku = 8;
+
+        if (requestCode == AndroidR_File_ID && resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+
+                uri = resultData.getData();
+                //关键是这里，这个就是保存这个目录的访问权限
+                getContentResolver().takePersistableUriPermission(uri, resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+
+                //安卓Q开始切换储存模式
+                MessageDialog.build()
+                        .setTitle("选择替换缓存目录")
+                        .setMessage("【认真看】：请选择一个B站缓存视频文件夹。\n\n什么是缓存视频文件夹？\n导入缓存的前提是必须存在一个B站的视频缓存文件，因此，你需要先缓存一个视频。\n缓存后，在B站缓存文件夹下面会有一个以缓存视频AV号为名称的文件夹，请选择它。")
+                        //设置按钮文本并设置回调
+                        .setOkButton("选择缓存替换目录", new OnDialogButtonClickListener<MessageDialog>() {
+                            @Override
+                            public boolean onClick(MessageDialog baseDialog, View v) {
+                                fileUriUtils.startFor("/storage/emulated/0/Android/data/tv.danmaku.bili/download/", VideoAsActivity.this, 3);
+                                return false;
+                            }
+                        })
+                        .setCancelButton("取消", null).show();
+
+                //普通目录权限获取
+                //Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                //过滤器只显示可以打开的结果
+                //intent.addCategory(Intent.CATEGORY_OPENABLE);
+                //使用图像MIME数据类型过滤以仅显示图像
+                //intent.setType("*/*");
+                //要搜索通过已安装的存储提供商提供的所有文档
+                //intent.setType("*/*");
+                //startActivityForResult(intent, 2);
+
+                Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                startActivityForResult(intent1, 2);
+
+                Log.i("URI", "Uri: " + uri.toString());
+
+
+            }
+        } else if (requestCode == Set_Danmaku && resultCode == Activity.RESULT_OK) {
+            Uri uri = resultData.getData();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                AppFilePathUtils.copySafFile(getExternalFilesDir("哔哩哔哩视频").toString() + "/DM.xml", uri, VideoAsActivity.this);
+                AppFilePathUtils.copySafFile(getExternalFilesDir("哔哩哔哩视频").toString() + "/导入模板/entry.json", SAF_Entry, VideoAsActivity.this);
+                AppFilePathUtils.copySafFile(getExternalFilesDir("哔哩哔哩视频").toString() + "/导入模板/index.json", SAF_Index, VideoAsActivity.this);
+
+                AppFilePathUtils.copySafFile(dashVideoPath, SAF_Video, VideoAsActivity.this);
+                AppFilePathUtils.copySafFile(dashAudioPath, SAF_Audio, VideoAsActivity.this);
+
+                Toast.makeText(getApplicationContext(), "导入完成", Toast.LENGTH_SHORT).show();
+                boolean ImportDelete = sharedPreferences.getBoolean("ImportDelete", false);
+                if (ImportDelete) {
+                    BilibiliPost.deleteFile(dashVideoPath);
+                    BilibiliPost.deleteFile(dashAudioPath);
+                }
+            }
+
+
+        } else if (requestCode == Set_Index && resultCode == Activity.RESULT_OK) {
+
+            SAF_Entry = resultData.getData();
+
+            //安卓Q开始切换储存模式
+            MessageDialog.build()
+                    .setTitle("选择替换弹幕文件")
+                    .setMessage("在下面授权中，请选择danmaku.xml文件，来确保完成替换")
+                    //设置按钮文本并设置回调
+                    .setOkButton("选中替换文件", new OnDialogButtonClickListener<MessageDialog>() {
+                        @Override
+                        public boolean onClick(MessageDialog baseDialog, View v) {
+                            //普通目录权限获取
+                            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            //过滤器只显示可以打开的结果
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            //使用图像MIME数据类型过滤以仅显示图像
+                            intent.setType("*/*");
+                            //要搜索通过已安装的存储提供商提供的所有文档
+                            intent.setType("*/*");
+                            startActivityForResult(intent, 8);
+                            return false;
+                        }
+                    })
+                    .setCancelButton("取消", null).show();
+
+        } else if (requestCode == Set_Entry && resultCode == Activity.RESULT_OK) {
+
+            SAF_Index = resultData.getData();
+
+            //安卓Q开始切换储存模式
+            MessageDialog.build()
+                    .setTitle("选择替换配置文件2")
+                    .setMessage("在下面授权中，请选择entry.json文件，来确保完成替换")
+                    //设置按钮文本并设置回调
+                    .setOkButton("选中替换文件", new OnDialogButtonClickListener<MessageDialog>() {
+                        @Override
+                        public boolean onClick(MessageDialog baseDialog, View v) {
+                            //普通目录权限获取
+                            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            //过滤器只显示可以打开的结果
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            //使用图像MIME数据类型过滤以仅显示图像
+                            intent.setType("*/*");
+                            //要搜索通过已安装的存储提供商提供的所有文档
+                            intent.setType("*/*");
+                            startActivityForResult(intent, 7);
+                            return false;
+                        }
+                    })
+                    .setCancelButton("取消", null).show();
+
+        } else if (requestCode == Set_Audio && resultCode == Activity.RESULT_OK) {
+
+            SAF_Audio = resultData.getData();
+
+
+            //安卓Q开始切换储存模式
+            MessageDialog.build()
+                    .setTitle("选择替换配置文件1")
+                    .setMessage("在下面授权中，请选择index.json文件，来确保完成替换")
+                    //设置按钮文本并设置回调
+                    .setOkButton("选中替换文件", new OnDialogButtonClickListener<MessageDialog>() {
+                        @Override
+                        public boolean onClick(MessageDialog baseDialog, View v) {
+                            //普通目录权限获取
+                            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            //过滤器只显示可以打开的结果
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            //使用图像MIME数据类型过滤以仅显示图像
+                            intent.setType("*/*");
+                            //要搜索通过已安装的存储提供商提供的所有文档
+                            intent.setType("*/*");
+                            startActivityForResult(intent, 6);
+                            return false;
+                        }
+                    })
+                    .setCancelButton("取消", null).show();
+
+        } else if (requestCode == Set_Video && resultCode == Activity.RESULT_OK) {
+
+            SAF_Video = resultData.getData();
+
+            //安卓Q开始切换储存模式
+            MessageDialog.build()
+                    .setTitle("选择替换音频文件")
+                    .setMessage("在下面授权中，请选择audio.m4s文件，来确保完成替换")
+                    //设置按钮文本并设置回调
+                    .setOkButton("选中替换文件", new OnDialogButtonClickListener<MessageDialog>() {
+                        @Override
+                        public boolean onClick(MessageDialog baseDialog, View v) {
+                            //普通目录权限获取
+                            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            //过滤器只显示可以打开的结果
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            //使用图像MIME数据类型过滤以仅显示图像
+                            intent.setType("*/*");
+                            //要搜索通过已安装的存储提供商提供的所有文档
+                            intent.setType("*/*");
+                            startActivityForResult(intent, 5);
+                            return false;
+                        }
+                    })
+                    .setCancelButton("取消", null).show();
+
+
+        } else if (requestCode == SetAvid_ID && resultCode == Activity.RESULT_OK) {
+            //获取视频CID
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                Uri finalUri = uri;
+
+                //安卓Q开始切换储存模式
+                MessageDialog.build()
+                        .setTitle("选择替换视频文件")
+                        .setMessage("在下面授权中，请选择video.m4s文件，来确保完成替换")
+                        //设置按钮文本并设置回调
+                        .setOkButton("选中替换文件", new OnDialogButtonClickListener<MessageDialog>() {
+                            @Override
+                            public boolean onClick(MessageDialog baseDialog, View v) {
+                                //普通目录权限获取
+                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                //过滤器只显示可以打开的结果
+                                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                //使用图像MIME数据类型过滤以仅显示图像
+                                intent.setType("*/*");
+                                //要搜索通过已安装的存储提供商提供的所有文档
+                                intent.setType("*/*");
+                                startActivityForResult(intent, 4);
+                                return false;
+                            }
+                        })
+                        .setCancelButton("取消", null).show();
+
+                //setDLPath(uri);
+                Log.i("URI", "Uri: " + uri.toString());
+            }
+        }
+
+
+    }
+
 
     /**
      * 下面分别对应着不同格式的按钮下载
-     *
-     * @param view
      */
     public void onBvUrl1(View view) {
         if (bvid != null) {
-            type = "";
             initProgressDialog();
             pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在拉取数据");
             //下载视频
@@ -1104,9 +1845,9 @@ public class VideoAsActivity extends AppCompatActivity {
         pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "验证数据合法性");
         new Thread(() -> {
             System.out.println("Bvid=" + bvid + "&Mid=" + Mid);
-            String SoFreezeStr = HttpUtils.doPost("https://api.misakaloli.com/app/AppFunction.php?type=SoFreeze", "Bvid=" + bvid + "&Mid=" + mid, "");
+            String SoFreezeStr = HttpUtils.doPost("https://api.misakaloli.com/app/AppFunction.php?type=SoFreeze", "Bvid=" + bvid + "&Mid=" + Mid, "");
+            Log.e("冻结测试", SoFreezeStr);
             try {
-                DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/Path.txt");
                 JSONObject SoFreezeJson = new JSONObject(SoFreezeStr);
                 int code = SoFreezeJson.getInt("code");
                 String msg = SoFreezeJson.getString("msg");
@@ -1115,23 +1856,121 @@ public class VideoAsActivity extends AppCompatActivity {
                         pd2.cancel();
                         AddVideo();
                         if (DownloadMethod.equals("1")) {
+                            newProgressBar(Title, batchFor);
                             new download().start();
                         } else if (DownloadMethod.equals("2")) {
                             videoDownloadNotification();
-                        } else {
-                            setDownloadMethod();
+                        } else if (DownloadMethod.equals("3")) {
+                            callAdmDownload();
+                        } else if (DownloadMethod.equals("4")) {
+                            callIdmDownload();
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
                         pd2.cancel();
                     }
                 });
-            } catch (JSONException | IOException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }).start();
     }
 
+
+    private void callAdmDownload() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StrData = HttpUtils.doGet(jxUrl, cookie);
+                try {
+                    JSONObject videoDataJson = new JSONObject(StrData);
+                    videoDataJson = videoDataJson.getJSONObject("data");
+                    JSONArray videoDataArray = videoDataJson.getJSONArray("durl");
+                    videoDataJson = videoDataArray.getJSONObject(0);
+                    String videoUrl = videoDataJson.getString("url");
+                    System.out.println(videoUrl);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent("android.intent.action.VIEW");
+                            intent.addCategory("android.intent.category.APP_BROWSER");
+                            intent.setData(Uri.parse(videoUrl));
+                            intent.putExtra("Cookie", cookie);
+                            intent.putExtra("Referer", "https://www.bilibili.com/video/av" + aid + "/");
+                            intent.putExtra("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+                            if (AppFilePathUtils.isInstallApp(VideoAsActivity.this, "com.dv.adm")) {
+                                Toast.makeText(VideoAsActivity.this, "正在拉起ADM", Toast.LENGTH_SHORT).show();
+                                // 下载调用
+                                String str1 = "com.dv.adm";
+                                String str2 = "com.dv.adm.AEditor";
+                                intent.setClassName(str1, str2);
+                                startActivity(intent);
+                            } else if (AppFilePathUtils.isInstallApp(VideoAsActivity.this, "com.dv.adm.pay")) {
+                                Toast.makeText(VideoAsActivity.this, "正在拉起ADM PRO", Toast.LENGTH_SHORT).show();
+                                // 下载调用
+                                String str1 = "com.dv.adm.pay";
+                                String str2 = "com.dv.adm.pay.AEditor";
+                                intent.setClassName(str1, str2);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(VideoAsActivity.this, "看起来你还没有安装下载器", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+    private void callIdmDownload() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StrData = HttpUtils.doGet(jxUrl, cookie);
+                try {
+                    JSONObject videoDataJson = new JSONObject(StrData);
+                    videoDataJson = videoDataJson.getJSONObject("data");
+                    JSONArray videoDataArray = videoDataJson.getJSONArray("durl");
+                    videoDataJson = videoDataArray.getJSONObject(0);
+                    String videoUrl = videoDataJson.getString("url");
+                    System.out.println(videoUrl);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent("android.intent.action.VIEW");
+                            intent.addCategory("android.intent.category.APP_BROWSER");
+                            intent.setData(Uri.parse(videoUrl));
+                            intent.putExtra("Cookie", cookie);
+                            intent.putExtra("Referer", "https://www.bilibili.com/video/av" + aid + "/");
+                            intent.putExtra("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+                            if (AppFilePathUtils.isInstallApp(VideoAsActivity.this, "idm.internet.download.manager.plus")) {
+                                Toast.makeText(VideoAsActivity.this, "正在拉起IDM", Toast.LENGTH_SHORT).show();
+                                // 下载调用
+                                String str2 = "idm.internet.download.manager.plus";
+                                intent.setClassName(str2, "idm.internet.download.manager.Downloader");
+                                startActivity(intent);
+
+                            } else if (AppFilePathUtils.isInstallApp(VideoAsActivity.this, "idm.internet.download.manager")) {
+                                Toast.makeText(VideoAsActivity.this, "正在拉起IDM", Toast.LENGTH_SHORT).show();
+                                // 下载调用
+                                String str2 = "idm.internet.download.manager";
+                                intent.setClassName(str2, "idm.internet.download.manager.Downloader");
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(VideoAsActivity.this, "看起来你还没有安装下载器", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
 
     private void videoDownloadNotification() {
         new Thread(new Runnable() {
@@ -1149,7 +1988,8 @@ public class VideoAsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             DownloadManagerUtil downloadManagerUtil = new DownloadManagerUtil(VideoAsActivity.this);
-                            downloadManagerUtil.download(videoUrl, Title, "BILIBILI AS", "av" + aid + "_" + type + "_" + cid + "." + videoType, cookie, aid);
+                            String DownloadName = fileRename(sharedPreferences.getString("DownloadName", "P{P}-{P_TITLE}-{CID}.{VIDEO_TYPE}"));
+                            downloadManagerUtil.download(videoUrl, Title, "BILIBILI AS", DownloadName, cookie, aid);
                         }
                     });
                 } catch (JSONException e) {
@@ -1159,10 +1999,42 @@ public class VideoAsActivity extends AppCompatActivity {
         }).start();
     }
 
+    //批量下载按钮
     public void batchDownloadVideo(View view) {
-        initProgressDialog();
-        batchIF = true;
-        downloadVideo();
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("请选择下载子集");
+        final String[] names = list.toArray(new String[list.size()]);
+        listBatch.clear();
+        listVideoName.clear();
+        //设置Dialog为多选框，且无默认选项（null）
+        builder.setMultiChoiceItems(names, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            //设置点击事件：如果选中则添加进choose，如果取消或者未选择则移出choose
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                if (isChecked) {
+                    listBatch.add(names[which]);
+                    listVideoName.add(names[which].split("]")[1]);
+                } else {
+                    listBatch.remove(names[which]);
+                }
+            }
+        });
+        //设置正面按钮以及点击事件（土司显示choose内容）
+        builder.setNegativeButton("取消", null);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(VideoAsActivity.this, "选取完成", Toast.LENGTH_SHORT).show();
+                initProgressDialog();
+                batchIF = true;
+                batchFor = 1;
+                //批量下载需要需要单独使用
+                cid = sj(listBatch.get(0), "[", "]");
+                jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
+                downloadVideo();
+            }
+        });
+        builder.show();//显示Dialog对话框
     }
 
     //远程提交解析内容
@@ -1218,13 +2090,9 @@ public class VideoAsActivity extends AppCompatActivity {
         //设置标题
         progressDialog.setTitle("下载文件");
         //获取信息
-        try {
-            //获取下载路径
-            DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/Path.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        DLPath = DLPath + Title + type + cid + "." + videoType;
+        //获取下载路径
+        //DLPath = BilibiliPost.fileRead(getExternalFilesDir("下载设置").toString() + "/Path.txt");
+        //DLPath = DLPath + Title + type + cid + "." + videoType;
         progressDialog.setMessage("当前下载地址\n" + DLPath + "\n进入设置页面设置下载地址");
         //设置空白处不消失
         progressDialog.setCancelable(false);
@@ -1241,6 +2109,14 @@ public class VideoAsActivity extends AppCompatActivity {
                 cancelable.cancel();
             }
         });
+
+
+        //新建一个 ProgressBar 并设置为横向进度样式
+        progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+        progressBar.setMax(100);
+        progressBar.setProgress(0);
+        DLPath = DLPath + Title + type + cid + "." + videoType;
+
     }
 
 
@@ -1355,18 +2231,17 @@ public class VideoAsActivity extends AppCompatActivity {
                     dashState = false;
                 }
                 jxUrl = "https://api.bilibili.com/x/player/playurl?cid=" + cid + "&bvid=" + bvid + "&type=json&fourk=1" + "&qn=" + qn + "&fnval=" + fnval;
+                Log.e("下载地址", jxUrl);
                 //释放弹幕内存
                 if (mDanmakuView != null) {
                     // dont forget release!
                     mDanmakuView.release();
                     mDanmakuView = null;
                 }
-                //加载评论
-                getReply();
                 //加载弹幕
-                GoDm();
-                //启动提示 ??? 我已经忘了
-                pd2 = ProgressDialog.show(VideoAsActivity.this, "提示", "正在加载评论和弹幕");
+                if (sharedPreferences.getBoolean("PlayDMSwitch", true)) {
+                    GoDm();
+                }
             }
 
             @Override
@@ -1374,67 +2249,6 @@ public class VideoAsActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
-    }
-
-
-    //评论区加载事件
-    private void getReply() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String replyJsonData = HttpUtils.doGet("http://api.bilibili.com/x/v2/reply/main?type=1&mode=1&ps=49&oid=" + aid, cookie);
-                try {
-                    JSONObject replyJson = new JSONObject(replyJsonData);
-                    int pd = replyJson.getInt("code");
-                    if (pd == 0) {
-                        JSONObject replyData = replyJson.getJSONObject("data");
-                        JSONArray replyHost = replyData.getJSONArray("hots");
-                        JSONArray replyReplies = replyData.getJSONArray("replies");
-                        for (int i = 0; i < replyHost.length(); i++) {
-                            JSONObject upUserJson = replyHost.getJSONObject(i);
-                            JSONObject upUserJsonStr = upUserJson.getJSONObject("member");
-                            JSONObject upReplyJson = upUserJson.getJSONObject("content");
-                            String msg = upReplyJson.getString("message");
-                            String upName = upUserJsonStr.getString("uname");
-                            String Url = upUserJsonStr.getString("avatar");
-                            Reply ReplyListData = new Reply(upName, msg, Url, VideoAsActivity.this);
-                            replyList.add(ReplyListData);
-                        }
-                        for (int r = 0; r < replyReplies.length(); r++) {
-                            JSONObject upUserJson = replyReplies.getJSONObject(r);
-                            JSONObject upUserJsonStr = upUserJson.getJSONObject("member");
-                            JSONObject upReplyJson = upUserJson.getJSONObject("content");
-                            String msg = upReplyJson.getString("message");
-                            String upName = upUserJsonStr.getString("uname");
-                            String Url = upUserJsonStr.getString("avatar");
-                            Reply ReplyListData = new Reply(upName, msg, Url, VideoAsActivity.this);
-                            replyList.add(ReplyListData);
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //执行刷新
-                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.As_RecyclerView);
-                        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View v) {
-                                return true;
-                            }
-                        });
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(VideoAsActivity.this);
-                        recyclerView.setLayoutManager(layoutManager);
-                        ReplyAdapter adapter = new ReplyAdapter(replyList);
-                        recyclerView.setAdapter(adapter);
-                        pd2.cancel();
-                    }
-                });
-            }
-        }).start();
     }
 
 
@@ -1540,6 +2354,7 @@ public class VideoAsActivity extends AppCompatActivity {
 
 
     private void GoDm() {
+
         new Thread(() -> {
             try {
                 //获取下载路径
@@ -1580,6 +2395,7 @@ public class VideoAsActivity extends AppCompatActivity {
 
         if (mDanmakuView != null) {
             InputStream input = new FileInputStream(getExternalFilesDir("哔哩哔哩视频").toString() + "/DM.xml");
+
             mParser = createParser(input); //创建解析器对象，从raw资源目录下解析comments.xml文本
             mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
                 @Override
@@ -1608,6 +2424,7 @@ public class VideoAsActivity extends AppCompatActivity {
         }
 
     }
+
 
     /**
      * 创建解析器对象，解析输入流
@@ -1644,6 +2461,7 @@ public class VideoAsActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        StatService.onResume(this);
         super.onResume();
         if (mDanmakuView != null && mDanmakuView.isPrepared() &&
                 mDanmakuView.isPaused()) {

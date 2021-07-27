@@ -3,9 +3,16 @@ package com.imcys.bilibilias.home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,49 +22,80 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+
+import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
+
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
+
 import androidx.core.app.ActivityCompat;
-;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.mobstat.StatService;
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.AppBarLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.imcys.bilibilias.AppFilePathUtils;
 import com.imcys.bilibilias.BilibiliPost;
 import com.imcys.bilibilias.HttpUtils;
 import com.imcys.bilibilias.R;
+import com.imcys.bilibilias.SetActivity;
+
 import com.imcys.bilibilias.as.MergeVideoActivity;
 import com.imcys.bilibilias.as.RankingActivity;
 import com.imcys.bilibilias.as.VideoAsActivity;
+import com.imcys.bilibilias.as.video.AESUtils;
+import com.imcys.bilibilias.fileUriUtils;
 import com.imcys.bilibilias.play.PlayPathActivity;
-import com.imcys.bilibilias.user.AboutActivity;
+
 import com.imcys.bilibilias.user.UserActivity;
+
+
+import com.kongzue.dialogx.dialogs.BottomDialog;
+import com.kongzue.dialogx.dialogs.MessageDialog;
+import com.kongzue.dialogx.dialogs.PopTip;
+import com.kongzue.dialogx.dialogs.WaitDialog;
+import com.kongzue.dialogx.interfaces.OnBindView;
+import com.kongzue.dialogx.interfaces.OnDialogButtonClickListener;
 
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -68,21 +106,26 @@ import com.youth.banner.loader.ImageLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xutils.common.util.DensityUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static org.xutils.common.util.DensityUtil.dip2px;
 
 public class NewHomeActivity extends AppCompatActivity {
 
@@ -104,17 +147,24 @@ public class NewHomeActivity extends AppCompatActivity {
     private String URL;
     private ProgressDialog pd2;
     private String mid;
-    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php?type=json&version=1.7";
-    private String Version = "1.7";
+    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php?type=json&version=2.1";
+    private String Version = "2.1";
     private AppFilePathUtils mAppFilePathUtils;
     private SharedPreferences sharedPreferences;
     private String ps = "如果你正在逆向，不如联系作者QQ1250422131 我会给你想要的东西";
     private static final int NO_1 = 0x1;
+    private String AsCookie;
+    private String LoginType;
+    private String access_token;
+    private String AsUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newhome);
+
+
         //权限获取
         checkPermission();
         //实例化常用控件
@@ -123,31 +173,53 @@ public class NewHomeActivity extends AppCompatActivity {
         initDrawerToggle();
         //正版查询 -> 检测布局是否正常
         getApkMd5();
+        //LoginCheck();
+        //getNotice();
         //检查是否同意隐私政策
         newVersionCheck();
-        //检测下载配置
-        String DLPath = getExternalFilesDir("下载设置").toString() + "/Path.txt";
-        File file = new File(DLPath);
-        if (!file.exists()) {
-            try {
-                BilibiliPost.fileWrite(DLPath, getExternalFilesDir("哔哩哔哩视频").toString() + "/");
-                DLPath = getExternalFilesDir("下载设置").toString() + "/断点续传设置.txt";
-                file = new File(DLPath);
-                if (!file.exists()) {
-                    BilibiliPost.fileWrite(DLPath, "1");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        //检查缓存
         getCacheSize();
         //轮播图加载
         setBanner();
-        //百度统计执行
-        StatService.setAuthorizedState(NewHomeActivity.this, true);
-        StatService.start(this);
+        //加载必要数据
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(NewHomeActivity.this);
+        LoginType = sharedPreferences.getString("LoginType", "BILIBILIAS");
+        access_token = sharedPreferences.getString("access_token", "0");
+        AsUserName = sharedPreferences.getString("AsUserName", "0");
+        AsCookie = sharedPreferences.getString("AsCookie", "0");
+
+        //加载登录信息
+        asUser();
+
+        //获取全体文件访问权限
+        //Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+        //intent.setData(Uri.parse("package:" + getPackageName()));
+        //startActivityForResult(intent, 41);
+
+        //Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        //startActivityForResult(intent1, 42);
+
+
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
+
+    private void asUser() {
+        if (!AsUserName.equals("0")) {
+            LinearLayout mLinearLayout = (LinearLayout) findViewById(R.id.Home_As_LinearLayout);
+            TextView mTextView = (TextView) findViewById(R.id.Home_As_UserName);
+            mTextView.setText(AsUserName);
+            mLinearLayout.setVisibility(View.VISIBLE);
+        }
+
+
+    }
 
     private void newVersionCheck() {
         //步骤1：创建一个SharedPreferences对象
@@ -157,7 +229,7 @@ public class NewHomeActivity extends AppCompatActivity {
             //步骤2： 实例化SharedPreferences.Editor对象
             SharedPreferences.Editor editor = sharedPreferences.edit();
             //步骤3：将获取过来的值放入文件
-            editor.putString("Version", "1.7");
+            editor.putString("Version", "2.1");
             //步骤4：提交 commit有返回值apply没有
             editor.apply();
             LinearLayout lLayout = new LinearLayout(this);
@@ -200,7 +272,8 @@ public class NewHomeActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     AppFilePathUtils.deleteDir(getCacheDir());
-                    Toast.makeText(NewHomeActivity.this, "清理完成", Toast.LENGTH_SHORT).show();
+                    DrawerLayout Home_DrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
+                    Snackbar.make(Home_DrawerLayout, "清理完成", Snackbar.LENGTH_LONG).show();
                 }
             });
             adBd.setNegativeButton("我内存大", new DialogInterface.OnClickListener() {
@@ -218,6 +291,13 @@ public class NewHomeActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.Home_FunctionRecyclerView);
         drawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu, menu);
+        return true;
+    }
+
 
     //侧滑和首页的展示
     private void initDrawerToggle() {
@@ -241,6 +321,13 @@ public class NewHomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //显示侧滑菜单
                 drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                goSet();
+                return true;
             }
         });
 
@@ -299,7 +386,7 @@ public class NewHomeActivity extends AppCompatActivity {
                                         goMergeVideo();
                                         break;
                                     default:
-                                        Toast.makeText(NewHomeActivity.this, "内测功能，请等待新版本更新。", Toast.LENGTH_LONG).show();
+                                        Snackbar.make(findViewById(R.id.Home_DrawerLayout), "内测功能，请等待新版本更新。", Snackbar.LENGTH_LONG);
                                 }
                             }
                         });
@@ -333,7 +420,7 @@ public class NewHomeActivity extends AppCompatActivity {
 
     private void goSet() {
         Intent intent = new Intent();
-        intent.setClass(NewHomeActivity.this, AboutActivity.class);
+        intent.setClass(NewHomeActivity.this, SetActivity.class);
         startActivity(intent);
     }
 
@@ -349,28 +436,31 @@ public class NewHomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void goMergeVideo(){
+    private void goMergeVideo() {
         Intent intent = new Intent();
         intent.setClass(NewHomeActivity.this, MergeVideoActivity.class);
         startActivity(intent);
     }
 
     private void UserExit() {
-        androidx.appcompat.app.AlertDialog aldg;
-        androidx.appcompat.app.AlertDialog.Builder adBd = new androidx.appcompat.app.AlertDialog.Builder(NewHomeActivity.this);
-        adBd.setTitle("警告");
-        adBd.setMessage("awa，那个那个，要离开本程序同时清除B站服务器的登录身份记录吗？");
-        adBd.setPositiveButton("嗯嗯，郑要走惹", (dialog, which) -> new Thread(() -> {
-            HttpUtils.doPost("https://passport.bilibili.com/login/exit/v2", "biliCSRF=" + csrf, cookie);
-            runOnUiThread(() -> {
-                Toast.makeText(getApplicationContext(), "退出完成", Toast.LENGTH_SHORT).show();
-                System.exit(0);
-            });
-        }).start());
-        adBd.setNegativeButton("手滑惹", (dialog, which) -> {
-        });
-        aldg = adBd.create();
-        aldg.show();
+        MessageDialog.build()
+                .setTitle("警告")
+                .setMessage("awa，那个那个，要离开本程序同时清除B站服务器的登录身份记录吗？")
+                //设置按钮文本并设置回调
+                .setOkButton("嗯嗯，郑要走惹", new OnDialogButtonClickListener<MessageDialog>() {
+                    @Override
+                    public boolean onClick(MessageDialog baseDialog, View v) {
+                        new Thread(() -> {
+                            HttpUtils.doPost("https://passport.bilibili.com/login/exit/v2", "biliCSRF=" + csrf, cookie);
+                            runOnUiThread(() -> {
+                                Toast.makeText(getApplicationContext(), "退出完成", Toast.LENGTH_SHORT).show();
+                                System.exit(0);
+                            });
+                        }).start();
+                        return false;
+                    }
+                })
+                .setCancelButton("手滑惹", null).show();
     }
 
 
@@ -434,26 +524,39 @@ public class NewHomeActivity extends AppCompatActivity {
         }).start();
         //数据更新
         LoginCheck();
+        getNotice();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String NoticeStr = HttpUtils.doGet("https://api.misakaloli.com/app/AppFunction.php?type=Notice", "");
+                try {
+                    JSONObject NoticeJson = new JSONObject(NoticeStr);
+                    String Title = NoticeJson.getString("Title");
+                    String msg = NoticeJson.getString("msg");
+                    int state = NoticeJson.getInt("state");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (state == 1) {
+                                MessageDialog.build()
+                                        .setTitle(Title)
+                                        .setMessage(msg)
+                                        //设置按钮文本并设置回调
+                                        .setOkButton("朕知道了", null).show();
+
+                            }
+
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
-    private void getPirate() {
-        banner = (Banner) findViewById(R.id.Home_banner);
-        RelativeLayout mRelativeLayout = findViewById(R.id.Home_Banner_RelativeLayout);
-        CardView mCardView = findViewById(R.id.Home_Banner_CardView);
-        LinearLayout mLinearLayout = findViewById(R.id.Home_MainNewLinearLayout);
-        AppBarLayout mAppBarLayout = findViewById(R.id.Home_AppBarLayout);
-        if (banner.getVisibility() == View.GONE) {
-            goWebUrl();
-        } else if (mRelativeLayout.getVisibility() == View.GONE) {
-            goWebUrl();
-        } else if (mCardView.getVisibility() == View.GONE) {
-            goWebUrl();
-        } else if (mLinearLayout.getVisibility() == View.GONE) {
-            goWebUrl();
-        } else if (mAppBarLayout.getVisibility() == View.GONE) {
-            goWebUrl();
-        }
-    }
 
     private void goWebUrl() {
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
@@ -480,27 +583,25 @@ public class NewHomeActivity extends AppCompatActivity {
                         StrPd = jsonGxStr.getString("version");
                         final String StrNr = jsonGxStr.getString("gxnotice");
                         final String StrUrl = jsonGxStr.getString("url");
-                        if (StrPd.equals("1.6")) {
+                        if (StrPd.equals(Version)) {
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    AlertDialog dialog = new AlertDialog.Builder(NewHomeActivity.this)
+                                    MessageDialog.build()
                                             .setTitle("有新版本了")
                                             .setMessage(StrNr)
-                                            .setPositiveButton("下载新版本", new DialogInterface.OnClickListener() {
+                                            //设置按钮文本并设置回调
+                                            .setOkButton("下载新版本", new OnDialogButtonClickListener<MessageDialog>() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                                public boolean onClick(MessageDialog baseDialog, View v) {
                                                     Uri uri = Uri.parse(StrUrl);
                                                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                                     startActivity(intent);
+                                                    return false;
                                                 }
                                             })
-                                            .setNegativeButton("取消", null)
-                                            .setNeutralButton(null, null)
-                                            .create();
-                                    dialog.setCanceledOnTouchOutside(false);
-                                    dialog.show();
+                                            .setCancelButton("残忍拒绝", null).show();
                                 }
                             });
                         }
@@ -627,7 +728,8 @@ public class NewHomeActivity extends AppCompatActivity {
                 getPost = post.replace("{token}", csrf);
                 System.out.println(getPost);
             }
-            String goUrlStr = HttpUtils.doPost(goUrl, getPost, cookie);
+            String goUrlStr = HttpUtils.doCardPost(goUrl, getPost, cookie);
+            Log.e("CARD", goUrlStr);
             try {
                 JSONObject goUrlJson = new JSONObject(goUrlStr);
                 int code = goUrlJson.getInt("code");
@@ -642,6 +744,113 @@ public class NewHomeActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+
+    public void checkUser(View view) {
+        if (AsCookie.equals("0") | AsUserName.equals("0")) {
+            Intent intent = new Intent();
+            intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
+            startActivity(intent);
+        } else {
+            pd2 = ProgressDialog.show(NewHomeActivity.this, "提示", "正在加载数据");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String requestUrl = "";
+                    if (LoginType.equals("BILIBILIAS")) {
+                        //BILIBILI AS登录
+                        requestUrl = "https://api.misakaloli.com/app/api/";
+                    } else {
+                        //Profile登录
+                        requestUrl = "https://api.misakaloli.com/app/api/testauth/";
+                    }
+                    String UserData = HttpUtils.doGet(requestUrl + "Account.php?type=userData&access_token=" + access_token, AsCookie);
+                    Log.d("账号数据", UserData);
+                    try {
+                        JSONObject UserAsJson = new JSONObject(UserData);
+                        String AsUser = UserAsJson.getString("username");
+                        String AsEmail = UserAsJson.getString("useremail");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pd2.cancel();
+                                MessageDialog.build()
+                                        .setTitle("确定要退出AS账号吗？")
+                                        .setMessage("账号：" + AsUser + "\n" + "邮箱：" + AsEmail)
+                                        //设置按钮文本并设置回调
+                                        .setOkButton("退出登录", new OnDialogButtonClickListener<MessageDialog>() {
+                                            @Override
+                                            public boolean onClick(MessageDialog baseDialog, View v) {
+
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putString("AsUserName", "0");
+                                                editor.putString("AsCookie", "0");
+                                                editor.putString("access_token", "0");
+                                                editor.apply();
+
+                                                String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
+                                                String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "token.txt";
+                                                String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
+                                                try {
+                                                    BilibiliPost.fileWrite(CookiePath, "");
+                                                    BilibiliPost.fileWrite(ToKenPath, "");
+                                                    BilibiliPost.fileWrite(csrfPath, "");
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                Intent intent = new Intent();
+                                                intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                                return false;
+                                            }
+                                        })
+                                        .setCancelButton("不啦", null).show();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+        }
+    }
+
+    public void goServerDonation(View view) {
+        Intent intent = new Intent();
+        intent.setClass(NewHomeActivity.this, ServerDonationActivity.class);
+        startActivity(intent);
+    }
+
+    public void feedBack(View view) {
+        Uri uri = Uri.parse("https://support.qq.com/products/337496");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    public void shareApp(View view) {
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        String Msg = "我正在BILIBILIAS缓存文件，还可以将视频导入播放哦，分享给你。https://support.qq.com/products/337496/link-jump?jump=https%3A%2F%2Fapi.misakaloli.com%2Fapp";
+        intent.putExtra(Intent.EXTRA_TEXT, Msg);
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "选择分享应用"));
+    }
+
+    public void goAbout(View view) {
+        Uri uri = Uri.parse("https://support.qq.com/products/337496/team/");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
+    public void goImport(View view) {
+        Uri uri = Uri.parse("https://support.qq.com/products/337496/faqs/99945");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
 
@@ -661,25 +870,16 @@ public class NewHomeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //获取必要信息内容
-
                 final String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "token.txt";
                 String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
                 String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
-                String likeStr = HttpUtils.doGet("http://passport.bilibili.com/qrcode/getLoginUrl", "");
                 //获取登录信息，同时捕获如果没有登录时，登录需要的数据和个人信息
                 try {
-                    JSONObject LoginQRJson = new JSONObject(likeStr);
-                    LoginQRJson = LoginQRJson.getJSONObject("data");
-                    URL = LoginQRJson.getString("url");
-                    oauthKey = LoginQRJson.getString("oauthKey");
-                    System.out.println(URL);
                     csrf = BilibiliPost.fileRead(csrfPath);
                     toKen = BilibiliPost.fileRead(ToKenPath);
                     cookie = BilibiliPost.fileRead(CookiePath);
                     System.out.println(toKen);
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 String pd = BilibiliPost.nav(toKen);
@@ -704,15 +904,11 @@ public class NewHomeActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            init("https://api.misakaloli.com/app/BiliBiliAsLogin.php?URL=" + URL);
-                            WebView webView1 = (WebView) findViewById(R.id.Home_WebView1);
-                            webView1.setWebChromeClient(new WebChromeClient());
-                            webView1.setWebViewClient(new NewHomeActivity.NewWebViewClient());
-                            ScrollView webLayout = (ScrollView) findViewById(R.id.Home_WebLayout);
-                            DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
-                            webLayout.setVisibility(View.VISIBLE);
-                            mDrawerLayout.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
+                            startActivity(intent);
+                            finish();
                         }
                     });
                 }
@@ -832,7 +1028,7 @@ public class NewHomeActivity extends AppCompatActivity {
                             webLayout.setVisibility(View.GONE);
                             DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
                             mDrawerLayout.setVisibility(View.VISIBLE);
-                            Toast.makeText(getApplicationContext(), "登录成功", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.Home_DrawerLayout), "登录成功", Snackbar.LENGTH_LONG);
                         }
                     });
                 } else {

@@ -3,16 +3,20 @@ package com.imcys.bilibilias.as;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.baidu.mobstat.StatService;
 import com.imcys.bilibilias.BilibiliPost;
 import com.imcys.bilibilias.HttpUtils;
 import com.imcys.bilibilias.R;
 
+import com.imcys.bilibilias.home.VerificationUtils;
+import com.imcys.bilibilias.user.UserActivity;
 import com.imcys.bilibilias.user.UserVideo;
 import com.imcys.bilibilias.user.UserVideoAdapter;
 
@@ -61,8 +65,18 @@ public class RankingActivity extends AppCompatActivity {
                         String Dm = videoJson.getString("danmaku");
                         String bvid = rankingJsonData.getString("bvid");
                         String aid = rankingJsonData.getString("aid");
-                        UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, RankingActivity.this);
-                        fruitList.add(VideoListData);
+                        try {
+                            int playInt = Integer.parseInt(play);
+                            int DmInt =  Integer.parseInt(Dm);
+                            play = VerificationUtils.DigitalConversion(playInt);
+                            Dm = VerificationUtils.DigitalConversion(DmInt);
+                            UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, RankingActivity.this);
+                            fruitList.add(VideoListData);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
 
                 } catch (IOException | JSONException e) {
@@ -85,9 +99,38 @@ public class RankingActivity extends AppCompatActivity {
         }).start();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatService.onResume(this);
+    }
+
     private void newTool(){
         Toolbar mToolbar = (Toolbar) findViewById(R.id.Total_Toolbar);
         mToolbar.setTitle("热门视频");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//左侧添加一个默认的返回图标
+        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //设置Menu点击事件
+        super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                break;
+        }
+        return true;
+
     }
 
 }
