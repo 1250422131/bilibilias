@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import com.baidu.mobstat.StatService;
 import com.imcys.bilibilias.R;
 import com.imcys.bilibilias.SetActivity;
 import com.imcys.bilibilias.home.NewHomeActivity;
@@ -38,6 +39,17 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        StatService.onResume(this);
+    }
 
     public void goSet(View view){
         Intent intent= new Intent();
@@ -54,7 +66,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     public void goBiliBiliASUrl(View view){
-        Uri uri = Uri.parse("https://api.misakaloli.com/app/");
+        Uri uri = Uri.parse("https://api.misakamoe.com/app/");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
 

@@ -3,16 +3,8 @@ package com.imcys.bilibilias.home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AppOpsManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,21 +14,17 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -44,28 +32,21 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.core.app.ActivityCompat;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.Person;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -83,18 +64,13 @@ import com.imcys.bilibilias.SetActivity;
 import com.imcys.bilibilias.as.MergeVideoActivity;
 import com.imcys.bilibilias.as.RankingActivity;
 import com.imcys.bilibilias.as.VideoAsActivity;
-import com.imcys.bilibilias.as.video.AESUtils;
-import com.imcys.bilibilias.fileUriUtils;
 import com.imcys.bilibilias.play.PlayPathActivity;
 
+import com.imcys.bilibilias.user.CacheActivity;
 import com.imcys.bilibilias.user.UserActivity;
 
 
-import com.kongzue.dialogx.dialogs.BottomDialog;
 import com.kongzue.dialogx.dialogs.MessageDialog;
-import com.kongzue.dialogx.dialogs.PopTip;
-import com.kongzue.dialogx.dialogs.WaitDialog;
-import com.kongzue.dialogx.interfaces.OnBindView;
 import com.kongzue.dialogx.interfaces.OnDialogButtonClickListener;
 
 import com.youth.banner.Banner;
@@ -106,26 +82,21 @@ import com.youth.banner.loader.ImageLoader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xutils.common.util.DensityUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import static org.xutils.common.util.DensityUtil.dip2px;
 
 public class NewHomeActivity extends AppCompatActivity {
 
@@ -147,8 +118,8 @@ public class NewHomeActivity extends AppCompatActivity {
     private String URL;
     private ProgressDialog pd2;
     private String mid;
-    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php?type=json&version=2.1";
-    private String Version = "2.1";
+    private String GxUrl = "https://api.misakamoe.com/app/bilibilias.php?type=json&version=2.2";
+    private String Version = "2.2";
     private AppFilePathUtils mAppFilePathUtils;
     private SharedPreferences sharedPreferences;
     private String ps = "如果你正在逆向，不如联系作者QQ1250422131 我会给你想要的东西";
@@ -158,12 +129,10 @@ public class NewHomeActivity extends AppCompatActivity {
     private String access_token;
     private String AsUserName;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newhome);
-
 
         //权限获取
         checkPermission();
@@ -173,12 +142,9 @@ public class NewHomeActivity extends AppCompatActivity {
         initDrawerToggle();
         //正版查询 -> 检测布局是否正常
         getApkMd5();
-        //LoginCheck();
-        //getNotice();
-        //检查是否同意隐私政策
-        newVersionCheck();
-        //检查缓存
-        getCacheSize();
+        LoginCheck();
+        getNotice();
+
         //轮播图加载
         setBanner();
         //加载必要数据
@@ -190,6 +156,11 @@ public class NewHomeActivity extends AppCompatActivity {
 
         //加载登录信息
         asUser();
+        //检查缓存
+        getCacheSize();
+
+        //检查是否同意隐私政策
+        newVersionCheck();
 
         //获取全体文件访问权限
         //Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -199,8 +170,18 @@ public class NewHomeActivity extends AppCompatActivity {
         //Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         //startActivityForResult(intent1, 42);
 
+        //fileUriUtils.startFor("/storage/emulated/0/Android/data/tv.danmaku.bili/", this, 1);
+
+        //if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()) {
+        //Toast.makeText(this, "已获得访问所有文件的权限", Toast.LENGTH_SHORT).show();
+        //} else {
+        // Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        //startActivity(intent);
+        //}
+
 
     }
+
 
 
     @Override
@@ -218,7 +199,6 @@ public class NewHomeActivity extends AppCompatActivity {
             mLinearLayout.setVisibility(View.VISIBLE);
         }
 
-
     }
 
     private void newVersionCheck() {
@@ -226,12 +206,6 @@ public class NewHomeActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("data", Context.MODE_PRIVATE);
         String SPVersion = sharedPreferences.getString("Version", "");
         if (!SPVersion.equals(Version)) { //Version
-            //步骤2： 实例化SharedPreferences.Editor对象
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //步骤3：将获取过来的值放入文件
-            editor.putString("Version", "2.1");
-            //步骤4：提交 commit有返回值apply没有
-            editor.apply();
             LinearLayout lLayout = new LinearLayout(this);
             lLayout.setOrientation(LinearLayout.VERTICAL);
             WebView Privacy = new WebView(NewHomeActivity.this);
@@ -240,16 +214,22 @@ public class NewHomeActivity extends AppCompatActivity {
             Privacy.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
             Privacy.getSettings().setDomStorageEnabled(true);//DOM Storage 重点是设置这个
             Privacy.getSettings().setAllowFileAccess(false);
-            Privacy.loadUrl("https://docs.qq.com/doc/DVWdlb2hSWFlJaUFk");
+            Privacy.loadUrl("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865");
             LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1500);//这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
             lLayout.addView(Privacy, lParams);
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(NewHomeActivity.this);
             builder.setView(lLayout);
             builder.setCancelable(false);
             builder.setTitle("隐私政策");
-            builder.setPositiveButton("使用程序则代表同意协议", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("同意协议", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //步骤2： 实例化SharedPreferences.Editor对象
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    //步骤3：将获取过来的值放入文件
+                    editor.putString("Version", "2.2");
+                    //步骤4：提交 commit有返回值apply没有
+                    editor.apply();
                     Intent intent = new Intent();
                     intent.setClass(NewHomeActivity.this, VersionActivity.class);
                     startActivity(intent);
@@ -285,6 +265,7 @@ public class NewHomeActivity extends AppCompatActivity {
             aldg.show();
         }
     }
+
 
     //实例化全体控件
     private void newView() {
@@ -334,7 +315,7 @@ public class NewHomeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String HomeItemStr = HttpUtils.doGet("https://api.misakaloli.com/app/AppFunction.php?type=homeitem", "");
+                String HomeItemStr = HttpUtils.doGet("https://api.misakamoe.com/app/AppFunction.php?type=homeitem", "");
                 try {
                     JSONObject HomeItemJson = new JSONObject(HomeItemStr);
                     JSONArray HomeItemArray = HomeItemJson.getJSONArray("data");
@@ -362,7 +343,7 @@ public class NewHomeActivity extends AppCompatActivity {
                         recyclerView.setAdapter(adapter);
                         adapter.setOnItemClickListener(new FunctionAdapter.OnItemClickListener() {
                             @Override
-                            public void onClick(int position, int tag) {
+                            public void onClick(int position, int tag, View v) {
                                 switch (tag) {
                                     case 1:
                                         GoUser();
@@ -385,8 +366,11 @@ public class NewHomeActivity extends AppCompatActivity {
                                     case 7:
                                         goMergeVideo();
                                         break;
+                                    case 8:
+                                        getCache();
+                                        break;
                                     default:
-                                        Snackbar.make(findViewById(R.id.Home_DrawerLayout), "内测功能，请等待新版本更新。", Snackbar.LENGTH_LONG);
+                                        Snackbar.make(findViewById(R.id.Home_DrawerLayout), "内测功能，请等待新版本更新。", Snackbar.LENGTH_LONG).show();
                                 }
                             }
                         });
@@ -442,6 +426,14 @@ public class NewHomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void getCache() {
+        Intent intent = new Intent();
+        intent.setClass(NewHomeActivity.this, CacheActivity.class);
+        intent.putExtra("cookie", cookie);
+        intent.putExtra("mid", mid);
+        startActivity(intent);
+    }
+
     private void UserExit() {
         MessageDialog.build()
                 .setTitle("警告")
@@ -461,6 +453,8 @@ public class NewHomeActivity extends AppCompatActivity {
                     }
                 })
                 .setCancelButton("手滑惹", null).show();
+
+
     }
 
 
@@ -515,21 +509,18 @@ public class NewHomeActivity extends AppCompatActivity {
                             }
                         });
                     } else if (ID.equals("0")) {
-                        String fs = HttpUtils.doGet("https://api.misakaloli.com/app/bilibilias.php?type=json&version=" + Version + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ, cookie);
+                        String fs = HttpUtils.doGet("https://api.misakamoe.com/app/bilibilias.php?type=json&version=" + Version + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ, cookie);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-        //数据更新
-        LoginCheck();
-        getNotice();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String NoticeStr = HttpUtils.doGet("https://api.misakaloli.com/app/AppFunction.php?type=Notice", "");
+                String NoticeStr = HttpUtils.doGet("https://api.misakamoe.com/app/AppFunction.php?type=Notice", "");
                 try {
                     JSONObject NoticeJson = new JSONObject(NoticeStr);
                     String Title = NoticeJson.getString("Title");
@@ -561,7 +552,7 @@ public class NewHomeActivity extends AppCompatActivity {
     private void goWebUrl() {
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
         mDrawerLayout.setVisibility(View.GONE);
-        Uri uri = Uri.parse("https//:api.misakaloli.bilibilias/app");
+        Uri uri = Uri.parse("https//:api.misakamoe.bilibilias/app");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
         System.exit(0);
@@ -574,7 +565,7 @@ public class NewHomeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String StrGx = HttpUtils.doGet(GxUrl, "");
-                if (!GxUrl.equals("https://api.misakaloli.com/app/bilibilias.php?type=json&version=" + Version)) {
+                if (!GxUrl.equals("https://api.misakamoe.com/app/bilibilias.php?type=json&version=" + Version)) {
                 } else {
                     JSONObject jsonGxStr = null;
                     String StrPd = null;
@@ -619,7 +610,7 @@ public class NewHomeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String bannerJsonStr = HttpUtils.doGet("https://api.misakaloli.com/app/bilibilias.php?type=banner", "");
+                String bannerJsonStr = HttpUtils.doGet("https://api.misakamoe.com/app/bilibilias.php?type=banner", "");
                 try {
                     JSONObject bannerJson = new JSONObject(bannerJsonStr);
                     JSONArray imgUrlList = bannerJson.getJSONArray("imgUrlList");
@@ -760,54 +751,71 @@ public class NewHomeActivity extends AppCompatActivity {
                     String requestUrl = "";
                     if (LoginType.equals("BILIBILIAS")) {
                         //BILIBILI AS登录
-                        requestUrl = "https://api.misakaloli.com/app/api/";
+                        requestUrl = "https://api.misakamoe.com/web/";
                     } else {
                         //Profile登录
-                        requestUrl = "https://api.misakaloli.com/app/api/testauth/";
+                        requestUrl = "https://api.misakamoe.com/web/testauth/";
                     }
-                    String UserData = HttpUtils.doGet(requestUrl + "Account.php?type=userData&access_token=" + access_token, AsCookie);
+                    String UserData = HttpUtils.doGet(requestUrl + "Account?type=userData&access_token=" + access_token, AsCookie);
                     Log.d("账号数据", UserData);
                     try {
                         JSONObject UserAsJson = new JSONObject(UserData);
-                        String AsUser = UserAsJson.getString("username");
-                        String AsEmail = UserAsJson.getString("useremail");
+                        int code = UserAsJson.getInt("code");
+                        String AsUser = "";
+                        String AsEmail = "";
+                        if (code == 0) {
+                            AsUser = UserAsJson.getString("username");
+                            AsEmail = UserAsJson.getString("useremail");
+                        }
+
+                        String finalAsUser = AsUser;
+                        String finalAsEmail = AsEmail;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 pd2.cancel();
-                                MessageDialog.build()
-                                        .setTitle("确定要退出AS账号吗？")
-                                        .setMessage("账号：" + AsUser + "\n" + "邮箱：" + AsEmail)
-                                        //设置按钮文本并设置回调
-                                        .setOkButton("退出登录", new OnDialogButtonClickListener<MessageDialog>() {
-                                            @Override
-                                            public boolean onClick(MessageDialog baseDialog, View v) {
+                                if (code == 0) {
+                                    MessageDialog.build()
+                                            .setTitle("确定要退出AS账号吗？")
+                                            .setMessage("账号：" + finalAsUser + "\n" + "邮箱：" + finalAsEmail)
+                                            //设置按钮文本并设置回调
+                                            .setOkButton("退出登录", new OnDialogButtonClickListener<MessageDialog>() {
+                                                @Override
+                                                public boolean onClick(MessageDialog baseDialog, View v) {
 
-                                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                editor.putString("AsUserName", "0");
-                                                editor.putString("AsCookie", "0");
-                                                editor.putString("access_token", "0");
-                                                editor.apply();
+                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                    editor.putString("AsUserName", "0");
+                                                    editor.putString("AsCookie", "0");
+                                                    editor.putString("access_token", "0");
+                                                    editor.apply();
 
-                                                String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
-                                                String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "token.txt";
-                                                String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
-                                                try {
-                                                    BilibiliPost.fileWrite(CookiePath, "");
-                                                    BilibiliPost.fileWrite(ToKenPath, "");
-                                                    BilibiliPost.fileWrite(csrfPath, "");
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
+                                                    String CookiePath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "cookie.txt";
+                                                    String ToKenPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "token.txt";
+                                                    String csrfPath = getExternalFilesDir("哔哩哔哩视频").toString() + "/" + "csrf.txt";
+                                                    try {
+                                                        BilibiliPost.fileWrite(CookiePath, "");
+                                                        BilibiliPost.fileWrite(ToKenPath, "");
+                                                        BilibiliPost.fileWrite(csrfPath, "");
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    Intent intent = new Intent();
+                                                    intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                    return false;
                                                 }
+                                            })
+                                            .setCancelButton("不啦", null).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "身份验证过期", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent();
+                                    intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
 
-                                                Intent intent = new Intent();
-                                                intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                                return false;
-                                            }
-                                        })
-                                        .setCancelButton("不啦", null).show();
                             }
                         });
                     } catch (JSONException e) {
@@ -831,15 +839,6 @@ public class NewHomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void shareApp(View view) {
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        String Msg = "我正在BILIBILIAS缓存文件，还可以将视频导入播放哦，分享给你。https://support.qq.com/products/337496/link-jump?jump=https%3A%2F%2Fapi.misakaloli.com%2Fapp";
-        intent.putExtra(Intent.EXTRA_TEXT, Msg);
-        intent.setType("text/plain");
-        startActivity(Intent.createChooser(intent, "选择分享应用"));
-    }
 
     public void goAbout(View view) {
         Uri uri = Uri.parse("https://support.qq.com/products/337496/team/");
@@ -884,7 +883,7 @@ public class NewHomeActivity extends AppCompatActivity {
                 }
                 String pd = BilibiliPost.nav(toKen);
                 if (pd.equals("0")) {
-                    final String UserNavStr = HttpUtils.doGet("http://api.bilibili.com/x/web-interface/nav", cookie);
+                    final String UserNavStr = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/nav", cookie);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -895,6 +894,9 @@ public class NewHomeActivity extends AppCompatActivity {
                                 UserNavJson = new JSONObject(UserNavStr);
                                 UserNavJson = UserNavJson.getJSONObject("data");
                                 mid = UserNavJson.getString("mid");
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("BilibiliUID", mid);
+                                editor.apply();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -904,7 +906,7 @@ public class NewHomeActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.Home_DrawerLayout), "请先登录", Snackbar.LENGTH_LONG).show();
                             Intent intent = new Intent();
                             intent.setClass(NewHomeActivity.this, LoginTypeActivity.class);
                             startActivity(intent);
@@ -971,7 +973,7 @@ public class NewHomeActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         String QRUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + URL;
-                        URL = "https://api.misakaloli.com/app/BiliBiliAsLogin.php?URL=" + URL;
+                        URL = "https://api.misakamoe.com/app/BiliBiliAsLogin.php?URL=" + URL;
                         init(URL);
                         URL = QRUrl;
                         WebView webView1 = (WebView) findViewById(R.id.Home_WebView1);
@@ -998,7 +1000,7 @@ public class NewHomeActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 if (cookie.length() > 45) {
-                    final String UserNavStr = HttpUtils.doGet("http://api.bilibili.com/x/web-interface/nav", cookie);
+                    final String UserNavStr = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/nav", cookie);
                     //这里是造成之前个人主页无数据的原因，mid没有抓到
                     JSONObject UserNavJson = null;
                     try {
@@ -1028,7 +1030,7 @@ public class NewHomeActivity extends AppCompatActivity {
                             webLayout.setVisibility(View.GONE);
                             DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.Home_DrawerLayout);
                             mDrawerLayout.setVisibility(View.VISIBLE);
-                            Snackbar.make(findViewById(R.id.Home_DrawerLayout), "登录成功", Snackbar.LENGTH_LONG);
+                            Snackbar.make(findViewById(R.id.Home_DrawerLayout), "登录成功", Snackbar.LENGTH_LONG).show();
                         }
                     });
                 } else {
@@ -1063,7 +1065,7 @@ public class NewHomeActivity extends AppCompatActivity {
                     public void run() {
                         Toast.makeText(getApplicationContext(), "刷新完成", Toast.LENGTH_SHORT).show();
                         String QRUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + URL;
-                        URL = "https://api.misakaloli.com/app/BiliBiliAsLogin.php?URL=" + URL;
+                        URL = "https://api.misakamoe.com/app/BiliBiliAsLogin.php?URL=" + URL;
                         init(URL);
                         URL = QRUrl;
                         WebView webView1 = (WebView) findViewById(R.id.Home_WebView1);

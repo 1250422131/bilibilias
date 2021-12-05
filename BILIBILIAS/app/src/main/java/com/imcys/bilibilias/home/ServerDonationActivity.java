@@ -42,7 +42,7 @@ public class ServerDonationActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String ServerStr = HttpUtils.doGet("https://api.misakaloli.com/app/AppFunction.php?type=Donate", "");
+                String ServerStr = HttpUtils.doGet("https://api.misakamoe.com/app/AppFunction.php?type=Donate", "");
                 try {
                     JSONObject ServerJson = new JSONObject(ServerStr);
                     int Surplus = ServerJson.getInt("Surplus");

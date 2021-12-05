@@ -7,6 +7,7 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.baidu.mobstat.StatService;
 import com.imcys.bilibilias.R;
 
 
@@ -16,7 +17,19 @@ public class VersionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_version);
-        init("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va");
+        init("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va?pub=1&dver=2.1.27292865");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatService.onResume(this);
     }
 
     private void init(String LoginUrl) {

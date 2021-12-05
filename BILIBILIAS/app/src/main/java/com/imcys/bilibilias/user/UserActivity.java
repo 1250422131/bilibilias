@@ -1,23 +1,31 @@
 package com.imcys.bilibilias.user;
 
+import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
+import com.baidu.mobstat.StatService;
 import com.bumptech.glide.Glide;
 
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.imcys.bilibilias.HttpUtils;
 import com.imcys.bilibilias.R;
 import com.imcys.bilibilias.home.NewHomeActivity;
+import com.imcys.bilibilias.home.VerificationUtils;
 import com.imcys.bilibilias.play.PlayVideoActivity;
 
 
@@ -37,6 +46,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.samlss.broccoli.Broccoli;
+import me.samlss.broccoli.BroccoliGradientDrawable;
+import me.samlss.broccoli.PlaceholderParameter;
+
 
 public class UserActivity extends AppCompatActivity {
 
@@ -45,14 +58,12 @@ public class UserActivity extends AppCompatActivity {
     private Intent intent;
     private String toKen;
     private String csrf;
-    private String cookie;
+    public static String cookie;
     private String face;
     private String name;
     private String money;
-    private String mid;
+    public static String mid;
     private String sign;
-    private String sex;
-    private String UserMid;
     private String topPhoto;
     private String VipText;
     private String nickname_color;
@@ -60,29 +71,55 @@ public class UserActivity extends AppCompatActivity {
     private int VipType;
     private String follower;
     private String following;
-    private TextView userLevel;
     private RecyclerView recyclerView;
     private UserVideoAdapter adapter;
     private EditText inputAddFreezeVideo;
     private int MRL = 1;
     private double pageCount;
     private String image_enhance;
-    private String GxUrl = "https://api.misakaloli.com/app/bilibilias.php?type=json&version=1.7";
+    private String GxUrl = "https://api.misakamoe.com/app/bilibilias.php?type=json&version=2.0";
+    Broccoli broccoli;
+    private View content;
+    private int mX;
+    private int mY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
+
         //获取首页用户信息变量
         intent = getIntent();
         mid = intent.getStringExtra("mid");
         cookie = intent.getStringExtra("cookie");
-        cookie = intent.getStringExtra("cookie");
+        String goUP = intent.getStringExtra("UP");
 
 
-        //提示对话框
-        pd2 = ProgressDialog.show(UserActivity.this, "提示", "正在拉取用户数据");
+
+        //占位加载
+        ImageView userFace = (ImageView) findViewById(R.id.User_Face);
+        ImageView userEnhance = (ImageView) findViewById(R.id.User_Enhance);
+        TextView nameTextView = (TextView) findViewById(R.id.User_name);
+        TextView signTextView = (TextView) findViewById(R.id.User_sign);
+        TextView followerTextView = (TextView) findViewById(R.id.User_follower);//粉丝
+        TextView followingTextView = (TextView) findViewById(R.id.User_following);//关注
+        TextView moneyTextView = (TextView) findViewById(R.id.User_money);
+        LinearLayout levelCard = (LinearLayout) findViewById(R.id.User_LevelLinearLayout);
+        LinearLayout vipCard = (LinearLayout) findViewById(R.id.User_VipLinearLayout);
+
+        broccoli = new Broccoli();
+        View listView[] = {userFace, nameTextView, signTextView, followerTextView, followingTextView, moneyTextView, levelCard, vipCard};
+        for (int i = 0; i < listView.length; i++) {
+            broccoli.addPlaceholder(new PlaceholderParameter.Builder()
+                    .setView(listView[i])
+                    .setDrawable(new BroccoliGradientDrawable(Color.parseColor("#DDDDDD"),
+                            Color.parseColor("#CCCCCC"), 0, 1000, new LinearInterpolator()))
+                    .build());
+        }
+        broccoli.show();
+
+
         //加载用户数据
         new Thread((Runnable) () -> {
             String UserInfo = null;
@@ -106,7 +143,19 @@ public class UserActivity extends AppCompatActivity {
                     level = UserNavInfo.getInt("level");
                     face = UserNavInfo.getString("face");
                     name = UserNavInfo.getString("name");
-                    money = UserNavInfo.getString("coins");
+                    if (goUP == null) {
+                        money = UserNavInfo.getString("coins");
+                    } else {
+                        money = "";
+                        androidx.appcompat.widget.Toolbar mToolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.User_Toolbar);
+                        mToolbar.setTitle("UP主页");
+                        TextView videoText = (TextView) findViewById(R.id.User_VideoText);
+                        videoText.setText("UP的投稿");
+                        LinearLayout moneyLy = (LinearLayout) findViewById(R.id.User_money_LinearLayout);
+                        moneyLy.setVisibility(View.GONE);
+                        CardView UserCardView = (CardView) findViewById(R.id.User_Fusion_CardView);
+                        UserCardView.setVisibility(View.GONE);
+                    }
                     sign = UserNavInfo.getString("sign");
                     if (VipType != 0) {
                         nickname_color = UserVipData.getString("nickname_color");
@@ -122,16 +171,10 @@ public class UserActivity extends AppCompatActivity {
                 LinearLayout UserVipLinearLayout = (LinearLayout) findViewById(R.id.Home_FunctionRecyclerView);
                 TextView userLevel = (TextView) findViewById(R.id.User_Level);
                 TextView userVip = (TextView) findViewById(R.id.User_Vip);
-                ImageView userFace = (ImageView) findViewById(R.id.User_Face);
-                ImageView userEnhance = (ImageView) findViewById(R.id.User_Enhance);
-                TextView nameTextView = (TextView) findViewById(R.id.User_name);
-                TextView signTextView = (TextView) findViewById(R.id.User_sign);
-                TextView followerTextView = (TextView) findViewById(R.id.User_follower);//粉丝
-                TextView followingTextView = (TextView) findViewById(R.id.User_following);//关注
-                TextView moneyTextView = (TextView) findViewById(R.id.User_money);
+
                 nameTextView.setText(name);
                 signTextView.setText(sign);
-                followerTextView.setText(follower);
+                followerTextView.setText(VerificationUtils.DigitalConversion(Integer.parseInt(follower)));
                 followingTextView.setText(following);
                 moneyTextView.setText(money);
                 if (!image_enhance.equals("")) {
@@ -177,8 +220,16 @@ public class UserActivity extends AppCompatActivity {
                         String Dm = UserVideoData.getString("video_review");
                         String bvid = UserVideoData.getString("bvid");
                         String aid = UserVideoData.getString("aid");
-                        UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, UserActivity.this);
-                        fruitList.add(VideoListData);
+                        try {
+                            int playInt = Integer.parseInt(play);
+                            int DmInt = Integer.parseInt(Dm);
+                            play = VerificationUtils.DigitalConversion(playInt);
+                            Dm = VerificationUtils.DigitalConversion(DmInt);
+                            UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, UserActivity.this);
+                            fruitList.add(VideoListData);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -207,12 +258,41 @@ public class UserActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        pd2.cancel();
+
+                        broccoli.clearAllPlaceholders();
                     }
                 });
             }
         }).start();
 
+    }
+
+
+    // 动画
+    private Animator createRevealAnimator(boolean reversed, int x, int y) {
+        float hypot = (float) Math.hypot(content.getHeight(), content.getWidth());
+        float startRadius = reversed ? hypot : 0;
+        float endRadius = reversed ? 0 : hypot;
+
+        Animator animator = ViewAnimationUtils.createCircularReveal(
+                content, x, y,
+                startRadius,
+                endRadius);
+        animator.setDuration(800);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        return animator;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        StatService.onResume(this);
     }
 
 
@@ -225,7 +305,7 @@ public class UserActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void GoPlaybackRecord(View view){
+    public void GoPlaybackRecord(View view) {
         Intent intent = new Intent();
         intent.setClass(UserActivity.this, PlaybackRecordActivity.class);
         intent.putExtra("cookie", cookie);
@@ -244,13 +324,7 @@ public class UserActivity extends AppCompatActivity {
 
     private void SlideToBottom() {
         if (MRL < (int) pageCount) {
-            new Thread(() -> {
-                MRL = MRL + 1;
-                runOnUiThread(() -> {
-                    fruitList.clear();
-                    adapter.notifyDataSetChanged();
-                });
-            }).start();
+            MRL = MRL + 1;
             new Thread((Runnable) () -> {
                 String UserVideoStr = HttpUtils.doGet("https://api.bilibili.com/x/space/arc/search?mid=" + mid + "&pn=" + MRL + "&ps=25&order=pubdate&index=1&jsonp=jsonp", cookie);
                 try {
@@ -269,18 +343,22 @@ public class UserActivity extends AppCompatActivity {
                         String Dm = UserVideoData.getString("video_review");
                         String bvid = UserVideoData.getString("bvid");
                         String aid = UserVideoData.getString("aid");
-                        UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, UserActivity.this);
-                        fruitList.add(VideoListData);
+                        try {
+                            int playInt = Integer.parseInt(play);
+                            int DmInt = Integer.parseInt(Dm);
+                            play = VerificationUtils.DigitalConversion(playInt);
+                            Dm = VerificationUtils.DigitalConversion(DmInt);
+                            UserVideo VideoListData = new UserVideo(Title, bvid, aid, pic, play, Dm, UserActivity.this);
+                            fruitList.add(VideoListData);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 runOnUiThread(() -> {
-                    recyclerView = findViewById(R.id.User_RecyclerView);
-                    GridLayoutManager layoutManager = new GridLayoutManager(UserActivity.this, 2);
-                    recyclerView.setLayoutManager(layoutManager);
-                    adapter = new UserVideoAdapter(fruitList);
-                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                 });
             }).start();
         } else {
@@ -327,7 +405,7 @@ public class UserActivity extends AppCompatActivity {
         pd2 = ProgressDialog.show(UserActivity.this, "提示", "正在提交");
         new Thread(() -> {
             Long startTs = System.currentTimeMillis(); // 当前时间戳
-            String AddVideo = HttpUtils.doPost("https://api.misakaloli.com/app/AppFunction.php?type=FVideoAdd", "token=" + startTs * 6 + "&mid=" + mid + "&Bvid=" + inputAddFreezeVideo.getText().toString(), "");
+            String AddVideo = HttpUtils.doPost("https://api.misakamoe.com/app/AppFunction.php?type=FVideoAdd", "token=" + startTs * 6 + "&mid=" + mid + "&Bvid=" + inputAddFreezeVideo.getText().toString(), "");
             try {
                 JSONObject AddVideoJson = new JSONObject(AddVideo);
                 String msg = AddVideoJson.getString("msg");
@@ -346,7 +424,7 @@ public class UserActivity extends AppCompatActivity {
         pd2 = ProgressDialog.show(UserActivity.this, "提示", "正在提交");
         new Thread(() -> {
             Long startTs = System.currentTimeMillis(); // 当前时间戳
-            String AddVideo = HttpUtils.doPost("https://api.misakaloli.com/app/AppFunction.php?type=FUpAdd", "token=" + startTs * 6 + "&mid=" + mid, "");
+            String AddVideo = HttpUtils.doPost("https://api.misakamoe.com/app/AppFunction.php?type=FUpAdd", "token=" + startTs * 6 + "&mid=" + mid, "");
             System.out.println(AddVideo);
             try {
                 JSONObject AddVideoJson = new JSONObject(AddVideo);
@@ -363,7 +441,19 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void getNot(View view) {
-        Toast.makeText(UserActivity.this, "正在开发", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setClass(UserActivity.this, CreativeCenterActivity.class);
+        intent.putExtra("cookie", cookie);
+        intent.putExtra("mid", mid);
+        startActivity(intent);
+    }
+
+    public void getCache(View view) {
+        Intent intent = new Intent();
+        intent.setClass(UserActivity.this, CacheActivity.class);
+        intent.putExtra("cookie", cookie);
+        intent.putExtra("mid", mid);
+        startActivity(intent);
     }
 
 
@@ -395,4 +485,6 @@ public class UserActivity extends AppCompatActivity {
         }
         ).start();
     }
+
+
 }

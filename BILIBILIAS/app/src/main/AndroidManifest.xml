@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.imcys.bilibilias">
 
+    <!-- 目前自己需要的权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -10,6 +11,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+
+
+    <!-- 获取Android所有文件权限 -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
 
     <!-- 百度移动统计SDK -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -19,18 +27,30 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
+
+    <!-- 文档储存权限 -->
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
+
+
     <application
         android:name=".BilibiliGet"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/app_ca"
+        android:preserveLegacyExternalStorage="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup"
         tools:targetApi="m">
+
+
         <!-- 您从百度网站获取的APP KEY，根据实际您的APP申请的APP_KEY进行修改 -->
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
@@ -66,15 +86,37 @@
             android:name="BaiduMobAd_WIFI_LOCATION"
             android:value="true" />
 
-        <activity android:name="com.imcys.bilibilias.home.NewHomeActivity">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.imcys.bilibilias.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+
+        </provider>
+
+
+        <activity android:name=".home.NewHomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <!--按如下格式添加整个intent-filter块，其中data字段只能有一个，其内容是mtj拼接上您的appkey-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="mtj0f9d51ff82" />
+            </intent-filter>
         </activity>
+
+        <!-- AS解析视频 -->
         <activity
-            android:name="com.imcys.bilibilias.as.VideoAsActivity"
+            android:name=".as.VideoAsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -94,33 +136,120 @@
                     android:port="2333"
                     android:scheme="bilibilias" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="m.bilibili.com"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
-        <activity android:name="com.imcys.bilibilias.SetActivity" />
-        <activity android:name="com.imcys.bilibilias.LiveActivity" />
-        <activity android:name="com.imcys.bilibilias.user.AboutActivity" />
-        <activity android:name="com.imcys.bilibilias.user.UserActivity" />
-        <activity android:name="com.imcys.bilibilias.user.CollectionActivity" />
-        <activity android:name="com.imcys.bilibilias.user.PlaybackRecordActivity" />
-        <activity android:name="com.imcys.bilibilias.as.RankingActivity" />
-        <activity android:name="com.imcys.bilibilias.as.MergeVideoActivity" />
-        <activity android:name="com.imcys.bilibilias.play.PlayPathActivity" />
-        <activity android:name="com.imcys.bilibilias.home.VersionActivity" />
+
+        <!-- profile登录支持 -->
+        <activity android:name=".home.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="profile"
+                    android:path="/login"
+                    android:port="2333"
+                    android:scheme="bilibilias" />
+            </intent-filter>
+        </activity>
+
+        <!-- 注册Service，注意：一定要加权限：android.permission.BIND_REMOTEVIEWS -->
+        <service
+            android:name=".Widget.Adapter.MyRemoteViewsService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+
+        <service
+            android:name=".Widget.Adapter.BangumiRemoteViewsService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+
+        <service android:name=".Widget.Service.LikeAnimationService" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.EXAMPLE_APP_WIDGET_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".SetActivity" />
+        <activity android:name=".LiveActivity" />
+        <activity android:name=".user.AboutActivity" />
+        <activity android:name=".user.UserActivity" />
+        <activity android:name=".user.CollectionActivity" />
+        <activity android:name=".user.CreativeCenterActivity" />
+        <activity android:name=".user.PlaybackRecordActivity" />
+        <activity android:name=".user.CacheActivity" />
+        <activity android:name=".as.RankingActivity" />
+        <activity android:name=".as.MergeVideoActivity" />
+        <activity android:name=".play.PlayPathActivity" />
+        <activity android:name=".home.RetrieveActivity" />
+        <activity android:name=".home.VersionActivity" />
+        <activity android:name=".home.RegUserActivity" />
+        <activity android:name=".home.AccountListActivity" />
+        <activity android:name=".home.BiliLoginActivity" />
+        <activity android:name=".home.LoginTypeActivity" />
+        <activity android:name=".home.ServerDonationActivity" />
+        <activity android:name=".about.GitHubActivity" />
+        <activity android:name=".about.SupportActivity" />
         <activity
-            android:name="com.imcys.bilibilias.play.PlayVideoActivity"
+            android:name=".SettingActivity"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".play.PlayVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="landscape" />
         <activity android:name="com.thl.filechooser.FileChooserActivity" />
 
-        <receiver android:name="com.imcys.bilibilias.Widget.UserWidget">
+        <receiver
+            android:name="com.imcys.bilibilias.Widget.UserWidget"
+            android:label="@string/UserWidgetName">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.imcys.bilibilias.Widget.UPDATE_ALL" />
+                <action android:name=".Widget.UPDATE_ALL" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_user" />
         </receiver>
-        <receiver android:name="com.imcys.bilibilias.as.DownloadUtil$DownloadManagerReceiver">
+
+        <receiver
+            android:name=".Widget.LikeAnimationWidget"
+            android:label="播放历史">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name=".widget.UPDATE_ALL" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_like_animation" />
+
+        </receiver>
+
+        <receiver
+            android:name=".Widget.BangumiWidget"
+            android:label="追番列表">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name=".widget.UPDATE_ALL" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_bangumi_follow" />
+
+        </receiver>
+
+
+        <receiver android:name=".as.DownloadUtil$DownloadManagerReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.Widget;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -73,6 +74,7 @@ public class UserWidget extends AppWidgetProvider {
     /**
      * 每次窗口小部件被更新都调用一次该方法
      */
+    @SuppressLint("RemoteViewLayout")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -97,6 +99,7 @@ public class UserWidget extends AppWidgetProvider {
     /**
      * 当该窗口小部件第一次添加到桌面时调用该方法
      */
+    @SuppressLint("RemoteViewLayout")
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
@@ -147,7 +150,7 @@ public class UserWidget extends AppWidgetProvider {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void UserNav(Context context){
         new Thread(() -> {
-            String UserNavStr = HttpUtils.doGet("http://api.bilibili.com/x/web-interface/nav",cookie);
+            String UserNavStr = HttpUtils.doGet("https://api.bilibili.com/x/web-interface/nav",cookie);
             try {
                 JSONObject UserNavJson = new JSONObject(UserNavStr);
                 UserNavJson = UserNavJson.getJSONObject("data");
@@ -189,6 +192,7 @@ public class UserWidget extends AppWidgetProvider {
                 rv.setImageViewBitmap(R.id.Widget_User_Face,mUserFace);
                 rv.setImageViewBitmap(R.id.Widget_User_BJ,mTopUserFace);
                 manager.updateAppWidget(cn, rv);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
