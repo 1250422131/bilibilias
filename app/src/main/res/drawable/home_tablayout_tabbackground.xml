@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 边框颜色值 -->
+
+
+    <item  android:left="10dp" android:right="10dp" android:state_selected="true">
+
+        <shape>
+            <corners android:radius="15dp" />
+            <solid android:color="@color/color_primary" />
+        </shape>
+
+    </item>
+
+    <item android:left="10dp" android:right="10dp" android:state_selected="false">
+
+        <shape>
+            <corners android:radius="15dp" />
+            <solid android:color="@color/color_primary_variant" />
+        </shape>
+
+    </item>
+
+</layer-list>

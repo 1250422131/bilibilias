@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="LoginQRModel"
+            type="com.imcys.bilibilias.base.model.login.view.LoginQRModel" />
+
+
+        <variable
+            name="DataBean"
+            type="com.imcys.bilibilias.base.model.login.LoginQrcodeBean.DataBean" />
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:theme="@style/BottomSheetDialog">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+
+                android:layout_width="50dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:id="@+id/dialog_login_qr_tip_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/color_primary_variant"
+                    android:orientation="vertical" />
+            </androidx.cardview.widget.CardView>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="扫码登陆"
+                    android:textColor="@color/color_primary_text"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/dialog_login_qr_image"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:imageUrl="@{`https://pan.misakamoe.com/qrcode/?url=`+DataBean.url}"
+                android:onClick="@{(view) -> LoginQRModel.reloadLoginQR(view,DataBean)}"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="13dp"
+                android:text="@{LoginQRModel.loginTip}"
+                android:textColor="@color/color_primary"
+                android:textStyle="bold"
+                android:visibility="@{LoginQRModel.loginTip == `` ? View.GONE : View.VISIBLE}" />
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginRight="25dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/color_primary"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcode_key)}"
+                    android:text="完成登陆"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="25dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="?attr/colorPrimaryVariant"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:text="下载扫码"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="?attr/colorPrimaryVariant"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:text="跳转扫码"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</layout>
