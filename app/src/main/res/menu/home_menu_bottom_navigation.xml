@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_bottom_menu_black_room"
+        android:icon="@drawable/ic_home_home"
+        android:title="首页" />
+    <item
+        android:id="@+id/home_bottom_menu_discipline_admin"
+
+        android:icon="@drawable/ic_home_tool"
+
+        android:title="工具" />
+
+    <item
+        android:id="@+id/home_bottom_menu_operation_log"
+
+        android:icon="@drawable/ic_home_download_four"
+
+        android:title="缓存" />
+
+    <item
+        android:id="@+id/home_bottom_menu_statistics"
+
+        android:icon="@drawable/ic_home_people"
+
+        android:title="我的" />
+
+
+</menu>
