@@ -12,6 +12,10 @@
         android:title="工具" />
 
     <item
+        android:enabled="false"
+        android:title="" />
+
+    <item
         android:id="@+id/home_bottom_menu_operation_log"
 
         android:icon="@drawable/ic_home_download_four"

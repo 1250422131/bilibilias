@@ -15,12 +15,11 @@ class RCMDVideoModel {
 
     fun likeVideo(view: View, bvid: String) {
         Log.e("Tag","点击了")
-        HttpUtils()
-            .addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", App.cookies)
             .addParam("bvid", bvid)
             .addParam("like", "1")
             .addParam("csrf", App.biliJct)
-            .post(BilibiliApi().likeVideoPath, LikeVideoBean::class.java) {
+            .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
                 App.handler.post {
                     if (it.code == 0) {
                         Toast.makeText(context, "点赞成功", Toast.LENGTH_SHORT).show()

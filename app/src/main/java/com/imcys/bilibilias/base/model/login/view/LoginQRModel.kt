@@ -41,8 +41,8 @@ class LoginQRModel {
         bottomSheetDialog?.show()
 
         //登录完成
-        HttpUtils().get(
-            BilibiliApi().getLoginStatePath + "?qrcode_key=" + qrcode_key,
+        HttpUtils.get(
+            BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcode_key,
             object : Callback {
 
                 override fun onFailure(call: Call, e: IOException) {
@@ -92,8 +92,8 @@ class LoginQRModel {
      */
     fun reloadLoginQR(view: View, loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
 
-        HttpUtils().get(
-            BilibiliApi().getLoginQRPath,
+        HttpUtils.get(
+            BilibiliApi.getLoginQRPath,
             LoginQrcodeBean::class.java
         ) {
             loginQrcodeDataBean.url = URLEncoder.encode(it.data.url, "UTF-8")
