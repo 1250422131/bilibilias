@@ -4,7 +4,7 @@
     <item android:left="10dp" android:right="10dp">
         <shape>
             <solid android:color="@color/color_primary" />
-            <corners android:radius="15dp" />
+            <corners android:radius="20dp" />
             <size
                 android:height="20dp" />
         </shape>

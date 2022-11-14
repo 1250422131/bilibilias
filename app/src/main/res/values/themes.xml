@@ -40,6 +40,13 @@
         <item name="android:background">@drawable/dialog_bottom_sheet_bg</item>
     </style>
 
+    <style name="asVideoToolStyle" parent="ThemeOverlay.AppCompat.Light">
+        <item name="collapsedTitleTextColor">@color/black</item>
+        <item name="contentScrim">@color/white</item>
+    </style>
+
+
+
     <style name="Theme.BILIBILIAS.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

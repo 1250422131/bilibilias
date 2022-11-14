@@ -46,7 +46,7 @@ class RCMDVideoAdapter(
         holder: ViewHolder,
         data: HomeRCMDVideoBean.DataBean.ItemBean,
         position: Int,
-        size: Int
+        size: Int,
     ) {
 
 
@@ -58,7 +58,8 @@ class RCMDVideoAdapter(
 
             holder.itemView.setOnClickListener {
                 val intent = Intent()
-                intent.setClass(context,AsVideoActivity::class.java)
+                intent.putExtra("bvId", data.bvid)
+                intent.setClass(context, AsVideoActivity::class.java)
                 context.startActivity(intent)
             }
 
@@ -69,7 +70,7 @@ class RCMDVideoAdapter(
             itemRcmdLikeLottie.progress = data.likeState
 
             itemHomeRcmdLike.setOnClickListener {
-                Log.d("偏移回调",data.title+data.likeState)
+                Log.d("偏移回调", data.title + data.likeState)
 
                 data.likeState = 1f
                 itemRcmdLikeLottie.playAnimation()
@@ -83,12 +84,12 @@ class RCMDVideoAdapter(
     }
 
     private fun likeVideo(bvid: String) {
-        HttpUtils()
+        HttpUtils
             .addHeader("cookie", App.cookies)
             .addParam("bvid", bvid)
             .addParam("like", "1")
             .addParam("csrf", App.biliJct)
-            .post(BilibiliApi().likeVideoPath, LikeVideoBean::class.java) {
+            .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
                 App.handler.post {
                     if (it.code == 0) {
                         Toast.makeText(context, "点赞成功", Toast.LENGTH_SHORT).show()

@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun testLogin() {
-        HttpUtils().get(BilibiliApi().getLoginQRPath, LoginQrcodeBean::class.java) {
+        HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
             loginQRDialog = DialogUtils().loginQRDialog(
                 requireActivity(),
@@ -106,10 +106,9 @@ class HomeFragment : Fragment() {
     private fun initUserData() {
 
         bottomSheetDialog?.show()
-        HttpUtils()
-            .addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", App.cookies)
             .get(
-                BilibiliApi().getMyUserData, MyUserData::class.java
+                BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
                 loadUserData(it)
             }
@@ -117,10 +116,9 @@ class HomeFragment : Fragment() {
 
     //加载用户数据
     private fun loadUserData(myUserData: MyUserData) {
-        HttpUtils()
-            .addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", App.cookies)
             .get(
-                BilibiliApi().getUserInfoPath + "?mid=" + myUserData.data.mid,
+                BilibiliApi.getUserInfoPath + "?mid=" + myUserData.data.mid,
                 UserInfoBean::class.java
             ) {
                 loginQRDialog.cancel()
@@ -132,8 +130,8 @@ class HomeFragment : Fragment() {
 
     //加载推荐视频
     private fun loadRCMDVideoData() {
-        HttpUtils().addHeader("cookie", App.cookies).get(
-            BilibiliApi().homeRCMDVideoPath + "?ps=10",
+        HttpUtils.addHeader("cookie", App.cookies).get(
+            BilibiliApi.homeRCMDVideoPath + "?ps=10",
             HomeRCMDVideoBean::class.java
         ) {
             fragmentHomeBinding.run {

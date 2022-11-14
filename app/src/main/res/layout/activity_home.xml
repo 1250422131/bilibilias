@@ -12,7 +12,6 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -33,6 +32,17 @@
                 app:itemIconTint="@color/home_bottom_nav_seletor"
                 app:itemTextColor="@color/home_bottom_nav_seletor"
                 app:menu="@menu/home_menu_bottom_navigation">
+
+                <FrameLayout
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </FrameLayout>
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

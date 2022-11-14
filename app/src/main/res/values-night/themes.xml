@@ -38,5 +38,10 @@
         <item name="android:background">@drawable/dialog_bottom_sheet_night_bg</item>
     </style>
 
+    <style name="asVideoToolStyle" parent="ThemeOverlay.AppCompat.Light">
+        <item name="collapsedTitleTextColor">@color/white</item>
+        <item name="contentScrim">@color/black</item>
+    </style>
+
 
 </resources>
