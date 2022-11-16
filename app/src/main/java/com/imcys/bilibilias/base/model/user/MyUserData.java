@@ -63,7 +63,7 @@ public class MyUserData {
          * rank : 正式会员
          */
 
-        private Long mid;
+        private long mid;
         private String uname;
         private String userid;
         private String sign;
@@ -72,11 +72,11 @@ public class MyUserData {
         private boolean nick_free;
         private String rank;
 
-        public Long getMid() {
+        public long getMid() {
             return mid;
         }
 
-        public void setMid(Long mid) {
+        public void setMid(long mid) {
             this.mid = mid;
         }
 

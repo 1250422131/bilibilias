@@ -37,7 +37,7 @@ class LoginQRModel {
      * @param qrcode_key String
      */
     fun finishLogin(view: View, qrcode_key: String) {
-        val bottomSheetDialog = activity?.let { DialogUtils().loadDialog(it) }
+        val bottomSheetDialog = activity?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
 
         //登录完成
@@ -122,6 +122,8 @@ class LoginQRModel {
         val rSESSDATA: Pattern = Pattern.compile(patternSESSDATA)
         val patternBiliJct = "bili_jct=(.*?);"
         val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
+
+
         response.headers.values("Set-Cookie").forEach {
             cookies += it
             var m = rSESSDATA.matcher(it)

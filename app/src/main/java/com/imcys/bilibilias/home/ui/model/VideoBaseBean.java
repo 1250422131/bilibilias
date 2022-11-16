@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model.view;
+package com.imcys.bilibilias.home.ui.model;
 
 import java.util.List;
 
@@ -572,15 +572,15 @@ public class VideoBaseBean {
              * face : https://i1.hdslb.com/bfs/face/e6e5adfb421686da23f3f14103cd88673030e088.jpg
              */
 
-            private int mid;
+            private long mid;
             private String name;
             private String face;
 
-            public int getMid() {
+            public long getMid() {
                 return mid;
             }
 
-            public void setMid(int mid) {
+            public void setMid(long mid) {
                 this.mid = mid;
             }
 
