@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -30,7 +31,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding;
     private lateinit var loginQRDialog: BottomSheetDialog
-    private val bottomSheetDialog = context?.let { DialogUtils().loadDialog(it) }
+    private val bottomSheetDialog = context?.let { DialogUtils.loadDialog(it) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +39,8 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?,
+    ): View {
         fragmentHomeBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_home,
@@ -61,7 +62,7 @@ class HomeFragment : Fragment() {
     private fun initView() {
 
         //登陆检测
-        //context?.let { DialogUtils().loginDialog(it).show() }
+        //context?.let { DialogUtils.loginDialog(it).show() }
 
         //数据获取
         initUserToken()
@@ -82,12 +83,13 @@ class HomeFragment : Fragment() {
         App.cookies = sharedPreferences.getString("cookies", "").toString()
         App.sessdata = sharedPreferences.getString("SESSDATA", "").toString()
         App.biliJct = sharedPreferences.getString("bili_jct", "").toString()
+        App.mid = sharedPreferences.getLong("mid", 0)
     }
 
     private fun testLogin() {
         HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
-            loginQRDialog = DialogUtils().loginQRDialog(
+            loginQRDialog = DialogUtils.loginQRDialog(
                 requireActivity(),
                 it
             ) { code: Int, _: LoginStateBean ->
@@ -115,14 +117,22 @@ class HomeFragment : Fragment() {
     }
 
     //加载用户数据
+    @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
+
         HttpUtils.addHeader("cookie", App.cookies)
             .get(
                 BilibiliApi.getUserInfoPath + "?mid=" + myUserData.data.mid,
                 UserInfoBean::class.java
             ) {
+                val sharedPreferences: SharedPreferences =
+                    requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putLong("mid", it.data.mid)
+                editor.apply()
+                App.mid = it.data.mid
                 loginQRDialog.cancel()
-                DialogUtils().userDataDialog(requireActivity(), it).show()
+                DialogUtils.userDataDialog(requireActivity(), it).show()
             }
 
     }

@@ -20,7 +20,7 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/drawable/ic_launcher_background.xml" value="0.158" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/drawable/ic_videodetails_like.xml" value="0.223" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.1" />
-        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_as_video.xml" value="0.125" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_as_video.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_csactivity.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_home.xml" value="0.15925925925925927" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_main.xml" value="0.1" />
@@ -28,7 +28,8 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_splash.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/as_video_me.xml" value="0.8664122137404581" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/content_scrolling.xml" value="0.4192708333333333" />
-        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_load_bottomsheet.xml" value="0.1" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_collection.xml" value="0.21510416666666668" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_load_bottomsheet.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_login_bottomsheet.xml" value="0.375" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_login_qr_bottomsheet.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_user_data_bottomsheet.xml" value="0.21614583333333334" />
@@ -36,6 +37,7 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_home.xml" value="0.25477707006369427" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_tool.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_user.xml" value="0.21614583333333334" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_collection.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_rcmd_video.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/menu/home_menu_bottom_navigation.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/menu/menu_scrolling.xml" value="0.21614583333333334" />

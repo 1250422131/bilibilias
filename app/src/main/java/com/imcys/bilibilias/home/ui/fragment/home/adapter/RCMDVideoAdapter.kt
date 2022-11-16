@@ -2,7 +2,6 @@ package com.imcys.bilibilias.home.ui.fragment.home.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,11 +69,9 @@ class RCMDVideoAdapter(
             itemRcmdLikeLottie.progress = data.likeState
 
             itemHomeRcmdLike.setOnClickListener {
-                Log.d("偏移回调", data.title + data.likeState)
-
                 data.likeState = 1f
                 itemRcmdLikeLottie.playAnimation()
-                likeVideo(data.bvid)
+                likeVideo(data.bvid, itemRcmdVideoBinding)
             }
 
             executePendingBindings()
@@ -83,7 +80,7 @@ class RCMDVideoAdapter(
         }
     }
 
-    private fun likeVideo(bvid: String) {
+    private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
         HttpUtils
             .addHeader("cookie", App.cookies)
             .addParam("bvid", bvid)
@@ -94,6 +91,7 @@ class RCMDVideoAdapter(
                     if (it.code == 0) {
                         Toast.makeText(context, "点赞成功", Toast.LENGTH_SHORT).show()
                     } else {
+                        itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
                         Toast.makeText(context, "点赞失败，${it.message}", Toast.LENGTH_SHORT)
                             .show()
                     }

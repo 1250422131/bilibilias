@@ -28,11 +28,25 @@ class BilibiliApi() {
         //获取个人基本信息
         val getMyUserData = serviceApi + "x/member/web/account"
 
+        //获取用户卡片信息
+        val getUserCardPath = serviceApi + "x/web-interface/card"
+
         //post aid bvid like:1,2 csrf:j_xx
         val likeVideoPath = serviceApi + "x/web-interface/archive/like"
 
         //获取视频详细信息 get bvid avid
         val getVideoDataPath = serviceApi + "x/web-interface/view"
+
+
+        //对视频进行点赞
+        val videLikePath = serviceApi + "x/web-interface/archive/like"
+
+        //对视频进行投币
+        val videAddCoinPath = serviceApi + "x/web-interface/coin/add"
+
+        //获取收藏列表
+        val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
+
 
     }
 
