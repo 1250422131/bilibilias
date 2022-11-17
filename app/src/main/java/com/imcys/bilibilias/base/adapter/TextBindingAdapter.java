@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.base.adapter;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.Html;
 import android.widget.TextView;
 
@@ -18,11 +20,16 @@ import androidx.databinding.BindingMethods;
 public class TextBindingAdapter {
 
 
-    //快速解决字体颜色问题
-    @BindingAdapter(value = {"android:textColor", "android:text"})
-    public static void setTextColor(TextView textView, String textColor, String text) {
-        textView.setText(Html.fromHtml("<font color=\"" + textColor + "\">" + text + "</font> "));
+    @BindingConversion
+    public static int setTextColor(String textColor) {
+        return Color.parseColor(textColor);
+    }
+
+    @BindingAdapter(value = {"html"})
+    public static void setTextHtml(TextView textView, String html) {
+        textView.setText(Html.fromHtml(html));
     }
 
 
 }
+

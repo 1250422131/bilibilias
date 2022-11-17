@@ -15,5 +15,6 @@ class MainActivity : BaseActivity() {
         //沉浸式
         statusBarOnly(this)
 
+
     }
 }

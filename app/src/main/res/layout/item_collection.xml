@@ -6,6 +6,7 @@
 
     <data>
 
+
         <variable
             name="ListBean"
             type="com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean.DataBean.ListBean" />
@@ -23,12 +24,14 @@
         tools:ignore="MissingConstraints">
 
         <Button
+            android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="?attr/colorPrimaryVariant"
+            android:background="@{ListBean.selected == 0 ? `#E2E6FA`  : `#0b3DFB`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@{ListBean.title}"
-            android:textColor="@color/black"
+            android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"
+
             android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

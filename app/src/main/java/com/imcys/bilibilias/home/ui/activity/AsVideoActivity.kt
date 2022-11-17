@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
@@ -45,6 +47,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadShareView() {
 
         binding.apply {
@@ -53,7 +56,7 @@ class AsVideoActivity : BaseActivity() {
                     UserCreateCollectionBean::class.java) {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(this@AsVideoActivity,
-                            it) { selectedItem, binding ->
+                            it) { selectedItem, selects ->
 
                         }.show()
                     }

@@ -22,6 +22,7 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState, persistentState)
 
 
+
     }
 
 
@@ -29,6 +30,6 @@ open class BaseActivity : AppCompatActivity() {
         UltimateBarX.statusBarOnly(fragmentActivity)
             .fitWindow(false)
             .light(true)
-            .apply();
+            .apply()
     }
 }

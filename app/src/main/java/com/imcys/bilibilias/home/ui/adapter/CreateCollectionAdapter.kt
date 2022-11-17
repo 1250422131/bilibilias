@@ -1,18 +1,24 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.BindingMethod
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemCollectionBinding
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 
-class CreateCollectionAdapter(val datas: MutableList<UserCreateCollectionBean.DataBean.ListBean>) :
+class CreateCollectionAdapter(
+    val datas: MutableList<UserCreateCollectionBean.DataBean.ListBean>,
+    val selectedResult: (position: Int, itemBinding: ItemCollectionBinding) -> Unit,
+) :
     RecyclerView.Adapter<CreateCollectionAdapter.ViewHolder>() {
 
-    lateinit var selectedResult: (selectedItem: Int, binding: ItemCollectionBinding) -> Unit
+    private val TAG = CreateCollectionAdapter::class.java.simpleName
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -30,8 +36,8 @@ class CreateCollectionAdapter(val datas: MutableList<UserCreateCollectionBean.Da
         }
 
         //回调点击项数
-        holder.itemView.setOnClickListener {
-            binding?.let { it1 -> selectedResult(position, it1) }
+        binding?.itemCollectionButton?.setOnClickListener {
+            selectedResult(position, binding)
         }
     }
 

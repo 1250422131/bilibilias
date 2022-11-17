@@ -4,6 +4,7 @@ package com.imcys.bilibilias.base.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
@@ -23,6 +24,7 @@ import com.imcys.bilibilias.databinding.DialogUserDataBottomsheetBinding
 import com.imcys.bilibilias.databinding.ItemCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import okhttp3.internal.notifyAll
 import java.net.URLEncoder
 
 
@@ -126,10 +128,11 @@ class DialogUtils {
         }
 
 
+        @SuppressLint("NotifyDataSetChanged")
         fun loadUserCreateCollectionDialog(
             activity: Activity,
             userCreateCollectionBean: UserCreateCollectionBean,
-            selectedResult: (selectedItem: Int, binding: ItemCollectionBinding) -> Unit,
+            selectedResult: (selectedItem: Int, selects: MutableList<Long>) -> Unit,
         ): BottomSheetDialog {
 
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(activity))
@@ -144,11 +147,38 @@ class DialogUtils {
                     binding.root.parent)
 
             binding.apply {
-                val collectionAdapter =
-                    CreateCollectionAdapter(userCreateCollectionBean.data.list.toMutableList())
 
-                //设置回调接受参数
-                collectionAdapter.selectedResult = selectedResult
+                val collectionMutableList = mutableListOf<Long>()
+                val collectionAdapter =
+                    CreateCollectionAdapter(userCreateCollectionBean.data.list.toMutableList()
+                    ) { position, itemBinding ->
+                        //这个接口是为了处理弹窗背景问题
+
+                        val total = collectionMutableList.size
+                        //标签，判断这一次是否有重复
+                        var tage = true
+                        for (a in 0 until total) {
+
+                            if (collectionMutableList[a] == userCreateCollectionBean.data.list[position].id.toLong()) {
+                                tage = false
+                                itemBinding.listBean?.selected = 0
+                                collectionMutableList.removeAt(a)
+                                break
+                            }
+                        }
+
+
+                        if (tage) {
+                            itemBinding.listBean?.selected = 1
+                            collectionMutableList.add(userCreateCollectionBean.data.list[position].id.toLong())
+                        }
+
+                        binding.dialogCollectionRv.adapter?.notifyDataSetChanged()
+                        selectedResult(position, collectionMutableList)
+
+
+                    }
+
 
                 //设置数据适配器
                 dialogCollectionRv.adapter = collectionAdapter
@@ -156,6 +186,8 @@ class DialogUtils {
                 //设置布局加载器
                 dialogCollectionRv.layoutManager =
                     LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+
+
             }
 
 
@@ -171,11 +203,12 @@ class DialogUtils {
             context: Context,
             viewGroup: ViewParent,
         ) {
+
             //用户行为
             val mDialogBehavior = BottomSheetBehavior.from(viewGroup as View)
             mDialogBehavior.addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
-                @SuppressLint("UseCompatLoadingForDrawables")
+                @SuppressLint("UseCompatLoadingForDrawables", "SwitchIntDef")
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     //拖动监听
                     val linearLayout: View = tipView
