@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.base.adapter;
 
 import android.graphics.Bitmap;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.databinding.BindingAdapter;
@@ -27,7 +28,7 @@ public class ImageViewAttrAdapter {
     public static void loadImage(ImageView imageView, String url, int imageRoundingRadius) {
 
         //设置图片上去，就不在多写了
-        //Glide设置图片圆角角度
+        //Glide设置图片圆角角
         RoundedCorners roundedCorners = new RoundedCorners(imageRoundingRadius);
         RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
         Glide.with(imageView.getContext())
