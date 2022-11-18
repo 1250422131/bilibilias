@@ -37,13 +37,14 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                <com.imcys.bilibilias.base.view.AsJzvdStd
+                    android:id="@+id/as_video_asJzvdStd"
+                    app:showPlayButton="false"
                     android:imageUrl="@{VideoBaseBean.data.pic}"
-                    android:scaleType="centerCrop"
-                    android:src="@mipmap/ic_launcher"
-                    app:layout_collapseMode="parallax" />
+                    app:layout_collapseMode="parallax"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/Buzzword_Toolbar"
@@ -214,7 +215,7 @@
                     android:layout_marginTop="35dp"
                     android:orientation="horizontal"
 
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="60dp"

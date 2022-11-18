@@ -44,6 +44,7 @@ class DialogUtils {
          * @param context Context
          */
         @SuppressLint("InflateParams")
+        @JvmStatic
         fun loginDialog(context: Context): BottomSheetDialog {
             //先获取View实例
             val view: View = LayoutInflater.from(context)
@@ -64,6 +65,7 @@ class DialogUtils {
          * @param loginQrcodeBean LoginQrcodeBean
          * @return BottomSheetDialog
          */
+        @JvmStatic
         fun loginQRDialog(
             activity: Activity,
             loginQrcodeBean: LoginQrcodeBean,
@@ -94,6 +96,7 @@ class DialogUtils {
 
         }
 
+        @JvmStatic
         fun userDataDialog(activity: Activity, userInfoBean: UserInfoBean): BottomSheetDialog {
             //先获取View实例
             val binding = DialogUserDataBottomsheetBinding.inflate(LayoutInflater.from(activity))
@@ -114,6 +117,7 @@ class DialogUtils {
 
 
         @SuppressLint("InflateParams")
+        @JvmStatic
         fun loadDialog(context: Context): BottomSheetDialog {
             //先获取View实例
             val view: View = LayoutInflater.from(context)
@@ -129,6 +133,7 @@ class DialogUtils {
 
 
         @SuppressLint("NotifyDataSetChanged")
+        @JvmStatic
         fun loadUserCreateCollectionDialog(
             activity: Activity,
             userCreateCollectionBean: UserCreateCollectionBean,
@@ -197,7 +202,7 @@ class DialogUtils {
 
 
         //TODO 常用方法封装
-
+        @JvmStatic
         private fun initDialogBehaviorBinding(
             tipView: View,
             context: Context,
@@ -234,6 +239,7 @@ class DialogUtils {
             })
         }
 
+        @JvmStatic
         private fun initDialogBehavior(
             barId: Int,
             context: Context,
@@ -274,6 +280,7 @@ class DialogUtils {
             return mDialogBehavior
         }
 
+        @JvmStatic
         private fun initBottomSheetDialog(context: Context, view: View): BottomSheetDialog {
 
             val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)

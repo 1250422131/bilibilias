@@ -47,6 +47,8 @@ class BilibiliApi() {
         //获取收藏列表
         val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
 
+        val videoPlayPath = serviceApi + "x/player/playurl"
+
 
     }
 
