@@ -33,6 +33,7 @@ class HttpUtils {
          * @param url String 请求地址
          * @param callBack Callback
          */
+        @JvmStatic
         fun get(url: String, callBack: Callback) {
             val okHttpClient = OkHttpClient()
             val request: Request = Request.Builder().apply {
@@ -46,6 +47,7 @@ class HttpUtils {
         }
 
 
+        @JvmStatic
         fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
             val okHttpClient = OkHttpClient()
             val request: Request = Request.Builder().apply {
@@ -66,6 +68,7 @@ class HttpUtils {
         }
 
 
+        @JvmStatic
         fun <T> post(url: String, clz: Class<T>, responseResult: (data: T) -> Unit) {
             val okHttpClient = OkHttpClient()
 
@@ -103,6 +106,7 @@ class HttpUtils {
          * @param url String 请求地址
          * @param callBack Callback
          */
+        @JvmStatic
         fun post(url: String, callBack: Callback) {
             val okHttpClient = OkHttpClient()
 
@@ -134,6 +138,7 @@ class HttpUtils {
          * @param jsonString String 请求json
          * @param callBack Callback
          */
+        @JvmStatic
         fun postJson(url: String, jsonString: String, callBack: Callback) {
             val okHttpClient = OkHttpClient()
             val stringBody = jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
@@ -157,6 +162,7 @@ class HttpUtils {
          * @param value String
          * @return HttpUtils
          */
+        @JvmStatic
         fun addParam(key: String, value: String): Companion {
             params[key] = value
             return this
@@ -169,6 +175,7 @@ class HttpUtils {
          * @param value String
          * @return HttpUtils
          */
+        @JvmStatic
         fun addHeader(key: String, value: String): Companion {
             headers[key] = value
             return this

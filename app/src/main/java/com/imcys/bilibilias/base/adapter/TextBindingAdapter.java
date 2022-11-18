@@ -25,6 +25,8 @@ public class TextBindingAdapter {
         return Color.parseColor(textColor);
     }
 
+
+
     @BindingAdapter(value = {"html"})
     public static void setTextHtml(TextView textView, String html) {
         textView.setText(Html.fromHtml(html));

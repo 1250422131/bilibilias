@@ -56,10 +56,7 @@ class RCMDVideoAdapter(
         itemRcmdVideoBinding?.apply {
 
             holder.itemView.setOnClickListener {
-                val intent = Intent()
-                intent.putExtra("bvId", data.bvid)
-                intent.setClass(context, AsVideoActivity::class.java)
-                context.startActivity(intent)
+                AsVideoActivity.actionStart(context,data.bvid)
             }
 
             itemRcmdLikeLottie.setAnimation(R.raw.home_like)

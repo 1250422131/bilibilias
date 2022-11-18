@@ -25,6 +25,8 @@
         <activity
             android:name=".home.ui.activity.AsVideoActivity"
             android:exported="false"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="fullSensor"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
 
         <activity
