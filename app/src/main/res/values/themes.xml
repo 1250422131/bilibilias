@@ -46,7 +46,6 @@
     </style>
 
 
-
     <style name="Theme.BILIBILIAS.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

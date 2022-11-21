@@ -9,8 +9,11 @@
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </FrameLayout>
+
+
+
+
 
     <ImageView
         android:id="@+id/poster"
@@ -242,4 +245,9 @@
             android:textColor="@android:color/white"
             android:textSize="14sp" />
     </LinearLayout>
+
+    <master.flame.danmaku.ui.widget.DanmakuView
+        android:id="@+id/as_jzvdstd_DanmakuView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>
