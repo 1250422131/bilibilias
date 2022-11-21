@@ -23,12 +23,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".home.ui.activity.AsVideoActivity"
+            android:name=".home.ui.activity.UserActivity"
             android:exported="false"
+            android:label="@string/title_activity_user"
+            android:theme="@style/Theme.BILIBILIAS" />
+        <activity
+            android:name=".home.ui.activity.AsVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
-
         <activity
             android:name=".home.ui.activity.HomeActivity"
             android:exported="false" />

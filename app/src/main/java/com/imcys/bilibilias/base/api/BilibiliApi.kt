@@ -49,6 +49,8 @@ class BilibiliApi() {
 
         val videoPlayPath = serviceApi + "x/player/playurl"
 
+        //弹幕下载
+        val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
 
     }
 

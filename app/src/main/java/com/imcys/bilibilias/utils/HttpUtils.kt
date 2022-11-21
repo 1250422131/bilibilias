@@ -23,6 +23,10 @@ class HttpUtils {
 
 
     companion object{
+
+        val okHttpClient = OkHttpClient()
+
+
         private val TAG = HttpUtils::class.java.simpleName
         private var params = mutableMapOf<String, String>()
         private var headers = mutableMapOf<String, String>()
@@ -35,7 +39,7 @@ class HttpUtils {
          */
         @JvmStatic
         fun get(url: String, callBack: Callback) {
-            val okHttpClient = OkHttpClient()
+
             val request: Request = Request.Builder().apply {
                 headers.forEach {
                     addHeader(it.key, it.value)
@@ -49,7 +53,6 @@ class HttpUtils {
 
         @JvmStatic
         fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
-            val okHttpClient = OkHttpClient()
             val request: Request = Request.Builder().apply {
                 headers.forEach {
                     addHeader(it.key, it.value)
@@ -70,8 +73,6 @@ class HttpUtils {
 
         @JvmStatic
         fun <T> post(url: String, clz: Class<T>, responseResult: (data: T) -> Unit) {
-            val okHttpClient = OkHttpClient()
-
             //构建FormBody
             val formBody: FormBody.Builder = FormBody.Builder()
             //添加params参数
@@ -108,7 +109,6 @@ class HttpUtils {
          */
         @JvmStatic
         fun post(url: String, callBack: Callback) {
-            val okHttpClient = OkHttpClient()
 
             //构建FormBody
             val formBody: FormBody.Builder = FormBody.Builder()
@@ -140,7 +140,6 @@ class HttpUtils {
          */
         @JvmStatic
         fun postJson(url: String, jsonString: String, callBack: Callback) {
-            val okHttpClient = OkHttpClient()
             val stringBody = jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
             val request: Request = Request.Builder().apply {
                 headers.forEach {

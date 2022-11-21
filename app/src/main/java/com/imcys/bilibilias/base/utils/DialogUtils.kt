@@ -55,6 +55,7 @@ class DialogUtils {
             val mDialogBehavior = initDialogBehavior(R.id.dialog_login_tip_bar, context, view)
             //自定义方案
             //mDialogBehavior.peekHeight = 600
+
             return bottomSheetDialog
         }
 
@@ -96,6 +97,13 @@ class DialogUtils {
 
         }
 
+
+        /**
+         * 用户信息弹窗
+         * @param activity Activity
+         * @param userInfoBean UserInfoBean
+         * @return BottomSheetDialog
+         */
         @JvmStatic
         fun userDataDialog(activity: Activity, userInfoBean: UserInfoBean): BottomSheetDialog {
             //先获取View实例
@@ -132,6 +140,13 @@ class DialogUtils {
         }
 
 
+        /**
+         * 加载用户收藏文件夹
+         * @param activity Activity
+         * @param userCreateCollectionBean UserCreateCollectionBean
+         * @param selectedResult Function2<[@kotlin.ParameterName] Int, [@kotlin.ParameterName] MutableList<Long>, Unit>
+         * @return BottomSheetDialog
+         */
         @SuppressLint("NotifyDataSetChanged")
         @JvmStatic
         fun loadUserCreateCollectionDialog(
@@ -239,6 +254,15 @@ class DialogUtils {
             })
         }
 
+
+        /**
+         * 设置拖动监听
+         * @param barId Int
+         * @param context Context
+         * @param view View
+         * @return BottomSheetBehavior<View>
+         */
+
         @JvmStatic
         private fun initDialogBehavior(
             barId: Int,
@@ -246,7 +270,6 @@ class DialogUtils {
             view: View,
         ): BottomSheetBehavior<View> {
             //用户行为
-
             val mDialogBehavior = BottomSheetBehavior.from(view.parent as View)
             mDialogBehavior.addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
@@ -272,7 +295,6 @@ class DialogUtils {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     //状态改变监听
 
-
                 }
 
             })
@@ -280,6 +302,12 @@ class DialogUtils {
             return mDialogBehavior
         }
 
+        /**
+         * 设置弹窗布局
+         * @param context Context
+         * @param view View
+         * @return BottomSheetDialog
+         */
         @JvmStatic
         private fun initBottomSheetDialog(context: Context, view: View): BottomSheetDialog {
 

@@ -3,13 +3,23 @@ package com.imcys.bilibilias.base.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.Toast
-import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.asLogD
+import master.flame.danmaku.controller.IDanmakuView
 
+
+interface JzbdStdInfo {
+    fun statePlaying(state: Int)
+    fun stopPlay(state: Int)
+    fun endPlay(state: Int)
+    fun seekBarStopTracking(state: Int)
+}
 
 /**
  * 继承饺子播放器，这里需要定义一些东西
@@ -18,13 +28,24 @@ import com.imcys.bilibilias.R
 class AsJzvdStd : JzvdStd {
 
 
+    lateinit var jzbdStdInfo: JzbdStdInfo
+    var stopTime: Long = 0
+    var asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
+    val startLinearLayout = findViewById<LinearLayout>(R.id.start_layout)
+
+
+    fun setPlayStateListener(jzbdStdInfo: JzbdStdInfo) {
+        this.jzbdStdInfo = jzbdStdInfo
+    }
+
+
     @SuppressLint("Recycle")
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AsJzvdStd)
         val showPlayType = typedArray.getBoolean(R.styleable.AsJzvdStd_showPlayButton, true)
 
-        val startLayout = findViewById<LinearLayout>(R.id.start_layout)
-        if (!showPlayType) startLayout.visibility = View.GONE
+        if (!showPlayType) startLinearLayout.visibility = View.INVISIBLE
 
     }
 
@@ -33,6 +54,18 @@ class AsJzvdStd : JzvdStd {
     override fun getLayoutId(): Int {
         return R.layout.jz_layout_std
     }
+
+
+    override fun onStateAutoComplete() {
+        super.onStateAutoComplete()
+
+        changeUiToComplete()
+        cancelDismissControlViewTimer()
+        bottomProgressBar.progress = 100
+        //通知播放完成
+        jzbdStdInfo.endPlay(state)
+    }
+
 
     override fun onClick(v: View) {
         super.onClick(v)
@@ -63,7 +96,12 @@ class AsJzvdStd : JzvdStd {
                 Toast.LENGTH_SHORT)
                 .show()
             return
+        } else if (state == STATE_AUTO_COMPLETE) {
+            onClickUiToggle()
         }
+
+        /*
+        暂停使用海报播放
         if (state == STATE_NORMAL) {
             if (!jzDataSource.currentUrl.toString().startsWith("file") &&
                 !jzDataSource.currentUrl.toString().startsWith("/") &&
@@ -72,10 +110,39 @@ class AsJzvdStd : JzvdStd {
                 showWifiDialog()
                 return
             }
+            onPlayStartListener(state)
             startVideo()
-        } else if (state == STATE_AUTO_COMPLETE) {
-            onClickUiToggle()
-        }
+        }*/
+    }
+
+
+    override fun onStatePlaying() {
+        //先一步返回状态，确保外部明确因为什么原因开启了播放
+        jzbdStdInfo.statePlaying(state)
+        super.onStatePlaying()
+
+    }
+
+
+    override fun onStatePreparingPlaying() {
+        asLogD(context, "onStatePreparingPlaying")
+        super.onStatePreparingPlaying()
+
+    }
+
+
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
+        super.onStopTrackingTouch(seekBar)
+        jzbdStdInfo.seekBarStopTracking(state)
+    }
+
+
+    override fun onStatePause() {
+
+        //记录暂停时间
+        stopTime = currentPositionWhenPlaying
+        jzbdStdInfo.stopPlay(state)
+        super.onStatePause()
     }
 
 

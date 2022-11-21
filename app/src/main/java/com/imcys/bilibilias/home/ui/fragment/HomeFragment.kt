@@ -114,6 +114,7 @@ class HomeFragment : Fragment() {
             ) {
                 loadUserData(it)
             }
+
     }
 
     //加载用户数据
