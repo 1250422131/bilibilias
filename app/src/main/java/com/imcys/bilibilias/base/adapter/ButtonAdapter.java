@@ -21,6 +21,7 @@ public class ButtonAdapter {
 
     @BindingConversion
     public static ColorDrawable setBackground(String colorStr) {
+        if (colorStr.equals("")) colorStr = "#000000";
         int color = Color.parseColor(colorStr);
         return new ColorDrawable(color);
 

@@ -14,6 +14,8 @@ class App : Application() {
 
     }
 
+
+
     companion object {
         lateinit var cookies: String
         lateinit var sessdata: String

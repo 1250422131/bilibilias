@@ -14,9 +14,12 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
+import com.imcys.bilibilias.danmaku.BiliDanmukuParser
+
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
@@ -32,7 +35,7 @@ import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.model.android.Danmakus
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-import master.flame.danmaku.danmaku.parser.android.BiliDanmukuParser
+
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -128,7 +131,6 @@ class AsVideoActivity : BaseActivity() {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(this@AsVideoActivity,
                             it) { selectedItem, selects ->
-
                         }.show()
                     }
                 }
@@ -249,7 +251,12 @@ class AsVideoActivity : BaseActivity() {
     }
 
     override fun onPause() {
+        asDanmaku.apply {
+            pause()
+           // hide()
+        }
         JzvdStd.releaseAllVideos()
+        changeFaButtonToPlay()
         super.onPause()
     }
 
@@ -269,9 +276,6 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    fun cs(view: View) {
-        asJzvdStd.startVideo()
-    }
 
     /**
      * 设置饺子播放器参数配置
@@ -299,7 +303,7 @@ class AsVideoActivity : BaseActivity() {
 
                     if (state == Jzvd.STATE_PAUSE) {
                         if (asJzvdStd.stopTime != asJzvdStd.currentPositionWhenPlaying) {
-                            asDanmaku.start(asJzvdStd.currentPositionWhenPlaying)
+                            start(asJzvdStd.currentPositionWhenPlaying)
                         } else {
                             resume()
                         }
@@ -452,9 +456,9 @@ class AsVideoActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
-            asDanmaku.resume()
-        }
+         if (asDanmaku.isPrepared && asDanmaku.isPaused) {
+             //asDanmaku.show()
+         }
 
     }
 
@@ -463,6 +467,7 @@ class AsVideoActivity : BaseActivity() {
         super.onDestroy()
         asDanmaku.release()
     }
+
 
 
     //解压deflate数据的函数
@@ -492,5 +497,6 @@ class AsVideoActivity : BaseActivity() {
         decompresser.end()
         return output
     }
+
 
 }

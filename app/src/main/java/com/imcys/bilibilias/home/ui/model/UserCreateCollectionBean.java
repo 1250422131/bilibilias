@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 
 
 
-public class UserCreateCollectionBean {
+public class UserCreateCollectionBean implements Serializable {
 
     /**
      * code : 0
@@ -96,7 +97,7 @@ public class UserCreateCollectionBean {
             this.list = list;
         }
 
-        public static class ListBean {
+        public static class ListBean  implements Serializable{
             /**
              * id : 196026807
              * fid : 1960268

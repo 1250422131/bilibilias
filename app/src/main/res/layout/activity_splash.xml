@@ -40,10 +40,10 @@
                 android:textColor="@color/color_primary_text"
                 android:textSize="56sp"
                 android:textStyle="normal"
-                app:fontFamily="@font/font_fashion_inblack_splash"
                 app:fontVariationSettings="@null" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"

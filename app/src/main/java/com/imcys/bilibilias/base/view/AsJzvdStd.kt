@@ -28,10 +28,10 @@ interface JzbdStdInfo {
 class AsJzvdStd : JzvdStd {
 
 
-    lateinit var jzbdStdInfo: JzbdStdInfo
+    private lateinit var jzbdStdInfo: JzbdStdInfo
     var stopTime: Long = 0
     var asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
-    val startLinearLayout = findViewById<LinearLayout>(R.id.start_layout)
+    private var startLinearLayout: LinearLayout = findViewById(R.id.start_layout)
 
 
     fun setPlayStateListener(jzbdStdInfo: JzbdStdInfo) {
@@ -46,6 +46,7 @@ class AsJzvdStd : JzvdStd {
         val showPlayType = typedArray.getBoolean(R.styleable.AsJzvdStd_showPlayButton, true)
 
         if (!showPlayType) startLinearLayout.visibility = View.INVISIBLE
+
 
     }
 

@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.home.ui.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.MyUserData
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.home.ui.fragment.home.adapter.RCMDVideoAdapter
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
@@ -70,11 +73,12 @@ class HomeFragment : Fragment() {
         //加载推荐视频
         loadRCMDVideoData()
 
-        //测试登录
-        testLogin()
+        detectUserLogin()
 
 
     }
+
+
 
     private fun initUserToken() {
         val sharedPreferences: SharedPreferences =
@@ -86,11 +90,11 @@ class HomeFragment : Fragment() {
         App.mid = sharedPreferences.getLong("mid", 0)
     }
 
-    private fun testLogin() {
+    private fun loadLogin() {
         HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
             loginQRDialog = DialogUtils.loginQRDialog(
-                requireActivity(),
+                context as Activity,
                 it
             ) { code: Int, _: LoginStateBean ->
                 //登陆成功
@@ -114,8 +118,18 @@ class HomeFragment : Fragment() {
             ) {
                 loadUserData(it)
             }
-
     }
+
+    private fun detectUserLogin() {
+
+        HttpUtils.addHeader("cookie", App.cookies)
+            .get(
+                BilibiliApi.getMyUserData, MyUserData::class.java
+            ) {
+                if (it.code != 0) loadLogin()
+            }
+    }
+
 
     //加载用户数据
     @SuppressLint("CommitPrefEdits")
@@ -133,7 +147,7 @@ class HomeFragment : Fragment() {
                 editor.apply()
                 App.mid = it.data.mid
                 loginQRDialog.cancel()
-                DialogUtils.userDataDialog(requireActivity(), it).show()
+                DialogUtils.userDataDialog(context as Activity, it).show()
             }
 
     }
@@ -147,13 +161,13 @@ class HomeFragment : Fragment() {
         ) {
             fragmentHomeBinding.run {
                 //新增BannerLifecycleObserver
-                fragmentHomeBanner.addBannerLifecycleObserver(activity)
-                    .setAdapter(
-                        RCMDVideoAdapter(
-                            requireActivity(),
-                            it.data.item
-                        )
+                Log.e("调试价差", it.toString())
+                fragmentHomeBanner.setAdapter(
+                    RCMDVideoAdapter(
+                        context as Activity,
+                        it.data.item
                     )
+                )
                     .setBannerGalleryEffect(5, 5, 40)
                     .addPageTransformer(ZoomOutPageTransformer())
             }

@@ -19,89 +19,68 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+############################################
+#
+# 复制的混淆
+# 对于一些基本指令的添加
+#
+#############################################
+# 代码混淆压缩比，在0~7之间，默认为5，一般不做修改
+-optimizationpasses 5
 
--optimizationpasses 5 # 指定代码的压缩级别
--dontusemixedcaseclassnames # 混淆后类名都为小写
--dontskipnonpubliclibraryclasses #指定不去忽略非公共的库的类
--dontskipnonpubliclibraryclassmembers #指定不去忽略非公共的库的类的成员
--dontpreverify # 不做预校验的操作
--verbose # 混淆时是否记录日志
--printmapping proguardMapping.txt #生成原类名和混淆后的类名的映射文件
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*  # 混淆时所采用的算法
--keepattributes *Annotation*,InnerClasses #不混淆Annotation
--keepattributes Signature #不混淆泛型
--keepattributes SourceFile,LineNumberTable #抛出异常时保留代码行号
--ignorewarnings #抑制警告
+# 混合时不使用大小写混合，混合后的类名为小写
+-dontusemixedcaseclassnames
 
-#系统类不需要混淆
--keep public class * extends android.app.Activity
--keep public class * extends android.app.Application
--keep public class * extends android.app.Service
--keep public class * extends android.content.BroadcastReceiver
--keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
--keep public class * extends android.view.View
--keep class android.support.** {*;}
--keep public class * extends android.app.Fragment
+# 指定不去忽略非公共库的类
+-dontskipnonpubliclibraryclasses
 
--keepclasseswithmembernames class * {  # 保持 native 方法不被混淆
-    native <methods>;
+# 这句话能够使我们的项目混淆后产生映射文件
+# 包含有类名->混淆后类名的映射关系
+-verbose
+
+# 指定不去忽略非公共库的类成员
+-dontskipnonpubliclibraryclassmembers
+
+# 不做预校验，preverify是proguard的四个步骤之一，Android不需要preverify，去掉这一步能够加快混淆速度。
+-dontpreverify
+
+# 保留Annotation不混淆
+-keepattributes *Annotation*,InnerClasses
+
+# 避免混淆泛型
+-keepattributes Signature
+
+# 抛出异常时保留代码行号
+-keepattributes SourceFile,LineNumberTable
+
+# 指定混淆是采用的算法，后面的参数是一个过滤器
+# 这个过滤器是谷歌推荐的算法，一般不做更改
+-optimizations !code/simplification/cast,!field/*,!class/merging/*
+
+
+-keep class com.zackratos.ultimatebarx.ultimatebarx.** { *; }
+
+# 保留R下面的资源
+-keep class **.R$* {*;}
+
+
+-keep class com.youth.banner.** {
+    *;
+ }
+
+-keepclassmembers class * {
+    void *(*Event);
 }
--keepclassmembers class * extends android.app.Activity { # 保持自定义控件类不被混淆
-    public void *(android.view.View);
-}
--keepclassmembers enum * {# 保持枚举 enum 类不被混淆
+
+-keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
--keep public class * extends android.view.View{# 保持View类不被混淆
-    *** get*();
-    void set*(***);
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
--keepclasseswithmembers class * {# 保持自定义控件类不被混淆
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
--keep class * implements android.os.Parcelable { # 保持 Parcelable 不被混淆
-    public static final android.os.Parcelable$Creator *;
-}
--keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
-    private static final java.io.ObjectStreamField[] serialPersistentFields;
-    private void writeObject(java.io.ObjectOutputStream);
-    private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
-}
--keep class **.R$* {
- *;
-}
--keepclassmembers class * {
-    void *(**On*Event);
+
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
 
-
-# 其它
--keep class com.google.android.gms.** {*;}
--dontwarn com.google.android.gms.**
--dontwarn com.viewpagerindicator.*
--dontwarn com.amazonaws.**
--dontnote com.google.vending.licensing.ILicensingService
--dontnote com.android.vending.licensing.ILicensingService
-
-
-# Androidx相关
--keep class com.google.android.material.** {*;}
--keep class androidx.** {*;}
--keep public class * extends androidx.**
--keep interface androidx.** {*;}
--dontwarn com.google.android.material.**
--dontnote com.google.android.material.**
--dontwarn androidx.**
 
 
 #饺子播放器混淆
@@ -109,4 +88,38 @@
 -keep class tv.danmaku.ijk.media.player.** {*; }
 -dontwarn tv.danmaku.ijk.media.player.*
 -keep interface tv.danmaku.ijk.media.player.** { *; }
+#我们认为这些类混淆后可能将导致播放器出现问题
+-keep class cn.jzvd.Jzvd{*; }
+-keep class cn.jzvd.JzvdStd{*; }
+-keep class com.imcys.bilibilias.base.view.AsJzvdStd{*; }
+-keep class cn.jzvd.JZUtils{*; }
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+-keepclassmembers class * implements android.os.Parcelable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+#保持 Serializable 不被混淆
+-keepnames class * implements java.io.Serializable
+
+#保持 Serializable 不被混淆并且enum 类也不被混淆
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    !private <fields>;
+    !private <methods>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
 

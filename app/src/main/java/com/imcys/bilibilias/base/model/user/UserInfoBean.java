@@ -2,6 +2,7 @@ package com.imcys.bilibilias.base.model.user;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public class UserInfoBean {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable {
         /**
          * mid : 351201307
          * name : 萌新杰少
@@ -420,7 +421,7 @@ public class UserInfoBean {
             this.tags = tags;
         }
 
-        public static class FansMedalBean {
+        public static class FansMedalBean implements Serializable{
             /**
              * show : true
              * wear : true
@@ -455,7 +456,7 @@ public class UserInfoBean {
                 this.medal = medal;
             }
 
-            public static class MedalBean {
+            public static class MedalBean implements Serializable{
                 /**
                  * uid : 351201307
                  * target_id : 351201307
@@ -622,7 +623,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class OfficialBean {
+        public static class OfficialBean implements Serializable{
             /**
              * role : 0
              * title :
@@ -668,7 +669,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class VipBean {
+        public static class VipBean implements Serializable{
             /**
              * type : 1
              * status : 0
@@ -793,7 +794,7 @@ public class UserInfoBean {
                 this.tv_vip_pay_type = tv_vip_pay_type;
             }
 
-            public static class LabelBean {
+            public static class LabelBean implements Serializable{
                 /**
                  * path :
                  * text :
@@ -920,7 +921,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class PendantBean {
+        public static class PendantBean implements Serializable{
             /**
              * pid : 1416
              * name : 拜年祭粉丝专鼠
@@ -986,7 +987,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class NameplateBean {
+        public static class NameplateBean implements Serializable{
             /**
              * nid : 9
              * name : 出道偶像
@@ -1052,16 +1053,16 @@ public class UserInfoBean {
             }
         }
 
-        public static class UserHonourInfoBean {
+        public static class UserHonourInfoBean implements Serializable {
         }
 
-        public static class ThemeBean {
+        public static class ThemeBean  implements Serializable{
         }
 
-        public static class SysNoticeBean {
+        public static class SysNoticeBean implements Serializable{
         }
 
-        public static class LiveRoomBean {
+        public static class LiveRoomBean implements Serializable {
             /**
              * roomStatus : 1
              * liveStatus : 0
@@ -1156,7 +1157,7 @@ public class UserInfoBean {
                 this.watched_show = watched_show;
             }
 
-            public static class WatchedShowBean {
+            public static class WatchedShowBean implements Serializable {
                 /**
                  * switch : true
                  * num : 1
@@ -1234,7 +1235,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class SchoolBean {
+        public static class SchoolBean implements Serializable{
             /**
              * name :
              */
@@ -1296,7 +1297,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class SeriesBean {
+        public static class SeriesBean implements Serializable{
             /**
              * user_upgrade_status : 3
              * show_upgrade_window : false
@@ -1322,7 +1323,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class ElecBean {
+        public static class ElecBean implements Serializable{
             /**
              * show_info : {"show":true,"state":1,"title":"","icon":"","jump_url":""}
              */

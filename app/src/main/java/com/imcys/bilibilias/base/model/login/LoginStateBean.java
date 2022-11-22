@@ -1,11 +1,13 @@
 package com.imcys.bilibilias.base.model.login;
 
+import java.io.Serializable;
+
 /**
  * @author:imcys
  * @create: 2022-10-26 17:30
  * @Description: 登陆状态数据
  */
-public class LoginStateBean {
+public class LoginStateBean  implements Serializable {
 
     /**
      * code : 0
@@ -51,7 +53,7 @@ public class LoginStateBean {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable{
         /**
          * url :
          * refresh_token :

@@ -14,17 +14,47 @@ android {
         versionCode 1
         versionName "1.0"
 
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled false
+            keyAlias 'mxjs'
+            keyPassword 'imcys19909384476'
+            storeFile file('D:/AndroidStudioProjects/mxjs.jks')
+            storePassword 'imcys19909384476'
+        }
+    }
+
+    buildTypes {
+
+        debug {
+            //混淆
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            //混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+
     }
 
 
@@ -60,7 +90,7 @@ dependencies {
     //api "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     //DanmakuFlameMaster支持
-    implementation 'com.github.ctiao:dfm:0.4.2'
+    implementation 'com.github.ctiao:dfm:0.6.0'
 
 
     // Compose ui 相关的基础支持
