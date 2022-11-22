@@ -12,9 +12,6 @@
     </FrameLayout>
 
 
-
-
-
     <ImageView
         android:id="@+id/poster"
         android:layout_width="match_parent"

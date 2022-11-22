@@ -1,11 +1,13 @@
 package com.imcys.bilibilias.base.model.login;
 
+import java.io.Serializable;
+
 /**
  * @author:imcys
  * @create: 2022-10-26 17:25
  * @Description: 登陆二维码数据
  */
-public class LoginQrcodeBean {
+public class LoginQrcodeBean  implements Serializable {
 
     /**
      * code : 0
@@ -51,7 +53,7 @@ public class LoginQrcodeBean {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable{
         /**
          * url : https://passport.bilibili.com/h5-app/passport/login/scan?navhide=1&qrcode_key=ede6c0dde9d2a25eee16ff596b4385e3&from=
          * qrcode_key : ede6c0dde9d2a25eee16ff596b4385e3

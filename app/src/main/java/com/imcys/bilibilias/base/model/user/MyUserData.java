@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.base.model.user;
 
+import java.io.Serializable;
+
 /**
  * @author:imcys
  * @create: 2022-10-30 08:12
@@ -51,7 +53,7 @@ public class MyUserData {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable {
         /**
          * mid : 293793435
          * uname : 社会易姐QwQ

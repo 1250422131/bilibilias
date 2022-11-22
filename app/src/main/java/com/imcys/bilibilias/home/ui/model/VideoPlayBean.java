@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * @create: 2022-11-18 17:01
  * @Description: 视频下载信息数据类
  */
-public class VideoPlayBean {
+public class VideoPlayBean  implements Serializable {
 
 
     /**
@@ -54,7 +55,7 @@ public class VideoPlayBean {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean  implements Serializable{
         /**
          * from : local
          * result : suee
@@ -229,7 +230,7 @@ public class VideoPlayBean {
             this.support_formats = support_formats;
         }
 
-        public static class DurlBean {
+        public static class DurlBean  implements Serializable{
             /**
              * order : 1
              * length : 233643
@@ -305,7 +306,7 @@ public class VideoPlayBean {
             }
         }
 
-        public static class SupportFormatsBean {
+        public static class SupportFormatsBean  implements Serializable{
             /**
              * quality : 80
              * format : mp4

@@ -22,9 +22,9 @@ public class TextBindingAdapter {
 
     @BindingConversion
     public static int setTextColor(String textColor) {
+        if (textColor.equals("")) textColor = "#000000";
         return Color.parseColor(textColor);
     }
-
 
 
     @BindingAdapter(value = {"html"})
