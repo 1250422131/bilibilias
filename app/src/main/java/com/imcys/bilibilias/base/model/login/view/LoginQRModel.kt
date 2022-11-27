@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import com.google.gson.Gson
 import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -129,15 +130,21 @@ class LoginQRModel {
             var m = rSESSDATA.matcher(it)
 
             if (m.find()) {
-                editor.putString("SESSDATA", m.group(1))
+                val groupStr = m.group(1)
+                App.sessdata = groupStr
+                editor.putString("SESSDATA", groupStr)
             }
 
             m = rBiliJct.matcher(it)
 
             if (m.find()) {
-                editor.putString("bili_jct", m.group(1))
+                val groupStr = m.group(1)
+                App.biliJct = groupStr
+                editor.putString("bili_jct", groupStr)
             }
         }
+        App.cookies = cookies
+
         editor.putString("cookies", cookies)
         editor.putString("refreshToken", loginStateBean.data.refresh_token)
         editor.apply()

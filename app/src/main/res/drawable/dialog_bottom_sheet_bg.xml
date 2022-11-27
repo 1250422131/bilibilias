@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:shape="rectangle"
     tools:ignore="MissingDefaultResource">
-    <solid android:color="@color/cardview_light_background" />
+    <solid android:color="@color/white" />
     <corners
         android:topLeftRadius="16dp"
         android:topRightRadius="16dp" />

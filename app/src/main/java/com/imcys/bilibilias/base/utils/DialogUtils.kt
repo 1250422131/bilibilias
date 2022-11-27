@@ -193,7 +193,7 @@ class DialogUtils {
                             collectionMutableList.add(userCreateCollectionBean.data.list[position].id.toLong())
                         }
 
-                        binding.dialogCollectionRv.adapter?.notifyDataSetChanged()
+                        binding.dialogCollectionRv.adapter?.notifyItemChanged(position)
                         selectedResult(position, collectionMutableList)
 
 

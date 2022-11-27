@@ -39,8 +39,8 @@
     </style>
 
     <style name="asVideoToolStyle" parent="ThemeOverlay.AppCompat.Light">
-        <item name="collapsedTitleTextColor">@color/white</item>
-        <item name="contentScrim">@color/black</item>
+        <item name="collapsedTitleTextColor">@color/black</item>
+        <item name="contentScrim">@color/color_303030</item>
     </style>
 
 

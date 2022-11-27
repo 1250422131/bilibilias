@@ -3,6 +3,8 @@ package com.imcys.bilibilias.base.utils
 import android.content.Context
 import android.util.Log
 
+
+
 //顶层方法
 fun asLogD(tag: String, content: String) = Log.d(tag, content)
 

@@ -52,6 +52,10 @@ class BilibiliApi() {
         //弹幕下载
         val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
 
+        //视频列表
+
+        val videoPageListPath = serviceApi + "x/player/pagelist"
+
     }
 
 }
