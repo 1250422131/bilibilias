@@ -79,7 +79,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     private fun initUserToken() {
         val sharedPreferences: SharedPreferences =
             requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
@@ -126,6 +125,7 @@ class HomeFragment : Fragment() {
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
+                Log.d("cookie调试", it.toString())
                 if (it.code != 0) loadLogin()
             }
     }

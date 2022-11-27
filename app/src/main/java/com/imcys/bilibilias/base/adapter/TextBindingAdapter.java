@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.base.adapter;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Html;
@@ -18,6 +19,7 @@ import androidx.databinding.BindingMethods;
 
 
 public class TextBindingAdapter {
+
 
 
     @BindingConversion

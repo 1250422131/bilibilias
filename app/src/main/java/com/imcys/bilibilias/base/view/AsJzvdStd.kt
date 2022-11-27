@@ -44,9 +44,7 @@ class AsJzvdStd : JzvdStd {
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.AsJzvdStd)
         val showPlayType = typedArray.getBoolean(R.styleable.AsJzvdStd_showPlayButton, true)
-
         if (!showPlayType) startLinearLayout.visibility = View.INVISIBLE
-
 
     }
 

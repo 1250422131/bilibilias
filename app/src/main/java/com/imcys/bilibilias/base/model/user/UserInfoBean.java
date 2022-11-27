@@ -10,7 +10,7 @@ import java.util.List;
  * @create: 2022-10-26 18:08
  * @Description: 用户常用数据
  */
-public class UserInfoBean {
+public class UserInfoBean implements Serializable{
 
     /**
      * code : 0
@@ -1251,7 +1251,7 @@ public class UserInfoBean {
             }
         }
 
-        public static class ProfessionBean {
+        public static class ProfessionBean  implements Serializable{
             /**
              * name :
              * department :

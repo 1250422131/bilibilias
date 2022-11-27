@@ -11,10 +11,10 @@ public class PanBean implements Serializable {
      * reslist : {"code":0,"message":"ok","data":{"Next":"-1","Len":1,"IsFirst":true,"Expired":false,"InfoList":[{"FileId":1835306,"FileName":"WeChat 8.0.30(2240).apk","Type":0,"Size":488103719,"ContentType":"0","S3KeyFlag":"1813124589-0","CreateAt":"2022-11-21T23:46:35+08:00","UpdateAt":"2022-11-22T17:00:40+08:00","Etag":"79fca5071213d611c1910491a2a66772","DownloadUrl":"","Status":2,"ParentFileId":1766237,"Category":0,"PunishFlag":0,"checked":false}]}}
      * publicPath : https://www.123pan.com/a/api/
      */
-
     private ResBean res;
     private ReslistBean reslist;
     private String publicPath;
+
 
 
     @Override

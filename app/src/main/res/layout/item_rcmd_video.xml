@@ -70,7 +70,7 @@
                                 android:lines="2"
                                 android:maxEms="8"
                                 android:text="@{ItemBean.title}"
-                                android:textColor="@color/white"
+                                android:textColor="#FFFFFF"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
                         </LinearLayout>

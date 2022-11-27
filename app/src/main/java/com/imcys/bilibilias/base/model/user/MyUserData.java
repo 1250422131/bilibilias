@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @create: 2022-10-30 08:12
  * @Description: 我的个人信息类
  */
-public class MyUserData {
+public class MyUserData implements Serializable{
 
     /**
      * code : 0
@@ -20,6 +20,16 @@ public class MyUserData {
     private String message;
     private int ttl;
     private DataBean data;
+
+    @Override
+    public String toString() {
+        return "MyUserData{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", ttl=" + ttl +
+                ", data=" + data +
+                '}';
+    }
 
     public int getCode() {
         return code;
@@ -54,17 +64,6 @@ public class MyUserData {
     }
 
     public static class DataBean implements Serializable {
-        /**
-         * mid : 293793435
-         * uname : 社会易姐QwQ
-         * userid : bili_84675323391
-         * sign : 高中技术宅一枚，爱好MC&电子&8-bit音乐&数码&编程，资深猿厨，粉丝群：1136462265
-         * birthday : 2002-03-05
-         * sex : 男
-         * nick_free : false
-         * rank : 正式会员
-         */
-
         private long mid;
         private String uname;
         private String userid;

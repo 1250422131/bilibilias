@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
@@ -14,17 +15,13 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
-
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
+import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.utils.HttpUtils
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -35,7 +32,6 @@ import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.model.android.Danmakus
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -108,9 +104,8 @@ class AsVideoActivity : BaseActivity() {
     private fun loadVideoPlay() {
 
         HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0",
+            .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                 VideoPlayBean::class.java) {
-
                 setAsJzvdConfig(it.data.durl[0].url, "")
 
             }
@@ -145,7 +140,8 @@ class AsVideoActivity : BaseActivity() {
 
 
         val intent = intent
-        val bvId = intent.getStringExtra("bvId")
+        var bvId = intent.getStringExtra("bvId")
+        //bvId = "BV1ss411m7t9"
 
         HttpUtils.addHeader("cookie", App.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
@@ -159,7 +155,47 @@ class AsVideoActivity : BaseActivity() {
                 loadDanmakuFlameMaster()
                 //加载视频播放信息
                 loadVideoPlay()
+                //加载视频列表信息
+                loadVideoList()
             }
+    }
+
+    /**
+     * 加载视频列表信息
+     *
+     */
+    private fun loadVideoList() {
+        HttpUtils.get(BilibiliApi.videoPageListPath + "?bvid=" + bvid,
+            VideoPageListData::class.java) {
+            binding.apply {
+
+                if (it.data.size == 0) asVideoSubsectionRv.visibility = View.GONE
+
+                asVideoSubsectionRv.adapter =
+                    SubsectionAdapter(it.data.toMutableList()) { data, position ->
+
+                        //更新CID刷新播放页面
+                        cid = data.cid
+                        //暂停播放
+                        changeFaButtonToPlay()
+                        //刷新播放器
+                        loadVideoPlay()
+                        //清空弹幕
+                        asDanmaku.release()
+                        //更新弹幕
+                        loadDanmakuFlameMaster()
+                        asVideoSubsectionRv.adapter?.notifyItemChanged(position)
+
+
+                    }
+
+                asVideoSubsectionRv.layoutManager =
+                    LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
+
+
+            }
+        }
+
     }
 
     /**
@@ -178,6 +214,7 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息
      */
     private fun loadDanmakuFlameMaster() {
+
         HttpUtils.addHeader("cookie", App.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -253,7 +290,7 @@ class AsVideoActivity : BaseActivity() {
     override fun onPause() {
         asDanmaku.apply {
             pause()
-           // hide()
+            // hide()
         }
         JzvdStd.releaseAllVideos()
         changeFaButtonToPlay()
@@ -283,6 +320,7 @@ class AsVideoActivity : BaseActivity() {
      * @param title String
      */
     private fun setAsJzvdConfig(url: String, title: String) {
+        val map = LinkedHashMap<Any, Any>()
 
         val jzDataSource = JZDataSource(url, title)
 
@@ -456,9 +494,9 @@ class AsVideoActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-         if (asDanmaku.isPrepared && asDanmaku.isPaused) {
-             //asDanmaku.show()
-         }
+        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
+            //asDanmaku.show()
+        }
 
     }
 
@@ -467,7 +505,6 @@ class AsVideoActivity : BaseActivity() {
         super.onDestroy()
         asDanmaku.release()
     }
-
 
 
     //解压deflate数据的函数

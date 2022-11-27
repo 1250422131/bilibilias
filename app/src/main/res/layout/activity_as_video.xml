@@ -261,18 +261,26 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/as_video_subsection_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+
+
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/as_video_faButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:clickable="true"
             android:elevation="3dp"
             android:focusable="true"
-            android:id="@+id/as_video_faButton"
             android:src="@drawable/ic_as_video_play"
             app:backgroundTint="@color/white"
             app:layout_anchor="@id/as_video_appbar"
