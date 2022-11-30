@@ -53,8 +53,13 @@ class BilibiliApi() {
         val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
 
         //视频列表
-
         val videoPageListPath = serviceApi + "x/player/pagelist"
+
+        //修改视频收藏
+        val videoCollectionSetPath = serviceApi + "x/v3/fav/resource/deal"
+
+        //投币地址
+        val videoCoinAddPath = serviceApi + "x/web-interface/coin/add"
 
     }
 

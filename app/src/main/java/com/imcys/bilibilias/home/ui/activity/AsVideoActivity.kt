@@ -3,8 +3,11 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
@@ -14,6 +17,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
@@ -45,12 +49,13 @@ import java.util.zip.Inflater
 class AsVideoActivity : BaseActivity() {
 
 
-    lateinit var binding: ActivityAsVideoBinding
+    private lateinit var videoDataBean: VideoBaseBean
+    private lateinit var binding: ActivityAsVideoBinding
 
-    lateinit var asJzvdStd: AsJzvdStd
-    lateinit var asDanmaku: IDanmakuView
-    lateinit var danmakuParser: BaseDanmakuParser
-    val danmakuContext = DanmakuContext.create()
+    private lateinit var asJzvdStd: AsJzvdStd
+    private lateinit var asDanmaku: IDanmakuView
+    private lateinit var danmakuParser: BaseDanmakuParser
+    private val danmakuContext = DanmakuContext.create()
 
     //视频临时数据
     var bvid: String = ""
@@ -61,6 +66,7 @@ class AsVideoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
+
         statusBarOnly(this)
 
         //加载视频首要信息
@@ -79,8 +85,8 @@ class AsVideoActivity : BaseActivity() {
             asJzvdStd = asVideoAsJzvdStd
             asDanmaku = asVideoAsJzvdStd.asDanmaku
 
-            asVideoShareLy.setOnClickListener {
-                loadShareView()
+            asVideoCollectionLy.setOnClickListener {
+                loadCollectionView()
             }
 
             asVideoFaButton.setOnClickListener {
@@ -94,9 +100,45 @@ class AsVideoActivity : BaseActivity() {
                 }
             }
 
+            asVideoLikeLy.setOnClickListener {
+                likeVideo()
+            }
+
+            asVideoThrowLy.setOnClickListener {
+                videoCoinAdd()
+            }
+
 
         }
     }
+
+    private fun videoCoinAdd() {
+        HttpUtils
+            .addHeader("cookie", App.cookies)
+            .addParam("bvid", bvid)
+            .addParam("multiply", "2")
+            .addParam("csrf", App.biliJct)
+            .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                changeCoinAddButtonToTrue()
+            }
+    }
+
+    /**
+     * 点赞视频
+     */
+    private fun likeVideo() {
+        HttpUtils
+            .addHeader("cookie", App.cookies)
+            .addParam("csrf", App.biliJct)
+            .addParam("like", "1")
+            .addParam("bvid", bvid)
+            .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                changeLikeButtonToTrue()
+            }
+    }
+
 
     /**
      * 加载视频播放信息
@@ -106,7 +148,10 @@ class AsVideoActivity : BaseActivity() {
         HttpUtils.addHeader("cookie", App.cookies)
             .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                 VideoPlayBean::class.java) {
+
+
                 setAsJzvdConfig(it.data.durl[0].url, "")
+
 
             }
 
@@ -118,20 +163,64 @@ class AsVideoActivity : BaseActivity() {
      * 加载用户收藏夹
      */
     @SuppressLint("NotifyDataSetChanged")
-    private fun loadShareView() {
+    private fun loadCollectionView() {
         binding.apply {
             HttpUtils.addHeader("cookie", App.cookies)
                 .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + App.mid,
                     UserCreateCollectionBean::class.java) {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(this@AsVideoActivity,
-                            it) { selectedItem, selects ->
-                        }.show()
+                            it, { _, _ ->
+                            }, { selects ->
+                                //选取完成了收藏文件夹
+                                setCollection(selects)
+                            }).show()
                     }
                 }
         }
 
     }
+
+    /**
+     * 设置收藏夹的ID列表
+     * @param selects MutableList<Long>
+     */
+    private fun setCollection(selects: MutableList<Long>) {
+
+        var addMediaIds = ""
+        selects.forEachIndexed { index, l ->
+            if (index == selects.size) {
+                addMediaIds = "$addMediaIds$l"
+            }
+            addMediaIds = "$addMediaIds,$l"
+        }
+        addCollection(addMediaIds)
+    }
+
+
+    /**
+     * 新增收藏夹内容
+     * @param addMediaIds String
+     */
+    private fun addCollection(addMediaIds: String) {
+        HttpUtils.addHeader("cookie", App.cookies)
+            .addParam("rid", avid.toString())
+            .addParam("add_media_ids", addMediaIds)
+            .addParam("csrf", App.biliJct)
+            .addParam("type", "2")
+            .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
+                if (it.code == 0) {
+                    changeCollectionButtonToTrue()
+                    Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(this, it.code.toString(), Toast.LENGTH_SHORT).show()
+
+                }
+            }
+
+    }
+
 
     /**
      * 加载视频数据
@@ -146,6 +235,8 @@ class AsVideoActivity : BaseActivity() {
         HttpUtils.addHeader("cookie", App.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
 
+
+                videoDataBean = it
                 showVideoData()
                 //TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
                 setBaseData(it)
@@ -322,7 +413,9 @@ class AsVideoActivity : BaseActivity() {
     private fun setAsJzvdConfig(url: String, title: String) {
         val map = LinkedHashMap<Any, Any>()
 
-        val jzDataSource = JZDataSource(url, title)
+        map["760P"] = url
+
+        val jzDataSource = JZDataSource(map, title)
 
         jzDataSource.headerMap["Cookie"] = App.cookies;
         jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
@@ -391,6 +484,28 @@ class AsVideoActivity : BaseActivity() {
     private fun changeFaButtonToRedo() {
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
+
+    //三联按钮状态更新
+    private fun changeCollectionButtonToTrue() {
+        binding.asVideoCollectionBt.imageTintList =
+            getEmphasizeColor()
+    }
+
+    private fun changeLikeButtonToTrue() {
+        binding.asVideoLikeBt.imageTintList =
+            getEmphasizeColor()
+    }
+
+    private fun changeCoinAddButtonToTrue() {
+        binding.asVideoThrowBt.imageTintList =
+            getEmphasizeColor()
+    }
+
+
+    private fun getEmphasizeColor(): ColorStateList {
+        return ColorStateList.valueOf(Color.parseColor("#FB7299"))
+    }
+
     //——————————————————————————————————————————————————————————————————————————
 
 

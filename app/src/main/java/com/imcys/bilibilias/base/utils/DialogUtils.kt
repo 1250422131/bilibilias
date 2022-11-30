@@ -40,7 +40,7 @@ class DialogUtils {
 
 
         /**
-         * 登陆对话框
+         * 登录对话框
          * @param context Context
          */
         @SuppressLint("InflateParams")
@@ -61,7 +61,7 @@ class DialogUtils {
 
 
         /**
-         * 本地/AS绑定 B站账号登陆弹窗
+         * 本地/AS绑定 B站账号登录弹窗
          * @param activity Activity
          * @param loginQrcodeBean LoginQrcodeBean
          * @return BottomSheetDialog
@@ -153,6 +153,7 @@ class DialogUtils {
             activity: Activity,
             userCreateCollectionBean: UserCreateCollectionBean,
             selectedResult: (selectedItem: Int, selects: MutableList<Long>) -> Unit,
+            finished:(selects: MutableList<Long>)->Unit
         ): BottomSheetDialog {
 
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(activity))
@@ -207,6 +208,14 @@ class DialogUtils {
                 dialogCollectionRv.layoutManager =
                     LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
 
+                //设置完成选中收藏夹
+                dialogCollectionFinishBt.setOnClickListener {
+
+                    bottomSheetDialog.cancel()
+                    finished(collectionMutableList)
+
+
+                }
 
             }
 
