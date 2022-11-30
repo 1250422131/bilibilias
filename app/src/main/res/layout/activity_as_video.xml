@@ -118,12 +118,14 @@
                         android:orientation="horizontal">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/as_video_like_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:id="@+id/as_video_like_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_like"
@@ -141,12 +143,14 @@
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/as_video_throw_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
 
                             <ImageView
+                                android:id="@+id/as_video_throw_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
@@ -165,12 +169,14 @@
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/as_video_collection_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
 
                             <ImageView
+                                android:id="@+id/as_video_collection_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"

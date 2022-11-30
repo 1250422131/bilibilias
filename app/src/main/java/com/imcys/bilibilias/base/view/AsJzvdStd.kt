@@ -28,6 +28,7 @@ interface JzbdStdInfo {
 class AsJzvdStd : JzvdStd {
 
 
+
     private lateinit var jzbdStdInfo: JzbdStdInfo
     var stopTime: Long = 0
     var asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
