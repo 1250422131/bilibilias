@@ -18,10 +18,9 @@ class HomeActivity : BaseActivity() {
     lateinit var activityHomeBinding: ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-        //沉浸式
-        statusBarOnly(this)
 
+
+        activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         loadFragment()
 
     }

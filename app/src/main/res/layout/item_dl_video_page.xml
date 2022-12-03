@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+
+        <variable
+            name="DataBean"
+            type="com.imcys.bilibilias.home.ui.model.VideoPageListData.DataBean" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="25dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="0dp"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/item_collection_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@{DataBean.selected == 0 ? `#E2E6FA`  : `#0b3DFB`}"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:text="@{DataBean.part}"
+            android:textColor="@{DataBean.selected == 0 ? @color/black  : @color/white}"
+
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
+</layout>
+

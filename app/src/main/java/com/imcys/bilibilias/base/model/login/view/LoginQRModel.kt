@@ -2,6 +2,7 @@ package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.util.Log
@@ -26,7 +27,6 @@ class LoginQRModel {
 
 
     var binding: DialogLoginQrBottomsheetBinding? = null
-    var activity: Activity? = null
     var loginTip = ""
 
     lateinit var responseResult: (Int, LoginStateBean) -> Unit
@@ -38,7 +38,7 @@ class LoginQRModel {
      * @param qrcode_key String
      */
     fun finishLogin(view: View, qrcode_key: String) {
-        val bottomSheetDialog = activity?.let { DialogUtils.loadDialog(it) }
+        val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
 
         //登录完成
@@ -60,11 +60,11 @@ class LoginQRModel {
                     //关闭加载弹窗
                     bottomSheetDialog?.cancel()
                     //更新UI线程
-                    activity?.runOnUiThread {
+                    (view.context as Activity).runOnUiThread {
 
                         //登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
-                            loginSuccessOp(loginStateBean, response)
+                            loginSuccessOp(view.context,loginStateBean, response)
                         } else {
                             //展示登录结果
                             val loginQRModel = binding?.loginQRModel!!
@@ -91,7 +91,7 @@ class LoginQRModel {
      * @param view View
      * @param loginQrcodeDataBean DataBean
      */
-    fun reloadLoginQR(view: View, loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+    fun reloadLoginQR( loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
 
         HttpUtils.get(
             BilibiliApi.getLoginQRPath,
@@ -111,10 +111,10 @@ class LoginQRModel {
      * @param response Response
      */
     @SuppressLint("CommitPrefEdits")
-    fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
+    fun loginSuccessOp(context: Context,loginStateBean: LoginStateBean, response: Response) {
 
         val sharedPreferences: SharedPreferences =
-            activity!!.getSharedPreferences("data", MODE_PRIVATE)
+            context.getSharedPreferences("data", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("refreshToken", loginStateBean.data.refresh_token)
         var cookies = ""
@@ -131,7 +131,9 @@ class LoginQRModel {
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                App.sessdata = groupStr
+                if (groupStr != null) {
+                    App.sessdata = groupStr
+                }
                 editor.putString("SESSDATA", groupStr)
             }
 
@@ -139,7 +141,9 @@ class LoginQRModel {
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                App.biliJct = groupStr
+                if (groupStr != null) {
+                    App.biliJct = groupStr
+                }
                 editor.putString("bili_jct", groupStr)
             }
         }

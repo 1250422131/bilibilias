@@ -2,12 +2,13 @@ package com.imcys.bilibilias.utils
 
 import com.google.gson.Gson
 import com.imcys.bilibilias.base.app.App
-import okhttp3.Callback
-import okhttp3.FormBody
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.xutils.common.task.PriorityExecutor
+import org.xutils.http.RequestParams
+import org.xutils.x
+import java.io.File
 
 
 /**
@@ -20,15 +21,36 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class HttpUtils {
 
 
-    companion object{
+    companion object {
 
-        val okHttpClient = OkHttpClient()
+        private val okHttpClient = OkHttpClient()
 
 
-        private val TAG = HttpUtils::class.java.simpleName
+        private val TAG = javaClass.simpleName
         private var params = mutableMapOf<String, String>()
         private var headers = mutableMapOf<String, String>()
 
+
+        /**
+         * 下载文件方法
+         * @param url String
+         * @param callBack ProgressCallback<File>
+         */
+        @JvmStatic
+        fun downLoadFile(url: String, callBack: org.xutils.common.Callback.ProgressCallback<File>) {
+            val requestParams = RequestParams(url).apply {
+                this@Companion.headers.forEach {
+                    addHeader(it.key, it.value)
+                }
+
+                saveFilePath = ""
+                executor = PriorityExecutor(1, true)
+                //自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
+                isCancelFast = true //是否可以被立即停止.
+
+            }
+            x.http().get(requestParams, callBack)
+        }
 
         /**
          * get请求执行方法
@@ -138,7 +160,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun postJson(url: String, jsonString: String, callBack: Callback) {
-            val stringBody = jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
+            val stringBody =
+                jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
             val request: Request = Request.Builder().apply {
                 headers.forEach {
                     addHeader(it.key, it.value)

@@ -3,4 +3,8 @@
     <declare-styleable name="AsJzvdStd">
         <attr name="showPlayButton" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="GrayFrameLayout">
+        <attr name="isGray" format="boolean"/>
+    </declare-styleable>
 </resources>

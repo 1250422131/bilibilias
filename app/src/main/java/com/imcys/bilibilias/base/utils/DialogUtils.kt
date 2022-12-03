@@ -18,12 +18,14 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.databinding.DialogCollectionBinding
-import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
-import com.imcys.bilibilias.databinding.DialogUserDataBottomsheetBinding
-import com.imcys.bilibilias.databinding.ItemCollectionBinding
+import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
+import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
+import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.home.ui.model.VideoPlayBean
 import okhttp3.internal.notifyAll
 import java.net.URLEncoder
 
@@ -51,8 +53,8 @@ class DialogUtils {
                 .inflate(R.layout.dialog_login_bottomsheet, null, false)
 
             val bottomSheetDialog = initBottomSheetDialog(context, view)
-            //用户行为
-            val mDialogBehavior = initDialogBehavior(R.id.dialog_login_tip_bar, context, view)
+            //用户行为val mDialogBehavior =
+            initDialogBehavior(R.id.dialog_login_tip_bar, context, view)
             //自定义方案
             //mDialogBehavior.peekHeight = 600
 
@@ -83,14 +85,13 @@ class DialogUtils {
             binding.dataBean = loginQrcodeBean.data
             binding.loginQRModel = LoginQRModel()
             binding.loginQRModel?.responseResult = responseResult
-            binding.loginQRModel?.activity = activity
             //传导binding过去
             binding.loginQRModel?.binding = binding
-            //用户行为
-            val mDialogBehavior =
-                initDialogBehaviorBinding(binding.dialogLoginQrTipBar,
-                    activity,
-                    binding.root.parent)
+            //用户行为val mDialogBehavior =
+
+            initDialogBehaviorBinding(binding.dialogLoginQrTipBar,
+                activity,
+                binding.root.parent)
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             return bottomSheetDialog
@@ -114,9 +115,9 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
 
             binding.dataBean = userInfoBean.data
-            //用户行为
-            val mDialogBehavior =
-                initDialogBehaviorBinding(binding.dialogUserDataBar, activity, binding.root.parent)
+            //用户行为 val mDialogBehavior =
+
+            initDialogBehaviorBinding(binding.dialogUserDataBar, activity, binding.root.parent)
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             return bottomSheetDialog
@@ -132,8 +133,8 @@ class DialogUtils {
                 .inflate(R.layout.dialog_load_bottomsheet, null, false)
             //设置布局背景
             val bottomSheetDialog = initBottomSheetDialog(context, view)
-            //用户行为
-            val mDialogBehavior = initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+            //用户行为val mDialogBehavior =
+            initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             return bottomSheetDialog
@@ -153,7 +154,7 @@ class DialogUtils {
             activity: Activity,
             userCreateCollectionBean: UserCreateCollectionBean,
             selectedResult: (selectedItem: Int, selects: MutableList<Long>) -> Unit,
-            finished:(selects: MutableList<Long>)->Unit
+            finished: (selects: MutableList<Long>) -> Unit,
         ): BottomSheetDialog {
 
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(activity))
@@ -162,10 +163,10 @@ class DialogUtils {
             //创建设置布局
             bottomSheetDialog.setContentView(binding.root)
 
-            val mDialogBehavior =
-                initDialogBehaviorBinding(binding.dialogCollectionBar,
-                    activity,
-                    binding.root.parent)
+            //val mDialogBehavior =
+            initDialogBehaviorBinding(binding.dialogCollectionBar,
+                activity,
+                binding.root.parent)
 
             binding.apply {
 
@@ -219,6 +220,176 @@ class DialogUtils {
 
             }
 
+
+            return bottomSheetDialog
+
+        }
+
+
+        @JvmStatic
+        fun downloadVideoDialog(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            videoPageListData: VideoPageListData,
+            videoPlayBean: VideoPlayBean,
+        ): BottomSheetDialog {
+            var videoPageMutableList = mutableListOf<Long>()
+            var selectDefinition = 64
+            videoPageMutableList.add(videoPageListData.data[0].cid.toLong())
+
+            val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+
+            initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
+            //自定义方案
+            //mDialogBehavior.peekHeight = 600
+            binding.apply {
+                dialogDlVideoDiversityTx.setOnClickListener {
+                    loadVideoPageDialog(context, videoPageListData) { it1 ->
+                        videoPageMutableList = it1
+                    }.show()
+                }
+
+                dialogDlVideoDefinitionTx.setOnClickListener {
+                    loadVideoDefinition(context, videoPlayBean) {
+                        selectDefinition = it
+                    }.show()
+                }
+
+
+            }
+
+
+            return bottomSheetDialog
+
+        }
+
+
+        /**
+         * 加载视频子集
+         * @param context Context
+         * @param videoPageListData VideoPageListData
+         * @param finished Function1<[@kotlin.ParameterName] MutableList<Long>, Unit>
+         * @return BottomSheetDialog
+         */
+        private fun loadVideoPageDialog(
+            context: Context,
+            videoPageListData: VideoPageListData,
+            finished: (selects: MutableList<Long>) -> Unit,
+        ): BottomSheetDialog {
+
+            val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //创建设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+            //val mDialogBehavior =
+            initDialogBehaviorBinding(binding.dialogCollectionBar,
+                context,
+                binding.root.parent)
+
+
+            binding.apply {
+                dialogCollectionTitle.text = "请选择视频子集"
+
+                val videoPageListDataList = mutableListOf<Long>()
+                dialogCollectionRv.adapter =
+                    VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
+                        //这个接口是为了处理弹窗背景问题
+
+                        val total = videoPageListDataList.size
+                        //标签，判断这一次是否有重复
+                        var tage = true
+                        for (a in 0 until total) {
+
+                            if (videoPageListDataList[a] == videoPageListData.data[position].cid.toLong()) {
+                                tage = false
+                                itemBinding.dataBean?.selected = 0
+                                videoPageListDataList.removeAt(a)
+                                break
+                            }
+                        }
+
+
+                        if (tage) {
+                            itemBinding.dataBean?.selected = 1
+                            videoPageListDataList.add(videoPageListData.data[position].cid.toLong())
+                        }
+
+                        dialogCollectionRv.adapter?.notifyItemChanged(position)
+
+                    }
+
+
+                //设置布局加载器
+                dialogCollectionRv.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+                //设置完成选中收藏夹
+                dialogCollectionFinishBt.setOnClickListener {
+
+                    bottomSheetDialog.cancel()
+                    finished(videoPageListDataList)
+                }
+            }
+
+            return bottomSheetDialog
+
+
+        }
+
+
+        /**
+         * 加载视频清晰度
+         * @param context Context
+         * @param videoPlayBean VideoPageListData
+         * @param finished Function1<[@kotlin.ParameterName] Int, Unit>
+         */
+        private fun loadVideoDefinition(
+            context: Context,
+            videoPlayBean: VideoPlayBean,
+            finished: (selects: Int) -> Unit,
+        ): BottomSheetDialog {
+
+            var selectDefinition = 64
+            val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //创建设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+            //val mDialogBehavior =
+            initDialogBehaviorBinding(binding.dialogCollectionBar,
+                context,
+                binding.root.parent)
+
+
+            binding.apply {
+                dialogCollectionTitle.text = "请选择缓存清晰度"
+
+                dialogCollectionRv.adapter =
+                    VideoDefinitionAdapter(videoPlayBean.data.accept_description) { position, beforeChangePosition ->
+
+                        selectDefinition = videoPlayBean.data.accept_quality[position]
+
+                    }
+
+
+                //设置布局加载器
+                dialogCollectionRv.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+                //设置完成选中收藏夹
+                dialogCollectionFinishBt.setOnClickListener {
+                    bottomSheetDialog.cancel()
+                    finished(selectDefinition)
+                }
+            }
 
             return bottomSheetDialog
 

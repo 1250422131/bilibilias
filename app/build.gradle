@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.imcys.bilibilias"
         minSdk 21
-        targetSdk 32
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 
@@ -88,6 +88,9 @@ android {
 dependencies {
 
     //api "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
+
+    //xutils支持
+    implementation 'org.xutils:xutils:3.9.0'
 
     //DanmakuFlameMaster支持
     implementation 'com.github.ctiao:dfm:0.6.0'
