@@ -161,7 +161,6 @@ class HomeFragment : Fragment() {
         ) {
             fragmentHomeBinding.run {
                 //新增BannerLifecycleObserver
-                Log.e("调试价差", it.toString())
                 fragmentHomeBanner.setAdapter(
                     RCMDVideoAdapter(
                         context as Activity,

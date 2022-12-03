@@ -17,6 +17,18 @@
             name="UserCardBean"
             type="com.imcys.bilibilias.home.ui.model.UserCardBean" />
 
+        <variable
+            name="AsVideoViewModel"
+            type="com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel" />
+
+
+        <variable
+            name="VideoPlayBean"
+            type="com.imcys.bilibilias.home.ui.model.VideoPlayBean" />
+
+        <variable
+            name="VideoPageListData"
+            type="com.imcys.bilibilias.home.ui.model.VideoPageListData" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -122,6 +134,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
+                            android:onClick="@{() -> AsVideoViewModel.likeVideo(VideoBaseBean.data.bvid)}"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -146,7 +159,8 @@
                             android:id="@+id/as_video_throw_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:onClick="@{()->AsVideoViewModel.videoCoinAdd(VideoBaseBean.data.bvid)}">
 
 
                             <ImageView
@@ -172,7 +186,8 @@
                             android:id="@+id/as_video_collection_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:onClick="@{()->AsVideoViewModel.loadCollectionView(VideoBaseBean.data.aid)}">
 
 
                             <ImageView
@@ -274,6 +289,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp" />
 
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="13dp"
+
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="0dp">
+
+                    <Button
+                        android:id="@+id/as_video_dl_bt"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@color/color_primary"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:onClick="@{()->AsVideoViewModel.downloadVideo(VideoBaseBean,VideoPageListData,VideoPlayBean)}"
+                        android:text="缓 存 视 频"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 

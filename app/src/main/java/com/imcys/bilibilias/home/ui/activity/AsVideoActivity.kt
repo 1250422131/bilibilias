@@ -19,6 +19,7 @@ import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
@@ -26,6 +27,7 @@ import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import com.imcys.bilibilias.utils.HttpUtils
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -66,15 +68,9 @@ class AsVideoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
-        statusBarOnly(this)
-
         //加载视频首要信息
         initVideoData()
-
         initView()
-
-
     }
 
     private fun initView() {
@@ -84,10 +80,6 @@ class AsVideoActivity : BaseActivity() {
 
             asJzvdStd = asVideoAsJzvdStd
             asDanmaku = asVideoAsJzvdStd.asDanmaku
-
-            asVideoCollectionLy.setOnClickListener {
-                loadCollectionView()
-            }
 
             asVideoFaButton.setOnClickListener {
                 when (asJzvdStd.state) {
@@ -100,43 +92,12 @@ class AsVideoActivity : BaseActivity() {
                 }
             }
 
-            asVideoLikeLy.setOnClickListener {
-                likeVideo()
-            }
 
-            asVideoThrowLy.setOnClickListener {
-                videoCoinAdd()
-            }
+            //设置点击事件
+            asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
 
 
         }
-    }
-
-    private fun videoCoinAdd() {
-        HttpUtils
-            .addHeader("cookie", App.cookies)
-            .addParam("bvid", bvid)
-            .addParam("multiply", "2")
-            .addParam("csrf", App.biliJct)
-            .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                changeCoinAddButtonToTrue()
-            }
-    }
-
-    /**
-     * 点赞视频
-     */
-    private fun likeVideo() {
-        HttpUtils
-            .addHeader("cookie", App.cookies)
-            .addParam("csrf", App.biliJct)
-            .addParam("like", "1")
-            .addParam("bvid", bvid)
-            .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-                changeLikeButtonToTrue()
-            }
     }
 
 
@@ -148,76 +109,14 @@ class AsVideoActivity : BaseActivity() {
         HttpUtils.addHeader("cookie", App.cookies)
             .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                 VideoPlayBean::class.java) {
-
-
+                asLogD(this,
+                    "视频接口" + "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
+                binding.videoPlayBean = it
                 setAsJzvdConfig(it.data.durl[0].url, "")
 
 
             }
 
-
-    }
-
-
-    /**
-     * 加载用户收藏夹
-     */
-    @SuppressLint("NotifyDataSetChanged")
-    private fun loadCollectionView() {
-        binding.apply {
-            HttpUtils.addHeader("cookie", App.cookies)
-                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + App.mid,
-                    UserCreateCollectionBean::class.java) {
-                    if (it.code == 0) {
-                        DialogUtils.loadUserCreateCollectionDialog(this@AsVideoActivity,
-                            it, { _, _ ->
-                            }, { selects ->
-                                //选取完成了收藏文件夹
-                                setCollection(selects)
-                            }).show()
-                    }
-                }
-        }
-
-    }
-
-    /**
-     * 设置收藏夹的ID列表
-     * @param selects MutableList<Long>
-     */
-    private fun setCollection(selects: MutableList<Long>) {
-
-        var addMediaIds = ""
-        selects.forEachIndexed { index, l ->
-            if (index == selects.size) {
-                addMediaIds = "$addMediaIds$l"
-            }
-            addMediaIds = "$addMediaIds,$l"
-        }
-        addCollection(addMediaIds)
-    }
-
-
-    /**
-     * 新增收藏夹内容
-     * @param addMediaIds String
-     */
-    private fun addCollection(addMediaIds: String) {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .addParam("rid", avid.toString())
-            .addParam("add_media_ids", addMediaIds)
-            .addParam("csrf", App.biliJct)
-            .addParam("type", "2")
-            .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
-                if (it.code == 0) {
-                    changeCollectionButtonToTrue()
-                    Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
-
-                } else {
-                    Toast.makeText(this, it.code.toString(), Toast.LENGTH_SHORT).show()
-
-                }
-            }
 
     }
 
@@ -262,6 +161,7 @@ class AsVideoActivity : BaseActivity() {
 
                 if (it.data.size == 0) asVideoSubsectionRv.visibility = View.GONE
 
+                binding.videoPageListData = it
                 asVideoSubsectionRv.adapter =
                     SubsectionAdapter(it.data.toMutableList()) { data, position ->
 
@@ -483,22 +383,6 @@ class AsVideoActivity : BaseActivity() {
 
     private fun changeFaButtonToRedo() {
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
-    }
-
-    //三联按钮状态更新
-    private fun changeCollectionButtonToTrue() {
-        binding.asVideoCollectionBt.imageTintList =
-            getEmphasizeColor()
-    }
-
-    private fun changeLikeButtonToTrue() {
-        binding.asVideoLikeBt.imageTintList =
-            getEmphasizeColor()
-    }
-
-    private fun changeCoinAddButtonToTrue() {
-        binding.asVideoThrowBt.imageTintList =
-            getEmphasizeColor()
     }
 
 

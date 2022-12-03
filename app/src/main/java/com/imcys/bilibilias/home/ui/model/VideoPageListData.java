@@ -67,6 +67,7 @@ public class VideoPageListData implements Serializable {
          * dimension : {"width":1520,"height":720,"rotate":0}
          */
 
+        private int selected = 0;
         private int checkState = 0;
         private int cid;
         private int page;
@@ -76,6 +77,14 @@ public class VideoPageListData implements Serializable {
         private String vid;
         private String weblink;
         private DimensionBean dimension;
+
+        public int getSelected() {
+            return selected;
+        }
+
+        public void setSelected(int selected) {
+            this.selected = selected;
+        }
 
         public int getCheckState() {
             return checkState;

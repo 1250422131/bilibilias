@@ -69,7 +69,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:imageUrl="@{`https://pan.misakamoe.com/qrcode/?url=`+DataBean.url}"
-                android:onClick="@{(view) -> LoginQRModel.reloadLoginQR(view,DataBean)}"
+                android:onClick="@{() -> LoginQRModel.reloadLoginQR(DataBean)}"
                 android:scaleType="fitXY" />
 
             <TextView
