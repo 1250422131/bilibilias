@@ -12,7 +12,7 @@ import com.imcys.bilibilias.databinding.ItemDlVideoPageBinding
 import com.imcys.bilibilias.databinding.ItemVideoDefinitionBinding
 
 class VideoDefinitionAdapter(
-    val datas: List<String>,
+    private val datas: List<String>,
     val selectedResult: (position: Int, beforeChangePosition: Int) -> Unit,
 ) :
     RecyclerView.Adapter<VideoDefinitionAdapter.ViewHolder>() {
@@ -20,7 +20,7 @@ class VideoDefinitionAdapter(
     var selectItem = -1
     private lateinit var selectBinding: ItemVideoDefinitionBinding
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -42,14 +42,8 @@ class VideoDefinitionAdapter(
 
                 if (selectItem != -1) {
                     selectBinding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
-                    binding.itemCollectionButton.setTextColor(R.color.black)
-
                 }
-                Log.i("视频接口", "我被选中了")
-
                 binding.itemCollectionButton.setBackgroundResource(R.color.color_primary)
-                binding.itemCollectionButton.setTextColor(R.color.white)
-
                 //先向外传递
                 selectedResult(position, selectItem)
                 //再改变记录

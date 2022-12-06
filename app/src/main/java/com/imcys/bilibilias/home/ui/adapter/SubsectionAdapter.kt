@@ -15,9 +15,9 @@ class SubsectionAdapter(
 ) :
     RecyclerView.Adapter<SubsectionAdapter.ViewHolder>() {
 
-    var clickItem = 0
+    var clickItem = -1
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -30,17 +30,28 @@ class SubsectionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<ItemSubsectionBinding>(holder.itemView)
 
-        binding?.dataBean = datas[position]
-        if (position == 0) {
+        if (clickItem == -1) {
             datas[0].checkState = 1
         }
 
+        binding?.dataBean = datas[position]
+
+
         holder.itemView.setOnClickListener {
+
+            if (clickItem == -1) {
+                datas[0].checkState = 0
+                clickItem = 0
+            }
+
             datas[clickItem].checkState = 0
+            notifyItemChanged(clickItem)
 
             clickItem = position
 
             datas[position].checkState = 1
+
+            notifyItemChanged(position)
             onClickMethod(datas[position], position)
         }
 

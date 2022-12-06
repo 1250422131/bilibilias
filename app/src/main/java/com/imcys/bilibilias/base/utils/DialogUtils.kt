@@ -8,24 +8,27 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
+import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.databinding.*
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
-import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.utils.HttpUtils
 import okhttp3.internal.notifyAll
 import java.net.URLEncoder
 
@@ -231,11 +234,11 @@ class DialogUtils {
             context: Context,
             videoBaseBean: VideoBaseBean,
             videoPageListData: VideoPageListData,
-            videoPlayBean: VideoPlayBean,
+            dashVideoPlayBean: DashVideoPlayBean,
         ): BottomSheetDialog {
-            var videoPageMutableList = mutableListOf<Long>()
-            var selectDefinition = 64
-            videoPageMutableList.add(videoPageListData.data[0].cid.toLong())
+            var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
+            var selectDefinition = 80
+            videoPageMutableList.add(videoPageListData.data[0])
 
             val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
 
@@ -250,14 +253,25 @@ class DialogUtils {
             binding.apply {
                 dialogDlVideoDiversityTx.setOnClickListener {
                     loadVideoPageDialog(context, videoPageListData) { it1 ->
+                        videoPageMutableList.clear()
                         videoPageMutableList = it1
+
                     }.show()
                 }
 
                 dialogDlVideoDefinitionTx.setOnClickListener {
-                    loadVideoDefinition(context, videoPlayBean) {
+                    loadVideoDefinition(context, dashVideoPlayBean) {
                         selectDefinition = it
                     }.show()
+                }
+
+
+                dialogDlVideoButton.setOnClickListener {
+                    addDownloadTask(context,
+                        videoBaseBean,
+                        selectDefinition,
+                        80,
+                        videoPageMutableList)
                 }
 
 
@@ -266,6 +280,76 @@ class DialogUtils {
 
             return bottomSheetDialog
 
+        }
+
+        private fun addDownloadTask(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        ) {
+            videoPageMutableList.forEach {
+                addTask(context, it, qn, fnval, videoBaseBean, "video")
+                addTask(context, it, qn, fnval, videoBaseBean, "audio")
+            }
+        }
+
+        private fun addTask(
+            context: Context,
+            dataBean: VideoPageListData.DataBean,
+            qn: Int,
+            fnval: Int,
+            videoBaseBean: VideoBaseBean,
+            type: String,
+        ) {
+            Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+
+            HttpUtils.addHeader("cookie", App.cookies)
+                .addHeader("referer", "https://www.bilibili.com")
+                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
+                    DashVideoPlayBean::class.java) { it1 ->
+
+                    val videoPlayData = it1.data
+                    var urlIndex = 0
+                    //获取视频/音频的索引
+                    it1.data.dash.video.forEachIndexed { index, i ->
+                        if (i.id == qn) urlIndex = index
+                    }
+
+                    var fileType = ""
+                    val url = when (type) {
+                        "video" -> {
+                            fileType = ".mp4"
+                            videoPlayData.dash.video[urlIndex].baseUrl
+                        }
+                        "audio" -> {
+                            fileType = ".m4a"
+                            videoPlayData.dash.audio[0].baseUrl
+                        }
+                        else -> throw IllegalArgumentException("Invalid type: $type")
+                    }
+
+                    App.downloadQueue.addTask(
+                        url,
+                        "${
+                            context.getExternalFilesDir("download").toString()
+                        }/${videoBaseBean.data.bvid}/cs$fileType",
+                        DownloadTaskDataBean(
+                            dataBean.cid.toString(),
+                            dataBean.part,
+                            qn.toString(),
+                            dashVideoPlayBean = it1,
+                            videoPageDataData = dataBean
+                        )
+                    ) { it2 ->
+                        if (it2) {
+                            Toast.makeText(context, "${videoBaseBean.data.bvid}下载成功", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "${videoBaseBean.data.bvid}下载失败", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
         }
 
 
@@ -279,7 +363,7 @@ class DialogUtils {
         private fun loadVideoPageDialog(
             context: Context,
             videoPageListData: VideoPageListData,
-            finished: (selects: MutableList<Long>) -> Unit,
+            finished: (selects: MutableList<VideoPageListData.DataBean>) -> Unit,
         ): BottomSheetDialog {
 
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
@@ -297,28 +381,29 @@ class DialogUtils {
             binding.apply {
                 dialogCollectionTitle.text = "请选择视频子集"
 
-                val videoPageListDataList = mutableListOf<Long>()
+                val videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
                 dialogCollectionRv.adapter =
                     VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
 
-                        val total = videoPageListDataList.size
+                        val total = videoPageMutableList.size
                         //标签，判断这一次是否有重复
                         var tage = true
                         for (a in 0 until total) {
 
-                            if (videoPageListDataList[a] == videoPageListData.data[position].cid.toLong()) {
+                            if (videoPageMutableList[a].cid.toLong() == videoPageListData.data[position].cid.toLong()) {
                                 tage = false
                                 itemBinding.dataBean?.selected = 0
-                                videoPageListDataList.removeAt(a)
+                                videoPageMutableList.removeAt(a)
                                 break
                             }
+
                         }
 
 
                         if (tage) {
                             itemBinding.dataBean?.selected = 1
-                            videoPageListDataList.add(videoPageListData.data[position].cid.toLong())
+                            videoPageMutableList.add(videoPageListData.data[position])
                         }
 
                         dialogCollectionRv.adapter?.notifyItemChanged(position)
@@ -334,7 +419,7 @@ class DialogUtils {
                 dialogCollectionFinishBt.setOnClickListener {
 
                     bottomSheetDialog.cancel()
-                    finished(videoPageListDataList)
+                    finished(videoPageMutableList)
                 }
             }
 
@@ -352,11 +437,11 @@ class DialogUtils {
          */
         private fun loadVideoDefinition(
             context: Context,
-            videoPlayBean: VideoPlayBean,
+            dashVideoPlayBean: DashVideoPlayBean,
             finished: (selects: Int) -> Unit,
         ): BottomSheetDialog {
 
-            var selectDefinition = 64
+            var selectDefinition = 80
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
             val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
@@ -373,9 +458,9 @@ class DialogUtils {
                 dialogCollectionTitle.text = "请选择缓存清晰度"
 
                 dialogCollectionRv.adapter =
-                    VideoDefinitionAdapter(videoPlayBean.data.accept_description) { position, beforeChangePosition ->
+                    VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
 
-                        selectDefinition = videoPlayBean.data.accept_quality[position]
+                        selectDefinition = dashVideoPlayBean.data.accept_quality[position]
 
                     }
 

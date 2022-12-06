@@ -22,6 +22,7 @@ class GrayFrameLayout : FrameLayout {
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.GrayFrameLayout)
         isGrayType = typedArray.getBoolean(R.styleable.GrayFrameLayout_isGray, false)
+
         //判断是否灰度化
         if (isGrayType) {
             val cm = ColorMatrix()
