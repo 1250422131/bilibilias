@@ -14,7 +14,7 @@ class VideoPageAdapter(
     val selectedResult: (position: Int, itemBinding: ItemDlVideoPageBinding) -> Unit,
 ) : RecyclerView.Adapter<VideoPageAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDlVideoPageBinding =

@@ -305,7 +305,7 @@
                         android:layout_height="60dp"
                         android:background="@color/color_primary"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:onClick="@{()->AsVideoViewModel.downloadVideo(VideoBaseBean,VideoPageListData,VideoPlayBean)}"
+                        android:onClick="@{()->AsVideoViewModel.downloadVideo(VideoBaseBean,VideoPageListData)}"
                         android:text="缓 存 视 频"
                         android:textColor="@color/white"
                         android:textSize="15sp"

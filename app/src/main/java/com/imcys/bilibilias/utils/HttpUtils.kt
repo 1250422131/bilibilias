@@ -53,35 +53,53 @@ class HttpUtils {
         }
 
         /**
-         * get请求执行方法
+         * 使用 OkHttp 库发送 GET 请求的方法
          * @param url String 请求地址
-         * @param callBack Callback
+         * @param callBack Callback 请求完成后的回调函数
          */
         @JvmStatic
         fun get(url: String, callBack: Callback) {
 
+            // 创建请求对象
             val request: Request = Request.Builder().apply {
+                // 将已设置的头信息添加到请求中
                 headers.forEach {
                     addHeader(it.key, it.value)
                 }
+                // 设置请求地址
                 url(url)
+                // 设置为 GET 请求
                 get()
             }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
             okHttpClient.newCall(request).enqueue(callBack)
         }
 
 
+        /**
+         * 使用 OkHttp 库发送 GET 请求的方法，并将响应数据自动映射为指定类型的对象
+         * @param url String 请求地址
+         * @param clz Class<T> 响应数据需要映射成的类的类型
+         * @param method (data: T) -> Unit 请求完成后的回调函数，用于接收请求响应的结果
+         */
         @JvmStatic
         fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
+            // 创建请求对象
             val request: Request = Request.Builder().apply {
+                // 将已设置的头信息添加到请求中
                 headers.forEach {
                     addHeader(it.key, it.value)
                 }
+                // 设置请求地址
                 url(url)
+                // 设置为 GET 请求
                 get()
             }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
             okHttpClient.newCall(request).enqueue(HttpCallback {
+                // 使用 Gson 将响应数据映射为指定类型的对象
                 val data = Gson().fromJson(it, clz)
+                // 调用回调函数返回结果
                 data?.let {
                     App.handler.post {
                         method(it)
@@ -91,27 +109,36 @@ class HttpUtils {
         }
 
 
+        /**
+         * 使用 OkHttp 库发送 POST 请求的方法，并将响应数据自动映射为指定类型的对象
+         * @param url String 请求地址
+         * @param clz Class<T> 响应数据需要映射成的类的类型
+         * @param responseResult (data: T) -> Unit 请求完成后的回调函数，用于接收请求响应的结果
+         */
         @JvmStatic
         fun <T> post(url: String, clz: Class<T>, responseResult: (data: T) -> Unit) {
-            //构建FormBody
+            // 构建表单请求体
             val formBody: FormBody.Builder = FormBody.Builder()
-            //添加params参数
+            // 添加参数
             params.forEach {
                 formBody.add(it.key, it.value)
             }
-            //构建request并且添加headers
+            // 构建请求并添加头信息
             val request: Request = Request.Builder()
                 .apply {
-                    //设置请求头
+                    // 设置请求头
                     headers.forEach {
                         addHeader(it.key, it.value)
                     }
-                    //设置请求地址和参数
+                    // 设置请求地址和请求体
                     url(url)
                     post(formBody.build())
                 }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
             okHttpClient.newCall(request).enqueue(HttpCallback {
+                // 使用 Gson 将响应数据映射为指定类型的对象
                 val data = Gson().fromJson(it, clz)
+                // 调用回调函数返回结果
                 data.let {
                     App.handler.post {
                         responseResult(it)
@@ -120,7 +147,6 @@ class HttpUtils {
             })
 
         }
-
 
         /**
          * post请求类

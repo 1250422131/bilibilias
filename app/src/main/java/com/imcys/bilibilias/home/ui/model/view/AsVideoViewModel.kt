@@ -10,7 +10,9 @@ import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.utils.HttpUtils
 
@@ -23,9 +25,19 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     fun downloadVideo(
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
-        videoPlayBean: VideoPlayBean,
-    ) {
-        DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData,videoPlayBean).show()
+        ) {
+
+
+        val loadDialog = DialogUtils.loadDialog(context).apply { show() }
+        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+                DashVideoPlayBean::class.java) {
+                loadDialog.cancel()
+                DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData, it)
+                    .show()
+            }
+
+
     }
 
 

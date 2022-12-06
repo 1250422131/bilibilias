@@ -1,15 +1,12 @@
 package com.imcys.bilibilias.base.adapter;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Html;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.BindingConversion;
-import androidx.databinding.BindingMethod;
-import androidx.databinding.BindingMethods;
+
+import com.imcys.bilibilias.base.extend.StringKt;
 
 /**
  * @author:imcys
@@ -21,17 +18,21 @@ import androidx.databinding.BindingMethods;
 public class TextBindingAdapter {
 
 
-
     @BindingConversion
     public static int setTextColor(String textColor) {
         if (textColor.equals("")) textColor = "#000000";
         return Color.parseColor(textColor);
     }
 
+    @BindingConversion
+    public static String setText(int text) {
+        return String.valueOf(text);
+    }
+
 
     @BindingAdapter(value = {"html"})
     public static void setTextHtml(TextView textView, String html) {
-        textView.setText(Html.fromHtml(html));
+        textView.setText(StringKt.toHtml(html));
     }
 
 

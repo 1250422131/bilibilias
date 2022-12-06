@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -106,7 +107,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoPlay() {
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                 VideoPlayBean::class.java) {
                 asLogD(this,
@@ -129,7 +130,7 @@ class AsVideoActivity : BaseActivity() {
 
         val intent = intent
         var bvId = intent.getStringExtra("bvId")
-        //bvId = "BV1ss411m7t9"
+        bvId = "BV19U4y1R7zV"
 
         HttpUtils.addHeader("cookie", App.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
@@ -175,9 +176,6 @@ class AsVideoActivity : BaseActivity() {
                         asDanmaku.release()
                         //更新弹幕
                         loadDanmakuFlameMaster()
-                        asVideoSubsectionRv.adapter?.notifyItemChanged(position)
-
-
                     }
 
                 asVideoSubsectionRv.layoutManager =

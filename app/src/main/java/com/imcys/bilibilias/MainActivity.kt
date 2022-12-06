@@ -8,14 +8,11 @@ import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 class MainActivity : BaseActivity() {
 
-    private val TAG = HttpUtils::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         //沉浸式
         statusBarOnly(this)
-
-
     }
 
 

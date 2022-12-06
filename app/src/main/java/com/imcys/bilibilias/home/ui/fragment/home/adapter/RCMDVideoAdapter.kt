@@ -24,7 +24,7 @@ class RCMDVideoAdapter(
 ) :
     BannerAdapter<HomeRCMDVideoBean.DataBean.ItemBean, RCMDVideoAdapter.ViewHolder>(datas) {
 
-    class ViewHolder(rootView: View) : RecyclerView.ViewHolder(
+    inner class ViewHolder(rootView: View) : RecyclerView.ViewHolder(
         rootView
     )
 

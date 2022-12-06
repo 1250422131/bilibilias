@@ -1,13 +1,9 @@
 package com.imcys.bilibilias.base.app
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Handler
-import com.imcys.bilibilias.base.utils.VideoDownloadTask
-import okhttp3.Cookie
-import org.xutils.BuildConfig
+import com.imcys.bilibilias.base.utils.DownloadQueue
 import org.xutils.x
-import kotlin.properties.Delegates
 
 class App : Application() {
 
@@ -23,13 +19,12 @@ class App : Application() {
 
 
     companion object {
+        val downloadQueue: DownloadQueue = DownloadQueue()
         lateinit var cookies: String
         lateinit var sessdata: String
         lateinit var biliJct: String
         lateinit var handler: Handler
         var mid: Long = 0L
-
-        lateinit var videoDownloadTask: VideoDownloadTask
     }
 
 }
