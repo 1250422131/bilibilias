@@ -19,6 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+ #中文混淆
+-classobfuscationdictionary ./proguard-class.txt
+-packageobfuscationdictionary ./proguard-package.txt
+-obfuscationdictionary ./proguard-package.txt
+
 ############################################
 #
 # 复制的混淆

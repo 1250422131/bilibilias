@@ -1,14 +1,11 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Html
 import android.view.View
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
@@ -18,8 +15,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.user.LikeVideoBean
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
@@ -27,7 +22,10 @@ import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
-import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.home.ui.model.UserCardBean
+import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.home.ui.model.VideoPlayBean
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import com.imcys.bilibilias.utils.HttpUtils
 import master.flame.danmaku.controller.IDanmakuView
@@ -129,8 +127,7 @@ class AsVideoActivity : BaseActivity() {
 
 
         val intent = intent
-        var bvId = intent.getStringExtra("bvId")
-        bvId = "BV19U4y1R7zV"
+        val bvId = intent.getStringExtra("bvId")
 
         HttpUtils.addHeader("cookie", App.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {

@@ -71,13 +71,16 @@ android {
     dataBinding {
         enabled true
     }
+
     buildFeatures {
         viewBinding true
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'

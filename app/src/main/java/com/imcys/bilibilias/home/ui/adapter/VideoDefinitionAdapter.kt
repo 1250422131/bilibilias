@@ -44,6 +44,7 @@ class VideoDefinitionAdapter(
                     selectBinding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
                 }
                 binding.itemCollectionButton.setBackgroundResource(R.color.color_primary)
+
                 //先向外传递
                 selectedResult(position, selectItem)
                 //再改变记录

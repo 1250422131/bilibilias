@@ -4,6 +4,7 @@
     <color name="color_primary_text">#0b3DFB</color>
     <color name="color_primary_variant">#E2E6FA</color>
     <color name="color_primary_light_text">#05080c</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

@@ -12,6 +12,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
@@ -63,16 +64,12 @@ class RCMDVideoAdapter(
 
             itemBean = data
 
-            itemRcmdLikeLottie.progress = data.likeState
-
             itemHomeRcmdLike.setOnClickListener {
                 data.likeState = 1f
                 itemRcmdLikeLottie.playAnimation()
                 likeVideo(data.bvid, itemRcmdVideoBinding)
+                notifyItemChanged(position)
             }
-
-            executePendingBindings()
-
 
         }
     }
@@ -86,11 +83,10 @@ class RCMDVideoAdapter(
             .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
                 App.handler.post {
                     if (it.code == 0) {
-                        Toast.makeText(context, "点赞成功", Toast.LENGTH_SHORT).show()
+                        asToast(context, "点赞成功")
                     } else {
                         itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
-                        Toast.makeText(context, "点赞失败，${it.message}", Toast.LENGTH_SHORT)
-                            .show()
+                        asToast(context, "点赞失败，${it.message}")
                     }
                 }
             }

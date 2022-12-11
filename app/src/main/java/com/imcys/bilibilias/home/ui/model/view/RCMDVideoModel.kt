@@ -13,7 +13,7 @@ class RCMDVideoModel {
 
     lateinit var context: Context
 
-    fun likeVideo(view: View, bvid: String) {
+    fun likeVideo(bvid: String) {
         Log.e("Tag","点击了")
         HttpUtils.addHeader("cookie", App.cookies)
             .addParam("bvid", bvid)

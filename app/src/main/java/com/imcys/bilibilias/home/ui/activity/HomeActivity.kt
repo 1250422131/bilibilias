@@ -1,16 +1,16 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.os.Bundle
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.extend.toHtml
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
@@ -20,60 +20,28 @@ import com.imcys.bilibilias.home.ui.fragment.UserFragment
 
 
 class HomeActivity : BaseActivity() {
-    private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
     private lateinit var activityHomeBinding: ActivityHomeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
+
+
+        /*
+        备选方案
+        val paint = Paint()
+        val cm = ColorMatrix()
+        cm.setSaturation(0f)
+        mPaint.setColorFilter(ColorMatrixColorFilter(cm))
+        window.decorView.setLayerType(View.LAYER_TYPE_HARDWARE, paint)
+        */
+
+
         activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
+
         loadFragment()
 
 
-        getSavePermissions()
-
-    }
-
-    private fun getSavePermissions() {
-        // 首先检查是否已经授予了储存权限
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            // 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            ) {
-                // 在这里可以弹出一个对话框来说明为什么需要此权限
-            } else {
-                // 申请储存权限
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
-            }
-        } else {
-            // 如果已经授予了储存权限，则可以进行相应的操作
-        }
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> {
-                // 如果权限被授予，则可以进行相应的操作
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 已经授予了储存权限，可以进行相应的操作
-                    Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show()
-                } else {
-                    // 用户拒绝了权限请求，可以提醒用户为什么需要此权限
-                }
-                return
-            }
-        }
     }
 
 
