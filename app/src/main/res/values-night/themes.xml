@@ -35,7 +35,7 @@
     </style>
 
     <style name="bottomSheetStyleWrapper" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/dialog_bottom_sheet_night_bg</item>
+        <item name="android:background">@drawable/dialog_bottom_sheet_bg</item>
     </style>
 
     <style name="asVideoToolStyle" parent="ThemeOverlay.AppCompat.Light">

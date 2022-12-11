@@ -25,8 +25,6 @@ class HttpUtils {
 
         private val okHttpClient = OkHttpClient()
 
-
-        private val TAG = javaClass.simpleName
         private var params = mutableMapOf<String, String>()
         private var headers = mutableMapOf<String, String>()
 

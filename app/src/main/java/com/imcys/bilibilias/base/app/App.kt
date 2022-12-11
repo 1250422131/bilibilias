@@ -19,6 +19,7 @@ class App : Application() {
 
 
     companion object {
+
         val downloadQueue: DownloadQueue = DownloadQueue()
         lateinit var cookies: String
         lateinit var sessdata: String

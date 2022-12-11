@@ -9,6 +9,8 @@ import android.text.Html.FROM_HTML_MODE_COMPACT
  * @receiver String 待Html解析的字符串
  * @return String Html解析后的字符串
  */
+
+
 fun String.toHtml(): String {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Html.fromHtml(this, FROM_HTML_MODE_COMPACT).toString()
@@ -16,6 +18,8 @@ fun String.toHtml(): String {
         Html.fromHtml(this).toString()
     }
 }
+
+
 
 
 

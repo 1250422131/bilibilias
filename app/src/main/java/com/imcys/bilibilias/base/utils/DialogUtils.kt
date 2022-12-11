@@ -4,6 +4,7 @@ package com.imcys.bilibilias.base.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.icu.text.CaseMap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +50,6 @@ class DialogUtils {
          * @param context Context
          */
         @SuppressLint("InflateParams")
-        @JvmStatic
         fun loginDialog(context: Context): BottomSheetDialog {
             //先获取View实例
             val view: View = LayoutInflater.from(context)
@@ -71,7 +71,6 @@ class DialogUtils {
          * @param loginQrcodeBean LoginQrcodeBean
          * @return BottomSheetDialog
          */
-        @JvmStatic
         fun loginQRDialog(
             activity: Activity,
             loginQrcodeBean: LoginQrcodeBean,
@@ -102,13 +101,54 @@ class DialogUtils {
         }
 
 
+        // 创建一个底部弹出对话框
+        fun dialog(
+            context: Context,
+            title: String, // 对话框标题
+            message: String, // 对话框消息
+            positiveButtonText: String, // 确定按钮文本
+            negativeButtonText: String, // 取消按钮文本
+            positiveButtonClickListener: () -> Unit, // 确定按钮点击事件处理器
+            negativeButtonClickListener: () -> Unit, // 取消按钮点击事件处理器
+        ): BottomSheetDialog {
+            //先获取View实例
+            val binding = DialogBottomsheetBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //设置布局
+            bottomSheetDialog.setContentView(binding.root)
+            bottomSheetDialog.setCancelable(false)
+            binding.apply {
+                // 设置标题文本
+                dialogBottomSheetTitle.text = title
+                // 设置消息文本
+                dialogBottomSheetMessage.text = message
+                // 设置确定按钮文本
+                dialogBottomSheetPositiveButton.text = positiveButtonText
+                // 为确定按钮添加点击事件处理器
+                dialogBottomSheetPositiveButton.setOnClickListener {
+                    positiveButtonClickListener()
+                    bottomSheetDialog.cancel()
+                }
+                // 设置取消按钮文本
+                dialogBottomSheetNegativeButton.text = negativeButtonText
+                // 为取消按钮添加点击事件处理器
+                dialogBottomSheetNegativeButton.setOnClickListener {
+                    negativeButtonClickListener()
+                    bottomSheetDialog.cancel()
+                }
+
+            }
+            return bottomSheetDialog
+        }
+
+
         /**
          * 用户信息弹窗
          * @param activity Activity
          * @param userInfoBean UserInfoBean
          * @return BottomSheetDialog
          */
-        @JvmStatic
         fun userDataDialog(activity: Activity, userInfoBean: UserInfoBean): BottomSheetDialog {
             //先获取View实例
             val binding = DialogUserDataBottomsheetBinding.inflate(LayoutInflater.from(activity))
@@ -129,7 +169,6 @@ class DialogUtils {
 
 
         @SuppressLint("InflateParams")
-        @JvmStatic
         fun loadDialog(context: Context): BottomSheetDialog {
             //先获取View实例
             val view: View = LayoutInflater.from(context)
@@ -152,7 +191,6 @@ class DialogUtils {
          * @return BottomSheetDialog
          */
         @SuppressLint("NotifyDataSetChanged")
-        @JvmStatic
         fun loadUserCreateCollectionDialog(
             activity: Activity,
             userCreateCollectionBean: UserCreateCollectionBean,
@@ -255,14 +293,32 @@ class DialogUtils {
                     loadVideoPageDialog(context, videoPageListData) { it1 ->
                         videoPageMutableList.clear()
                         videoPageMutableList = it1
-
+                        var videoPageMsg = ""
+                        if (videoPageMutableList.size != 1) {
+                            videoPageMutableList.forEach {
+                                videoPageMsg = "$videoPageMsg${it.part} "
+                            }
+                            dialogDlVideoDiversityTx.text = videoPageMsg
+                        }
                     }.show()
+
+
                 }
 
                 dialogDlVideoDefinitionTx.setOnClickListener {
                     loadVideoDefinition(context, dashVideoPlayBean) {
+                        //这里返回的是清晰度的数值代码
                         selectDefinition = it
+
+                        //处理下
+                        dashVideoPlayBean.data.support_formats.forEach { it1 ->
+                            if (it1.quality == it) dialogDlVideoDefinitionTx.text =
+                                it1.new_description
+                        }
+
                     }.show()
+
+
                 }
 
 
@@ -317,13 +373,16 @@ class DialogUtils {
                         if (i.id == qn) urlIndex = index
                     }
 
-                    var fileType = ""
+                    val intFileType: Int
+                    val fileType: String
                     val url = when (type) {
                         "video" -> {
+                            intFileType = 0
                             fileType = ".mp4"
                             videoPlayData.dash.video[urlIndex].baseUrl
                         }
                         "audio" -> {
+                            intFileType = 1
                             fileType = ".m4a"
                             videoPlayData.dash.audio[0].baseUrl
                         }
@@ -335,6 +394,7 @@ class DialogUtils {
                         "${
                             context.getExternalFilesDir("download").toString()
                         }/${videoBaseBean.data.bvid}/cs$fileType",
+                        intFileType,
                         DownloadTaskDataBean(
                             dataBean.cid.toString(),
                             dataBean.part,
@@ -344,9 +404,13 @@ class DialogUtils {
                         )
                     ) { it2 ->
                         if (it2) {
-                            Toast.makeText(context, "${videoBaseBean.data.bvid}下载成功", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,
+                                "${videoBaseBean.data.bvid}下载成功",
+                                Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "${videoBaseBean.data.bvid}下载失败", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,
+                                "${videoBaseBean.data.bvid}下载失败",
+                                Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -415,7 +479,7 @@ class DialogUtils {
                 dialogCollectionRv.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-                //设置完成选中收藏夹
+                //设置完成选中的子集
                 dialogCollectionFinishBt.setOnClickListener {
 
                     bottomSheetDialog.cancel()
@@ -459,7 +523,6 @@ class DialogUtils {
 
                 dialogCollectionRv.adapter =
                     VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
-
                         selectDefinition = dashVideoPlayBean.data.accept_quality[position]
 
                     }
@@ -529,7 +592,7 @@ class DialogUtils {
          */
 
         @JvmStatic
-        private fun initDialogBehavior(
+        fun initDialogBehavior(
             barId: Int,
             context: Context,
             view: View,
@@ -538,7 +601,7 @@ class DialogUtils {
             val mDialogBehavior = BottomSheetBehavior.from(view.parent as View)
             mDialogBehavior.addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
-                @SuppressLint("UseCompatLoadingForDrawables")
+                @SuppressLint("UseCompatLoadingForDrawables", "SwitchIntDef")
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     //拖动监听
                     val linearLayout: View? = view.findViewById(barId)

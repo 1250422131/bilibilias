@@ -88,12 +88,11 @@
 
                             <com.airbnb.lottie.LottieAnimationView
                                 android:id="@+id/item_rcmd_like_lottie"
-                                app:lottie_progress="0"
-
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 app:lottie_autoPlay="false"
-                                app:lottie_loop="false" />
+                                app:lottie_loop="false"
+                                app:lottie_progress="@{ItemBean.likeState}" />
                         </LinearLayout>
 
 

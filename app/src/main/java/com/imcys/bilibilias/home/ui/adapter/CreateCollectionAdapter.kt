@@ -17,9 +17,6 @@ class CreateCollectionAdapter(
 ) :
     RecyclerView.Adapter<CreateCollectionAdapter.ViewHolder>() {
 
-    private val TAG = CreateCollectionAdapter::class.java.simpleName
-
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

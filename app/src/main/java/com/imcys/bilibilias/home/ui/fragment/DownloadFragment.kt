@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 class DownloadFragment : Fragment() {
 
@@ -25,7 +26,8 @@ class DownloadFragment : Fragment() {
 
         fragmentDownloadBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
-
+        //添加边距
+        fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
         return fragmentDownloadBinding.root
 
     }

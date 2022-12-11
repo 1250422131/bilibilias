@@ -15,7 +15,7 @@ object FileUtils {
      */
     fun deleteFile(sPath: String?): Boolean {
         var flag = false
-        val file = File(sPath)
+        val file = File(sPath!!)
         // 路径为文件且不为空则进行删除
         if (file.isFile && file.exists()) {
             file.delete()
@@ -26,9 +26,9 @@ object FileUtils {
 
 
     fun fileRead(path: String?): String? {
-        val file = File(path)
+        val file = File(path.toString())
         if (!file.exists()) {
-            file.parentFile.mkdirs()
+            file.parentFile?.mkdirs()
         }
         file.createNewFile()
 
@@ -40,9 +40,9 @@ object FileUtils {
 
 
     fun fileWrite(path: String?, Str: String?) {
-        val file = File(path)
+        val file = File(path.toString())
         if (!file.exists()) {
-            file.parentFile.mkdirs()
+            file.parentFile?.mkdirs()
         }
         try {
             file.createNewFile()

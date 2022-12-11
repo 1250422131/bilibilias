@@ -5,6 +5,10 @@
     </declare-styleable>
 
     <declare-styleable name="GrayFrameLayout">
-        <attr name="isGray" format="boolean"/>
+        <attr name="isGray" format="boolean" />
+        <attr name="graylessSubviews" format="reference" />
     </declare-styleable>
+
+
+
 </resources>

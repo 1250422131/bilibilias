@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.widget.Toast
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
@@ -25,7 +27,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     fun downloadVideo(
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
-        ) {
+    ) {
 
 
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
@@ -52,7 +54,11 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
             .addParam("like", "1")
             .addParam("bvid", bvid)
             .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                if (it.code == 0){
+                    asToast(context, "点赞成功")
+                }else{
+                    asToast(context, it.message)
+                }
                 changeLikeButtonToTrue()
             }
     }
@@ -69,7 +75,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
             .addParam("multiply", "2")
             .addParam("csrf", App.biliJct)
             .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                asToast(context, it.message)
                 changeCoinAddButtonToTrue()
             }
     }
@@ -128,11 +134,8 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
             .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
                 if (it.code == 0) {
                     changeCollectionButtonToTrue()
-                    Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show()
-
                 } else {
-                    Toast.makeText(context, it.code.toString(), Toast.LENGTH_SHORT).show()
-
+                    asToast(context, "收藏失败${it.code}")
                 }
             }
 
@@ -153,8 +156,9 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     }
 
 
+    @SuppressLint("ResourceAsColor")
     private fun getEmphasizeColor(): ColorStateList {
-        return ColorStateList.valueOf(Color.parseColor("#FB7299"))
+        return ColorStateList.valueOf(R.color.color_primary)
     }
 
 

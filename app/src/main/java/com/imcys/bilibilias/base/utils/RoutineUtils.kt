@@ -2,6 +2,7 @@ package com.imcys.bilibilias.base.utils
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 
 
 //顶层方法
@@ -24,3 +25,6 @@ fun asLogE(context: Context, content: String) = Log.e(context::class.java.simple
 fun asLogV(context: Context, content: String) = Log.v(context::class.java.simpleName, content)
 
 fun asLoW(context: Context, content: String) = Log.w(context::class.java.simpleName, content)
+
+fun asToast(context: Context, content: String) =
+    Toast.makeText(context, content, Toast.LENGTH_SHORT).show()

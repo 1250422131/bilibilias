@@ -4,17 +4,17 @@ package com.imcys.bilibilias.base.extend
 fun Int.digitalConversion(): String {
 
     fun lengthNum(num: Int): Int {
-        var num = num
+        var mNum = num
         var count = 0 //计数
-        while (num >= 1) {
-            num /= 10
+        while (mNum >= 1) {
+            mNum /= 10
             count++
         }
         return count
     }
 
     val originallyNum: String = this.toString() + ""
-    var result = ""
+    val result: String
     return if (this >= 10000) {
         when (lengthNum(this)) {
             5 -> {
