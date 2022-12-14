@@ -39,6 +39,7 @@ class HomeActivity : BaseActivity() {
 
         activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
+
         loadFragment()
 
 

@@ -32,7 +32,7 @@
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="缓存列表"
+                        android:text="Download"
                         android:textSize="30sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -43,6 +43,16 @@
                     android:layout_weight="5" />
 
             </LinearLayout>
+
+
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_download_RecyclerView"
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
 
         </LinearLayout>
 
