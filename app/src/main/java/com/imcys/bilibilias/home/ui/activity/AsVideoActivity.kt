@@ -50,15 +50,22 @@ import java.util.zip.Inflater
 class AsVideoActivity : BaseActivity() {
 
 
+    //视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
+
     private lateinit var binding: ActivityAsVideoBinding
 
+    //饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AsJzvdStd
+
+    //烈焰弹幕使 弹幕解析器
     private lateinit var asDanmaku: IDanmakuView
+
+    //烈焰弹幕使，方便全局调用
     private lateinit var danmakuParser: BaseDanmakuParser
     private val danmakuContext = DanmakuContext.create()
 
-    //视频临时数据
+    //视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
     var avid: Int = 0
     var cid: Int = 0
@@ -69,6 +76,7 @@ class AsVideoActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
         //加载视频首要信息
         initVideoData()
+        //加载控件
         initView()
     }
 
@@ -77,9 +85,11 @@ class AsVideoActivity : BaseActivity() {
 
         binding.apply {
 
+            //绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd
             asDanmaku = asVideoAsJzvdStd.asDanmaku
 
+            //设置播放按钮功能
             asVideoFaButton.setOnClickListener {
                 when (asJzvdStd.state) {
                     Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
@@ -92,7 +102,7 @@ class AsVideoActivity : BaseActivity() {
             }
 
 
-            //设置点击事件
+            //设置点击事件->这里将点击事件都放这个类了
             asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
 
 
@@ -105,15 +115,14 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoPlay() {
 
+        //这里默认用目前flv最高免费画质1080P，注意：flv已经被B站弃用，目前只能使用360P和1080P，后面得考虑想办法做音频分离。
         HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                 VideoPlayBean::class.java) {
-                asLogD(this,
-                    "视频接口" + "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
+                //设置布局视频播放数据
                 binding.videoPlayBean = it
+                //真正调用饺子播放器设置视频数据
                 setAsJzvdConfig(it.data.durl[0].url, "")
-
-
             }
 
 
@@ -125,15 +134,16 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun initVideoData() {
 
-
+        //这里必须通过外界获取数据
         val intent = intent
         val bvId = intent.getStringExtra("bvId")
 
+        //这里才是真正的视频基本数据获取
         HttpUtils.addHeader("cookie", App.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
-
-
+                //设置数据
                 videoDataBean = it
+                //这里需要显示视频数据
                 showVideoData()
                 //TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
                 setBaseData(it)

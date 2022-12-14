@@ -36,6 +36,10 @@ class HomeFragment : Fragment() {
     private lateinit var loginQRDialog: BottomSheetDialog
     private val bottomSheetDialog = context?.let { DialogUtils.loadDialog(it) }
 
+
+    private val sharedPreferences =
+        requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -73,12 +77,16 @@ class HomeFragment : Fragment() {
         //加载推荐视频
         loadRCMDVideoData()
 
+        //检测用户是否登陆
         detectUserLogin()
 
 
     }
 
 
+    /**
+     * 获取下之前登陆的用户信息
+     */
     private fun initUserToken() {
         val sharedPreferences: SharedPreferences =
             requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
@@ -89,6 +97,9 @@ class HomeFragment : Fragment() {
         App.mid = sharedPreferences.getLong("mid", 0)
     }
 
+    /**
+     * 加载登陆对话框
+     */
     private fun loadLogin() {
         HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
@@ -119,13 +130,16 @@ class HomeFragment : Fragment() {
             }
     }
 
+    /**
+     * 检查用户是否登陆
+     */
     private fun detectUserLogin() {
 
         HttpUtils.addHeader("cookie", App.cookies)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
-                Log.d("cookie调试", it.toString())
+                //判断是否登陆，没有就加载登陆
                 if (it.code != 0) loadLogin()
             }
     }
@@ -140,14 +154,18 @@ class HomeFragment : Fragment() {
                 BilibiliApi.getUserInfoPath + "?mid=" + myUserData.data.mid,
                 UserInfoBean::class.java
             ) {
-                val sharedPreferences: SharedPreferences =
-                    requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
+                //这里需要储存下数据
                 val editor = sharedPreferences.edit()
                 editor.putLong("mid", it.data.mid)
+                //提交储存
                 editor.apply()
+
+                //这里给全局设置必要信息
                 App.mid = it.data.mid
+                //关闭登陆登陆弹窗
                 loginQRDialog.cancel()
-                DialogUtils.userDataDialog(context as Activity, it).show()
+                //加载用户弹窗
+                DialogUtils.userDataDialog(requireActivity(), it).show()
             }
 
     }
@@ -167,8 +185,8 @@ class HomeFragment : Fragment() {
                         it.data.item
                     )
                 )
-                    .setBannerGalleryEffect(5, 5, 40)
-                    .addPageTransformer(ZoomOutPageTransformer())
+                    .setBannerGalleryEffect(5, 5, 40)//设置下banner间距
+                    .addPageTransformer(ZoomOutPageTransformer())//设置banner样式
             }
         }
     }

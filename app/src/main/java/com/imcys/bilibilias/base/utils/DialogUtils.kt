@@ -32,6 +32,7 @@ import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.utils.HttpUtils
 import okhttp3.internal.notifyAll
 import java.net.URLEncoder
+import kotlin.math.asin
 
 
 /**
@@ -389,11 +390,16 @@ class DialogUtils {
                         else -> throw IllegalArgumentException("Invalid type: $type")
                     }
 
+
+                    asLogI("下载检查","${
+                        context.getExternalFilesDir("download").toString()
+                    }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType")
+
                     App.downloadQueue.addTask(
                         url,
                         "${
                             context.getExternalFilesDir("download").toString()
-                        }/${videoBaseBean.data.bvid}/cs$fileType",
+                        }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
                         intFileType,
                         DownloadTaskDataBean(
                             dataBean.cid.toString(),
