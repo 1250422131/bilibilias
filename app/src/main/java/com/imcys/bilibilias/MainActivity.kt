@@ -13,6 +13,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         //沉浸式
         statusBarOnly(this)
+
     }
 
 

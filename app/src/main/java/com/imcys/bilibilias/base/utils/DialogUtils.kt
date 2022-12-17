@@ -25,6 +25,7 @@ import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.home.ui.adapter.BangumiPageAdapter
 import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
@@ -268,6 +269,14 @@ class DialogUtils {
         }
 
 
+        /**
+         * 缓存视频弹窗
+         * @param context Context
+         * @param videoBaseBean VideoBaseBean
+         * @param videoPageListData VideoPageListData
+         * @param dashVideoPlayBean DashVideoPlayBean
+         * @return BottomSheetDialog
+         */
         @JvmStatic
         fun downloadVideoDialog(
             context: Context,
@@ -339,6 +348,105 @@ class DialogUtils {
 
         }
 
+
+        /**
+         * 缓存番剧弹窗
+         * @param context Context
+         * @param videoBaseBean VideoBaseBean
+         * @param bangumiSeasonBean BangumiSeasonBean
+         * @param dashVideoPlayBean DashVideoPlayBean
+         * @return BottomSheetDialog
+         */
+        @JvmStatic
+        fun downloadVideoDialog(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            bangumiSeasonBean: BangumiSeasonBean,
+            dashVideoPlayBean: DashVideoPlayBean,
+        ): BottomSheetDialog {
+            var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+            var selectDefinition = 80
+            videoPageMutableList.add(bangumiSeasonBean.result.episodes[0])
+
+            val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+
+            initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
+
+
+            //自定义方案
+            //mDialogBehavior.peekHeight = 600
+            binding.apply {
+                dialogDlVideoDiversityTx.setOnClickListener {
+                    loadVideoPageDialog(context, bangumiSeasonBean) { it1 ->
+                        videoPageMutableList.clear()
+                        videoPageMutableList = it1
+                        var videoPageMsg = ""
+
+                        if (videoPageMutableList.size != 1) {
+                            videoPageMutableList.forEach {
+                                videoPageMsg = "$videoPageMsg${it.long_title} "
+                            }
+                            dialogDlVideoDiversityTx.text = videoPageMsg
+                        }
+                    }.show()
+
+
+                }
+
+                dialogDlVideoDefinitionTx.setOnClickListener {
+                    loadVideoDefinition(context, dashVideoPlayBean) {
+                        //这里返回的是清晰度的数值代码
+                        selectDefinition = it
+
+                        //处理下
+                        dashVideoPlayBean.data.support_formats.forEach { it1 ->
+                            if (it1.quality == it) dialogDlVideoDefinitionTx.text =
+                                it1.new_description
+                        }
+
+                    }.show()
+
+
+                }
+
+
+                dialogDlVideoButton.setOnClickListener {
+                    addBangumiDownloadTask(context,
+                        videoBaseBean,
+                        selectDefinition,
+                        80,
+                        videoPageMutableList)
+                }
+
+
+            }
+
+
+            return bottomSheetDialog
+
+        }
+
+
+
+        private fun addBangumiDownloadTask(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        ) {
+            bangumiPageMutableList.forEach {
+                addTask(context, it, qn, fnval, videoBaseBean, "video")
+                addTask(context, it, qn, fnval, videoBaseBean, "audio")
+            }
+        }
+
+
         private fun addDownloadTask(
             context: Context,
             videoBaseBean: VideoBaseBean,
@@ -352,6 +460,92 @@ class DialogUtils {
             }
         }
 
+
+        /**
+         * 添加番剧下载任务
+         * @param context Context
+         * @param dataBean EpisodesBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoBaseBean VideoBaseBean
+         * @param type String
+         */
+        private fun addTask(
+            context: Context,
+            dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+            qn: Int,
+            fnval: Int,
+            videoBaseBean: VideoBaseBean,
+            type: String,
+        ) {
+            Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+
+            HttpUtils.addHeader("cookie", App.cookies)
+                .addHeader("referer", "https://www.bilibili.com")
+                .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
+                    DashBangumiPlayBean::class.java) { it1 ->
+
+                    val bangumiPlayData = it1.result
+                    var urlIndex = 0
+                    //获取视频/音频的索引
+                    it1.result.dash.video.forEachIndexed { index, i ->
+                        if (i.id == qn) urlIndex = index
+                    }
+
+                    val intFileType: Int
+                    val fileType: String
+                    val url = when (type) {
+                        "video" -> {
+                            intFileType = 0
+                            fileType = ".mp4"
+                            bangumiPlayData.dash.video[urlIndex].baseUrl
+                        }
+                        "audio" -> {
+                            intFileType = 1
+                            fileType = ".m4a"
+                            bangumiPlayData.dash.audio[0].baseUrl
+                        }
+                        else -> throw IllegalArgumentException("Invalid type: $type")
+                    }
+
+
+                    App.downloadQueue.addTask(
+                        url,
+                        "${
+                            context.getExternalFilesDir("download").toString()
+                        }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
+                        intFileType,
+                        DownloadTaskDataBean(
+                            dataBean.cid.toString(),
+                            dataBean.long_title,
+                            qn.toString(),
+                            dashBangumiPlayBean = it1,
+                            bangumiSeasonBean = dataBean,
+                        )
+                    ) { it2 ->
+                        if (it2) {
+                            Toast.makeText(context,
+                                "${videoBaseBean.data.bvid}下载成功",
+                                Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context,
+                                "${videoBaseBean.data.bvid}下载失败",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+        }
+
+
+        /**
+         * 添加视频下载任务
+         * @param context Context
+         * @param dataBean DataBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoBaseBean VideoBaseBean
+         * @param type String
+         */
         private fun addTask(
             context: Context,
             dataBean: VideoPageListData.DataBean,
@@ -391,7 +585,7 @@ class DialogUtils {
                     }
 
 
-                    asLogI("下载检查","${
+                    asLogI("下载检查", "${
                         context.getExternalFilesDir("download").toString()
                     }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType")
 
@@ -496,6 +690,79 @@ class DialogUtils {
             return bottomSheetDialog
 
 
+        }
+
+
+        /**
+         * 加载番剧子集
+         * @param context Context
+         * @param bangumiSeasonBean BangumiSeasonBean
+         * @param finished Function1<[@kotlin.ParameterName] MutableList<EpisodesBean>, Unit>
+         * @return BottomSheetDialog
+         */
+        private fun loadVideoPageDialog(
+            context: Context,
+            bangumiSeasonBean: BangumiSeasonBean,
+            finished: (selects: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
+        ): BottomSheetDialog {
+            val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //创建设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+            //val mDialogBehavior =
+            initDialogBehaviorBinding(binding.dialogCollectionBar,
+                context,
+                binding.root.parent)
+
+
+            binding.apply {
+                dialogCollectionTitle.text = "请选择视频子集"
+
+                val videoPageMutableList =
+                    mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+                dialogCollectionRv.adapter =
+                    BangumiPageAdapter(bangumiSeasonBean.result.episodes) { position, itemBinding ->
+                        //这个接口是为了处理弹窗背景问题
+                        val total = videoPageMutableList.size
+                        //标签，判断这一次是否有重复
+                        var tage = true
+                        for (a in 0 until total) {
+
+                            if (videoPageMutableList[a].cid.toLong() == bangumiSeasonBean.result.episodes[position].cid.toLong()) {
+                                tage = false
+                                itemBinding.episodesBean?.selected = 0
+                                videoPageMutableList.removeAt(a)
+                                break
+                            }
+
+                        }
+
+
+                        if (tage) {
+                            itemBinding.episodesBean?.selected = 1
+                            videoPageMutableList.add(bangumiSeasonBean.result.episodes[position])
+                        }
+
+                        dialogCollectionRv.adapter?.notifyItemChanged(position)
+
+                    }
+
+
+                //设置布局加载器
+                dialogCollectionRv.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+                //设置完成选中的子集
+                dialogCollectionFinishBt.setOnClickListener {
+
+                    bottomSheetDialog.cancel()
+                    finished(videoPageMutableList)
+                }
+            }
+
+            return bottomSheetDialog
         }
 
 

@@ -24,18 +24,42 @@ import com.imcys.bilibilias.utils.HttpUtils
 class AsVideoViewModel(val context: Context, private val asVideoBinding: ActivityAsVideoBinding) {
 
 
+    /**
+     * 缓存视频
+     * @param videoBaseBean VideoBaseBean
+     * @param videoPageListData VideoPageListData
+     */
     fun downloadVideo(
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
     ) {
-
-
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
         HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
                 DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData, it)
+                    .show()
+            }
+
+
+    }
+
+    /**
+     * 缓存番剧
+     * @param videoBaseBean VideoBaseBean
+     * @param bangumiSeasonBean BangumiSeasonBean
+     */
+    fun downloadVideo(
+        videoBaseBean: VideoBaseBean,
+        bangumiSeasonBean: BangumiSeasonBean,
+    ) {
+        val loadDialog = DialogUtils.loadDialog(context).apply { show() }
+        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+                DashVideoPlayBean::class.java) {
+                loadDialog.cancel()
+                DialogUtils.downloadVideoDialog(context, videoBaseBean, bangumiSeasonBean, it)
                     .show()
             }
 
@@ -54,9 +78,9 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
             .addParam("like", "1")
             .addParam("bvid", bvid)
             .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                if (it.code == 0){
+                if (it.code == 0) {
                     asToast(context, "点赞成功")
-                }else{
+                } else {
                     asToast(context, it.message)
                 }
                 changeLikeButtonToTrue()

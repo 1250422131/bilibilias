@@ -31,6 +31,19 @@ class DownloadTaskAdapter :
             ): Boolean {
                 return oldItem.progress == newItem.progress
             }
+
+
+            override fun getChangePayload(
+                oldItem: DownloadQueue.Task,
+                newItem: DownloadQueue.Task,
+            ): Any? {
+
+                if (oldItem.progress != newItem.progress) {
+                    newItem.payloadsType = 1
+                    oldItem.payloadsType = 1
+                }
+                return super.getChangePayload(oldItem, newItem)
+            }
         }
     ) {
 
@@ -45,10 +58,14 @@ class DownloadTaskAdapter :
             parent, false
         )
 
+
+
         return ViewHolder(binding.root)
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)
         binding?.apply {
             taskBean = getItem(position)

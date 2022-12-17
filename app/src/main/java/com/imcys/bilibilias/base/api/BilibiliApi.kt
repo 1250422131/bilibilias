@@ -48,6 +48,7 @@ class BilibiliApi() {
         val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
 
         val videoPlayPath = serviceApi + "x/player/playurl"
+        val bangumiPlayPath = serviceApi + "pgc/player/web/playurl"
 
         //弹幕下载
         val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
@@ -60,6 +61,9 @@ class BilibiliApi() {
 
         //投币地址
         val videoCoinAddPath = serviceApi + "x/web-interface/coin/add"
+
+        //获取剧集明细 get season_id / ep_id
+        val bangumiVideoDataPath = serviceApi + "pgc/view/web/season"
 
     }
 
