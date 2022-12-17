@@ -3,11 +3,13 @@ package com.imcys.bilibilias.home.ui.model;
 import java.io.Serializable;
 import java.util.List;
 
+
 /**
  * @author:imcys
  * @create: 2022-12-06 16:59
  * @Description: dash类型视频返回数据
  */
+
 public class DashVideoPlayBean implements Serializable {
 
     /**

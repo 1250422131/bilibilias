@@ -15,17 +15,15 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asLogE
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
+import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
-import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import com.imcys.bilibilias.utils.HttpUtils
 import master.flame.danmaku.controller.IDanmakuView
@@ -69,6 +67,7 @@ class AsVideoActivity : BaseActivity() {
     var bvid: String = ""
     var avid: Int = 0
     var cid: Int = 0
+    var epid: Long = 0;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,17 +112,35 @@ class AsVideoActivity : BaseActivity() {
     /**
      * 加载视频播放信息
      */
-    private fun loadVideoPlay() {
+    private fun loadVideoPlay(type: String) {
 
         //这里默认用目前flv最高免费画质1080P，注意：flv已经被B站弃用，目前只能使用360P和1080P，后面得考虑想办法做音频分离。
-        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
-                VideoPlayBean::class.java) {
-                //设置布局视频播放数据
-                binding.videoPlayBean = it
-                //真正调用饺子播放器设置视频数据
-                setAsJzvdConfig(it.data.durl[0].url, "")
+
+        when (type) {
+            "video" -> {
+                HttpUtils.addHeader("cookie", App.cookies)
+                    .addHeader("referer", "https://www.bilibili.com")
+                    .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
+                        VideoPlayBean::class.java) {
+                        //设置布局视频播放数据
+                        binding.videoPlayBean = it
+                        //真正调用饺子播放器设置视频数据
+                        setAsJzvdConfig(it.data.durl[0].url, "")
+                    }
             }
+            "bangumi" -> {
+                HttpUtils.addHeader("cookie", App.cookies)
+                    .addHeader("referer", "https://www.bilibili.com")
+                    .get("${BilibiliApi.bangumiPlayPath}?ep_id=$epid&qn=64&fnval=0&fourk=1",
+                        BangumiPlayBean::class.java) {
+                        //设置布局视频播放数据
+                        binding.bangumiPlayBean = it
+                        //真正调用饺子播放器设置视频数据
+                        setAsJzvdConfig(it.result.durl[0].url, "")
+                    }
+            }
+            else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
+        }
 
 
     }
@@ -136,7 +153,8 @@ class AsVideoActivity : BaseActivity() {
 
         //这里必须通过外界获取数据
         val intent = intent
-        val bvId = intent.getStringExtra("bvId")
+        var bvId = intent.getStringExtra("bvId")
+        bvId = "BV1Qv4y1R7Tv"
 
         //这里才是真正的视频基本数据获取
         HttpUtils.addHeader("cookie", App.cookies)
@@ -152,10 +170,60 @@ class AsVideoActivity : BaseActivity() {
                 //加载弹幕信息
                 loadDanmakuFlameMaster()
                 //加载视频播放信息
-                loadVideoPlay()
-                //加载视频列表信息
-                loadVideoList()
+                loadVideoPlay("video")
+                //加载视频列表信息，这里判断下是不是番剧
+                it.data.redirect_url?.apply {
+
+                    //通过正则表达式检查该视频是不是番剧
+                    val epRegex = Regex("""(?<=ep)([0-9]*)""")
+                    if (epRegex.containsMatchIn(this)) {
+                        //加载番剧视频列表
+                        epid = epRegex.find(this)?.value?.toLong()!!
+                        loadBangumiVideoList()
+                    } else {
+                        //加载正常视频列表
+                        loadVideoList()
+                    }
+                }
+
+
             }
+    }
+
+    /**
+     * 加载番剧视频列表信息
+     *
+     */
+    private fun loadBangumiVideoList() {
+        HttpUtils.get(BilibiliApi.bangumiVideoDataPath + "?ep_id=" + epid,
+            BangumiSeasonBean::class.java) {
+            binding.apply {
+
+                if (it.result.episodes.size == 0) asVideoSubsectionRv.visibility = View.GONE
+
+                binding.bangumiSeasonBean = it
+                asVideoSubsectionRv.adapter =
+                    BangumiSubsectionAdapter(it.result.episodes.toMutableList(),
+                        cid) { data, position ->
+                        //更新CID刷新播放页面
+                        cid = data.cid
+                        epid = data.id.toLong()
+                        //暂停播放
+                        changeFaButtonToPlay()
+                        //清空弹幕
+                        asDanmaku.release()
+                        //刷新播放器
+                        loadVideoPlay("bangumi")
+                        //更新弹幕
+                        loadDanmakuFlameMaster()
+                    }
+
+                asVideoSubsectionRv.layoutManager =
+                    LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
+
+            }
+        }
+
     }
 
     /**
@@ -167,18 +235,17 @@ class AsVideoActivity : BaseActivity() {
             VideoPageListData::class.java) {
             binding.apply {
 
-                if (it.data.size == 0) asVideoSubsectionRv.visibility = View.GONE
+                if (it.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
 
                 binding.videoPageListData = it
                 asVideoSubsectionRv.adapter =
                     SubsectionAdapter(it.data.toMutableList()) { data, position ->
-
                         //更新CID刷新播放页面
                         cid = data.cid
                         //暂停播放
                         changeFaButtonToPlay()
                         //刷新播放器
-                        loadVideoPlay()
+                        loadVideoPlay("video")
                         //清空弹幕
                         asDanmaku.release()
                         //更新弹幕

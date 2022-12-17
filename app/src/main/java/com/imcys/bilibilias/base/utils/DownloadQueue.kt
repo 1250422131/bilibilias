@@ -1,9 +1,9 @@
 package com.imcys.bilibilias.base.utils
 
 import android.annotation.SuppressLint
-import androidx.compose.runtime.toMutableStateList
-import androidx.recyclerview.widget.DiffUtil
+
 import androidx.recyclerview.widget.RecyclerView
+
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
@@ -24,28 +24,10 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 
-operator fun <E> MutableList<E>.plus(mutableList: MutableList<E>): MutableList<E> {
-
-    val newMutableList = mutableListOf<E>()
-    newMutableList.addAll(this)
-    newMutableList.addAll(mutableList)
-
-    return newMutableList
-}
-
-operator fun <E> ArrayList<E>.plus(arrayList: ArrayList<E>): ArrayList<E> {
-
-    val newArrayList = arrayListOf<E>()
-    newArrayList.addAll(this)
-    newArrayList.addAll(arrayList)
-    return newArrayList
-
-}
-
 // 定义一个下载队列类
 class DownloadQueue {
 
-    private var cumulativeTaskNumber = 0
+    private var cumulativeTaskNumber = 0L
 
 
     var recyclerView: RecyclerView? = null
@@ -61,8 +43,7 @@ class DownloadQueue {
 
     // 下载任务类
     data class Task(
-        //定义任务ID
-        var id: Int,
+        var id: Long = 0,
         // 下载地址
         val url: String,
         // 下载文件保存路径
@@ -73,6 +54,7 @@ class DownloadQueue {
         val downloadTaskDataBean: DownloadTaskDataBean,
         // 定义下载完成回调
         val onComplete: (Boolean) -> Unit,
+        var payloadsType: Int = 0,
         // 下载状态
         var state: Int = STATE_DOWNLOAD_WAIT,
         // 定义当前任务的下载进度
@@ -114,7 +96,6 @@ class DownloadQueue {
 
         while (currentTasks.size < 3 && queue.isNotEmpty()) {
             //删除并且返回当前的task
-
             val task = queue.removeAt(0)
             //更新任务状态
             task.state = STATE_DOWNLOADING

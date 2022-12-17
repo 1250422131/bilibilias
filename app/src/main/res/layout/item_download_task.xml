@@ -68,6 +68,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -96,7 +97,7 @@
                                 android:maxLines="1"
                                 android:text="@{`清晰度：`+TaskBean.downloadTaskDataBean.qn}"
                                 android:textColor="@color/color_text_hint"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -105,7 +106,7 @@
                                 android:maxLines="1"
                                 android:text="@{`子集：`+TaskBean.downloadTaskDataBean.cid}"
                                 android:textColor="@color/color_text_hint"
-                                android:textSize="11sp" />
+                                android:textSize="12sp" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -124,6 +125,7 @@
 
 
             <ProgressBar
+                android:id="@+id/item_download_progressBar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"

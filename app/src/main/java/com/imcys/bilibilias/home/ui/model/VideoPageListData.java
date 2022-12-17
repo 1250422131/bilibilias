@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.model;
 import java.io.Serializable;
 import java.util.List;
 
+
 /**
  * @author:imcys
  * @create: 2022-11-24 15:53
@@ -55,6 +56,7 @@ public class VideoPageListData implements Serializable {
         this.data = data;
     }
 
+
     public static class DataBean implements Serializable {
         /**
          * cid : 148810443
@@ -76,7 +78,26 @@ public class VideoPageListData implements Serializable {
         private int duration;
         private String vid;
         private String weblink;
+
         private DimensionBean dimension;
+
+
+
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "selected=" + selected +
+                    ", checkState=" + checkState +
+                    ", cid=" + cid +
+                    ", page=" + page +
+                    ", from='" + from + '\'' +
+                    ", part='" + part + '\'' +
+                    ", duration=" + duration +
+                    ", vid='" + vid + '\'' +
+                    ", weblink='" + weblink + '\'' +
+                    ", dimension=" + dimension +
+                    '}';
+        }
 
         public int getSelected() {
             return selected;
@@ -168,6 +189,10 @@ public class VideoPageListData implements Serializable {
             private int width;
             private int height;
             private int rotate;
+
+            public DimensionBean() {
+
+            }
 
             public int getWidth() {
                 return width;

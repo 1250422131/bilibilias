@@ -38,6 +38,7 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_splash.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/as_video_me.xml" value="0.8664122137404581" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/content_scrolling.xml" value="0.4192708333333333" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_bangumi_collection.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_bottomsheet.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_collection.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_download_video.xml" value="0.165" />
@@ -50,7 +51,9 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_home.xml" value="0.25477707006369427" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_tool.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_user.xml" value="0.21614583333333334" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_bangumi_subsection.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_collection.xml" value="0.21510416666666668" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_dl_bangumi_page.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_dl_video_page.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_download_task.xml" value="0.5128983308042488" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_rcmd_video.xml" value="0.25" />

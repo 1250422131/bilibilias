@@ -123,6 +123,15 @@ public class VideoBaseBean implements Serializable {
         private String like_icon;
         private List<DescV2Bean> desc_v2;
         private List<PagesBean> pages;
+        private String redirect_url;
+
+        public String getRedirect_url() {
+            return redirect_url;
+        }
+
+        public void setRedirect_url(String redirect_url) {
+            this.redirect_url = redirect_url;
+        }
 
         public String getBvid() {
             return bvid;

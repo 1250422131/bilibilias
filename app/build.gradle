@@ -92,6 +92,10 @@ dependencies {
 
     //api "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
+    //room
+    //implementation "androidx.room:room-runtime:2.4.3"
+    //annotationProcessor "androidx.room:room-compiler:2.4.3"
+
     //xutils支持
     implementation 'org.xutils:xutils:3.9.0'
 

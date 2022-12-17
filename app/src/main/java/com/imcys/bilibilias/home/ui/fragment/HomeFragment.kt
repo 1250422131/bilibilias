@@ -37,9 +37,6 @@ class HomeFragment : Fragment() {
     private val bottomSheetDialog = context?.let { DialogUtils.loadDialog(it) }
 
 
-    private val sharedPreferences =
-        requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -155,6 +152,8 @@ class HomeFragment : Fragment() {
                 UserInfoBean::class.java
             ) {
                 //这里需要储存下数据
+                val sharedPreferences =
+                    requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putLong("mid", it.data.mid)
                 //提交储存
