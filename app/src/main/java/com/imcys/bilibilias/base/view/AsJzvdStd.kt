@@ -125,7 +125,6 @@ class AsJzvdStd : JzvdStd {
 
 
     override fun onStatePreparingPlaying() {
-        asLogD(context, "onStatePreparingPlaying")
         super.onStatePreparingPlaying()
 
     }
@@ -138,7 +137,6 @@ class AsJzvdStd : JzvdStd {
 
 
     override fun onStatePause() {
-
         //记录暂停时间
         stopTime = currentPositionWhenPlaying
         jzbdStdInfo.stopPlay(state)

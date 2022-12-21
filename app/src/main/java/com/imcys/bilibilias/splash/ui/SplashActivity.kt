@@ -50,6 +50,21 @@ class SplashActivity : BaseActivity() {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)
             ) {
                 // 在这里可以弹出一个对话框来说明为什么需要此权限
+                DialogUtils.dialog(
+                    this,
+                    "授权提示",
+                    "使用BILIBILIAS就需要要同意此权限，因为缓存视频等需要向系统内储存权限。",
+                    "同意授权",
+                    "拒绝授权",
+                    positiveButtonClickListener = {
+                        ActivityCompat.requestPermissions(this,
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
+                    },
+                    negativeButtonClickListener = {
+                        finishAll()
+                    }
+                ).show()
             } else {
                 // 申请储存权限
                 DialogUtils.dialog(
@@ -69,35 +84,37 @@ class SplashActivity : BaseActivity() {
                         // 处理取消按钮点击事件
                         finishAll()
                     }
-                )
+                ).show()
 
 
             }
         } else {
-            // 如果已经授予了储存权限，则可以进行相应的操作
-            if (!isFirstLoaded) {
-                isFirstLoaded = true
-
-                delayedHandler = Handler(Looper.getMainLooper())
-                delayedHandler?.let {
-                    HandlerCompat.postDelayed(it, {
-
-                        // 创建一个意图，说明我要跳转到那个活动界面。
-                        val intent = Intent(this, HomeActivity::class.java)
-                        // 跳转到主要活动。
-                        startActivity(intent)
-                        // 再来个跳转过度动画。
-                        overridePendingTransition(android.R.anim.fade_in,
-                            android.R.anim.fade_out)
-                        // 销毁当前活动。
-                        finish()
-
-                    }, null, 800L)
-                }
-
-            }
+            toHome()
         }
 
+    }
+
+    private fun toHome() {
+        // 如果已经授予了储存权限，则可以进行相应的操作
+        if (!isFirstLoaded) {
+            isFirstLoaded = true
+            delayedHandler = Handler(Looper.getMainLooper())
+            delayedHandler?.let {
+                HandlerCompat.postDelayed(it, {
+                    // 创建一个意图，说明我要跳转到那个活动界面。
+                    val intent = Intent(this, HomeActivity::class.java)
+                    // 跳转到主要活动。
+                    startActivity(intent)
+                    // 再来个跳转过度动画。
+                    overridePendingTransition(android.R.anim.fade_in,
+                        android.R.anim.fade_out)
+                    // 销毁当前活动。
+                    finish()
+
+                }, null, 800L)
+            }
+
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -111,8 +128,7 @@ class SplashActivity : BaseActivity() {
                 // 如果权限被授予，则可以进行相应的操作
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 已经授予了储存权限，可以进行相应的操作
-                    Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show()
-
+                    toHome()
 
                 } else {
                     // 用户拒绝了权限请求，可以提醒用户为什么需要此权限

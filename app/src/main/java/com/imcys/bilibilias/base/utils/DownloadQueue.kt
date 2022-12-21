@@ -1,18 +1,16 @@
 package com.imcys.bilibilias.base.utils
 
 import android.annotation.SuppressLint
-
 import androidx.recyclerview.widget.RecyclerView
-
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.utils.MediaExtractorUtils
 import org.xutils.common.Callback
 import org.xutils.common.task.PriorityExecutor
 import org.xutils.http.RequestParams
 import org.xutils.x
 import java.io.File
-import java.time.Instant
 
 
 const val STATE_DOWNLOAD_WAIT = 0
@@ -28,6 +26,8 @@ const val STATE_DOWNLOAD_ERROR = -1
 class DownloadQueue {
 
     private var cumulativeTaskNumber = 0L
+
+    private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
 
 
     var recyclerView: RecyclerView? = null
@@ -65,6 +65,8 @@ class DownloadQueue {
         var fileDlSize: Double = 0.0,
         // 定义当前任务的下载请求
         var call: Callback.Cancelable? = null,
+        // 标识这个任务是否是一组任务的一部分
+        val isGroupTask: Boolean = true,
 
         )
 
@@ -77,9 +79,23 @@ class DownloadQueue {
         downloadTaskDataBean: DownloadTaskDataBean,
         onComplete: (Boolean) -> Unit,
     ) {
+
         // 创建一个下载任务
         val task =
             Task(++cumulativeTaskNumber, url, savePath, fileType, downloadTaskDataBean, onComplete)
+
+        if (task.isGroupTask) {
+            // 在map中找到这个任务所属的一组任务
+            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+            if (groupTasks == null) {
+                // 创建一个新的任务列表
+                val newGroupTasks = mutableListOf<Task>()
+                // 将这个任务加入到这个任务列表中
+                newGroupTasks.add(task)
+                // 将这个任务列表加入到map中
+                groupTasksMap[task.downloadTaskDataBean.cid] = newGroupTasks
+            } else groupTasks.add(task)
+        }
         // 添加下载任务到队列中
         queue.add(task)
         // 如果队列不为空，就执行队列中的所有任务
@@ -130,8 +146,24 @@ class DownloadQueue {
                         task.onComplete(true)
                         //更新
                         updateAdapter()
+
+                        if (task.isGroupTask) {
+                            // 在map中找到这个任务所属的一组任务
+                            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                            // 判断这一组任务是否都已经下载完成
+                            val isGroupTasksCompleted =
+                                groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
+                            if (isGroupTasksCompleted) {
+                                videoMerge(task.downloadTaskDataBean.cid)
+
+
+                            }
+
+                        }
+
                         // 执行下一个任务
                         executeTask()
+
 
                     }
 
@@ -187,6 +219,32 @@ class DownloadQueue {
         }
 
 
+    }
+
+    /**
+     * 参数合并
+     * @param cid Int
+     */
+    private fun videoMerge(cid: Int) {
+
+        //耗时操作，这里直接开个新线程
+        Thread {
+            val taskMutableList = groupTasksMap[cid]
+            val videoPath = taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
+            val audioPath = taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
+            //这里的延迟是为了有足够时间让下载检查下载完整
+            Thread.sleep(3000)
+
+            val mergeFile = File(videoPath + "_merge.mp4")
+            mergeFile.createNewFile()
+
+            //执行合并
+            MediaExtractorUtils.combineTwoVideos(audioPath,
+                0,
+                videoPath,
+                mergeFile)
+
+        }.start()
     }
 
 

@@ -110,8 +110,8 @@ class DialogUtils {
             message: String, // 对话框消息
             positiveButtonText: String, // 确定按钮文本
             negativeButtonText: String, // 取消按钮文本
-            positiveButtonClickListener: () -> Unit, // 确定按钮点击事件处理器
-            negativeButtonClickListener: () -> Unit, // 取消按钮点击事件处理器
+            positiveButtonClickListener: (() -> Unit)?, // 确定按钮点击事件处理器
+            negativeButtonClickListener: (() -> Unit)?, // 取消按钮点击事件处理器
         ): BottomSheetDialog {
             //先获取View实例
             val binding = DialogBottomsheetBinding.inflate(LayoutInflater.from(context))
@@ -121,6 +121,7 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
             bottomSheetDialog.setCancelable(false)
             binding.apply {
+
                 // 设置标题文本
                 dialogBottomSheetTitle.text = title
                 // 设置消息文本
@@ -128,17 +129,24 @@ class DialogUtils {
                 // 设置确定按钮文本
                 dialogBottomSheetPositiveButton.text = positiveButtonText
                 // 为确定按钮添加点击事件处理器
-                dialogBottomSheetPositiveButton.setOnClickListener {
-                    positiveButtonClickListener()
-                    bottomSheetDialog.cancel()
+                positiveButtonClickListener?.apply {
+                    dialogBottomSheetPositiveButton.visibility = View.VISIBLE
+                    dialogBottomSheetPositiveButton.setOnClickListener {
+                        positiveButtonClickListener()
+                        bottomSheetDialog.cancel()
+                    }
                 }
                 // 设置取消按钮文本
                 dialogBottomSheetNegativeButton.text = negativeButtonText
                 // 为取消按钮添加点击事件处理器
-                dialogBottomSheetNegativeButton.setOnClickListener {
-                    negativeButtonClickListener()
-                    bottomSheetDialog.cancel()
+                negativeButtonClickListener?.apply {
+                    dialogBottomSheetNegativeButton.visibility = View.VISIBLE
+                    dialogBottomSheetNegativeButton.setOnClickListener {
+                        negativeButtonClickListener()
+                        bottomSheetDialog.cancel()
+                    }
                 }
+
 
             }
             return bottomSheetDialog
@@ -338,6 +346,8 @@ class DialogUtils {
                         selectDefinition,
                         80,
                         videoPageMutableList)
+                    bottomSheetDialog.cancel()
+
                 }
 
 
@@ -405,6 +415,7 @@ class DialogUtils {
 
                         //处理下
                         dashVideoPlayBean.data.support_formats.forEach { it1 ->
+
                             if (it1.quality == it) dialogDlVideoDefinitionTx.text =
                                 it1.new_description
                         }
@@ -421,6 +432,8 @@ class DialogUtils {
                         selectDefinition,
                         80,
                         videoPageMutableList)
+
+                    bottomSheetDialog.cancel()
                 }
 
 
@@ -430,7 +443,6 @@ class DialogUtils {
             return bottomSheetDialog
 
         }
-
 
 
         private fun addBangumiDownloadTask(
@@ -516,7 +528,7 @@ class DialogUtils {
                         }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
                         intFileType,
                         DownloadTaskDataBean(
-                            dataBean.cid.toString(),
+                            dataBean.cid,
                             dataBean.long_title,
                             qn.toString(),
                             dashBangumiPlayBean = it1,
@@ -565,7 +577,10 @@ class DialogUtils {
                     var urlIndex = 0
                     //获取视频/音频的索引
                     it1.data.dash.video.forEachIndexed { index, i ->
-                        if (i.id == qn) urlIndex = index
+                        if (i.id == qn) {
+                            urlIndex = index
+                            return@forEachIndexed
+                        }
                     }
 
                     val intFileType: Int
@@ -596,7 +611,7 @@ class DialogUtils {
                         }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
                         intFileType,
                         DownloadTaskDataBean(
-                            dataBean.cid.toString(),
+                            dataBean.cid,
                             dataBean.part,
                             qn.toString(),
                             dashVideoPlayBean = it1,
