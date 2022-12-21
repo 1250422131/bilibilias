@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -16,6 +17,7 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asLogE
+import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -92,9 +94,11 @@ class AsVideoActivity : BaseActivity() {
             asVideoFaButton.setOnClickListener {
                 when (asJzvdStd.state) {
                     Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
+                        //播放视频
                         asJzvdStd.startVideo()
                     }
                     Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
+                        //恢复播放/暂停播放
                         asJzvdStd.startButton.performClick()
                     }
                 }
@@ -126,6 +130,7 @@ class AsVideoActivity : BaseActivity() {
                         binding.videoPlayBean = it
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(it.data.durl[0].url, "")
+                        binding.asVideoCd.visibility = View.VISIBLE
                     }
             }
             "bangumi" -> {
@@ -137,6 +142,7 @@ class AsVideoActivity : BaseActivity() {
                         binding.bangumiPlayBean = it
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(it.result.durl[0].url, "")
+                        binding.asVideoBangumiCd.visibility = View.VISIBLE
                     }
             }
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
@@ -153,8 +159,7 @@ class AsVideoActivity : BaseActivity() {
 
         //这里必须通过外界获取数据
         val intent = intent
-        var bvId = intent.getStringExtra("bvId")
-        bvId = "BV1Qv4y1R7Tv"
+        val bvId = intent.getStringExtra("bvId")
 
         //这里才是真正的视频基本数据获取
         HttpUtils.addHeader("cookie", App.cookies)
@@ -180,11 +185,9 @@ class AsVideoActivity : BaseActivity() {
                         //加载番剧视频列表
                         epid = epRegex.find(this)?.value?.toLong()!!
                         loadBangumiVideoList()
-                    } else {
-                        //加载正常视频列表
-                        loadVideoList()
                     }
-                }
+
+                } ?: loadVideoList() //加载正常列表
 
 
             }
@@ -199,7 +202,7 @@ class AsVideoActivity : BaseActivity() {
             BangumiSeasonBean::class.java) {
             binding.apply {
 
-                if (it.result.episodes.size == 0) asVideoSubsectionRv.visibility = View.GONE
+                if (it.result.episodes.size == 1) asVideoSubsectionRv.visibility = View.GONE
 
                 binding.bangumiSeasonBean = it
                 asVideoSubsectionRv.adapter =
@@ -281,7 +284,6 @@ class AsVideoActivity : BaseActivity() {
         HttpUtils.addHeader("cookie", App.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    asLogE(this@AsVideoActivity, "请求错误")
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -351,14 +353,18 @@ class AsVideoActivity : BaseActivity() {
     }
 
     override fun onPause() {
+        super.onPause()
         asDanmaku.apply {
             pause()
             // hide()
         }
-        JzvdStd.releaseAllVideos()
-        changeFaButtonToPlay()
-        super.onPause()
+        if (asJzvdStd.state == Jzvd.STATE_PLAYING) { //暂停视频
+            asJzvdStd.startButton.performClick()
+            changeFaButtonToPlay()
+        }
+
     }
+
 
     companion object {
 
@@ -383,11 +389,9 @@ class AsVideoActivity : BaseActivity() {
      * @param title String
      */
     private fun setAsJzvdConfig(url: String, title: String) {
-        val map = LinkedHashMap<Any, Any>()
-
-        map["760P"] = url
-
-        val jzDataSource = JZDataSource(map, title)
+        //val map = LinkedHashMap<Any, Any>()
+        //map["760P"] = url
+        val jzDataSource = JZDataSource(url, title)
 
         jzDataSource.headerMap["Cookie"] = App.cookies;
         jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
@@ -405,6 +409,8 @@ class AsVideoActivity : BaseActivity() {
                 asDanmaku.apply {
 
                     if (state == Jzvd.STATE_PAUSE) {
+                        //判断暂停的事时间是不是不等同于现在的播放时间
+                        //如果不是相当于重新播放
                         if (asJzvdStd.stopTime != asJzvdStd.currentPositionWhenPlaying) {
                             start(asJzvdStd.currentPositionWhenPlaying)
                         } else {
@@ -565,8 +571,9 @@ class AsVideoActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
+        if (asDanmaku.isPrepared && asDanmaku.isPaused ) {
             //asDanmaku.show()
+            // asJzvdStd.startButton.performClick()
         }
 
     }
@@ -575,6 +582,7 @@ class AsVideoActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         asDanmaku.release()
+        JzvdStd.releaseAllVideos()
     }
 
 

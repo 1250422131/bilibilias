@@ -4,14 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.widget.Toast
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -50,7 +47,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * @param videoBaseBean VideoBaseBean
      * @param bangumiSeasonBean BangumiSeasonBean
      */
-    fun downloadVideo(
+    fun downloadBangumiVideo(
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
     ) {

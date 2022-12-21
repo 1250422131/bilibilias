@@ -63,7 +63,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/dialog_bottomSheet_message"
                     android:text=""
-                    android:textSize="22sp"
+                    android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

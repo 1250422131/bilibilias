@@ -6,7 +6,7 @@ import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 data class DownloadTaskDataBean(
-    val cid: String,
+    val cid: Int,
     val pageTitle: String,
     //分辨率
     val qn: String,

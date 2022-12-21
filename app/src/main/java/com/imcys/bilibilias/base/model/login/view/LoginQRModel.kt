@@ -60,11 +60,10 @@ class LoginQRModel {
                     //关闭加载弹窗
                     bottomSheetDialog?.cancel()
                     //更新UI线程
-                    (view.context as Activity).runOnUiThread {
-
+                    App.handler.post {
                         //登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
-                            loginSuccessOp(view.context,loginStateBean, response)
+                            loginSuccessOp(view.context, loginStateBean, response)
                         } else {
                             //展示登录结果
                             val loginQRModel = binding?.loginQRModel!!
@@ -72,7 +71,6 @@ class LoginQRModel {
                             binding?.loginQRModel = loginQRModel
 
                         }
-
                         //将登录完成事件返回给Fragment
                         responseResult(loginStateBean.data.code, loginStateBean)
                     }
@@ -91,7 +89,7 @@ class LoginQRModel {
      * @param view View
      * @param loginQrcodeDataBean DataBean
      */
-    fun reloadLoginQR( loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+    fun reloadLoginQR(loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
 
         HttpUtils.get(
             BilibiliApi.getLoginQRPath,
@@ -111,7 +109,7 @@ class LoginQRModel {
      * @param response Response
      */
     @SuppressLint("CommitPrefEdits")
-    fun loginSuccessOp(context: Context,loginStateBean: LoginStateBean, response: Response) {
+    fun loginSuccessOp(context: Context, loginStateBean: LoginStateBean, response: Response) {
 
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences("data", MODE_PRIVATE)

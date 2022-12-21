@@ -32,7 +32,7 @@
             android:name=".home.ui.activity.AsVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
             android:name=".home.ui.activity.HomeActivity"
