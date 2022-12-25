@@ -17,12 +17,15 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
+        <activity
+            android:name=".home.ui.activity.SettingActivity"
+            android:exported="false" />
         <activity
             android:name=".home.ui.activity.UserActivity"
             android:exported="false"
@@ -33,10 +36,16 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
+            android:theme="@style/Theme.BILIBILIAS.NoActionBar" >
+        </activity>
         <activity
-            android:name=".home.ui.activity.HomeActivity"
-            android:exported="false" />
+            android:name=".home.ui.activity.HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".splash.ui.SplashActivity"
             android:exported="true"

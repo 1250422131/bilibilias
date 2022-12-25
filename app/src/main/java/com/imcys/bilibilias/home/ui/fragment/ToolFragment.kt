@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.home.ui.fragment
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.extend.extract
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
@@ -25,6 +29,10 @@ import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
 import com.imcys.bilibilias.utils.AsVideoNumUtils
 import com.imcys.bilibilias.utils.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import java.io.IOException
 
 
 class ToolFragment : Fragment() {
@@ -45,7 +53,12 @@ class ToolFragment : Fragment() {
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
 
+
+
         initView()
+
+        //检验
+        parseShare()
 
         return fragmentToolBinding.root
     }
@@ -63,6 +76,20 @@ class ToolFragment : Fragment() {
         loadToolItem()
         //设置监听
         setEditListener()
+
+    }
+
+    @SuppressLint("ResourceType")
+    private fun parseShare() {
+        val intent = activity?.intent
+        val action = intent?.action
+        val type = intent?.type
+        if (Intent.ACTION_SEND == action && type != null) {
+            if ("text/plain" == type) {
+                asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
+            }
+        }
+
 
     }
 
@@ -88,12 +115,15 @@ class ToolFragment : Fragment() {
      * 对输入的视频ID进行解析
      * @param inputString String
      */
-    private fun asVideoId(inputString: String) {
+    fun asVideoId(inputString: String) {
         //ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
+        } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
+            loadShareData("""https://b23.tv/([A-z]|[0-9])*""".toRegex()
+                .find(inputString)?.value!!.toString())
         } else {
             if (AsVideoNumUtils.getBvid(inputString) != "") {
                 getVideoCardData(AsVideoNumUtils.getBvid(inputString))
@@ -106,6 +136,23 @@ class ToolFragment : Fragment() {
                 Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    /**
+     * 加载APP端分享视频
+     * @param toString String
+     */
+    private fun loadShareData(toString: String) {
+        HttpUtils.addHeader("cookie", App.cookies).get(toString, object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val str = response.request.url.toString()
+                asVideoId(str)
+            }
+        })
     }
 
 
@@ -161,6 +208,10 @@ class ToolFragment : Fragment() {
                     asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
                 }
 
+            },
+            ToolItemBean("关 于 设 置", "https://i.niupic.com/images/2022/12/23/aed4.png", "") {
+                val intent = Intent(context, SettingActivity::class.java)
+                context?.startActivity(intent)
             }
 
         )
@@ -178,7 +229,7 @@ class ToolFragment : Fragment() {
                             return if ((mAdapter.currentList)[position].type == 1) {
                                 3
                             } else {
-                                2
+                                1
                             }
                         }
 

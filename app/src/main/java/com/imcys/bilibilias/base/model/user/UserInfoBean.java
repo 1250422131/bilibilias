@@ -10,7 +10,7 @@ import java.util.List;
  * @create: 2022-10-26 18:08
  * @Description: 用户常用数据
  */
-public class UserInfoBean implements Serializable{
+public class UserInfoBean implements Serializable {
 
     /**
      * code : 0
@@ -96,7 +96,7 @@ public class UserInfoBean implements Serializable{
          * elec : {"show_info":{"show":true,"state":1,"title":"","icon":"","jump_url":""}}
          */
 
-        private Long mid;
+        private long mid;
         private String name;
         private String sex;
         private String face;
@@ -421,7 +421,7 @@ public class UserInfoBean implements Serializable{
             this.tags = tags;
         }
 
-        public static class FansMedalBean implements Serializable{
+        public static class FansMedalBean implements Serializable {
             /**
              * show : true
              * wear : true
@@ -456,7 +456,7 @@ public class UserInfoBean implements Serializable{
                 this.medal = medal;
             }
 
-            public static class MedalBean implements Serializable{
+            public static class MedalBean implements Serializable {
                 /**
                  * uid : 351201307
                  * target_id : 351201307
@@ -623,7 +623,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class OfficialBean implements Serializable{
+        public static class OfficialBean implements Serializable {
             /**
              * role : 0
              * title :
@@ -669,7 +669,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class VipBean implements Serializable{
+        public static class VipBean implements Serializable {
             /**
              * type : 1
              * status : 0
@@ -794,7 +794,7 @@ public class UserInfoBean implements Serializable{
                 this.tv_vip_pay_type = tv_vip_pay_type;
             }
 
-            public static class LabelBean implements Serializable{
+            public static class LabelBean implements Serializable {
                 /**
                  * path :
                  * text :
@@ -921,7 +921,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class PendantBean implements Serializable{
+        public static class PendantBean implements Serializable {
             /**
              * pid : 1416
              * name : 拜年祭粉丝专鼠
@@ -987,7 +987,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class NameplateBean implements Serializable{
+        public static class NameplateBean implements Serializable {
             /**
              * nid : 9
              * name : 出道偶像
@@ -1056,10 +1056,10 @@ public class UserInfoBean implements Serializable{
         public static class UserHonourInfoBean implements Serializable {
         }
 
-        public static class ThemeBean  implements Serializable{
+        public static class ThemeBean implements Serializable {
         }
 
-        public static class SysNoticeBean implements Serializable{
+        public static class SysNoticeBean implements Serializable {
         }
 
         public static class LiveRoomBean implements Serializable {
@@ -1235,7 +1235,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class SchoolBean implements Serializable{
+        public static class SchoolBean implements Serializable {
             /**
              * name :
              */
@@ -1251,7 +1251,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class ProfessionBean  implements Serializable{
+        public static class ProfessionBean implements Serializable {
             /**
              * name :
              * department :
@@ -1297,7 +1297,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class SeriesBean implements Serializable{
+        public static class SeriesBean implements Serializable {
             /**
              * user_upgrade_status : 3
              * show_upgrade_window : false
@@ -1323,7 +1323,7 @@ public class UserInfoBean implements Serializable{
             }
         }
 
-        public static class ElecBean implements Serializable{
+        public static class ElecBean implements Serializable {
             /**
              * show_info : {"show":true,"state":1,"title":"","icon":"","jump_url":""}
              */

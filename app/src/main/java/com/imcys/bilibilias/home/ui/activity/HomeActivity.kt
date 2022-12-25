@@ -1,16 +1,14 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.extend.toHtml
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
@@ -21,10 +19,9 @@ import com.imcys.bilibilias.home.ui.fragment.UserFragment
 
 class HomeActivity : BaseActivity() {
     private lateinit var activityHomeBinding: ActivityHomeBinding
+    lateinit var toolFragment: ToolFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
 
         /*
@@ -43,6 +40,26 @@ class HomeActivity : BaseActivity() {
         loadFragment()
 
 
+        parseShare()
+
+    }
+
+    //解析视频数据
+    @SuppressLint("ResourceType")
+    private fun parseShare() {
+        val intent = intent
+        val action = intent.action
+        val type = intent.type
+        if (Intent.ACTION_SEND == action && type != null) {
+            if ("text/plain" == type) {
+                activityHomeBinding.apply {
+                    homeViewPage.currentItem = 1
+                    homeBottomNavigationView.menu.getItem(1).isChecked = true
+                }
+            }
+
+
+        }
     }
 
 
@@ -51,7 +68,8 @@ class HomeActivity : BaseActivity() {
         val fragmentArrayList = ArrayList<Fragment>()
         //添加fragment
         fragmentArrayList.add(HomeFragment.newInstance())
-        fragmentArrayList.add(ToolFragment.newInstance())
+        toolFragment = ToolFragment.newInstance()
+        fragmentArrayList.add(toolFragment)
         fragmentArrayList.add(DownloadFragment.newInstance())
         fragmentArrayList.add(UserFragment.newInstance())
 
