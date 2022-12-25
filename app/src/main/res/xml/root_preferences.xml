@@ -1,0 +1,57 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="缓存配置">
+
+        <EditTextPreference
+            app:defaultValue="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+            app:key="user_download_save_path"
+            app:selectable="false"
+            app:title="@string/user_download_save_path_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:defaultValue="{BV}/{TITLE}.{FILE_TYPE}"
+            app:dialogMessage="@string/dl_file_rename_rules"
+            app:key="user_download_file_name_editText"
+            app:title="@string/user_download_file_name"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="缓存完成后的行为">
+
+        <SwitchPreferenceCompat
+            app:key="user_dl_finish_automatic_merge_switch"
+            app:summary="默认下载是音频分离的"
+            app:title="缓存完成后自动合并" >
+
+        </SwitchPreferenceCompat>
+
+
+        <SwitchPreferenceCompat
+            app:key="user_dl_finish_automatic_import_switch"
+            app:summaryOff="这需要你单独对文件夹进行授权"
+            app:summaryOn="现在下载完成后便会自动导入B站的缓存列表"
+            app:title="缓存完成后自动导入B站" />
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="合并配置">
+
+        <SwitchPreferenceCompat
+            app:key="user_dl_finish_delete_merge_switch"
+            app:title="合并后删除原来音频文件" >
+        </SwitchPreferenceCompat>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="导入配置">
+
+        <SwitchPreferenceCompat
+            app:key="user_dl_delete_import_file_switch"
+            app:title="导入后删除原来音频文件" >
+
+        </SwitchPreferenceCompat>
+    </PreferenceCategory>
+
+</PreferenceScreen>

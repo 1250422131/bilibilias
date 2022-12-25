@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -16,13 +15,10 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.utils.asLogE
-import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
-import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
@@ -75,11 +71,14 @@ class AsVideoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
+
+
         //加载视频首要信息
         initVideoData()
         //加载控件
         initView()
     }
+
 
     private fun initView() {
 
@@ -131,6 +130,7 @@ class AsVideoActivity : BaseActivity() {
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(it.data.durl[0].url, "")
                         binding.asVideoCd.visibility = View.VISIBLE
+                        binding.asVideoBangumiCd.visibility = View.GONE
                     }
             }
             "bangumi" -> {
@@ -142,7 +142,6 @@ class AsVideoActivity : BaseActivity() {
                         binding.bangumiPlayBean = it
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(it.result.durl[0].url, "")
-                        binding.asVideoBangumiCd.visibility = View.VISIBLE
                     }
             }
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
@@ -159,6 +158,7 @@ class AsVideoActivity : BaseActivity() {
 
         //这里必须通过外界获取数据
         val intent = intent
+
         val bvId = intent.getStringExtra("bvId")
 
         //这里才是真正的视频基本数据获取
@@ -203,6 +203,10 @@ class AsVideoActivity : BaseActivity() {
             binding.apply {
 
                 if (it.result.episodes.size == 1) asVideoSubsectionRv.visibility = View.GONE
+
+                //到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
+                binding.asVideoBangumiCd.visibility = View.VISIBLE
+                binding.asVideoCd.visibility = View.GONE
 
                 binding.bangumiSeasonBean = it
                 asVideoSubsectionRv.adapter =
@@ -571,7 +575,7 @@ class AsVideoActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused ) {
+        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
             //asDanmaku.show()
             // asJzvdStd.startButton.performClick()
         }

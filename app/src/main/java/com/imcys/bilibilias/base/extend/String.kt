@@ -19,6 +19,18 @@ fun String.toHtml(): String {
     }
 }
 
+/**
+ * 取中间字符串，需要提供开始截取的位置和结束截取的位置
+ * @receiver String
+ * @param startString String
+ * @param endString String
+ * @return String
+ */
+fun String.extract(startString: String, endString: String): String {
+    return this.substring(this.indexOf(startString) + startString.length ,
+        this.indexOf(endString))
+}
+
 
 
 
