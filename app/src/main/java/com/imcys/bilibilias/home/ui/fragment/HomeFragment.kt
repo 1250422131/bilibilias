@@ -11,7 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -21,6 +24,7 @@ import com.imcys.bilibilias.base.model.user.MyUserData
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.home.ui.fragment.home.adapter.RCMDVideoAdapter
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
@@ -70,10 +74,8 @@ class HomeFragment : Fragment() {
 
         //数据获取
         initUserToken()
-
         //加载推荐视频
         loadRCMDVideoData()
-
         //检测用户是否登陆
         detectUserLogin()
 
@@ -87,11 +89,13 @@ class HomeFragment : Fragment() {
     private fun initUserToken() {
         val sharedPreferences: SharedPreferences =
             requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
+
+        App.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         //获取重要数据
         App.cookies = sharedPreferences.getString("cookies", "").toString()
         App.sessdata = sharedPreferences.getString("SESSDATA", "").toString()
         App.biliJct = sharedPreferences.getString("bili_jct", "").toString()
-        App.mid = sharedPreferences.getLong("mid", 0)
+        App.mid = sharedPreferences.getInt("mid", 0)
     }
 
     /**
@@ -146,19 +150,20 @@ class HomeFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils
+            .addHeader("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
+            .addHeader("cookie", App.cookies)
             .get(
-                BilibiliApi.getUserInfoPath + "?mid=" + myUserData.data.mid,
+                "${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}",
                 UserInfoBean::class.java
             ) {
                 //这里需要储存下数据
                 val sharedPreferences =
                     requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
-                editor.putLong("mid", it.data.mid)
+                editor.putInt("mid", it.data.mid)
                 //提交储存
                 editor.apply()
-
                 //这里给全局设置必要信息
                 App.mid = it.data.mid
                 //关闭登陆登陆弹窗
@@ -172,6 +177,7 @@ class HomeFragment : Fragment() {
 
     //加载推荐视频
     private fun loadRCMDVideoData() {
+
         HttpUtils.addHeader("cookie", App.cookies).get(
             BilibiliApi.homeRCMDVideoPath + "?ps=10",
             HomeRCMDVideoBean::class.java

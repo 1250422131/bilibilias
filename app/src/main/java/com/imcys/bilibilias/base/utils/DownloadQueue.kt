@@ -1,10 +1,12 @@
 package com.imcys.bilibilias.base.utils
 
 import android.annotation.SuppressLint
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.utils.FileUtils
 import com.imcys.bilibilias.utils.MediaExtractorUtils
 import org.xutils.common.Callback
 import org.xutils.common.task.PriorityExecutor
@@ -156,7 +158,6 @@ class DownloadQueue {
                             if (isGroupTasksCompleted) {
                                 videoMerge(task.downloadTaskDataBean.cid)
 
-
                             }
 
                         }
@@ -168,7 +169,6 @@ class DownloadQueue {
                     }
 
                     override fun onError(ex: Throwable?, isOnCallback: Boolean) {
-                        asLogI("下载检查", task.url)
                         currentTasks.remove(task)
                         //更新任务状态
                         task.state = STATE_DOWNLOAD_ERROR
@@ -227,24 +227,44 @@ class DownloadQueue {
      */
     private fun videoMerge(cid: Int) {
 
-        //耗时操作，这里直接开个新线程
-        Thread {
-            val taskMutableList = groupTasksMap[cid]
-            val videoPath = taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
-            val audioPath = taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
-            //这里的延迟是为了有足够时间让下载检查下载完整
-            Thread.sleep(3000)
 
-            val mergeFile = File(videoPath + "_merge.mp4")
-            mergeFile.createNewFile()
+        val mergeState =
+            App.sharedPreferences.getBoolean("user_dl_finish_automatic_merge_switch", false)
 
-            //执行合并
-            MediaExtractorUtils.combineTwoVideos(audioPath,
-                0,
-                videoPath,
-                mergeFile)
+        if (mergeState) {
+            //耗时操作，这里直接开个新线程
+            Thread {
+                val taskMutableList = groupTasksMap[cid]
+                val videoPath =
+                    taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
+                val audioPath =
+                    taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
+                //这里的延迟是为了有足够时间让下载检查下载完整
+                Thread.sleep(4000)
 
-        }.start()
+                val mergeFile = File(videoPath + "_merge.mp4")
+                mergeFile.createNewFile()
+
+                //执行合并
+                MediaExtractorUtils.combineTwoVideos(audioPath,
+                    0,
+                    videoPath,
+                    mergeFile)
+
+                val deleteFileState =
+                    App.sharedPreferences.getBoolean("user_dl_finish_delete_merge_switch", false)
+
+                if (deleteFileState) {
+                    FileUtils.apply {
+                        deleteFile(videoPath)
+                    }.apply {
+                        deleteFile(audioPath)
+                    }
+
+                }
+            }.start()
+        }
+
     }
 
 

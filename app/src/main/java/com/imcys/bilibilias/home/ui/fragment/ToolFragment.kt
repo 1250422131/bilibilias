@@ -1,22 +1,23 @@
 package com.imcys.bilibilias.home.ui.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.extend.extract
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
@@ -33,6 +34,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import kotlin.math.floor
 
 
 class ToolFragment : Fragment() {
@@ -232,7 +234,6 @@ class ToolFragment : Fragment() {
                                 1
                             }
                         }
-
                     }
                 }
 
@@ -240,6 +241,7 @@ class ToolFragment : Fragment() {
 
 
     }
+
 
     companion object {
 

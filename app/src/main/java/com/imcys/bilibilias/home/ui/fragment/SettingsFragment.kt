@@ -33,8 +33,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Toast.makeText(context, "缺少文件后缀", Toast.LENGTH_SHORT).show()
                 false
             } else {
-                Toast.makeText(context, "存在特殊符号", Toast.LENGTH_SHORT).show()
-                !regex.containsMatchIn(newValue.toString())
+                (!regex.containsMatchIn(newValue.toString())).apply {
+                    if (!this) Toast.makeText(context, "存在特殊符号", Toast.LENGTH_SHORT).show()
+                }
             }
 
         }

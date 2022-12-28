@@ -16,5 +16,6 @@
     <color name="color_text_hint">#A6A6AD</color>
     <color name="color_121212">#FFFFFF</color>
     <color name="color_303030">#FFFFFF</color>
+    <color name="user_work_bg">#F7F8FA</color>
 
 </resources>

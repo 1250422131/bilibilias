@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewParent
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -34,6 +35,7 @@ import com.imcys.bilibilias.utils.HttpUtils
 import okhttp3.internal.notifyAll
 import java.net.URLEncoder
 import kotlin.math.asin
+import kotlin.random.Random
 
 
 /**
@@ -169,6 +171,9 @@ class DialogUtils {
 
             binding.dataBean = userInfoBean.data
             //用户行为 val mDialogBehavior =
+            binding.dialogUserDataFinishBt.setOnClickListener {
+                bottomSheetDialog.cancel()
+            }
 
             initDialogBehaviorBinding(binding.dialogUserDataBar, activity, binding.root.parent)
             //自定义方案
@@ -588,27 +593,39 @@ class DialogUtils {
                     val url = when (type) {
                         "video" -> {
                             intFileType = 0
-                            fileType = ".mp4"
+                            fileType = "mp4"
                             videoPlayData.dash.video[urlIndex].baseUrl
                         }
                         "audio" -> {
                             intFileType = 1
-                            fileType = ".m4a"
+                            fileType = "m4a"
                             videoPlayData.dash.audio[0].baseUrl
                         }
                         else -> throw IllegalArgumentException("Invalid type: $type")
                     }
 
-
-                    asLogI("下载检查", "${
-                        context.getExternalFilesDir("download").toString()
-                    }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType")
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString("user_download_file_name_editText", "")
+                            .toString()
+                    var DownloadName =
+                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
+                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
+                    DownloadName =
+                        DownloadName.replace("{P_TITLE}", dataBean.part + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
+                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
+                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
+                    DownloadName = DownloadName.replace("{TITLE}",
+                        videoBaseBean.data.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+                    DownloadName = DownloadName.replace(" ", "")
 
                     App.downloadQueue.addTask(
                         url,
                         "${
                             context.getExternalFilesDir("download").toString()
-                        }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
+                        }/$DownloadName",
                         intFileType,
                         DownloadTaskDataBean(
                             dataBean.cid,
@@ -672,7 +689,7 @@ class DialogUtils {
 
                             if (videoPageMutableList[a].cid.toLong() == videoPageListData.data[position].cid.toLong()) {
                                 tage = false
-                                itemBinding.dataBean?.selected = 0
+                                itemBinding[position].dataBean?.selected = 0
                                 videoPageMutableList.removeAt(a)
                                 break
                             }
@@ -681,7 +698,7 @@ class DialogUtils {
 
 
                         if (tage) {
-                            itemBinding.dataBean?.selected = 1
+                            itemBinding[position].dataBean?.selected = 1
                             videoPageMutableList.add(videoPageListData.data[position])
                         }
 

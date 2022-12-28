@@ -47,6 +47,7 @@
             </LinearLayout>
 
             <com.google.android.material.tabs.TabLayout
+                android:id="@+id/fragment_home_tab"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
@@ -77,15 +78,11 @@
                     android:layout_height="wrap_content"
                     android:text="推荐" />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="热门" />
             </com.google.android.material.tabs.TabLayout>
 
             <LinearLayout
                 android:layout_marginBottom="30dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"

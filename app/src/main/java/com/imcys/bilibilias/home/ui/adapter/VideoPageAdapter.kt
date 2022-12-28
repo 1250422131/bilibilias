@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,13 @@ import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 class VideoPageAdapter(
     val datas: MutableList<VideoPageListData.DataBean>,
-    val selectedResult: (position: Int, itemBinding: ItemDlVideoPageBinding) -> Unit,
+    val selectedResult: (position: Int, itemBinding: MutableList<ItemDlVideoPageBinding>) -> Unit,
 ) : RecyclerView.Adapter<VideoPageAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    private var longClickItem = -1
+    private val bindingMutableList = mutableListOf<ItemDlVideoPageBinding>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDlVideoPageBinding =
@@ -23,15 +27,20 @@ class VideoPageAdapter(
         return ViewHolder(binding.root)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder,position: Int) {
         val binding = DataBindingUtil.getBinding<ItemDlVideoPageBinding>(holder.itemView)
         binding?.apply {
             dataBean = datas[position]
         }
 
+
         //回调点击项数
-        binding?.itemCollectionButton?.setOnClickListener {
-            selectedResult(position, binding)
+        binding?.apply {
+            bindingMutableList.add(this)
+            itemCollectionButton.setOnClickListener {
+                selectedResult(position, bindingMutableList)
+            }
+
         }
     }
 

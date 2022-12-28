@@ -110,6 +110,7 @@
                 app:cardElevation="0dp">
 
                 <Button
+                    android:id="@+id/dialog_user_data_finish_bt"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="@color/color_primary"

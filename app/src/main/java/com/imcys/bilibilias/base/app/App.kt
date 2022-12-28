@@ -1,7 +1,10 @@
 package com.imcys.bilibilias.base.app
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.content.SharedPreferences
 import android.os.Handler
+import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import org.xutils.x
 
@@ -25,7 +28,9 @@ class App : Application() {
         lateinit var sessdata: String
         lateinit var biliJct: String
         lateinit var handler: Handler
-        var mid: Long = 0L
+        lateinit var sharedPreferences : SharedPreferences
+
+        var mid: Int = 0
     }
 
 }
