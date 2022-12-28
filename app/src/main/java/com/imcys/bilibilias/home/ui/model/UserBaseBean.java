@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.model.user;
+package com.imcys.bilibilias.home.ui.model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -7,16 +7,17 @@ import java.util.List;
 
 /**
  * @author:imcys
- * @create: 2022-10-26 18:08
- * @Description: 用户常用数据
+ * @create: 2022-12-27 10:59
+ * @Description: 用户基本信息类
  */
-public class UserInfoBean implements Serializable {
+public class UserBaseBean implements Serializable {
+
 
     /**
      * code : 0
      * message : 0
      * ttl : 1
-     * data : {"mid":351201307,"name":"萌新杰少","sex":"男","face":"https://i1.hdslb.com/bfs/face/6323fa4fdbd8cfa9d448cc9a3a0c32394bf34426.jpg","face_nft":0,"face_nft_type":0,"sign":"高考结束，恢复更新。粉丝群:703180724博客www.imcys.com 接单爬虫，简单前后端，安卓","rank":10000,"level":6,"jointime":0,"moral":0,"silence":0,"coins":0,"fans_badge":true,"fans_medal":{"show":true,"wear":true,"medal":{"uid":351201307,"target_id":351201307,"medal_id":181675,"level":4,"medal_name":"东方杰","medal_color":6067854,"intimacy":348,"next_intimacy":700,"day_limit":1500,"medal_color_start":6067854,"medal_color_end":6067854,"medal_color_border":6067854,"is_lighted":1,"light_status":1,"wearing_status":1,"score":1349}},"official":{"role":0,"title":"","desc":"","type":-1},"vip":{"type":1,"status":0,"due_date":1637769600000,"vip_pay_type":0,"theme_type":0,"label":{"path":"","text":"","label_theme":"","text_color":"","bg_style":0,"bg_color":"","border_color":"","use_img_label":true,"img_label_uri_hans":"","img_label_uri_hant":"","img_label_uri_hans_static":"https://i0.hdslb.com/bfs/vip/d7b702ef65a976b20ed854cbd04cb9e27341bb79.png","img_label_uri_hant_static":"https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/KJunwh19T5.png"},"avatar_subscript":0,"nickname_color":"","role":0,"avatar_subscript_url":"","tv_vip_status":0,"tv_vip_pay_type":0},"pendant":{"pid":1416,"name":"拜年祭粉丝专鼠","image":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","expire":0,"image_enhance":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","image_enhance_frame":""},"nameplate":{"nid":9,"name":"出道偶像","image":"https://i2.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png","image_small":"https://i0.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png","level":"高级勋章","condition":"所有自制视频总播放数>=50万"},"user_honour_info":{"mid":0,"colour":null,"tags":[]},"is_followed":false,"top_photo":"http://i0.hdslb.com/bfs/space/e22f5b8e06ea3ee4de9e4da702ce8ef9a2958f5a.png","theme":{},"sys_notice":{},"live_room":{"roomStatus":1,"liveStatus":0,"url":"https://live.bilibili.com/14260149?broadcast_type=0&is_room_feed=1","title":"萌新杰少的直播间","cover":"http://i0.hdslb.com/bfs/live/new_room_cover/7a537216592d0b5062856b571e67191ea9f7e016.jpg","roomid":14260149,"roundStatus":1,"broadcast_type":0,"watched_show":{"switch":true,"num":1,"text_small":"1","text_large":"1人看过","icon":"https://i0.hdslb.com/bfs/live/a725a9e61242ef44d764ac911691a7ce07f36c1d.png","icon_location":"","icon_web":"https://i0.hdslb.com/bfs/live/8d9d0f33ef8bf6f308742752d13dd0df731df19c.png"}},"birthday":"09-25","school":{"name":""},"profession":{"name":"","department":"","title":"","is_show":0},"tags":["科技","程序","动漫"],"series":{"user_upgrade_status":3,"show_upgrade_window":false},"is_senior_member":1,"mcn_info":null,"gaia_res_type":0,"gaia_data":null,"is_risk":false,"elec":{"show_info":{"show":true,"state":1,"title":"","icon":"","jump_url":""}}}
+     * data : {"mid":351201307,"name":"萌新杰少","sex":"男","face":"https://i1.hdslb.com/bfs/face/6323fa4fdbd8cfa9d448cc9a3a0c32394bf34426.jpg","face_nft":0,"face_nft_type":0,"sign":"高考结束，恢复更新。粉丝群:703180724博客www.imcys.com 接单爬虫，简单前后端，安卓","rank":10000,"level":6,"jointime":0,"moral":0,"silence":0,"coins":3553.6,"fans_badge":true,"fans_medal":{"show":true,"wear":true,"medal":{"uid":351201307,"target_id":351201307,"medal_id":181675,"level":4,"medal_name":"东方杰","medal_color":6067854,"intimacy":348,"next_intimacy":700,"day_limit":1500,"medal_color_start":6067854,"medal_color_end":6067854,"medal_color_border":6067854,"is_lighted":1,"light_status":1,"wearing_status":1,"score":1349}},"official":{"role":0,"title":"","desc":"","type":-1},"vip":{"type":1,"status":0,"due_date":1637769600000,"vip_pay_type":0,"theme_type":0,"label":{"path":"","text":"","label_theme":"","text_color":"","bg_style":0,"bg_color":"","border_color":"","use_img_label":true,"img_label_uri_hans":"","img_label_uri_hant":"","img_label_uri_hans_static":"https://i0.hdslb.com/bfs/vip/d7b702ef65a976b20ed854cbd04cb9e27341bb79.png","img_label_uri_hant_static":"https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/KJunwh19T5.png"},"avatar_subscript":0,"nickname_color":"","role":0,"avatar_subscript_url":"","tv_vip_status":0,"tv_vip_pay_type":0},"pendant":{"pid":1416,"name":"拜年祭粉丝专鼠","image":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","expire":0,"image_enhance":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","image_enhance_frame":""},"nameplate":{"nid":9,"name":"出道偶像","image":"https://i0.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png","image_small":"https://i2.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png","level":"高级勋章","condition":"所有自制视频总播放数>=50万"},"user_honour_info":{"mid":0,"colour":null,"tags":[]},"is_followed":false,"top_photo":"http://i1.hdslb.com/bfs/space/e22f5b8e06ea3ee4de9e4da702ce8ef9a2958f5a.png","theme":{},"sys_notice":{},"live_room":{"roomStatus":1,"liveStatus":0,"url":"https://live.bilibili.com/14260149?broadcast_type=0&is_room_feed=1","title":"萌新杰少的直播间","cover":"http://i0.hdslb.com/bfs/live/new_room_cover/7a537216592d0b5062856b571e67191ea9f7e016.jpg","roomid":14260149,"roundStatus":1,"broadcast_type":0,"watched_show":{"switch":true,"num":1,"text_small":"1","text_large":"1人看过","icon":"https://i0.hdslb.com/bfs/live/a725a9e61242ef44d764ac911691a7ce07f36c1d.png","icon_location":"","icon_web":"https://i0.hdslb.com/bfs/live/8d9d0f33ef8bf6f308742752d13dd0df731df19c.png"}},"birthday":"09-25","school":{"name":""},"profession":{"name":"","department":"","title":"","is_show":0},"tags":["科技","程序","动漫"],"series":{"user_upgrade_status":3,"show_upgrade_window":false},"is_senior_member":1,"mcn_info":null,"gaia_res_type":0,"gaia_data":null,"is_risk":false,"elec":{"show_info":{"show":true,"state":2,"title":"为TA充电","icon":"","jump_url":"https://www.bilibili.com/h5/upower/index?mid=351201307&navhide=1"}},"contract":{"is_display":false,"is_follow_display":false}}
      */
 
     private int code;
@@ -56,7 +57,7 @@ public class UserInfoBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable {
+    public static class DataBean implements Serializable{
         /**
          * mid : 351201307
          * name : 萌新杰少
@@ -70,16 +71,16 @@ public class UserInfoBean implements Serializable {
          * jointime : 0
          * moral : 0
          * silence : 0
-         * coins : 0
+         * coins : 3553.6
          * fans_badge : true
          * fans_medal : {"show":true,"wear":true,"medal":{"uid":351201307,"target_id":351201307,"medal_id":181675,"level":4,"medal_name":"东方杰","medal_color":6067854,"intimacy":348,"next_intimacy":700,"day_limit":1500,"medal_color_start":6067854,"medal_color_end":6067854,"medal_color_border":6067854,"is_lighted":1,"light_status":1,"wearing_status":1,"score":1349}}
          * official : {"role":0,"title":"","desc":"","type":-1}
          * vip : {"type":1,"status":0,"due_date":1637769600000,"vip_pay_type":0,"theme_type":0,"label":{"path":"","text":"","label_theme":"","text_color":"","bg_style":0,"bg_color":"","border_color":"","use_img_label":true,"img_label_uri_hans":"","img_label_uri_hant":"","img_label_uri_hans_static":"https://i0.hdslb.com/bfs/vip/d7b702ef65a976b20ed854cbd04cb9e27341bb79.png","img_label_uri_hant_static":"https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/KJunwh19T5.png"},"avatar_subscript":0,"nickname_color":"","role":0,"avatar_subscript_url":"","tv_vip_status":0,"tv_vip_pay_type":0}
          * pendant : {"pid":1416,"name":"拜年祭粉丝专鼠","image":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","expire":0,"image_enhance":"https://i1.hdslb.com/bfs/garb/item/c90b1b7d971d0a6f92f10ac3b9ae3c7e80fe2dc8.png","image_enhance_frame":""}
-         * nameplate : {"nid":9,"name":"出道偶像","image":"https://i2.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png","image_small":"https://i0.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png","level":"高级勋章","condition":"所有自制视频总播放数>=50万"}
+         * nameplate : {"nid":9,"name":"出道偶像","image":"https://i0.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png","image_small":"https://i2.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png","level":"高级勋章","condition":"所有自制视频总播放数>=50万"}
          * user_honour_info : {"mid":0,"colour":null,"tags":[]}
          * is_followed : false
-         * top_photo : http://i0.hdslb.com/bfs/space/e22f5b8e06ea3ee4de9e4da702ce8ef9a2958f5a.png
+         * top_photo : http://i1.hdslb.com/bfs/space/e22f5b8e06ea3ee4de9e4da702ce8ef9a2958f5a.png
          * theme : {}
          * sys_notice : {}
          * live_room : {"roomStatus":1,"liveStatus":0,"url":"https://live.bilibili.com/14260149?broadcast_type=0&is_room_feed=1","title":"萌新杰少的直播间","cover":"http://i0.hdslb.com/bfs/live/new_room_cover/7a537216592d0b5062856b571e67191ea9f7e016.jpg","roomid":14260149,"roundStatus":1,"broadcast_type":0,"watched_show":{"switch":true,"num":1,"text_small":"1","text_large":"1人看过","icon":"https://i0.hdslb.com/bfs/live/a725a9e61242ef44d764ac911691a7ce07f36c1d.png","icon_location":"","icon_web":"https://i0.hdslb.com/bfs/live/8d9d0f33ef8bf6f308742752d13dd0df731df19c.png"}}
@@ -93,7 +94,8 @@ public class UserInfoBean implements Serializable {
          * gaia_res_type : 0
          * gaia_data : null
          * is_risk : false
-         * elec : {"show_info":{"show":true,"state":1,"title":"","icon":"","jump_url":""}}
+         * elec : {"show_info":{"show":true,"state":2,"title":"为TA充电","icon":"","jump_url":"https://www.bilibili.com/h5/upower/index?mid=351201307&navhide=1"}}
+         * contract : {"is_display":false,"is_follow_display":false}
          */
 
         private int mid;
@@ -131,6 +133,7 @@ public class UserInfoBean implements Serializable {
         private Object gaia_data;
         private boolean is_risk;
         private ElecBean elec;
+        private ContractBean contract;
         private List<String> tags;
 
         public int getMid() {
@@ -413,6 +416,14 @@ public class UserInfoBean implements Serializable {
             this.elec = elec;
         }
 
+        public ContractBean getContract() {
+            return contract;
+        }
+
+        public void setContract(ContractBean contract) {
+            this.contract = contract;
+        }
+
         public List<String> getTags() {
             return tags;
         }
@@ -421,7 +432,7 @@ public class UserInfoBean implements Serializable {
             this.tags = tags;
         }
 
-        public static class FansMedalBean implements Serializable {
+        public static class FansMedalBean implements Serializable{
             /**
              * show : true
              * wear : true
@@ -456,7 +467,7 @@ public class UserInfoBean implements Serializable {
                 this.medal = medal;
             }
 
-            public static class MedalBean implements Serializable {
+            public static class MedalBean implements Serializable{
                 /**
                  * uid : 351201307
                  * target_id : 351201307
@@ -623,7 +634,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class OfficialBean implements Serializable {
+        public static class OfficialBean implements Serializable{
             /**
              * role : 0
              * title :
@@ -669,7 +680,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class VipBean implements Serializable {
+        public static class VipBean implements Serializable{
             /**
              * type : 1
              * status : 0
@@ -794,7 +805,7 @@ public class UserInfoBean implements Serializable {
                 this.tv_vip_pay_type = tv_vip_pay_type;
             }
 
-            public static class LabelBean implements Serializable {
+            public static class LabelBean implements Serializable{
                 /**
                  * path :
                  * text :
@@ -921,7 +932,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class PendantBean implements Serializable {
+        public static class PendantBean implements Serializable{
             /**
              * pid : 1416
              * name : 拜年祭粉丝专鼠
@@ -987,12 +998,12 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class NameplateBean implements Serializable {
+        public static class NameplateBean implements Serializable{
             /**
              * nid : 9
              * name : 出道偶像
-             * image : https://i2.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png
-             * image_small : https://i0.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png
+             * image : https://i0.hdslb.com/bfs/face/3f2d64f048b39fb6c26f3db39df47e6080ec0f9c.png
+             * image_small : https://i2.hdslb.com/bfs/face/90c35d41d8a19b19474d6bac672394c17b444ce8.png
              * level : 高级勋章
              * condition : 所有自制视频总播放数>=50万
              */
@@ -1053,16 +1064,16 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class UserHonourInfoBean implements Serializable {
+        public static class UserHonourInfoBean {
         }
 
-        public static class ThemeBean implements Serializable {
+        public static class ThemeBean {
         }
 
-        public static class SysNoticeBean implements Serializable {
+        public static class SysNoticeBean {
         }
 
-        public static class LiveRoomBean implements Serializable {
+        public static class LiveRoomBean implements Serializable{
             /**
              * roomStatus : 1
              * liveStatus : 0
@@ -1157,7 +1168,7 @@ public class UserInfoBean implements Serializable {
                 this.watched_show = watched_show;
             }
 
-            public static class WatchedShowBean implements Serializable {
+            public static class WatchedShowBean implements Serializable{
                 /**
                  * switch : true
                  * num : 1
@@ -1235,7 +1246,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class SchoolBean implements Serializable {
+        public static class SchoolBean implements Serializable{
             /**
              * name :
              */
@@ -1251,7 +1262,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class ProfessionBean implements Serializable {
+        public static class ProfessionBean implements Serializable{
             /**
              * name :
              * department :
@@ -1297,7 +1308,7 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class SeriesBean implements Serializable {
+        public static class SeriesBean {
             /**
              * user_upgrade_status : 3
              * show_upgrade_window : false
@@ -1323,9 +1334,9 @@ public class UserInfoBean implements Serializable {
             }
         }
 
-        public static class ElecBean implements Serializable {
+        public static class ElecBean implements Serializable{
             /**
-             * show_info : {"show":true,"state":1,"title":"","icon":"","jump_url":""}
+             * show_info : {"show":true,"state":2,"title":"为TA充电","icon":"","jump_url":"https://www.bilibili.com/h5/upower/index?mid=351201307&navhide=1"}
              */
 
             private ShowInfoBean show_info;
@@ -1338,13 +1349,13 @@ public class UserInfoBean implements Serializable {
                 this.show_info = show_info;
             }
 
-            public static class ShowInfoBean {
+            public static class ShowInfoBean implements Serializable{
                 /**
                  * show : true
-                 * state : 1
-                 * title :
+                 * state : 2
+                 * title : 为TA充电
                  * icon :
-                 * jump_url :
+                 * jump_url : https://www.bilibili.com/h5/upower/index?mid=351201307&navhide=1
                  */
 
                 private boolean show;
@@ -1392,6 +1403,32 @@ public class UserInfoBean implements Serializable {
                 public void setJump_url(String jump_url) {
                     this.jump_url = jump_url;
                 }
+            }
+        }
+
+        public static class ContractBean implements Serializable{
+            /**
+             * is_display : false
+             * is_follow_display : false
+             */
+
+            private boolean is_display;
+            private boolean is_follow_display;
+
+            public boolean isIs_display() {
+                return is_display;
+            }
+
+            public void setIs_display(boolean is_display) {
+                this.is_display = is_display;
+            }
+
+            public boolean isIs_follow_display() {
+                return is_follow_display;
+            }
+
+            public void setIs_follow_display(boolean is_follow_display) {
+                this.is_follow_display = is_follow_display;
             }
         }
     }

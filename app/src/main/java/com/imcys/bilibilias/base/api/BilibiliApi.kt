@@ -22,6 +22,10 @@ class BilibiliApi() {
         //需要传入PS为展示项
         val homeRCMDVideoPath: String = serviceApi + "x/web-interface/index/top/feed/rcmd"
 
+        //热门视频
+        //get，ps和pn
+        val homePopularVideoPath: String = serviceApi + "x/web-interface/popular"
+
         //需要传入mid
         val getUserInfoPath: String = serviceApi + "x/space/acc/info"
 
@@ -65,6 +69,14 @@ class BilibiliApi() {
         //获取剧集明细 get season_id / ep_id
         val bangumiVideoDataPath = serviceApi + "pgc/view/web/season"
 
+        //获取用户基本信息
+        val userBaseDataPath = serviceApi + "x/space/acc/info"
+
+        //用户状态
+        val userUpStat = serviceApi + "x/space/upstat"
+
+        //用户投稿
+        val userWorksPath = serviceApi + "x/space/arc/search"
     }
 
 }

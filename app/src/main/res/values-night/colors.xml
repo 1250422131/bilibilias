@@ -15,4 +15,6 @@
     <color name="color_text_hint">#A6A6AD</color>
     <color name="color_121212">#121212</color>
     <color name="color_303030" tools:ignore="MissingDefaultResource">#303030</color>
+    <color name="user_work_bg">#303030</color>
+
 </resources>

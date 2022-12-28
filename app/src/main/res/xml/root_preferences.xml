@@ -11,7 +11,7 @@
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
-            app:defaultValue="{BV}/{TITLE}.{FILE_TYPE}"
+            app:defaultValue="{BV}/{CID}.{FILE_TYPE}"
             app:dialogMessage="@string/dl_file_rename_rules"
             app:key="user_download_file_name_editText"
             app:title="@string/user_download_file_name"
@@ -23,8 +23,9 @@
     <PreferenceCategory app:title="缓存完成后的行为">
 
         <SwitchPreferenceCompat
+            app:summaryOff="默认下载是音频分离的"
             app:key="user_dl_finish_automatic_merge_switch"
-            app:summary="默认下载是音频分离的"
+            app:summaryOn="目前音频合并只是一个很简单的行为，因此它可能有BUG，可能合并出问题，请熟知。"
             app:title="缓存完成后自动合并" >
 
         </SwitchPreferenceCompat>
