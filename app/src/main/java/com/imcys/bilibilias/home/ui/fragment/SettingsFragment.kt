@@ -1,18 +1,47 @@
 package com.imcys.bilibilias.home.ui.fragment
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Environment
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asLogI
+import com.imcys.bilibilias.utils.AppFilePathUtils
+import com.imcys.bilibilias.utils.UriUtils
+import me.rosuh.filepicker.bean.FileItemBeanImpl
+import me.rosuh.filepicker.config.AbstractFileFilter
+import me.rosuh.filepicker.config.FilePickerManager
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
+
+    private lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
     private lateinit var userDlFinishAutomaticMergeSwitch: Preference
     private lateinit var userDlFinishAutomaticImportSwitch: Preference
+    private val SAVE_FILE_PATH_CODE = 1
+
+
+    private val getSavePath = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()) {
+        val path = UriUtils.getPath(context, it)
+        sharedPreferences.edit().apply {
+            putString("user_download_save_path", path)
+            apply()
+        }
+    }
+
+
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -39,8 +68,70 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
         }
+        bindingGetSavePathEvent()
 
     }
+
+    @SuppressLint("UseRequireInsteadOfGet")
+    private fun bindingGetSavePathEvent() {
+        userDownloadSavePathEditText.setOnPreferenceClickListener {
+            DialogUtils.dialog(context!!, "选择区域",
+                "现在选择，你要在手机内部储存还是SD卡呢？",
+                "手机内部储存",
+                "SD卡", {
+                    FilePickerManager
+                        .from(this)
+                        .maxSelectable(1)
+                        .filter(object : AbstractFileFilter() {
+                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                                return ArrayList(listData.filter { item ->
+                                    item.isDir
+                                })
+                            }
+                        }).skipDirWhenSelect(false)
+                        .forResult(SAVE_FILE_PATH_CODE)
+
+                }, {
+                    FilePickerManager
+                        .from(this)
+                        .maxSelectable(1)
+                        .filter(object : AbstractFileFilter() {
+                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                                return ArrayList(listData.filter { item ->
+                                    item.isDir
+                                })
+                            }
+                        }).skipDirWhenSelect(false)
+                        .setCustomRootPath(AppFilePathUtils(context,
+                            "com.imcys.bilibilias").sdCardDirectory)
+                        .forResult(SAVE_FILE_PATH_CODE)
+                }
+            ).show()
+
+
+
+            false
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            SAVE_FILE_PATH_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val list = FilePickerManager.obtainData().forEach {
+                        sharedPreferences.edit().apply {
+                            putString("user_download_save_path", it)
+                            apply()
+                            userDownloadSavePathEditText.summary = it
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 
     /**
      * 初始化控件
@@ -51,6 +142,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
         userDlFinishAutomaticImportSwitch =
             findPreference("user_dl_finish_automatic_import_switch")!!
+
+        userDownloadSavePathEditText = findPreference("user_download_save_path")!!
+        sharedPreferences.apply {
+            val value = getString("user_download_save_path",
+                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download")
+            userDownloadSavePathEditText.summary = value
+
+        }
 
     }
 

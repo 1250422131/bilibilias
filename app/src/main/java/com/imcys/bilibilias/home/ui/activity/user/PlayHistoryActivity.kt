@@ -1,0 +1,80 @@
+package com.imcys.bilibilias.home.ui.activity.user
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
+import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
+import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
+import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.RecyclerViewUtils
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+
+class PlayHistoryActivity : BaseActivity() {
+    private lateinit var binding: ActivityPlayHistoryBinding
+    private lateinit var playHistoryAdapter: PlayHistoryAdapter
+    private lateinit var playHistoryBean: PlayHistoryBean
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView<ActivityPlayHistoryBinding?>(this,
+            R.layout.activity_play_history).apply {
+            playHistoryTopLy.addStatusBarTopPadding()
+        }
+        initView()
+
+    }
+
+    private fun initView() {
+        initPlayHistory()
+    }
+
+    private fun initPlayHistory() {
+        binding.apply {
+            playHistoryAdapter = PlayHistoryAdapter()
+            playHistoryTopRv.adapter = playHistoryAdapter
+            playHistoryTopRv.layoutManager =
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+            HttpUtils.addHeader("cookie", App.cookies)
+                .get("${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
+                    PlayHistoryBean::class.java) {
+                    playHistoryBean = it
+                    playHistoryAdapter.submitList(it.data.list)
+                }
+
+            playHistoryTopRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
+                        loadPlayHistory()
+                    }
+                }
+            })
+        }
+    }
+
+    private fun loadPlayHistory() {
+        HttpUtils.addHeader("cookie", App.cookies)
+            .get("${BilibiliApi.userPlayHistoryPath}?max=${playHistoryBean.data.cursor.max}&view_at=${playHistoryBean.data.cursor.view_at}&type=archive",
+                PlayHistoryBean::class.java) {
+                playHistoryAdapter.submitList(playHistoryBean.data.list + it.data.list)
+                playHistoryBean = it
+            }
+    }
+
+    companion object {
+        fun actionStart(context: Context) {
+            val intent = Intent(context, PlayHistoryActivity::class.java)
+            context.startActivity(intent)
+        }
+
+    }
+
+}

@@ -51,6 +51,9 @@ class BilibiliApi() {
         //获取收藏列表
         val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
 
+        //收藏夹详细内容
+        val userCollectionDataPath = serviceApi + "x/v3/fav/resource/list"
+
         val videoPlayPath = serviceApi + "x/player/playurl"
         val bangumiPlayPath = serviceApi + "pgc/player/web/playurl"
 
@@ -77,6 +80,9 @@ class BilibiliApi() {
 
         //用户投稿
         val userWorksPath = serviceApi + "x/space/arc/search"
+
+        //播放历史
+        val userPlayHistoryPath = serviceApi + "x/web-interface/history/cursor"
     }
 
 }

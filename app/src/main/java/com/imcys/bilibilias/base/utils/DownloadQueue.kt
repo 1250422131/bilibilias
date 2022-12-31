@@ -54,6 +54,8 @@ class DownloadQueue {
         var fileType: Int,
         //下载任务的其他参撒
         val downloadTaskDataBean: DownloadTaskDataBean,
+        // 标识这个任务是否是一组任务的一部分
+        var isGroupTask: Boolean = true,
         // 定义下载完成回调
         val onComplete: (Boolean) -> Unit,
         var payloadsType: Int = 0,
@@ -67,8 +69,6 @@ class DownloadQueue {
         var fileDlSize: Double = 0.0,
         // 定义当前任务的下载请求
         var call: Callback.Cancelable? = null,
-        // 标识这个任务是否是一组任务的一部分
-        val isGroupTask: Boolean = true,
 
         )
 
@@ -79,12 +79,19 @@ class DownloadQueue {
         savePath: String,
         fileType: Int,
         downloadTaskDataBean: DownloadTaskDataBean,
+        isGroupTask: Boolean = true,
         onComplete: (Boolean) -> Unit,
     ) {
 
         // 创建一个下载任务
         val task =
-            Task(++cumulativeTaskNumber, url, savePath, fileType, downloadTaskDataBean, onComplete)
+            Task(++cumulativeTaskNumber,
+                url,
+                savePath,
+                fileType,
+                downloadTaskDataBean,
+                isGroupTask = isGroupTask,
+                onComplete)
 
         if (task.isGroupTask) {
             // 在map中找到这个任务所属的一组任务

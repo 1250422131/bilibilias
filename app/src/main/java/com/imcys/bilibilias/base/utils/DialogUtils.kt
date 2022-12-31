@@ -4,16 +4,15 @@ package com.imcys.bilibilias.base.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.icu.text.CaseMap
-import android.util.Log
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.core.content.ContextCompat.startActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
@@ -25,16 +24,13 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.databinding.*
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.BangumiPageAdapter
 import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
 import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.utils.AppFilePathUtils
 import com.imcys.bilibilias.utils.HttpUtils
-import okhttp3.internal.notifyAll
-import java.net.URLEncoder
-import kotlin.math.asin
 import kotlin.random.Random
 
 
@@ -47,6 +43,11 @@ class DialogUtils {
     companion object {
 
         private val TAG = DialogUtils::class.java.simpleName
+        val DASH_TYPE = 1
+        val FLV_TYPE = 2
+        val ADM_DOWNLOAD = 3
+        val IDM_DOWNLOAD = 2
+        val APP_DOWNLOAD = 1
 
 
         /**
@@ -197,6 +198,38 @@ class DialogUtils {
             return bottomSheetDialog
         }
 
+        @SuppressLint("CommitPrefEdits")
+        private fun loadDownloadTypeDialog(
+            context: Context,
+            finished: (selects: Int, typeName: String) -> Unit,
+        ): BottomSheetDialog {
+            val binding = DialogDownloadTypeBinding.inflate(LayoutInflater.from(context))
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //创建设置布局
+            bottomSheetDialog.setContentView(binding.root)
+            //val mDialogBehavior =
+            initDialogBehaviorBinding(binding.dialogDlTypeTopBar,
+                context,
+                binding.root.parent)
+            binding.apply {
+
+                dialogDlTypeDashBt.setOnClickListener {
+                    App.sharedPreferences.edit().putInt("user_download_type", 1).apply()
+                    finished(1, "Dash")
+                    bottomSheetDialog.cancel()
+                }
+
+                dialogDlTypeFlvBt.setOnClickListener {
+                    App.sharedPreferences.edit().putInt("user_download_type", 2).apply()
+                    finished(2, "FLV")
+                    bottomSheetDialog.cancel()
+                }
+            }
+
+            return bottomSheetDialog
+
+        }
+
 
         /**
          * 加载用户收藏文件夹
@@ -281,6 +314,91 @@ class DialogUtils {
 
         }
 
+        /**
+         * 判断视频下载方案
+         * @param context Context
+         * @param downloadType Int
+         * @param downloadTool Int
+         * @param videoBaseBean VideoBaseBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoPageMutableList MutableList<DataBean>
+         */
+        private fun downloadTaskStream(
+            context: Context,
+            downloadType: Int,
+            downloadTool: Int,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        ) {
+            //首先判断是什么类型
+            when (downloadType) {
+                DASH_TYPE -> {
+                    addDownloadTask(context,
+                        videoBaseBean,
+                        qn,
+                        80,
+                        videoPageMutableList)
+                }
+                FLV_TYPE -> {
+                    addFlvDownloadTask(
+                        context,
+                        videoBaseBean,
+                        qn,
+                        80,
+                        downloadTool,
+                        videoPageMutableList
+                    )
+
+                }
+            }
+        }
+
+
+        /**
+         * 判断番剧下载方案
+         * @param context Context
+         * @param downloadType Int
+         * @param downloadTool Int
+         * @param videoBaseBean VideoBaseBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoPageMutableList MutableList<DataBean>
+         */
+        @JvmName("downloadTaskStream1")
+        private fun downloadTaskStream(
+            context: Context,
+            downloadType: Int,
+            downloadTool: Int,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        ) {
+            //首先判断是什么类型
+            when (downloadType) {
+                DASH_TYPE -> {
+                    addBangumiDownloadTask(context,
+                        videoBaseBean,
+                        qn,
+                        80,
+                        bangumiPageMutableList)
+                }
+                FLV_TYPE -> {
+                    addFlvBangumiDownloadTask(
+                        context,
+                        videoBaseBean,
+                        qn,
+                        80,
+                        downloadTool,
+                        bangumiPageMutableList
+                    )
+                }
+            }
+        }
+
 
         /**
          * 缓存视频弹窗
@@ -290,6 +408,7 @@ class DialogUtils {
          * @param dashVideoPlayBean DashVideoPlayBean
          * @return BottomSheetDialog
          */
+        @SuppressLint("CommitPrefEdits")
         @JvmStatic
         fun downloadVideoDialog(
             context: Context,
@@ -297,8 +416,13 @@ class DialogUtils {
             videoPageListData: VideoPageListData,
             dashVideoPlayBean: DashVideoPlayBean,
         ): BottomSheetDialog {
+
             var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
             var selectDefinition = 80
+
+            var downloadType = DASH_TYPE
+            var downloadTool = APP_DOWNLOAD
+
             videoPageMutableList.add(videoPageListData.data[0])
 
             val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
@@ -345,8 +469,63 @@ class DialogUtils {
                 }
 
 
+                dialogDlVideoTypeTx.setOnClickListener {
+                    loadDownloadTypeDialog(context) { selects, typeName ->
+                        downloadType = selects
+                        dialogDlVideoTypeTx.text = typeName
+                    }.show()
+                }
+
+                val sharedPreferences = App.sharedPreferences.apply {
+                    when (getInt("user_download_tool_list", 1)) {
+                        1 -> {
+                            downloadTool = APP_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_app_dl)
+                        }
+                        2 -> {
+                            downloadTool = IDM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_idm_dl)
+                        }
+                        3 -> {
+                            downloadTool = ADM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_adm_dl)
+                        }
+                    }
+                    downloadType = getInt("user_download_type", 1)
+                    when (getInt("user_download_type", 1)) {
+                        1 -> {
+                            dialogDlVideoTypeTx.text = "Dash"
+                        }
+                        2 -> {
+                            dialogDlVideoTypeTx.text = "FLV"
+                        }
+                    }
+
+                }
+
+
+                dialogDlVideoRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                    when (i) {
+                        R.id.dialog_dl_video_idm_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 2).apply()
+                            downloadTool = IDM_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_app_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 1).apply()
+                            downloadTool = APP_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_adm_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 3).apply()
+                            downloadTool = ADM_DOWNLOAD
+                        }
+                    }
+                }
+
                 dialogDlVideoButton.setOnClickListener {
-                    addDownloadTask(context,
+                    downloadTaskStream(
+                        context,
+                        downloadType,
+                        downloadTool,
                         videoBaseBean,
                         selectDefinition,
                         80,
@@ -381,7 +560,12 @@ class DialogUtils {
         ): BottomSheetDialog {
             var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
             var selectDefinition = 80
+
+            var downloadType = DASH_TYPE
+            var downloadTool = APP_DOWNLOAD
+
             videoPageMutableList.add(bangumiSeasonBean.result.episodes[0])
+
 
             val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
 
@@ -431,8 +615,77 @@ class DialogUtils {
                 }
 
 
+                dialogDlVideoTypeTx.setOnClickListener {
+                    loadDownloadTypeDialog(context) { selects, typeName ->
+                        downloadType = selects
+                        dialogDlVideoTypeTx.text = typeName
+                    }.show()
+                }
+
+
+                val sharedPreferences = App.sharedPreferences.apply {
+                    when (getInt("user_download_tool_list", 1)) {
+                        1 -> dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_app_dl)
+                        2 -> dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_idm_dl)
+                        3 -> dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_adm_dl)
+                    }
+                    downloadType = getInt("user_download_type", 1)
+                    when (getInt("user_download_type", 1)) {
+                        1 -> {
+                            dialogDlVideoTypeTx.text = "Dash"
+                        }
+                        2 -> {
+                            dialogDlVideoTypeTx.text = "FLV"
+                        }
+                    }
+
+                }
+
+
+                dialogDlVideoRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                    when (i) {
+                        R.id.dialog_dl_video_idm_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 2).apply()
+                            downloadTool = IDM_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_app_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 1).apply()
+                            downloadTool = APP_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_adm_dl -> {
+                            sharedPreferences.edit().putInt("user_download_tool_list", 3).apply()
+                            downloadTool = ADM_DOWNLOAD
+                        }
+                    }
+                }
+
+
+                dialogDlVideoRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                    when (i) {
+                        R.id.dialog_dl_video_idm_dl -> {
+                            App.sharedPreferences.edit().putInt("user_download_tool_list", 2)
+                                .apply()
+                            downloadTool = IDM_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_app_dl -> {
+                            App.sharedPreferences.edit().putInt("user_download_tool_list", 1)
+                                .apply()
+                            downloadTool = APP_DOWNLOAD
+                        }
+                        R.id.dialog_dl_video_adm_dl -> {
+                            App.sharedPreferences.edit().putInt("user_download_tool_list", 3)
+                                .apply()
+                            downloadTool = ADM_DOWNLOAD
+                        }
+                    }
+                }
+
+
                 dialogDlVideoButton.setOnClickListener {
-                    addBangumiDownloadTask(context,
+                    downloadTaskStream(
+                        context,
+                        downloadType,
+                        downloadTool,
                         videoBaseBean,
                         selectDefinition,
                         80,
@@ -477,6 +730,254 @@ class DialogUtils {
             }
         }
 
+
+        /**
+         * 添加视频FLV下载任务
+         * @param context Context
+         * @param videoBaseBean VideoBaseBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoPageMutableList MutableList<DataBean>
+         */
+        private fun addFlvDownloadTask(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            downloadTool: Int,
+            videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        ) {
+            videoPageMutableList.forEach {
+                addFlvTask(context, it, qn, fnval, videoBaseBean, downloadTool, "video", false)
+            }
+        }
+
+
+        /**
+         * 添加番剧FLV下载任务
+         * @param context Context
+         * @param videoBaseBean VideoBaseBean
+         * @param qn Int
+         * @param fnval Int
+         * @param bangumiPageMutableList MutableList<EpisodesBean>
+         */
+        private fun addFlvBangumiDownloadTask(
+            context: Context,
+            videoBaseBean: VideoBaseBean,
+            qn: Int,
+            fnval: Int,
+            downloadTool: Int,
+            bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        ) {
+            bangumiPageMutableList.forEach {
+                addFlvTask(context, it, qn, fnval, videoBaseBean, downloadTool, "video", false)
+            }
+        }
+
+        /**
+         * 添加视频FLV下载任务
+         * @param context Context
+         * @param dataBean DataBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoBaseBean VideoBaseBean
+         * @param type String
+         */
+        private fun addFlvTask(
+            context: Context,
+            dataBean: VideoPageListData.DataBean,
+            qn: Int,
+            fnval: Int,
+            videoBaseBean: VideoBaseBean,
+            downloadTool: Int,
+            type: String,
+            isGroupTask: Boolean = false,
+        ) {
+            Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+
+            HttpUtils.addHeader("cookie", App.cookies)
+                .addHeader("referer", "https://www.bilibili.com")
+                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
+                    VideoPlayBean::class.java) { it1 ->
+
+                    val videoPlayData = it1.data
+                    var urlIndex = 0
+                    //获取视频
+                    it1.data.accept_quality.forEachIndexed { index, i ->
+                        if (i == qn) {
+                            urlIndex = index
+                            return@forEachIndexed
+                        }
+                    }
+
+                    val intFileType: Int
+                    val fileType: String
+                    val url = when (type) {
+                        "video" -> {
+                            intFileType = 0
+                            fileType = "mp4"
+                            videoPlayData.durl[0].url
+                        }
+                        else -> throw IllegalArgumentException("Invalid type: $type")
+                    }
+
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString("user_download_file_name_editText", "")
+                            .toString()
+                    var DownloadName =
+                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
+                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
+                    DownloadName =
+                        DownloadName.replace("{P_TITLE}", dataBean.part + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
+                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
+                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
+                    DownloadName = DownloadName.replace("{TITLE}", videoBaseBean.data.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+
+                    val savePath = sharedPreferences.getString("user_download_save_path",
+                        context.getExternalFilesDir("download").toString())
+
+                    when (downloadTool) {
+                        APP_DOWNLOAD -> {
+                            App.downloadQueue.addTask(
+                                url,
+                                "$savePath/$DownloadName",
+                                intFileType,
+                                DownloadTaskDataBean(
+                                    dataBean.cid,
+                                    dataBean.part,
+                                    qn.toString(),
+                                    videoPlayBean = it1,
+                                    videoPageDataData = dataBean,
+                                ),
+                                isGroupTask = isGroupTask,
+                            ) { it2 ->
+                                if (it2) {
+                                    Toast.makeText(context,
+                                        "${videoBaseBean.data.bvid}下载成功",
+                                        Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context,
+                                        "${videoBaseBean.data.bvid}下载失败",
+                                        Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                        }
+
+                        IDM_DOWNLOAD -> {
+                            toIdmDownload(url, context)
+                        }
+                        ADM_DOWNLOAD -> {
+                            toAdmDownload(url, context)
+                        }
+                    }
+                }
+        }
+
+
+        /**
+         * 添加番剧FLV下载任务
+         * @param context Context
+         * @param dataBean DataBean
+         * @param qn Int
+         * @param fnval Int
+         * @param videoBaseBean VideoBaseBean
+         * @param type String
+         */
+        private fun addFlvTask(
+            context: Context,
+            dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+            qn: Int,
+            fnval: Int,
+            videoBaseBean: VideoBaseBean,
+            downloadTool: Int,
+            type: String,
+            isGroupTask: Boolean = false,
+        ) {
+            HttpUtils.addHeader("cookie", App.cookies)
+                .addHeader("referer", "https://www.bilibili.com")
+                .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
+                    BangumiPlayBean::class.java) { it1 ->
+
+                    val videoPlayData = it1.result
+                    var urlIndex = 0
+                    //获取视频
+                    videoPlayData.accept_quality.forEachIndexed { index, i ->
+                        if (i == qn) {
+                            urlIndex = index
+                            return@forEachIndexed
+                        }
+                    }
+
+                    val intFileType: Int
+                    val fileType: String
+                    val url = when (type) {
+                        "video" -> {
+                            intFileType = 0
+                            fileType = "mp4"
+                            videoPlayData.durl[0].url
+                        }
+                        else -> throw IllegalArgumentException("Invalid type: $type")
+                    }
+
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString("user_download_file_name_editText", "")
+                            .toString()
+                    var DownloadName =
+                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
+                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
+                    DownloadName =
+                        DownloadName.replace("{P_TITLE}", dataBean.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
+                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
+                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
+                    DownloadName = DownloadName.replace("{TITLE}",
+                        videoBaseBean.data.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+                    DownloadName = DownloadName.replace(" ", "")
+
+                    val savePath = sharedPreferences.getString("user_download_save_path",
+                        context.getExternalFilesDir("download").toString())
+
+                    when (downloadTool) {
+                        APP_DOWNLOAD -> {
+                            App.downloadQueue.addTask(
+                                url,
+                                "$savePath/$DownloadName",
+                                intFileType,
+                                DownloadTaskDataBean(
+                                    dataBean.cid,
+                                    dataBean.title,
+                                    qn.toString(),
+                                    bangumiPlayBean = it1,
+                                    bangumiSeasonBean = dataBean,
+                                ),
+                                isGroupTask = isGroupTask,
+                            ) { it2 ->
+                                if (it2) {
+                                    Toast.makeText(context,
+                                        "${videoBaseBean.data.bvid}下载成功",
+                                        Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context,
+                                        "${videoBaseBean.data.bvid}下载失败",
+                                        Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                        IDM_DOWNLOAD -> {
+                            toIdmDownload(url, context)
+                        }
+                        ADM_DOWNLOAD -> {
+                            toAdmDownload(url, context)
+                        }
+                    }
+                }
+        }
 
         /**
          * 添加番剧下载任务
@@ -525,12 +1026,29 @@ class DialogUtils {
                         else -> throw IllegalArgumentException("Invalid type: $type")
                     }
 
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString("user_download_file_name_editText", "")
+                            .toString()
+                    var DownloadName =
+                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
+                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
+                    DownloadName =
+                        DownloadName.replace("{P_TITLE}", dataBean.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
+                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
+                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
+                    DownloadName = DownloadName.replace("{TITLE}",
+                        videoBaseBean.data.title + Random.nextInt(0, 90000))
+                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+                    DownloadName = DownloadName.replace(" ", "")
+
+                    val savePath = sharedPreferences.getString("user_download_save_path",
+                        context.getExternalFilesDir("download").toString())
 
                     App.downloadQueue.addTask(
                         url,
-                        "${
-                            context.getExternalFilesDir("download").toString()
-                        }/${videoBaseBean.data.bvid}/cs${dataBean.cid}$fileType",
+                        "$savePath/$DownloadName",
                         intFileType,
                         DownloadTaskDataBean(
                             dataBean.cid,
@@ -570,6 +1088,7 @@ class DialogUtils {
             fnval: Int,
             videoBaseBean: VideoBaseBean,
             type: String,
+            isGroupTask: Boolean = true,
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
@@ -621,19 +1140,20 @@ class DialogUtils {
                     DownloadName = DownloadName.replace("{TYPE}", qn.toString())
                     DownloadName = DownloadName.replace(" ", "")
 
+                    val savePath = sharedPreferences.getString("user_download_save_path",
+                        context.getExternalFilesDir("download").toString())
                     App.downloadQueue.addTask(
                         url,
-                        "${
-                            context.getExternalFilesDir("download").toString()
-                        }/$DownloadName",
+                        "$savePath/$DownloadName",
                         intFileType,
                         DownloadTaskDataBean(
                             dataBean.cid,
                             dataBean.part,
                             qn.toString(),
                             dashVideoPlayBean = it1,
-                            videoPageDataData = dataBean
-                        )
+                            videoPageDataData = dataBean,
+                        ),
+                        isGroupTask = isGroupTask,
                     ) { it2 ->
                         if (it2) {
                             Toast.makeText(context,
@@ -646,6 +1166,61 @@ class DialogUtils {
                         }
                     }
                 }
+        }
+
+
+        private fun toIdmDownload(url: String, context: Context) {
+            val intent = Intent("android.intent.action.VIEW")
+            intent.addCategory("android.intent.category.APP_BROWSER")
+            intent.data = Uri.parse(url)
+            intent.putExtra("Cookie", App.cookies)
+            intent.putExtra("Referer", "https://www.bilibili.com/")
+            intent.putExtra("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")
+            if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager.plus")
+            ) {
+                Toast.makeText(context, "正在拉起IDM", Toast.LENGTH_SHORT).show()
+                // 下载调用
+                val str2 = "idm.internet.download.manager.plus"
+                intent.setClassName(str2, "idm.internet.download.manager.Downloader")
+                context.startActivity(intent)
+            } else if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager")
+            ) {
+                Toast.makeText(context, "正在拉起IDM", Toast.LENGTH_SHORT).show()
+                // 下载调用
+                val str2 = "idm.internet.download.manager"
+                intent.setClassName(str2, "idm.internet.download.manager.Downloader")
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, "看起来你还没有安装下载器", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        private fun toAdmDownload(url: String, context: Context) {
+            val intent = Intent("android.intent.action.VIEW")
+            intent.addCategory("android.intent.category.APP_BROWSER")
+            intent.data = Uri.parse(url)
+            intent.putExtra("Cookie", App.cookies)
+            intent.putExtra("Referer", "https://www.bilibili.com/")
+            intent.putExtra("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")
+            if (AppFilePathUtils.isInstallApp(context, "com.dv.adm")) {
+                Toast.makeText(context, "正在拉起ADM", Toast.LENGTH_SHORT).show()
+                // 下载调用
+                val str1 = "com.dv.adm"
+                val str2 = "com.dv.adm.AEditor"
+                intent.setClassName(str1, str2)
+                context.startActivity(intent)
+            } else if (AppFilePathUtils.isInstallApp(context, "com.dv.adm.pay")) {
+                Toast.makeText(context, "正在拉起ADM PRO", Toast.LENGTH_SHORT).show()
+                // 下载调用
+                val str1 = "com.dv.adm.pay"
+                val str2 = "com.dv.adm.pay.AEditor"
+                intent.setClassName(str1, str2)
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, "看起来你还没有安装下载器", Toast.LENGTH_SHORT).show()
+            }
         }
 
 

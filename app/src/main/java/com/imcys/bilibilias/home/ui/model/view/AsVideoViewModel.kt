@@ -2,8 +2,14 @@ package com.imcys.bilibilias.home.ui.model.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.content.res.ColorStateList
+import android.os.Build
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -121,6 +127,22 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                     }
                 }
         }
+
+    }
+
+    /**
+     * 复制内容
+     * @param inputStr String
+     */
+    fun addClipboardMessage(inputStr: String): Boolean {
+        val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        // When setting the clip board text.
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
+        // Only show a toast for Android 12 and lower.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
+            Toast.makeText(context, "复制吃过", Toast.LENGTH_SHORT).show()
+
+        return true
 
     }
 

@@ -9,4 +9,18 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+
+    <string-array name="user_download_tool">
+        <item>APP</item>
+        <item>ADM</item>
+        <item>IDM</item>
+    </string-array>
+
+    <integer-array name="user_download_tool_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+
 </resources>

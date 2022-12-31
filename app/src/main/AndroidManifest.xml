@@ -10,6 +10,7 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
+
     <application
         android:name=".base.app.App"
         android:allowBackup="true"
@@ -24,6 +25,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".home.ui.activity.user.PlayHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.ui.activity.user.CollectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.ui.activity.SettingActivity"
             android:exported="false" />
         <activity
@@ -36,13 +43,15 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.BILIBILIAS.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
-            android:name=".home.ui.activity.HomeActivity">
+            android:name=".home.ui.activity.HomeActivity"
+            tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/*" />
             </intent-filter>
         </activity>

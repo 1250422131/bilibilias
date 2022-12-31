@@ -34,19 +34,22 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout-v23/item_tool.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_as_video.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_collection.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_csactivity.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_home.xml" value="0.15925925925925927" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_play_history.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_scrolling.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_splash.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/activity_stting.xml" value="0.21614583333333334" />
-        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/as_top_navigationlayout.xml" value="0.1764957264957265" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/as_top_navigationlayout.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/as_video_me.xml" value="0.8664122137404581" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/content_scrolling.xml" value="0.4192708333333333" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_bangumi_collection.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_bottomsheet.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_collection.xml" value="0.21510416666666668" />
-        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_download_video.xml" value="0.165" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_download_type.xml" value="0.1234375" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_download_video.xml" value="0.2088607594936709" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_load_bottomsheet.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_login_bottomsheet.xml" value="0.375" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/dialog_login_qr_bottomsheet.xml" value="0.25" />
@@ -58,11 +61,14 @@
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/fragment_user.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_bangumi_subsection.xml" value="0.21614583333333334" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_collection.xml" value="0.21510416666666668" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_collection_works.xml" value="0.12135416666666667" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_dl_bangumi_page.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_dl_video_page.xml" value="0.1" />
-        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_download_task.xml" value="0.5128983308042488" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_download_task.xml" value="0.25190839694656486" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_fg_user_card_data.xml" value="0.1234375" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_fg_user_face.xml" value="0.1234375" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_fg_user_tool.xml" value="0.21510416666666668" />
+        <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_play_history_works.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_rcmd_video.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_subsection.xml" value="0.21510416666666668" />
         <entry key="..\:/AndroidStudioProjects/BILIBILIAS/app/src/main/res/layout/item_tool.xml" value="0.33064516129032256" />

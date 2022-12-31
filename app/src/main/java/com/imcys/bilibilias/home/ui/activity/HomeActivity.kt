@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ import com.imcys.bilibilias.home.ui.fragment.UserFragment
 
 
 class HomeActivity : BaseActivity() {
+    private var exitTime: Long = 0
     private lateinit var activityHomeBinding: ActivityHomeBinding
     lateinit var toolFragment: ToolFragment
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,6 +118,25 @@ class HomeActivity : BaseActivity() {
                 false
             }
 
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exit()
+            return false
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private fun exit() {
+        if (System.currentTimeMillis() - exitTime > 2000) {
+            Toast.makeText(applicationContext, "再按一次退出程序",
+                Toast.LENGTH_SHORT).show()
+            exitTime = System.currentTimeMillis()
+        } else {
+
+            finishAll()
         }
     }
 }

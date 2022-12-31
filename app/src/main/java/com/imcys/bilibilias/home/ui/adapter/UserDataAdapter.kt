@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
+import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
+import com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel
 
 class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     ItemCallback<UserViewItemBean>() {
@@ -36,6 +38,10 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
                 DataBindingUtil.inflate<ItemFgUserCardDataBinding>(LayoutInflater.from(parent.context),
                     R.layout.item_fg_user_card_data, parent, false)
             }
+            3 -> {
+                DataBindingUtil.inflate<ItemFgUserToolBinding>(LayoutInflater.from(parent.context),
+                    R.layout.item_fg_user_tool, parent, false)
+            }
             else -> {
                 TODO("错误")
             }
@@ -54,6 +60,11 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
                 DataBindingUtil.getBinding<ItemFgUserCardDataBinding>(holder.itemView)?.apply {
                     upStatBeam = getItem(position).upStatBeam
                     userCardBean = getItem(position).userCardBean
+                }
+            }
+            3 -> {
+                DataBindingUtil.getBinding<ItemFgUserToolBinding>(holder.itemView)?.apply {
+                    itemFgUserToolViewModel = ItemFgUserToolViewModel()
                 }
             }
             else -> {
