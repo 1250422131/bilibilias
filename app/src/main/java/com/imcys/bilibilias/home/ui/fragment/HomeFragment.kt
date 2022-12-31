@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -23,12 +20,10 @@ import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.MyUserData
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asLogD
-import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.home.ui.fragment.home.adapter.RCMDVideoAdapter
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import com.youth.banner.transformer.ZoomOutPageTransformer
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import java.net.URLEncoder

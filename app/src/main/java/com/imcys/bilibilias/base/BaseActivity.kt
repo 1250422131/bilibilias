@@ -1,15 +1,11 @@
 package com.imcys.bilibilias.base
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
-import com.imcys.bilibilias.utils.HttpUtils
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes

@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -29,8 +28,8 @@ import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.utils.AppFilePathUtils
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import kotlin.random.Random
 
 

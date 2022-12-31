@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.utils
+package com.imcys.bilibilias.utils.file
 
 import android.content.Context
 import android.database.Cursor

@@ -1,10 +1,8 @@
 package com.imcys.bilibilias.home.ui.fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,13 +26,12 @@ import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
 import com.imcys.bilibilias.utils.AsVideoNumUtils
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import kotlin.math.floor
 
 
 class ToolFragment : Fragment() {

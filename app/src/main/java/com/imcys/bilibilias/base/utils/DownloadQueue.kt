@@ -1,13 +1,12 @@
 package com.imcys.bilibilias.base.utils
 
 import android.annotation.SuppressLint
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.utils.FileUtils
-import com.imcys.bilibilias.utils.MediaExtractorUtils
+import com.imcys.bilibilias.utils.file.FileUtils
+import com.imcys.bilibilias.utils.file.MediaExtractorUtils
 import org.xutils.common.Callback
 import org.xutils.common.task.PriorityExecutor
 import org.xutils.http.RequestParams

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.utils
+package com.imcys.bilibilias.utils.http
 
 import okhttp3.Call
 import okhttp3.Callback

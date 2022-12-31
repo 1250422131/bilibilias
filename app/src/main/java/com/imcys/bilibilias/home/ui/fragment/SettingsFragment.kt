@@ -4,26 +4,25 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asLogI
-import com.imcys.bilibilias.utils.AppFilePathUtils
-import com.imcys.bilibilias.utils.UriUtils
+import com.imcys.bilibilias.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.utils.file.fileUriUtils
 import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
 import me.rosuh.filepicker.config.FilePickerManager
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
+
 
     private lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
@@ -32,11 +31,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val SAVE_FILE_PATH_CODE = 1
 
 
-    private val getSavePath = registerForActivityResult(
+    private val saveImport = registerForActivityResult(
         ActivityResultContracts.OpenDocumentTree()) {
-        val path = UriUtils.getPath(context, it)
-        sharedPreferences.edit().apply {
-            putString("user_download_save_path", path)
+        App.sharedPreferences.edit().apply {
+            putString("AppDataUri", it.toString())
+            putBoolean("user_dl_finish_automatic_import_switch", true)
             apply()
         }
     }
@@ -69,7 +68,35 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         }
         bindingGetSavePathEvent()
+        bindingImportFileEvent()
 
+    }
+
+    @SuppressLint("UseRequireInsteadOfGet")
+    private fun bindingImportFileEvent() {
+        userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
+            //判断是否有权限
+            if (!fileUriUtils.isGrant(context)) {
+                //申请权限
+                DialogUtils.dialog(
+                    context!!,
+                    "授权须知",
+                    "简答来讲，这项功能需要你授权下文件的读写权限，BILIBILIAS仅仅会利用此权限实现导入番剧。",
+                    "同意授权",
+                    "拒绝授权",
+                    {
+                        saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                    },
+                    {
+                    }
+                ).show()
+                false
+            } else {
+                true
+            }
+
+
+        }
     }
 
     @SuppressLint("UseRequireInsteadOfGet")
@@ -102,7 +129,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                                 })
                             }
                         }).skipDirWhenSelect(false)
-                        .setCustomRootPath(AppFilePathUtils(context,
+                        .setCustomRootPath(AppFilePathUtils(
+                            context,
                             "com.imcys.bilibilias").sdCardDirectory)
                         .forResult(SAVE_FILE_PATH_CODE)
                 }
@@ -148,6 +176,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val value = getString("user_download_save_path",
                 "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download")
             userDownloadSavePathEditText.summary = value
+
 
         }
 
