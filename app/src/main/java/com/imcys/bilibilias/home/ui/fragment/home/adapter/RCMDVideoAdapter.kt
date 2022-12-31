@@ -1,11 +1,9 @@
 package com.imcys.bilibilias.home.ui.fragment.home.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
@@ -16,7 +14,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import com.youth.banner.adapter.BannerAdapter
 
 class RCMDVideoAdapter(

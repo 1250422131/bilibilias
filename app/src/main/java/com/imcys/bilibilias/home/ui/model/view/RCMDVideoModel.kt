@@ -2,12 +2,11 @@ package com.imcys.bilibilias.home.ui.model.view
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 
 class RCMDVideoModel {
 

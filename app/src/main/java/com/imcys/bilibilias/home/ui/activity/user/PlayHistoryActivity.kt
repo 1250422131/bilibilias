@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -14,7 +13,7 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import com.imcys.bilibilias.utils.RecyclerViewUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 

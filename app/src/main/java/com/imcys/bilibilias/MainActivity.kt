@@ -1,10 +1,7 @@
 package com.imcys.bilibilias
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.utils.HttpUtils
-import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 class MainActivity : BaseActivity() {
 

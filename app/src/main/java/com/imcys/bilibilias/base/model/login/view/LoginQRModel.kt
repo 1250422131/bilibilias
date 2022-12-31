@@ -1,11 +1,9 @@
 package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.View
 import com.google.gson.Gson
 import com.imcys.bilibilias.base.api.BilibiliApi
@@ -14,13 +12,12 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
-import com.imcys.bilibilias.utils.HttpUtils
+import com.imcys.bilibilias.utils.http.HttpUtils
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 import java.net.URLEncoder
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class LoginQRModel {

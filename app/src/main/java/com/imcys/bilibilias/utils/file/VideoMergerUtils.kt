@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.utils
+package com.imcys.bilibilias.utils.file
 
 import android.media.MediaCodec
 import android.media.MediaExtractor

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.utils;
+package com.imcys.bilibilias.utils.file;
 
 import android.annotation.SuppressLint;
 import android.media.MediaCodec;

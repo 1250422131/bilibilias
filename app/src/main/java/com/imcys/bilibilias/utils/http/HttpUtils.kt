@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.utils
+package com.imcys.bilibilias.utils.http
 
 import com.google.gson.Gson
 import com.imcys.bilibilias.base.app.App
@@ -37,7 +37,7 @@ class HttpUtils {
         @JvmStatic
         fun downLoadFile(url: String, callBack: org.xutils.common.Callback.ProgressCallback<File>) {
             val requestParams = RequestParams(url).apply {
-                this@Companion.headers.forEach {
+                Companion.headers.forEach {
                     addHeader(it.key, it.value)
                 }
 
