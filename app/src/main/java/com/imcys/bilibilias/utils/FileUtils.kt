@@ -1,9 +1,15 @@
 package com.imcys.bilibilias.utils
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
+import androidx.loader.content.CursorLoader
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
+
 
 /**
  * 文件操作类
@@ -24,6 +30,7 @@ object FileUtils {
             mDeleteFile(sPath)
         }
     }
+
 
 
     /**
@@ -74,6 +81,17 @@ object FileUtils {
         bw.close()
         fw.close()
     }
+
+     fun getRealPathFromURI(contentUri: Uri,context: Context): String? {
+        val proj = arrayOf(MediaStore.Images.Media.DATA)
+        val loader = CursorLoader(context, contentUri, proj, null, null, null)
+        val cursor: Cursor = loader.loadInBackground()!!
+        val columnIndex: Int = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(columnIndex)
+    }
+
+
 
 
 }

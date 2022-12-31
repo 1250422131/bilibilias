@@ -9,6 +9,10 @@
         <attr name="graylessSubviews" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="AsTopNavigationLayout">
+        <attr name="title" format="string"/>
+    </declare-styleable>
+
 
 
 </resources>

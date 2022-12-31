@@ -117,6 +117,7 @@
                         android:layout_marginRight="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
+                        android:onLongClick="@{()->AsVideoViewModel.addClipboardMessage(VideoBaseBean.data.title)}"
                         android:text="@{VideoBaseBean.data.title}"
                         android:textColor="@color/black"
                         android:textSize="30sp"
@@ -328,19 +329,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="13dp"
-                    app:cardCornerRadius="15dp"
                     android:visibility="gone"
+                    app:cardCornerRadius="15dp"
                     app:cardElevation="0dp">
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@color/color_primary"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{()->AsVideoViewModel.downloadBangumiVideo(VideoBaseBean,BangumiSeasonBean)}"
-                    android:text="缓 存 番 剧"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@color/color_primary"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:onClick="@{()->AsVideoViewModel.downloadBangumiVideo(VideoBaseBean,BangumiSeasonBean)}"
+                        android:text="缓 存 番 剧"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>

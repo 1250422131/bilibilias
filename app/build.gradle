@@ -11,8 +11,8 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdk 21
         targetSdk 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 200
+        versionName "2.0.0"
 
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
@@ -24,27 +24,15 @@ android {
         }
     }
 
-    signingConfigs {
-        release {
-            keyAlias 'mxjs'
-            keyPassword 'imcys19909384476'
-            storeFile file('D:/AndroidStudioProjects/mxjs.jks')
-            storePassword 'imcys19909384476'
-        }
-    }
-
     buildTypes {
 
         debug {
             //混淆
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-
         }
 
         release {
-            signingConfig signingConfigs.release
             //混淆
             minifyEnabled true
             //Zipalign优化
@@ -90,11 +78,19 @@ android {
 
 dependencies {
 
+    //微软统计
+    def appCenterSdkVersion = '5.0.0'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
     //api "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     //room
     //implementation "androidx.room:room-runtime:2.4.3"
     //annotationProcessor "androidx.room:room-compiler:2.4.3"
+
+    //文件选择呢其
+    implementation 'me.rosuh:AndroidFilePicker:0.8.2'
 
     //xutils支持
     implementation 'org.xutils:xutils:3.9.0'

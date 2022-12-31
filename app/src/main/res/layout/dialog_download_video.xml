@@ -254,6 +254,43 @@
 
                 </RelativeLayout>
 
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp">
+
+                    <RadioGroup
+                        android:id="@+id/dialog_dl_video_radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_video_app_dl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="内置下载" />
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_video_idm_dl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="IDM" />
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_video_adm_dl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="ADM" />
+                    </RadioGroup>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
             </LinearLayout>
 
             <androidx.cardview.widget.CardView

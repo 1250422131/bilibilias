@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.utils.NumberUtils" />
+        <import type="com.imcys.bilibilias.base.extend.LongKt" />
 
         <variable
-            name="VlistBean"
-            type="com.imcys.bilibilias.home.ui.model.UserWorksBean.DataBean.ListBean.VlistBean" />
+            name="MediasBean"
+            type="com.imcys.bilibilias.home.ui.model.CollectionDataBean.DataBean.MediasBean" />
 
     </data>
 
@@ -27,9 +27,9 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:orientation="vertical">
 
                 <FrameLayout
@@ -39,47 +39,27 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:imageUrl="@{VlistBean.pic}"
+                        android:imageUrl="@{MediasBean.cover}"
                         android:scaleType="fitXY" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
-                        android:padding="1dp"
-                        android:background="#80a1a3a6"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:gravity="center_vertical"
+                        android:gravity="end"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_play_num"
-                            app:tint="@color/white" />
 
                         <TextView
+                            android:padding="2dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.play)}"
+                            android:background="#80a1a3a6"
+                            android:text="@{LongKt.timeStampDateStr(MediasBean.fav_time,`MM-dd`)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginLeft="10dp"
-                            android:src="@drawable/ic_danmaku_num"
-                            app:tint="@color/white" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.video_review)}"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </FrameLayout>
@@ -95,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="@{VlistBean.title}"
+                        android:text="@{MediasBean.title}"
                         android:textSize="14dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
@@ -65,7 +67,8 @@ class AsVideoActivity : BaseActivity() {
     var bvid: String = ""
     var avid: Int = 0
     var cid: Int = 0
-    var epid: Long = 0;
+    var epid: Long = 0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -588,6 +591,8 @@ class AsVideoActivity : BaseActivity() {
         asDanmaku.release()
         JzvdStd.releaseAllVideos()
     }
+
+
 
 
     //解压deflate数据的函数

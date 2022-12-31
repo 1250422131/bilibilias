@@ -65,6 +65,12 @@ class UserFragment : Fragment() {
 
         initUserWorks()
 
+
+    }
+
+    private fun initUserTool() {
+        userDataMutableList.add(UserViewItemBean(3))
+        userDataRvAd.submitList(userDataMutableList + mutableListOf())
     }
 
 
@@ -125,6 +131,7 @@ class UserFragment : Fragment() {
                     upStatBeam = it,
                     userCardBean = userCardBean))
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
+                initUserTool()
             }
     }
 

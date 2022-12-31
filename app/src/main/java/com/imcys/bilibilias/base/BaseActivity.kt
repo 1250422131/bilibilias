@@ -7,8 +7,12 @@ import android.os.PersistableBundle
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.utils.HttpUtils
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 open class BaseActivity : AppCompatActivity() {
@@ -21,6 +25,19 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sharedPreferences.getBoolean("microsoft_app_center_type", true)) {
+            //统计接入
+            AppCenter.start(application,
+                "3c7c5174-a6be-4093-a0df-c6fbf7371480",
+                Analytics::class.java,
+                Crashes::class.java)
+
+        }
+
+
         // 添加当前活动
         addActivity(this)
         // 打印活动名称
@@ -44,19 +61,19 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     // 添加活动
-    fun addActivity(activity: Activity) {
+    private fun addActivity(activity: Activity) {
         activities.add(activity)
     }
 
     // 移除活动
-    fun removeActivity(activity: Activity) {
+    private fun removeActivity(activity: Activity) {
         activities.remove(activity)
     }
 
     // 结束所有活动
     fun finishAll() {
         activities.forEach {
-            if (it.isFinishing) it.finish()
+            if (!it.isFinishing) it.finish()
         }
     }
 
