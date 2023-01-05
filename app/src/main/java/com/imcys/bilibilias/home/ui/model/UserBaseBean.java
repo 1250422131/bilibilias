@@ -98,7 +98,7 @@ public class UserBaseBean implements Serializable {
          * contract : {"is_display":false,"is_follow_display":false}
          */
 
-        private int mid;
+        private long mid;
         private String name;
         private String sex;
         private String face;
@@ -136,11 +136,11 @@ public class UserBaseBean implements Serializable {
         private ContractBean contract;
         private List<String> tags;
 
-        public int getMid() {
+        public long getMid() {
             return mid;
         }
 
-        public void setMid(int mid) {
+        public void setMid(long mid) {
             this.mid = mid;
         }
 
@@ -1091,7 +1091,7 @@ public class UserBaseBean implements Serializable {
             private String url;
             private String title;
             private String cover;
-            private int roomid;
+            private long roomid;
             private int roundStatus;
             private int broadcast_type;
             private WatchedShowBean watched_show;
@@ -1136,11 +1136,11 @@ public class UserBaseBean implements Serializable {
                 this.cover = cover;
             }
 
-            public int getRoomid() {
+            public long getRoomid() {
                 return roomid;
             }
 
-            public void setRoomid(int roomid) {
+            public void setRoomid(long roomid) {
                 this.roomid = roomid;
             }
 

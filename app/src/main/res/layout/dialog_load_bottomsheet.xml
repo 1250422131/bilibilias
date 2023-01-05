@@ -51,7 +51,7 @@
             android:padding="25dp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_url="https://assets2.lottiefiles.com/packages/lf20_e8Sg3j.json" />
+            app:lottie_url="https://assets10.lottiefiles.com/packages/lf20_imw8dd3h.json" />
     </LinearLayout>
 
 </RelativeLayout>

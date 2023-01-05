@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.res.ColorStateList
 import android.os.Build
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
@@ -73,36 +75,78 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * 点赞视频
      * @param bvid String aid
      */
-    fun likeVideo(bvid: String) {
+    fun likeVideo(view:View,bvid: String) {
+
+        if (asVideoBinding.archiveHasLikeBean?.data == 0){
+            HttpUtils
+                .addHeader("cookie", App.cookies)
+                .addParam("csrf", App.biliJct)
+                .addParam("like", "1")
+                .addParam("bvid", bvid)
+                .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
+                    when (it.code) {
+                        0 -> {
+                            asVideoBinding.archiveHasLikeBean?.data = 1
+                            asVideoBinding.asVideoLikeBt.isSelected = true
+                        }
+                        65006 -> {
+                            cancelLikeVideo(view,bvid)
+                        }
+                        else -> {
+                            asToast(context, it.message)
+                        }
+                    }
+                }
+        }else{
+            cancelLikeVideo(view,bvid)
+        }
+
+
+    }
+
+    /**
+     * 取消对视频的点赞
+     * @param bvid String
+     */
+    private fun cancelLikeVideo(view:View,bvid: String){
         HttpUtils
             .addHeader("cookie", App.cookies)
             .addParam("csrf", App.biliJct)
-            .addParam("like", "1")
+            .addParam("like", "2")
             .addParam("bvid", bvid)
             .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                if (it.code == 0) {
-                    asToast(context, "点赞成功")
-                } else {
-                    asToast(context, it.message)
+                when (it.code) {
+                    0 -> {
+                        asVideoBinding.archiveHasLikeBean?.data = 0
+                        asVideoBinding.asVideoLikeBt.isSelected = false
+                    }
+                    65004 -> {
+                        likeVideo(view,bvid)
+                    }
+                    else -> {
+                        asToast(context, it.message)
+                    }
                 }
-                changeLikeButtonToTrue()
             }
     }
+
+
 
 
     /**
      * 视频投币
      * @param bvid String
      */
-    fun videoCoinAdd(bvid: String) {
+    fun videoCoinAdd(view: View,bvid: String) {
         HttpUtils
             .addHeader("cookie", App.cookies)
             .addParam("bvid", bvid)
             .addParam("multiply", "2")
             .addParam("csrf", App.biliJct)
             .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
-                asToast(context, it.message)
-                changeCoinAddButtonToTrue()
+                asVideoBinding.archiveCoinsBean?.data?.multiply = 2
+                asVideoBinding.asVideoThrowBt.isSelected = true
+
             }
     }
 
@@ -139,7 +183,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
         // Only show a toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
-            Toast.makeText(context, "复制吃过", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show()
 
         return true
 
@@ -175,7 +219,8 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
             .addParam("type", "2")
             .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
                 if (it.code == 0) {
-                    changeCollectionButtonToTrue()
+                    asVideoBinding.archiveFavouredBean?.data?.isFavoured = true
+                    asVideoBinding.asVideoCollectionBt.isSelected = true
                 } else {
                     asToast(context, "收藏失败${it.code}")
                 }
@@ -185,22 +230,19 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
 
     //三联按钮状态更新
     private fun changeCollectionButtonToTrue() {
-        asVideoBinding.asVideoCollectionBt.imageTintList =
-            getEmphasizeColor()
+        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.color_primary)
+    }
+
+    private fun changeLikeButtonToFalse() {
+        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.black)
     }
 
     private fun changeLikeButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.imageTintList = getEmphasizeColor()
+        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
     }
 
     private fun changeCoinAddButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.imageTintList = getEmphasizeColor()
-    }
-
-
-    @SuppressLint("ResourceAsColor")
-    private fun getEmphasizeColor(): ColorStateList {
-        return ColorStateList.valueOf(R.color.color_primary)
+        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
     }
 
 

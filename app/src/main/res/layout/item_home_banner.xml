@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            tools:ignore="MissingConstraints">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+               android:id="@+id/item_home_banner_image"
+                android:layout_width="match_parent"
+                android:scaleType="center"
+                android:layout_height="180dp"
+                tools:ignore="MissingConstraints" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:background="#80a1a3a6"
+                android:layout_gravity="bottom"
+                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/item_home_banner_title"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

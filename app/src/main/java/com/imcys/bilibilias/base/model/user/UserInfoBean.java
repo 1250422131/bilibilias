@@ -96,7 +96,7 @@ public class UserInfoBean implements Serializable {
          * elec : {"show_info":{"show":true,"state":1,"title":"","icon":"","jump_url":""}}
          */
 
-        private int mid;
+        private long mid;
         private String name;
         private String sex;
         private String face;
@@ -133,11 +133,11 @@ public class UserInfoBean implements Serializable {
         private ElecBean elec;
         private List<String> tags;
 
-        public int getMid() {
+        public long getMid() {
             return mid;
         }
 
-        public void setMid(int mid) {
+        public void setMid(long mid) {
             this.mid = mid;
         }
 
@@ -1080,7 +1080,7 @@ public class UserInfoBean implements Serializable {
             private String url;
             private String title;
             private String cover;
-            private int roomid;
+            private long roomid;
             private int roundStatus;
             private int broadcast_type;
             private WatchedShowBean watched_show;
@@ -1125,11 +1125,11 @@ public class UserInfoBean implements Serializable {
                 this.cover = cover;
             }
 
-            public int getRoomid() {
+            public long getRoomid() {
                 return roomid;
             }
 
-            public void setRoomid(int roomid) {
+            public void setRoomid(long roomid) {
                 this.roomid = roomid;
             }
 

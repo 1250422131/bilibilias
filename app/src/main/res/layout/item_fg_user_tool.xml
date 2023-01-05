@@ -81,8 +81,8 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:onClick="@{(view)->ItemFgUserToolViewModel.goToBangumiFollowr(view)}"
                     android:layout_width="0dp"
-
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -94,14 +94,13 @@
 
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/ic_as_video_like_true"
-                        app:tint="@color/color_primary" />
+                        android:src="@drawable/ic_item_bangumi_followr" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="点赞" />
+                        android:text="追番" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
