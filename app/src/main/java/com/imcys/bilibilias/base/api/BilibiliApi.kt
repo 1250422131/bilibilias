@@ -10,79 +10,91 @@ class BilibiliApi() {
          *
          */
 
-        val serviceApi: String = "https://api.bilibili.com/"
-        val loginApi: String = "http://passport.bilibili.com/"
+        const val serviceApi: String = "https://api.bilibili.com/"
+        const val loginApi: String = "http://passport.bilibili.com/"
 
 
-        val getLoginQRPath: String = loginApi + "x/passport-login/web/qrcode/generate"
+        const val getLoginQRPath: String = loginApi + "x/passport-login/web/qrcode/generate"
 
         //需要登陆密钥
-        val getLoginStatePath: String = loginApi + "x/passport-login/web/qrcode/poll"
+        const val getLoginStatePath: String = loginApi + "x/passport-login/web/qrcode/poll"
 
         //需要传入PS为展示项
-        val homeRCMDVideoPath: String = serviceApi + "x/web-interface/index/top/feed/rcmd"
+        const val homeRCMDVideoPath: String = serviceApi + "x/web-interface/index/top/feed/rcmd"
 
         //热门视频
         //get，ps和pn
-        val homePopularVideoPath: String = serviceApi + "x/web-interface/popular"
+        const val homePopularVideoPath: String = serviceApi + "x/web-interface/popular"
 
         //需要传入mid
-        val getUserInfoPath: String = serviceApi + "x/space/acc/info"
+        const val getUserInfoPath: String = serviceApi + "x/space/acc/info"
 
         //获取个人基本信息
-        val getMyUserData = serviceApi + "x/member/web/account"
+        const val getMyUserData = serviceApi + "x/member/web/account"
 
         //获取用户卡片信息
-        val getUserCardPath = serviceApi + "x/web-interface/card"
+        const val getUserCardPath = serviceApi + "x/web-interface/card"
 
         //post aid bvid like:1,2 csrf:j_xx
-        val likeVideoPath = serviceApi + "x/web-interface/archive/like"
+        const val likeVideoPath = serviceApi + "x/web-interface/archive/like"
 
         //获取视频详细信息 get bvid avid
-        val getVideoDataPath = serviceApi + "x/web-interface/view"
+        const val getVideoDataPath = serviceApi + "x/web-interface/view"
 
 
         //对视频进行点赞
-        val videLikePath = serviceApi + "x/web-interface/archive/like"
+        const val videLikePath = serviceApi + "x/web-interface/archive/like"
 
         //对视频进行投币
-        val videAddCoinPath = serviceApi + "x/web-interface/coin/add"
+        const val videAddCoinPath = serviceApi + "x/web-interface/coin/add"
 
         //获取收藏列表
-        val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
+        const val userCreatedScFolderPath = serviceApi + "x/v3/fav/folder/created/list-all"
 
         //收藏夹详细内容
-        val userCollectionDataPath = serviceApi + "x/v3/fav/resource/list"
+        const val userCollectionDataPath = serviceApi + "x/v3/fav/resource/list"
 
-        val videoPlayPath = serviceApi + "x/player/playurl"
-        val bangumiPlayPath = serviceApi + "pgc/player/web/playurl"
+        const val videoPlayPath = serviceApi + "x/player/playurl"
+        const val bangumiPlayPath = serviceApi + "pgc/player/web/playurl"
 
         //弹幕下载
-        val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
+        const val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
 
         //视频列表
-        val videoPageListPath = serviceApi + "x/player/pagelist"
+        const val videoPageListPath = serviceApi + "x/player/pagelist"
 
         //修改视频收藏
-        val videoCollectionSetPath = serviceApi + "x/v3/fav/resource/deal"
+        const val videoCollectionSetPath = serviceApi + "x/v3/fav/resource/deal"
 
         //投币地址
-        val videoCoinAddPath = serviceApi + "x/web-interface/coin/add"
+        const val videoCoinAddPath = serviceApi + "x/web-interface/coin/add"
 
         //获取剧集明细 get season_id / ep_id
-        val bangumiVideoDataPath = serviceApi + "pgc/view/web/season"
+        const val bangumiVideoDataPath = serviceApi + "pgc/view/web/season"
 
         //获取用户基本信息
-        val userBaseDataPath = serviceApi + "x/space/acc/info"
+        const val userBaseDataPath = serviceApi + "x/space/acc/info"
 
         //用户状态
-        val userUpStat = serviceApi + "x/space/upstat"
+        const val userUpStat = serviceApi + "x/space/upstat"
 
         //用户投稿
-        val userWorksPath = serviceApi + "x/space/arc/search"
+        const val userWorksPath = serviceApi + "x/space/arc/search"
 
         //播放历史
-        val userPlayHistoryPath = serviceApi + "x/web-interface/history/cursor"
+        const val userPlayHistoryPath = serviceApi + "x/web-interface/history/cursor"
+
+        //注销登录
+        const val exitLogin = loginApi + "login/exit/v2"
+
+        //点赞判断
+        const val archiveHasLikePath = serviceApi + "x/web-interface/archive/has/like"
+        //投币判断
+        const val archiveCoinsPath = serviceApi + "x/web-interface/archive/coins"
+        //收藏判断
+        const val  archiveFavoured = serviceApi + "x/v2/fav/video/favoured"
+        //追番剧列表
+        const val bangumiFollowPath = serviceApi + "x/space/bangumi/follow/list"
     }
 
 }

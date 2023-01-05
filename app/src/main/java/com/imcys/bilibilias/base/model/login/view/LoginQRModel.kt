@@ -3,22 +3,35 @@ package com.imcys.bilibilias.base.model.login.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Environment
 import android.view.View
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.imcys.bilibilias.utils.http.HttpUtils
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.regex.Pattern
+
 
 class LoginQRModel {
 
@@ -99,6 +112,69 @@ class LoginQRModel {
 
     }
 
+
+
+    fun downloadLoginQR(view: View,loginQrcodeDataBean: LoginQrcodeBean.DataBean){
+
+        Glide.with(view.context).asBitmap().load("https://pan.misakamoe.com/qrcode/?url="+loginQrcodeDataBean.url).into(object : SimpleTarget<Bitmap?>() {
+            override fun onResourceReady(
+                resource: Bitmap,
+                transition: Transition<in Bitmap?>?,
+            ) {
+                val photoDir = File(Environment.getExternalStorageDirectory(), "BILIBILIAS")
+                if (!photoDir.exists()) {
+                    photoDir.mkdirs()
+                }
+                val fileName = "BILIBILIAS扫码.jpg"
+                val photo = File(photoDir, fileName)
+                try {
+                    val fos = FileOutputStream(photo)
+                    resource.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                    fos.flush()
+                    fos.close()
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                updatePhotoMedia(photo,view.context)
+                asToast(view.context,"下载完成，跳转扫码。")
+                goToQR(view)
+            }
+        })
+
+
+
+    }
+
+
+
+    //更新图库
+    private fun updatePhotoMedia(file: File, context: Context) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
+        intent.data = Uri.fromFile(file)
+        context.sendBroadcast(intent)
+    }
+
+     fun goToQR(view: View) {
+        val context = view.context
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan"))
+            val packageManager = context.packageManager
+            val componentName = intent.resolveActivity(packageManager)
+            if (componentName != null) {
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context,
+                    "呜哇，好像没有安装B站",
+                    Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     /**
      * 登录成功后储存cookie等资源

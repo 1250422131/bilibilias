@@ -5,7 +5,9 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.loader.content.CursorLoader
+import com.microsoft.appcenter.utils.storage.FileManager.deleteDirectory
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -31,6 +33,19 @@ object FileUtils {
         }
     }
 
+
+    /** 删除文件，可以是文件或文件夹
+     * @param delFile 要删除的文件夹或文件名
+     * @return 删除成功返回true，否则返回false
+     */
+     fun delete(delFile: String): Boolean {
+        val file = File(delFile)
+        return if (!file.exists()) {
+            false
+        } else {
+            if (file.isFile) mDeleteFile(delFile) else deleteDirectory(File(delFile))
+        }
+    }
 
 
     /**
@@ -82,7 +97,7 @@ object FileUtils {
         fw.close()
     }
 
-     fun getRealPathFromURI(contentUri: Uri,context: Context): String? {
+    fun getRealPathFromURI(contentUri: Uri, context: Context): String? {
         val proj = arrayOf(MediaStore.Images.Media.DATA)
         val loader = CursorLoader(context, contentUri, proj, null, null, null)
         val cursor: Cursor = loader.loadInBackground()!!
@@ -90,8 +105,6 @@ object FileUtils {
         cursor.moveToFirst()
         return cursor.getString(columnIndex)
     }
-
-
 
 
 }

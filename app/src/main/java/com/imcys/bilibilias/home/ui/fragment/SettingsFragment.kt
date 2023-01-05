@@ -5,7 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
@@ -29,6 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var userDlFinishAutomaticMergeSwitch: Preference
     private lateinit var userDlFinishAutomaticImportSwitch: Preference
     private val SAVE_FILE_PATH_CODE = 1
+    private val IMPORT_FILE_PATH_CODE = 2
 
 
     private val saveImport = registerForActivityResult(
@@ -39,6 +43,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             apply()
         }
     }
+
+
+   private val saveSDFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+       if (it.resultCode == Activity.RESULT_OK){
+           //小于安卓11
+           setSavePath()
+       }
+
+    }
+
 
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -84,8 +99,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "简答来讲，这项功能需要你授权下文件的读写权限，BILIBILIAS仅仅会利用此权限实现导入番剧。",
                     "同意授权",
                     "拒绝授权",
+                    true,
                     {
-                        saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                       // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                        fileUriUtils.startForRoot(context as Activity, IMPORT_FILE_PATH_CODE)
                     },
                     {
                     }
@@ -97,53 +114,79 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         }
+
     }
+
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingGetSavePathEvent() {
+
+
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            DialogUtils.dialog(context!!, "选择区域",
-                "现在选择，你要在手机内部储存还是SD卡呢？",
-                "手机内部储存",
-                "SD卡", {
-                    FilePickerManager
-                        .from(this)
-                        .maxSelectable(1)
-                        .filter(object : AbstractFileFilter() {
-                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                                return ArrayList(listData.filter { item ->
-                                    item.isDir
-                                })
-                            }
-                        }).skipDirWhenSelect(false)
-                        .forResult(SAVE_FILE_PATH_CODE)
 
-                }, {
-                    FilePickerManager
-                        .from(this)
-                        .maxSelectable(1)
-                        .filter(object : AbstractFileFilter() {
-                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                                return ArrayList(listData.filter { item ->
-                                    item.isDir
-                                })
-                            }
-                        }).skipDirWhenSelect(false)
-                        .setCustomRootPath(AppFilePathUtils(
-                            context,
-                            "com.imcys.bilibilias").sdCardDirectory)
-                        .forResult(SAVE_FILE_PATH_CODE)
+
+            // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    setSavePath()
+                    true
+                } else {
+                    saveSDFile.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                    false
                 }
-            ).show()
+            } else {
+                //小于安卓11
+                setSavePath()
+                false
+            }
 
 
 
-            false
         }
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun setSavePath(){
+        DialogUtils.dialog(requireContext(), "选择区域",
+            "现在选择，你要在手机内部储存还是SD卡呢？",
+            "手机内部储存",
+            "SD卡",
+            true,
+            {
+                FilePickerManager
+                    .from(this)
+                    .maxSelectable(1)
+                    .filter(object : AbstractFileFilter() {
+                        override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                            return ArrayList(listData.filter { item ->
+                                item.isDir
+                            })
+                        }
+                    }).skipDirWhenSelect(false)
+                    .forResult(SAVE_FILE_PATH_CODE)
+
+            }, {
+                FilePickerManager
+                    .from(this)
+                    .maxSelectable(1)
+                    .filter(object : AbstractFileFilter() {
+                        override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                            return ArrayList(listData.filter { item ->
+                                item.isDir
+                            })
+                        }
+                    }).skipDirWhenSelect(false)
+                    .setCustomRootPath(AppFilePathUtils(
+                        context,
+                        "com.imcys.bilibilias").sdCardDirectory)
+                    .forResult(SAVE_FILE_PATH_CODE)
+            }
+        ).show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("WrongConstant", "UseRequireInsteadOfGet")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         when (requestCode) {
             SAVE_FILE_PATH_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
@@ -156,6 +199,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+
         }
 
     }

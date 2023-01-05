@@ -111,7 +111,7 @@
                     android:background="@color/color_primary_variant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text=""
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 

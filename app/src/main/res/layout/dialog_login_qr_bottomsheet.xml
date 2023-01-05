@@ -114,9 +114,10 @@
                 app:cardElevation="0dp">
 
                 <Button
+                    android:onClick="@{(view) -> LoginQRModel.downloadLoginQR(view,DataBean)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="?attr/colorPrimaryVariant"
+                    android:background="@color/color_primary_variant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="下载扫码"
                     android:textColor="@color/black"
@@ -135,9 +136,10 @@
                 app:cardElevation="0dp">
 
                 <Button
+                    android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="?attr/colorPrimaryVariant"
+                    android:background="@color/color_primary_variant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="跳转扫码"
                     android:textColor="@color/black"

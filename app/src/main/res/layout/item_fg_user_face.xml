@@ -38,6 +38,7 @@
                     android:layout_weight="1">
 
                     <TextView
+                        android:id="@+id/item_fg_user_face_name_text"
                         android:letterSpacing="0.05"
                         android:textStyle="bold"
                         android:ellipsize="end"

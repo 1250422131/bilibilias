@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -19,7 +20,7 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     }
 
     override fun areContentsTheSame(oldItem: UserViewItemBean, newItem: UserViewItemBean): Boolean {
-        return oldItem == newItem
+        return oldItem.type == newItem.type
     }
 
 }) {
@@ -54,6 +55,10 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
             1 -> {
                 DataBindingUtil.getBinding<ItemFgUserFaceBinding>(holder.itemView)?.apply {
                     userBaseBean = getItem(position).userBaseBean
+                    if (userBaseBean?.data?.vip?.status == 1){
+                        itemFgUserFaceNameText.setTextColor(Color.parseColor(userBaseBean?.data?.vip?.nickname_color))
+                    }
+
                 }
             }
             2 -> {

@@ -13,11 +13,21 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.baidu.mobstat.StatService
+import com.hyy.highlightpro.HighlightPro
+import com.hyy.highlightpro.parameter.Constraints
+import com.hyy.highlightpro.parameter.HighlightParameter
+import com.hyy.highlightpro.parameter.MarginOffset
+import com.hyy.highlightpro.shape.RectShape
+import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.extend.toColorInt
 import com.imcys.bilibilias.databinding.FragmentToolBinding
+import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
@@ -39,9 +49,45 @@ class ToolFragment : Fragment() {
     lateinit var fragmentToolBinding: FragmentToolBinding
     lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
+
+    @SuppressLint("CommitPrefEdits")
+    override fun onResume() {
+        super.onResume()
+        val guideVersion = App.sharedPreferences.getString("AppGuideVersion", "")
+        if (guideVersion != App.AppGuideVersion) {
+            App.sharedPreferences.edit().putString("AppGuideVersion", App.AppGuideVersion).apply()
+            loadToolGuide()
+        }
+        StatService.onPageStart(context, "ToolFragment")
+    }
+
+    private fun loadToolGuide() {
+        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
+        HighlightPro.with(this)
+            .setHighlightParameter {
+                tipAppBinding.tipAppTitle.text = "解析功能移动到这里了"
+                HighlightParameter.Builder()
+                    .setTipsView(tipAppBinding.root)
+                    .setHighlightViewId(fragmentToolBinding.fragmentToolSearch.id)
+                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
+                    .setHighlightHorizontalPadding(8f.dp)
+                    .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
+                    .setMarginOffset(MarginOffset(start = 8.dp))
+                    .build()
+
+            }
+            .setOnDismissCallback {
+                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
+                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
+                    0).isCheckable = true
+            }
+            .setBackgroundColor("#80000000".toColorInt())
+            .show()
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -51,8 +97,6 @@ class ToolFragment : Fragment() {
 
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
-
-
 
         initView()
 
@@ -237,6 +281,11 @@ class ToolFragment : Fragment() {
         }
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StatService.onPageEnd(context, "ToolFragment")
     }
 
 

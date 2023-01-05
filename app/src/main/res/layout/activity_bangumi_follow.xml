@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+       android:orientation="vertical"
+        android:layout_height="match_parent"
+        tools:context=".home.ui.activity.user.BangumiFollowActivity">
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+            <com.imcys.bilibilias.base.view.AsTopNavigationLayout
+                android:id="@+id/bangumi_follow_top_ly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="追番" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bangumi_follow_rv"
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
