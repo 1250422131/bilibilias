@@ -38,9 +38,6 @@ class DonateActivity : BaseActivity() {
     }
 
     private fun initRv() {
-        donateMutableList.add(
-            DonateViewBean(PAY_XML)
-        )
 
         donateAdapter = DonateItemAdapter()
         binding.apply {
@@ -48,7 +45,6 @@ class DonateActivity : BaseActivity() {
             donateRv.layoutManager =
                 LinearLayoutManager(this@DonateActivity, LinearLayoutManager.VERTICAL, false)
         }
-        donateAdapter.submitList(donateMutableList)
 
 
     }
@@ -57,6 +53,9 @@ class DonateActivity : BaseActivity() {
     private fun loadDonateData() {
         HttpUtils.get("${BiliBiliAsApi.appFunction}?type=Donate", OldDonateBean::class.java) {
             val newMutableList = mutableListOf<DonateViewBean>()
+            donateMutableList.add(
+                DonateViewBean(PAY_XML)
+            )
             newMutableList.add(
                 DonateViewBean(PAY_PROGRESS, it)
             )

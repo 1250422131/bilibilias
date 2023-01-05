@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.ItemDonateDocBinding
 import com.imcys.bilibilias.databinding.ItemDonatePayTypeBinding
 import com.imcys.bilibilias.databinding.ItemDonateProgressBinding
@@ -62,7 +63,29 @@ class DonateItemAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = when (getItem(position).type) {
             DonateActivity.PAY_XML -> {
-                DataBindingUtil.getBinding<ItemDonatePayTypeBinding>(holder.itemView)
+                DataBindingUtil.getBinding<ItemDonatePayTypeBinding>(holder.itemView)?.apply {
+                    itemDonateWechatPay.setOnClickListener {
+                        DialogUtils.dialog(
+                            holder.itemView.context,
+                            "微信支付",
+                            "感谢捐款支持",
+                            "好嘞",
+                            imageUrl = getItem(1).oldDonateBean?.weChat,
+                            positiveButtonClickListener = {}
+                        ).show()
+                    }
+
+                    itemDonatePayAlipay.setOnClickListener {
+                        DialogUtils.dialog(
+                            holder.itemView.context,
+                            "支付宝支付",
+                            "感谢捐款支持",
+                            "好嘞",
+                            imageUrl = getItem(1).oldDonateBean?.alipay,
+                            positiveButtonClickListener = {}
+                        ).show()
+                    }
+                }
             }
 
             DonateActivity.PAY_PROGRESS -> {

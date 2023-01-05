@@ -47,6 +47,13 @@ class FragmentHomeViewModel {
         view.context.startActivity(intent)
     }
 
+    fun goToCommunity(view: View) {
+        val uri = Uri.parse("https://support.qq.com/product/337496")
+        val intent = Intent(Intent.ACTION_VIEW, uri);
+        view.context.startActivity(intent)
+    }
+
+
 
     fun logoutLogin(view: View) {
         DialogUtils.dialog(
@@ -56,6 +63,7 @@ class FragmentHomeViewModel {
             "是的",
             "点错了",
             true,
+            positiveButtonClickListener =
             {
                 HttpUtils.addHeader("cookie",App.cookies).addParam("biliCSRF", App.biliJct)
                     .post(BilibiliApi.exitLogin, object : Callback {
@@ -68,7 +76,8 @@ class FragmentHomeViewModel {
                         }
 
                     })
-            }, {}
+            },
+            negativeButtonClickListener = {}
         ).show()
     }
 

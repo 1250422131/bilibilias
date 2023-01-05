@@ -108,9 +108,10 @@ class HomeFragment : Fragment() {
      * 加载引导
      */
     private fun loadHomeGuide() {
-        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
+
         HighlightPro.with(this)
             .setHighlightParameter {
+                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
                 tipAppBinding.tipAppTitle.text = "新版本内容在这里查看"
                 HighlightParameter.Builder()
                     .setTipsView(tipAppBinding.root)
@@ -118,16 +119,6 @@ class HomeFragment : Fragment() {
                     .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
                     .setHighlightHorizontalPadding(8f.dp)
                     .setConstraints(Constraints.TopToBottomOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }.setHighlightParameter {
-                tipAppBinding.tipAppTitle.text = "这里可以查看用户的捐款和参与开发的人员"
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentHomeBinding.fragmentHomeDedicateLy.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
                     .setMarginOffset(MarginOffset(start = 8.dp))
                     .build()
             }
@@ -140,6 +131,7 @@ class HomeFragment : Fragment() {
 
             }
             .show()
+
     }
 
     /**
@@ -210,11 +202,12 @@ class HomeFragment : Fragment() {
                 "更新",
                 "还是更新",
                 false,
-                {
+                positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
                     val intent = Intent(Intent.ACTION_VIEW, uri);
                     requireContext().startActivity(intent)
-                },{
+                },
+                negativeButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
                     val intent = Intent(Intent.ACTION_VIEW, uri);
                     requireContext().startActivity(intent)
@@ -264,9 +257,10 @@ class HomeFragment : Fragment() {
                 "我明白了",
                 "这份公告不行啊",
                 true,
-                {
+               positiveButtonClickListener =  {
                     sharedPreferences.edit().putString("AppNotice", notice).apply()
-                }, {
+                },
+                negativeButtonClickListener = {
                 }
             ).show()
         }
@@ -336,10 +330,6 @@ class HomeFragment : Fragment() {
             .putBoolean("microsoft_app_center_type",true)
             .putBoolean("baidu_statistics_type",true)
             .apply()
-        App().startBaiDuService()
-
-
-
     }
 
     //初始化用户数据
