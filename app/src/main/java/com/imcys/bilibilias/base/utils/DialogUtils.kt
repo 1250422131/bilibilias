@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
@@ -143,6 +144,7 @@ class DialogUtils {
             positiveButtonText: String = "", // 确定按钮文本
             negativeButtonText: String? = "", // 取消按钮文本
             cancelable: Boolean = true,
+            imageUrl:String? = null,
             positiveButtonClickListener: (() -> Unit)? = null, // 确定按钮点击事件处理器
             negativeButtonClickListener: (() -> Unit)? = null, // 取消按钮点击事件处理器
         ): BottomSheetDialog {
@@ -181,6 +183,11 @@ class DialogUtils {
                         negativeButtonClickListener()
                         bottomSheetDialog.cancel()
                     }
+                }
+
+                imageUrl?.apply {
+                    dialogBottomSheetImage.visibility = View.VISIBLE
+                    Glide.with(context).load(imageUrl).into(dialogBottomSheetImage)
                 }
 
 

@@ -44,6 +44,13 @@ class DedicateActivity : BaseActivity() {
                 "https://api.misakamoe.com/as-donate.html"
             ),
             DedicateBean(
+                "GitHub",
+                "欢迎点击 star",
+                "BILIBILIAS开源开发，可以前去监督开发和提交需求，你还可以通过分叉来参与开发。",
+                "http://message.biliimg.com/bfs/im/1903c78f14847ad1d17a2f828d336aa80977d3c0.png",
+                "https://github.com/1250422131/bilibilias"
+            ),
+            DedicateBean(
                 "萌新交流社",
                 "BILIBILIAS反馈群",
                 "感谢萌新交流社的风纪委员会全体成员，几年来不离不弃，尽职尽责的维护着群内治安。",

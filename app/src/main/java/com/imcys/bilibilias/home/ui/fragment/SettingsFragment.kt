@@ -17,6 +17,7 @@ import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.utils.file.fileUriUtils
 import me.rosuh.filepicker.bean.FileItemBeanImpl
@@ -27,10 +28,13 @@ import me.rosuh.filepicker.config.FilePickerManager
 class SettingsFragment : PreferenceFragmentCompat() {
 
 
+    private lateinit var renameUserDownloadFileNameEditText: Preference
     private lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
     private lateinit var userDlFinishAutomaticMergeSwitch: Preference
     private lateinit var userDlFinishAutomaticImportSwitch: Preference
+
+    private lateinit var  renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
 
@@ -45,15 +49,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
 
-   private val saveSDFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private val saveSDFile =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 
-       if (it.resultCode == Activity.RESULT_OK){
-           //小于安卓11
-           setSavePath()
-       }
+            if (it.resultCode == Activity.RESULT_OK) {
+                //小于安卓11
+                setSavePath()
+            }
 
-    }
-
+        }
 
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -82,6 +86,50 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
         }
+        renameUserDownloadSavePath.setOnPreferenceClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "是否还原默认下载地址",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                   App.sharedPreferences.edit().putString("user_download_save_path",
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download").apply()
+                    asToast(requireContext(),"恢复成功，返回页面重新进入可见")
+                    renameUserDownloadSavePath.summary = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+
+
+
+                },
+                negativeButtonClickListener = {
+                }
+            ).show()
+            true
+        }
+
+
+        renameUserDownloadFileNameEditText.setOnPreferenceClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "是否还原默认命名规则",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                    App.sharedPreferences.edit().putString("user_download_file_name_editText",
+                        "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}").apply()
+                    asToast(requireContext(),"恢复成功，返回页面重新进入可见")
+                    renameUserDownloadSavePath.summary = "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+
+                },
+                negativeButtonClickListener = {
+                }
+            ).show()
+            true
+        }
         bindingGetSavePathEvent()
         bindingImportFileEvent()
 
@@ -100,11 +148,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "同意授权",
                     "拒绝授权",
                     true,
-                    {
-                       // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                    positiveButtonClickListener = {
+                        // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
                         fileUriUtils.startForRoot(context as Activity, IMPORT_FILE_PATH_CODE)
                     },
-                    {
+                    negativeButtonClickListener = {
                     }
                 ).show()
                 false
@@ -120,6 +168,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingGetSavePathEvent() {
+
+
 
 
         userDownloadSavePathEditText.setOnPreferenceClickListener {
@@ -141,18 +191,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
 
-
         }
 
     }
 
-    fun setSavePath(){
+    fun setSavePath() {
         DialogUtils.dialog(requireContext(), "选择区域",
             "现在选择，你要在手机内部储存还是SD卡呢？",
             "手机内部储存",
             "SD卡",
             true,
-            {
+            positiveButtonClickListener = {
                 FilePickerManager
                     .from(this)
                     .maxSelectable(1)
@@ -165,7 +214,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }).skipDirWhenSelect(false)
                     .forResult(SAVE_FILE_PATH_CODE)
 
-            }, {
+            },
+            negativeButtonClickListener = {
                 FilePickerManager
                     .from(this)
                     .maxSelectable(1)
@@ -223,6 +273,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         }
+
+        renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
+        renameUserDownloadFileNameEditText = findPreference("rename_user_download_file_name_editText")!!
+
 
     }
 

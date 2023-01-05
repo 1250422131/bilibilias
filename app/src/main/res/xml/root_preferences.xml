@@ -17,6 +17,17 @@
             app:title="@string/user_download_file_name"
             app:useSimpleSummaryProvider="true" />
 
+
+        <Preference
+            app:key="rename_user_download_save_path"
+            app:title="还原下载路径"
+            app:useSimpleSummaryProvider="true" />
+
+        <Preference
+            app:key="rename_user_download_file_name_editText"
+            app:title="还原命名规则"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="缓存完成后的行为">

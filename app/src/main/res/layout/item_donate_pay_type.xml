@@ -5,6 +5,7 @@
 
     <data>
 
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,6 +34,7 @@
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/item_donate_wechat_pay"
                         android:background="#00c923"
                         android:padding="10dp"
                         android:orientation="horizontal"
@@ -77,6 +79,7 @@
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/item_donate_alipay"
                         android:background="#1976ff"
                         android:padding="10dp"
                         android:orientation="horizontal"
