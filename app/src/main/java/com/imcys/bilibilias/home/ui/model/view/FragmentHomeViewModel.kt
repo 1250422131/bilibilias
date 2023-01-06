@@ -3,12 +3,12 @@ package com.imcys.bilibilias.home.ui.model.view
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response

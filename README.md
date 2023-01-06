@@ -35,10 +35,15 @@ UP主可以下载一些剪辑素材，来做视频
 - [x] 后台下载功能
 - [x] 点赞 投币 三连
 
+
+### API接口参考
+[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
+
 ### 下载
 |   系统    |                            GitHub                            |                  官网                   |
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakaloli.com/app/) |
+
 ### 问题反馈
 
 企鹅群：703180724

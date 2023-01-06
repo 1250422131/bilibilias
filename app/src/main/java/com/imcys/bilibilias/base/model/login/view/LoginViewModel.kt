@@ -1,31 +1,15 @@
 package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.startActivity
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.imcys.bilibilias.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.user.MyUserData
-import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.fragment.HomeFragment
-import com.imcys.bilibilias.utils.http.HttpUtils
-import java.net.URLEncoder
 
 
 class LoginViewModel {

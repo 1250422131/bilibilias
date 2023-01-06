@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
@@ -32,8 +32,8 @@ import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.microsoft.appcenter.analytics.Analytics
 import kotlin.random.Random
 
@@ -210,7 +210,7 @@ class DialogUtils {
             //设置布局
             bottomSheetDialog.setContentView(binding.root)
 
-            binding.dataBean = userInfoBean.data
+            binding.dataBean = userInfoBean
             //用户行为 val mDialogBehavior =
             binding.dialogUserDataFinishBt.setOnClickListener {
                 bottomSheetDialog.cancel()
