@@ -1,0 +1,16 @@
+ext {
+    Config = [
+            /**
+             * Is application mode.
+             */
+            isApplicationMode   : false,
+            /**
+             * 调试混淆启用
+             */
+            debugMinifyEnabled  : false,
+            /**
+             * 发版混淆启用
+             */
+            releaseMinifyEnabled: true,
+    ]
+}

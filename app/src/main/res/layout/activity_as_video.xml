@@ -10,7 +10,7 @@
 
         <import type="android.graphics.Color" />
 
-        <import type="com.imcys.bilibilias.utils.NumberUtils" />
+        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
 
         <variable
             name="VideoBaseBean"

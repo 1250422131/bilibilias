@@ -6,13 +6,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -20,7 +18,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 
 /**
  * 解析视频的ViewModel

@@ -15,7 +15,7 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback
