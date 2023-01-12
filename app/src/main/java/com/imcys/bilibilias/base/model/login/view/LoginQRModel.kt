@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
@@ -204,6 +205,7 @@ class LoginQRModel {
                 val groupStr = m.group(1)
                 if (groupStr != null) {
                     BaseApplication.sessdata = groupStr
+
                 }
                 editor.putString("SESSDATA", groupStr)
             }
@@ -214,12 +216,12 @@ class LoginQRModel {
                 val groupStr = m.group(1)
                 if (groupStr != null) {
                     BaseApplication.biliJct = groupStr
+
                 }
                 editor.putString("bili_jct", groupStr)
             }
         }
         BaseApplication.cookies = cookies
-
         editor.putString("cookies", cookies)
         editor.putString("refreshToken", loginStateBean.data.refresh_token)
         editor.apply()

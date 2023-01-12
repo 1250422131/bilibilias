@@ -132,3 +132,5 @@
     java.lang.Object readResolve();
 }
 
+-dontwarn io.microshow.rxffmpeg.**
+-keep class io.microshow.rxffmpeg.**{*;}

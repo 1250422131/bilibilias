@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
@@ -104,10 +105,10 @@ class OldHomeBeanAdapter(
         Thread {
             var getPost: String = postData
             if (token == 1) {
-                getPost = getPost.replace("{token}", App.biliJct)
+                getPost = getPost.replace("{token}", BaseApplication.biliJct)
                 println(getPost)
             }
-            val goUrlStr = HttpUtils.doCardPost(url, getPost, App.cookies)
+            val goUrlStr = HttpUtils.doCardPost(url, getPost, BaseApplication.cookies)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
                 val code = goUrlJson.getInt("code")
@@ -130,7 +131,7 @@ class OldHomeBeanAdapter(
         failToast: String,
         context: Context,
     ) {
-        HttpUtils.addHeader("cookie", App.cookies).get(url, object : Callback {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
             }

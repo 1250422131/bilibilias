@@ -6,19 +6,22 @@ import android.os.Build
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
-import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.base.utils.file.MediaExtractorUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.ffmpeg.utils.FFmpegUtil
+import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.microsoft.appcenter.analytics.Analytics
+import io.microshow.rxffmpeg.RxFFmpegInvoke
+import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import okhttp3.Call
 import okhttp3.Response
 import okio.BufferedSink
@@ -154,7 +157,7 @@ class DownloadQueue {
             params.addHeader("User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0");
             params.addHeader("referer", "https://www.bilibili.com/")
-            params.addHeader("cookie", App.cookies)
+            params.addHeader("cookie", BaseApplication.cookies)
             //设置是否根据头信息自动命名文件
             params.isAutoRename = false
             //设储存路径
@@ -262,7 +265,7 @@ class DownloadQueue {
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}",
                 VideoBaseBean::class.java) {
                 val mid = it.data.owner.mid
@@ -309,13 +312,14 @@ class DownloadQueue {
         Analytics.trackEvent("缓存成功")
         StatService.onEvent(App.context, "CacheSuccessful", "缓存成功")
 
-        val microsoftAppCenterType = App.sharedPreferences.getBoolean("microsoft_app_center_type",true)
-        val baiduStatisticsType = App.sharedPreferences.getBoolean("baidu_statistics_type",true)
+        val microsoftAppCenterType =
+            App.sharedPreferences.getBoolean("microsoft_app_center_type", true)
+        val baiduStatisticsType = App.sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-        val url = if (!microsoftAppCenterType && !baiduStatisticsType){
+        val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
             "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
-        }else{
-            "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${App.myUserData.uname}&UserUID=${App.myUserData.mid}"
+        } else {
+            "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${BaseApplication.myUserData.uname}&UserUID=${BaseApplication.myUserData.mid}"
         }
 
         HttpUtils
@@ -344,36 +348,19 @@ class DownloadQueue {
 
         if (mergeState) {
             //耗时操作，这里直接开个新线程
-            Thread {
-                val taskMutableList = groupTasksMap[cid]
-                val videoPath =
-                    taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
-                val audioPath =
-                    taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
-                //这里的延迟是为了有足够时间让下载检查下载完整
-                Thread.sleep(4000)
 
-                val mergeFile = File(videoPath + "_merge.mp4")
-                mergeFile.createNewFile()
+            val taskMutableList = groupTasksMap[cid]
+            val videoPath =
+                taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
+            val audioPath =
+                taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
+            //这里的延迟是为了有足够时间让下载检查下载完整
 
-                //执行合并
-                MediaExtractorUtils.combineTwoVideos(audioPath,
-                    0,
-                    videoPath,
-                    mergeFile)
+            runFFmpegRxJavaVideoMerge(videoPath, audioPath)
 
-                val deleteFileState =
-                    App.sharedPreferences.getBoolean("user_dl_finish_delete_merge_switch", false)
 
-                if (deleteFileState) {
-                    FileUtils.apply {
-                        deleteFile(videoPath)
-                    }.apply {
-                        deleteFile(audioPath)
-                    }
+            // MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
 
-                }
-            }.start()
         } else if (importState) {
             val taskMutableList = groupTasksMap[cid]
             val videoTask =
@@ -383,6 +370,46 @@ class DownloadQueue {
             }
 
         }
+
+    }
+
+    private fun runFFmpegRxJavaVideoMerge(
+        videoPath: String,
+        audioPath: String,
+
+        ) {
+
+        Thread {
+
+            //停顿等待检查下载
+            Thread.sleep(3000)
+            val commands = FFmpegUtil.mediaMux(videoPath, audioPath, videoPath + "_merge.mp4")
+            RxFFmpegInvoke.getInstance()
+                .runCommandRxJava(commands)
+                .subscribe(object : RxFFmpegSubscriber() {
+                    override fun onError(message: String?) {
+                    }
+
+                    override fun onFinish() {
+                        asToast(App.context, "合并完成")
+                        //删除合并文件
+                        if(App.sharedPreferences.getBoolean("user_dl_finish_delete_merge_switch", false)){
+                            FileUtils.deleteFile(videoPath)
+                            FileUtils.deleteFile(audioPath)
+                        }
+
+                    }
+
+                    override fun onProgress(progress: Int, progressTime: Long) {
+                    }
+
+                    override fun onCancel() {
+                    }
+
+                })
+
+
+        }.start()
 
     }
 
@@ -436,7 +463,7 @@ class DownloadQueue {
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
                     videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
@@ -553,7 +580,7 @@ class DownloadQueue {
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
                     object : okhttp3.Callback {
                         override fun onFailure(call: Call, e: IOException) {
@@ -649,7 +676,7 @@ class DownloadQueue {
                 videoIndex)
 
 
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
                     object : okhttp3.Callback {
                         override fun onFailure(call: Call, e: IOException) {

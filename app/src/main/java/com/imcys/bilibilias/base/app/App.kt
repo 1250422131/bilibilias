@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
-import androidx.preference.PreferenceManager
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
+
 
 class App : BaseApplication() {
 
@@ -21,6 +21,8 @@ class App : BaseApplication() {
         //xUtils初始化
         x.Ext.init(this)
         x.Ext.setDebug(false); // 是否输出debug日志, 开启debug会影响性能.
+        RxFFmpegInvoke.getInstance().setDebug(true);
+
 
         context = BaseApplication.context
     }
@@ -34,11 +36,6 @@ class App : BaseApplication() {
 
         val downloadQueue: DownloadQueue = DownloadQueue()
 
-        //——————————————————cookie核心要素——————————————————
-        lateinit var cookies: String
-        lateinit var sessdata: String
-        lateinit var biliJct: String
-        //—————————————————————————————————————————————————
 
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
@@ -55,8 +52,6 @@ class App : BaseApplication() {
         //——————————————————部分内置需要的上下文——————————————————
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        var mid: Long = 0
-        lateinit var myUserData: MyUserData.DataBean
         //—————————————————————————————————————————————————
 
     }

@@ -6,6 +6,7 @@ import android.view.View
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -65,7 +66,7 @@ class FragmentHomeViewModel {
             true,
             positiveButtonClickListener =
             {
-                HttpUtils.addHeader("cookie",App.cookies).addParam("biliCSRF", App.biliJct)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies).addParam("biliCSRF", BaseApplication.biliJct)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 
