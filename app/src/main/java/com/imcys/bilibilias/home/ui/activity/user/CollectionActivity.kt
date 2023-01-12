@@ -12,6 +12,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -72,8 +73,8 @@ class CollectionActivity : BaseActivity() {
     }
 
     private fun loadCollectionList() {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.userCreatedScFolderPath}?up_mid=${App.mid}",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.userCreatedScFolderPath}?up_mid=${BaseApplication.mid}",
                 UserCreateCollectionBean::class.java) {
                 it.data.list.forEach { it1 ->
                     binding.apply {
@@ -127,7 +128,7 @@ class CollectionActivity : BaseActivity() {
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
                 CollectionDataBean::class.java) {
                 collectionDataMutableList.addAll(it.data.medias)

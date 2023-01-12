@@ -25,6 +25,7 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BangumiPageAdapter
@@ -144,7 +145,7 @@ class DialogUtils {
             positiveButtonText: String = "", // 确定按钮文本
             negativeButtonText: String? = "", // 取消按钮文本
             cancelable: Boolean = true,
-            imageUrl:String? = null,
+            imageUrl: String? = null,
             positiveButtonClickListener: (() -> Unit)? = null, // 确定按钮点击事件处理器
             negativeButtonClickListener: (() -> Unit)? = null, // 取消按钮点击事件处理器
         ): BottomSheetDialog {
@@ -930,7 +931,7 @@ class DialogUtils {
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
                     VideoPlayBean::class.java) { it1 ->
@@ -972,6 +973,7 @@ class DialogUtils {
                     DownloadName = DownloadName.replace("{TITLE}",
                         videoBaseBean.data.title + Random.nextInt(0, 90000))
                     DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+                    DownloadName = DownloadName.replace(" ", "_")
 
                     val savePath = sharedPreferences.getString("user_download_save_path",
                         context.getExternalFilesDir("download").toString())
@@ -1038,7 +1040,7 @@ class DialogUtils {
             type: String,
             isGroupTask: Boolean = false,
         ) {
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
                     BangumiPlayBean::class.java) { it1 ->
@@ -1080,7 +1082,7 @@ class DialogUtils {
                     DownloadName = DownloadName.replace("{TITLE}",
                         videoBaseBean.data.title)
                     DownloadName = DownloadName.replace("{TYPE}", qn.toString())
-                    DownloadName = DownloadName.replace(" ", "")
+                    DownloadName = DownloadName.replace(" ", "_")
 
                     val savePath = sharedPreferences.getString("user_download_save_path",
                         context.getExternalFilesDir("download").toString())
@@ -1142,7 +1144,7 @@ class DialogUtils {
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
                     DashBangumiPlayBean::class.java) { it1 ->
@@ -1186,8 +1188,7 @@ class DialogUtils {
                     DownloadName = DownloadName.replace("{TITLE}",
                         videoBaseBean.data.title)
                     DownloadName = DownloadName.replace("{TYPE}", qn.toString())
-                    DownloadName = DownloadName.replace(" ", "")
-
+                    DownloadName = DownloadName.replace(" ", "_")
                     val savePath = sharedPreferences.getString("user_download_save_path",
                         context.getExternalFilesDir("download").toString())
 
@@ -1251,7 +1252,7 @@ class DialogUtils {
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
                     DashVideoPlayBean::class.java) { it1 ->
@@ -1298,6 +1299,8 @@ class DialogUtils {
                     DownloadName = DownloadName.replace("{TITLE}",
                         videoBaseBean.data.title)
                     DownloadName = DownloadName.replace("{TYPE}", qn.toString())
+
+                    DownloadName = DownloadName.replace(" ", "_")
                     val savePath = sharedPreferences.getString("user_download_save_path",
                         context.getExternalFilesDir("download").toString())
                     when (downloadTool) {
@@ -1328,7 +1331,7 @@ class DialogUtils {
                             }
                         }
                         IDM_DOWNLOAD -> {
-                            toIdmDownload(url,   context)
+                            toIdmDownload(url, context)
                         }
                         ADM_DOWNLOAD -> {
                             toAdmDownload(url, context)
@@ -1343,7 +1346,7 @@ class DialogUtils {
             val intent = Intent("android.intent.action.VIEW")
             intent.addCategory("android.intent.category.APP_BROWSER")
             intent.data = Uri.parse(url)
-            intent.putExtra("Cookie", App.cookies)
+            intent.putExtra("Cookie", BaseApplication.cookies)
             intent.putExtra("Referer", "https://www.bilibili.com/")
             intent.putExtra("User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")
@@ -1370,7 +1373,7 @@ class DialogUtils {
             val intent = Intent("android.intent.action.VIEW")
             intent.addCategory("android.intent.category.APP_BROWSER")
             intent.data = Uri.parse(url)
-            intent.putExtra("Cookie", App.cookies)
+            intent.putExtra("Cookie", BaseApplication.cookies)
             intent.putExtra("Referer", "https://www.bilibili.com/")
             intent.putExtra("User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")

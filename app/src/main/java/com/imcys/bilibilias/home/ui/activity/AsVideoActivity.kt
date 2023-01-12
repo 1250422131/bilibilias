@@ -19,6 +19,7 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
@@ -123,7 +124,7 @@ class AsVideoActivity : BaseActivity() {
 
         when (type) {
             "video" -> {
-                HttpUtils.addHeader("cookie", App.cookies)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .addHeader("referer", "https://www.bilibili.com")
                     .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                         VideoPlayBean::class.java) {
@@ -136,7 +137,7 @@ class AsVideoActivity : BaseActivity() {
                     }
             }
             "bangumi" -> {
-                HttpUtils.addHeader("cookie", App.cookies)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .addHeader("referer", "https://www.bilibili.com")
                     .get("${BilibiliApi.bangumiPlayPath}?ep_id=$epid&qn=64&fnval=0&fourk=1",
                         BangumiPlayBean::class.java) {
@@ -165,7 +166,7 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         //这里才是真正的视频基本数据获取
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
                 //设置数据
                 videoDataBean = it
@@ -381,7 +382,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadDanmakuFlameMaster() {
 
-        HttpUtils.addHeader("cookie", App.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
             object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                 }
@@ -418,7 +419,7 @@ class AsVideoActivity : BaseActivity() {
 
 
     private fun loadUserCardData(mid: Long) {
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(BilibiliApi.getUserCardPath + "?mid=$mid", UserCardBean::class.java) {
                 showUserCard()
                 binding.userCardBean = it
@@ -496,7 +497,7 @@ class AsVideoActivity : BaseActivity() {
         //map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = App.cookies;
+        jzDataSource.headerMap["Cookie"] = BaseApplication.cookies;
         jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
         jzDataSource.headerMap["User-Agent"] =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";

@@ -23,6 +23,7 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
@@ -186,7 +187,7 @@ class ToolFragment : Fragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", App.cookies).get(toString, object : Callback {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(toString, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
             }
@@ -204,7 +205,7 @@ class ToolFragment : Fragment() {
      * @param epId Int
      */
     private fun loadEpVideoCard(epId: Int) {
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
                 if (it.code == 0) {
                     it.result.episodes.forEach { it1 ->
@@ -217,7 +218,7 @@ class ToolFragment : Fragment() {
     private fun getVideoCardData(bvid: String) {
 
         fragmentToolBinding.apply {
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .get(BilibiliApi.getVideoDataPath + "?bvid=$bvid", VideoBaseBean::class.java) {
                     (mAdapter).apply {
                         //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。

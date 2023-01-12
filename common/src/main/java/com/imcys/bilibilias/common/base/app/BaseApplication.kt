@@ -16,7 +16,6 @@ open class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         context = this
-
         handler = Handler(mainLooper)
         //百度统计开始
         startBaiDuService()

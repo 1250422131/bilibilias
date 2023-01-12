@@ -16,7 +16,9 @@ android {
     defaultConfig {
 
         if (Config.isApplicationMode){
+
             applicationId "com.imcys.bilibilias.tool_livestream"
+
         }
 
         minSdk 21

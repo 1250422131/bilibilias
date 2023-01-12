@@ -19,8 +19,7 @@ open class BaseActivity : AbsActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        App.context = this
+            App.context = this
 
         // 打印活动名称
         asLogD(this, TAG)

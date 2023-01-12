@@ -53,7 +53,10 @@ android {
 
 dependencies {
 
-    
+    //RxFFmpeg
+    api 'com.github.microshow:RxFFmpeg:4.9.0-lite'
+
+
     //组件化
     api 'com.alibaba:arouter-api:1.5.1'
     kapt  'com.alibaba:arouter-compiler:1.5.1'

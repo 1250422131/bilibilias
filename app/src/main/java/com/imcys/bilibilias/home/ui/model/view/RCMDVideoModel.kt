@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 
 class RCMDVideoModel {
@@ -14,10 +15,10 @@ class RCMDVideoModel {
 
     fun likeVideo(bvid: String) {
         Log.e("Tag","点击了")
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .addParam("bvid", bvid)
             .addParam("like", "1")
-            .addParam("csrf", App.biliJct)
+            .addParam("csrf", BaseApplication.biliJct)
             .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
                 App.handler.post {
                     if (it.code == 0) {

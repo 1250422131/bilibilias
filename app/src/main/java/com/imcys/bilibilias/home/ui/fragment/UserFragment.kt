@@ -14,6 +14,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
@@ -79,8 +80,8 @@ class UserFragment : Fragment() {
 
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.userWorksPath}?mid=${App.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20",
                 UserWorksBean::class.java) {
                 userWorksBean = it
                 userWorksAd.submitList(oldMutableList + it.data.list.vlist)
@@ -88,8 +89,8 @@ class UserFragment : Fragment() {
     }
 
     private fun initUserWorks() {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.userWorksPath}?mid=${App.mid}&qn=1&ps=20",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&qn=1&ps=20",
                 UserWorksBean::class.java) {
                 userWorksBean = it
                 userWorksAd = UserWorksAdapter()
@@ -128,8 +129,8 @@ class UserFragment : Fragment() {
     }
 
     private fun initUpState(userCardBean: UserCardBean) {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.userUpStat}?mid=${App.mid}", UpStatBeam::class.java) {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}", UpStatBeam::class.java) {
                 userDataMutableList.add(UserViewItemBean(2,
                     upStatBeam = it,
                     userCardBean = userCardBean))
@@ -139,15 +140,15 @@ class UserFragment : Fragment() {
     }
 
     private fun initUserCardData() {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.getUserCardPath}?mid=${App.mid}", UserCardBean::class.java) {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}", UserCardBean::class.java) {
                 initUpState(it)
             }
     }
 
     private fun initUserData() {
-        HttpUtils.addHeader("cookie", App.cookies)
-            .get("${BilibiliApi.userBaseDataPath}?mid=${App.mid}", UserBaseBean::class.java) {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}", UserBaseBean::class.java) {
                 userDataMutableList.add(UserViewItemBean(1, userBaseBean = it))
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
             }
