@@ -2,6 +2,7 @@ package com.imcys.bilibilias.home.ui.model.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -9,6 +10,9 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Build
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -24,7 +28,15 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 /**
  * 解析视频的ViewModel
  */
-class AsVideoViewModel(val context: Context, private val asVideoBinding: ActivityAsVideoBinding) {
+class AsVideoViewModel(
+    val context: Context, private val asVideoBinding: ActivityAsVideoBinding,
+) : ViewModel() {
+
+
+    lateinit var archiveHasLike: MutableLiveData<ArchiveHasLikeBean>
+    lateinit var archiveCoinsBean: MutableLiveData<ArchiveCoinsBean>
+    lateinit var archiveFavouredBean: MutableLiveData<ArchiveFavouredBean>
+
 
 
     /**
@@ -37,7 +49,8 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
         videoPageListData: VideoPageListData,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", BaseApplication.cookies).addHeader("referer", "https://www.bilibili.com")
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
@@ -58,7 +71,8 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", BaseApplication.cookies).addHeader("referer", "https://www.bilibili.com")
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
@@ -74,9 +88,9 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * 点赞视频
      * @param bvid String aid
      */
-    fun likeVideo(view:View,bvid: String) {
+    fun likeVideo(view: View, bvid: String) {
 
-        if (asVideoBinding.archiveHasLikeBean?.data == 0){
+        if (asVideoBinding.archiveHasLikeBean?.data == 0) {
             HttpUtils
                 .addHeader("cookie", BaseApplication.cookies)
                 .addParam("csrf", BaseApplication.biliJct)
@@ -89,15 +103,15 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                             asVideoBinding.asVideoLikeBt.isSelected = true
                         }
                         65006 -> {
-                            cancelLikeVideo(view,bvid)
+                            cancelLikeVideo(view, bvid)
                         }
                         else -> {
                             asToast(context, it.message)
                         }
                     }
                 }
-        }else{
-            cancelLikeVideo(view,bvid)
+        } else {
+            cancelLikeVideo(view, bvid)
         }
 
 
@@ -107,7 +121,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * 取消对视频的点赞
      * @param bvid String
      */
-    private fun cancelLikeVideo(view:View,bvid: String){
+    private fun cancelLikeVideo(view: View, bvid: String) {
         HttpUtils
             .addHeader("cookie", BaseApplication.cookies)
             .addParam("csrf", BaseApplication.biliJct)
@@ -120,7 +134,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                         asVideoBinding.asVideoLikeBt.isSelected = false
                     }
                     65004 -> {
-                        likeVideo(view,bvid)
+                        likeVideo(view, bvid)
                     }
                     else -> {
                         asToast(context, it.message)
@@ -130,13 +144,11 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     }
 
 
-
-
     /**
      * 视频投币
      * @param bvid String
      */
-    fun videoCoinAdd(view: View,bvid: String) {
+    fun videoCoinAdd(view: View, bvid: String) {
         HttpUtils
             .addHeader("cookie", BaseApplication.cookies)
             .addParam("bvid", bvid)
@@ -227,22 +239,6 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
 
     }
 
-    //三联按钮状态更新
-    private fun changeCollectionButtonToTrue() {
-        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.color_primary)
-    }
-
-    private fun changeLikeButtonToFalse() {
-        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.black)
-    }
-
-    private fun changeLikeButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
-    }
-
-    private fun changeCoinAddButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
-    }
 
 
 }

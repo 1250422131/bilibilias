@@ -1,14 +1,25 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="缓存配置">
 
         <Preference
-            app:summary="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
             app:defaultValue="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
             app:key="user_download_save_path"
+            app:summary="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
             app:title="@string/user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
+
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            app:key="user_download_save_sd_path_switch"
+            app:summaryOff="使用SD卡储存"
+            app:summaryOn="这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download"
+            app:title="用SD卡作为下载路径">
+
+        </SwitchPreferenceCompat>
+
 
         <EditTextPreference
             app:defaultValue="{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
@@ -33,10 +44,11 @@
     <PreferenceCategory app:title="缓存完成后的行为">
 
         <SwitchPreferenceCompat
-            app:summaryOff="默认下载是音频分离的"
+            android:defaultValue="true"
             app:key="user_dl_finish_automatic_merge_switch"
+            app:summaryOff="默认下载是音频分离的"
             app:summaryOn="目前音频合并只是一个很简单的行为，因此它可能有BUG，可能合并出问题，请熟知。"
-            app:title="缓存完成后自动合并" >
+            app:title="缓存完成后自动合并">
 
         </SwitchPreferenceCompat>
 
@@ -52,9 +64,22 @@
     <PreferenceCategory app:title="合并配置">
 
         <SwitchPreferenceCompat
+            android:defaultValue="true"
             app:key="user_dl_finish_delete_merge_switch"
-            app:title="合并后删除原来音频文件" >
+            app:title="合并后删除原来音视频文件">
+
         </SwitchPreferenceCompat>
+
+        <EditTextPreference
+            android:defaultValue="ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
+            android:dialogTitle="RxFFmpeg"
+            app:dialogMessage="@string/user_dl_merge_cmd"
+            app:key="user_dl_merge_cmd_editText"
+            app:title="合并时FFmpeg命令"
+            app:useSimpleSummaryProvider="true">
+
+        </EditTextPreference>
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="导入配置">
@@ -62,7 +87,7 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="user_dl_delete_import_file_switch"
-            app:title="导入后删除原来音频文件" >
+            app:title="导入后删除原来音视频文件">
 
         </SwitchPreferenceCompat>
     </PreferenceCategory>
@@ -70,20 +95,18 @@
     <PreferenceCategory app:title="隐私政策">
 
         <SwitchPreferenceCompat
-            app:defaultValue="false"
             android:icon="@drawable/ic_setting_vscodeignore"
-            app:summary="这将匿名传递APP使用的统计数据，如：缓存使用什么方式，FLV还是DASH，帮助我们优化APP。"
+            app:defaultValue="false"
             app:key="microsoft_app_center_type"
-            app:title="允许使用 Microsoft AppCenter" >
-        </SwitchPreferenceCompat>
+            app:summary="这将匿名传递APP使用的统计数据，如：缓存使用什么方式，FLV还是DASH，帮助我们优化APP。"
+            app:title="允许使用 Microsoft AppCenter"></SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
-            app:defaultValue="false"
             android:icon="@drawable/baidu_logo"
-            app:summary="以匿名的方式上传您的使用时长，页面停留时间，和地区信息，这将帮我们统计优化APP。"
+            app:defaultValue="false"
             app:key="baidu_statistics_type"
-            app:title="允许使用 百度统计" >
-        </SwitchPreferenceCompat>
+            app:summary="以匿名的方式上传您的使用时长，页面停留时间，和地区信息，这将帮我们统计优化APP。"
+            app:title="允许使用 百度统计"></SwitchPreferenceCompat>
 
     </PreferenceCategory>
 

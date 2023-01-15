@@ -8,6 +8,7 @@ import android.os.Handler
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.common.data.AppDatabase
 
 
 open class BaseApplication : Application() {
@@ -19,6 +20,7 @@ open class BaseApplication : Application() {
         handler = Handler(mainLooper)
         //百度统计开始
         startBaiDuService()
+        appDatabase = AppDatabase.getDatabase(this)
 
     }
 
@@ -31,7 +33,7 @@ open class BaseApplication : Application() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getBoolean("baidu_statistics_type", false)) {
             StatService.setAuthorizedState(applicationContext, true)
-        }else{
+        } else {
             StatService.setAuthorizedState(applicationContext, false)
         }
         StatService.autoTrace(applicationContext)
@@ -40,6 +42,8 @@ open class BaseApplication : Application() {
 
 
     companion object {
+
+        lateinit var appDatabase: AppDatabase
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
