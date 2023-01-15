@@ -108,6 +108,9 @@ class AsVideoActivity : BaseActivity() {
 
 
             //设置点击事件->这里将点击事件都放这个类了
+
+
+
             asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
 
 
