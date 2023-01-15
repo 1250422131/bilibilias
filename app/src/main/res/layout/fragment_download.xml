@@ -45,50 +45,57 @@
 
             </LinearLayout>
 
+
+
+
             <androidx.cardview.widget.CardView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_margin="5dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.tabs.TabLayout
-                    app:tabBackground="@drawable/home_tablayout_tabbackground"
-                    app:tabGravity="start"
-                    app:tabIndicator="@drawable/home_tablayout_indicator"
-                    app:tabIndicatorAnimationDuration="400"
-                    app:tabIndicatorAnimationMode="elastic"
-                    app:tabIndicatorColor="@color/color_primary"
-                    app:tabIndicatorFullWidth="true"
-                    app:tabIndicatorGravity="stretch"
-                    app:tabIndicatorHeight="0dp"
-                    app:tabInlineLabel="true"
-                    app:tabMaxWidth="0dp"
-                    app:tabMinWidth="0dp"
-                    app:tabPaddingEnd="32dp"
-                    app:tabPaddingStart="32dp"
-                    app:tabSelectedTextColor="@color/white"
-                    app:tabTextColor="@color/black"
-                    android:textSize="18sp"
-                    app:tabUnboundedRipple="true"
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                  android:padding="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.google.android.material.tabs.TabItem
-                        android:text="下载列表"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-                    <com.google.android.material.tabs.TabItem
-                        android:text="正在下载"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="HardcodedText" />
-                    <com.google.android.material.tabs.TabItem
-                        android:text="下载完成"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </com.google.android.material.tabs.TabLayout>
+                    <com.google.android.material.tabs.TabLayout
+                       android:id="@+id/fragment_download_tabLayout"
+                        app:tabBackground="@drawable/home_tablayout_tabbackground"
+                        app:tabGravity="start"
+                        app:tabMode="scrollable"
+                        app:tabIndicator="@drawable/home_tablayout_indicator"
+                        app:tabIndicatorAnimationDuration="400"
+                        app:tabIndicatorAnimationMode="elastic"
+                        app:tabIndicatorColor="@color/color_primary"
+                        app:tabIndicatorFullWidth="true"
+                        app:tabIndicatorGravity="stretch"
+                        app:tabIndicatorHeight="0dp"
+                        app:tabInlineLabel="true"
+                        app:tabMaxWidth="0dp"
+                        app:tabMinWidth="0dp"
+                        app:tabPaddingEnd="32dp"
+                        app:tabPaddingStart="32dp"
+                        app:tabSelectedTextColor="@color/white"
+                        app:tabTextColor="@color/black"
+                        android:textSize="18sp"
+                        app:tabUnboundedRipple="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <com.google.android.material.tabs.TabItem
+                            android:text="正在下载"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:ignore="HardcodedText" />
+                        <com.google.android.material.tabs.TabItem
+                            android:text="下载完成"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </com.google.android.material.tabs.TabLayout>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.cardview.widget.CardView>
 

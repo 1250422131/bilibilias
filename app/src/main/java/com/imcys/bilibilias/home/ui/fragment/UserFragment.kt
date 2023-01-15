@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -21,6 +22,7 @@ import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.*
 import kotlin.math.ceil
 
 
@@ -65,8 +67,6 @@ class UserFragment : Fragment() {
         initUserDataRv()
 
         initUserData()
-        initUserCardData()
-
         initUserWorks()
 
 
@@ -89,6 +89,9 @@ class UserFragment : Fragment() {
     }
 
     private fun initUserWorks() {
+
+
+
         HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&qn=1&ps=20",
                 UserWorksBean::class.java) {
@@ -128,32 +131,67 @@ class UserFragment : Fragment() {
 
     }
 
-    private fun initUpState(userCardBean: UserCardBean) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}", UpStatBeam::class.java) {
-                userDataMutableList.add(UserViewItemBean(2,
-                    upStatBeam = it,
-                    userCardBean = userCardBean))
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-                initUserTool()
-            }
-    }
 
-    private fun initUserCardData() {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}", UserCardBean::class.java) {
-                initUpState(it)
-            }
-    }
-
+    @OptIn(DelicateCoroutinesApi::class)
     private fun initUserData() {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}", UserBaseBean::class.java) {
-                userDataMutableList.add(UserViewItemBean(1, userBaseBean = it))
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            }
+
+        //切到后台线程去
+        lifecycleScope.launch {
+
+            val userBaseBean = lifecycleScope.async { getUserData() }
+
+            // 用户卡片信息
+            val userCardBean = lifecycleScope.async { getUserCardBean() }
+
+            //获取up状态
+            val userUpStat = lifecycleScope.async { getUpStat() }
 
 
+            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
+
+            userDataMutableList.add(
+                UserViewItemBean(2,
+                    upStatBeam = userUpStat.await(),
+                    userCardBean = userCardBean.await())
+            )
+
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            initUserTool()
+
+
+        }
+
+
+    }
+
+    /**
+     * 获取用户卡片信息
+     * @return UserCardBean
+     */
+    private suspend fun getUserCardBean(): UserCardBean {
+        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}",
+                UserCardBean::class.java)
+    }
+
+    /**
+     * 获取用户状态信息
+     * @return UpStatBeam
+     */
+    private suspend fun getUpStat(): UpStatBeam {
+        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}",
+                UpStatBeam::class.java)
+    }
+
+    /**
+     * 获取用户基础信息
+     * @return UserBaseBean
+     */
+    private suspend fun getUserData(): UserBaseBean {
+        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
+                UserBaseBean::class.java)
     }
 
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {

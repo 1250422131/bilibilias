@@ -7,6 +7,8 @@ import android.os.Handler
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
+import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
 
@@ -21,7 +23,7 @@ class App : BaseApplication() {
         //xUtils初始化
         x.Ext.init(this)
         x.Ext.setDebug(false); // 是否输出debug日志, 开启debug会影响性能.
-        RxFFmpegInvoke.getInstance().setDebug(true);
+        RxFFmpegInvoke.getInstance().setDebug(true)
 
 
         context = BaseApplication.context
@@ -35,6 +37,8 @@ class App : BaseApplication() {
         const val AppGuideVersion = "1.0"
 
         val downloadQueue: DownloadQueue = DownloadQueue()
+
+
 
 
         //——————————————————全局线程处理器——————————————————

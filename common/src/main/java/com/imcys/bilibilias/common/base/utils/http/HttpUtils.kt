@@ -2,11 +2,10 @@ package com.imcys.bilibilias.common.base.utils.http
 
 import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import okhttp3.Callback
-import okhttp3.FormBody
+import com.imcys.bilibilias.common.base.extend.awaitResponse
+import kotlinx.coroutines.*
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.xutils.common.task.PriorityExecutor
 import org.xutils.http.RequestParams
@@ -109,6 +108,98 @@ class HttpUtils {
                     }
                 }
             })
+        }
+
+
+        /**
+         * 使用 OkHttp 库发送 GET 请求的方法
+         * @param url String 请求地址
+         * @param callBack Callback 请求完成后的回调函数
+         */
+        @OptIn(DelicateCoroutinesApi::class)
+        @JvmStatic
+        suspend fun asyncGet(url: String): Deferred<Response> {
+
+            // 创建请求对象
+            val request: Request = Request.Builder().apply {
+                // 将已设置的头信息添加到请求中
+                headers.forEach {
+                    addHeader(it.key, it.value)
+                }
+                // 设置请求地址
+                url(url)
+                // 设置为 GET 请求
+                get()
+            }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
+            return GlobalScope.async{
+                okHttpClient.newCall(request).awaitResponse()
+            }
+        }
+
+        /**
+         * 携程get请求
+         * @param url String
+         * @param clz Class<T>
+         * @return T
+         */
+        @JvmStatic
+        suspend fun <T : Any> asyncGet(url: String, clz: Class<T>): T {
+
+            // 创建请求对象
+            val request: Request = Request.Builder().apply {
+                // 将已设置的头信息添加到请求中
+                headers.forEach {
+                    addHeader(it.key, it.value)
+                }
+                // 设置请求地址
+                url(url)
+                // 设置为 GET 请求
+                get()
+            }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
+            val response = okHttpClient.newCall(request).awaitResponse()
+
+            return getJsonObject(response, clz)
+
+        }
+
+        /**
+         * 携程post请求
+         * @param url String
+         * @param clz Class<T>
+         * @return T
+         */
+        @JvmStatic
+        suspend fun <T : Any> asyncPost(url: String, clz: Class<T>): T {
+
+            // 构建表单请求体
+            val formBody: FormBody.Builder = FormBody.Builder()
+            // 添加参数
+            params.forEach {
+                formBody.add(it.key, it.value)
+            }
+            // 构建请求并添加头信息
+            val request: Request = Request.Builder()
+                .apply {
+                    // 设置请求头
+                    headers.forEach {
+                        addHeader(it.key, it.value)
+                    }
+                    // 设置请求地址和请求体
+                    url(url)
+                    post(formBody.build())
+                }.build()
+            // 使用 OkHttp 的 enqueue 方法异步发送请求
+            val response = okHttpClient.newCall(request).awaitResponse()
+            return getJsonObject(response, clz)
+
+        }
+
+        private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
+            return withContext(Dispatchers.IO) {
+                Gson().fromJson(response.body?.string() ?: "empty string", clz)
+            }
         }
 
 

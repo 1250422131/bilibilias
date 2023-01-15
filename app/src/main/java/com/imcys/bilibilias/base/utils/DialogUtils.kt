@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
@@ -25,7 +24,11 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BangumiPageAdapter
@@ -33,8 +36,6 @@ import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
 import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.microsoft.appcenter.analytics.Analytics
 import kotlin.random.Random
 
@@ -962,28 +963,25 @@ class DialogUtils {
                         sharedPreferences.getString("user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
                             .toString()
-                    var DownloadName =
-                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
-                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
-                    DownloadName =
-                        DownloadName.replace("{P_TITLE}", dataBean.part)
-                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
-                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
-                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
-                    DownloadName = DownloadName.replace("{TITLE}",
-                        videoBaseBean.data.title + Random.nextInt(0, 90000))
-                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
-                    DownloadName = DownloadName.replace(" ", "_")
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        dataBean.part,
+                        dataBean.cid.toString(),
+                        fileType,
+                        urlIndex.toString(),
+                        videoBaseBean.data.title,
+                        qn.toString(),
+                    )
 
-                    val savePath = sharedPreferences.getString("user_download_save_path",
-                        context.getExternalFilesDir("download").toString())
 
                     when (downloadTool) {
 
                         APP_DOWNLOAD -> {
                             App.downloadQueue.addTask(
                                 url,
-                                "$savePath/$DownloadName",
+                                savePath,
                                 intFileType,
                                 DownloadTaskDataBean(
                                     dataBean.cid,
@@ -1071,27 +1069,24 @@ class DialogUtils {
                         sharedPreferences.getString("user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
                             .toString()
-                    var DownloadName =
-                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
-                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
-                    DownloadName =
-                        DownloadName.replace("{P_TITLE}", dataBean.long_title)
-                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
-                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
-                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
-                    DownloadName = DownloadName.replace("{TITLE}",
-                        videoBaseBean.data.title)
-                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
-                    DownloadName = DownloadName.replace(" ", "_")
 
-                    val savePath = sharedPreferences.getString("user_download_save_path",
-                        context.getExternalFilesDir("download").toString())
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        dataBean.long_title,
+                        dataBean.cid.toString(),
+                        fileType,
+                        urlIndex.toString(),
+                        videoBaseBean.data.title,
+                        qn.toString(),
+                    )
 
                     when (downloadTool) {
                         APP_DOWNLOAD -> {
                             App.downloadQueue.addTask(
                                 url,
-                                "$savePath/$DownloadName",
+                                savePath,
                                 intFileType,
                                 DownloadTaskDataBean(
                                     dataBean.cid,
@@ -1177,26 +1172,23 @@ class DialogUtils {
                         sharedPreferences.getString("user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
                             .toString()
-                    var DownloadName =
-                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
-                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
-                    DownloadName =
-                        DownloadName.replace("{P_TITLE}", dataBean.long_title)
-                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
-                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
-                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
-                    DownloadName = DownloadName.replace("{TITLE}",
-                        videoBaseBean.data.title)
-                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
-                    DownloadName = DownloadName.replace(" ", "_")
-                    val savePath = sharedPreferences.getString("user_download_save_path",
-                        context.getExternalFilesDir("download").toString())
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        dataBean.long_title,
+                        dataBean.cid.toString(),
+                        fileType,
+                        urlIndex.toString(),
+                        videoBaseBean.data.title,
+                        qn.toString(),
+                    )
 
                     when (downloadTool) {
                         APP_DOWNLOAD -> {
                             App.downloadQueue.addTask(
                                 url,
-                                "$savePath/$DownloadName",
+                                savePath,
                                 intFileType,
                                 DownloadTaskDataBean(
                                     dataBean.cid,
@@ -1288,26 +1280,25 @@ class DialogUtils {
                         sharedPreferences.getString("user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
                             .toString()
-                    var DownloadName =
-                        inputString.replace("{AV}", videoBaseBean.data.aid.toString())
-                    DownloadName = DownloadName.replace("{BV}", videoBaseBean.data.bvid)
-                    DownloadName =
-                        DownloadName.replace("{P_TITLE}", dataBean.part)
-                    DownloadName = DownloadName.replace("{CID}", dataBean.cid.toString())
-                    DownloadName = DownloadName.replace("{FILE_TYPE}", fileType)
-                    DownloadName = DownloadName.replace("{P}", urlIndex.toString())
-                    DownloadName = DownloadName.replace("{TITLE}",
-                        videoBaseBean.data.title)
-                    DownloadName = DownloadName.replace("{TYPE}", qn.toString())
 
-                    DownloadName = DownloadName.replace(" ", "_")
-                    val savePath = sharedPreferences.getString("user_download_save_path",
-                        context.getExternalFilesDir("download").toString())
+                    //获取下载地址
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        dataBean.part,
+                        dataBean.cid.toString(),
+                        fileType,
+                        urlIndex.toString(),
+                        videoBaseBean.data.title,
+                        qn.toString(),
+                    )
+
                     when (downloadTool) {
                         APP_DOWNLOAD -> {
                             App.downloadQueue.addTask(
                                 url,
-                                "$savePath/$DownloadName",
+                                savePath,
                                 intFileType,
                                 DownloadTaskDataBean(
                                     dataBean.cid,

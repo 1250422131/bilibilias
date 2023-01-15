@@ -167,4 +167,11 @@
         最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n
         你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式
     </string>
+    <string name="user_dl_merge_cmd" >
+        如果你不清楚FFmpeg命令，请不要修改\n
+        BILIBILIAS为大家提供了简单的命令参数\n
+        {VIDEO_PATH} 视频下载路径\n
+        {AUDIO_PATH} 音频储存路径\n
+        {VIDEO_MERGE_PATH} 合并后储存路径
+    </string>
 </resources>
