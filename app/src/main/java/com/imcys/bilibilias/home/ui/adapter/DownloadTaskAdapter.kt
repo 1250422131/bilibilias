@@ -21,7 +21,7 @@ class DownloadTaskAdapter :
                 oldItem: DownloadQueue.Task,
                 newItem: DownloadQueue.Task,
             ): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.savePath == newItem.savePath
             }
 
             @SuppressLint("DiffUtilEquals")

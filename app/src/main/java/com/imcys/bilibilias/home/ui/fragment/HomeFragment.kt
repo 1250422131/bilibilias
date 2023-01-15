@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -47,6 +48,7 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import io.microshow.rxffmpeg.RxFFmpegCommandList
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -171,27 +173,34 @@ class HomeFragment : Fragment() {
     private fun loadAppData() {
         AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
 
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-            OldUpdateDataBean::class.java) {
+        lifecycleScope.launch {
+
+            val oldUpdateDataBean = HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                OldUpdateDataBean::class.java)
+
             //加载公告
-            if (it.notice != "") {
-                loadNotice(it.notice.toString())
+            if (oldUpdateDataBean.notice != "") {
+                loadNotice(oldUpdateDataBean.notice.toString())
             }
             //送出签名信息
             val sha = apkVerifyWithSHA(requireContext(), "")
             val md5 = apkVerifyWithMD5(requireContext(), "")
             val crc = apkVerifyWithCRC(requireContext(), "")
 
-            when (it.id) {
+            when (oldUpdateDataBean.id) {
                 "0" -> postAppData(sha, md5, crc)
-                "1" -> checkAppData(it, sha, md5, crc)
+                "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
             }
 
-            loadVersionData(it)
-
+            //检测更新
+            loadVersionData(oldUpdateDataBean)
 
         }
+
     }
+
+
+
 
     /**
      * 加载版本信息

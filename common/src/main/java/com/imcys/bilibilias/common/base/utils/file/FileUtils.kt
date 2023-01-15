@@ -17,6 +17,9 @@ import java.nio.file.Paths
  */
 object FileUtils {
 
+    fun isFileExists(file: File): Boolean {
+        return file.exists() && !file.isDirectory
+    }
 
     /**
      * 删除文件
