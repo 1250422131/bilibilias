@@ -5,13 +5,18 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.imcys.bilibilias.common.data.dao.DownloadFinishTaskDao
+import com.imcys.bilibilias.common.data.dao.RoamDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
+import com.imcys.bilibilias.common.data.entity.RoamInfo
 
-@Database(entities = [DownloadFinishTaskInfo::class], version = 1, exportSchema = false)
+@Database(entities = [
+    DownloadFinishTaskInfo::class, RoamInfo::class
+], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun  downloadFinishTaskDao(): DownloadFinishTaskDao
+    abstract fun downloadFinishTaskDao(): DownloadFinishTaskDao
 
+    abstract fun roamDao(): RoamDao
 
 
     companion object {

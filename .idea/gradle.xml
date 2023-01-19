@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/model_ffmpeg" />
             <option value="$PROJECT_DIR$/tool_livestream" />
+            <option value="$PROJECT_DIR$/tool_roam" />
           </set>
         </option>
       </GradleProjectSettings>

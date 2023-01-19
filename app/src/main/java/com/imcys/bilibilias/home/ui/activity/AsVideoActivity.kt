@@ -110,7 +110,6 @@ class AsVideoActivity : BaseActivity() {
             //设置点击事件->这里将点击事件都放这个类了
 
 
-
             asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
 
 
@@ -142,7 +141,7 @@ class AsVideoActivity : BaseActivity() {
             "bangumi" -> {
                 HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .addHeader("referer", "https://www.bilibili.com")
-                    .get("${BilibiliApi.bangumiPlayPath}?ep_id=$epid&qn=64&fnval=0&fourk=1",
+                    .get("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1",
                         BangumiPlayBean::class.java) {
 
                         //设置布局视频播放数据
@@ -249,7 +248,11 @@ class AsVideoActivity : BaseActivity() {
      *
      */
     private fun loadBangumiVideoList() {
-        HttpUtils.get(BilibiliApi.bangumiVideoDataPath + "?ep_id=" + epid,
+        HttpUtils.apply {
+            if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                    true)
+            ) this.addHeader("cookie", BaseApplication.cookies)
+        }.get(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid,
             BangumiSeasonBean::class.java) {
 
 
@@ -302,6 +305,8 @@ class AsVideoActivity : BaseActivity() {
             //更新CID刷新播放页面
             cid = data.cid
             epid = data.id.toLong()
+            asJzvdStd.updatePoster(data.cover)
+
             //暂停播放
             changeFaButtonToPlay()
             //清空弹幕
@@ -385,22 +390,23 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadDanmakuFlameMaster() {
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
-            object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-
-                    App.handler.post {
-                        //储存弹幕
-                        saveDanmaku(response.body!!.bytes())
-                        //初始化弹幕配置
-                        initDanmaku()
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.videoDanMuPath}?oid=$cid",
+                object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
                     }
-                }
 
-            })
+                    override fun onResponse(call: Call, response: Response) {
+
+                        App.handler.post {
+                            //储存弹幕
+                            saveDanmaku(response.body!!.bytes())
+                            //初始化弹幕配置
+                            initDanmaku()
+                        }
+                    }
+
+                })
     }
 
 
@@ -692,8 +698,6 @@ class AsVideoActivity : BaseActivity() {
         asDanmaku.release()
         JzvdStd.releaseAllVideos()
     }
-
-
 
 
     //解压deflate数据的函数

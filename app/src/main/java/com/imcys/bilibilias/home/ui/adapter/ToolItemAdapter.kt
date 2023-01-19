@@ -55,7 +55,7 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
             val binding = DataBindingUtil.getBinding<ItemToolVideoCardBinding>(holder.itemView)
             binding?.videoBaseBean = getItem(position).videoBaseBean
             val clickEvent: () -> Unit = getItem(position).clickEvent
-            holder.itemView.setOnClickListener {
+            binding?.root?.setOnClickListener {
                 clickEvent()
             }
         }

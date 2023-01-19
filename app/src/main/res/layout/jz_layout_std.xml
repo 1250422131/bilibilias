@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
@@ -8,20 +9,8 @@
     <FrameLayout
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 
-
-    <ImageView
-        android:id="@+id/poster"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:adjustViewBounds="true"
-        android:background="#000000"
-        android:scaleType="fitXY" />
 
     <LinearLayout
         android:id="@+id/layout_bottom"
@@ -248,6 +237,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <FrameLayout
+        android:id="@+id/as_jzvdstd_poster_fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        tools:ignore="RtlHardcoded">
 
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:background="#000000"
+            android:scaleType="fitXY"
+            android:visibility="gone">
+
+        </ImageView>
+
+
+
+            <TextView
+                android:padding="5dp"
+                android:id="@+id/as_jzvdstd_pic_dl_bt"
+                android:layout_gravity="right"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="25dp"
+                android:background="@drawable/jz_layout_pic_dl_bg"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="封面下载"
+                android:textColor="@color/white"
+                android:focusable="true" />
+
+    </FrameLayout>
 
 </RelativeLayout>

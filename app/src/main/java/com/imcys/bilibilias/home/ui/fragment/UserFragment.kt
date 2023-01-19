@@ -138,6 +138,8 @@ class UserFragment : Fragment() {
         //切到后台线程去
         lifecycleScope.launch {
 
+            userDataMutableList.clear()
+
             val userBaseBean = lifecycleScope.async { getUserData() }
 
             // 用户卡片信息

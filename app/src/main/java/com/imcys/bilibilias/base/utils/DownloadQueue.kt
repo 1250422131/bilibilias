@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.base.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.documentfile.provider.DocumentFile
@@ -60,8 +62,6 @@ const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
 class DownloadQueue {
-
-    private var cumulativeTaskNumber = 0L
 
     private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
 
@@ -183,36 +183,6 @@ class DownloadQueue {
                 task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
                     override fun onSuccess(result: File?) {
 
-                        currentTasks.remove(task)
-                        //更新任务状态
-                        task.state = STATE_DOWNLOAD_END
-                        // 下载成功，调用任务的完成回调
-                        task.onComplete(true)
-                        //更新
-                        updateAdapter()
-
-                        if (task.isGroupTask) {
-                            // 在map中找到这个任务所属的一组任务
-                            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
-                            // 判断这一组任务是否都已经下载完成
-                            val isGroupTasksCompleted =
-                                groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
-                            if (isGroupTasksCompleted) {
-                                videoDataSubmit(task)
-                                videoMerge(task.downloadTaskDataBean.cid)
-                            }
-
-                        } else {
-                            //TODO FLV或者单独任务不需要合并操作，直接视为下载了。
-                            saveFinishTask(task)
-                            videoDataSubmit(task)
-                        }
-
-
-                        // 执行下一个任务
-                        executeTask()
-
-
                     }
 
                     override fun onError(ex: Throwable?, isOnCallback: Boolean) {
@@ -241,7 +211,35 @@ class DownloadQueue {
                     }
 
                     override fun onFinished() {
-                        // 暂时不需要实现
+                        currentTasks.remove(task)
+                        //更新任务状态
+                        task.state = STATE_DOWNLOAD_END
+                        // 下载成功，调用任务的完成回调
+                        task.onComplete(true)
+                        //更新
+                        updateAdapter()
+
+                        if (task.isGroupTask) {
+                            // 在map中找到这个任务所属的一组任务
+                            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                            // 判断这一组任务是否都已经下载完成
+                            val isGroupTasksCompleted =
+                                groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
+                            if (isGroupTasksCompleted) {
+                                videoDataSubmit(task)
+                                videoMerge(task.downloadTaskDataBean.cid)
+                            }
+
+                        } else {
+                            //TODO FLV或者单独任务不需要合并操作，直接视为下载了。
+                            saveFinishTask(task)
+                            videoDataSubmit(task)
+                            updatePhotoMedias(App.context, File(task.savePath))
+                        }
+
+
+                        // 执行下一个任务
+                        executeTask()
                     }
 
                     override fun onWaiting() {
@@ -330,7 +328,7 @@ class DownloadQueue {
 
 
     /**
-     * 储存完成的下载任务
+     * 储存完成的下载任务集合
      * @param tasks Array<out Task>
      */
     private fun saveFinishTask(vararg tasks: Task) {
@@ -425,42 +423,45 @@ class DownloadQueue {
     private fun videoMerge(cid: Int) {
 
         val mergeState =
-            App.sharedPreferences.getBoolean("user_dl_finish_automatic_merge_switch", false)
+            App.sharedPreferences.getBoolean("user_dl_finish_automatic_merge_switch", true)
         val importState =
             App.sharedPreferences.getBoolean("user_dl_finish_automatic_import_switch", false)
 
 
+        val taskMutableList = groupTasksMap[cid]
+        val videoTask =
+            taskMutableList?.filter { it.fileType == 0 }
+        val audioTask =
+            taskMutableList?.filter { it.fileType == 1 }
+
         if (mergeState) {
             //耗时操作，这里直接开个新线程
-
-            val taskMutableList = groupTasksMap[cid]
             val videoPath =
-                taskMutableList?.filter { it.fileType == 0 }.run { this!![0].savePath }
+                videoTask!![0].savePath
             val audioPath =
-                taskMutableList?.filter { it.fileType == 1 }.run { this!![0].savePath }
+                audioTask!![0].savePath
             //这里的延迟是为了有足够时间让下载检查下载完整
 
-
-            runFFmpegRxJavaVideoMerge(taskMutableList?.filter { it.fileType == 0 }?.get(0)!!,
+            runFFmpegRxJavaVideoMerge(videoTask[0],
                 videoPath,
                 audioPath)
 
-
-            // MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
+            //旧的合并方案： MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
 
         } else if (importState) {
-            val taskMutableList = groupTasksMap[cid]
-            val videoTask =
-                taskMutableList?.filter { it.fileType == 0 }
-            val audioTask =
-                taskMutableList?.filter { it.fileType == 0 }
-
             //分别添加下载完成了
             saveFinishTask(videoTask!![0], audioTask!![0])
 
             videoTask[0].downloadTaskDataBean.bangumiSeasonBean?.apply {
                 importVideo(cid)
             }
+
+        } else {
+
+            //这类代表虽然是dash下载，但是并不需要其他操作
+            saveFinishTask(videoTask!![0], audioTask!![0])
+            //这类通知相册更新下文件
+            updatePhotoMedias(App.context, File(videoTask[0].savePath), File(audioTask[0].savePath))
 
         }
 
@@ -501,12 +502,17 @@ class DownloadQueue {
                         //仅仅储存视频地址
                         task.savePath = videoPath + "_merge.mp4"
                         saveFinishTask(task)
+                        //通知相册更新
+                        updatePhotoMedias(App.context, File(videoPath + "_merge.mp4"))
                     } else {
                         //分别储存两次下载结果
                         saveFinishTask(task)
                         task.savePath = audioPath
                         task.fileType = 1
                         saveFinishTask(task)
+                        //通知相册更新
+                        updatePhotoMedias(App.context, File(videoPath), File(audioPath))
+
                     }
 
 
@@ -721,8 +727,29 @@ class DownloadQueue {
                                 AppFilePathUtils.copyFile(audioPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s");
 
-                                FileUtils.deleteFile(videoPath)
-                                FileUtils.deleteFile(audioPath)
+                                val impFileDeleteState =
+                                    App.sharedPreferences.getBoolean("user_dl_delete_import_file_switch",
+                                        true)
+
+                                if (impFileDeleteState) {
+                                    FileUtils.deleteFile(videoPath)
+                                    FileUtils.deleteFile(audioPath)
+                                    task.savePath =
+                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
+                                    //分别储存两次下载结果
+                                    saveFinishTask(task)
+                                    task.savePath =
+                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"
+                                    task.fileType = 1
+                                    saveFinishTask(task)
+
+                                } else {
+                                    //分别储存两次下载结果
+                                    saveFinishTask(task)
+                                    task.savePath = audioPath
+                                    task.fileType = 1
+                                    saveFinishTask(task)
+                                }
 
                             }
                         }
@@ -848,7 +875,23 @@ class DownloadQueue {
             if (impFileDeleteState) {
                 FileUtils.deleteFile(videoPath)
                 FileUtils.deleteFile(audioPath)
+                task.savePath =
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
+                //分别储存两次下载结果
+                saveFinishTask(task)
+                task.savePath =
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"
+                task.fileType = 1
+                saveFinishTask(task)
+
+            } else {
+                //分别储存两次下载结果
+                saveFinishTask(task)
+                task.savePath = audioPath
+                task.fileType = 1
+                saveFinishTask(task)
             }
+
 
             FileUtils.delete(App.context.getExternalFilesDir("temp")
                 .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid)
@@ -918,6 +961,16 @@ class DownloadQueue {
         return output
     }
 
+
+    //更新图库
+    private fun updatePhotoMedias(context: Context, vararg files: File) {
+        files.forEach {
+            val intent = Intent()
+            intent.action = Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
+            intent.data = Uri.fromFile(it)
+            context.sendBroadcast(intent)
+        }
+    }
 }
 
 
