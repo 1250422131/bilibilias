@@ -15,7 +15,7 @@
             android:defaultValue="false"
             app:key="user_download_save_sd_path_switch"
             app:summaryOff="使用SD卡储存"
-            app:summaryOn="这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download"
+            app:summaryOn="这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。"
             app:title="用SD卡作为下载路径">
 
         </SwitchPreferenceCompat>
