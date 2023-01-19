@@ -4,16 +4,17 @@
         <!-- Primary brand color. -->
 
         <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryVariant">#E2E6FA</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/color_primary_variant</item>
         <!-- Customize your theme here. -->
         <item name="android:letterSpacing">0.05</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
 
 
     </style>
@@ -22,6 +23,12 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="Download_TabLayoutTextStyle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 
     <style name="Theme.SplashOverlay" parent="Theme.BILIBILIAS">
         <item name="android:windowDisablePreview">true</item>

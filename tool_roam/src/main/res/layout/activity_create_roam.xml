@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="ResourceName">
+
+    <data>
+
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.CreateRoamActivity">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/create_roam_topLy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/create_roam_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+                app:title="新增服务" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        <ScrollView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                tools:ignore="ScrollViewSize">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/create_roam_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="名称"
+                    android:theme="@style/Theme.BILIBILIAS"
+                    app:boxCornerRadiusBottomEnd="5dp"
+                    app:boxCornerRadiusBottomStart="5dp"
+                    app:boxCornerRadiusTopEnd="5dp"
+                    app:boxCornerRadiusTopStart="5dp"
+                    app:startIconDrawable="@drawable/ic_public_edit"
+                    tools:ignore="HardcodedText">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/create_roam_name_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:theme="@style/AsInputStyle" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/create_roam_path"
+
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="接口地址"
+                    android:theme="@style/Theme.BILIBILIAS"
+                    app:boxCornerRadiusBottomEnd="5dp"
+                    app:boxCornerRadiusBottomStart="5dp"
+                    app:boxCornerRadiusTopEnd="5dp"
+                    app:boxCornerRadiusTopStart="5dp"
+                    app:startIconDrawable="@drawable/ic_public_connect_address"
+                    tools:ignore="HardcodedText">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/create_roam_path_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:theme="@style/AsInputStyle" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/create_roam_remark"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="备注信息"
+                    android:theme="@style/Theme.BILIBILIAS"
+                    app:boxCornerRadiusBottomEnd="5dp"
+                    app:boxCornerRadiusBottomStart="5dp"
+                    app:boxCornerRadiusTopEnd="5dp"
+                    app:boxCornerRadiusTopStart="5dp"
+                    app:startIconDrawable="@drawable/ic_public_info"
+                    tools:ignore="HardcodedText">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/create_roam_remark_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:theme="@style/AsInputStyle" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <RadioGroup
+
+                    android:theme="@style/Theme.BILIBILIAS"
+                    android:id="@+id/create_roam_radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/create_roam_radio_cookie_true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="需要cookie" />
+
+                    <RadioButton
+                        android:id="@+id/create_roam_radio_cookie_false"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="不需要cookie" />
+
+                </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/public_info_bg"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    tools:ignore="UnusedAttribute">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:tint="@color/color_primary"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_public_info"
+                            tools:ignore="UseAppTint" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20dp"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="漫游原理"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="配置前务必看"
+                                android:textColor="@color/black" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="70dp"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="你配置的接口地址，会替换APP内置的B站接口。\n注意:接口配置如：https://api.bilibili.com/\n注意尾部的/需要携带。\n替换后其实就是将请求由服务器受理，然后再转发回来，注意选择可靠的服务器。\n并且，如果你确定这个接口需要cookie，就务必确保你信任，否则你很可能因此泄露账号数据。"
+                            tools:ignore="HardcodedText" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/public_info_bg"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    tools:ignore="UnusedAttribute">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:tint="@color/color_primary"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_public_info"
+                            tools:ignore="UseAppTint" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="20dp"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="暂时不完全兼容哔哩漫游配置"
+                                android:textColor="@color/black"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="配置前务必看"
+                                android:textColor="@color/black" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="70dp"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="我们采用web端的cookie，请确保你的服务器是支持web接口和web的cookie的。"
+                            tools:ignore="HardcodedText" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                </LinearLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+        </ScrollView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>
