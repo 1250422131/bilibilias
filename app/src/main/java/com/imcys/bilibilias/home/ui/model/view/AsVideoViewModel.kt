@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -20,10 +21,20 @@ import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.microsoft.appcenter.analytics.Analytics
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
+import java.io.File
 
 /**
  * 解析视频的ViewModel
@@ -31,12 +42,6 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 class AsVideoViewModel(
     val context: Context, private val asVideoBinding: ActivityAsVideoBinding,
 ) : ViewModel() {
-
-
-    lateinit var archiveHasLike: MutableLiveData<ArchiveHasLikeBean>
-    lateinit var archiveCoinsBean: MutableLiveData<ArchiveCoinsBean>
-    lateinit var archiveFavouredBean: MutableLiveData<ArchiveFavouredBean>
-
 
 
     /**
@@ -51,7 +56,7 @@ class AsVideoViewModel(
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
         HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
                 DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData, it)
@@ -73,7 +78,7 @@ class AsVideoViewModel(
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
         HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
                 DialogUtils.downloadVideoDialog(context, videoBaseBean, bangumiSeasonBean, it)
@@ -83,6 +88,46 @@ class AsVideoViewModel(
 
     }
 
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun downloadDanMu(videoBaseBean: VideoBaseBean) {
+        GlobalScope.launch(Dispatchers.IO) {
+
+            val response =
+                HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
+
+            saveDanmaku(response.await().body!!.bytes(), videoBaseBean.data.cid)
+
+        }
+
+    }
+
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun saveDanmaku(bytes: ByteArray, cid: Int) {
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val savePath = sharedPreferences.getString("user_download_save_path",
+            context.getExternalFilesDir("download").toString())
+
+        val bufferedSink: BufferedSink?
+        val dest = File("${savePath}/${cid}_danmu.xml")
+        if (!FileUtils.isFileExists(dest)) dest.createNewFile()
+        val sink = dest.sink() //打开目标文件路径的sink
+        val decompressBytes =
+            (context as AsVideoActivity).decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
+        bufferedSink = sink.buffer()
+        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        bufferedSink.close()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
+            //通知下载成功
+            Analytics.trackEvent("下载弹幕")
+        }
+
+    }
 
     /**
      * 点赞视频
@@ -238,7 +283,6 @@ class AsVideoViewModel(
             }
 
     }
-
 
 
 }

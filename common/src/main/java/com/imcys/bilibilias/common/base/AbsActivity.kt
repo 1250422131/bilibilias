@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -19,6 +20,8 @@ open class AbsActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 打印活动名称
+        asLogD(this, javaClass.simpleName)
         //启动APP统计
         startAppCenter()
         // 添加当前活动

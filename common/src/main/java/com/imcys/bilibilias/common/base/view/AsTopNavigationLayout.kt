@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.view
+package com.imcys.bilibilias.common.base.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.R
 
 @SuppressLint("Recycle")
 class AsTopNavigationLayout(context: Context, attrs: AttributeSet?) :

@@ -228,7 +228,10 @@ class ToolFragment : Fragment() {
                             mutableListOf(
                                 ToolItemBean(
                                     type = 1,
-                                    videoBaseBean = it
+                                    videoBaseBean = it,
+                                    clickEvent = {
+                                        AsVideoActivity.actionStart(requireContext(),bvid)
+                                    }
                                 )
                             ) + this
                         }.apply {
@@ -246,12 +249,7 @@ class ToolFragment : Fragment() {
 
         val toolItemMutableList = mutableListOf(
             ToolItemBean("缓 存 视 频", "https://s1.ax1x.com/2022/12/18/zbTmpF.png", "") {
-                mAdapter.currentList[0].videoBaseBean?.data?.bvid?.let {
-                    context?.let { it1 -> AsVideoActivity.actionStart(it1, it) }
-                } ?: run {
-                    asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-                }
-
+                asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
             },
             ToolItemBean("关 于 设 置", "https://i.niupic.com/images/2022/12/23/aed4.png", "") {
                 val intent = Intent(context, SettingActivity::class.java)

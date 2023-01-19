@@ -31,9 +31,11 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -43,11 +45,10 @@ import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.view.FragmentHomeViewModel
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.distribute.Distribute
+import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import io.microshow.rxffmpeg.RxFFmpegCommandList
-import io.microshow.rxffmpeg.RxFFmpegInvoke
-import io.microshow.rxffmpeg.RxFFmpegSubscriber
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
@@ -61,7 +62,9 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.system.exitProcess
 
-
+@RouterAnno(
+    hostAndPath = ARouterAddress.AppHomeFragment,
+)
 class HomeFragment : Fragment() {
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding;
@@ -71,6 +74,7 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
 
@@ -175,8 +179,9 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
 
-            val oldUpdateDataBean = HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-                OldUpdateDataBean::class.java)
+            val oldUpdateDataBean =
+                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                    OldUpdateDataBean::class.java)
 
             //加载公告
             if (oldUpdateDataBean.notice != "") {
@@ -198,8 +203,6 @@ class HomeFragment : Fragment() {
         }
 
     }
-
-
 
 
     /**
@@ -292,8 +295,35 @@ class HomeFragment : Fragment() {
         //检测用户是否登陆
         detectUserLogin()
 
+        loadRoamData()
+
 
     }
+
+    /**
+     * 加载漫游数据
+     */
+    private fun loadRoamData() {
+
+        val roamId = App.sharedPreferences.getInt("use_roam_id", -1)
+        if (roamId != -1) {
+            queryRoamData(roamId)
+        }
+
+    }
+
+    private fun queryRoamData(roamId: Int) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val roamDao = AppDatabase.getDatabase(requireContext()).roamDao()
+            roamDao.getByIdQuery(roamId).apply {
+                BilibiliApi.roamApi = romaPath
+            }
+
+        }
+    }
+
+
+
 
 
     /**
@@ -304,6 +334,7 @@ class HomeFragment : Fragment() {
             requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
 
         App.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        BaseApplication.sharedPreferences = App.sharedPreferences
         //获取重要数据
         BaseApplication.cookies = sharedPreferences.getString("cookies", "").toString()
         BaseApplication.sessdata = sharedPreferences.getString("SESSDATA", "").toString()

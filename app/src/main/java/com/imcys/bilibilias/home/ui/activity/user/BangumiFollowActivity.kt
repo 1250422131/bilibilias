@@ -10,13 +10,12 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiFollowList
-import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlin.math.ceil
 

@@ -14,10 +14,11 @@ public class AsJzvdStdAdapter {
 
     @BindingAdapter({"android:imageUrl"})
     public static void loadImage(AsJzvdStd asJzvdStd, String url) {
-
+        asJzvdStd.setPosterImageUrl(url);
         Glide.with(asJzvdStd.getContext())
                 .load(url)
                 .into(asJzvdStd.posterImageView);
-
     }
+
+
 }

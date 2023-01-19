@@ -7,8 +7,14 @@ import android.content.SharedPreferences
 import android.os.Handler
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
+import com.drake.statelayout.StateConfig
+import com.imcys.bilibilias.common.BuildConfig
+import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.data.AppDatabase
+import com.xiaojinzi.component.Component
+import com.xiaojinzi.component.Config
+import com.xiaojinzi.component.impl.application.ModuleManager
 
 
 open class BaseApplication : Application() {
@@ -16,12 +22,41 @@ open class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         context = this
         handler = Handler(mainLooper)
+
         //百度统计开始
         startBaiDuService()
         appDatabase = AppDatabase.getDatabase(this)
 
+        initKComponent()
+
+        initBRV()
+
+
+
+    }
+
+    private fun initKComponent() {
+        Component.init(
+            application = this,
+            isDebug = BuildConfig.DEBUG,
+            config = Config.Builder()
+                .build()
+        )
+        // 手动加载模块
+        ModuleManager.registerArr(
+            "app", "common", "tool_roam",
+        )
+    }
+
+    private fun initBRV() {
+        StateConfig.apply {
+            emptyLayout = R.layout.public_layout_empty
+            errorLayout = R.layout.public_layout_error
+            loadingLayout = R.layout.public_layout_loading
+        }
     }
 
 
@@ -65,6 +100,9 @@ open class BaseApplication : Application() {
         lateinit var videoEntry: String
         lateinit var videoIndex: String
         lateinit var bangumiEntry: String
+
+        var roamApi: String = "https://api.bilibili.com/"
+
 
         //——————————————————部分内置需要的上下文——————————————————
         @SuppressLint("StaticFieldLeak")

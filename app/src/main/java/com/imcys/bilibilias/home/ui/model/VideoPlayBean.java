@@ -243,7 +243,7 @@ public class VideoPlayBean  implements Serializable {
 
             private int order;
             private int length;
-            private int size;
+            private Long size;
             private String ahead;
             private String vhead;
             private String url;
@@ -265,11 +265,11 @@ public class VideoPlayBean  implements Serializable {
                 this.length = length;
             }
 
-            public int getSize() {
+            public Long getSize() {
                 return size;
             }
 
-            public void setSize(int size) {
+            public void setSize(Long size) {
                 this.size = size;
             }
 

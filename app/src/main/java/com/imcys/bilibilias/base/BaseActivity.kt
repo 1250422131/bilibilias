@@ -13,16 +13,10 @@ import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 open class BaseActivity : AbsActivity() {
 
-    // 活动的类名
-    private val TAG = javaClass.simpleName
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
             App.context = this
-
-        // 打印活动名称
-        asLogD(this, TAG)
 
         // 沉浸式状态栏
         statusBarOnly(this)

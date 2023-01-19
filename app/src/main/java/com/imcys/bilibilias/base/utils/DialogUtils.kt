@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -27,17 +28,14 @@ import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.adapter.BangumiPageAdapter
-import com.imcys.bilibilias.home.ui.adapter.CreateCollectionAdapter
-import com.imcys.bilibilias.home.ui.adapter.VideoDefinitionAdapter
-import com.imcys.bilibilias.home.ui.adapter.VideoPageAdapter
+import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
-import kotlin.random.Random
 
 
 /**
@@ -49,11 +47,15 @@ class DialogUtils {
     companion object {
 
         private val TAG = DialogUtils::class.java.simpleName
-        val DASH_TYPE = 1
-        val FLV_TYPE = 2
-        val ADM_DOWNLOAD = 3
-        val IDM_DOWNLOAD = 2
-        val APP_DOWNLOAD = 1
+        const val DASH_TYPE = 1
+        const val FLV_TYPE = 2
+        const val ADM_DOWNLOAD = 3
+        const val IDM_DOWNLOAD = 2
+        const val APP_DOWNLOAD = 1
+
+        const val VIDEOANDAUDIO = 1
+        const val ONLY_AUDIO = 2
+        const val ONLY_VIDEO = 3
 
 
         /**
@@ -377,6 +379,8 @@ class DialogUtils {
             tName: String,
             downloadTool: Int,
             downloadType: Int,
+            downloadCondition: Int,
+            toneQuality: Int,
         ) {
 
             val mDownloadTool = when (downloadTool) {
@@ -408,11 +412,14 @@ class DialogUtils {
 
             //构建微软事件提交
             var properties = mutableMapOf<String, String>()
+            properties["bvid"] = bvid
             properties["upName"] = name
             properties["copyright"] = copyright.toString()
             properties["tName"] = tName
             properties["downloadTool"] = mDownloadTool
             properties["downloadType"] = mDownloadType
+            properties["downloadCondition"] = downloadCondition.toString()
+            properties["toneQuality"] = toneQuality.toString()
             Analytics.trackEvent("AnalysisVideo", properties)
             //构建百度事件提交
 
@@ -445,6 +452,8 @@ class DialogUtils {
             context: Context,
             downloadType: Int,
             downloadTool: Int,
+            downloadCondition: Int,
+            toneQuality: Int,
             videoBaseBean: VideoBaseBean,
             qn: Int,
             fnval: Int,
@@ -460,7 +469,9 @@ class DialogUtils {
                 videoBaseBean.data.copyright,
                 videoBaseBean.data.tname,
                 downloadTool,
-                downloadType
+                downloadType,
+                downloadCondition,
+                toneQuality
             )
 
             //首先判断是什么类型
@@ -471,6 +482,8 @@ class DialogUtils {
                         qn,
                         80,
                         downloadTool,
+                        downloadCondition,
+                        toneQuality,
                         videoPageMutableList)
                 }
                 FLV_TYPE -> {
@@ -503,6 +516,8 @@ class DialogUtils {
             context: Context,
             downloadType: Int,
             downloadTool: Int,
+            downloadCondition: Int,
+            toneQuality: Int,
             videoBaseBean: VideoBaseBean,
             qn: Int,
             fnval: Int,
@@ -518,7 +533,9 @@ class DialogUtils {
                 videoBaseBean.data.copyright,
                 videoBaseBean.data.tname,
                 downloadTool,
-                downloadType
+                downloadType,
+                downloadCondition,
+                toneQuality,
             )
 
             //首先判断是什么类型
@@ -529,6 +546,8 @@ class DialogUtils {
                         qn,
                         80,
                         downloadTool,
+                        downloadCondition,
+                        toneQuality,
                         bangumiPageMutableList)
                 }
                 FLV_TYPE -> {
@@ -542,6 +561,42 @@ class DialogUtils {
                     )
                 }
             }
+        }
+
+
+        /**
+         * 加载视频音质列表
+         *  @param dashVideoPlayBean DashVideoPlayBean
+         */
+        private fun loadVideoToneQualityList(
+            context: Context,
+            dashVideoPlayBean: DashVideoPlayBean,
+            selectedResult: (audio: DashVideoPlayBean.DataBean.DashBean.AudioBean) -> Unit,
+        ): BottomSheetDialog {
+
+            val binding = DialogToneQualityBinding.inflate(LayoutInflater.from(context))
+
+            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+            //设置布局
+            bottomSheetDialog.setContentView(binding.root)
+
+            initDialogBehaviorBinding(binding.dialogToneQualityBar, context, binding.root.parent)
+
+            binding.apply {
+                dialogToneQualityRv.adapter =
+                    VideoToneQualityAdapter(dashVideoPlayBean.data.dash.audio, selectedResult)
+                dialogToneQualityRv.layoutManager = LinearLayoutManager(context)
+
+                dialogToneQualityFinishBt.setOnClickListener {
+                    bottomSheetDialog.cancel()
+                }
+            }
+
+
+
+            return bottomSheetDialog
+
+
         }
 
 
@@ -564,9 +619,11 @@ class DialogUtils {
 
             var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
             var selectDefinition = 80
+            var toneQuality = 30280
 
             var downloadType = DASH_TYPE
             var downloadTool = APP_DOWNLOAD
+            var downloadCondition = VIDEOANDAUDIO
 
             videoPageMutableList.add(videoPageListData.data[0])
 
@@ -621,6 +678,16 @@ class DialogUtils {
                     }.show()
                 }
 
+
+                //设置音质选择
+                dialogDlAudioTypeTx.setOnClickListener {
+                    loadVideoToneQualityList(context, dashVideoPlayBean) {
+                        toneQuality = it.id
+                        dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    }.show()
+                }
+
+
                 val sharedPreferences = App.sharedPreferences.apply {
                     when (getInt("user_download_tool_list", 1)) {
                         1 -> {
@@ -648,6 +715,19 @@ class DialogUtils {
                         }
                     }
 
+                    downloadCondition = getInt("user_download_condition", 1)
+                    when (getInt("user_download_condition", 1)) {
+                        1 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
+                        }
+                        2 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_audio)
+                        }
+                        3 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_video)
+                        }
+                    }
+
                 }
 
 
@@ -668,11 +748,42 @@ class DialogUtils {
                     }
                 }
 
+                dialogDlConditionRadioGroup.setOnCheckedChangeListener { _, i ->
+                    when (i) {
+                        R.id.dialog_dl_video_and_audio -> {
+                            downloadCondition = VIDEOANDAUDIO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", VIDEOANDAUDIO)
+                                apply()
+                            }
+                        }
+                        R.id.dialog_dl_only_video -> {
+                            downloadCondition = ONLY_VIDEO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", ONLY_VIDEO)
+                                apply()
+                            }
+                        }
+
+                        R.id.dialog_dl_only_audio -> {
+                            downloadCondition = ONLY_VIDEO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", ONLY_AUDIO)
+                                apply()
+                            }
+                        }
+
+                    }
+                }
+
+
                 dialogDlVideoButton.setOnClickListener {
                     downloadTaskStream(
                         context,
                         downloadType,
                         downloadTool,
+                        downloadCondition,
+                        toneQuality,
                         videoBaseBean,
                         selectDefinition,
                         80,
@@ -708,8 +819,12 @@ class DialogUtils {
             var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
             var selectDefinition = 80
 
+            var toneQuality = 30280
+
             var downloadType = DASH_TYPE
             var downloadTool = APP_DOWNLOAD
+            var downloadCondition = VIDEOANDAUDIO
+
 
             videoPageMutableList.add(bangumiSeasonBean.result.episodes[0])
 
@@ -769,6 +884,14 @@ class DialogUtils {
                     }.show()
                 }
 
+                //设置音质选择
+                dialogDlAudioTypeTx.setOnClickListener {
+                    loadVideoToneQualityList(context, dashVideoPlayBean) {
+                        toneQuality = it.id
+                        dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    }.show()
+                }
+
 
                 val sharedPreferences = App.sharedPreferences.apply {
                     when (getInt("user_download_tool_list", 1)) {
@@ -795,6 +918,19 @@ class DialogUtils {
                         }
                     }
 
+                    downloadCondition = getInt("user_download_condition", 1)
+                    when (getInt("user_download_condition", 1)) {
+                        1 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
+                        }
+                        2 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_audio)
+                        }
+                        3 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_video)
+                        }
+                    }
+
                 }
 
 
@@ -815,12 +951,42 @@ class DialogUtils {
                     }
                 }
 
+                dialogDlConditionRadioGroup.setOnCheckedChangeListener { _, i ->
+                    when (i) {
+                        R.id.dialog_dl_video_and_audio -> {
+                            downloadCondition = VIDEOANDAUDIO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", VIDEOANDAUDIO)
+                                apply()
+                            }
+                        }
+                        R.id.dialog_dl_only_video -> {
+                            downloadCondition = ONLY_VIDEO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", ONLY_VIDEO)
+                                apply()
+                            }
+                        }
+
+                        R.id.dialog_dl_only_audio -> {
+                            downloadCondition = ONLY_VIDEO
+                            sharedPreferences.edit {
+                                putInt("user_download_condition", ONLY_AUDIO)
+                                apply()
+                            }
+                        }
+
+                    }
+                }
+
 
                 dialogDlVideoButton.setOnClickListener {
                     downloadTaskStream(
                         context,
                         downloadType,
                         downloadTool,
+                        downloadCondition,
+                        toneQuality,
                         videoBaseBean,
                         selectDefinition,
                         80,
@@ -844,11 +1010,56 @@ class DialogUtils {
             qn: Int,
             fnval: Int,
             downloadTool: Int,
+            downloadCondition: Int,
+            toneQuality: Int,
             bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
         ) {
             bangumiPageMutableList.forEach {
-                addTask(context, it, qn, fnval, videoBaseBean, downloadTool, "video")
-                addTask(context, it, qn, fnval, videoBaseBean, downloadTool, "audio")
+                when (downloadCondition) {
+                    VIDEOANDAUDIO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "video")
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "audio")
+                    }
+                    ONLY_AUDIO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "audio",
+                            false
+                        )
+                    }
+
+                    ONLY_VIDEO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "video",
+                            false)
+                    }
+                }
+
             }
         }
 
@@ -859,11 +1070,57 @@ class DialogUtils {
             qn: Int,
             fnval: Int,
             downloadTool: Int,
+            downloadCondition: Int,
+            toneQuality: Int,
             videoPageMutableList: MutableList<VideoPageListData.DataBean>,
         ) {
             videoPageMutableList.forEach {
-                addTask(context, it, qn, fnval, videoBaseBean, downloadTool, "video")
-                addTask(context, it, qn, fnval, videoBaseBean, downloadTool, "audio")
+
+                when (downloadCondition) {
+                    VIDEOANDAUDIO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "video")
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "audio")
+                    }
+                    ONLY_AUDIO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "audio",
+                            false
+                        )
+                    }
+                    ONLY_VIDEO -> {
+                        addTask(context,
+                            it,
+                            qn,
+                            fnval,
+                            videoBaseBean,
+                            downloadTool,
+                            toneQuality,
+                            "video",
+                            false)
+                    }
+                }
+
+
             }
         }
 
@@ -938,14 +1195,7 @@ class DialogUtils {
                     VideoPlayBean::class.java) { it1 ->
 
                     val videoPlayData = it1.data
-                    var urlIndex = 0
-                    //获取视频
-                    it1.data.accept_quality.forEachIndexed { index, i ->
-                        if (i == qn) {
-                            urlIndex = index
-                            return@forEachIndexed
-                        }
-                    }
+                    val urlIndex = 0
 
                     val intFileType: Int
                     val fileType: String
@@ -1038,9 +1288,13 @@ class DialogUtils {
             type: String,
             isGroupTask: Boolean = false,
         ) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.apply {
+                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                        true)
+                ) this.addHeader("cookie", BaseApplication.cookies)
+            }
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
+                .get("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
                     BangumiPlayBean::class.java) { it1 ->
 
                     val videoPlayData = it1.result
@@ -1135,13 +1389,19 @@ class DialogUtils {
             fnval: Int,
             videoBaseBean: VideoBaseBean,
             downloadTool: Int,
+            toneQuality: Int,
             type: String,
+            isGroupTask: Boolean = true,
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.apply {
+                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                        true)
+                ) this.addHeader("cookie", BaseApplication.cookies)
+            }
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BilibiliApi.bangumiPlayPath}?cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
+                .get("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
                     DashBangumiPlayBean::class.java) { it1 ->
 
                     val bangumiPlayData = it1.result
@@ -1162,7 +1422,11 @@ class DialogUtils {
                         "audio" -> {
                             intFileType = 1
                             fileType = "m4a"
-                            bangumiPlayData.dash.audio[0].baseUrl
+                            var mUrl = bangumiPlayData.dash.audio[0].baseUrl
+                            bangumiPlayData.dash.audio.forEach {
+                                if (it.id == toneQuality) mUrl = it.baseUrl
+                            }
+                            mUrl
                         }
                         else -> throw IllegalArgumentException("Invalid type: $type")
                     }
@@ -1197,7 +1461,8 @@ class DialogUtils {
                                     qn.toString(),
                                     dashBangumiPlayBean = it1,
                                     bangumiSeasonBean = dataBean,
-                                )
+                                ),
+                                isGroupTask = isGroupTask
                             ) { it2 ->
                                 if (it2) {
                                     Toast.makeText(context,
@@ -1239,6 +1504,7 @@ class DialogUtils {
             fnval: Int,
             videoBaseBean: VideoBaseBean,
             downloadTool: Int,
+            toneQuality: Int,
             type: String,
             isGroupTask: Boolean = true,
         ) {
@@ -1246,7 +1512,7 @@ class DialogUtils {
 
             HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=80&fourk=1",
+                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
                     DashVideoPlayBean::class.java) { it1 ->
 
                     val videoPlayData = it1.data
@@ -1270,7 +1536,11 @@ class DialogUtils {
                         "audio" -> {
                             intFileType = 1
                             fileType = "m4a"
-                            videoPlayData.dash.audio[0].baseUrl
+                            var mUrl = videoPlayData.dash.audio[0].baseUrl
+                            videoPlayData.dash.audio.forEach {
+                                if (it.id == toneQuality) mUrl = it.baseUrl
+                            }
+                            mUrl
                         }
                         else -> throw IllegalArgumentException("Invalid type: $type")
                     }
