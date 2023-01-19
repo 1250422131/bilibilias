@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:iconTint="@color/black"
+        android:icon="@drawable/ic_public_plus"
+        app:showAsAction="always"
+        android:id="@+id/main_menu_add"
+        android:title="新增配置"
+        tools:ignore="HardcodedText" />
+
+</menu>

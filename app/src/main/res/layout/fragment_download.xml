@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -46,64 +46,55 @@
             </LinearLayout>
 
 
-
-
-            <androidx.cardview.widget.CardView
-                android:visibility="visible"
-                android:layout_margin="5dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="5dp">
 
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                  android:padding="5dp"
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/fragment_download_tabLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <com.google.android.material.tabs.TabLayout
-                       android:id="@+id/fragment_download_tabLayout"
-                        app:tabBackground="@drawable/home_tablayout_tabbackground"
-                        app:tabGravity="start"
-                        app:tabMode="scrollable"
-                        app:tabIndicator="@drawable/home_tablayout_indicator"
-                        app:tabIndicatorAnimationDuration="400"
-                        app:tabIndicatorAnimationMode="elastic"
-                        app:tabIndicatorColor="@color/color_primary"
-                        app:tabIndicatorFullWidth="true"
-                        app:tabIndicatorGravity="stretch"
-                        app:tabIndicatorHeight="0dp"
-                        app:tabInlineLabel="true"
-                        app:tabMaxWidth="0dp"
-                        app:tabMinWidth="0dp"
-                        app:tabPaddingEnd="32dp"
-                        app:tabPaddingStart="32dp"
-                        app:tabSelectedTextColor="@color/white"
-                        app:tabTextColor="@color/black"
-                        android:textSize="18sp"
-                        app:tabUnboundedRipple="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <com.google.android.material.tabs.TabItem
-                            android:text="正在下载"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:ignore="HardcodedText" />
-                        <com.google.android.material.tabs.TabItem
-                            android:text="下载完成"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </com.google.android.material.tabs.TabLayout>
+                    android:layout_height="wrap_content"
+                    app:tabBackground="@android:color/transparent"
+                    app:tabIndicator="@drawable/download_tablayout_indicator"
+                    app:tabIndicatorColor="@color/color_primary"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="3dp"
+                    app:tabTextAppearance="@style/Download_TabLayoutTextStyle"
+                    app:tabMode="scrollable"
+                    app:tabIndicatorAnimationDuration="400"
+                    app:tabIndicatorAnimationMode="elastic"
+                    app:tabRippleColor="@android:color/transparent"
+                    app:tabSelectedTextColor="@color/color_primary"
+                    app:tabTextColor="@color/black"
+                    app:tabGravity="start"
+                    app:tabInlineLabel="true"
+                    app:tabMaxWidth="0dp"
+                    app:tabMinWidth="0dp"
+                    app:tabPaddingEnd="42dp"
+                    app:tabPaddingStart="42dp"
+                    >
 
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="正在下载"
+                        tools:ignore="HardcodedText" />
 
-            </androidx.cardview.widget.CardView>
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="下载完成" />
+                </com.google.android.material.tabs.TabLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/fragment_download_RecyclerView"
-                android:padding="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:padding="10dp" />
 
 
         </LinearLayout>

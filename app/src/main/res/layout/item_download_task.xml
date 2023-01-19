@@ -20,6 +20,7 @@
         app:cardElevation="0dp">
 
         <LinearLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -111,11 +112,13 @@
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <ImageView
-                            android:background="@color/color_primary_variant"
+                            android:id="@+id/item_dl_task_delete"
+                            android:src="@drawable/ic_item_task_delete"
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentEnd="true"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"/>
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            app:tint="@color/color_primary" />
 
                     </RelativeLayout>
 

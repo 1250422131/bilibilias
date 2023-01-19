@@ -254,6 +254,59 @@
 
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/as_audio_download_ic"
+                        android:layout_width="20sp"
+                        android:layout_height="20sp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_as_audio_download_monitor"
+                        app:tint="@color/color_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_toRightOf="@id/as_audio_download_ic"
+                        android:text="缓存的音质"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/dialog_dl_audio_type_tx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_toStartOf="@id/as_audio_download_right"
+                        android:text="192K"
+                        android:textColor="@color/color_text_hint"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/as_audio_download_right"
+                        android:layout_width="20sp"
+                        android:layout_height="20sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right"
+                        app:tint="@color/color_text_hint" />
+
+                </RelativeLayout>
+
+
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
@@ -288,8 +341,45 @@
                             android:text="ADM" />
                     </RadioGroup>
 
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <RadioGroup
+                        android:id="@+id/dialog_dl_condition_radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_video_and_audio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="音视频" />
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_only_audio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="仅音频" />
+
+                        <RadioButton
+                            android:id="@+id/dialog_dl_only_video"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/color_primary"
+                            android:text="仅视频" />
+                    </RadioGroup>
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
             </LinearLayout>
 

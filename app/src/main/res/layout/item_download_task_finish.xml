@@ -21,11 +21,11 @@
         app:cardElevation="0dp">
 
         <LinearLayout
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
-
             >
 
             <androidx.appcompat.widget.LinearLayoutCompat

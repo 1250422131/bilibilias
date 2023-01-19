@@ -603,6 +603,7 @@ public class DashVideoPlayBean implements Serializable {
                  * codecid : 0
                  */
 
+                private int selected;
                 private int id;
                 private String baseUrl;
                 private String base_url;
@@ -622,6 +623,14 @@ public class DashVideoPlayBean implements Serializable {
                 private int codecid;
                 private List<String> backupUrl;
                 private List<String> backup_url;
+
+                public int getSelected() {
+                    return selected;
+                }
+
+                public void setSelected(int selected) {
+                    this.selected = selected;
+                }
 
                 public int getId() {
                     return id;

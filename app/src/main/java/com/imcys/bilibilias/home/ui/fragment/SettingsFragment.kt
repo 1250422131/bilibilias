@@ -33,8 +33,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var renameUserDownloadFileNameEditText: Preference
     private lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
-    private lateinit var userDlFinishAutomaticMergeSwitch: Preference
-    private lateinit var userDlFinishAutomaticImportSwitch: Preference
+    private lateinit var userDlFinishAutomaticMergeSwitch: SwitchPreferenceCompat
+    private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
 
     private lateinit var renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
@@ -102,8 +102,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                     userDownloadSavePathEditText.summary =
                         "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
-
-
                 },
                 negativeButtonClickListener = {
                 }
@@ -142,6 +140,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     }
 
+
+
     private fun bindingSaveSDPathSwitchEvent() {
 
         userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
@@ -165,6 +165,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingImportFileEvent() {
         userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
+
             //判断是否有权限
             if (!fileUriUtils.isGrant(context)) {
                 //申请权限
@@ -186,6 +187,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else {
                 true
             }
+
 
 
         }

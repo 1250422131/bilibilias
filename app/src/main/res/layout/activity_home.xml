@@ -13,6 +13,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:background="@color/app_default_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -26,10 +27,11 @@
             </androidx.viewpager2.widget.ViewPager2>
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
+
                 android:id="@+id/home_bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/home_bottomnavigation_background"
+                android:background="@color/white"
                 app:itemIconTint="@color/home_bottom_nav_seletor"
                 app:itemTextColor="@color/home_bottom_nav_seletor"
                 app:menu="@menu/home_menu_bottom_navigation">

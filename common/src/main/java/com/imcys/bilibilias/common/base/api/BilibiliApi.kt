@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.common.base.api
 
 
-class BilibiliApi() {
+class BilibiliApi {
 
     companion object {
         /**
@@ -10,8 +10,9 @@ class BilibiliApi() {
          *
          */
 
-        const val serviceApi: String = "https://api.bilibili.com/"
+        private const val serviceApi: String = "https://api.bilibili.com/"
         const val loginApi: String = "http://passport.bilibili.com/"
+        var roamApi: String = "https://api.bilibili.com/"
 
 
         const val getLoginQRPath: String = loginApi + "x/passport-login/web/qrcode/generate"
@@ -55,7 +56,7 @@ class BilibiliApi() {
         const val userCollectionDataPath = serviceApi + "x/v3/fav/resource/list"
 
         const val videoPlayPath = serviceApi + "x/player/playurl"
-        const val bangumiPlayPath = serviceApi + "pgc/player/web/playurl"
+        var bangumiPlayPath = roamApi + "pgc/player/web/playurl"
 
         //弹幕下载
         const val videoDanMuPath = serviceApi + "x/v1/dm/list.so"
@@ -70,7 +71,7 @@ class BilibiliApi() {
         const val videoCoinAddPath = serviceApi + "x/web-interface/coin/add"
 
         //获取剧集明细 get season_id / ep_id
-        const val bangumiVideoDataPath = serviceApi + "pgc/view/web/season"
+        var bangumiVideoDataPath = roamApi + "pgc/view/web/season"
 
         //获取用户基本信息
         const val userBaseDataPath = serviceApi + "x/space/acc/info"
@@ -89,10 +90,13 @@ class BilibiliApi() {
 
         //点赞判断
         const val archiveHasLikePath = serviceApi + "x/web-interface/archive/has/like"
+
         //投币判断
         const val archiveCoinsPath = serviceApi + "x/web-interface/archive/coins"
+
         //收藏判断
-        const val  archiveFavoured = serviceApi + "x/v2/fav/video/favoured"
+        const val archiveFavoured = serviceApi + "x/v2/fav/video/favoured"
+
         //追番剧列表
         const val bangumiFollowPath = serviceApi + "x/space/bangumi/follow/list"
     }
