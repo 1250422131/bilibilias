@@ -65,7 +65,6 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="13dp"
                 android:layout_marginRight="25dp"
-                android:layout_marginBottom="25dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp">
 
@@ -73,6 +72,7 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
+
                     <Button
                         android:id="@+id/dialog_collection_finish_bt"
                         android:layout_width="match_parent"
@@ -87,6 +87,35 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:visibility="gone"
+                        android:id="@+id/dialog_collection_all_select_bt"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="@color/color_primary"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:text="全部选择"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 

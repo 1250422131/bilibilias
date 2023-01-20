@@ -119,12 +119,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    App.sharedPreferences.edit().putString("user_download_file_name_editText",
-                        "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}").apply()
+                    App.sharedPreferences.edit {
+                        putString("user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        apply()
+                    }
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
-                    userDownloadFileNameEditText.summary =
-                        "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
-
                 },
                 negativeButtonClickListener = {
                 }
@@ -139,7 +139,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         bindingSaveSDPathSwitchEvent()
 
     }
-
 
 
     private fun bindingSaveSDPathSwitchEvent() {
@@ -187,7 +186,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else {
                 true
             }
-
 
 
         }
