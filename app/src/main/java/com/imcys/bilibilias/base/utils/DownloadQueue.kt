@@ -495,21 +495,24 @@ class DownloadQueue {
                     //删除合并文件
                     val deleteMergeSatae =
                         App.sharedPreferences.getBoolean("user_dl_finish_delete_merge_switch",
-                            false)
+                            true)
                     if (deleteMergeSatae) {
                         FileUtils.deleteFile(videoPath)
                         FileUtils.deleteFile(audioPath)
                         //仅仅储存视频地址
                         task.savePath = videoPath + "_merge.mp4"
+                        task.fileType = 0
                         saveFinishTask(task)
                         //通知相册更新
                         updatePhotoMedias(App.context, File(videoPath + "_merge.mp4"))
                     } else {
                         //分别储存两次下载结果
-                        saveFinishTask(task)
-                        task.savePath = audioPath
-                        task.fileType = 1
-                        saveFinishTask(task)
+                        val videoTask = task
+                        val audioTask = task
+                        videoTask.fileType = 0
+                        audioTask.savePath = audioPath
+                        audioTask.fileType = 1
+                        saveFinishTask(videoTask, audioTask)
                         //通知相册更新
                         updatePhotoMedias(App.context, File(videoPath), File(audioPath))
 
@@ -878,6 +881,7 @@ class DownloadQueue {
                 task.savePath =
                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
                 //分别储存两次下载结果
+                task.fileType = 0
                 saveFinishTask(task)
                 task.savePath =
                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"

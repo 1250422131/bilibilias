@@ -55,11 +55,10 @@
                     android:id="@+id/fragment_download_tabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:tabBackground="@android:color/transparent"
                     app:tabIndicator="@drawable/download_tablayout_indicator"
                     app:tabIndicatorColor="@color/color_primary"
                     app:tabIndicatorFullWidth="false"
-                    app:tabIndicatorHeight="3dp"
+                    app:tabIndicatorHeight="10dp"
                     app:tabTextAppearance="@style/Download_TabLayoutTextStyle"
                     app:tabMode="scrollable"
                     app:tabIndicatorAnimationDuration="400"
@@ -69,10 +68,6 @@
                     app:tabTextColor="@color/black"
                     app:tabGravity="start"
                     app:tabInlineLabel="true"
-                    app:tabMaxWidth="0dp"
-                    app:tabMinWidth="0dp"
-                    app:tabPaddingEnd="42dp"
-                    app:tabPaddingStart="42dp"
                     >
 
                     <com.google.android.material.tabs.TabItem

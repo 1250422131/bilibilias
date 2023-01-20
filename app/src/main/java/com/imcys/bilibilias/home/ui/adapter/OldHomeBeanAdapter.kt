@@ -112,11 +112,12 @@ class OldHomeBeanAdapter(
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
                 val code = goUrlJson.getInt("code")
+                val message = goUrlJson.optString("message")
                 (context as Activity).runOnUiThread {
                     if (code == 0) {
-                        Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: JSONException) {
@@ -140,10 +141,12 @@ class OldHomeBeanAdapter(
                 val requestStr = response.body!!.string()
                 val requestJson = JSONObject(requestStr)
                 val code = requestJson.optInt("code")
+                val message = requestJson.optString("message")
+
                 if (code == 0) {
-                    Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
                 }
             }
 

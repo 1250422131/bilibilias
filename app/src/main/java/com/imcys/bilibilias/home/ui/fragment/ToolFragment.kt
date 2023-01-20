@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +22,14 @@ import com.hyy.highlightpro.parameter.MarginOffset
 import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -33,12 +38,13 @@ import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -160,6 +166,10 @@ class ToolFragment : Fragment() {
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
+        if (inputString == "") {
+            asToast(requireContext(), "没有输入任何内容哦")
+            return
+        }
         //ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
@@ -230,7 +240,7 @@ class ToolFragment : Fragment() {
                                     type = 1,
                                     videoBaseBean = it,
                                     clickEvent = {
-                                        AsVideoActivity.actionStart(requireContext(),bvid)
+                                        AsVideoActivity.actionStart(requireContext(), bvid)
                                     }
                                 )
                             ) + this
@@ -246,40 +256,62 @@ class ToolFragment : Fragment() {
 
 
     private fun loadToolItem() {
-
-        val toolItemMutableList = mutableListOf(
-            ToolItemBean("缓 存 视 频", "https://s1.ax1x.com/2022/12/18/zbTmpF.png", "") {
-                asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-            },
-            ToolItemBean("关 于 设 置", "https://i.niupic.com/images/2022/12/23/aed4.png", "") {
-                val intent = Intent(context, SettingActivity::class.java)
-                context?.startActivity(intent)
+        val toolItemMutableList = mutableListOf<ToolItemBean>()
+        lifecycleScope.launch {
+            val oldToolItemBean = getOldToolItemBean()
+            oldToolItemBean.data.forEach {
+                when (it.tool_code) {
+                    1 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color) {
+                            asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
+                        })
+                    }
+                    2 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color) {
+                            val intent = Intent(context, SettingActivity::class.java)
+                            context?.startActivity(intent)
+                        })
+                    }
+                }
             }
 
-        )
+            fragmentToolBinding.apply {
+                fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
-        fragmentToolBinding.apply {
-            fragmentToolRecyclerView.adapter = ToolItemAdapter()
+                mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
+                mAdapter.submitList(toolItemMutableList)
 
-            mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-            mAdapter.submitList(toolItemMutableList)
-
-            fragmentToolRecyclerView.layoutManager =
-                GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return if ((mAdapter.currentList)[position].type == 1) {
-                                3
-                            } else {
-                                1
+                fragmentToolRecyclerView.layoutManager =
+                    GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
+                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return if ((mAdapter.currentList)[position].type == 1) {
+                                    3
+                                } else {
+                                    1
+                                }
                             }
                         }
                     }
-                }
 
+            }
         }
 
 
+    }
+
+
+    private suspend fun getOldToolItemBean(): OldToolItemBean {
+        return withContext(lifecycleScope.coroutineContext) {
+            HttpUtils.asyncGet("${BiliBiliAsApi.appFunction}?type=oldToolItem",
+                OldToolItemBean::class.java)
+        }
     }
 
     override fun onDestroy() {

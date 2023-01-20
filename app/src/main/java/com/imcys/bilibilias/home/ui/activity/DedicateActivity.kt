@@ -98,6 +98,13 @@ class DedicateActivity : BaseActivity() {
                 "紫叶为BILIBILIAS的开发提供的一些重要的意见，部分已经实现。",
                 "https://q1.qlogo.cn/g?b=qq&nk=3287319782&s=640",
             ),
+            DedicateBean(
+                "空dio徐伦",
+                "帮助BILIBILIAS在其他平台展示",
+                "空dio徐伦，长期在App分享软件里提交BILIBILIAS的更新，只是很遗憾我们没办法联系到他，这里头像就先使用app的吧。",
+                "https://view.misakamoe.com/v1/app_ico.png",
+                ""
+            ),
         )
         binding.apply {
             dedicateRv.adapter = adapter
