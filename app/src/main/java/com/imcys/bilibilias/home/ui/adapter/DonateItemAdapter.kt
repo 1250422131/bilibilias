@@ -96,7 +96,7 @@ class DonateItemAdapter :
                     val progress = if (surplus == 0) {
                         0
                     } else {
-                        (total!! / surplus!!) * 100
+                        (surplus!! / total!!) * 100
                     }
                     itemDownloadProgressBar.progress = progress
                 }

@@ -92,6 +92,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/dialog_dl_video_definition_ly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp">
@@ -143,6 +144,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/dialog_dl_video_diversity_ly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp">
@@ -201,6 +203,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/dialog_dl_video_type_ly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"
@@ -255,6 +258,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/dialog_dl_audio_type_ly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"
@@ -311,7 +315,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp">
+                    android:layout_marginTop="20dp">
 
                     <RadioGroup
                         android:id="@+id/dialog_dl_video_radioGroup"
@@ -348,7 +352,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    >
 
                     <RadioGroup
                         android:id="@+id/dialog_dl_condition_radioGroup"

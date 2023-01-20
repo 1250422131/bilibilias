@@ -63,8 +63,8 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
             holder.itemView.setOnClickListener {
                 if (FileUtils.isFileExists(File(task.savePath))) {
                     AsDialog.init(holder.itemView.context)
-                        .setTitle("文件共享")
-                        .setContent("你确定要分享这个文件吗？")
+                        .setTitle("文件操作")
+                        .setContent("请选择下面的按钮")
                         .setPositiveButton("分享文件") {
                             val fileType: String = if (task.fileType == 0) {
                                 "video/*"
@@ -79,6 +79,24 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
                                 fileType)
                             it.cancel()
                         }
+                        .setNeutralButton("播放文件") {
+                            val fileType: String = if (task.fileType == 0) {
+                                "video/*"
+                            } else {
+                                "audio/*"
+                            }
+                            val intent = Intent()
+                            intent.apply {
+                                action = Intent.ACTION_VIEW
+                                setDataAndType(FileProvider.getUriForFile(holder.itemView.context,
+                                    "com.imcys.bilibilias.fileProvider",
+                                    File(task.savePath)), fileType)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                holder.itemView.context.startActivity(this)
+                            }
+
+                        }
                         .setNegativeButton("取消") {
                             it.cancel()
                         }.build().show()
@@ -90,39 +108,47 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
             }
 
             itemDlFinishTaskDelete.setOnClickListener {
-                bindingDeleteMethod(itemDlFinishTaskDelete, taskId)
+                bindingDeleteMethod(itemDlFinishTaskDelete, task)
             }
 
         }
 
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun bindingDeleteMethod(
         itemDlFinishTaskDelete: ImageView,
-        taskId: Int,
+        task: DownloadFinishTaskInfo,
     ) {
 
         AsDialog.init(itemDlFinishTaskDelete.context)
             .setTitle("删除警告")
             .setContent("确定删除这条纪录吗？")
-            .setPositiveButton("删除") {
-                GlobalScope.launch {
-                    val downloadFinishTaskDao =
-                        BaseApplication.appDatabase.downloadFinishTaskDao()
-                    val newTasks =
-                        DownloadFinishTaskRepository(downloadFinishTaskDao).deleteAndReturnList(
-                            downloadFinishTaskDao.findById(taskId))
-                    //更新数据
-                    submitList(newTasks)
-                    it.cancel()
-                }
-
+            .setPositiveButton("删除纪录") {
+                deleteTaskRecords(task.id)
+                it.cancel()
+            }.setNeutralButton("删除纪录和文件") {
+                deleteTaskRecords(task.id)
+                FileUtils.delete(task.savePath)
+                it.cancel()
             }
             .setNegativeButton("点错了") {
                 it.cancel()
             }
             .build().show()
+
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun deleteTaskRecords(taskId: Int) {
+        GlobalScope.launch {
+            val downloadFinishTaskDao =
+                BaseApplication.appDatabase.downloadFinishTaskDao()
+            val newTasks =
+                DownloadFinishTaskRepository(downloadFinishTaskDao).deleteAndReturnList(
+                    downloadFinishTaskDao.findById(taskId))
+            //更新数据
+            submitList(newTasks)
+        }
 
     }
 

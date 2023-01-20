@@ -48,7 +48,7 @@ class DialogUtils {
 
         private val TAG = DialogUtils::class.java.simpleName
         const val DASH_TYPE = 1
-        const val FLV_TYPE = 2
+        const val MP4_TYPE = 2
         const val ADM_DOWNLOAD = 3
         const val IDM_DOWNLOAD = 2
         const val APP_DOWNLOAD = 1
@@ -276,7 +276,7 @@ class DialogUtils {
 
                 dialogDlTypeFlvBt.setOnClickListener {
                     App.sharedPreferences.edit().putInt("user_download_type", 2).apply()
-                    finished(2, "FLV")
+                    finished(2, "MP4")
                     bottomSheetDialog.cancel()
                 }
             }
@@ -402,8 +402,8 @@ class DialogUtils {
                 DASH_TYPE -> {
                     "DASH"
                 }
-                FLV_TYPE -> {
-                    "FLV"
+                MP4_TYPE -> {
+                    "MP4"
                 }
                 else -> {
                     TODO("意外出现")
@@ -486,7 +486,7 @@ class DialogUtils {
                         toneQuality,
                         videoPageMutableList)
                 }
-                FLV_TYPE -> {
+                MP4_TYPE -> {
                     addFlvDownloadTask(
                         context,
                         videoBaseBean,
@@ -550,7 +550,7 @@ class DialogUtils {
                         toneQuality,
                         bangumiPageMutableList)
                 }
-                FLV_TYPE -> {
+                MP4_TYPE -> {
                     addFlvBangumiDownloadTask(
                         context,
                         videoBaseBean,
@@ -638,7 +638,7 @@ class DialogUtils {
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             binding.apply {
-                dialogDlVideoDiversityTx.setOnClickListener {
+                dialogDlVideoDiversityLy.setOnClickListener {
                     loadVideoPageDialog(context, videoPageListData) { it1 ->
                         videoPageMutableList.clear()
                         videoPageMutableList = it1
@@ -654,7 +654,7 @@ class DialogUtils {
 
                 }
 
-                dialogDlVideoDefinitionTx.setOnClickListener {
+                dialogDlVideoDefinitionLy.setOnClickListener {
                     loadVideoDefinition(context, dashVideoPlayBean) {
                         //这里返回的是清晰度的数值代码
                         selectDefinition = it
@@ -671,7 +671,7 @@ class DialogUtils {
                 }
 
 
-                dialogDlVideoTypeTx.setOnClickListener {
+                dialogDlVideoTypeLy.setOnClickListener {
                     loadDownloadTypeDialog(context) { selects, typeName ->
                         downloadType = selects
                         dialogDlVideoTypeTx.text = typeName
@@ -711,7 +711,7 @@ class DialogUtils {
                             dialogDlVideoTypeTx.text = "Dash"
                         }
                         2 -> {
-                            dialogDlVideoTypeTx.text = "FLV"
+                            dialogDlVideoTypeTx.text = "MP4"
                         }
                     }
 
@@ -766,7 +766,7 @@ class DialogUtils {
                         }
 
                         R.id.dialog_dl_only_audio -> {
-                            downloadCondition = ONLY_VIDEO
+                            downloadCondition = ONLY_AUDIO
                             sharedPreferences.edit {
                                 putInt("user_download_condition", ONLY_AUDIO)
                                 apply()
@@ -842,7 +842,7 @@ class DialogUtils {
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             binding.apply {
-                dialogDlVideoDiversityTx.setOnClickListener {
+                dialogDlVideoDiversityLy.setOnClickListener {
                     loadVideoPageDialog(context, bangumiSeasonBean) { it1 ->
                         videoPageMutableList.clear()
                         videoPageMutableList = it1
@@ -859,7 +859,7 @@ class DialogUtils {
 
                 }
 
-                dialogDlVideoDefinitionTx.setOnClickListener {
+                dialogDlVideoDefinitionLy.setOnClickListener {
                     loadVideoDefinition(context, dashVideoPlayBean) {
                         //这里返回的是清晰度的数值代码
                         selectDefinition = it
@@ -877,7 +877,7 @@ class DialogUtils {
                 }
 
 
-                dialogDlVideoTypeTx.setOnClickListener {
+                dialogDlVideoTypeLy.setOnClickListener {
                     loadDownloadTypeDialog(context) { selects, typeName ->
                         downloadType = selects
                         dialogDlVideoTypeTx.text = typeName
@@ -885,7 +885,7 @@ class DialogUtils {
                 }
 
                 //设置音质选择
-                dialogDlAudioTypeTx.setOnClickListener {
+                dialogDlAudioTypeLy.setOnClickListener {
                     loadVideoToneQualityList(context, dashVideoPlayBean) {
                         toneQuality = it.id
                         dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
@@ -914,7 +914,7 @@ class DialogUtils {
                             dialogDlVideoTypeTx.text = "Dash"
                         }
                         2 -> {
-                            dialogDlVideoTypeTx.text = "FLV"
+                            dialogDlVideoTypeTx.text = "MP4"
                         }
                     }
 
@@ -969,7 +969,7 @@ class DialogUtils {
                         }
 
                         R.id.dialog_dl_only_audio -> {
-                            downloadCondition = ONLY_VIDEO
+                            downloadCondition = ONLY_AUDIO
                             sharedPreferences.edit {
                                 putInt("user_download_condition", ONLY_AUDIO)
                                 apply()
@@ -1407,8 +1407,13 @@ class DialogUtils {
                     val bangumiPlayData = it1.result
                     var urlIndex = 0
                     //获取视频/音频的索引
-                    it1.result.dash.video.forEachIndexed { index, i ->
-                        if (i.id == qn) urlIndex = index
+                    it1.result.dash.video.run {
+                        forEachIndexed fe@{ index, i ->
+                            if (i.id == qn) {
+                                urlIndex = index
+                                return@run
+                            }
+                        }
                     }
 
                     val intFileType: Int
@@ -1518,10 +1523,12 @@ class DialogUtils {
                     val videoPlayData = it1.data
                     var urlIndex = 0
                     //获取视频/音频的索引
-                    it1.data.dash.video.forEachIndexed { index, i ->
-                        if (i.id == qn) {
-                            urlIndex = index
-                            return@forEachIndexed
+                    it1.data.dash.video.run {
+                        forEachIndexed fe@{ index, i ->
+                            if (i.id == qn) {
+                                urlIndex = index
+                                return@run
+                            }
                         }
                     }
 
@@ -1687,6 +1694,7 @@ class DialogUtils {
                 dialogCollectionTitle.text = "请选择视频子集"
 
                 val videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
+                val pageData =  mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
                 dialogCollectionRv.adapter =
                     VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
@@ -1700,6 +1708,7 @@ class DialogUtils {
                                 tage = false
                                 itemBinding[position].dataBean?.selected = 0
                                 videoPageMutableList.removeAt(a)
+                                dialogCollectionRv.adapter?.notifyItemChanged(a)
                                 break
                             }
 
@@ -1725,6 +1734,21 @@ class DialogUtils {
 
                     bottomSheetDialog.cancel()
                     finished(videoPageMutableList)
+                }
+
+
+                dialogCollectionAllSelectBt.apply {
+                    visibility = View.VISIBLE
+
+                    setOnClickListener {
+                        pageData.forEachIndexed { index, episodesBean ->
+                            episodesBean.selected = 1
+                            videoPageMutableList.add(episodesBean)
+                            dialogCollectionRv.adapter?.notifyItemChanged(index)
+                        }
+
+                    }
+
                 }
             }
 
@@ -1763,6 +1787,8 @@ class DialogUtils {
 
                 val videoPageMutableList =
                     mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+                val epData =
+                    mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes
                 dialogCollectionRv.adapter =
                     BangumiPageAdapter(bangumiSeasonBean.result.episodes) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
@@ -1774,6 +1800,7 @@ class DialogUtils {
                             if (videoPageMutableList[a].cid.toLong() == bangumiSeasonBean.result.episodes[position].cid.toLong()) {
                                 tage = false
                                 itemBinding.episodesBean?.selected = 0
+                                dialogCollectionRv.adapter?.notifyItemChanged(a)
                                 videoPageMutableList.removeAt(a)
                                 break
                             }
@@ -1790,16 +1817,28 @@ class DialogUtils {
 
                     }
 
-
                 //设置布局加载器
                 dialogCollectionRv.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
                 //设置完成选中的子集
                 dialogCollectionFinishBt.setOnClickListener {
-
                     bottomSheetDialog.cancel()
                     finished(videoPageMutableList)
+                }
+
+                dialogCollectionAllSelectBt.apply {
+                    visibility = View.VISIBLE
+
+                    setOnClickListener {
+                        epData.forEachIndexed { index, episodesBean ->
+                            episodesBean.selected = 1
+                            videoPageMutableList.add(episodesBean)
+                            dialogCollectionRv.adapter?.notifyItemChanged(index)
+                        }
+
+                    }
+
                 }
             }
 

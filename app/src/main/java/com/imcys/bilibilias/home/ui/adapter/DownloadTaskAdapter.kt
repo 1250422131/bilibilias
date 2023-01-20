@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.base.utils.asLogI
@@ -69,6 +70,18 @@ class DownloadTaskAdapter :
         val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)
         binding?.apply {
             taskBean = getItem(position)
+            itemDlTaskDelete.setOnClickListener {
+                val dataBean = getItem(position)
+                AsDialog.init(holder.itemView.context)
+                    .setTitle("删除任务")
+                    .setContent("注意B站视频下载链接有效时长为1小时左右，这里就只提供取消这个任务的功能了。")
+                    .setPositiveButton("删除任务") {
+                        dataBean.call?.cancel()
+                        it.cancel()
+                    }.setNegativeButton("手滑了") {
+                        it.cancel()
+                    }.build().show()
+            }
         }
     }
 }
