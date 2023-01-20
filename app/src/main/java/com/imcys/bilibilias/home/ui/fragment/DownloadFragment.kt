@@ -62,7 +62,6 @@ class DownloadFragment : Fragment() {
 
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun initTabLayout() {
         fragmentDownloadBinding.apply {
             fragmentDownloadTabLayout.addOnTabSelectedListener(

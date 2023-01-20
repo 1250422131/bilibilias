@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -14,20 +15,22 @@ import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
@@ -65,6 +68,8 @@ class AsVideoActivity : BaseActivity() {
     private lateinit var danmakuParser: BaseDanmakuParser
     private val danmakuContext = DanmakuContext.create()
 
+    lateinit var userBaseBean: UserBaseBean
+
     //视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
     var avid: Int = 0
@@ -76,10 +81,17 @@ class AsVideoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
 
+        loadUserData()
         //加载视频首要信息
         initVideoData()
         //加载控件
         initView()
+    }
+
+    private fun loadUserData() {
+        lifecycleScope.launch {
+            userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
+        }
     }
 
 
@@ -292,7 +304,8 @@ class AsVideoActivity : BaseActivity() {
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
         position: Int,
     ) {
-        if (data.badge == "会员") {
+        val userVipState = userBaseBean.data.vip.status
+        if (data.badge == "会员" && userVipState != 1) {
             DialogUtils.dialog(
                 this,
                 "越界啦",
@@ -321,8 +334,10 @@ class AsVideoActivity : BaseActivity() {
 
     private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
         var memberType = false
+
+        val userVipState = userBaseBean.data.vip.status
         bangumiSeasonBean.result.episodes.forEach {
-            if (it.cid == cid && it.badge == "会员") memberType = true
+            if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
         }
         if (memberType) {
             DialogUtils.dialog(
@@ -337,6 +352,18 @@ class AsVideoActivity : BaseActivity() {
             loadVideoPlay("bangumi")
         }
     }
+
+
+    /**
+     * 获取用户基础信息
+     * @return UserBaseBean
+     */
+    private suspend fun getUserData(): UserBaseBean {
+        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
+                UserBaseBean::class.java)
+    }
+
 
     /**
      * 加载视频列表信息

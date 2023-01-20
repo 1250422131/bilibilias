@@ -213,10 +213,10 @@ class HomeFragment : Fragment() {
             DialogUtils.dialog(
                 requireContext(),
                 "有新版本了",
-                "鉴于初期版本不稳定，因此强制性更新，下面是更新内容。\n${oldUpdateDataBean.gxnotice}",
+                oldUpdateDataBean.gxnotice,
                 "更新",
                 "还是更新",
-                false,
+                oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
                     val intent = Intent(Intent.ACTION_VIEW, uri);
@@ -295,7 +295,7 @@ class HomeFragment : Fragment() {
         //检测用户是否登陆
         detectUserLogin()
 
-        loadRoamData()
+        //loadRoamData()
 
 
     }
@@ -321,9 +321,6 @@ class HomeFragment : Fragment() {
 
         }
     }
-
-
-
 
 
     /**
