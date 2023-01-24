@@ -1,9 +1,9 @@
-package com.imcys.bilibilias.adapter;
+package com.imcys.bilibilias.common.base.adapter;
 
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
-import com.imcys.bilibilias.base.view.AsJzvdStd;
+import com.imcys.bilibilias.common.base.view.AsJzvdStd;
 
 /**
  * @author:imcys

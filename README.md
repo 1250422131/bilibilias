@@ -12,7 +12,7 @@
 </div>
 
 ---
-### 简介
+## 简介
 
 **BILIBILIAS**是一款B站，哔哩哔哩视频缓存的辅助工具，一键解析缓存
 
@@ -23,7 +23,7 @@ UP主可以下载一些剪辑素材，来做视频
 项目特殊性，随时可能停止运维。
 
 
-### 支持的功能
+## 支持的功能
 - 完成的功能
 - [x] 扫码登录
 - [x] 缓存视频/大陆支持播放的番剧
@@ -34,10 +34,13 @@ UP主可以下载一些剪辑素材，来做视频
 - [x] 支持下载列表操作
 
 
-### API接口参考
+## 采用的API接口参考
 [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 
-### 下载
+## 感谢开源项目
+[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
+
+## 下载
 |   系统    |                            GitHub                            |                  官网                   |
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakaloli.com/app/) |
@@ -51,7 +54,7 @@ UP主可以下载一些剪辑素材，来做视频
 
 
 
-### 问题反馈
+## 问题反馈
 
 企鹅群：703180724
 

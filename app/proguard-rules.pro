@@ -100,7 +100,7 @@
 #我们认为这些类混淆后可能将导致播放器出现问题
 -keep class cn.jzvd.Jzvd{*; }
 -keep class cn.jzvd.JzvdStd{*; }
--keep class com.imcys.bilibilias.base.view.AsJzvdStd{*; }
+-keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
 -keep class cn.jzvd.JZUtils{*; }
 
 -keep class * implements android.os.Parcelable {

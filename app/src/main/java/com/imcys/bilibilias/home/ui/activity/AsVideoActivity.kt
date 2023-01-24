@@ -17,8 +17,8 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.view.AsJzvdStd
-import com.imcys.bilibilias.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.base.view.AsJzvdStd
+import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
