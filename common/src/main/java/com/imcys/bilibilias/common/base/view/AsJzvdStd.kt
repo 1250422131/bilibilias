@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.view
+package com.imcys.bilibilias.common.base.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,8 +14,8 @@ import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.R
 import com.microsoft.appcenter.analytics.Analytics
 import master.flame.danmaku.controller.IDanmakuView
 import java.io.File

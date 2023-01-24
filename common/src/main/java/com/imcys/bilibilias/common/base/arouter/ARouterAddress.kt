@@ -16,4 +16,6 @@ object ARouterAddress : Serializable {
 
     const val CreateRoamActivity = "tool_roam/CreateRoamActivity"
 
+    const val LiveStreamActivity = "tool_livestream/LiveStreamActivity"
+
 }

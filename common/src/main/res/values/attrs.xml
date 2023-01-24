@@ -5,5 +5,8 @@
         <attr name="title" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="AsJzvdStd">
+        <attr name="showPlayButton" format="boolean" />
+    </declare-styleable>
 
 </resources>
