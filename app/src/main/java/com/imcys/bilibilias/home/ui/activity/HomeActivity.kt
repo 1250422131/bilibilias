@@ -19,6 +19,7 @@ import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
+import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.anno.RouterAnno
 
 @RouterAnno(
@@ -33,8 +34,7 @@ class HomeActivity : BaseActivity() {
     lateinit var userFragment: UserFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        Component.inject(target = this)
         /*
         备选方案
         val paint = Paint()

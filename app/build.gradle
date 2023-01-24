@@ -129,9 +129,8 @@ android {
 dependencies {
 
     implementation project(":common")
-    implementation project(":tool_roam")
     implementation project(":model_ffmpeg")
-
+    implementation project(":tool_livestream")
 
     ksp "com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4"
     implementation 'com.google.android.material:material:1.6.1'

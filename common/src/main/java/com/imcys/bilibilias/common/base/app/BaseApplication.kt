@@ -47,7 +47,7 @@ open class BaseApplication : Application() {
         )
         // 手动加载模块
         ModuleManager.registerArr(
-            "app", "common", "tool_roam",
+            "app", "common", "tool_livestream",
         )
     }
 

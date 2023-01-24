@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BILIBILIAS">
         <activity
-            android:name=".LiveStreamActivity"
+            android:name=".ui.LiveStreamActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +21,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name="com.imcys.bilibilias.tool_livestream.LiveStreamActivity" />
+        <activity android:name="com.imcys.bilibilias.tool_livestream.ui.LiveStreamActivity" />
     </application>
 
 </manifest>
