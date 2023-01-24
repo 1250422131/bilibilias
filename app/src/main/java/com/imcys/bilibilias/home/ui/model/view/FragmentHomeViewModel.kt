@@ -27,11 +27,11 @@ class FragmentHomeViewModel {
         view.context.startActivity(intent)
     }
 
-    fun goToRoam(view: View){
+    fun goToRoam(view: View) {
         //跳转
         Router
             .with(view.context)
-            .hostAndPath(hostAndPath = ARouterAddress.RoamMainActivity).forward()
+            .hostAndPath(hostAndPath = ARouterAddress.LiveStreamActivity).forward()
     }
 
     fun goToNewVersionDoc(view: View) {
@@ -63,7 +63,6 @@ class FragmentHomeViewModel {
     }
 
 
-
     fun logoutLogin(view: View) {
         DialogUtils.dialog(
             view.context,
@@ -74,7 +73,8 @@ class FragmentHomeViewModel {
             true,
             positiveButtonClickListener =
             {
-                HttpUtils.addHeader("cookie", BaseApplication.cookies).addParam("biliCSRF", BaseApplication.biliJct)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                    .addParam("biliCSRF", BaseApplication.biliJct)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 

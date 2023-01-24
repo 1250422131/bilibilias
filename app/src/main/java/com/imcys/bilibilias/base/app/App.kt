@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
-import com.drake.brv.utils.BRV
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.tool_roam.BR
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
 
@@ -29,8 +27,6 @@ class App : BaseApplication() {
 
         context = BaseApplication.context
 
-        //初始化
-        BRV.modelId = BR.data
     }
 
 
