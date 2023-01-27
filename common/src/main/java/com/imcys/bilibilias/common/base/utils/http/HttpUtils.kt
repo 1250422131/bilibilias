@@ -116,7 +116,6 @@ class HttpUtils {
          * @param url String 请求地址
          * @param callBack Callback 请求完成后的回调函数
          */
-        @OptIn(DelicateCoroutinesApi::class)
         @JvmStatic
         suspend fun asyncGet(url: String): Deferred<Response> {
 
@@ -131,8 +130,9 @@ class HttpUtils {
                 // 设置为 GET 请求
                 get()
             }.build()
+            val coroutineScope = CoroutineScope(Dispatchers.Default)
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            return GlobalScope.async{
+            return coroutineScope.async{
                 okHttpClient.newCall(request).awaitResponse()
             }
         }

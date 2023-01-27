@@ -7,6 +7,13 @@
 
     <data>
 
+        <variable
+            name="LiveMasterUserBean"
+            type="com.imcys.bilibilias.tool_livestream.ui.model.LiveMasterUserBean" />
+
+        <variable
+            name="LiveRoomDataBean"
+            type="com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -32,7 +39,8 @@
                     android:layout_height="match_parent">
 
 
-                    <com.imcys.bilibilias.common.base.view.AsJzvdStd
+                    <com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer
+                        android:imageUrl="@{LiveRoomDataBean.data.userCover}"
                         android:id="@+id/live_stream_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -52,7 +60,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="-15dp"
-            android:background="@drawable/as_video_layout_bg"
             android:visibility="visible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -67,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -75,16 +82,19 @@
                         android:layout_marginRight="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                       android:textColor="@color/black"
+                        android:text="@{LiveRoomDataBean.data.title}"
+                        android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:textColor="@color/color_text_hint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="4"
+                        android:text="@{LiveMasterUserBean.data.roomNews.content}"
                         android:textSize="19sp"
                         android:textStyle="bold" />
 
@@ -103,6 +113,7 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
+                        android:imageUrl="@{LiveMasterUserBean.data.info.face}"
                         app:round="20dp">
 
                     </androidx.constraintlayout.utils.widget.ImageFilterView>
@@ -118,11 +129,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                           android:textSize="16sp" />
+                            android:text="@{LiveMasterUserBean.data.info.uname}"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{LiveMasterUserBean.data.info.officialVerify.desc}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 
@@ -131,13 +144,6 @@
 
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/live_stream_subsection_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
 
             </LinearLayout>
 
@@ -157,6 +163,7 @@
             app:layout_anchor="@id/live_stream_appbar"
             app:layout_anchorGravity="bottom|end"
             app:pressedTranslationZ="16dp"
+            app:tint="@color/color_primary"
             tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

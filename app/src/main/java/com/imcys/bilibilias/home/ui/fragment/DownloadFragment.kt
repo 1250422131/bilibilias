@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -92,14 +93,14 @@ class DownloadFragment : Fragment() {
     /**
      * 加载下载完成列表
      */
-    @OptIn(DelicateCoroutinesApi::class)
     private fun loadDownloadTask() {
 
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadFinishTaskAd = DownloadFinishTaskAd()
             fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadFinishTaskAd
 
-            GlobalScope.launch(Dispatchers.IO) {
+
+            lifecycleScope.launch(Dispatchers.IO) {
                 val downloadFinishTaskDao =
                     AppDatabase.getDatabase(App.context.applicationContext).downloadFinishTaskDao()
 
@@ -108,7 +109,7 @@ class DownloadFragment : Fragment() {
 
                     App.downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             submitList(finishTasks)
                         }
                     }

@@ -29,10 +29,7 @@ import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.microsoft.appcenter.analytics.Analytics
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.Call
 import okhttp3.Response
 import okio.BufferedSink
@@ -270,9 +267,9 @@ class DownloadQueue {
      * 储存完成的下载任务
      * @param task Task
      */
-    @OptIn(DelicateCoroutinesApi::class)
     private fun saveFinishTask(task: Task) {
-        GlobalScope.launch(Dispatchers.IO) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch(Dispatchers.IO) {
 
             var videoTitle = ""
             var videoPageTitle = ""
@@ -763,7 +760,6 @@ class DownloadQueue {
 
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun safImpVideo(
         task: Task,
         videoPath: String,
@@ -774,7 +770,8 @@ class DownloadQueue {
         videoBaseBean: VideoBaseBean,
     ) {
 
-        GlobalScope.launch(Dispatchers.IO) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch(Dispatchers.IO) {
 
             var videoEntry = videoEntry
             val appDataUri = App.sharedPreferences.getString("AppDataUri", "")
