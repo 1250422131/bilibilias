@@ -176,14 +176,14 @@ class RoamMainActivity : RoamBaseActivity() {
 
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     fun deleteItem(roamInfo: RoamInfo) {
         AsDialog.init(this)
             .setTitle("删除警告")
             .setContent("确定要删除这条纪录吗？")
             .setPositiveButton("确定") {
                 //删除
-                GlobalScope.launch {
+                lifecycleScope.launch {
                     deleteRoam(this@RoamMainActivity, roamInfo)
                     it.cancel()
                 }

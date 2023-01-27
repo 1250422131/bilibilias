@@ -27,6 +27,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -42,6 +43,9 @@ import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
+import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
+import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
+import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,7 +54,9 @@ import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 
-
+@RouterAnno(
+    hostAndPath = ARouterAddress.ToolFragment,
+)
 class ToolFragment : Fragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding
@@ -107,25 +113,25 @@ class ToolFragment : Fragment() {
 
         initView()
 
-        //检验
-        parseShare()
-
         return fragmentToolBinding.root
     }
 
     private fun initView() {
         //设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
+
         //设置点击事件
         fragmentToolBinding.toolViewHolder =
             context?.let { ToolViewHolder(it, fragmentToolBinding) }
+
         //绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
-        //加载工具item
-        loadToolItem()
         //设置监听
         setEditListener()
+
+        //加载工具item
+        loadToolItem()
 
     }
 
@@ -166,29 +172,77 @@ class ToolFragment : Fragment() {
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
+
         if (inputString == "") {
             asToast(requireContext(), "没有输入任何内容哦")
             return
         }
+
         //ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
+            return
         } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
             loadShareData("""https://b23.tv/([A-z]|[0-9])*""".toRegex()
                 .find(inputString)?.value!!.toString())
-        } else {
-            if (AsVideoNumUtils.getBvid(inputString) != "") {
-                getVideoCardData(AsVideoNumUtils.getBvid(inputString))
-            } else {
-                mAdapter.apply {
-                    currentList.filter { it.type == 0 }.run {
-                        submitList(this)
-                    }
-                }
-                Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+            return
+        } else if (AsVideoNumUtils.getBvid(inputString) != "") {
+            getVideoCardData(AsVideoNumUtils.getBvid(inputString))
+            return
+        }
+
+        val liveRegex = Regex("""(?<=live.bilibili.com/)([0-9]+)""")
+        //判断是否有搜到
+        if (liveRegex.containsMatchIn(inputString)) {
+            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
+            return
+        }
+        //至此，视频的检索没有超过，开始判断是不是直播内容
+
+
+        mAdapter.apply {
+            currentList.filter { it.type == 0 }.run {
+                submitList(this)
             }
+        }
+        Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun loadLiveRoomCard(roomId: String) {
+        lifecycleScope.launch {
+            //获取数据
+            val liveRoomData = getLiveRoomData(roomId)
+            mAdapter.apply {
+                currentList.filter { it.type == 0 }.run {
+                    //由于返回list不可变，这里采用相加
+                    mutableListOf(
+                        ToolItemBean(
+                            type = 2,
+                            liveRoomDataBean = liveRoomData,
+                            clickEvent = {
+                                LiveStreamActivity.actionStart(requireContext(), roomId)
+                            }
+                        )
+                    ) + this
+                }.apply {
+                    submitList(this)
+                }
+            }
+
+
+        }
+
+    }
+
+
+    private suspend fun getLiveRoomData(roomId: String): LiveRoomDataBean {
+        return withContext(lifecycleScope.coroutineContext) {
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .asyncGet("${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
+                    LiveRoomDataBean::class.java)
         }
     }
 
@@ -258,6 +312,7 @@ class ToolFragment : Fragment() {
     private fun loadToolItem() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         lifecycleScope.launch {
+            //通过远程数据获取item
             val oldToolItemBean = getOldToolItemBean()
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
@@ -281,6 +336,7 @@ class ToolFragment : Fragment() {
                 }
             }
 
+            //展示item
             fragmentToolBinding.apply {
                 fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
@@ -291,16 +347,21 @@ class ToolFragment : Fragment() {
                     GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
                         spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                             override fun getSpanSize(position: Int): Int {
-                                return if ((mAdapter.currentList)[position].type == 1) {
-                                    3
-                                } else {
-                                    1
+                                return when ((mAdapter.currentList)[position].type) {
+                                    1 -> 3
+                                    2 -> 3
+                                    else -> 1
                                 }
+
                             }
                         }
                     }
 
             }
+
+            //校验分享数据
+            parseShare()
+
         }
 
 

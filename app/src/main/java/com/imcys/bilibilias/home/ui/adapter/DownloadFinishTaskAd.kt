@@ -18,9 +18,7 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 
 
@@ -138,14 +136,15 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
 
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun deleteTaskRecords(taskId: Int) {
-        GlobalScope.launch {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch {
             val downloadFinishTaskDao =
                 BaseApplication.appDatabase.downloadFinishTaskDao()
-            val newTasks =
+            val newTasks = withContext(Dispatchers.IO) {
                 DownloadFinishTaskRepository(downloadFinishTaskDao).deleteAndReturnList(
                     downloadFinishTaskDao.findById(taskId))
+            }
             //更新数据
             submitList(newTasks)
         }
@@ -153,7 +152,7 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
     }
 
 
-    fun shareFile(context: Context, content: String?, uri: Uri?, type: String?) {
+    private fun shareFile(context: Context, content: String?, uri: Uri?, type: String?) {
 
         val shareIntent = Intent(Intent.ACTION_SEND)
         if (uri != null) {

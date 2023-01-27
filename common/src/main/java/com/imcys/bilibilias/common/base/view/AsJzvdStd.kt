@@ -35,7 +35,7 @@ interface JzbdStdInfo {
  * 继承饺子播放器，这里需要定义一些东西
  * @constructor
  */
-class AsJzvdStd : JzvdStd {
+open class AsJzvdStd : JzvdStd {
 
 
     private lateinit var jzbdStdInfo: JzbdStdInfo
