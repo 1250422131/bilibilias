@@ -27,10 +27,7 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.microsoft.appcenter.analytics.Analytics
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -89,9 +86,9 @@ class AsVideoViewModel(
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun downloadDanMu(videoBaseBean: VideoBaseBean) {
-        GlobalScope.launch(Dispatchers.IO) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch(Dispatchers.IO) {
 
             val response =
                 HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
@@ -103,8 +100,10 @@ class AsVideoViewModel(
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     fun saveDanmaku(bytes: ByteArray, cid: Int) {
+
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -121,7 +120,7 @@ class AsVideoViewModel(
         decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
-        GlobalScope.launch(Dispatchers.Main) {
+        coroutineScope.launch(Dispatchers.Main) {
             asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
             //通知下载成功
             Analytics.trackEvent("下载弹幕")

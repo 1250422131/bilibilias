@@ -52,6 +52,18 @@ android {
 
 dependencies {
 
+    //网络图片加载库
+    api "io.coil-kt:coil-compose:2.2.2"
+
+    //ijk框架
+    // required, enough for most devices.
+    api 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
+    api 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+    // Other ABIs: optional
+    api 'tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8'
+    api 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
+    api 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8'
+
     //rv框架
     api 'com.github.liangjingkanji:BRV:1.3.90'
 
@@ -103,14 +115,17 @@ dependencies {
     api 'com.github.ctiao:dfm:0.6.0'
 
 
+    api platform('androidx.compose:compose-bom:2022.11.00')
     // Compose ui 相关的基础支持
-    api 'androidx.compose.ui:ui:1.3.1'
+    api 'androidx.compose.ui:ui'
     // 将 Compose 支持预览，类似 XML 的预览模式，并支持 点击、滑动等 XML 不支持的交互操作
-    api 'androidx.compose.ui:ui-tooling:1.3.1'
+    api 'androidx.compose.ui:ui-tooling'
     // Compose 库的主体包，具体在上面介绍
-    api 'androidx.compose.material:material:1.3.1'
+    api 'androidx.compose.material:material'
     // 将 Activity 支持 Compose
     api 'androidx.activity:activity-compose:1.5.0'
+
+
 
 
     //饺子播放器

@@ -6,25 +6,23 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.RoamInfo
 import com.imcys.bilibilias.tool_roam.databinding.ActivityRoamMainBinding
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class RoamItemViewModel(val binding: ActivityRoamMainBinding) {
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun deleteItem(view: View, roamInfo: RoamInfo) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+
         AsDialog.init(view.context)
             .setTitle("删除警告")
             .setContent("确定要删除这条纪录吗？")
             .setPositiveButton("确定") {
                 //删除
-                GlobalScope.launch {
+                coroutineScope.launch(Dispatchers.IO) {
                     deleteRoam(view.context, roamInfo)
-                    it.cancel()
                 }
+                it.cancel()
 
             }
             .setNegativeButton("手滑了") {

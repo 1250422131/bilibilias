@@ -98,8 +98,6 @@
             android:id="@+id/as_video_nsv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="-15dp"
-            android:background="@drawable/as_video_layout_bg"
             android:visibility="visible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -108,6 +106,12 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20sp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/as_video_data_ly"
