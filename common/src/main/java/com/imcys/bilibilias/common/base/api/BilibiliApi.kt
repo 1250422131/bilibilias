@@ -13,6 +13,7 @@ class BilibiliApi {
         private const val serviceApi: String = "https://api.bilibili.com/"
         const val loginApi: String = "http://passport.bilibili.com/"
         var roamApi: String = "https://api.bilibili.com/"
+        private const val liveRoomApi = "https://api.live.bilibili.com/"
 
 
         const val getLoginQRPath: String = loginApi + "x/passport-login/web/qrcode/generate"
@@ -99,6 +100,17 @@ class BilibiliApi {
 
         //追番剧列表
         const val bangumiFollowPath = serviceApi + "x/space/bangumi/follow/list"
+
+        //直播间信息
+        const val liveRoomDataPath = liveRoomApi + "room/v1/Room/get_info"
+
+        //直播用户信息
+        const val liveUserMasterInfo = liveRoomApi + "live_user/v1/Master/info"
+
+        //直播间播放数据信息
+        const val roomPlayInfo = liveRoomApi + "xlive/web-room/v2/index/getRoomPlayInfo"
+
+        const val liveRoomPlayUrl = liveRoomApi + "room/v1/Room/playUrl"
     }
 
 }

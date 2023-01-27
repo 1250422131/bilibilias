@@ -39,6 +39,7 @@ import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.activity.UserActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -99,7 +100,6 @@ class HomeFragment : Fragment() {
 
         initView()
         loadServiceData()
-
         return fragmentHomeBinding.root
     }
 

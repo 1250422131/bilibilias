@@ -9,6 +9,7 @@ object ARouterAddress : Serializable {
 
     const val BangumiFollowActivity = "app/BangumiFollowActivity"
 
+    const val ToolFragment = "app/ToolFragment"
 
     const val AppHomeFragment = "app/HomeFragment"
 

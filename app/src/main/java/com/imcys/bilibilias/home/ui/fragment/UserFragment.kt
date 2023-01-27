@@ -132,7 +132,6 @@ class UserFragment : Fragment() {
     }
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun initUserData() {
 
         //切到后台线程去
