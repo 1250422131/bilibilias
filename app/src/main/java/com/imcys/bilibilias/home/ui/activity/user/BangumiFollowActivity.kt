@@ -2,23 +2,20 @@ package com.imcys.bilibilias.home.ui.activity.user
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.AbsListView.OnScrollListener
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
-import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiFollowList
-import com.imcys.bilibilias.utils.RecyclerViewUtils
-import com.imcys.bilibilias.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlin.math.ceil
 
@@ -50,7 +47,7 @@ class BangumiFollowActivity : BaseActivity() {
             bangumiFollowRv.adapter = bangumiFollowAdapter
             bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
 
-            HttpUtils.addHeader("coolie",App.cookies).get("${BilibiliApi.bangumiFollowPath}?vmid=${App.myUserData.mid}&type=1&pn=1&ps=15",
+            HttpUtils.addHeader("coolie", BaseApplication.cookies).get("${BilibiliApi.bangumiFollowPath}?vmid=${BaseApplication.myUserData.mid}&type=1&pn=1&ps=15",
                 BangumiFollowList::class.java) {
                 if (it.code == 0) {
                     bangumiFollowList = it
@@ -74,7 +71,7 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun loadBangumiFollow(pn: Int) {
-        HttpUtils.get("${BilibiliApi.bangumiFollowPath}?vmid=${App.myUserData.mid}&type=1&pn=${pn}&ps=15",
+        HttpUtils.get("${BilibiliApi.bangumiFollowPath}?vmid=${BaseApplication.myUserData.mid}&type=1&pn=${pn}&ps=15",
             BangumiFollowList::class.java) {
             if (it.code == 0) {
                 bangumiFollowList = it

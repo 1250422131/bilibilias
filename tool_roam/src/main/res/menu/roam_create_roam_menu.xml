@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:iconTint="@color/black"
+        app:showAsAction="always"
+        android:tooltipText="完成"
+        android:id="@+id/create_roam_finish"
+        android:icon="@drawable/ic_public_check"
+        android:title="完成"
+        tools:ignore="HardcodedText,UnusedAttribute" />
+
+</menu>

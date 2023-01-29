@@ -6,9 +6,6 @@
     <string name="app_channel_debug">Official Channel Debug</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="BilibiliApi">https://api.bilibili.com/</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_user">UserActivity</string>
     <string name="dl_file_rename_rules" tools:ignore="ExtraTranslation">
@@ -156,15 +153,44 @@
             }
         }
     </string>
-    <string name="new_version_doc">
-        新版本解析功能被移动到了工具页面，支持并且优化了旧版本的一些功能。你可以前往设置页面来设置你需要的功能。
-        \n底部导航 > 工具 > 设置
-
-    </string>
+    <string name="new_version_doc">2.0.1恢复了封面，音视频独立下载和ffmpeg合并视频的功能，请务必查看。</string>
     <string name="app_donate_doc">
         BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。
         因此，希望BILIBILIAS的用户们可以支援一些费用，一次早餐钱，一次奶茶钱，一次午饭钱就可以满足BILIBILIAS绝大部分的费用。
         最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n
         你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式
     </string>
+    <string name="user_dl_merge_cmd" >
+        如果你不清楚FFmpeg命令，请不要修改\n
+        BILIBILIAS为大家提供了简单的命令参数\n
+        {VIDEO_PATH} 视频下载路径\n
+        {AUDIO_PATH} 音频储存路径\n
+        {VIDEO_MERGE_PATH} 合并后储存路径
+    </string>
+
+    <string name="app_activity_bangumi_follow_title">追番</string>
+    <string name="app_activity_collection_title">收藏</string>
+    <string name="app_activity_dedicate_title">致敬</string>
+    <string name="app_activity_donate_title">捐款</string>
+    <string name="app_activity_play_history_title">播放历史</string>
+    <string name="app_fragment_tool_input_tip">输入BV/AV/EP号</string>
+    <string name="app_fragment_download_task_tab_downloading_title">正在下载</string>
+    <string name="app_fragment_download_task_tab_finish_title">下载完成</string>
+    <string name="app_item_fg_user_card_data_fans">粉丝</string>
+    <string name="app_item_fg_user_card_data_friend">关注</string>
+    <string name="app_item_fg_user_card_data_liks">获赞</string>
+    <string name="app_item_fg_user_card_data_view">播放</string>
+    <string name="app_fragment_user_works_title">作品</string>
+    <string name="app_dialog_dl_video_bar_title">视频信息</string>
+    <string name="app_dialog_dl_video_tip">此视频未经允许禁止转载</string>
+    <string name="app_dialog_dl_video_definition">视频清晰度</string>
+    <string name="app_dialog_dl_video_episode">缓存的子集</string>
+    <string name="app_dialog_dl_video_video_type">缓存的类型</string>
+    <string name="app_dialog_dl_video_audio_quality">缓存的音质</string>
+    <string name="app_dialog_dl_video_radio_built_download">内置下载</string>
+    <string name="app_dialog_dl_radio_video_and_audio">音视频</string>
+    <string name="app_dialog_dl_radio_only_audio">仅音频</string>
+    <string name="app_dialog_dl_radio_only_video">仅视频</string>
+    <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
+    <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
 </resources>

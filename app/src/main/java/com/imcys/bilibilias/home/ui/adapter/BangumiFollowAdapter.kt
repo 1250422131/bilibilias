@@ -6,13 +6,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.BangumiFollowList
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 
 class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, ViewHolder>(object :
     DiffUtil.ItemCallback<BangumiFollowList.DataBean.ListBean>() {
@@ -45,7 +46,7 @@ class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, Vi
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
 
-                HttpUtils.addHeader("cookie", App.cookies)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=${getItem(position).first_ep}",
                         BangumiSeasonBean::class.java) {
                         if (it.code == 0){

@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         maven { url 'https://jitpack.io' }
         mavenCentral()
+
         gradlePluginPortal()
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
@@ -16,6 +17,8 @@ dependencyResolutionManagement {
     repositories {
         maven { url 'https://jitpack.io' }
         mavenCentral()
+
+
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url 'https://maven.aliyun.com/repository/public' }
@@ -27,3 +30,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BILIBILIAS"
 include ':app'
+include ':tool_livestream'
+include ':common'
+include ':model_ffmpeg'
+include ':tool_roam'
+include ':tool_user'

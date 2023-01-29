@@ -12,10 +12,11 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback
@@ -104,18 +105,19 @@ class OldHomeBeanAdapter(
         Thread {
             var getPost: String = postData
             if (token == 1) {
-                getPost = getPost.replace("{token}", App.biliJct)
+                getPost = getPost.replace("{token}", BaseApplication.biliJct)
                 println(getPost)
             }
-            val goUrlStr = HttpUtils.doCardPost(url, getPost, App.cookies)
+            val goUrlStr = HttpUtils.doCardPost(url, getPost, BaseApplication.cookies)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
                 val code = goUrlJson.getInt("code")
+                val message = goUrlJson.optString("message")
                 (context as Activity).runOnUiThread {
                     if (code == 0) {
-                        Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: JSONException) {
@@ -130,7 +132,7 @@ class OldHomeBeanAdapter(
         failToast: String,
         context: Context,
     ) {
-        HttpUtils.addHeader("cookie", App.cookies).get(url, object : Callback {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
             }
@@ -139,10 +141,12 @@ class OldHomeBeanAdapter(
                 val requestStr = response.body!!.string()
                 val requestJson = JSONObject(requestStr)
                 val code = requestJson.optInt("code")
+                val message = requestJson.optString("message")
+
                 if (code == 0) {
-                    Toast.makeText(context, successToast, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
                 }
             }
 

@@ -1,0 +1,5 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="roam_config_tip" tools:ignore="ExtraTranslation">你配置的接口地址，会替换APP内置的B站接口。
+
+    </string>
+</resources>

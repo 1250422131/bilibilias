@@ -99,7 +99,7 @@
                             android:textColor="@color/white"
                             android:layout_marginStart="10dp"
                             android:textSize="18sp"
-                            android:text="微信支付"
+                            android:text="支付宝支付"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
 

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name_debug">BILIBILIAS_DEBUG</string>
+    <string name="app_name_release">BILIBILIAS</string>
+
+    <string name="app_channel_release">Official Channel</string>
+    <string name="app_channel_debug">Official Channel Debug</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_user">UserActivity</string>
+    <string name="dl_file_rename_rules" tools:ignore="ExtraTranslation">
+        路径开头 / 默认给出，无需添加。\n命名规则：即代表下载文件储存的子目录或者文件的命名方案，我们为你准备了一些变量，帮助你进行重命名。\n下面我简单介绍一些命名变量：\n
+        AV号：{AV}\n
+        BV号：{BV}\n
+        CID编号：{CID}\n
+        视频名称：{TITLE}\n
+        分P名称：{P_TITLE}\n
+        文件类型：{FILE_TYPE}\n
+        如果视频是av10086，自定义命名规则如下\n{BV}/{TITLE}.{FILE_TYPE}\n
+        则下载的路径和文件名称为\n下载路径/BV1bx411c7u3/搞笑漫画日和之贴纸.mp4
+        \n\n【注意】：如果修改后发现文件下载失败了，就尝试直接用CID等作为名称，也可能是系统对这类文件名称有劫持。\n
+        尽可能保证音频和视频不在一个文件夹里，经过测试，这样有可能诱发一个文件下载失败。
+    </string>
+    <string name="user_download_save_path_title">缓存文件储存路径</string>
+    <string name="user_download_file_name">缓存文件命名规则</string>
+
+    <string name="BangumiEntry">
+        {
+          \"media_type\": 2,
+          \"has_dash_audio\": true,
+          \"is_completed\": true,
+          \"total_bytes\": 下载大小,
+          \"downloaded_bytes\": 下载大小,
+          \"title\": \"标题\",
+          \"type_tag\": \"QN编码\",
+          \"cover\": \"封面地址\",
+          \"video_quality\": QN编码,
+          \"prefered_video_quality\": QN编码,
+          \"guessed_total_bytes\": 0,
+          \"total_time_milli\": 总时间,
+          \"danmaku_count\": 弹幕数量,
+          \"time_update_stamp\": 1672473810242,
+          \"time_create_stamp\": 1672473771023,
+          \"can_play_in_advance\": true,
+          \"interrupt_transform_temp_file\": false,
+          \"quality_pithy_description\": \"清晰度\",
+          \"quality_superscript\": \"码率\",
+          \"cache_version_code\": 7010500,
+          \"preferred_audio_quality\": 0,
+          \"audio_quality\": 0,
+          \"source\": { \"av_id\": AID编号, \"cid\": CID编号, \"website\": \"bangumi\" },
+          \"ep\": {
+            \"av_id\": AID编号,
+            \"page\": 子集索引,
+            \"danmaku\": CID编号,
+            \"cover\": \"封面地址\",
+            \"episode_id\": EPID编号,
+            \"index\": \"子集号\",
+            \"index_title\": \"下载子TITLE\",
+            \"from\": \"bangumi\",
+            \"season_type\": 4,
+            \"width\": 宽度,
+            \"height\": 高度,
+            \"rotate\": 0,
+            \"link\": \"LINK地址\",
+            \"bvid\": \"BVID编号\",
+            \"sort_index\": 排序号
+          },
+          \"season_id\": \"SSID编号\"
+        }
+
+    </string>
+
+
+    <string name="VideoIndex">
+        {
+            \"video\": [{
+                \"id\": QN编码,
+                \"base_url\": \"https:\/\/upos-sz-mirrorcoso1.bilivideo.com\",
+                \"backup_url\": [\"https:\/\/upos-sz-mirrorcos.bilivideo.com\"],
+                \"bandwidth\": 348483,
+                \"codecid\": 7,
+                \"size\": 视频大小,
+                \"md5\": \"01c0e7ba2efc8a36f16e993a194d2d5d\",
+                \"no_rexcode\": false,
+                \"frame_rate\": \"\",
+                \"width\": 宽度,
+                \"height\": 高度,
+                \"dash_drm_type\": 0
+            }],
+            \"audio\": [{
+                \"id\": 30216,
+                \"base_url\": \"https:\/\/upos-sz-mirrorkodoo1.bilivideo.com\",
+                \"backup_url\": [\"https:\/\/upos-sz-mirrorkodo.bilivideo.com\"],
+                \"bandwidth\": 67463,
+                \"codecid\": 0,
+                \"size\": 音频大小,
+                \"md5\": \"2f785a38a9e46c4834347ec73b6802c0\",
+                \"no_rexcode\": false,
+                \"frame_rate\": \"\",
+                \"width\": 0,
+                \"height\": 0,
+                \"dash_drm_type\": 0
+            }]
+        }
+	</string>
+
+    <string name="VideoEntry">
+        {
+            \"media_type\": 2,
+            \"has_dash_audio\": true,
+            \"is_completed\": true,
+            \"total_bytes\": 下载大小,
+            \"downloaded_bytes\": 下载大小,
+            \"title\": \"标题\",
+            \"type_tag\": \"QN编码\",
+            \"cover\": \"封面地址\",
+            \"video_quality\": QN编码,
+            \"prefered_video_quality\": QN编码,
+            \"guessed_total_bytes\": 0,
+            \"total_time_milli\": 总时间,
+            \"danmaku_count\": 弹幕数量,
+            \"time_update_stamp\": 1627134435654,
+            \"time_create_stamp\": 1627134431287,
+            \"can_play_in_advance\": true,
+            \"interrupt_transform_temp_file\": false,
+            \"quality_pithy_description\": \"清晰度\",
+            \"quality_superscript\": \"码率\",
+            \"cache_version_code\": 6340400,
+            \"preferred_audio_quality\": 0,
+            \"audio_quality\": 0,
+            \"avid\": AID编号,
+            \"spid\": 0,
+            \"seasion_id\": 0,
+            \"bvid\": \"BVID编号\",
+            \"owner_id\": UP主UID,
+            \"owner_name\": \"UP名称\",
+            \"owner_avatar\": \"UP头像\",
+            \"page_data\": {
+                \"cid\": CID编号,
+                \"page\": 1,
+                \"from\": \"vupload\",
+                \"part\": \"标题\",
+                \"link\": \"\",
+                \"vid\": \"\",
+                \"has_alias\": false,
+                \"tid\": 17,
+                \"width\": 宽度,
+                \"height\": 高度,
+                \"rotate\": 0,
+                \"download_title\": \"视频已缓存完成\",
+                \"download_subtitle\": \"下载子标题\"
+            }
+        }
+    </string>
+    <string name="new_version_doc">2.0.1恢复了封面，音视频独立下载和ffmpeg合并视频的功能，请务必查看。</string>
+    <string name="app_donate_doc">
+        BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。
+        因此，希望BILIBILIAS的用户们可以支援一些费用，一次早餐钱，一次奶茶钱，一次午饭钱就可以满足BILIBILIAS绝大部分的费用。
+        最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n
+        你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式
+    </string>
+    <string name="user_dl_merge_cmd" >
+        如果你不清楚FFmpeg命令，请不要修改\n
+        BILIBILIAS为大家提供了简单的命令参数\n
+        {VIDEO_PATH} 视频下载路径\n
+        {AUDIO_PATH} 音频储存路径\n
+        {VIDEO_MERGE_PATH} 合并后储存路径
+    </string>
+
+    <string name="app_activity_bangumi_follow_title">追番</string>
+    <string name="app_activity_collection_title">收藏</string>
+    <string name="app_activity_dedicate_title">致敬</string>
+    <string name="app_activity_donate_title">捐款</string>
+    <string name="app_activity_play_history_title">播放历史</string>
+    <string name="app_fragment_tool_input_tip">输入BV/AV/EP号</string>
+    <string name="app_fragment_download_task_tab_downloading_title">正在下载</string>
+    <string name="app_fragment_download_task_tab_finish_title">下载完成</string>
+    <string name="app_item_fg_user_card_data_fans">粉丝</string>
+    <string name="app_item_fg_user_card_data_friend">关注</string>
+    <string name="app_item_fg_user_card_data_liks">获赞</string>
+    <string name="app_item_fg_user_card_data_view">播放</string>
+    <string name="app_fragment_user_works_title">作品</string>
+    <string name="app_dialog_dl_video_bar_title">视频信息</string>
+    <string name="app_dialog_dl_video_tip">此视频未经允许禁止转载</string>
+    <string name="app_dialog_dl_video_definition">视频清晰度</string>
+    <string name="app_dialog_dl_video_episode">缓存的子集</string>
+    <string name="app_dialog_dl_video_video_type">缓存的类型</string>
+    <string name="app_dialog_dl_video_audio_quality">缓存的音质</string>
+    <string name="app_dialog_dl_video_radio_built_download">内置下载</string>
+    <string name="app_dialog_dl_radio_video_and_audio">音视频</string>
+    <string name="app_dialog_dl_radio_only_audio">仅音频</string>
+    <string name="app_dialog_dl_radio_only_video">仅视频</string>
+    <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
+    <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
+</resources>

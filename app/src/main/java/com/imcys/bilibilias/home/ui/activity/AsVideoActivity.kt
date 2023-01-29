@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -14,19 +15,22 @@ import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.view.AsJzvdStd
-import com.imcys.bilibilias.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.base.view.AsJzvdStd
+import com.imcys.bilibilias.common.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
-import com.imcys.bilibilias.utils.VideoNumConversion
-import com.imcys.bilibilias.utils.http.HttpUtils
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
@@ -64,6 +68,8 @@ class AsVideoActivity : BaseActivity() {
     private lateinit var danmakuParser: BaseDanmakuParser
     private val danmakuContext = DanmakuContext.create()
 
+    lateinit var userBaseBean: UserBaseBean
+
     //视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
     var avid: Int = 0
@@ -75,10 +81,17 @@ class AsVideoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
 
+        loadUserData()
         //加载视频首要信息
         initVideoData()
         //加载控件
         initView()
+    }
+
+    private fun loadUserData() {
+        lifecycleScope.launch {
+            userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
+        }
     }
 
 
@@ -107,6 +120,8 @@ class AsVideoActivity : BaseActivity() {
 
 
             //设置点击事件->这里将点击事件都放这个类了
+
+
             asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
 
 
@@ -123,7 +138,7 @@ class AsVideoActivity : BaseActivity() {
 
         when (type) {
             "video" -> {
-                HttpUtils.addHeader("cookie", App.cookies)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .addHeader("referer", "https://www.bilibili.com")
                     .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
                         VideoPlayBean::class.java) {
@@ -136,9 +151,9 @@ class AsVideoActivity : BaseActivity() {
                     }
             }
             "bangumi" -> {
-                HttpUtils.addHeader("cookie", App.cookies)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
                     .addHeader("referer", "https://www.bilibili.com")
-                    .get("${BilibiliApi.bangumiPlayPath}?ep_id=$epid&qn=64&fnval=0&fourk=1",
+                    .get("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1",
                         BangumiPlayBean::class.java) {
 
                         //设置布局视频播放数据
@@ -165,7 +180,7 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         //这里才是真正的视频基本数据获取
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
                 //设置数据
                 videoDataBean = it
@@ -245,7 +260,11 @@ class AsVideoActivity : BaseActivity() {
      *
      */
     private fun loadBangumiVideoList() {
-        HttpUtils.get(BilibiliApi.bangumiVideoDataPath + "?ep_id=" + epid,
+        HttpUtils.apply {
+            if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                    true)
+            ) this.addHeader("cookie", BaseApplication.cookies)
+        }.get(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid,
             BangumiSeasonBean::class.java) {
 
 
@@ -285,7 +304,8 @@ class AsVideoActivity : BaseActivity() {
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
         position: Int,
     ) {
-        if (data.badge == "会员") {
+        val userVipState = userBaseBean.data.vip.status
+        if (data.badge == "会员" && userVipState != 1) {
             DialogUtils.dialog(
                 this,
                 "越界啦",
@@ -298,6 +318,8 @@ class AsVideoActivity : BaseActivity() {
             //更新CID刷新播放页面
             cid = data.cid
             epid = data.id.toLong()
+            asJzvdStd.updatePoster(data.cover)
+
             //暂停播放
             changeFaButtonToPlay()
             //清空弹幕
@@ -312,8 +334,10 @@ class AsVideoActivity : BaseActivity() {
 
     private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
         var memberType = false
+
+        val userVipState = userBaseBean.data.vip.status
         bangumiSeasonBean.result.episodes.forEach {
-            if (it.cid == cid && it.badge == "会员") memberType = true
+            if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
         }
         if (memberType) {
             DialogUtils.dialog(
@@ -328,6 +352,18 @@ class AsVideoActivity : BaseActivity() {
             loadVideoPlay("bangumi")
         }
     }
+
+
+    /**
+     * 获取用户基础信息
+     * @return UserBaseBean
+     */
+    private suspend fun getUserData(): UserBaseBean {
+        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
+                UserBaseBean::class.java)
+    }
+
 
     /**
      * 加载视频列表信息
@@ -381,22 +417,23 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadDanmakuFlameMaster() {
 
-        HttpUtils.addHeader("cookie", App.cookies).get("${BilibiliApi.videoDanMuPath}?oid=$cid",
-            object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-
-                    App.handler.post {
-                        //储存弹幕
-                        saveDanmaku(response.body!!.bytes())
-                        //初始化弹幕配置
-                        initDanmaku()
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .get("${BilibiliApi.videoDanMuPath}?oid=$cid",
+                object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
                     }
-                }
 
-            })
+                    override fun onResponse(call: Call, response: Response) {
+
+                        App.handler.post {
+                            //储存弹幕
+                            saveDanmaku(response.body!!.bytes())
+                            //初始化弹幕配置
+                            initDanmaku()
+                        }
+                    }
+
+                })
     }
 
 
@@ -418,7 +455,7 @@ class AsVideoActivity : BaseActivity() {
 
 
     private fun loadUserCardData(mid: Long) {
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(BilibiliApi.getUserCardPath + "?mid=$mid", UserCardBean::class.java) {
                 showUserCard()
                 binding.userCardBean = it
@@ -496,7 +533,7 @@ class AsVideoActivity : BaseActivity() {
         //map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = App.cookies;
+        jzDataSource.headerMap["Cookie"] = BaseApplication.cookies;
         jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
         jzDataSource.headerMap["User-Agent"] =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";
@@ -688,8 +725,6 @@ class AsVideoActivity : BaseActivity() {
         asDanmaku.release()
         JzvdStd.releaseAllVideos()
     }
-
-
 
 
     //解压deflate数据的函数

@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="AsJzvdStd">
         <attr name="showPlayButton" format="boolean" />
+
     </declare-styleable>
 
     <declare-styleable name="GrayFrameLayout">

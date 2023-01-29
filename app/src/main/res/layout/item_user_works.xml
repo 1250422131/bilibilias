@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.utils.NumberUtils" />
+        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
 
         <variable
             name="VlistBean"

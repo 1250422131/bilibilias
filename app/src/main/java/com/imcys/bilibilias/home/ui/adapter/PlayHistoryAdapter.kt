@@ -9,7 +9,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemPlayHistoryWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
-import com.imcys.bilibilias.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 
 class PlayHistoryAdapter : ListAdapter<PlayHistoryBean.DataBean.ListBean, ViewHolder>(object :
     DiffUtil.ItemCallback<PlayHistoryBean.DataBean.ListBean>() {
