@@ -357,7 +357,7 @@ public class BangumiPlayBean implements Serializable {
              * md5 :
              */
 
-            private int size;
+            private Long size;
             private String ahead;
             private int length;
             private String vhead;
@@ -366,11 +366,11 @@ public class BangumiPlayBean implements Serializable {
             private String md5;
             private List<String> backup_url;
 
-            public int getSize() {
+            public Long getSize() {
                 return size;
             }
 
-            public void setSize(int size) {
+            public void setSize(Long size) {
                 this.size = size;
             }
 

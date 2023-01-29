@@ -12,14 +12,19 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
+import com.xiaojinzi.component.Component
+import com.xiaojinzi.component.anno.RouterAnno
 
-
+@RouterAnno(
+    hostAndPath = ARouterAddress.AppHomeActivity,
+)
 class HomeActivity : BaseActivity() {
     private var exitTime: Long = 0
     lateinit var activityHomeBinding: ActivityHomeBinding
@@ -29,8 +34,7 @@ class HomeActivity : BaseActivity() {
     lateinit var userFragment: UserFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        Component.inject(target = this)
         /*
         备选方案
         val paint = Paint()

@@ -13,7 +13,20 @@
         android:layout_height="match_parent"
         tools:context=".splash.ui.SplashActivity">
 
+        <com.imcys.bilibilias.base.helper.SplashHelper
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="splash_linearLayoutCompat"
+            app:layout_constraintBottom_toTopOf="@+id/splash_linearLayoutCompat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+
+
         <androidx.appcompat.widget.LinearLayoutCompat
+           android:id="@+id/splash_linearLayoutCompat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="top|center_horizontal"
@@ -23,14 +36,14 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.321">
+            app:layout_constraintVertical_bias="0.332">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                app:tint="@color/color_primary"
-                app:srcCompat="@mipmap/ic_launcher_foreground" />
+                app:srcCompat="@mipmap/ic_launcher_foreground"
+                app:tint="@color/color_primary" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
@@ -45,8 +58,8 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCompat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="bottom|center_horizontal"

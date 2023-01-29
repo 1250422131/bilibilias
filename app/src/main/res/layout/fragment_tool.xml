@@ -81,12 +81,13 @@
                             android:src="@drawable/ic_tool_search" />
 
                         <EditText
+                            android:textColor="@color/color_text_hint"
                             android:id="@+id/fragment_tool_editText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="8dp"
                             android:background="@android:color/transparent"
-                            android:hint="输入BV/AV/EP号"
+                            android:hint="@string/app_fragment_tool_input_tip"
                             android:imeOptions="actionSearch"
                             android:maxLines="1"
                             android:singleLine="true" />

@@ -113,7 +113,7 @@ class SplashActivity : BaseActivity() {
                     // 销毁当前活动。
                     finish()
 
-                }, null, 800L)
+                }, null, 1000)
             }
 
         }

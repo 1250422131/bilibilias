@@ -23,5 +23,6 @@
     <color name="color_121212">#FFFFFF</color>
     <color name="color_303030">#FFFFFF</color>
     <color name="user_work_bg">#F7F8FA</color>
+    <color name="app_default_bg">#f2f2f2</color>
 
 </resources>

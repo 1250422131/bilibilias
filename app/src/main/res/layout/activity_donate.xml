@@ -14,14 +14,14 @@
         android:layout_height="match_parent"
         tools:context=".home.ui.activity.DonateActivity">
 
-        <com.imcys.bilibilias.base.view.AsTopNavigationLayout
-            app:title="捐款"
+        <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
+            app:title="@string/app_activity_donate_title"
             android:id="@+id/donate_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
 
-        </com.imcys.bilibilias.base.view.AsTopNavigationLayout>
+        </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView
