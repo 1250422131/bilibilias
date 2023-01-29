@@ -73,13 +73,13 @@
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="正在下载"
+                        android:text="@string/app_fragment_download_task_tab_downloading_title"
                         tools:ignore="HardcodedText" />
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="下载完成" />
+                        android:text="@string/app_fragment_download_task_tab_finish_title" />
                 </com.google.android.material.tabs.TabLayout>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

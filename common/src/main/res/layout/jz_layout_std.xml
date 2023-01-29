@@ -272,7 +272,7 @@
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="封面下载"
+                android:text="@string/public_jz_layout_std_cover_download"
                 android:textColor="@color/white"
                 android:focusable="true" />
 
