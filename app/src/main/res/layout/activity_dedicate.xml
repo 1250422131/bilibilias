@@ -27,7 +27,7 @@
                  android:id="@+id/dedicate_top_ly"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
-                 app:title="致敬"
+                 app:title="@string/app_activity_dedicate_title"
                  tools:ignore="MissingConstraints" />
 
              <androidx.recyclerview.widget.RecyclerView
