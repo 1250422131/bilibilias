@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
@@ -20,8 +22,11 @@ import com.imcys.bilibilias.home.ui.fragment.UserFragment
 
 class HomeActivity : BaseActivity() {
     private var exitTime: Long = 0
-    private lateinit var activityHomeBinding: ActivityHomeBinding
+    lateinit var activityHomeBinding: ActivityHomeBinding
     lateinit var toolFragment: ToolFragment
+    lateinit var homeFragment: HomeFragment
+    lateinit var downloadFragment: DownloadFragment
+    lateinit var userFragment: UserFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,14 +41,31 @@ class HomeActivity : BaseActivity() {
         */
 
 
+        //补全必须要的内容
         activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
+        App.videoEntry = getString(R.string.VideoEntry)
+        App.videoIndex = getString(R.string.VideoIndex)
+        App.bangumiEntry = getString(R.string.BangumiEntry)
 
+
+        initFragment()
         loadFragment()
 
 
         parseShare()
 
+    }
+
+
+    /**
+     * 初始化fragment
+     */
+    private fun initFragment() {
+        homeFragment = HomeFragment.newInstance()
+        toolFragment = ToolFragment.newInstance()
+        userFragment = UserFragment.newInstance()
+        downloadFragment = DownloadFragment.newInstance()
     }
 
     //解析视频数据
@@ -69,11 +91,10 @@ class HomeActivity : BaseActivity() {
     private fun loadFragment() {
         val fragmentArrayList = ArrayList<Fragment>()
         //添加fragment
-        fragmentArrayList.add(HomeFragment.newInstance())
-        toolFragment = ToolFragment.newInstance()
+        fragmentArrayList.add(homeFragment)
         fragmentArrayList.add(toolFragment)
-        fragmentArrayList.add(DownloadFragment.newInstance())
-        fragmentArrayList.add(UserFragment.newInstance())
+        fragmentArrayList.add(downloadFragment)
+        fragmentArrayList.add(userFragment)
 
 
         val myFragmentPageAdapter =
@@ -119,6 +140,17 @@ class HomeActivity : BaseActivity() {
             }
 
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        StatService.onResume(this)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        StatService.onPause(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

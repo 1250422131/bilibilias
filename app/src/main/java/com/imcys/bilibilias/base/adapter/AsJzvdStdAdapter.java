@@ -22,7 +22,6 @@ public class AsJzvdStdAdapter {
 
         Glide.with(asJzvdStd.getContext())
                 .load(url)
-                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .into(asJzvdStd.posterImageView);
 
     }

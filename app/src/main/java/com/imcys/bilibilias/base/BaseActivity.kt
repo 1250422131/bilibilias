@@ -1,10 +1,13 @@
 package com.imcys.bilibilias.base
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
+import com.baidu.mobstat.StatService
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asLogD
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -23,23 +26,34 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (sharedPreferences.getBoolean("microsoft_app_center_type", true)) {
-            //统计接入
-            AppCenter.start(application,
-                "3c7c5174-a6be-4093-a0df-c6fbf7371480",
-                Analytics::class.java,
-                Crashes::class.java)
+        //启动APP统计
+        startAppCenter()
 
-        }
-
-
+        App.context = this
         // 添加当前活动
         addActivity(this)
         // 打印活动名称
         asLogD(this, TAG)
         // 沉浸式状态栏
         statusBarOnly(this)
+    }
+
+    /**
+     * 启动统计
+     */
+    private fun startAppCenter() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
+            if (!AppCenter.isConfigured()) {
+                //统计接入
+                AppCenter.start(application,
+                    App.appSecret,
+                    Analytics::class.java,
+                    Crashes::class.java)
+            }
+
+        }
+
     }
 
     override fun onDestroy() {

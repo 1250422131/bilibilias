@@ -87,7 +87,10 @@
     native <methods>;
 }
 
-
+#百度统计
+-keep class com.baidu.mobstat.** { *; }
+-keep class com.bun.miitmdid.core.** {*;}
+-keep class com.baidu.bottom.** { *; }
 
 #饺子播放器混淆
 -keep public class cn.jzvd.JZMediaSystem {*; }

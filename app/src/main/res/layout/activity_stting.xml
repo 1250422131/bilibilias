@@ -15,6 +15,7 @@
 
 
         <LinearLayout
+
             android:id="@+id/setting_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

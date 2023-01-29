@@ -40,6 +40,19 @@
         <variable
             name="BangumiPlayBean"
             type="com.imcys.bilibilias.home.ui.model.BangumiPlayBean" />
+
+        <variable
+            name="ArchiveHasLikeBean"
+            type="com.imcys.bilibilias.home.ui.model.ArchiveHasLikeBean" />
+
+
+        <variable
+            name="ArchiveCoinsBean"
+            type="com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean" />
+
+        <variable
+            name="ArchiveFavouredBean"
+            type="com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -66,6 +79,7 @@
 
 
                     <com.imcys.bilibilias.base.view.AsJzvdStd
+
                         android:id="@+id/as_video_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -146,15 +160,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{() -> AsVideoViewModel.likeVideo(VideoBaseBean.data.bvid)}"
+                            android:onClick="@{(view) -> AsVideoViewModel.likeVideo(view,VideoBaseBean.data.bvid)}"
                             android:orientation="horizontal">
 
                             <ImageView
+                                app:isSelected="@{ArchiveHasLikeBean.data == 1}"
                                 android:id="@+id/as_video_like_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_like"
-                                android:tint="@color/black"
+                                android:backgroundTint="@color/white"
+                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -172,15 +188,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{()->AsVideoViewModel.videoCoinAdd(VideoBaseBean.data.bvid)}">
+                            android:onClick="@{(view)->AsVideoViewModel.videoCoinAdd(view,VideoBaseBean.data.bvid)}">
 
 
                             <ImageView
+                                app:isSelected="@{ArchiveCoinsBean.data.multiply != 0}"
                                 android:id="@+id/as_video_throw_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
-                                android:tint="@color/black"
+                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -203,11 +220,12 @@
 
 
                             <ImageView
+                                app:isSelected="@{ArchiveFavouredBean.data.favoured}"
                                 android:id="@+id/as_video_collection_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"
-                                android:tint="@color/black"
+                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -303,6 +321,7 @@
 
 
                 <androidx.cardview.widget.CardView
+                    android:visibility="gone"
                     android:id="@+id/as_video_cd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -357,6 +376,7 @@
             android:clickable="true"
             android:elevation="3dp"
             android:focusable="true"
+            android:tint="@color/color_primary"
             android:src="@drawable/ic_as_video_play"
             app:backgroundTint="@color/white"
             app:layout_anchor="@id/as_video_appbar"

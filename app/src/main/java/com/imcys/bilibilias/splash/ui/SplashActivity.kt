@@ -56,6 +56,7 @@ class SplashActivity : BaseActivity() {
                     "使用BILIBILIAS就需要要同意此权限，因为缓存视频等需要向系统内储存权限。",
                     "同意授权",
                     "拒绝授权",
+                    false,
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(this,
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
@@ -75,6 +76,7 @@ class SplashActivity : BaseActivity() {
                             + "除非您自己将下载路径改动到了相册，否则不会去读取相册内容。",
                     "确定授权",
                     "拒绝授权",
+                    false,
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(this,
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),

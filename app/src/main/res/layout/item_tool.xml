@@ -12,8 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
 
         <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,9 +26,9 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@{ToolItemBean.bg_color == `` ? `#0b3DFB` : ToolItemBean.bg_color}"
-                android:gravity="center"
+                android:background="@{ToolItemBean.bg_color == `` ? `#fb7299` : ToolItemBean.bg_color}"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
@@ -38,7 +38,7 @@
                     android:src="@drawable/ic_as_video_download"
                     app:tint="@color/white" />
 
-                <TextView
+                <com.imcys.bilibilias.base.view.MarqueeTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
