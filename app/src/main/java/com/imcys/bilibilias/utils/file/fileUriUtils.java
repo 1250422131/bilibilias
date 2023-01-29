@@ -5,7 +5,9 @@ package com.imcys.bilibilias.utils.file;
  * @create: 2022-12-31 15:22
  * @Description: uri文件处理类
  */
+
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
@@ -13,11 +15,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 //此类来源
 //https://blog.csdn.net/qq_26280383/article/details/113995727
@@ -124,12 +128,8 @@ public class fileUriUtils {
     }
 
 
-    public static void createDirectory(Uri treeUri, String displayName, Context context) {
-        DocumentFile mDocumentFile = DocumentFile.fromTreeUri(context, treeUri);
-        mDocumentFile.createDirectory(displayName);
-        Log.e("数据错误", mDocumentFile.getUri() + "");
-
-
+    public static DocumentFile createDirectory(DocumentFile treeDocumentFile, String displayName) {
+        return treeDocumentFile.createDirectory(displayName);
     }
 
 }

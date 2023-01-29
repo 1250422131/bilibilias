@@ -18,7 +18,7 @@
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="#E2E6FA"
+            android:background="#ffd2e0"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:textColor="@color/black"
             android:textSize="15sp"

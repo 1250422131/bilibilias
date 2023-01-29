@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
@@ -35,8 +36,10 @@ class UserFragment : Fragment() {
     //
     lateinit var fragmentUserBinding: FragmentUserBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onResume() {
+        super.onResume()
+        StatService.onPageStart(context, "UserFragment")
 
     }
 
@@ -155,6 +158,12 @@ class UserFragment : Fragment() {
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
         if (recyclerView == null) return false
         return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        StatService.onPageEnd(context, "UserFragment")
+
     }
 
     companion object {

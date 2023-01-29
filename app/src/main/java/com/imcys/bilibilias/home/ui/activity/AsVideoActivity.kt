@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.view.AsJzvdStd
 import com.imcys.bilibilias.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -23,6 +25,7 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
+import com.imcys.bilibilias.utils.VideoNumConversion
 import com.imcys.bilibilias.utils.http.HttpUtils
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -49,7 +52,7 @@ class AsVideoActivity : BaseActivity() {
     //视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
 
-    private lateinit var binding: ActivityAsVideoBinding
+    lateinit var binding: ActivityAsVideoBinding
 
     //饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AsJzvdStd
@@ -68,11 +71,9 @@ class AsVideoActivity : BaseActivity() {
     var epid: Long = 0
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
 
         //加载视频首要信息
         initVideoData()
@@ -139,6 +140,7 @@ class AsVideoActivity : BaseActivity() {
                     .addHeader("referer", "https://www.bilibili.com")
                     .get("${BilibiliApi.bangumiPlayPath}?ep_id=$epid&qn=64&fnval=0&fourk=1",
                         BangumiPlayBean::class.java) {
+
                         //设置布局视频播放数据
                         binding.bangumiPlayBean = it
                         //真正调用饺子播放器设置视频数据
@@ -175,9 +177,8 @@ class AsVideoActivity : BaseActivity() {
                 loadUserCardData(it.data.owner.mid)
                 //加载弹幕信息
                 loadDanmakuFlameMaster()
-                //加载视频播放信息
-                loadVideoPlay("video")
                 //加载视频列表信息，这里判断下是不是番剧
+
                 it.data.redirect_url?.apply {
 
                     //通过正则表达式检查该视频是不是番剧
@@ -188,10 +189,55 @@ class AsVideoActivity : BaseActivity() {
                         loadBangumiVideoList()
                     }
 
-                } ?: loadVideoList() //加载正常列表
+                } ?: apply {
+                    //加载视频播放信息
+                    loadVideoPlay("video")
+                    loadVideoList() //加载正常列表
+                }
+                //检查三连情况
+                archiveHasLikeTriple()
 
 
             }
+    }
+
+    /**
+     * 检查三连情况
+     */
+    private fun archiveHasLikeTriple() {
+        archiveHasLike()
+        archiveCoins()
+        archiveFavoured()
+    }
+
+    /**
+     * 收藏检验
+     */
+    private fun archiveFavoured() {
+        HttpUtils.get("${BilibiliApi.archiveFavoured}?aid=${bvid}",
+            ArchiveFavouredBean::class.java) {
+            binding.archiveFavouredBean = it
+        }
+    }
+
+    /**
+     * 检验投币情况
+     */
+    private fun archiveCoins() {
+        HttpUtils.get("${BilibiliApi.archiveHasLikePath}?bvid=${bvid}",
+            ArchiveHasLikeBean::class.java) {
+            binding.archiveHasLikeBean = it
+        }
+    }
+
+    /**
+     * 检验是否点赞
+     */
+    private fun archiveHasLike() {
+        HttpUtils.get("${BilibiliApi.archiveCoinsPath}?bvid=${bvid}",
+            ArchiveCoinsBean::class.java) {
+            binding.archiveCoinsBean = it
+        }
     }
 
     /**
@@ -201,6 +247,11 @@ class AsVideoActivity : BaseActivity() {
     private fun loadBangumiVideoList() {
         HttpUtils.get(BilibiliApi.bangumiVideoDataPath + "?ep_id=" + epid,
             BangumiSeasonBean::class.java) {
+
+
+            isMember(it)
+
+
             binding.apply {
 
                 if (it.result.episodes.size == 1) asVideoSubsectionRv.visibility = View.GONE
@@ -213,17 +264,7 @@ class AsVideoActivity : BaseActivity() {
                 asVideoSubsectionRv.adapter =
                     BangumiSubsectionAdapter(it.result.episodes.toMutableList(),
                         cid) { data, position ->
-                        //更新CID刷新播放页面
-                        cid = data.cid
-                        epid = data.id.toLong()
-                        //暂停播放
-                        changeFaButtonToPlay()
-                        //清空弹幕
-                        asDanmaku.release()
-                        //刷新播放器
-                        loadVideoPlay("bangumi")
-                        //更新弹幕
-                        loadDanmakuFlameMaster()
+                        updateBangumiInformation(data, position)
                     }
 
                 asVideoSubsectionRv.layoutManager =
@@ -232,6 +273,60 @@ class AsVideoActivity : BaseActivity() {
             }
         }
 
+    }
+
+
+    /**
+     * 更新番剧信息
+     * @param data EpisodesBean
+     * @param position Int
+     */
+    private fun updateBangumiInformation(
+        data: BangumiSeasonBean.ResultBean.EpisodesBean,
+        position: Int,
+    ) {
+        if (data.badge == "会员") {
+            DialogUtils.dialog(
+                this,
+                "越界啦",
+                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
+                "我知道啦",
+                positiveButtonClickListener = {
+                }
+            ).show()
+        } else {
+            //更新CID刷新播放页面
+            cid = data.cid
+            epid = data.id.toLong()
+            //暂停播放
+            changeFaButtonToPlay()
+            //清空弹幕
+            asDanmaku.release()
+            //刷新播放器
+            loadVideoPlay("bangumi")
+            //更新弹幕
+            loadDanmakuFlameMaster()
+        }
+
+    }
+
+    private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
+        var memberType = false
+        bangumiSeasonBean.result.episodes.forEach {
+            if (it.cid == cid && it.badge == "会员") memberType = true
+        }
+        if (memberType) {
+            DialogUtils.dialog(
+                this,
+                "越界啦",
+                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
+                "我知道啦",
+                positiveButtonClickListener = {
+                }
+            ).show()
+        } else {
+            loadVideoPlay("bangumi")
+        }
     }
 
     /**
@@ -367,6 +462,9 @@ class AsVideoActivity : BaseActivity() {
             asJzvdStd.startButton.performClick()
             changeFaButtonToPlay()
         }
+        //百度统计
+        StatService.onPause(this)
+
 
     }
 
@@ -382,7 +480,7 @@ class AsVideoActivity : BaseActivity() {
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Int) {
             val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("aid", aid)
+            intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
             context.startActivity(intent)
         }
     }
@@ -551,7 +649,7 @@ class AsVideoActivity : BaseActivity() {
      * @param stream
      * @return
      */
-    private fun createParser(stream: InputStream?): BaseDanmakuParser? {
+    private fun createParser(stream: InputStream?): BaseDanmakuParser {
         if (stream == null) {
             return object : BaseDanmakuParser() {
                 override fun parse(): Danmakus {
@@ -580,7 +678,8 @@ class AsVideoActivity : BaseActivity() {
             //asDanmaku.show()
             // asJzvdStd.startButton.performClick()
         }
-
+        //百度统计
+        StatService.onResume(this)
     }
 
 

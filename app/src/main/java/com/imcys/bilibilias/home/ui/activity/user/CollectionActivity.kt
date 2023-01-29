@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.baidu.mobstat.StatService
 import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
@@ -19,7 +20,9 @@ import com.imcys.bilibilias.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlin.math.ceil
 
+//收藏夹
 class CollectionActivity : BaseActivity() {
+
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<CollectionDataBean.DataBean.MediasBean>()
     private lateinit var binding: ActivityCollectionBinding
@@ -88,6 +91,7 @@ class CollectionActivity : BaseActivity() {
 
                 //设置监听器
                 binding.apply {
+                    //这里监听选择的是哪个收藏夹
                     collectionTabLayout.addOnTabSelectedListener(object :
                         TabLayout.OnTabSelectedListener {
                         override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -129,6 +133,19 @@ class CollectionActivity : BaseActivity() {
                 collectionDataMutableList.addAll(it.data.medias)
                 collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
             }
+
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        StatService.onResume(this)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        StatService.onPause(this)
     }
 
     companion object {

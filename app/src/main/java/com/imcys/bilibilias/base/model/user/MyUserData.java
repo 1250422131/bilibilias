@@ -3,7 +3,7 @@ package com.imcys.bilibilias.base.model.user;
 import java.io.Serializable;
 
 /**
- * @author:imcys
+ * imcys
  * @create: 2022-10-30 08:12
  * @Description: 我的个人信息类
  */

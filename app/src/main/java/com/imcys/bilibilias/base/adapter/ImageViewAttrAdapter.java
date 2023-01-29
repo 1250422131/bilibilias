@@ -26,14 +26,13 @@ public class ImageViewAttrAdapter {
 
     @BindingAdapter({"android:imageUrl", "android:imageRoundingRadius"})
     public static void loadImage(ImageView imageView, String url, int imageRoundingRadius) {
-
         //设置图片上去，就不在多写了
         //Glide设置图片圆角角
+        //.apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
         RoundedCorners roundedCorners = new RoundedCorners(imageRoundingRadius);
         RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
         Glide.with(imageView.getContext())
                 .load(url)
-                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .apply(options)
                 .into(imageView);
 
@@ -45,7 +44,12 @@ public class ImageViewAttrAdapter {
         Glide.with(imageView.getContext())
                 .load(url)
                 //启用缓存数据
-                .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                //.apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .into(imageView);
+    }
+
+    @BindingAdapter({"isSelected"})
+    public static void isSelected(ImageView imageView, Boolean selected) {
+        imageView.setSelected(selected);
     }
 }

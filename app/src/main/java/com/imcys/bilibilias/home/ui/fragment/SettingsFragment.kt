@@ -5,7 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.Preference
@@ -14,6 +17,7 @@ import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.utils.file.fileUriUtils
 import me.rosuh.filepicker.bean.FileItemBeanImpl
@@ -24,11 +28,15 @@ import me.rosuh.filepicker.config.FilePickerManager
 class SettingsFragment : PreferenceFragmentCompat() {
 
 
+    private lateinit var renameUserDownloadFileNameEditText: Preference
     private lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
     private lateinit var userDlFinishAutomaticMergeSwitch: Preference
     private lateinit var userDlFinishAutomaticImportSwitch: Preference
+
+    private lateinit var  renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
+    private val IMPORT_FILE_PATH_CODE = 2
 
 
     private val saveImport = registerForActivityResult(
@@ -39,6 +47,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
             apply()
         }
     }
+
+
+    private val saveSDFile =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+            if (it.resultCode == Activity.RESULT_OK) {
+                //小于安卓11
+                setSavePath()
+            }
+
+        }
 
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -67,6 +86,50 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
         }
+        renameUserDownloadSavePath.setOnPreferenceClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "是否还原默认下载地址",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                   App.sharedPreferences.edit().putString("user_download_save_path",
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download").apply()
+                    asToast(requireContext(),"恢复成功，返回页面重新进入可见")
+                    renameUserDownloadSavePath.summary = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+
+
+
+                },
+                negativeButtonClickListener = {
+                }
+            ).show()
+            true
+        }
+
+
+        renameUserDownloadFileNameEditText.setOnPreferenceClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "是否还原默认命名规则",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                    App.sharedPreferences.edit().putString("user_download_file_name_editText",
+                        "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}").apply()
+                    asToast(requireContext(),"恢复成功，返回页面重新进入可见")
+                    renameUserDownloadSavePath.summary = "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+
+                },
+                negativeButtonClickListener = {
+                }
+            ).show()
+            true
+        }
         bindingGetSavePathEvent()
         bindingImportFileEvent()
 
@@ -84,10 +147,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "简答来讲，这项功能需要你授权下文件的读写权限，BILIBILIAS仅仅会利用此权限实现导入番剧。",
                     "同意授权",
                     "拒绝授权",
-                    {
-                        saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                    true,
+                    positiveButtonClickListener = {
+                        // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+                        fileUriUtils.startForRoot(context as Activity, IMPORT_FILE_PATH_CODE)
                     },
-                    {
+                    negativeButtonClickListener = {
                     }
                 ).show()
                 false
@@ -97,53 +162,81 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         }
+
     }
+
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingGetSavePathEvent() {
+
+
+
+
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            DialogUtils.dialog(context!!, "选择区域",
-                "现在选择，你要在手机内部储存还是SD卡呢？",
-                "手机内部储存",
-                "SD卡", {
-                    FilePickerManager
-                        .from(this)
-                        .maxSelectable(1)
-                        .filter(object : AbstractFileFilter() {
-                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                                return ArrayList(listData.filter { item ->
-                                    item.isDir
-                                })
-                            }
-                        }).skipDirWhenSelect(false)
-                        .forResult(SAVE_FILE_PATH_CODE)
 
-                }, {
-                    FilePickerManager
-                        .from(this)
-                        .maxSelectable(1)
-                        .filter(object : AbstractFileFilter() {
-                            override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                                return ArrayList(listData.filter { item ->
-                                    item.isDir
-                                })
-                            }
-                        }).skipDirWhenSelect(false)
-                        .setCustomRootPath(AppFilePathUtils(
-                            context,
-                            "com.imcys.bilibilias").sdCardDirectory)
-                        .forResult(SAVE_FILE_PATH_CODE)
+
+            // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    setSavePath()
+                    true
+                } else {
+                    saveSDFile.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+                    false
                 }
-            ).show()
+            } else {
+                //小于安卓11
+                setSavePath()
+                false
+            }
 
 
-
-            false
         }
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    fun setSavePath() {
+        DialogUtils.dialog(requireContext(), "选择区域",
+            "现在选择，你要在手机内部储存还是SD卡呢？",
+            "手机内部储存",
+            "SD卡",
+            true,
+            positiveButtonClickListener = {
+                FilePickerManager
+                    .from(this)
+                    .maxSelectable(1)
+                    .filter(object : AbstractFileFilter() {
+                        override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                            return ArrayList(listData.filter { item ->
+                                item.isDir
+                            })
+                        }
+                    }).skipDirWhenSelect(false)
+                    .forResult(SAVE_FILE_PATH_CODE)
+
+            },
+            negativeButtonClickListener = {
+                FilePickerManager
+                    .from(this)
+                    .maxSelectable(1)
+                    .filter(object : AbstractFileFilter() {
+                        override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
+                            return ArrayList(listData.filter { item ->
+                                item.isDir
+                            })
+                        }
+                    }).skipDirWhenSelect(false)
+                    .setCustomRootPath(AppFilePathUtils(
+                        context,
+                        "com.imcys.bilibilias").sdCardDirectory)
+                    .forResult(SAVE_FILE_PATH_CODE)
+            }
+        ).show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    @SuppressLint("WrongConstant", "UseRequireInsteadOfGet")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         when (requestCode) {
             SAVE_FILE_PATH_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
@@ -156,6 +249,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+
         }
 
     }
@@ -179,6 +273,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
         }
+
+        renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
+        renameUserDownloadFileNameEditText = findPreference("rename_user_download_file_name_editText")!!
+
 
     }
 
