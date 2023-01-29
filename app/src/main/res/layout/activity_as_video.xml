@@ -342,7 +342,7 @@
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:onClick="@{()->AsVideoViewModel.downloadVideo(VideoBaseBean,VideoPageListData)}"
-                                android:text="缓 存 视 频"
+                                android:text="@string/app_activity_as_video_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -398,7 +398,7 @@
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:onClick="@{()->AsVideoViewModel.downloadBangumiVideo(VideoBaseBean,BangumiSeasonBean)}"
-                                android:text="缓 存 番 剧"
+                                android:text="@string/app_activity_as_bangumi_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />

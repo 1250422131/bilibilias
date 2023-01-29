@@ -15,7 +15,7 @@
         tools:context=".home.ui.activity.DonateActivity">
 
         <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-            app:title="捐款"
+            app:title="@string/app_activity_donate_title"
             android:id="@+id/donate_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

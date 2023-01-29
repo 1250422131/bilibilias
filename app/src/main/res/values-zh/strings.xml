@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name_debug">BILIBILIAS_DEBUG</string>
     <string name="app_name_release">BILIBILIAS</string>
@@ -5,7 +6,7 @@
     <string name="app_channel_release">Official Channel</string>
     <string name="app_channel_debug">Official Channel Debug</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="action_settings">Settings</string>
     <string name="title_activity_user">UserActivity</string>
     <string name="dl_file_rename_rules" tools:ignore="ExtraTranslation">
@@ -70,7 +71,6 @@
         }
 
     </string>
-
 
     <string name="VideoIndex">
         {
@@ -153,6 +153,7 @@
             }
         }
     </string>
+
     <string name="new_version_doc">2.0.1恢复了封面，音视频独立下载和ffmpeg合并视频的功能，请务必查看。</string>
     <string name="app_donate_doc">
         BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。
@@ -167,7 +168,6 @@
         {AUDIO_PATH} 音频储存路径\n
         {VIDEO_MERGE_PATH} 合并后储存路径
     </string>
-
     <string name="app_activity_bangumi_follow_title">追番</string>
     <string name="app_activity_collection_title">收藏</string>
     <string name="app_activity_dedicate_title">致敬</string>
@@ -193,4 +193,5 @@
     <string name="app_dialog_dl_radio_only_video">仅视频</string>
     <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
     <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
+
 </resources>
