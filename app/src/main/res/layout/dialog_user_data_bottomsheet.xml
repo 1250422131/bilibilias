@@ -6,7 +6,7 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.base.model.user.UserInfoBean.DataBean" />
+            type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
     </data>
 
     <RelativeLayout
@@ -66,7 +66,7 @@
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:adjustViewBounds="true"
-                    android:imageUrl="@{DataBean.face}"
+                    android:imageUrl="@{DataBean.data.face}"
                     android:scaleType="fitXY" />
             </androidx.cardview.widget.CardView>
 
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{DataBean.name}"
+                android:text="@{DataBean.data.name}"
                 android:textColor="@color/color_primary"
                 android:textStyle="bold" />
 
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{`Level`+DataBean.level}"
+                android:text="@{`Level`+DataBean.data.level}"
                 android:textStyle="bold" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{DataBean.sign}"
+                android:text="@{DataBean.data.sign}"
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView

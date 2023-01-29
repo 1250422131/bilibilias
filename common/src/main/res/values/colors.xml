@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="color_primary">#fb7299</color>
+    <color name="color_primary_text">#fb7299</color>
+    <color name="color_primary_variant">#ffd2e0</color>
+    <color name="color_primary_two">#30CFB1</color>
+    <color name="color_primary_light_text">#05080c</color>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#ffd2e0</color>
+    <color name="teal_700">#fb7299</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="color_text_hint">#A6A6AD</color>
+    <color name="color_121212">#FFFFFF</color>
+    <color name="color_303030">#FFFFFF</color>
+    <color name="user_work_bg">#F7F8FA</color>
+    <color name="app_default_bg">#f2f2f2</color>
+
+</resources>

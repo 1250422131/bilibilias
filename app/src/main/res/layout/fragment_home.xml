@@ -120,7 +120,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
-                                    android:text="V2.0.0"
+                                    android:text="V2.0.1"
                                     android:textColor="@color/black" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -144,71 +144,6 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/home_item_bg"
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:onClick="@{(view)->FragmentHomeViewModel.goToPrivacyPolicy(view)}"
-                        android:orientation="vertical"
-                        android:padding="20dp"
-                        tools:ignore="UnusedAttribute">
-
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:padding="10dp"
-                                android:src="@drawable/ic_home_personal_privacy"
-                                app:tint="@color/color_primary" />
-
-                            <androidx.appcompat.widget.LinearLayoutCompat
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginLeft="20dp"
-                                android:gravity="center_vertical"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="隐私政策"
-                                    android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="5dp"
-                                    android:text="使用APP则代表同意"
-                                    android:textColor="@color/black" />
-                            </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-                        </androidx.appcompat.widget.LinearLayoutCompat>
-
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="70dp"
-                            android:layout_marginTop="5dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="隐私政策有所更新，并且更加严格。"
-                                tools:ignore="HardcodedText" />
-
-                        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/fragment_home_dedicate_ly"
@@ -422,7 +357,6 @@
                                 android:text="如果你遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 
                     </LinearLayout>

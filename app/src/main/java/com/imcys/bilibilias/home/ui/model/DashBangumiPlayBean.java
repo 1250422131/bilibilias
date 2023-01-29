@@ -473,7 +473,7 @@ public class DashBangumiPlayBean implements Serializable {
                 private String frameRate;
                 private int codecid;
                 private String baseUrl;
-                private int size;
+                private Long size;
                 private String mime_type;
                 private int width;
                 private int startWithSAP;
@@ -579,11 +579,11 @@ public class DashBangumiPlayBean implements Serializable {
                     this.baseUrl = baseUrl;
                 }
 
-                public int getSize() {
+                public Long getSize() {
                     return size;
                 }
 
-                public void setSize(int size) {
+                public void setSize(Long size) {
                     this.size = size;
                 }
 
@@ -741,7 +741,7 @@ public class DashBangumiPlayBean implements Serializable {
                 private String frameRate;
                 private int codecid;
                 private String baseUrl;
-                private int size;
+                private Long size;
                 private String mime_type;
                 private int width;
                 private int startWithSAP;
@@ -847,11 +847,11 @@ public class DashBangumiPlayBean implements Serializable {
                     this.baseUrl = baseUrl;
                 }
 
-                public int getSize() {
+                public Long getSize() {
                     return size;
                 }
 
-                public void setSize(int size) {
+                public void setSize(Long size) {
                     this.size = size;
                 }
 

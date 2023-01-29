@@ -92,20 +92,26 @@
 -keep class com.bun.miitmdid.core.** {*;}
 -keep class com.baidu.bottom.** { *; }
 
-#饺子播放器混淆
--keep public class cn.jzvd.JZMediaSystem {*; }
--keep class tv.danmaku.ijk.media.player.** {*; }
--dontwarn tv.danmaku.ijk.media.player.*
--keep interface tv.danmaku.ijk.media.player.** { *; }
+
 #我们认为这些类混淆后可能将导致播放器出现问题
 -keep class cn.jzvd.Jzvd{*; }
 -keep class cn.jzvd.JzvdStd{*; }
--keep class com.imcys.bilibilias.base.view.AsJzvdStd{*; }
+-keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
+-keep class com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer{*; }
+-keep class com.imcys.bilibilias.tool_livestream.base.ijkplayer.JZMediaIjk {*; }
+
 -keep class cn.jzvd.JZUtils{*; }
 
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
-}
+-keep class cn.jzvd.**{*;}
+-keep public class * extends cn.jzvd.JZMediaInterface
+-keep public class * extends cn.jzvd.JzvdStd
+
+-keep class tv.danmaku.ijk.media.player.** {*; }
+-dontwarn tv.danmaku.ijk.media.player.*
+-keep interface tv.danmaku.ijk.media.player.** { *; }
+
+
+
 -keepclassmembers class * implements android.os.Parcelable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
@@ -132,3 +138,12 @@
     java.lang.Object readResolve();
 }
 
+-dontwarn io.microshow.rxffmpeg.**
+-keep class io.microshow.rxffmpeg.**{*;}
+
+
+-keep public class com.alibaba.android.arouter.routes.**{*;}
+-keep public class com.alibaba.android.arouter.facade.**{*;}
+
+# 如果使用了 单类注入，即不定义接口实现 IProvider，需添加下面规则，保护实现
+# -keep class * implements com.alibaba.android.arouter.facade.template.IProvider
