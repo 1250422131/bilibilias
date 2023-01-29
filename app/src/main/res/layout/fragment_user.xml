@@ -83,7 +83,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.1"
-                        android:text="作品"
+                        android:text="@string/app_fragment_user_works_title"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 

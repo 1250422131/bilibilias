@@ -17,7 +17,7 @@
             android:id="@+id/collection_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="收藏" />
+            app:title="@string/app_activity_collection_title" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/collection_tabLayout"
