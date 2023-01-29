@@ -10,9 +10,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -23,28 +23,34 @@ import com.hyy.highlightpro.parameter.MarginOffset
 import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.extend.toColorInt
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.user.MyUserData
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.activity.UserActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.view.FragmentHomeViewModel
-import com.imcys.bilibilias.utils.http.HttpUtils
 import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.crashes.Crashes
+import com.microsoft.appcenter.distribute.Distribute
+import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -56,8 +62,10 @@ import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.system.exitProcess
-import com.microsoft.appcenter.distribute.Distribute;
 
+@RouterAnno(
+    hostAndPath = ARouterAddress.AppHomeFragment,
+)
 class HomeFragment : Fragment() {
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding;
@@ -67,7 +75,9 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,7 +100,6 @@ class HomeFragment : Fragment() {
 
         initView()
         loadServiceData()
-
         return fragmentHomeBinding.root
     }
 
@@ -168,40 +177,46 @@ class HomeFragment : Fragment() {
     private fun loadAppData() {
         AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
 
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-            OldUpdateDataBean::class.java) {
+        lifecycleScope.launch {
+
+            val oldUpdateDataBean =
+                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                    OldUpdateDataBean::class.java)
+
             //加载公告
-            if (it.notice != ""){
-                loadNotice(it.notice.toString())
+            if (oldUpdateDataBean.notice != "") {
+                loadNotice(oldUpdateDataBean.notice.toString())
             }
             //送出签名信息
             val sha = apkVerifyWithSHA(requireContext(), "")
             val md5 = apkVerifyWithMD5(requireContext(), "")
             val crc = apkVerifyWithCRC(requireContext(), "")
 
-            when (it.id) {
+            when (oldUpdateDataBean.id) {
                 "0" -> postAppData(sha, md5, crc)
-                "1" -> checkAppData(it, sha, md5, crc)
+                "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
             }
 
-            loadVersionData(it)
-
+            //检测更新
+            loadVersionData(oldUpdateDataBean)
 
         }
+
     }
+
 
     /**
      * 加载版本信息
      */
     private fun loadVersionData(oldUpdateDataBean: OldUpdateDataBean) {
-        if (BiliBiliAsApi.version.toString() != oldUpdateDataBean.version){
+        if (BiliBiliAsApi.version.toString() != oldUpdateDataBean.version) {
             DialogUtils.dialog(
                 requireContext(),
                 "有新版本了",
-                "鉴于初期版本不稳定，因此强制性更新，下面是更新内容。\n${oldUpdateDataBean.gxnotice}",
+                oldUpdateDataBean.gxnotice,
                 "更新",
                 "还是更新",
-                false,
+                oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
                     val intent = Intent(Intent.ACTION_VIEW, uri);
@@ -257,7 +272,7 @@ class HomeFragment : Fragment() {
                 "我明白了",
                 "这份公告不行啊",
                 true,
-               positiveButtonClickListener =  {
+                positiveButtonClickListener = {
                     sharedPreferences.edit().putString("AppNotice", notice).apply()
                 },
                 negativeButtonClickListener = {
@@ -280,7 +295,31 @@ class HomeFragment : Fragment() {
         //检测用户是否登陆
         detectUserLogin()
 
+        //loadRoamData()
 
+
+    }
+
+    /**
+     * 加载漫游数据
+     */
+    private fun loadRoamData() {
+
+        val roamId = App.sharedPreferences.getInt("use_roam_id", -1)
+        if (roamId != -1) {
+            queryRoamData(roamId)
+        }
+
+    }
+
+    private fun queryRoamData(roamId: Int) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val roamDao = AppDatabase.getDatabase(requireContext()).roamDao()
+            roamDao.getByIdQuery(roamId).apply {
+                BilibiliApi.roamApi = romaPath
+            }
+
+        }
     }
 
 
@@ -292,11 +331,12 @@ class HomeFragment : Fragment() {
             requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
 
         App.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        BaseApplication.sharedPreferences = App.sharedPreferences
         //获取重要数据
-        App.cookies = sharedPreferences.getString("cookies", "").toString()
-        App.sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-        App.biliJct = sharedPreferences.getString("bili_jct", "").toString()
-        App.mid = sharedPreferences.getLong("mid", 0)
+        BaseApplication.cookies = sharedPreferences.getString("cookies", "").toString()
+        BaseApplication.sessdata = sharedPreferences.getString("SESSDATA", "").toString()
+        BaseApplication.biliJct = sharedPreferences.getString("bili_jct", "").toString()
+        BaseApplication.mid = sharedPreferences.getLong("mid", 0)
     }
 
     /**
@@ -327,8 +367,8 @@ class HomeFragment : Fragment() {
     private fun startStatistics() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPreferences.edit()
-            .putBoolean("microsoft_app_center_type",true)
-            .putBoolean("baidu_statistics_type",true)
+            .putBoolean("microsoft_app_center_type", true)
+            .putBoolean("baidu_statistics_type", true)
             .apply()
     }
 
@@ -336,11 +376,11 @@ class HomeFragment : Fragment() {
     private fun initUserData() {
 
         bottomSheetDialog?.show()
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
-                App.myUserData = it.data
+                BaseApplication.myUserData = it.data
                 loadUserData(it)
             }
     }
@@ -350,12 +390,13 @@ class HomeFragment : Fragment() {
      */
     private fun detectUserLogin() {
 
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
                 //判断是否登陆，没有就加载登陆
-                if (it.code != 0) DialogUtils.loginDialog(requireContext()).show() else App.myUserData = it.data
+                if (it.code != 0) DialogUtils.loginDialog(requireContext())
+                    .show() else BaseApplication.myUserData = it.data
             }
     }
 
@@ -367,7 +408,7 @@ class HomeFragment : Fragment() {
         HttpUtils
             .addHeader("user-agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
-            .addHeader("cookie", App.cookies)
+            .addHeader("cookie", BaseApplication.cookies)
             .get(
                 "${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}",
                 UserInfoBean::class.java
@@ -380,7 +421,7 @@ class HomeFragment : Fragment() {
                 //提交储存
                 editor.apply()
                 //这里给全局设置必要信息
-                App.mid = it.data.mid
+                BaseApplication.mid = it.data.mid
                 //关闭登陆登陆弹窗
                 loginQRDialog.cancel()
                 //加载用户弹窗
@@ -388,7 +429,6 @@ class HomeFragment : Fragment() {
             }
 
     }
-
 
 
     companion object {
@@ -482,6 +522,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context,"HomeFragment")
+        StatService.onPageEnd(context, "HomeFragment")
     }
 }

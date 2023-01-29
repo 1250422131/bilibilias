@@ -2,30 +2,43 @@ package com.imcys.bilibilias.home.ui.model.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.microsoft.appcenter.analytics.Analytics
+import kotlinx.coroutines.*
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
+import java.io.File
 
 /**
  * 解析视频的ViewModel
  */
-class AsVideoViewModel(val context: Context, private val asVideoBinding: ActivityAsVideoBinding) {
+class AsVideoViewModel(
+    val context: Context, private val asVideoBinding: ActivityAsVideoBinding,
+) : ViewModel() {
 
 
     /**
@@ -38,8 +51,9 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
         videoPageListData: VideoPageListData,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .addHeader("referer", "https://www.bilibili.com")
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
                 DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData, it)
@@ -59,8 +73,9 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", App.cookies).addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=80&fourk=1",
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .addHeader("referer", "https://www.bilibili.com")
+            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
                 loadDialog.cancel()
                 DialogUtils.downloadVideoDialog(context, videoBaseBean, bangumiSeasonBean, it)
@@ -71,16 +86,58 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     }
 
 
+    fun downloadDanMu(videoBaseBean: VideoBaseBean) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch(Dispatchers.IO) {
+
+            val response =
+                HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
+
+            saveDanmaku(response.await().body!!.bytes(), videoBaseBean.data.cid)
+
+        }
+
+    }
+
+
+
+    fun saveDanmaku(bytes: ByteArray, cid: Int) {
+
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val savePath = sharedPreferences.getString("user_download_save_path",
+            context.getExternalFilesDir("download").toString())
+
+        val bufferedSink: BufferedSink?
+        val dest = File("${savePath}/${cid}_danmu.xml")
+        if (!FileUtils.isFileExists(dest)) dest.createNewFile()
+        val sink = dest.sink() //打开目标文件路径的sink
+        val decompressBytes =
+            (context as AsVideoActivity).decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
+        bufferedSink = sink.buffer()
+        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        bufferedSink.close()
+
+        coroutineScope.launch(Dispatchers.Main) {
+            asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
+            //通知下载成功
+            Analytics.trackEvent("下载弹幕")
+        }
+
+    }
+
     /**
      * 点赞视频
      * @param bvid String aid
      */
-    fun likeVideo(view:View,bvid: String) {
+    fun likeVideo(view: View, bvid: String) {
 
-        if (asVideoBinding.archiveHasLikeBean?.data == 0){
+        if (asVideoBinding.archiveHasLikeBean?.data == 0) {
             HttpUtils
-                .addHeader("cookie", App.cookies)
-                .addParam("csrf", App.biliJct)
+                .addHeader("cookie", BaseApplication.cookies)
+                .addParam("csrf", BaseApplication.biliJct)
                 .addParam("like", "1")
                 .addParam("bvid", bvid)
                 .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
@@ -90,15 +147,15 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                             asVideoBinding.asVideoLikeBt.isSelected = true
                         }
                         65006 -> {
-                            cancelLikeVideo(view,bvid)
+                            cancelLikeVideo(view, bvid)
                         }
                         else -> {
                             asToast(context, it.message)
                         }
                     }
                 }
-        }else{
-            cancelLikeVideo(view,bvid)
+        } else {
+            cancelLikeVideo(view, bvid)
         }
 
 
@@ -108,10 +165,10 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * 取消对视频的点赞
      * @param bvid String
      */
-    private fun cancelLikeVideo(view:View,bvid: String){
+    private fun cancelLikeVideo(view: View, bvid: String) {
         HttpUtils
-            .addHeader("cookie", App.cookies)
-            .addParam("csrf", App.biliJct)
+            .addHeader("cookie", BaseApplication.cookies)
+            .addParam("csrf", BaseApplication.biliJct)
             .addParam("like", "2")
             .addParam("bvid", bvid)
             .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
@@ -121,7 +178,7 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                         asVideoBinding.asVideoLikeBt.isSelected = false
                     }
                     65004 -> {
-                        likeVideo(view,bvid)
+                        likeVideo(view, bvid)
                     }
                     else -> {
                         asToast(context, it.message)
@@ -131,18 +188,16 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     }
 
 
-
-
     /**
      * 视频投币
      * @param bvid String
      */
-    fun videoCoinAdd(view: View,bvid: String) {
+    fun videoCoinAdd(view: View, bvid: String) {
         HttpUtils
-            .addHeader("cookie", App.cookies)
+            .addHeader("cookie", BaseApplication.cookies)
             .addParam("bvid", bvid)
             .addParam("multiply", "2")
-            .addParam("csrf", App.biliJct)
+            .addParam("csrf", BaseApplication.biliJct)
             .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
                 asVideoBinding.archiveCoinsBean?.data?.multiply = 2
                 asVideoBinding.asVideoThrowBt.isSelected = true
@@ -157,8 +212,8 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(avid: Int) {
         asVideoBinding.apply {
-            HttpUtils.addHeader("cookie", App.cookies)
-                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + App.mid,
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + BaseApplication.mid,
                     UserCreateCollectionBean::class.java) {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(context as Activity,
@@ -212,10 +267,10 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
      * @param addMediaIds String
      */
     private fun addCollection(addMediaIds: String, avid: Int) {
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .addParam("rid", avid.toString())
             .addParam("add_media_ids", addMediaIds)
-            .addParam("csrf", App.biliJct)
+            .addParam("csrf", BaseApplication.biliJct)
             .addParam("type", "2")
             .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
                 if (it.code == 0) {
@@ -226,23 +281,6 @@ class AsVideoViewModel(val context: Context, private val asVideoBinding: Activit
                 }
             }
 
-    }
-
-    //三联按钮状态更新
-    private fun changeCollectionButtonToTrue() {
-        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.color_primary)
-    }
-
-    private fun changeLikeButtonToFalse() {
-        asVideoBinding.asVideoCollectionBt.setColorFilter(R.color.black)
-    }
-
-    private fun changeLikeButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
-    }
-
-    private fun changeCoinAddButtonToTrue() {
-        asVideoBinding.asVideoLikeBt.setColorFilter(R.color.color_primary)
     }
 
 

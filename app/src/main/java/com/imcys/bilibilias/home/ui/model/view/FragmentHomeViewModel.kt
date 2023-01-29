@@ -3,12 +3,14 @@ package com.imcys.bilibilias.home.ui.model.view
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import com.imcys.bilibilias.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.xiaojinzi.component.impl.Router
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -23,6 +25,13 @@ class FragmentHomeViewModel {
             Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
         val intent = Intent(Intent.ACTION_VIEW, uri);
         view.context.startActivity(intent)
+    }
+
+    fun goToRoam(view: View) {
+        //跳转
+        Router
+            .with(view.context)
+            .hostAndPath(hostAndPath = ARouterAddress.LiveStreamActivity).forward()
     }
 
     fun goToNewVersionDoc(view: View) {
@@ -54,7 +63,6 @@ class FragmentHomeViewModel {
     }
 
 
-
     fun logoutLogin(view: View) {
         DialogUtils.dialog(
             view.context,
@@ -65,7 +73,8 @@ class FragmentHomeViewModel {
             true,
             positiveButtonClickListener =
             {
-                HttpUtils.addHeader("cookie",App.cookies).addParam("biliCSRF", App.biliJct)
+                HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                    .addParam("biliCSRF", BaseApplication.biliJct)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 

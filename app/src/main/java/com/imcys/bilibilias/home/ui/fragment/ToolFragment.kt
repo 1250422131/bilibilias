@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -21,9 +22,15 @@ import com.hyy.highlightpro.parameter.MarginOffset
 import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.extend.toColorInt
+import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -32,18 +39,24 @@ import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
-import com.imcys.bilibilias.utils.AsVideoNumUtils
-import com.imcys.bilibilias.utils.http.HttpUtils
+import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
+import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
+import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 
-
+@RouterAnno(
+    hostAndPath = ARouterAddress.ToolFragment,
+)
 class ToolFragment : Fragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding
@@ -100,25 +113,25 @@ class ToolFragment : Fragment() {
 
         initView()
 
-        //检验
-        parseShare()
-
         return fragmentToolBinding.root
     }
 
     private fun initView() {
         //设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
+
         //设置点击事件
         fragmentToolBinding.toolViewHolder =
             context?.let { ToolViewHolder(it, fragmentToolBinding) }
+
         //绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
-        //加载工具item
-        loadToolItem()
         //设置监听
         setEditListener()
+
+        //加载工具item
+        loadToolItem()
 
     }
 
@@ -159,25 +172,77 @@ class ToolFragment : Fragment() {
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
+
+        if (inputString == "") {
+            asToast(requireContext(), "没有输入任何内容哦")
+            return
+        }
+
         //ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
+            return
         } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
             loadShareData("""https://b23.tv/([A-z]|[0-9])*""".toRegex()
                 .find(inputString)?.value!!.toString())
-        } else {
-            if (AsVideoNumUtils.getBvid(inputString) != "") {
-                getVideoCardData(AsVideoNumUtils.getBvid(inputString))
-            } else {
-                mAdapter.apply {
-                    currentList.filter { it.type == 0 }.run {
-                        submitList(this)
-                    }
-                }
-                Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+            return
+        } else if (AsVideoNumUtils.getBvid(inputString) != "") {
+            getVideoCardData(AsVideoNumUtils.getBvid(inputString))
+            return
+        }
+
+        val liveRegex = Regex("""(?<=live.bilibili.com/)([0-9]+)""")
+        //判断是否有搜到
+        if (liveRegex.containsMatchIn(inputString)) {
+            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
+            return
+        }
+        //至此，视频的检索没有超过，开始判断是不是直播内容
+
+
+        mAdapter.apply {
+            currentList.filter { it.type == 0 }.run {
+                submitList(this)
             }
+        }
+        Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun loadLiveRoomCard(roomId: String) {
+        lifecycleScope.launch {
+            //获取数据
+            val liveRoomData = getLiveRoomData(roomId)
+            mAdapter.apply {
+                currentList.filter { it.type == 0 }.run {
+                    //由于返回list不可变，这里采用相加
+                    mutableListOf(
+                        ToolItemBean(
+                            type = 2,
+                            liveRoomDataBean = liveRoomData,
+                            clickEvent = {
+                                LiveStreamActivity.actionStart(requireContext(), roomId)
+                            }
+                        )
+                    ) + this
+                }.apply {
+                    submitList(this)
+                }
+            }
+
+
+        }
+
+    }
+
+
+    private suspend fun getLiveRoomData(roomId: String): LiveRoomDataBean {
+        return withContext(lifecycleScope.coroutineContext) {
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .asyncGet("${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
+                    LiveRoomDataBean::class.java)
         }
     }
 
@@ -186,7 +251,7 @@ class ToolFragment : Fragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", App.cookies).get(toString, object : Callback {
+        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(toString, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
             }
@@ -204,7 +269,7 @@ class ToolFragment : Fragment() {
      * @param epId Int
      */
     private fun loadEpVideoCard(epId: Int) {
-        HttpUtils.addHeader("cookie", App.cookies)
+        HttpUtils.addHeader("cookie", BaseApplication.cookies)
             .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
                 if (it.code == 0) {
                     it.result.episodes.forEach { it1 ->
@@ -217,7 +282,7 @@ class ToolFragment : Fragment() {
     private fun getVideoCardData(bvid: String) {
 
         fragmentToolBinding.apply {
-            HttpUtils.addHeader("cookie", App.cookies)
+            HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .get(BilibiliApi.getVideoDataPath + "?bvid=$bvid", VideoBaseBean::class.java) {
                     (mAdapter).apply {
                         //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
@@ -227,7 +292,10 @@ class ToolFragment : Fragment() {
                             mutableListOf(
                                 ToolItemBean(
                                     type = 1,
-                                    videoBaseBean = it
+                                    videoBaseBean = it,
+                                    clickEvent = {
+                                        AsVideoActivity.actionStart(requireContext(), bvid)
+                                    }
                                 )
                             ) + this
                         }.apply {
@@ -242,45 +310,69 @@ class ToolFragment : Fragment() {
 
 
     private fun loadToolItem() {
-
-        val toolItemMutableList = mutableListOf(
-            ToolItemBean("缓 存 视 频", "https://s1.ax1x.com/2022/12/18/zbTmpF.png", "") {
-                mAdapter.currentList[0].videoBaseBean?.data?.bvid?.let {
-                    context?.let { it1 -> AsVideoActivity.actionStart(it1, it) }
-                } ?: run {
-                    asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
+        val toolItemMutableList = mutableListOf<ToolItemBean>()
+        lifecycleScope.launch {
+            //通过远程数据获取item
+            val oldToolItemBean = getOldToolItemBean()
+            oldToolItemBean.data.forEach {
+                when (it.tool_code) {
+                    1 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color) {
+                            asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
+                        })
+                    }
+                    2 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color) {
+                            val intent = Intent(context, SettingActivity::class.java)
+                            context?.startActivity(intent)
+                        })
+                    }
                 }
-
-            },
-            ToolItemBean("关 于 设 置", "https://i.niupic.com/images/2022/12/23/aed4.png", "") {
-                val intent = Intent(context, SettingActivity::class.java)
-                context?.startActivity(intent)
             }
 
-        )
+            //展示item
+            fragmentToolBinding.apply {
+                fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
-        fragmentToolBinding.apply {
-            fragmentToolRecyclerView.adapter = ToolItemAdapter()
+                mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
+                mAdapter.submitList(toolItemMutableList)
 
-            mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-            mAdapter.submitList(toolItemMutableList)
+                fragmentToolRecyclerView.layoutManager =
+                    GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
+                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when ((mAdapter.currentList)[position].type) {
+                                    1 -> 3
+                                    2 -> 3
+                                    else -> 1
+                                }
 
-            fragmentToolRecyclerView.layoutManager =
-                GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                    spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return if ((mAdapter.currentList)[position].type == 1) {
-                                3
-                            } else {
-                                1
                             }
                         }
                     }
-                }
+
+            }
+
+            //校验分享数据
+            parseShare()
 
         }
 
 
+    }
+
+
+    private suspend fun getOldToolItemBean(): OldToolItemBean {
+        return withContext(lifecycleScope.coroutineContext) {
+            HttpUtils.asyncGet("${BiliBiliAsApi.appFunction}?type=oldToolItem",
+                OldToolItemBean::class.java)
+        }
     }
 
     override fun onDestroy() {

@@ -9,9 +9,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.utils.AsVideoNumUtils
-import com.imcys.bilibilias.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 
 class CollectionDataAdapter :
     ListAdapter<CollectionDataBean.DataBean.MediasBean, ViewHolder>(object :
