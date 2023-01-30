@@ -154,12 +154,6 @@
         }
     </string>
     <string name="new_version_doc">2.0.1恢复了封面，音视频独立下载和ffmpeg合并视频的功能，请务必查看。</string>
-    <string name="app_donate_doc">
-        BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。
-        因此，希望BILIBILIAS的用户们可以支援一些费用，一次早餐钱，一次奶茶钱，一次午饭钱就可以满足BILIBILIAS绝大部分的费用。
-        最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n
-        你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式
-    </string>
     <string name="user_dl_merge_cmd" >
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
@@ -193,4 +187,5 @@
     <string name="app_dialog_dl_radio_only_video">仅视频</string>
     <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
     <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
+    <string name="app_donate_doc">"\n        BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。\n        因此，希望BILIBILIAS的用户们可以支援一些费用，一次早餐钱，一次奶茶钱，一次午饭钱就可以满足BILIBILIAS绝大部分的费用。\n        最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n\n        你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式\n    "</string>
 </resources>
