@@ -22,8 +22,8 @@
         \n\n【注意】：如果修改后发现文件下载失败了，就尝试直接用CID等作为名称，也可能是系统对这类文件名称有劫持。\n
         尽可能保证音频和视频不在一个文件夹里，经过测试，这样有可能诱发一个文件下载失败。
     </string>
-    <string name="user_download_save_path_title">缓存文件储存路径</string>
-    <string name="user_download_file_name">缓存文件命名规则</string>
+    <string name="user_download_save_path_title">Storage Path</string>
+    <string name="user_download_file_name">Name Rules</string>
 
     <string name="BangumiEntry">
         {
@@ -171,25 +171,25 @@
 
     <string name="app_activity_bangumi_follow_title">Follow Series</string>
     <string name="app_activity_collection_title">Stars</string>
-    <string name="app_activity_dedicate_title">致敬</string>
-    <string name="app_activity_donate_title">捐款</string>
+    <string name="app_activity_dedicate_title">Salutes</string>
+    <string name="app_activity_donate_title">Donations</string>
     <string name="app_activity_play_history_title">Play History</string>
     <string name="app_fragment_tool_input_tip">Input BV/AV/EP Num</string>
     <string name="app_fragment_download_task_tab_downloading_title">Downloading</string>
     <string name="app_fragment_download_task_tab_finish_title">Download Complete</string>
     <string name="app_item_fg_user_card_data_fans">Fans</string>
-    <string name="app_item_fg_user_card_data_friend">关注</string>
-    <string name="app_item_fg_user_card_data_liks">获赞</string>
-    <string name="app_item_fg_user_card_data_view">播放</string>
-    <string name="app_fragment_user_works_title">作品</string>
+    <string name="app_item_fg_user_card_data_friend">Follow</string>
+    <string name="app_item_fg_user_card_data_liks">Like</string>
+    <string name="app_item_fg_user_card_data_view">Play</string>
+    <string name="app_fragment_user_works_title">Works</string>
     <string name="app_dialog_dl_video_bar_title">Video Info</string>
     <string name="app_dialog_dl_video_tip">Reproduction of this video without permission is prohibited. </string>
-    <string name="app_dialog_dl_video_definition">视频清晰度</string>
-    <string name="app_dialog_dl_video_episode">缓存的子集</string>
-    <string name="app_dialog_dl_video_video_type">缓存的类型</string>
-    <string name="app_dialog_dl_video_audio_quality">缓存的音质</string>
-    <string name="app_dialog_dl_video_radio_built_download">内置下载</string>
-    <string name="app_dialog_dl_radio_video_and_audio">音视频</string>
+    <string name="app_dialog_dl_video_definition">Video Quality</string>
+    <string name="app_dialog_dl_video_episode">Cache Subset</string>
+    <string name="app_dialog_dl_video_video_type">Type</string>
+    <string name="app_dialog_dl_video_audio_quality">Audio Quality</string>
+    <string name="app_dialog_dl_video_radio_built_download">Download using BILIBILIAS</string>
+    <string name="app_dialog_dl_radio_video_and_audio">All</string>
     <string name="app_dialog_dl_radio_only_audio">Audio Only</string>
     <string name="app_dialog_dl_radio_only_video">Video Only</string>
     <string name="app_activity_as_video_dl_bt_text">Cache Video</string>
