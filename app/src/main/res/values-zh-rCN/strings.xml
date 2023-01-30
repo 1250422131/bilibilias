@@ -184,6 +184,7 @@
     <string name="app_dialog_dl_video_bar_title">视频信息</string>
     <string name="app_dialog_dl_video_tip">此视频未经允许禁止转载</string>
     <string name="app_dialog_dl_video_definition">视频清晰度</string>
+    <string name="app_dialog_dl_video_episode">缓存的子集</string>
     <string name="app_dialog_dl_video_video_type">缓存的类型</string>
     <string name="app_dialog_dl_video_audio_quality">缓存的音质</string>
     <string name="app_dialog_dl_video_radio_built_download">内置下载</string>
