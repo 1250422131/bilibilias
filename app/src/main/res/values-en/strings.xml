@@ -169,29 +169,29 @@
         {VIDEO_MERGE_PATH} 合并后储存路径
     </string>
 
-    <string name="app_activity_bangumi_follow_title">追番</string>
-    <string name="app_activity_collection_title">收藏</string>
+    <string name="app_activity_bangumi_follow_title">Follow Series</string>
+    <string name="app_activity_collection_title">Stars</string>
     <string name="app_activity_dedicate_title">致敬</string>
     <string name="app_activity_donate_title">捐款</string>
-    <string name="app_activity_play_history_title">播放历史</string>
-    <string name="app_fragment_tool_input_tip">输入BV/AV/EP号</string>
-    <string name="app_fragment_download_task_tab_downloading_title">正在下载</string>
-    <string name="app_fragment_download_task_tab_finish_title">下载完成</string>
-    <string name="app_item_fg_user_card_data_fans">粉丝</string>
+    <string name="app_activity_play_history_title">Play History</string>
+    <string name="app_fragment_tool_input_tip">Input BV/AV/EP Num</string>
+    <string name="app_fragment_download_task_tab_downloading_title">Downloading</string>
+    <string name="app_fragment_download_task_tab_finish_title">Download Complete</string>
+    <string name="app_item_fg_user_card_data_fans">Fans</string>
     <string name="app_item_fg_user_card_data_friend">关注</string>
     <string name="app_item_fg_user_card_data_liks">获赞</string>
     <string name="app_item_fg_user_card_data_view">播放</string>
     <string name="app_fragment_user_works_title">作品</string>
-    <string name="app_dialog_dl_video_bar_title">视频信息</string>
-    <string name="app_dialog_dl_video_tip">此视频未经允许禁止转载</string>
+    <string name="app_dialog_dl_video_bar_title">Video Info</string>
+    <string name="app_dialog_dl_video_tip">Reproduction of this video without permission is prohibited. </string>
     <string name="app_dialog_dl_video_definition">视频清晰度</string>
     <string name="app_dialog_dl_video_episode">缓存的子集</string>
     <string name="app_dialog_dl_video_video_type">缓存的类型</string>
     <string name="app_dialog_dl_video_audio_quality">缓存的音质</string>
     <string name="app_dialog_dl_video_radio_built_download">内置下载</string>
     <string name="app_dialog_dl_radio_video_and_audio">音视频</string>
-    <string name="app_dialog_dl_radio_only_audio">仅音频</string>
-    <string name="app_dialog_dl_radio_only_video">仅视频</string>
-    <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
-    <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
+    <string name="app_dialog_dl_radio_only_audio">Audio Only</string>
+    <string name="app_dialog_dl_radio_only_video">Video Only</string>
+    <string name="app_activity_as_video_dl_bt_text">Cache Video</string>
+    <string name="app_activity_as_bangumi_dl_bt_text">Cache Series</string>
 </resources>
