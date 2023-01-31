@@ -156,7 +156,7 @@
     <string name="app_fragment_download_task_tab_finish_title">Download Complete</string>
     <string name="app_item_fg_user_card_data_fans">Fans</string>
     <string name="app_item_fg_user_card_data_friend">Followers</string>
-    <string name="app_item_fg_user_card_data_liks">Like</string>
+    <string name="app_item_fg_user_card_data_liks">Likes</string>
     <string name="app_item_fg_user_card_data_view">Play</string>
     <string name="app_fragment_user_works_title">Works</string>
     <string name="app_dialog_dl_video_bar_title">Video Info</string>
