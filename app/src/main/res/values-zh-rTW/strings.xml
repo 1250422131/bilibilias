@@ -22,8 +22,8 @@
         \n\n【注意】：如果修改后发现文件下载失败了，就尝试直接用CID等作为名称，也可能是系统对这类文件名称有劫持。\n
         尽可能保证音频和视频不在一个文件夹里，经过测试，这样有可能诱发一个文件下载失败。
     </string>
-    <string name="user_download_save_path_title">缓存文件储存路径</string>
-    <string name="user_download_file_name">缓存文件命名规则</string>
+    <string name="user_download_save_path_title">緩存檔案儲存路徑</string>
+    <string name="user_download_file_name">緩存檔案命名規則</string>
 
     <string name="BangumiEntry">
         {
