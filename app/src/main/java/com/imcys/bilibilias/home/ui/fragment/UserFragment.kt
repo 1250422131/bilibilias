@@ -21,6 +21,7 @@ import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.*
 import kotlin.math.ceil
@@ -80,16 +81,16 @@ class UserFragment : Fragment() {
 
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20",
-                UserWorksBean::class.java) {
-                userWorksBean = it
-                userWorksAd.submitList(oldMutableList + it.data.list.vlist)
-            }
+        lifecycleScope.launch {
+            val userWorksBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+            this@UserFragment.userWorksBean = userWorksBean
+            userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
+        }
+
     }
 
     private fun initUserWorks() {
-
 
 
         HttpUtils.addHeader("cookie", BaseApplication.cookies)
@@ -170,9 +171,8 @@ class UserFragment : Fragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}",
-                UserCardBean::class.java)
+        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}")
     }
 
     /**
@@ -180,9 +180,8 @@ class UserFragment : Fragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}",
-                UpStatBeam::class.java)
+        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}")
     }
 
     /**
@@ -190,9 +189,8 @@ class UserFragment : Fragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
-                UserBaseBean::class.java)
+        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}")
     }
 
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
