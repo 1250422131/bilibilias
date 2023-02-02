@@ -16,7 +16,6 @@ import com.imcys.bilibilias.common.base.view.AsJzvdStd
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.tool_livestream.R
 import com.imcys.bilibilias.tool_livestream.base.BaseActivity
-import com.imcys.bilibilias.tool_livestream.base.ijkplayer.JZMediaIjk
 import com.imcys.bilibilias.tool_livestream.databinding.ActivityLiveStreamBinding
 import com.imcys.bilibilias.tool_livestream.ui.model.LiveMasterUserBean
 import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
@@ -167,7 +166,7 @@ class LiveStreamActivity : BaseActivity() {
         jzDataSource.headerMap["User-Agent"] =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
 
-        asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL, JZMediaIjk::class.java)
+        asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 
         asJzvdStd.setPlayStateListener(object : JzbdStdInfo {
 
