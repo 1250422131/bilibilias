@@ -11,7 +11,7 @@ class BilibiliApi {
          */
 
         private const val serviceApi: String = "https://api.bilibili.com/"
-        const val loginApi: String = "http://passport.bilibili.com/"
+        const val loginApi: String = "https://passport.bilibili.com/"
         var roamApi: String = "https://api.bilibili.com/"
         private const val liveRoomApi = "https://api.live.bilibili.com/"
 

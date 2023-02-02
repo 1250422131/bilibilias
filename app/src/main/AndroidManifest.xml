@@ -22,6 +22,7 @@
     <application
         android:name=".base.app.App"
         android:allowBackup="true"
+        android:configChanges="locale"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -34,6 +35,14 @@
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".home.ui.activity.favlist.FavListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
             android:value="0f9d51ff82" /> <!-- 渠道商编号 -->
@@ -60,8 +69,7 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.imcys.bilibilias.fileProvider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/bilibilias_file_paths" />
@@ -74,7 +82,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".home.ui.activity.DonateActivity"
             android:exported="false" />

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.documentfile.provider.DocumentFile
-import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
@@ -18,8 +17,6 @@ import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.data.AppDatabase
-import com.imcys.bilibilias.common.data.dao.DownloadFinishTaskDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
@@ -148,7 +145,7 @@ class DownloadQueue {
     // 执行下载任务
     private fun executeTask() {
         //刷新下载对象
-        val executor = PriorityExecutor(1, true)
+        val coroutineScope = CoroutineScope(Dispatchers.IO)
 
         while (currentTasks.size < 3 && queue.isNotEmpty()) {
             //删除并且返回当前的task
@@ -175,7 +172,7 @@ class DownloadQueue {
 
 
             //使用多个线程同步下载
-            executor.execute {
+            coroutineScope.launch {
                 // 使用 XUtils 库来下载文件
                 task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
                     override fun onSuccess(result: File?) {
@@ -192,7 +189,6 @@ class DownloadQueue {
                         updateAdapter()
                         // 执行下一个任务
                         executeTask()
-
                     }
 
                     override fun onCancelled(cex: Callback.CancelledException?) {

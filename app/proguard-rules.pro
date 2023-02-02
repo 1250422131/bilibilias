@@ -97,6 +97,7 @@
 -keep class cn.jzvd.Jzvd{*; }
 -keep class cn.jzvd.JzvdStd{*; }
 -keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
+-keep class com.imcys.bilibilias.base.view.AppAsJzvdStd{*; }
 -keep class com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer{*; }
 -keep class com.imcys.bilibilias.tool_livestream.base.ijkplayer.JZMediaIjk {*; }
 

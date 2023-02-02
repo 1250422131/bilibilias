@@ -1079,7 +1079,7 @@ public class BangumiSeasonBean implements Serializable {
             private String avatar_subscript_url;
             private int follower;
             private int is_follow;
-            private int mid;
+            private long mid;
             private String nickname_color;
             private PendantBean pendant;
             private int theme_type;
@@ -1121,11 +1121,11 @@ public class BangumiSeasonBean implements Serializable {
                 this.is_follow = is_follow;
             }
 
-            public int getMid() {
+            public long getMid() {
                 return mid;
             }
 
-            public void setMid(int mid) {
+            public void setMid(long mid) {
                 this.mid = mid;
             }
 
