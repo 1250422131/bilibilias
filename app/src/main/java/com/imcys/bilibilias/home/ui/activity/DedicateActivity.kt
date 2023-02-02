@@ -80,8 +80,8 @@ class DedicateActivity : BaseActivity() {
             ),
             DedicateBean(
                 "xiwangly | 希望",
-                "BILIBILIAS初期测试人员",
-                "希望在BILIBILIAS各个版本都提出了不少的意见，部分意见已经在BILIBILIAS所实现。",
+                "BILIBILIAS多语言翻译",
+                "希望为as的国际化做出了巨大贡献，提供了英语，繁体等语言翻译。另外在在各个版本都提出了不少的意见，部分意见已经实现。",
                 "https://q1.qlogo.cn/g?b=qq&nk=1334850101&s=640",
                 "https://www.xiwangly.top/"
             ),
