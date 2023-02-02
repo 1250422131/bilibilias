@@ -42,7 +42,7 @@ open class AsJzvdStd : JzvdStd {
     var stopTime: Long = 0
     var asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
     private var startLinearLayout: LinearLayout = findViewById(R.id.start_layout)
-    private var asJzvdstdPosterFL: FrameLayout = findViewById(R.id.as_jzvdstd_poster_fl)
+    protected val asJzvdstdPosterFL: FrameLayout = findViewById(R.id.as_jzvdstd_poster_fl)
     private var asJzvdstdPicDlBt: TextView = findViewById(R.id.as_jzvdstd_pic_dl_bt)
 
     var posterImageUrl: String? = ""
@@ -119,7 +119,7 @@ open class AsJzvdStd : JzvdStd {
         }
     }
 
-    private fun clickPicDownload() {
+     private fun clickPicDownload() {
 
         if (posterImageUrl != "") {
             downloadPic()
@@ -205,10 +205,6 @@ open class AsJzvdStd : JzvdStd {
     }
 
 
-    override fun onStatePreparingPlaying() {
-        super.onStatePreparingPlaying()
-
-    }
 
 
     override fun onStopTrackingTouch(seekBar: SeekBar) {

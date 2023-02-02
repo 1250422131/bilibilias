@@ -35,6 +35,7 @@ import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
@@ -390,14 +391,15 @@ class HomeFragment : Fragment() {
      */
     private fun detectUserLogin() {
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get(
-                BilibiliApi.getMyUserData, MyUserData::class.java
-            ) {
-                //判断是否登陆，没有就加载登陆
-                if (it.code != 0) DialogUtils.loginDialog(requireContext())
-                    .show() else BaseApplication.myUserData = it.data
-            }
+        lifecycleScope.launch {
+            val myUserData = HttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .asyncGet(
+                    BilibiliApi.getMyUserData, MyUserData::class.java
+                )
+            if (myUserData.code != 0) DialogUtils.loginDialog(requireContext())
+                .show() else BaseApplication.myUserData = myUserData.data
+        }
+
     }
 
 
@@ -405,28 +407,26 @@ class HomeFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
 
-        HttpUtils
-            .addHeader("user-agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
-            .addHeader("cookie", BaseApplication.cookies)
-            .get(
-                "${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}",
-                UserInfoBean::class.java
-            ) {
-                //这里需要储存下数据
-                val sharedPreferences =
-                    requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.putLong("mid", it.data.mid)
-                //提交储存
-                editor.apply()
-                //这里给全局设置必要信息
-                BaseApplication.mid = it.data.mid
-                //关闭登陆登陆弹窗
-                loginQRDialog.cancel()
-                //加载用户弹窗
-                DialogUtils.userDataDialog(requireActivity(), it).show()
-            }
+        lifecycleScope.launch {
+            val userInfoBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+                .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+
+            //这里需要储存下数据
+            val sharedPreferences =
+                requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putLong("mid", userInfoBean.data.mid)
+            //提交储存
+            editor.apply()
+            //这里给全局设置必要信息
+            BaseApplication.mid = userInfoBean.data.mid
+            //关闭登陆登陆弹窗
+            loginQRDialog.cancel()
+            //加载用户弹窗
+            DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
+
+        }
+
 
     }
 

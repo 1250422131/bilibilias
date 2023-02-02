@@ -92,6 +92,19 @@
         </SwitchPreferenceCompat>
     </PreferenceCategory>
 
+
+    <PreferenceCategory app:title="Language">
+
+        <ListPreference
+            android:defaultValue="System"
+            android:entryValues="@array/user_language_value"
+            android:entries="@array/user_language"
+            app:key="user_language"
+            app:title="设置当前的语言">
+
+        </ListPreference>
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="隐私政策">
 
         <SwitchPreferenceCompat

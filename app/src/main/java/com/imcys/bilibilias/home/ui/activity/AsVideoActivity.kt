@@ -1,7 +1,9 @@
 package com.imcys.bilibilias.home.ui.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -13,16 +15,18 @@ import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
+import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.view.AsJzvdStd
-import com.imcys.bilibilias.common.base.view.JzbdStdInfo
+import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
@@ -59,7 +63,7 @@ class AsVideoActivity : BaseActivity() {
     lateinit var binding: ActivityAsVideoBinding
 
     //饺子播放器，方便全局调用
-    private lateinit var asJzvdStd: AsJzvdStd
+    private lateinit var asJzvdStd: AppAsJzvdStd
 
     //烈焰弹幕使 弹幕解析器
     private lateinit var asDanmaku: IDanmakuView
@@ -77,20 +81,24 @@ class AsVideoActivity : BaseActivity() {
     var epid: Long = 0
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
+        //加载用户信息&视频信息
         loadUserData()
-        //加载视频首要信息
-        initVideoData()
         //加载控件
         initView()
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     private fun loadUserData() {
         lifecycleScope.launch {
+
             userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
+            //加载视频首要信息
+            initVideoData()
         }
     }
 
@@ -109,6 +117,7 @@ class AsVideoActivity : BaseActivity() {
                 when (asJzvdStd.state) {
                     Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
                         //播放视频
+                        asVideoFaButton.visibility = View.GONE
                         asJzvdStd.startVideo()
                     }
                     Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
@@ -138,29 +147,48 @@ class AsVideoActivity : BaseActivity() {
 
         when (type) {
             "video" -> {
-                HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                    .addHeader("referer", "https://www.bilibili.com")
-                    .get("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1",
-                        VideoPlayBean::class.java) {
-                        //设置布局视频播放数据
-                        binding.videoPlayBean = it
+
+                lifecycleScope.launchWhenCreated {
+                    val videoPlayBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+                        .addHeader("referer", "https://www.bilibili.com")
+                        .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
+                    //设置布局视频播放数据
+                    binding.videoPlayBean = videoPlayBean
+
+                    if (videoPlayBean.code != 0) {
+                        //弹出通知弹窗
+                        AsDialog.build {
+                            title = "视频文件特殊"
+                            config = {
+                                content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
+                                positiveButtonText = "知道啦"
+                                positiveButton = {
+                                    it.cancel()
+                                }
+                            }
+                        }.show()
+                    } else {
                         //真正调用饺子播放器设置视频数据
-                        setAsJzvdConfig(it.data.durl[0].url, "")
-                        binding.asVideoCd.visibility = View.VISIBLE
-                        binding.asVideoBangumiCd.visibility = View.GONE
+                        setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
+                    binding.asVideoCd.visibility = View.VISIBLE
+                    binding.asVideoBangumiCd.visibility = View.GONE
+                }
             }
             "bangumi" -> {
-                HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                    .addHeader("referer", "https://www.bilibili.com")
-                    .get("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1",
-                        BangumiPlayBean::class.java) {
+                lifecycleScope.launch {
+                    val bangumiPlayBean = KtHttpUtils
+                        .addHeader("cookie", BaseApplication.cookies)
+                        .addHeader("referer", "https://www.bilibili.com")
+                        .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
 
-                        //设置布局视频播放数据
-                        binding.bangumiPlayBean = it
-                        //真正调用饺子播放器设置视频数据
-                        setAsJzvdConfig(it.result.durl[0].url, "")
-                    }
+                    //设置布局视频播放数据
+                    binding.bangumiPlayBean = bangumiPlayBean
+                    //真正调用饺子播放器设置视频数据
+                    setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
+
+                }
+
             }
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
         }
@@ -260,28 +288,33 @@ class AsVideoActivity : BaseActivity() {
      *
      */
     private fun loadBangumiVideoList() {
-        HttpUtils.apply {
-            if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
-                    true)
-            ) this.addHeader("cookie", BaseApplication.cookies)
-        }.get(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid,
-            BangumiSeasonBean::class.java) {
 
+        lifecycleScope.launch {
 
-            isMember(it)
+            val bangumiSeasonBean = KtHttpUtils.apply {
+                //漫游设计（该功能随时弃用）
+                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                        true)
+                ) this.addHeader("cookie", BaseApplication.cookies)
+            }
+                .asyncGet<BangumiSeasonBean>(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid)
+
+            isMember(bangumiSeasonBean)
 
 
             binding.apply {
 
-                if (it.result.episodes.size == 1) asVideoSubsectionRv.visibility = View.GONE
+                //如果就只有一个子集，就不要显示子集列表了
+                if (bangumiSeasonBean.result.episodes.size == 1) asVideoSubsectionRv.visibility =
+                    View.GONE
 
                 //到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
                 binding.asVideoBangumiCd.visibility = View.VISIBLE
                 binding.asVideoCd.visibility = View.GONE
 
-                binding.bangumiSeasonBean = it
+                binding.bangumiSeasonBean = bangumiSeasonBean
                 asVideoSubsectionRv.adapter =
-                    BangumiSubsectionAdapter(it.result.episodes.toMutableList(),
+                    BangumiSubsectionAdapter(bangumiSeasonBean.result.episodes.toMutableList(),
                         cid) { data, position ->
                         updateBangumiInformation(data, position)
                     }
@@ -290,6 +323,7 @@ class AsVideoActivity : BaseActivity() {
                     LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
 
             }
+
         }
 
     }
@@ -359,9 +393,8 @@ class AsVideoActivity : BaseActivity() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
-                UserBaseBean::class.java)
+        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}")
     }
 
 
@@ -393,7 +426,6 @@ class AsVideoActivity : BaseActivity() {
 
                 asVideoSubsectionRv.layoutManager =
                     LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
-
 
             }
         }
@@ -442,7 +474,7 @@ class AsVideoActivity : BaseActivity() {
             FileInputStream(getExternalFilesDir("temp").toString() + "/tempDm.xml")
 
         //解析弹幕
-        danmakuParser = createParser(input)!!
+        danmakuParser = createParser(input)
 
 
         //设置弹幕配置

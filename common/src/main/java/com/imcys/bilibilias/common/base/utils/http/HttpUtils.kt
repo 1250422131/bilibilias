@@ -1,8 +1,11 @@
 package com.imcys.bilibilias.common.base.utils.http
 
 import com.google.gson.Gson
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.awaitResponse
+import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -22,7 +25,7 @@ import java.net.URL
  */
 
 
-class HttpUtils {
+open class HttpUtils {
 
 
     companion object {
@@ -30,29 +33,12 @@ class HttpUtils {
         private val okHttpClient = OkHttpClient()
 
         private var params = mutableMapOf<String, String>()
-        private var headers =
-            mutableMapOf("user-agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
+        private var headers = mutableMapOf<String, String>()
 
-
-        /**
-         * 下载文件方法
-         * @param url String
-         * @param callBack ProgressCallback<File>
-         */
-        @JvmStatic
-        fun downLoadFile(url: String, callBack: org.xutils.common.Callback.ProgressCallback<File>) {
-            val requestParams = RequestParams(url).apply {
-                Companion.headers.forEach {
-                    addHeader(it.key, it.value)
-                }
-                saveFilePath = ""
-                executor = PriorityExecutor(1, true)
-                //自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
-                isCancelFast = true //是否可以被立即停止.
-
-            }
-            x.http().get(requestParams, callBack)
+        private val misakaMoeUa by lazy {
+            SystemUtil.getUserAgent()
         }
+
 
         /**
          * 使用 OkHttp 库发送 GET 请求的方法
@@ -61,7 +47,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun get(url: String, callBack: Callback) {
-
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
                 // 将已设置的头信息添加到请求中
@@ -86,6 +73,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
                 // 将已设置的头信息添加到请求中
@@ -118,7 +107,8 @@ class HttpUtils {
          */
         @JvmStatic
         suspend fun asyncGet(url: String): Deferred<Response> {
-
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
                 // 将已设置的头信息添加到请求中
@@ -132,7 +122,7 @@ class HttpUtils {
             }.build()
             val coroutineScope = CoroutineScope(Dispatchers.Default)
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            return coroutineScope.async{
+            return coroutineScope.async {
                 okHttpClient.newCall(request).awaitResponse()
             }
         }
@@ -145,7 +135,8 @@ class HttpUtils {
          */
         @JvmStatic
         suspend fun <T : Any> asyncGet(url: String, clz: Class<T>): T {
-
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
                 // 将已设置的头信息添加到请求中
@@ -172,7 +163,8 @@ class HttpUtils {
          */
         @JvmStatic
         suspend fun <T : Any> asyncPost(url: String, clz: Class<T>): T {
-
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 构建表单请求体
             val formBody: FormBody.Builder = FormBody.Builder()
             // 添加参数
@@ -211,6 +203,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun <T> post(url: String, clz: Class<T>, responseResult: (data: T) -> Unit) {
+            //检验url，添加对应的ua
+            checkUrl(url)
             // 构建表单请求体
             val formBody: FormBody.Builder = FormBody.Builder()
             // 添加参数
@@ -249,7 +243,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun post(url: String, callBack: Callback) {
-
+            //检验url，添加对应的ua
+            checkUrl(url)
             //构建FormBody
             val formBody: FormBody.Builder = FormBody.Builder()
             //添加params参数
@@ -280,6 +275,8 @@ class HttpUtils {
          */
         @JvmStatic
         fun postJson(url: String, jsonString: String, callBack: Callback) {
+            //检验url，添加对应的ua
+            checkUrl(url)
             val stringBody =
                 jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
             val request: Request = Request.Builder().apply {
@@ -386,7 +383,16 @@ class HttpUtils {
             return result
         }
 
+        private fun checkUrl(url: String) {
+            headers["user-agent"] = if (url.contains("misakamoe.com")) {
+                misakaMoeUa + " BILIBILIAS/${BiliBiliAsApi.version}"
+            } else {
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+            }
+        }
+
     }
+
 
 
 }

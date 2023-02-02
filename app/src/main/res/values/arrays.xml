@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Reply Preference -->
     <string-array name="reply_entries">
         <item>Reply</item>
@@ -22,5 +22,17 @@
         <item>2</item>
         <item>3</item>
     </integer-array>
+
+    <string-array name="user_language">
+        <item>跟随系统</item>
+        <item>简体中文</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="user_language_value">
+        <item>System</item>
+        <item>ZH</item>
+        <item>EN</item>
+    </string-array>
 
 </resources>

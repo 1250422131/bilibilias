@@ -67,13 +67,13 @@ class DownloadFragment : Fragment() {
         fragmentDownloadBinding.apply {
             fragmentDownloadTabLayout.addOnTabSelectedListener(
                 object : TabLayout.OnTabSelectedListener {
-                    override fun onTabSelected(tab: TabLayout.Tab?) {
-                        when (tab?.text) {
-                            "正在下载" -> {
+                    override fun onTabSelected(tab: TabLayout.Tab) {
+                        when (tab.position) {
+                            0 -> {
                                 fragmentDownloadRecyclerView.adapter =
                                     App.downloadQueue.downloadTaskAdapter
                             }
-                            "下载完成" -> {
+                            1 -> {
                                 loadDownloadTask()
                             }
                         }

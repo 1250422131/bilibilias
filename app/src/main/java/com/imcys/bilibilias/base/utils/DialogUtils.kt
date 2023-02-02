@@ -1694,7 +1694,7 @@ class DialogUtils {
                 dialogCollectionTitle.text = "请选择视频子集"
 
                 val videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
-                val pageData =  mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
+                val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
                 dialogCollectionRv.adapter =
                     VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
@@ -1702,17 +1702,19 @@ class DialogUtils {
                         val total = videoPageMutableList.size
                         //标签，判断这一次是否有重复
                         var tage = true
-                        for (a in 0 until total) {
-
-                            if (videoPageMutableList[a].cid.toLong() == videoPageListData.data[position].cid.toLong()) {
-                                tage = false
-                                itemBinding[position].dataBean?.selected = 0
-                                videoPageMutableList.removeAt(a)
-                                dialogCollectionRv.adapter?.notifyItemChanged(a)
-                                break
+                        //这里加also标签为的是可以return掉forEachIndexed
+                        videoPageMutableList.also {
+                            it.forEachIndexed { index, dataBean ->
+                                if (dataBean.cid == videoPageListData.data[position].cid) {
+                                    tage = false
+                                    itemBinding[position].dataBean?.selected = 0
+                                    videoPageMutableList.removeAt(index)
+                                    dialogCollectionRv.adapter?.notifyItemChanged(index)
+                                    return@forEachIndexed
+                                }
                             }
-
                         }
+
 
 
                         if (tage) {
@@ -1783,29 +1785,33 @@ class DialogUtils {
 
 
             binding.apply {
+
                 dialogCollectionTitle.text = "请选择视频子集"
 
                 val videoPageMutableList =
                     mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+
                 val epData =
                     mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes
+
                 dialogCollectionRv.adapter =
                     BangumiPageAdapter(bangumiSeasonBean.result.episodes) { position, itemBinding ->
-                        //这个接口是为了处理弹窗背景问题
-                        val total = videoPageMutableList.size
-                        //标签，判断这一次是否有重复
+
+                        //标签，判断这一次是否有重复 有重复就是false否则true
                         var tage = true
-                        for (a in 0 until total) {
-
-                            if (videoPageMutableList[a].cid.toLong() == bangumiSeasonBean.result.episodes[position].cid.toLong()) {
-                                tage = false
-                                itemBinding.episodesBean?.selected = 0
-                                dialogCollectionRv.adapter?.notifyItemChanged(a)
-                                videoPageMutableList.removeAt(a)
-                                break
+                        //这里加also标签为的是可以return掉forEachIndexed
+                        videoPageMutableList.also { range ->
+                            range.forEachIndexed fei@{ index, episodesBean ->
+                                if (episodesBean.cid == bangumiSeasonBean.result.episodes[position].cid) {
+                                    tage = false
+                                    itemBinding.episodesBean?.selected = 0
+                                    dialogCollectionRv.adapter?.notifyItemChanged(index)
+                                    videoPageMutableList.removeAt(index)
+                                    return@also
+                                }
                             }
-
                         }
+
 
 
                         if (tage) {

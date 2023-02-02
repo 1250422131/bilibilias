@@ -28,6 +28,7 @@ class BangumiPageAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<ItemDlBangumiPageBinding>(holder.itemView)
+
         binding?.apply {
             episodesBean = datas[position]
         }
