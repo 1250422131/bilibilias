@@ -73,7 +73,7 @@ open class AbsActivity: AppCompatActivity() {
     }
 
     // 沉浸式状态栏
-    fun statusBarOnly(fragmentActivity: FragmentActivity) {
+    open fun statusBarOnly(fragmentActivity: FragmentActivity) {
         UltimateBarX.statusBarOnly(fragmentActivity)
             .fitWindow(false)
             .light(true)
