@@ -15,7 +15,7 @@ open class RoamBaseActivity : AbsActivity() {
     }
 
     // 沉浸式状态栏
-    fun statusBarOnly(fragmentActivity: FragmentActivity) {
+    override fun statusBarOnly(fragmentActivity: FragmentActivity) {
         UltimateBarX.statusBarOnly(fragmentActivity)
             .fitWindow(false)
             .light(true)
