@@ -1,9 +1,7 @@
 package com.imcys.bilibilias.tool_roam.base
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import com.imcys.bilibilias.common.base.AbsActivity
-import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 
 open class RoamBaseActivity : AbsActivity() {
@@ -13,14 +11,5 @@ open class RoamBaseActivity : AbsActivity() {
         // 沉浸式状态栏
         statusBarOnly(this)
     }
-
-    // 沉浸式状态栏
-    override fun statusBarOnly(fragmentActivity: FragmentActivity) {
-        UltimateBarX.statusBarOnly(fragmentActivity)
-            .fitWindow(false)
-            .light(true)
-            .apply()
-    }
-
 
 }
