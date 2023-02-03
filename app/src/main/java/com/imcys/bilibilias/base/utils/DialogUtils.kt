@@ -36,6 +36,7 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
+import kotlinx.coroutines.flow.flow
 
 
 /**
@@ -82,9 +83,11 @@ class DialogUtils {
 
 
             //用户行为val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogLoginTipBar,
+            initDialogBehaviorBinding(
+                binding.dialogLoginTipBar,
                 context,
-                binding.root.parent)
+                binding.root.parent
+            )
             //自定义方案
             //mDialogBehavior.peekHeight = 600
 
@@ -119,9 +122,11 @@ class DialogUtils {
             binding.loginQRModel?.binding = binding
             //用户行为val mDialogBehavior =
 
-            initDialogBehaviorBinding(binding.dialogLoginQrTipBar,
+            initDialogBehaviorBinding(
+                binding.dialogLoginQrTipBar,
                 activity,
-                binding.root.parent)
+                binding.root.parent
+            )
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             return bottomSheetDialog
@@ -263,9 +268,11 @@ class DialogUtils {
             //创建设置布局
             bottomSheetDialog.setContentView(binding.root)
             //val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogDlTypeTopBar,
+            initDialogBehaviorBinding(
+                binding.dialogDlTypeTopBar,
                 context,
-                binding.root.parent)
+                binding.root.parent
+            )
             binding.apply {
 
                 dialogDlTypeDashBt.setOnClickListener {
@@ -308,15 +315,18 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
 
             //val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogCollectionBar,
+            initDialogBehaviorBinding(
+                binding.dialogCollectionBar,
                 activity,
-                binding.root.parent)
+                binding.root.parent
+            )
 
             binding.apply {
 
                 val collectionMutableList = mutableListOf<Long>()
                 val collectionAdapter =
-                    CreateCollectionAdapter(userCreateCollectionBean.data.list.toMutableList()
+                    CreateCollectionAdapter(
+                        userCreateCollectionBean.data.list.toMutableList()
                     ) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
 
@@ -428,11 +438,13 @@ class DialogUtils {
             properties["copyright"] = copyright.toString()
             properties["downloadTool"] = mDownloadTool
             properties["downloadType"] = mDownloadType
-            StatService.onEvent(App.context,
+            StatService.onEvent(
+                App.context,
                 "AnalysisVideo",
                 "解析视频",
                 1,
-                properties)
+                properties
+            )
 
 
         }
@@ -477,14 +489,16 @@ class DialogUtils {
             //首先判断是什么类型
             when (downloadType) {
                 DASH_TYPE -> {
-                    addDownloadTask(context,
+                    addDownloadTask(
+                        context,
                         videoBaseBean,
                         qn,
                         80,
                         downloadTool,
                         downloadCondition,
                         toneQuality,
-                        videoPageMutableList)
+                        videoPageMutableList
+                    )
                 }
                 MP4_TYPE -> {
                     addFlvDownloadTask(
@@ -541,14 +555,16 @@ class DialogUtils {
             //首先判断是什么类型
             when (downloadType) {
                 DASH_TYPE -> {
-                    addBangumiDownloadTask(context,
+                    addBangumiDownloadTask(
+                        context,
                         videoBaseBean,
                         qn,
                         80,
                         downloadTool,
                         downloadCondition,
                         toneQuality,
-                        bangumiPageMutableList)
+                        bangumiPageMutableList
+                    )
                 }
                 MP4_TYPE -> {
                     addFlvBangumiDownloadTask(
@@ -638,9 +654,11 @@ class DialogUtils {
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             binding.apply {
+
+                //子集选择 默认选中1集
+                videoPageListData.data[0].selected = 1
                 dialogDlVideoDiversityLy.setOnClickListener {
-                    loadVideoPageDialog(context, videoPageListData) { it1 ->
-                        videoPageMutableList.clear()
+                    loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
                         videoPageMutableList = it1
                         var videoPageMsg = ""
                         if (videoPageMutableList.size != 1) {
@@ -787,7 +805,8 @@ class DialogUtils {
                         videoBaseBean,
                         selectDefinition,
                         80,
-                        videoPageMutableList)
+                        videoPageMutableList
+                    )
                     bottomSheetDialog.cancel()
 
                 }
@@ -842,9 +861,10 @@ class DialogUtils {
             //自定义方案
             //mDialogBehavior.peekHeight = 600
             binding.apply {
+                //子集选择 默认选中1集
+                bangumiSeasonBean.result.episodes[0].selected = 1
                 dialogDlVideoDiversityLy.setOnClickListener {
-                    loadVideoPageDialog(context, bangumiSeasonBean) { it1 ->
-                        videoPageMutableList.clear()
+                    loadVideoPageDialog(context, bangumiSeasonBean, videoPageMutableList) { it1 ->
                         videoPageMutableList = it1
                         var videoPageMsg = ""
 
@@ -859,6 +879,7 @@ class DialogUtils {
 
                 }
 
+                //清晰度选择
                 dialogDlVideoDefinitionLy.setOnClickListener {
                     loadVideoDefinition(context, dashVideoPlayBean) {
                         //这里返回的是清晰度的数值代码
@@ -866,7 +887,6 @@ class DialogUtils {
 
                         //处理下
                         dashVideoPlayBean.data.support_formats.forEach { it1 ->
-
                             if (it1.quality == it) dialogDlVideoDefinitionTx.text =
                                 it1.new_description
                         }
@@ -877,6 +897,7 @@ class DialogUtils {
                 }
 
 
+                //下载类型选择
                 dialogDlVideoTypeLy.setOnClickListener {
                     loadDownloadTypeDialog(context) { selects, typeName ->
                         downloadType = selects
@@ -990,7 +1011,8 @@ class DialogUtils {
                         videoBaseBean,
                         selectDefinition,
                         80,
-                        videoPageMutableList)
+                        videoPageMutableList
+                    )
 
                     bottomSheetDialog.cancel()
                 }
@@ -1017,25 +1039,30 @@ class DialogUtils {
             bangumiPageMutableList.forEach {
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            "video")
-                        addTask(context,
+                            "video"
+                        )
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            "audio")
+                            "audio"
+                        )
                     }
                     ONLY_AUDIO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
@@ -1048,7 +1075,8 @@ class DialogUtils {
                     }
 
                     ONLY_VIDEO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
@@ -1056,7 +1084,8 @@ class DialogUtils {
                             downloadTool,
                             toneQuality,
                             "video",
-                            false)
+                            false
+                        )
                     }
                 }
 
@@ -1078,25 +1107,30 @@ class DialogUtils {
 
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            "video")
-                        addTask(context,
+                            "video"
+                        )
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            "audio")
+                            "audio"
+                        )
                     }
                     ONLY_AUDIO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
@@ -1108,7 +1142,8 @@ class DialogUtils {
                         )
                     }
                     ONLY_VIDEO -> {
-                        addTask(context,
+                        addTask(
+                            context,
                             it,
                             qn,
                             fnval,
@@ -1116,7 +1151,8 @@ class DialogUtils {
                             downloadTool,
                             toneQuality,
                             "video",
-                            false)
+                            false
+                        )
                     }
                 }
 
@@ -1191,8 +1227,10 @@ class DialogUtils {
 
             HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
-                    VideoPlayBean::class.java) { it1 ->
+                .get(
+                    "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
+                    VideoPlayBean::class.java
+                ) { it1 ->
 
                     val videoPlayData = it1.data
                     val urlIndex = 0
@@ -1210,8 +1248,10 @@ class DialogUtils {
 
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                     val inputString =
-                        sharedPreferences.getString("user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                        )
                             .toString()
                     val savePath = inputString.toAsDownloadSavePath(
                         context,
@@ -1244,13 +1284,17 @@ class DialogUtils {
                                 isGroupTask = isGroupTask,
                             ) { it2 ->
                                 if (it2) {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载成功",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载失败",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
 
@@ -1289,13 +1333,17 @@ class DialogUtils {
             isGroupTask: Boolean = false,
         ) {
             HttpUtils.apply {
-                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
-                        true)
+                if (BaseApplication.sharedPreferences.getBoolean(
+                        "use_roam_cookie_state",
+                        true
+                    )
                 ) this.addHeader("cookie", BaseApplication.cookies)
             }
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
-                    BangumiPlayBean::class.java) { it1 ->
+                .get(
+                    "${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
+                    BangumiPlayBean::class.java
+                ) { it1 ->
 
                     val videoPlayData = it1.result
                     var urlIndex = 0
@@ -1320,8 +1368,10 @@ class DialogUtils {
 
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                     val inputString =
-                        sharedPreferences.getString("user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                        )
                             .toString()
 
                     val savePath = inputString.toAsDownloadSavePath(
@@ -1353,13 +1403,17 @@ class DialogUtils {
                                 isGroupTask = isGroupTask,
                             ) { it2 ->
                                 if (it2) {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载成功",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载失败",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -1396,13 +1450,17 @@ class DialogUtils {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
             HttpUtils.apply {
-                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
-                        true)
+                if (BaseApplication.sharedPreferences.getBoolean(
+                        "use_roam_cookie_state",
+                        true
+                    )
                 ) this.addHeader("cookie", BaseApplication.cookies)
             }
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
-                    DashBangumiPlayBean::class.java) { it1 ->
+                .get(
+                    "${BaseApplication.roamApi}pgc/player/web/playurl?cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
+                    DashBangumiPlayBean::class.java
+                ) { it1 ->
 
                     val bangumiPlayData = it1.result
                     var urlIndex = 0
@@ -1438,8 +1496,10 @@ class DialogUtils {
 
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                     val inputString =
-                        sharedPreferences.getString("user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                        )
                             .toString()
                     val savePath = inputString.toAsDownloadSavePath(
                         context,
@@ -1470,13 +1530,17 @@ class DialogUtils {
                                 isGroupTask = isGroupTask
                             ) { it2 ->
                                 if (it2) {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载成功",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载失败",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -1517,8 +1581,10 @@ class DialogUtils {
 
             HttpUtils.addHeader("cookie", BaseApplication.cookies)
                 .addHeader("referer", "https://www.bilibili.com")
-                .get("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
-                    DashVideoPlayBean::class.java) { it1 ->
+                .get(
+                    "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
+                    DashVideoPlayBean::class.java
+                ) { it1 ->
 
                     val videoPlayData = it1.data
                     var urlIndex = 0
@@ -1554,8 +1620,10 @@ class DialogUtils {
 
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
                     val inputString =
-                        sharedPreferences.getString("user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                        )
                             .toString()
 
                     //获取下载地址
@@ -1588,13 +1656,17 @@ class DialogUtils {
                                 isGroupTask = isGroupTask,
                             ) { it2 ->
                                 if (it2) {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载成功",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context,
+                                    Toast.makeText(
+                                        context,
                                         "${videoBaseBean.data.bvid}下载失败",
-                                        Toast.LENGTH_SHORT).show()
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -1616,8 +1688,10 @@ class DialogUtils {
             intent.data = Uri.parse(url)
             intent.putExtra("Cookie", BaseApplication.cookies)
             intent.putExtra("Referer", "https://www.bilibili.com/")
-            intent.putExtra("User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")
+            intent.putExtra(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
+            )
             if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager.plus")
             ) {
                 Toast.makeText(context, "正在拉起IDM", Toast.LENGTH_SHORT).show()
@@ -1643,8 +1717,10 @@ class DialogUtils {
             intent.data = Uri.parse(url)
             intent.putExtra("Cookie", BaseApplication.cookies)
             intent.putExtra("Referer", "https://www.bilibili.com/")
-            intent.putExtra("User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36")
+            intent.putExtra(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
+            )
             if (AppFilePathUtils.isInstallApp(context, "com.dv.adm")) {
                 Toast.makeText(context, "正在拉起ADM", Toast.LENGTH_SHORT).show()
                 // 下载调用
@@ -1675,6 +1751,7 @@ class DialogUtils {
         private fun loadVideoPageDialog(
             context: Context,
             videoPageListData: VideoPageListData,
+            videoPageMutableList: MutableList<VideoPageListData.DataBean>,
             finished: (selects: MutableList<VideoPageListData.DataBean>) -> Unit,
         ): BottomSheetDialog {
 
@@ -1685,21 +1762,21 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
 
             //val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogCollectionBar,
+            initDialogBehaviorBinding(
+                binding.dialogCollectionBar,
                 context,
-                binding.root.parent)
+                binding.root.parent
+            )
 
 
             binding.apply {
                 dialogCollectionTitle.text = "请选择视频子集"
 
-                val videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
                 val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
+
                 dialogCollectionRv.adapter =
                     VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
                         //这个接口是为了处理弹窗背景问题
-
-                        val total = videoPageMutableList.size
                         //标签，判断这一次是否有重复
                         var tage = true
                         //这里加also标签为的是可以return掉forEachIndexed
@@ -1770,6 +1847,7 @@ class DialogUtils {
         private fun loadVideoPageDialog(
             context: Context,
             bangumiSeasonBean: BangumiSeasonBean,
+            videoPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
             finished: (selects: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
         ): BottomSheetDialog {
             val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
@@ -1779,17 +1857,16 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
 
             //val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogCollectionBar,
+            initDialogBehaviorBinding(
+                binding.dialogCollectionBar,
                 context,
-                binding.root.parent)
+                binding.root.parent
+            )
 
 
             binding.apply {
 
                 dialogCollectionTitle.text = "请选择视频子集"
-
-                val videoPageMutableList =
-                    mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
 
                 val epData =
                     mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes
@@ -1801,7 +1878,7 @@ class DialogUtils {
                         var tage = true
                         //这里加also标签为的是可以return掉forEachIndexed
                         videoPageMutableList.also { range ->
-                            range.forEachIndexed fei@{ index, episodesBean ->
+                            range.forEachIndexed { index, episodesBean ->
                                 if (episodesBean.cid == bangumiSeasonBean.result.episodes[position].cid) {
                                     tage = false
                                     itemBinding.episodesBean?.selected = 0
@@ -1872,9 +1949,11 @@ class DialogUtils {
             bottomSheetDialog.setContentView(binding.root)
 
             //val mDialogBehavior =
-            initDialogBehaviorBinding(binding.dialogCollectionBar,
+            initDialogBehaviorBinding(
+                binding.dialogCollectionBar,
                 context,
-                binding.root.parent)
+                binding.root.parent
+            )
 
 
             binding.apply {
