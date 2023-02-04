@@ -52,10 +52,10 @@ class SplashActivity : BaseActivity() {
                 // 在这里可以弹出一个对话框来说明为什么需要此权限
                 DialogUtils.dialog(
                     this,
-                    "授权提示",
-                    "使用BILIBILIAS就需要要同意此权限，因为缓存视频等需要向系统内储存权限。",
-                    "同意授权",
-                    "拒绝授权",
+                    getString(R.string.app_permission_application_title),
+                    getString(R.string.app_permission_application_msg),
+                    getString(R.string.app_permission_application_confirm),
+                    getString(R.string.app_permission_application_cancel),
                     false,
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(this,
@@ -70,12 +70,10 @@ class SplashActivity : BaseActivity() {
                 // 申请储存权限
                 DialogUtils.dialog(
                     this,
-                    "权限申请",
-                    "BILIBILIAS为了储存下载并且储存内容，需要申请一下储存权限，可以放心授权。"
-                            + "如果你是小米，可能看到的描述是获取相册等其他文件的权限，请不用担心，本软件开源发布，仅仅使用权限储存文件，"
-                            + "除非您自己将下载路径改动到了相册，否则不会去读取相册内容。",
-                    "确定授权",
-                    "拒绝授权",
+                    getString(R.string.app_permission_application_title),
+                    getString(R.string.app_permission_application_text),
+                    getString(R.string.app_permission_application_confirm),
+                    getString(R.string.app_permission_application_cancel),
                     false,
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(this,

@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="选择模式"
+                        android:text="@string/app_dialog_download_type_title"
                         android:textColor="@color/color_primary_text"
                         android:textStyle="bold" />
 

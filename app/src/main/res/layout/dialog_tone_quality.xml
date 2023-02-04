@@ -46,7 +46,7 @@
                     android:id="@+id/dialog_collection_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="音质选择"
+                    android:text="@string/app_dialog_tone_quality_sound_quality_selection"
                     android:textColor="@color/color_primary_text"
                     android:textStyle="bold" />
 
@@ -80,7 +80,7 @@
                         android:layout_height="60dp"
                         android:background="@color/color_primary"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:text="选定"
+                        android:text="@string/app_dialog_tone_quality_finish"
                         android:textColor="@color/white"
                         android:textSize="15sp"
                         android:textStyle="bold" />
