@@ -192,5 +192,6 @@
     <string name="app_fragment_home_logout">登出</string>
     <string name="app_fragment_tool_title">工具</string>
     <string name="app_fragment_user_title">用戶</string>
+    <string name="app_jz_layout_std_download_cover">封面下載</string>
 
 </resources>

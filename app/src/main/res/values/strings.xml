@@ -204,4 +204,5 @@
     <string name="app_fragment_home_logout_text">退出这个账户的登录</string>
     <string name="app_fragment_tool_title">工具</string>
     <string name="app_fragment_user_title">用户</string>
+    <string name="app_jz_layout_std_download_cover">封面下载</string>
 </resources>
