@@ -67,9 +67,11 @@ class ToolFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        val guideVersion = (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
+        val guideVersion =
+            (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
-            (context as HomeActivity).asSharedPreferences.edit().putString("AppGuideVersion", App.AppGuideVersion).apply()
+            (context as HomeActivity).asSharedPreferences.edit()
+                .putString("AppGuideVersion", App.AppGuideVersion).apply()
             loadToolGuide()
         }
         StatService.onPageStart(context, "ToolFragment")
@@ -93,7 +95,8 @@ class ToolFragment : Fragment() {
             .setOnDismissCallback {
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0).isCheckable = true
+                    0
+                ).isCheckable = true
             }
             .setBackgroundColor("#80000000".toColorInt())
             .show()
@@ -186,8 +189,10 @@ class ToolFragment : Fragment() {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
             return
         } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
-            loadShareData("""https://b23.tv/([A-z]|[0-9])*""".toRegex()
-                .find(inputString)?.value!!.toString())
+            loadShareData(
+                """https://b23.tv/([A-z]|[0-9])*""".toRegex()
+                    .find(inputString)?.value!!.toString()
+            )
             return
         } else if (AsVideoNumUtils.getBvid(inputString) != "") {
             getVideoCardData(AsVideoNumUtils.getBvid(inputString))
@@ -242,8 +247,10 @@ class ToolFragment : Fragment() {
     private suspend fun getLiveRoomData(roomId: String): LiveRoomDataBean {
         return withContext(lifecycleScope.coroutineContext) {
             HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet("${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
-                    LiveRoomDataBean::class.java)
+                .asyncGet(
+                    "${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
+                    LiveRoomDataBean::class.java
+                )
         }
     }
 
@@ -252,16 +259,17 @@ class ToolFragment : Fragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie).get(toString, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
-            }
+        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+            .get(toString, object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onResponse(call: Call, response: Response) {
-                val str = response.request.url.toString()
-                asVideoId(str)
-            }
-        })
+                override fun onResponse(call: Call, response: Response) {
+                    val str = response.request.url.toString()
+                    asVideoId(str)
+                }
+            })
     }
 
 
@@ -321,7 +329,8 @@ class ToolFragment : Fragment() {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,
-                            it.color) {
+                            it.color
+                        ) {
                             asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
                         })
                     }
@@ -329,11 +338,23 @@ class ToolFragment : Fragment() {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,
-                            it.color) {
+                            it.color
+                        ) {
                             val intent = Intent(context, SettingActivity::class.java)
                             context?.startActivity(intent)
                         })
                     }
+                    3 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color
+                        ) {
+                            val intent = Intent(context, SettingActivity::class.java)
+                            context?.startActivity(intent)
+                        })
+                    }
+
                 }
             }
 
@@ -371,8 +392,10 @@ class ToolFragment : Fragment() {
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.asyncGet("${BiliBiliAsApi.appFunction}?type=oldToolItem",
-                OldToolItemBean::class.java)
+            HttpUtils.asyncGet(
+                "${BiliBiliAsApi.appFunction}?type=oldToolItem",
+                OldToolItemBean::class.java
+            )
         }
     }
 

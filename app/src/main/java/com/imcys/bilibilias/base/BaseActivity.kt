@@ -10,20 +10,21 @@ import com.imcys.bilibilias.common.base.model.user.AsUser
 
 open class BaseActivity : AbsActivity() {
 
-     override val asSharedPreferences: SharedPreferences by lazy {
+    override val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    override val asUser: AsUser by lazy {
-        val sharedPreferences: SharedPreferences =
-            this.getSharedPreferences("data", Context.MODE_PRIVATE)
-        AsUser.apply {
-            cookie = sharedPreferences.getString("cookies", "").toString()
-            sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-            biliJct = sharedPreferences.getString("bili_jct", "").toString()
-            mid = sharedPreferences.getLong("mid", 0)
+    override val asUser: AsUser
+        get() {
+            val sharedPreferences: SharedPreferences =
+                this.getSharedPreferences("data", MODE_PRIVATE)
+           return AsUser.apply {
+                cookie = sharedPreferences.getString("cookies", "").toString()
+                sessdata = sharedPreferences.getString("SESSDATA", "").toString()
+                biliJct = sharedPreferences.getString("bili_jct", "").toString()
+                mid = sharedPreferences.getLong("mid", 0)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

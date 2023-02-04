@@ -20,22 +20,6 @@ import com.xiaojinzi.component.impl.application.ModuleManager
 
 open class BaseApplication : Application() {
 
-    val asSharedPreferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
-    }
-
-
-    val asUser: AsUser by lazy {
-        val sharedPreferences: SharedPreferences =
-            this.getSharedPreferences("data", Context.MODE_PRIVATE)
-        AsUser.apply {
-            cookie = sharedPreferences.getString("cookies", "").toString()
-            sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-            biliJct = sharedPreferences.getString("bili_jct", "").toString()
-            mid = sharedPreferences.getLong("mid", 0)
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
 
