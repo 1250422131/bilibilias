@@ -154,7 +154,7 @@
         }
     </string>
     <string name="new_version_doc">2.0.1恢复了封面，音视频独立下载和ffmpeg合并视频的功能，请务必查看。</string>
-    <string name="user_dl_merge_cmd" >
+    <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
         {VIDEO_PATH} 视频下载路径\n

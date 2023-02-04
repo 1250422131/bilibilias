@@ -36,6 +36,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".home.ui.activity.tool.WebAsActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.ui.activity.favlist.FavListActivity"
             android:exported="false">
             <meta-data
