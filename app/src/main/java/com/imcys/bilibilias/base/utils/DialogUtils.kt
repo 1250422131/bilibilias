@@ -25,6 +25,7 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
@@ -32,6 +33,7 @@ import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.*
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
@@ -276,13 +278,14 @@ class DialogUtils {
             binding.apply {
 
                 dialogDlTypeDashBt.setOnClickListener {
-                    App.sharedPreferences.edit().putInt("user_download_type", 1).apply()
+
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("user_download_type", 1).apply()
                     finished(1, "Dash")
                     bottomSheetDialog.cancel()
                 }
 
                 dialogDlTypeFlvBt.setOnClickListener {
-                    App.sharedPreferences.edit().putInt("user_download_type", 2).apply()
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("user_download_type", 2).apply()
                     finished(2, "MP4")
                     bottomSheetDialog.cancel()
                 }
@@ -706,7 +709,7 @@ class DialogUtils {
                 }
 
 
-                val sharedPreferences = App.sharedPreferences.apply {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
                     when (getInt("user_download_tool_list", 1)) {
                         1 -> {
                             downloadTool = APP_DOWNLOAD
@@ -914,7 +917,7 @@ class DialogUtils {
                 }
 
 
-                val sharedPreferences = App.sharedPreferences.apply {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context).apply {
                     when (getInt("user_download_tool_list", 1)) {
                         1 -> {
                             dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_app_dl)
@@ -1225,7 +1228,8 @@ class DialogUtils {
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+
+            HttpUtils.addHeader("cookie", (context as AbsActivity).asUser.cookie)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get(
                     "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=0&fourk=1",
@@ -1332,12 +1336,13 @@ class DialogUtils {
             type: String,
             isGroupTask: Boolean = false,
         ) {
+           val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             HttpUtils.apply {
-                if (BaseApplication.sharedPreferences.getBoolean(
+                if (sharedPreferences.getBoolean(
                         "use_roam_cookie_state",
                         true
                     )
-                ) this.addHeader("cookie", BaseApplication.cookies)
+                ) this.addHeader("cookie",  (context as AbsActivity).asUser.cookie)
             }
                 .addHeader("referer", "https://www.bilibili.com")
                 .get(
@@ -1448,13 +1453,14 @@ class DialogUtils {
             isGroupTask: Boolean = true,
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
             HttpUtils.apply {
-                if (BaseApplication.sharedPreferences.getBoolean(
+                if (sharedPreferences.getBoolean(
                         "use_roam_cookie_state",
                         true
                     )
-                ) this.addHeader("cookie", BaseApplication.cookies)
+                ) this.addHeader("cookie",  (context as AbsActivity).asUser.cookie)
             }
                 .addHeader("referer", "https://www.bilibili.com")
                 .get(
@@ -1579,7 +1585,7 @@ class DialogUtils {
         ) {
             Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.addHeader("cookie",  (context as AbsActivity).asUser.cookie)
                 .addHeader("referer", "https://www.bilibili.com")
                 .get(
                     "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${dataBean.cid}&qn=$qn&fnval=4048&fourk=1",
@@ -1686,7 +1692,7 @@ class DialogUtils {
             val intent = Intent("android.intent.action.VIEW")
             intent.addCategory("android.intent.category.APP_BROWSER")
             intent.data = Uri.parse(url)
-            intent.putExtra("Cookie", BaseApplication.cookies)
+            intent.putExtra("Cookie",  (context as AbsActivity).asUser.cookie)
             intent.putExtra("Referer", "https://www.bilibili.com/")
             intent.putExtra(
                 "User-Agent",
@@ -1715,7 +1721,7 @@ class DialogUtils {
             val intent = Intent("android.intent.action.VIEW")
             intent.addCategory("android.intent.category.APP_BROWSER")
             intent.data = Uri.parse(url)
-            intent.putExtra("Cookie", BaseApplication.cookies)
+            intent.putExtra("Cookie",  (context as AbsActivity).asUser.cookie)
             intent.putExtra("Referer", "https://www.bilibili.com/")
             intent.putExtra(
                 "User-Agent",
@@ -1868,11 +1874,19 @@ class DialogUtils {
 
                 dialogCollectionTitle.text = "请选择视频子集"
 
+                val userVipState = (context as AsVideoActivity).userBaseBean.data.vip.status
+                //会员判断
                 val epData =
-                    mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes
+                    mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
+                        !(userVipState != 1 && it.badge == "会员")
+                    }
+
 
                 dialogCollectionRv.adapter =
-                    BangumiPageAdapter(bangumiSeasonBean.result.episodes) { position, itemBinding ->
+                    BangumiPageAdapter(bangumiSeasonBean.result.episodes.filter {
+                        //没会员直接不展示
+                        !(userVipState != 1 && it.badge == "会员")
+                    }.toMutableList()) { position, itemBinding ->
 
                         //标签，判断这一次是否有重复 有重复就是false否则true
                         var tage = true

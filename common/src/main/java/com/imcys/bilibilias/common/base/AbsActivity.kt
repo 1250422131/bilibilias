@@ -1,20 +1,36 @@
 package com.imcys.bilibilias.common.base
 
 import android.app.Activity
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
-open class AbsActivity: AppCompatActivity() {
+open class AbsActivity : AppCompatActivity() {
 
+    open val asSharedPreferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
 
+    open val asUser: AsUser by lazy {
+        val sharedPreferences: SharedPreferences =
+            this.getSharedPreferences("data", Context.MODE_PRIVATE)
+        AsUser.apply {
+            cookie = sharedPreferences.getString("cookies", "").toString()
+            sessdata = sharedPreferences.getString("SESSDATA", "").toString()
+            biliJct = sharedPreferences.getString("bili_jct", "").toString()
+            mid = sharedPreferences.getLong("mid", 0)
+        }
+    }
 
 
     // 存储所有活动的列表
@@ -45,10 +61,12 @@ open class AbsActivity: AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 //统计接入
-                AppCenter.start(application,
+                AppCenter.start(
+                    application,
                     BaseApplication.appSecret,
                     Analytics::class.java,
-                    Crashes::class.java)
+                    Crashes::class.java
+                )
             }
 
         }
@@ -73,7 +91,7 @@ open class AbsActivity: AppCompatActivity() {
     }
 
     // 沉浸式状态栏
-    open fun statusBarOnly(fragmentActivity: FragmentActivity) {
+    fun statusBarOnly(fragmentActivity: FragmentActivity) {
         UltimateBarX.statusBarOnly(fragmentActivity)
             .fitWindow(false)
             .light(true)

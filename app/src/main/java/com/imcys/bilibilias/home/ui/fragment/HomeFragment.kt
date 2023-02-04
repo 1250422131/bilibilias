@@ -28,6 +28,7 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -106,7 +107,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val guideVersion = App.sharedPreferences.getString("AppGuideVersion", "")
+        val guideVersion = (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
             loadHomeGuide()
         }
@@ -289,8 +290,6 @@ class HomeFragment : Fragment() {
 
         //登陆检测
         //context?.let { DialogUtils.loginDialog(it).show() }
-        //数据获取
-        initUserToken()
         //加载推荐视频
         //loadRCMDVideoData()
         //检测用户是否登陆
@@ -306,7 +305,7 @@ class HomeFragment : Fragment() {
      */
     private fun loadRoamData() {
 
-        val roamId = App.sharedPreferences.getInt("use_roam_id", -1)
+        val roamId = (context as HomeActivity).asSharedPreferences.getInt("use_roam_id", -1)
         if (roamId != -1) {
             queryRoamData(roamId)
         }
@@ -324,21 +323,6 @@ class HomeFragment : Fragment() {
     }
 
 
-    /**
-     * 获取下之前登陆的用户信息
-     */
-    private fun initUserToken() {
-        val sharedPreferences: SharedPreferences =
-            requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
-
-        App.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        BaseApplication.sharedPreferences = App.sharedPreferences
-        //获取重要数据
-        BaseApplication.cookies = sharedPreferences.getString("cookies", "").toString()
-        BaseApplication.sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-        BaseApplication.biliJct = sharedPreferences.getString("bili_jct", "").toString()
-        BaseApplication.mid = sharedPreferences.getLong("mid", 0)
-    }
 
     /**
      * 加载登陆对话框
@@ -377,7 +361,7 @@ class HomeFragment : Fragment() {
     private fun initUserData() {
 
         bottomSheetDialog?.show()
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
             ) {
@@ -392,7 +376,7 @@ class HomeFragment : Fragment() {
     private fun detectUserLogin() {
 
         lifecycleScope.launch {
-            val myUserData = HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            val myUserData = HttpUtils.addHeader("cookie",(context as HomeActivity).asUser.cookie)
                 .asyncGet(
                     BilibiliApi.getMyUserData, MyUserData::class.java
                 )
@@ -408,7 +392,7 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
-            val userInfoBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            val userInfoBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                 .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
 
             //这里需要储存下数据
@@ -418,8 +402,6 @@ class HomeFragment : Fragment() {
             editor.putLong("mid", userInfoBean.data.mid)
             //提交储存
             editor.apply()
-            //这里给全局设置必要信息
-            BaseApplication.mid = userInfoBean.data.mid
             //关闭登陆登陆弹窗
             loginQRDialog.cancel()
             //加载用户弹窗

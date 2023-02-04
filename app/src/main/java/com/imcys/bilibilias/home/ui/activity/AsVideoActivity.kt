@@ -149,7 +149,7 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
 
                 lifecycleScope.launchWhenCreated {
-                    val videoPlayBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+                    val videoPlayBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
                         .addHeader("referer", "https://www.bilibili.com")
                         .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
                     //设置布局视频播放数据
@@ -178,7 +178,7 @@ class AsVideoActivity : BaseActivity() {
             "bangumi" -> {
                 lifecycleScope.launch {
                     val bangumiPlayBean = KtHttpUtils
-                        .addHeader("cookie", BaseApplication.cookies)
+                        .addHeader("cookie", asUser.cookie)
                         .addHeader("referer", "https://www.bilibili.com")
                         .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
 
@@ -208,7 +208,7 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         //这里才是真正的视频基本数据获取
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", asUser.cookie)
             .get(BilibiliApi.getVideoDataPath + "?bvid=$bvId", VideoBaseBean::class.java) {
                 //设置数据
                 videoDataBean = it
@@ -293,9 +293,9 @@ class AsVideoActivity : BaseActivity() {
 
             val bangumiSeasonBean = KtHttpUtils.apply {
                 //漫游设计（该功能随时弃用）
-                if (BaseApplication.sharedPreferences.getBoolean("use_roam_cookie_state",
+                if (asSharedPreferences.getBoolean("use_roam_cookie_state",
                         true)
-                ) this.addHeader("cookie", BaseApplication.cookies)
+                ) this.addHeader("cookie", asUser.cookie)
             }
                 .asyncGet<BangumiSeasonBean>(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid)
 
@@ -393,8 +393,8 @@ class AsVideoActivity : BaseActivity() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}")
+        return KtHttpUtils.addHeader("cookie", asUser.cookie)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${asUser.mid}")
     }
 
 
@@ -449,7 +449,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadDanmakuFlameMaster() {
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", asUser.cookie)
             .get("${BilibiliApi.videoDanMuPath}?oid=$cid",
                 object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
@@ -487,7 +487,7 @@ class AsVideoActivity : BaseActivity() {
 
 
     private fun loadUserCardData(mid: Long) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", asUser.cookie)
             .get(BilibiliApi.getUserCardPath + "?mid=$mid", UserCardBean::class.java) {
                 showUserCard()
                 binding.userCardBean = it
@@ -565,7 +565,7 @@ class AsVideoActivity : BaseActivity() {
         //map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = BaseApplication.cookies;
+        jzDataSource.headerMap["Cookie"] = asUser.cookie
         jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
         jzDataSource.headerMap["User-Agent"] =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";

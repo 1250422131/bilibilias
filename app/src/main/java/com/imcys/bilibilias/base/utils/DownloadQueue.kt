@@ -3,16 +3,20 @@ package com.imcys.bilibilias.base.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import androidx.documentfile.provider.DocumentFile
+import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
+import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
@@ -20,6 +24,7 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
@@ -150,6 +155,8 @@ class DownloadQueue {
         val coroutineScope = CoroutineScope(Dispatchers.IO)
 
         while (currentTasks.size < 3 && queue.isNotEmpty()) {
+
+
             //删除并且返回当前的task
             val task = queue.removeAt(0)
             //更新任务状态
@@ -164,7 +171,8 @@ class DownloadQueue {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
             );
             params.addHeader("referer", "https://www.bilibili.com/")
-            params.addHeader("cookie", BaseApplication.cookies)
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
+            params.addHeader("cookie",cookie!!)
             //设置是否根据头信息自动命名文件
             params.isAutoRename = false
             //设储存路径
@@ -346,7 +354,10 @@ class DownloadQueue {
         val coroutineScope = CoroutineScope(Dispatchers.Default)
 
         coroutineScope.launch {
-            val videoBaseBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                .getString("cookies", "")
+
+            val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
             val mid = videoBaseBean.data.owner.mid
             val name = videoBaseBean.data.owner.name
@@ -392,24 +403,33 @@ class DownloadQueue {
         Analytics.trackEvent("缓存成功")
         StatService.onEvent(App.context, "CacheSuccessful", "缓存成功")
 
-        val microsoftAppCenterType =
-            App.sharedPreferences.getBoolean("microsoft_app_center_type", true)
-        val baiduStatisticsType = App.sharedPreferences.getBoolean("baidu_statistics_type", true)
+        runBlocking {
+            launch(Dispatchers.IO) {
 
-        val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
-            "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
-        } else {
-            "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${BaseApplication.myUserData.uname}&UserUID=${BaseApplication.myUserData.mid}"
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
+                val microsoftAppCenterType =
+                    sharedPreferences.getBoolean("microsoft_app_center_type", true)
+                val baiduStatisticsType =
+                    sharedPreferences.getBoolean("baidu_statistics_type", true)
+
+                val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                    .getString("cookies", "")
+
+                val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
+                    .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
+
+                val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
+                    "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
+                } else {
+                    "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.data.uname}&UserUID=${myUserData.data.mid}"
+                }
+                //提交数据
+                HttpUtils.asyncGet(url).await()
+
+            }
         }
 
-        HttpUtils
-            .get(url,
-                object : okhttp3.Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                    }
-                    override fun onResponse(call: Call, response: Response) {
-                    }
-                })
+
     }
 
     /**
@@ -418,10 +438,18 @@ class DownloadQueue {
      */
     private fun videoMerge(cid: Int) {
 
+
+
         val mergeState =
-            App.sharedPreferences.getBoolean("user_dl_finish_automatic_merge_switch", true)
+            PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
+                "user_dl_finish_automatic_merge_switch",
+                true
+            )
         val importState =
-            App.sharedPreferences.getBoolean("user_dl_finish_automatic_import_switch", false)
+            PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
+                "user_dl_finish_automatic_import_switch",
+                false
+            )
 
 
         val taskMutableList = groupTasksMap[cid]
@@ -473,7 +501,7 @@ class DownloadQueue {
         ) {
 
         val userDLMergeCmd =
-            App.sharedPreferences.getString(
+            PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
                 "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
             )
@@ -497,7 +525,7 @@ class DownloadQueue {
                     asToast(App.context, "合并完成")
                     //删除合并文件
                     val deleteMergeSatae =
-                        App.sharedPreferences.getBoolean(
+                        PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                             "user_dl_finish_delete_merge_switch",
                             true
                         )
@@ -586,8 +614,9 @@ class DownloadQueue {
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
+        val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
                     videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
@@ -712,7 +741,9 @@ class DownloadQueue {
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
+
+            HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
                     object : okhttp3.Callback {
                         override fun onFailure(call: Call, e: IOException) {
@@ -750,7 +781,7 @@ class DownloadQueue {
                                 );
 
                                 val impFileDeleteState =
-                                    App.sharedPreferences.getBoolean(
+                                    PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                                         "user_dl_delete_import_file_switch",
                                         true
                                     )
@@ -798,7 +829,7 @@ class DownloadQueue {
         coroutineScope.launch(Dispatchers.IO) {
 
             var videoEntry = videoEntry
-            val appDataUri = App.sharedPreferences.getString("AppDataUri", "")
+            val appDataUri =  PreferenceManager.getDefaultSharedPreferences(App.context).getString("AppDataUri", "")
 
             val saf = DocumentFile.fromTreeUri(App.context, Uri.parse(appDataUri))
             //找查文件夹
@@ -851,8 +882,9 @@ class DownloadQueue {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
 
-            val asyncResponse = HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
             val response = asyncResponse.await()
 
@@ -913,7 +945,10 @@ class DownloadQueue {
 
 
             val impFileDeleteState =
-                App.sharedPreferences.getBoolean("user_dl_delete_import_file_switch", true)
+                PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
+                    "user_dl_delete_import_file_switch",
+                    true
+                )
 
             if (impFileDeleteState) {
                 FileUtils.deleteFile(videoPath)

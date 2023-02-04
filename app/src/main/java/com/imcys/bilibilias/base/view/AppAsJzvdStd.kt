@@ -10,6 +10,7 @@ import android.view.View
 import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
@@ -26,10 +27,12 @@ class AppAsJzvdStd : AsJzvdStd {
 
     @SuppressLint("Recycle")
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        //弹幕按钮事件绑定
-        bingAppAsJzStdDanmakuButtonEvent()
-        //绑定播放按钮事件
-        bindingAppAsJzStdPlayButtonEvent()
+        if (!isInEditMode) {
+            //弹幕按钮事件绑定
+            bingAppAsJzStdDanmakuButtonEvent()
+            //绑定播放按钮事件
+            bindingAppAsJzStdPlayButtonEvent()
+        }
     }
 
     constructor(context: Context) : super(context)
@@ -53,8 +56,10 @@ class AppAsJzvdStd : AsJzvdStd {
 
 
     private fun bingAppAsJzStdDanmakuButtonEvent() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
         val danmakuSwitch =
-            BaseApplication.sharedPreferences.getBoolean("user_video_danmaku_switch", true)
+            sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
         if (!danmakuSwitch) {
             //隐藏弹幕
@@ -63,11 +68,12 @@ class AppAsJzvdStd : AsJzvdStd {
         }
 
         appAsJzStdDanmakuButton.setOnClickListener {
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
             val danmakuSwitch =
-                BaseApplication.sharedPreferences.getBoolean("user_video_danmaku_switch", true)
+                sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
-            BaseApplication.sharedPreferences.edit {
+            sharedPreferences.edit {
                 putBoolean("user_video_danmaku_switch", !danmakuSwitch)
             }
             //注意，这里是变动前的标志

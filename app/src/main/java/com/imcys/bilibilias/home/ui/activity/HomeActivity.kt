@@ -48,10 +48,6 @@ class HomeActivity : BaseActivity() {
         //补全必须要的内容
         activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        App.videoEntry = getString(R.string.VideoEntry)
-        App.videoIndex = getString(R.string.VideoIndex)
-        App.bangumiEntry = getString(R.string.BangumiEntry)
-
 
         initFragment()
         loadFragment()

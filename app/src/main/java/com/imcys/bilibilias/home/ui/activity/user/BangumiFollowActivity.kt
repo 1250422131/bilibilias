@@ -47,7 +47,7 @@ class BangumiFollowActivity : BaseActivity() {
             bangumiFollowRv.adapter = bangumiFollowAdapter
             bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
 
-            HttpUtils.addHeader("coolie", BaseApplication.cookies).get("${BilibiliApi.bangumiFollowPath}?vmid=${BaseApplication.myUserData.mid}&type=1&pn=1&ps=15",
+            HttpUtils.addHeader("coolie", asUser.cookie).get("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
                 BangumiFollowList::class.java) {
                 if (it.code == 0) {
                     bangumiFollowList = it
@@ -71,7 +71,7 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun loadBangumiFollow(pn: Int) {
-        HttpUtils.get("${BilibiliApi.bangumiFollowPath}?vmid=${BaseApplication.myUserData.mid}&type=1&pn=${pn}&ps=15",
+        HttpUtils.get("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=15",
             BangumiFollowList::class.java) {
             if (it.code == 0) {
                 bangumiFollowList = it
