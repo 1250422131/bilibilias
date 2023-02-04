@@ -54,7 +54,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="扫码登陆"
+                    android:text="@string/app_dialog_login_qr_bottomsheet_title"
                     android:textColor="@color/color_primary_text"
                     android:textStyle="bold" />
 
@@ -98,7 +98,7 @@
                     android:background="@color/color_primary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcode_key)}"
-                    android:text="完成登陆"
+                    android:text="@string/app_dialog_login_qr_bottomsheet_finish"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -119,7 +119,7 @@
                     android:layout_height="60dp"
                     android:background="@color/color_primary_variant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="下载扫码"
+                    android:text="@string/app_dialog_login_qr_bottomsheet_download"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -141,7 +141,7 @@
                     android:layout_height="60dp"
                     android:background="@color/color_primary_variant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="跳转扫码"
+                    android:text="@string/app_dialog_login_qr_bottomsheet_go"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />

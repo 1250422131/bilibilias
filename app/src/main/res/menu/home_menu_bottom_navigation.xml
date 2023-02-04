@@ -5,24 +5,24 @@
 
         android:id="@+id/home_bottom_menu_black_room"
         android:icon="@drawable/ic_home_home_all"
-        android:title="首页"
+        android:title="@string/app_home_menu_button_navigation_home"
         tools:ignore="HardcodedText,UnusedAttribute" />
     <item
         android:id="@+id/home_bottom_menu_discipline_admin"
         android:icon="@drawable/ic_home_tool_all"
-        android:title="工具" />
+        android:title="@string/app_home_menu_button_navigation_tool" />
 
     <item
         android:id="@+id/home_bottom_menu_operation_log"
         android:icon="@drawable/ic_home_download_four_all"
-        android:title="缓存" />
+        android:title="@string/app_home_menu_button_navigation_download" />
 
     <item
         android:id="@+id/home_bottom_menu_statistics"
 
         android:icon="@drawable/ic_home_people_all"
 
-        android:title="我的" />
+        android:title="@string/app_home_menu_button_navigation_user" />
 
 
 </menu>

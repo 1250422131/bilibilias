@@ -49,7 +49,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="178dp"
-                    android:text="选择登录"
+                    android:text="@string/app_dialog_login_bottomsheet_title"
                     android:textColor="@color/color_primary_text"
                     android:textStyle="bold" />
 
@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="B站扫码"
+                        android:text="@string/app_dialog_login_bottomsheet_option_1"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -108,7 +108,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="BILIBILIAS云端"
+                        android:text="@string/app_dialog_login_bottomsheet_option_2"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -124,7 +124,7 @@
 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="登录后，你可以："
+                    android:text="@string/app_dialog_login_bottomsheet_text"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -141,7 +141,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:text="· 为了良好体验，此版本必须完成登录" />
+                        android:text="@string/app_dialog_login_bottomsheet_list_text_1" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -149,20 +149,20 @@
                         android:layout_marginBottom="2dp"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="· 云端账号加密保存，切换设备无需重复登陆。" />
+                        android:text="@string/app_dialog_login_bottomsheet_list_text_2" />
 
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:text="· 下载更加高清，更高码率的视频" />
+                        android:text="@string/app_dialog_login_bottomsheet_list_text_3" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:text="· 享受大会员权限视频和画质（如果你有）" />
+                        android:text="@string/app_dialog_login_bottomsheet_list_text_4" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -170,7 +170,7 @@
                         android:layout_marginBottom="2dp"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="· 缓存番剧，并且将番剧导入B站，实现携带弹幕的离线播放。" />
+                        android:text="@string/app_dialog_login_bottomsheet_list_text_5" />
 
 
 
@@ -184,14 +184,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="使用则代表你同意" />
+                            android:text="@string/app_dialog_login_bottomsheet_text2" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:text="· 哔哩哔哩账户和社区相关协议"
+                            android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
                             android:textColor="@color/color_primary" />
 
                         <TextView
@@ -199,7 +199,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:text="·《BILIBILIAS用户协议》和《BILIBILIAS隐私协议》"
+                            android:text="@string/app_dialog_login_bottomsheet_list_text2_2"
                             android:textColor="@color/color_primary" />
 
                         <TextView
@@ -207,21 +207,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:text="· 此APP没有得到B站许可，B站对此概不负责。"
+                            android:text="@string/app_dialog_login_bottomsheet_list_text2_3"
                             android:textColor="@color/color_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:text="· APP功能仅供学习使用参考"
+                            android:text="@string/app_dialog_login_bottomsheet_list_text2_4"
                             android:textColor="@color/color_primary" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:text="· 使用造成的任何后果BILIBILIAS概不负责"
+                            android:text="@string/app_dialog_login_bottomsheet_list_text2_5"
                             android:textColor="@color/color_primary" />
 
                     </LinearLayout>

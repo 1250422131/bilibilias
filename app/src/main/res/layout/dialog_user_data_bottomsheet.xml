@@ -46,7 +46,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="个人信息"
+                    android:text="@string/app_dialog_user_data_bottomsheet_personal_information"
                     android:textColor="@color/color_primary_text"
                     android:textStyle="bold" />
 
@@ -115,7 +115,7 @@
                     android:layout_height="60dp"
                     android:background="@color/color_primary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="确定"
+                    android:text="@string/app_dialog_user_data_bottomsheet_finish"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
