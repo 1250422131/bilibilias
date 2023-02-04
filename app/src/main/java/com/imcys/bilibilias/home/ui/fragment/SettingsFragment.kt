@@ -13,14 +13,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.AbsActivity
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
+import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
 import me.rosuh.filepicker.config.FilePickerManager
@@ -43,7 +47,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val saveImport = registerForActivityResult(
         ActivityResultContracts.OpenDocumentTree()) {
-        App.sharedPreferences.edit().apply {
+        (context as SettingActivity).asSharedPreferences.edit().apply {
             putString("AppDataUri", it.toString())
             putBoolean("user_dl_finish_automatic_import_switch", true)
             apply()
@@ -96,7 +100,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    App.sharedPreferences.edit().putString("user_download_save_path",
+                    getDefaultSharedPreferences(context).edit().putString("user_download_save_path",
                         "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download")
                         .apply()
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
@@ -119,7 +123,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    App.sharedPreferences.edit {
+                    PreferenceManager.getDefaultSharedPreferences(context).edit {
                         putString("user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
                         apply()
@@ -144,7 +148,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun bindingSaveSDPathSwitchEvent() {
 
         userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
-            val sdPathState = App.sharedPreferences.getBoolean("user_download_save_sd_path_switch",
+            val sdPathState = getDefaultSharedPreferences(context).getBoolean("user_download_save_sd_path_switch",
                 false)
             //禁止或者释放下载地址修改
             userDownloadSavePathEditText.isEnabled = !sdPathState
@@ -280,7 +284,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference("rename_user_download_file_name_editText")!!
         userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
 
-        val sdPathState = App.sharedPreferences.getBoolean("user_download_save_sd_path_switch",
+        val sdPathState = getDefaultSharedPreferences(context).getBoolean("user_download_save_sd_path_switch",
             false)
         //禁止或者释放下载地址修改
         userDownloadSavePathEditText.isEnabled = !sdPathState

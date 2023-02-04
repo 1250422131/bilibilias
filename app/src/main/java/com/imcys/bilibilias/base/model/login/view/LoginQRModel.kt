@@ -203,10 +203,6 @@ class LoginQRModel {
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                if (groupStr != null) {
-                    BaseApplication.sessdata = groupStr
-
-                }
                 editor.putString("SESSDATA", groupStr)
             }
 
@@ -214,14 +210,9 @@ class LoginQRModel {
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                if (groupStr != null) {
-                    BaseApplication.biliJct = groupStr
-
-                }
                 editor.putString("bili_jct", groupStr)
             }
         }
-        BaseApplication.cookies = cookies
         editor.putString("cookies", cookies)
         editor.putString("refreshToken", loginStateBean.data.refresh_token)
         editor.apply()

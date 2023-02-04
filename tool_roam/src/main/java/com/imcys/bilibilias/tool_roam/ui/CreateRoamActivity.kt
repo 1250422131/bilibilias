@@ -58,13 +58,13 @@ class CreateRoamActivity : RoamBaseActivity() {
             createRoamRadioGroup.setOnCheckedChangeListener { _, i ->
                 when (i) {
                     R.id.create_roam_radio_cookie_true -> {
-                        BaseApplication.sharedPreferences.edit {
+                        asSharedPreferences.edit {
                             putBoolean("use_roam_cookie_state", true)
                         }
                         cookieState = true
                     }
                     R.id.create_roam_radio_cookie_false -> {
-                        BaseApplication.sharedPreferences.edit {
+                        asSharedPreferences.edit {
                             putBoolean("use_roam_cookie_state", false)
                         }
                         cookieState = false
@@ -130,7 +130,7 @@ class CreateRoamActivity : RoamBaseActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
 
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.addHeader("cookie", asUser.cookie)
                 .get(roamPath + "pgc/player/web/playurl?cid=674487&qn=64&fnval=0&fourk=1",
                     object : Callback {
                         override fun onFailure(call: Call, e: IOException) {

@@ -72,7 +72,7 @@ class RoamMainActivity : RoamBaseActivity() {
 
     private fun loadRoamList() {
         bRVState.showLoading()  // 加载中
-        selectItem = BaseApplication.sharedPreferences.getInt("use_roam_id", -1)
+        selectItem = asSharedPreferences.getInt("use_roam_id", -1)
 
         lifecycleScope.launch(Dispatchers.IO) {
             roadDao = AppDatabase.getDatabase(this@RoamMainActivity).roamDao().apply {
@@ -124,7 +124,7 @@ class RoamMainActivity : RoamBaseActivity() {
         }
 
         binding.roamMainRv.models = roamMutableList
-        BaseApplication.sharedPreferences.edit {
+        asSharedPreferences.edit {
             putInt("use_roam_id", selectItem)
         }
     }
@@ -202,7 +202,7 @@ class RoamMainActivity : RoamBaseActivity() {
         roadDao.apply {
             if (roamInfo.id == selectItem){
                 selectItem = -1
-                BaseApplication.sharedPreferences.edit {
+                asSharedPreferences.edit {
                     putInt("use_roam_id", selectItem)
                 }
             }

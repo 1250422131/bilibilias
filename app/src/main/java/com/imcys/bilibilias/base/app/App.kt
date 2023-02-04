@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import io.microshow.rxffmpeg.RxFFmpegInvoke
@@ -30,7 +31,7 @@ class App : BaseApplication() {
     }
 
 
-    companion object{
+    companion object {
 
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
@@ -39,20 +40,20 @@ class App : BaseApplication() {
         val downloadQueue: DownloadQueue = DownloadQueue()
 
 
-
-
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
         //—————————————————————————————————————————————————
 
-        //——————————————————APP全局数据——————————————————
-        lateinit var sharedPreferences: SharedPreferences
-
         //——————————————————B站视频模板——————————————————
-        lateinit var videoEntry: String
-        lateinit var videoIndex: String
-        lateinit var bangumiEntry: String
-
+        val videoEntry: String by lazy {
+            App().getString(R.string.VideoEntry)
+        }
+        val videoIndex: String by lazy {
+            App().getString(R.string.VideoIndex)
+        }
+        val bangumiEntry: String by lazy {
+            App().getString(R.string.BangumiEntry)
+        }
         //——————————————————部分内置需要的上下文——————————————————
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
