@@ -23,6 +23,10 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -51,7 +55,6 @@ class LoginQRModel {
     fun finishLogin(view: View, qrcode_key: String) {
         val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
-
         //登录完成
         HttpUtils.get(
             BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcode_key,
