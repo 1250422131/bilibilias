@@ -231,4 +231,6 @@
     <string name="app_permission_application_confirm">Confirm</string>
     <string name="app_permission_application_cancel">Cancel</string>
     <string name="app_permission_application_msg">To use BILIBILIAS, you need to agree to this permission, because you need to apply for storage permission from the system for downloading video.</string>
+    <string name="app_guide_home">The contents of the new version can be viewed here</string>
+    <string name="app_guide_tool">The parsing function has moved here</string>
 </resources>
