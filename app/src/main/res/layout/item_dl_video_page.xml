@@ -24,6 +24,7 @@
         tools:ignore="MissingConstraints">
 
         <Button
+            tools:ignore="SpeakableTextPresentCheck"
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"

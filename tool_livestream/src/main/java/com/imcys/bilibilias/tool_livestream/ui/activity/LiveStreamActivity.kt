@@ -48,8 +48,10 @@ class LiveStreamActivity : BaseActivity() {
 
         Component.inject(target = this)
 
-        binding = DataBindingUtil.setContentView<ActivityLiveStreamBinding?>(this,
-            R.layout.activity_live_stream).apply {
+        binding = DataBindingUtil.setContentView<ActivityLiveStreamBinding?>(
+            this,
+            R.layout.activity_live_stream
+        ).apply {
         }
 
         initView()
@@ -87,7 +89,8 @@ class LiveStreamActivity : BaseActivity() {
             val livePlayUrlInfoBean = getRoomPlayUrlInfo()
 
             //加载播放器数据
-            loadLiveAsJzPlayer(livePlayUrlInfoBean
+            loadLiveAsJzPlayer(
+                livePlayUrlInfoBean
             )
         }
 
@@ -95,8 +98,10 @@ class LiveStreamActivity : BaseActivity() {
 
     private fun loadLiveAsJzPlayer(livePlayUrlInfoBean: RoomPlayUrlInfoBean) {
 
-        setAsJzvdConfig(livePlayUrlInfoBean.data.durl[0].url.replace("https", "http"),
-            liveRoomDataBean.data.title)
+        setAsJzvdConfig(
+            livePlayUrlInfoBean.data.durl[0].url.replace("https", "http"),
+            liveRoomDataBean.data.title
+        )
         bindLiveStreamFaButtonEvent()
 
     }
@@ -104,25 +109,31 @@ class LiveStreamActivity : BaseActivity() {
 
     private suspend fun getRoomInfo(): LiveRoomDataBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
-                    LiveRoomDataBean::class.java)
+            HttpUtils.addHeader("cookie", asUser.cookie)
+                .asyncGet(
+                    "${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
+                    LiveRoomDataBean::class.java
+                )
         }
     }
 
     private suspend fun getLiveMasterUserData(uid: Long): LiveMasterUserBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.liveUserMasterInfo}?uid=$uid",
-                    LiveMasterUserBean::class.java)
+            HttpUtils.addHeader("cookie", asUser.cookie)
+                .asyncGet(
+                    "${BilibiliApi.liveUserMasterInfo}?uid=$uid",
+                    LiveMasterUserBean::class.java
+                )
         }
     }
 
     private suspend fun getRoomPlayUrlInfo(): RoomPlayUrlInfoBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.liveRoomPlayUrl}?cid=$roomId&qn=0&platform=h5",
-                    RoomPlayUrlInfoBean::class.java)
+            HttpUtils.addHeader("cookie", asUser.cookie)
+                .asyncGet(
+                    "${BilibiliApi.liveRoomPlayUrl}?cid=$roomId&qn=0&platform=h5",
+                    RoomPlayUrlInfoBean::class.java
+                )
         }
     }
 
@@ -161,7 +172,7 @@ class LiveStreamActivity : BaseActivity() {
         //map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = BaseApplication.cookies
+        jzDataSource.headerMap["Cookie"] = asUser.cookie
         jzDataSource.headerMap["Referer"] = "https://live.bilibili.com"
         jzDataSource.headerMap["User-Agent"] =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";

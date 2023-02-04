@@ -51,7 +51,7 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.addHeader("cookie", asUser.cookie)
                 .get("${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
                     PlayHistoryBean::class.java) {
                     max = it.data.cursor.max
@@ -71,7 +71,7 @@ class PlayHistoryActivity : BaseActivity() {
     }
 
     private fun loadPlayHistory() {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", asUser.cookie)
             .get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
                 PlayHistoryBean::class.java) {
                 max = it.data.cursor.max

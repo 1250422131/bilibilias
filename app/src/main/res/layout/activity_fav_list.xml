@@ -46,12 +46,14 @@
                 app:tabTextColor="@color/black">
 
                 <com.google.android.material.tabs.TabItem
+                    android:id="@+id/fav_list_create_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="我创建的"
                     tools:ignore="HardcodedText" />
 
                 <com.google.android.material.tabs.TabItem
+                    android:id="@+id/fav_list_collection_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="我收藏的" />

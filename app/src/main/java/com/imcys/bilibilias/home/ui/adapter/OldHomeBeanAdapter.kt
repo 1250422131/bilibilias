@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -105,10 +107,15 @@ class OldHomeBeanAdapter(
         Thread {
             var getPost: String = postData
             if (token == 1) {
-                getPost = getPost.replace("{token}", BaseApplication.biliJct)
+                val biliJct = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("bili_kct","")
+
+                getPost = getPost.replace("{token}",  biliJct!!)
                 println(getPost)
             }
-            val goUrlStr = HttpUtils.doCardPost(url, getPost, BaseApplication.cookies)
+            val sharedPreferences: SharedPreferences =
+               context.getSharedPreferences("data", Context.MODE_PRIVATE)
+            val  cookie = sharedPreferences.getString("cookies", "").toString()
+            val goUrlStr = HttpUtils.doCardPost(url, getPost, cookie)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
                 val code = goUrlJson.getInt("code")
@@ -132,7 +139,11 @@ class OldHomeBeanAdapter(
         failToast: String,
         context: Context,
     ) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(url, object : Callback {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("data", Context.MODE_PRIVATE)
+        val  cookie = sharedPreferences.getString("cookies", "").toString()
+
+        HttpUtils.addHeader("cookie", cookie).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
             }

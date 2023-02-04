@@ -77,7 +77,7 @@ class UserViewModel : ViewModel() {
     private fun getUserWorksBean(qn: Int, ps: Int) {
         viewModelScope.launch {
             val userWorksBean = withContext(viewModelScope.coroutineContext) {
-                return@withContext HttpUtils.asyncGet("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&qn=$qn&ps=$ps",
+                return@withContext HttpUtils.asyncGet("${BilibiliApi.userWorksPath}?mid=1&qn=$qn&ps=$ps",
                     UserWorksBean::class.java)
             }
             viewStates = viewStates.copy(
@@ -117,8 +117,8 @@ class UserViewModel : ViewModel() {
 
     private val latestUserBaseData: Flow<UserBaseBean> = flow {
         val userBaseBean = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}",
+            HttpUtils.addHeader("cookie", "")
+                .asyncGet("${BilibiliApi.userBaseDataPath}?mid=1",
                     UserBaseBean::class.java)
         }
         //返回拉取结果
@@ -127,8 +127,8 @@ class UserViewModel : ViewModel() {
 
     private val latestUserCardData: Flow<UserCardBean> = flow {
         val userCardBean = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}",
+            HttpUtils.addHeader("cookie", "等待填充")
+                .asyncGet("${BilibiliApi.getUserCardPath}?mid=1",
                     UserCardBean::class.java)
         }
         //返回拉取结果
@@ -137,8 +137,8 @@ class UserViewModel : ViewModel() {
 
     private val latestUpStatBeamData: Flow<UpStatBeam> = flow {
         val upStatBeam = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}",
+            HttpUtils.addHeader("cookie","等待填充")
+                .asyncGet("${BilibiliApi.userUpStat}?mid=1",
                     UpStatBeam::class.java)
         }
         //返回拉取结果

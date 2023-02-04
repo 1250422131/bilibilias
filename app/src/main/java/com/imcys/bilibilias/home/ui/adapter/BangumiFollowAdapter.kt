@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -35,8 +37,10 @@ class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, Vi
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val binding =
-            DataBindingUtil.inflate<ItemBangumiFollowBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_bangumi_follow, parent, false)
+            DataBindingUtil.inflate<ItemBangumiFollowBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_bangumi_follow, parent, false
+            )
 
         return ViewHolder(binding.root)
     }
@@ -46,11 +50,19 @@ class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, Vi
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
 
-                HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                    .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=${getItem(position).first_ep}",
-                        BangumiSeasonBean::class.java) {
-                        if (it.code == 0){
-                            AsVideoActivity.actionStart(holder.itemView.context,it.result.episodes[0].bvid)
+                val sharedPreferences: SharedPreferences =
+                    holder.itemView.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                val cookie = sharedPreferences.getString("cookies", "").toString()
+                HttpUtils.addHeader("cookie", cookie)
+                    .get(
+                        "${BilibiliApi.bangumiVideoDataPath}?ep_id=${getItem(position).first_ep}",
+                        BangumiSeasonBean::class.java
+                    ) {
+                        if (it.code == 0) {
+                            AsVideoActivity.actionStart(
+                                holder.itemView.context,
+                                it.result.episodes[0].bvid
+                            )
                         }
                     }
             }
