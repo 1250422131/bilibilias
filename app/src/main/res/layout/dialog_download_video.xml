@@ -335,14 +335,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/color_primary"
-                            android:text="IDM" />
+                            android:text="@string/app_dialog_dl_video_idm_dl" />
 
                         <RadioButton
                             android:id="@+id/dialog_dl_video_adm_dl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:buttonTint="@color/color_primary"
-                            android:text="ADM" />
+                            android:text="@string/app_dialog_dl_video_adm_dl" />
                     </RadioGroup>
 
 
@@ -403,7 +403,7 @@
                     android:layout_height="60dp"
                     android:background="@color/color_primary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:text="加入缓存"
+                    android:text="@string/app_dialog_dl_video_button"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
