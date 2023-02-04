@@ -248,4 +248,6 @@
     <string name="app_permission_application_confirm">确定授权</string>
     <string name="app_permission_application_cancel">拒绝授权</string>
     <string name="app_permission_application_msg">使用BILIBILIAS需要同意此权限，因为缓存视频等需要向系统内申请储存权限。</string>
+    <string name="app_guide_home">新版本内容在这里查看</string>
+    <string name="app_guide_tool">解析功能移动到这里了</string>
 </resources>
