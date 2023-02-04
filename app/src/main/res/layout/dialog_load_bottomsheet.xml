@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="加载中"
+                android:text="@string/app_dialog_load_bottomsheet_loading"
                 android:textColor="@color/color_primary_text"
                 android:textStyle="bold" />
 

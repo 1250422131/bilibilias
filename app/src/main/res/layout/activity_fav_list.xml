@@ -17,7 +17,7 @@
             android:id="@+id/fav_list_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="收藏夹"
+            app:title="@string/app_activity_fav_list_title"
             tools:ignore="MissingConstraints">
 
         </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
@@ -49,14 +49,14 @@
                     android:id="@+id/fav_list_create_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="我创建的"
+                    android:text="@string/app_activity_fav_list_create_tab"
                     tools:ignore="HardcodedText" />
 
                 <com.google.android.material.tabs.TabItem
                     android:id="@+id/fav_list_collection_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="我收藏的" />
+                    android:text="@string/app_activity_fav_list_collection_tab" />
             </com.google.android.material.tabs.TabLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
