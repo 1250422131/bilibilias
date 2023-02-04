@@ -236,5 +236,7 @@
     <string name="app_permission_application_confirm">確定授權</string>
     <string name="app_permission_application_cancel">拒絕授權</string>
     <string name="app_permission_application_msg">使用BILIBILIAS需要同意此許可權，因為緩存視頻等需要向系統內申請儲存許可權。</string>
+    <string name="app_guide_home">新版本內容在這裡查看</string>
+    <string name="app_guide_tool">解析功能移動到這裡了</string>
 
 </resources>
