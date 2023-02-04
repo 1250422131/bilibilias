@@ -51,7 +51,7 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="User"
+                                    android:text="@string/app_fragment_user_title"
                                     android:textSize="30sp"
                                     android:textStyle="bold" />
                             </LinearLayout>

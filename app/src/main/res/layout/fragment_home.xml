@@ -111,7 +111,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="新版须知"
+                                    android:text="@string/app_fragment_home_update_content"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -120,7 +120,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
-                                    android:text="V2.0.1"
+                                    android:text="@string/app_fragment_home_version"
                                     android:textColor="@color/black" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -167,7 +167,8 @@
                                 android:layout_height="50dp"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_home_trophy"
-                                app:tint="@color/color_primary" />
+                                app:tint="@color/color_primary"
+                                android:contentDescription="@drawable/ic_home_trophy"/>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -179,7 +180,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="致敬"
+                                    android:text="@string/app_fragment_home_salute"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -188,7 +189,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
-                                    android:text="向全体BILIBILIAS用户致敬"
+                                    android:text="@string/app_fragment_home_salute_text"
                                     android:textColor="@color/black" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -205,7 +206,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
+                                android:text="@string/app_fragment_home_salute_doc"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -245,7 +246,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="捐款"
+                                    android:text="@string/app_fragment_home_donate"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -254,7 +255,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
-                                    android:text="为BILIBILIAS的开发提供支持"
+                                    android:text="@string/app_fragment_home_donate_text"
                                     android:textColor="@color/black" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -271,7 +272,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
+                                android:text="@string/app_fragment_home_donate_doc"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -287,7 +288,7 @@
                                 android:layout_height="wrap_content"
                                 android:letterSpacing="0.1"
                                 android:onClick="@{(view)->FragmentHomeViewModel.toDonateList(view)}"
-                                android:text="捐款名单"
+                                android:text="@string/app_fragment_home_donate_list"
                                 android:textColor="@color/color_primary"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -328,7 +329,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="反馈问题"
+                                    android:text="@string/app_fragment_home_feedback"
                                     android:textColor="@color/black"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -337,7 +338,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="5dp"
-                                    android:text="利用兔小巢来反馈问题"
+                                    android:text="@string/app_fragment_home_feedback_text"
                                     android:textColor="@color/black" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -354,7 +355,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="如果你遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
+                                android:text="@string/app_fragment_home_feedback_doc"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -400,7 +401,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="退出登录"
+                                        android:text="@string/app_fragment_home_logout"
                                         android:textColor="@color/white"
                                         android:textSize="16sp"
                                         android:textStyle="bold" />
@@ -409,7 +410,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="5dp"
-                                        android:text="退出这个账户的登录"
+                                        android:text="@string/app_fragment_home_logout_text"
                                         android:textColor="@color/white" />
                                 </androidx.appcompat.widget.LinearLayoutCompat>
 
