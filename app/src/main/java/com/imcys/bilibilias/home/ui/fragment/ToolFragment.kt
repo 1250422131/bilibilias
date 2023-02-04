@@ -81,7 +81,7 @@ class ToolFragment : Fragment() {
         val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
         HighlightPro.with(this)
             .setHighlightParameter {
-                tipAppBinding.tipAppTitle.text = "解析功能移动到这里了"
+                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_tool)
                 HighlightParameter.Builder()
                     .setTipsView(tipAppBinding.root)
                     .setHighlightViewId(fragmentToolBinding.fragmentToolSearch.id)

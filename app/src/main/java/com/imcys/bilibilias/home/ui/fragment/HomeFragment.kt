@@ -123,7 +123,7 @@ class HomeFragment : Fragment() {
         HighlightPro.with(this)
             .setHighlightParameter {
                 val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
-                tipAppBinding.tipAppTitle.text = "新版本内容在这里查看"
+                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_home)
                 HighlightParameter.Builder()
                     .setTipsView(tipAppBinding.root)
                     .setHighlightViewId(fragmentHomeBinding.fragmentHomeNewVersionLy.id)
