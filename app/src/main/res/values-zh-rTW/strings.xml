@@ -176,5 +176,21 @@
     <string name="app_dialog_dl_radio_only_video">僅視頻</string>
     <string name="app_activity_as_video_dl_bt_text">缓 存 視 頻</string>
     <string name="app_activity_as_bangumi_dl_bt_text">緩 存 番 劇</string>
+    <string name="app_fragment_home_donate">捐款</string>
+    <string name="app_fragment_home_salute">致敬</string>
+    <string name="app_fragment_home_update_content">更新内容</string>
+    <string name="app_fragment_home_version">V2.0.1</string>
+    <string name="app_fragment_home_salute_text">向全體BILIBILIAS用戶致敬</string>
+    <string name="app_fragment_home_salute_doc">愛好和追求不分年齡，無論何時，對生活有份熱愛，才是最快樂的事，生命才能多姿多彩！—— BILIBILIAS用戶</string>
+    <string name="app_fragment_home_donate_text">為BILIBILIAS的開發提供支援</string>
+    <string name="app_fragment_home_donate_doc">BILIBILIAS的伺服器會消耗費用，請我們一杯奶茶吧。</string>
+    <string name="app_fragment_home_donate_list">捐款名單</string>
+    <string name="app_fragment_home_feedback">迴響問題</string>
+    <string name="app_fragment_home_feedback_text">使用兔小巢來迴響問題</string>
+    <string name="app_fragment_home_feedback_doc">如果您遇到了問題或者需要新增功能，就可以在社區迴響給我們。</string>
+    <string name="app_fragment_home_logout_text">退出這個帳戶的登入</string>
+    <string name="app_fragment_home_logout">登出</string>
+    <string name="app_fragment_tool_title">工具</string>
+    <string name="app_fragment_user_title">用戶</string>
 
 </resources>
