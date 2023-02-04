@@ -24,6 +24,7 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -66,9 +67,9 @@ class ToolFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        val guideVersion = App.sharedPreferences.getString("AppGuideVersion", "")
+        val guideVersion = (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
-            App.sharedPreferences.edit().putString("AppGuideVersion", App.AppGuideVersion).apply()
+            (context as HomeActivity).asSharedPreferences.edit().putString("AppGuideVersion", App.AppGuideVersion).apply()
             loadToolGuide()
         }
         StatService.onPageStart(context, "ToolFragment")
@@ -240,7 +241,7 @@ class ToolFragment : Fragment() {
 
     private suspend fun getLiveRoomData(roomId: String): LiveRoomDataBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                 .asyncGet("${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
                     LiveRoomDataBean::class.java)
         }
@@ -251,7 +252,7 @@ class ToolFragment : Fragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies).get(toString, object : Callback {
+        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie).get(toString, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
             }
@@ -269,7 +270,7 @@ class ToolFragment : Fragment() {
      * @param epId Int
      */
     private fun loadEpVideoCard(epId: Int) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
                 if (it.code == 0) {
                     it.result.episodes.forEach { it1 ->
@@ -282,7 +283,7 @@ class ToolFragment : Fragment() {
     private fun getVideoCardData(bvid: String) {
 
         fragmentToolBinding.apply {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
+            HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                 .get(BilibiliApi.getVideoDataPath + "?bvid=$bvid", VideoBaseBean::class.java) {
                     (mAdapter).apply {
                         //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。

@@ -1,15 +1,19 @@
 package com.imcys.bilibilias.home.ui.model.view
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.xiaojinzi.component.impl.Router
 import okhttp3.Call
 import okhttp3.Callback
@@ -73,8 +77,13 @@ class FragmentHomeViewModel {
             true,
             positiveButtonClickListener =
             {
-                HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                    .addParam("biliCSRF", BaseApplication.biliJct)
+                val cookie = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                    .getString("cookies", "")
+                val biliJct = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                    .getString("bili_jct", "")
+
+                HttpUtils.addHeader("cookie", cookie!!)
+                    .addParam("biliCSRF", biliJct!!)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 

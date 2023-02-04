@@ -10,6 +10,7 @@ import com.baidu.mobstat.StatService
 import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.common.BuildConfig
 import com.imcys.bilibilias.common.R
+import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.xiaojinzi.component.Component
@@ -19,6 +20,21 @@ import com.xiaojinzi.component.impl.application.ModuleManager
 
 open class BaseApplication : Application() {
 
+    val asSharedPreferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
+
+
+    val asUser: AsUser by lazy {
+        val sharedPreferences: SharedPreferences =
+            this.getSharedPreferences("data", Context.MODE_PRIVATE)
+        AsUser.apply {
+            cookie = sharedPreferences.getString("cookies", "").toString()
+            sessdata = sharedPreferences.getString("SESSDATA", "").toString()
+            biliJct = sharedPreferences.getString("bili_jct", "").toString()
+            mid = sharedPreferences.getLong("mid", 0)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -84,22 +100,11 @@ open class BaseApplication : Application() {
         const val AppGuideVersion = "1.0"
 
 
-        lateinit var cookies: String
-        lateinit var sessdata: String
-        lateinit var biliJct: String
-        //—————————————————————————————————————————————————
-
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
         //—————————————————————————————————————————————————
 
-        //——————————————————APP全局数据——————————————————
-        lateinit var sharedPreferences: SharedPreferences
-
         //——————————————————B站视频模板——————————————————
-        lateinit var videoEntry: String
-        lateinit var videoIndex: String
-        lateinit var bangumiEntry: String
 
         var roamApi: String = "https://api.bilibili.com/"
 
@@ -110,6 +115,8 @@ open class BaseApplication : Application() {
         var mid: Long = 0
         lateinit var myUserData: MyUserData.DataBean
         //—————————————————————————————————————————————————
+
+
     }
 
 }

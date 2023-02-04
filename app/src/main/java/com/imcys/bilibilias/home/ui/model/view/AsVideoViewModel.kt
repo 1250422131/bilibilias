@@ -20,12 +20,14 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import okio.BufferedSink
@@ -51,7 +53,7 @@ class AsVideoViewModel(
         videoPageListData: VideoPageListData,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
             .addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
@@ -73,7 +75,7 @@ class AsVideoViewModel(
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
             .addHeader("referer", "https://www.bilibili.com")
             .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
                 DashVideoPlayBean::class.java) {
@@ -136,8 +138,8 @@ class AsVideoViewModel(
 
         if (asVideoBinding.archiveHasLikeBean?.data == 0) {
             HttpUtils
-                .addHeader("cookie", BaseApplication.cookies)
-                .addParam("csrf", BaseApplication.biliJct)
+                .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                .addParam("csrf",context.asUser.biliJct)
                 .addParam("like", "1")
                 .addParam("bvid", bvid)
                 .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
@@ -167,8 +169,8 @@ class AsVideoViewModel(
      */
     private fun cancelLikeVideo(view: View, bvid: String) {
         HttpUtils
-            .addHeader("cookie", BaseApplication.cookies)
-            .addParam("csrf", BaseApplication.biliJct)
+            .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+            .addParam("csrf", context.asUser.biliJct)
             .addParam("like", "2")
             .addParam("bvid", bvid)
             .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
@@ -194,10 +196,10 @@ class AsVideoViewModel(
      */
     fun videoCoinAdd(view: View, bvid: String) {
         HttpUtils
-            .addHeader("cookie", BaseApplication.cookies)
+            .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
             .addParam("bvid", bvid)
             .addParam("multiply", "2")
-            .addParam("csrf", BaseApplication.biliJct)
+            .addParam("csrf", context.asUser.biliJct)
             .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
                 asVideoBinding.archiveCoinsBean?.data?.multiply = 2
                 asVideoBinding.asVideoThrowBt.isSelected = true
@@ -212,8 +214,8 @@ class AsVideoViewModel(
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(avid: Int) {
         asVideoBinding.apply {
-            HttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + BaseApplication.mid,
+            HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid,
                     UserCreateCollectionBean::class.java) {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(context as Activity,
@@ -267,10 +269,10 @@ class AsVideoViewModel(
      * @param addMediaIds String
      */
     private fun addCollection(addMediaIds: String, avid: Int) {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
             .addParam("rid", avid.toString())
             .addParam("add_media_ids", addMediaIds)
-            .addParam("csrf", BaseApplication.biliJct)
+            .addParam("csrf",context.asUser.biliJct)
             .addParam("type", "2")
             .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
                 if (it.code == 0) {

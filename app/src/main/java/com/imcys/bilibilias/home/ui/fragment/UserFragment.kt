@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
@@ -22,6 +21,7 @@ import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.*
 import kotlin.math.ceil
@@ -51,17 +51,27 @@ class UserFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+
         fragmentUserBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false)
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
 
+        checkDataRecovery(savedInstanceState)
         initView()
 
 
 
         return fragmentUserBinding.root
+    }
+
+    private fun checkDataRecovery(savedInstanceState: Bundle?) {
+        if (savedInstanceState!=null){
+            lifecycleScope.launch {
+
+            }
+        }
     }
 
     private fun initView() {
@@ -82,8 +92,8 @@ class UserFragment : Fragment() {
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         lifecycleScope.launch {
-            val userWorksBean = KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
-                .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+            val userWorksBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
             userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
         }
@@ -93,9 +103,11 @@ class UserFragment : Fragment() {
     private fun initUserWorks() {
 
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userWorksPath}?mid=${BaseApplication.mid}&qn=1&ps=20",
-                UserWorksBean::class.java) {
+        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+            .get(
+                "${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20",
+                UserWorksBean::class.java
+            ) {
                 userWorksBean = it
                 userWorksAd = UserWorksAdapter()
 
@@ -142,6 +154,10 @@ class UserFragment : Fragment() {
 
             val userBaseBean = lifecycleScope.async { getUserData() }
 
+            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
+
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+
             // 用户卡片信息
             val userCardBean = lifecycleScope.async { getUserCardBean() }
 
@@ -149,12 +165,12 @@ class UserFragment : Fragment() {
             val userUpStat = lifecycleScope.async { getUpStat() }
 
 
-            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
-
             userDataMutableList.add(
-                UserViewItemBean(2,
+                UserViewItemBean(
+                    2,
                     upStatBeam = userUpStat.await(),
-                    userCardBean = userCardBean.await())
+                    userCardBean = userCardBean.await()
+                )
             )
 
             userDataRvAd.submitList(userDataMutableList + mutableListOf())
@@ -171,8 +187,8 @@ class UserFragment : Fragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${BaseApplication.mid}")
+        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
     /**
@@ -180,8 +196,8 @@ class UserFragment : Fragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userUpStat}?mid=${BaseApplication.mid}")
+        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+            .asyncGet("${BilibiliApi.userUpStat}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
     /**
@@ -189,8 +205,8 @@ class UserFragment : Fragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return KtHttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${BaseApplication.mid}")
+        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
@@ -202,6 +218,12 @@ class UserFragment : Fragment() {
         super.onDestroy()
         StatService.onPageEnd(context, "UserFragment")
 
+    }
+
+    //回收数据留存
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong("mid", (context as HomeActivity).asUser.mid)
     }
 
     companion object {

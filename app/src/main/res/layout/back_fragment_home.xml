@@ -51,7 +51,7 @@
                 android:id="@+id/fragment_home_tab"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="15dp"
                 android:background="@null"
                 app:tabBackground="@drawable/home_tablayout_tabbackground"

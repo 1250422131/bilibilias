@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
@@ -18,7 +19,9 @@ import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 
 //收藏夹
@@ -33,8 +36,10 @@ class CollectionActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityCollectionBinding?>(this,
-            R.layout.activity_collection).apply {
+        binding = DataBindingUtil.setContentView<ActivityCollectionBinding?>(
+            this,
+            R.layout.activity_collection
+        ).apply {
             collectionTopLy.addStatusBarTopPadding()
         }
 
@@ -73,51 +78,50 @@ class CollectionActivity : BaseActivity() {
     }
 
     private fun loadCollectionList() {
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userCreatedScFolderPath}?up_mid=${BaseApplication.mid}",
-                UserCreateCollectionBean::class.java) {
-                it.data.list.forEach { it1 ->
-                    binding.apply {
-                        val tab = collectionTabLayout.newTab()
-                        tab.text = it1.title
-                        collectionTabLayout.addTab(tab)
-                    }
-                }
-                //初始化全局需要的收藏夹列表
-                userCreateCollectionBean = it
-                //让监听器可以知道有多少内容加载
-                createCollectionList = it.data.list[0]
-                //加载第一个收藏夹
-                loadCollectionData(it.data.list[0])
-
-                //设置监听器
+        lifecycleScope.launch {
+            val userCreateCollectionBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+                .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
+            userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {
-                    //这里监听选择的是哪个收藏夹
-                    collectionTabLayout.addOnTabSelectedListener(object :
-                        TabLayout.OnTabSelectedListener {
-                        override fun onTabSelected(tab: TabLayout.Tab?) {
-                            userCreateCollectionBean.data.list.forEach { it1 ->
-                                if (it1.title == tab?.text) {
-                                    //更新数据
-                                    pn = 0
-                                    collectionDataMutableList.clear()
-                                    createCollectionList = it1
-                                    loadCollectionData(it1)
-                                }
+                    val tab = collectionTabLayout.newTab()
+                    tab.text = it1.title
+                    collectionTabLayout.addTab(tab)
+                }
+            }
+
+            //让监听器可以知道有多少内容加载
+            createCollectionList = userCreateCollectionBean.data.list[0]
+            //加载第一个收藏夹
+            loadCollectionData(userCreateCollectionBean.data.list[0])
+
+            //设置监听器
+            binding.apply {
+                //这里监听选择的是哪个收藏夹
+                collectionTabLayout.addOnTabSelectedListener(object :
+                    TabLayout.OnTabSelectedListener {
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        userCreateCollectionBean.data.list.forEach { it1 ->
+                            if (it1.title == tab?.text) {
+                                //更新数据
+                                pn = 0
+                                collectionDataMutableList.clear()
+                                createCollectionList = it1
+                                loadCollectionData(it1)
                             }
                         }
+                    }
 
-                        override fun onTabUnselected(tab: TabLayout.Tab?) {
-                        }
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    }
 
-                        override fun onTabReselected(tab: TabLayout.Tab?) {
-                        }
+                    override fun onTabReselected(tab: TabLayout.Tab?) {
+                    }
 
-                    })
-                }
-
-
+                })
             }
+
+
+        }
 
 
     }
@@ -128,9 +132,11 @@ class CollectionActivity : BaseActivity() {
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
 
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
-            .get("${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
-                CollectionDataBean::class.java) {
+        HttpUtils.addHeader("cookie", asUser.cookie)
+            .get(
+                "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
+                CollectionDataBean::class.java
+            ) {
                 collectionDataMutableList.addAll(it.data.medias)
                 collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
             }

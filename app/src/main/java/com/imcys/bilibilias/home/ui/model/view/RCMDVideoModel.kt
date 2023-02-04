@@ -15,10 +15,10 @@ class RCMDVideoModel {
 
     fun likeVideo(bvid: String) {
         Log.e("Tag","点击了")
-        HttpUtils.addHeader("cookie", BaseApplication.cookies)
+        HttpUtils.addHeader("cookie", "")
             .addParam("bvid", bvid)
             .addParam("like", "1")
-            .addParam("csrf", BaseApplication.biliJct)
+            .addParam("csrf", "")
             .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
                 App.handler.post {
                     if (it.code == 0) {

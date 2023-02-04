@@ -9,6 +9,8 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.AbsActivity
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -42,7 +44,8 @@ class SettingActivity : BaseActivity() {
                     this.contentResolver.takePersistableUriPermission(resultData.data!!,
                         takeFlags)
                 }
-                App.sharedPreferences.edit().apply {
+
+                asSharedPreferences.edit().apply {
                     putString("AppDataUri", resultData?.data!!.toString())
                     putBoolean("user_dl_finish_automatic_import_switch", true)
                     apply()

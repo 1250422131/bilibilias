@@ -9,7 +9,8 @@
     <FrameLayout
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent">
+    </FrameLayout>
 
 
     <LinearLayout
@@ -64,7 +65,7 @@
             android:paddingTop="8dp"
             android:paddingRight="12dp"
             android:paddingBottom="8dp"
-            android:progressDrawable="@drawable/jz_bottom_seek_progress"
+            android:progressDrawable="@drawable/app_as_jz_bottom_seek_progress"
             android:thumb="@drawable/jz_bottom_seek_poster" />
 
         <TextView
@@ -102,7 +103,7 @@
         android:layout_height="1.5dp"
         android:layout_alignParentBottom="true"
         android:max="100"
-        android:progressDrawable="@drawable/jz_bottom_progress" />
+        android:progressDrawable="@drawable/app_as_jz_bottom_seek_progress" />
 
     <ImageView
         android:id="@+id/back_tiny"
