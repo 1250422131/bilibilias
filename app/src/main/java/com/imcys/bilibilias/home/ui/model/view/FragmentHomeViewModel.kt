@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
+import androidx.core.content.edit
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -81,7 +82,12 @@ class FragmentHomeViewModel {
                     .getString("cookies", "")
                 val biliJct = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
                     .getString("bili_jct", "")
-
+                view.context.getSharedPreferences("data", Context.MODE_PRIVATE).edit {
+                    putLong("mid", 0)
+                    putString("cookies", "")
+                    putString("bili_jct", "")
+                    apply()
+                }
                 HttpUtils.addHeader("cookie", cookie!!)
                     .addParam("biliCSRF", biliJct!!)
                     .post(BilibiliApi.exitLogin, object : Callback {
