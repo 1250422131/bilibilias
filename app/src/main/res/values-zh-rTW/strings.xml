@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="app_channel_release">官方頻道</string>
     <string name="app_channel_debug">官方頻道調試</string>
@@ -260,5 +260,10 @@
     <string name="microsoft_app_center_type_title">允許使用Microsoft AppCenter</string>
     <string name="baidu_statistics_type_summary">以匿名的管道上傳您的使用時長，頁面停留時間，和地區資訊，這將幫我們統計優化APP。</string>
     <string name="baidu_statistics_type_title">以匿名的管道上傳您的使用時長，頁面停留時間，和地區資訊，這將幫我們統計優化APP。</string>
+    <string name="app_item_fg_user_tool_favorites">我的最愛</string>
+    <string name="app_item_fg_user_tool_follow_series">追番</string>
+    <string name="app_item_fg_user_tool_play_history">觀看</string>
+    <string name="app_item_fg_user_tool_coin_history">投幣</string>
+    <string name="user_dl_delete_import_file_switch_title">導入後删除原來音視頻檔案</string>
 
 </resources>
