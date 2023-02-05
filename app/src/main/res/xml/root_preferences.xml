@@ -87,7 +87,7 @@
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="user_dl_delete_import_file_switch"
-            app:title="导入后删除原来音视频文件">
+            app:title="@string/user_dl_delete_import_file_switch_title">
 
         </SwitchPreferenceCompat>
     </PreferenceCategory>

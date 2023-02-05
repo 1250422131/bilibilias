@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="app_channel_release">Official Channel</string>
     <string name="app_channel_debug">Official Channel Debug</string>
@@ -255,4 +255,9 @@
     <string name="microsoft_app_center_type_title">Allow Microsoft AppCenter</string>
     <string name="baidu_statistics_type_summary">Upload your usage duration, page dwell time, and region information anonymously, which will help us optimize the APP.</string>
     <string name="baidu_statistics_type_title">Allow to use Baidu Statistics</string>
+    <string name="app_item_fg_user_tool_favorites">Favorites</string>
+    <string name="app_item_fg_user_tool_follow_series">Follow\nSeries</string>
+    <string name="app_item_fg_user_tool_play_history">Play\nHistory</string>
+    <string name="app_item_fg_user_tool_coin_history">Coin\nHistory</string>
+    <string name="user_dl_delete_import_file_switch_title">Delete the original audio and video file after import</string>
 </resources>

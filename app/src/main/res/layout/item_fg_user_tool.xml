@@ -49,7 +49,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="收藏" />
+                        android:text="@string/app_item_fg_user_tool_favorites" />
 
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="观看" />
+                        android:text="@string/app_item_fg_user_tool_play_history" />
 
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -100,7 +100,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="追番" />
+                        android:text="@string/app_item_fg_user_tool_follow_series" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -123,7 +123,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="投币" />
+                        android:text="@string/app_item_fg_user_tool_coin_history" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
 
