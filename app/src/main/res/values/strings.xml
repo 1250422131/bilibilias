@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name_debug" translatable="false">BILIBILIAS_DEBUG</string>
     <string name="app_name_release" translatable="false">BILIBILIAS</string>
     <string name="app_channel_release">官方频道</string>
@@ -275,4 +275,9 @@
     <string name="microsoft_app_center_type_title">允许使用 Microsoft AppCenter</string>
     <string name="baidu_statistics_type_summary">以匿名的方式上传您的使用时长，页面停留时间，和地区信息，这将帮我们统计优化APP。</string>
     <string name="baidu_statistics_type_title">允许使用 百度统计</string>
+    <string name="app_item_fg_user_tool_favorites">收藏</string>
+    <string name="app_item_fg_user_tool_follow_series">追番</string>
+    <string name="app_item_fg_user_tool_play_history">观看</string>
+    <string name="app_item_fg_user_tool_coin_history">投币</string>
+    <string name="user_dl_delete_import_file_switch_title">导入后删除原来音视频文件</string>
 </resources>
