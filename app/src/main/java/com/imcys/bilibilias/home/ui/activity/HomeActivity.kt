@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.home.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -68,7 +69,7 @@ class HomeActivity : BaseActivity() {
         downloadFragment = DownloadFragment.newInstance()
     }
 
-    //解析视频数据
+    //启动时解析视频数据
     @SuppressLint("ResourceType")
     private fun parseShare() {
         val intent = intent
@@ -79,11 +80,35 @@ class HomeActivity : BaseActivity() {
                 activityHomeBinding.apply {
                     homeViewPage.currentItem = 1
                     homeBottomNavigationView.menu.getItem(1).isChecked = true
+                    toolFragment.parseShare(intent)
                 }
             }
-
-
         }
+    }
+
+    //复用/创建时检测
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val action = intent?.action
+        val type = intent?.type
+        if (Intent.ACTION_SEND == action && type != null) {
+            if ("text/plain" == type) {
+                activityHomeBinding.apply {
+                    homeViewPage.currentItem = 1
+                    homeBottomNavigationView.menu.getItem(1).isChecked = true
+                    toolFragment.parseShare(intent)
+                }
+            }
+        }
+        val asUrl = intent?.extras?.getString("asUrl")
+        if (asUrl != null) {
+            activityHomeBinding.apply {
+                homeViewPage.currentItem = 1
+                homeBottomNavigationView.menu.getItem(1).isChecked = true
+                toolFragment.parseShare(intent)
+            }
+        }
+
     }
 
 
@@ -142,6 +167,17 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    companion object {
+
+        fun actionStart(context: Context, asUrl: String) {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra("asUrl", asUrl)
+            context.startActivity(intent)
+        }
+
+
+    }
+
     override fun onResume() {
         super.onResume()
         StatService.onResume(this)
@@ -163,8 +199,10 @@ class HomeActivity : BaseActivity() {
 
     private fun exit() {
         if (System.currentTimeMillis() - exitTime > 2000) {
-            Toast.makeText(applicationContext, "再按一次退出程序",
-                Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                applicationContext, "再按一次退出程序",
+                Toast.LENGTH_SHORT
+            ).show()
             exitTime = System.currentTimeMillis()
         } else {
 
