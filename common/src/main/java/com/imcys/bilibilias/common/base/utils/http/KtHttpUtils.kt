@@ -13,93 +13,97 @@ import io.ktor.client.request.forms.*
 import io.ktor.serialization.gson.*
 
 
-class KtHttpUtils {
+object KtHttpUtils {
 
-    companion object {
+    var params = mutableMapOf<String, String>()
+    var headers = mutableMapOf<String, String>()
 
-        var params = mutableMapOf<String, String>()
-        var headers = mutableMapOf<String, String>()
+    val httpClient = HttpClient(OkHttp) {
 
-        val httpClient = HttpClient(OkHttp) {
+        expectSuccess = true
 
-            expectSuccess = true
+        install(Logging)
 
-            install(Logging)
+        install(ContentNegotiation) {
+            gson { }
+        }
 
-            install(ContentNegotiation) {
-                gson { }
+        //请求失败
+        install(HttpRequestRetry) {
+            retryOnServerErrors(maxRetries = 2)
+            exponentialDelay()
+        }
+
+    }
+
+
+    suspend inline fun <reified T> asyncGet(url: String): T {
+
+        checkUrl(url)
+
+        val mBean: T = httpClient.get(url) {
+            headers {
+                this@KtHttpUtils.headers.forEach {
+                    this.append(it.key, it.value)
+                }
+            }
+        }.body()
+        //清空
+        headers.clear()
+
+
+        return mBean
+    }
+
+    suspend inline fun <reified T> asyncPost(url: String): T {
+        checkUrl(url)
+        val mBean: T = httpClient.post(url) {
+            headers {
+                this@KtHttpUtils.headers.forEach {
+                    this.append(it.key, it.value)
+                }
+            }
+            formData {
+                this@KtHttpUtils.params.forEach {
+                    this.append(it.key, it.value)
+                }
             }
 
-            //请求失败
-            install(HttpRequestRetry) {
-                retryOnServerErrors(maxRetries = 2)
-                exponentialDelay()
-            }
+        }.body()
+        //清空
+        headers.clear()
+        params.clear()
+        return mBean
+    }
 
-        }
-
-
-        suspend inline fun <reified T> asyncGet(url: String): T {
-            checkUrl(url)
-            val mBean: T = httpClient.get(url) {
-                headers {
-                    this@Companion.headers.forEach {
-                        this.append(it.key, it.value)
-                    }
-                }
-            }.body()
-
-            return mBean
-        }
-
-        suspend inline fun <reified T> asyncPost(url: String): T {
-            checkUrl(url)
-            val mBean: T = httpClient.post(url) {
-                headers {
-                    this@Companion.headers.forEach {
-                        this.append(it.key, it.value)
-                    }
-                }
-                formData {
-                    this@Companion.params.forEach {
-                        this.append(it.key, it.value)
-                    }
-                }
-
-            }.body()
-
-            return mBean
-        }
-
-        /**
-         * 添加post的form参数
-         * @param key String
-         * @param value String
-         * @return HttpUtils
-         */
-        fun addParam(key: String, value: String): Companion {
-            params[key] = value
-            return this
-        }
+    /**
+     * 添加post的form参数
+     * @param key String
+     * @param value String
+     * @return HttpUtils
+     */
+    fun addParam(key: String, value: String): KtHttpUtils {
+        params[key] = value
+        return this
+    }
 
 
-        /**
-         * 添加请求头
-         * @param key String
-         * @param value String
-         * @return HttpUtils
-         */
-        fun addHeader(key: String, value: String): Companion {
-            headers[key] = value
-            return this
-        }
+    /**
+     * 添加请求头
+     * @param key String
+     * @param value String
+     * @return HttpUtils
+     */
+    fun addHeader(key: String, value: String): KtHttpUtils {
+        headers[key] = value
+        return this
+    }
 
-        fun checkUrl(url: String) {
-            headers["user-agent"] = if (url in "misakamoe") {
-                SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
-            } else {
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
-            }
+    fun checkUrl(url: String) {
+        headers["user-agent"] = if (url in "misakamoe") {
+            SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
+        } else {
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
         }
     }
 
