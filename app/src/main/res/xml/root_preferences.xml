@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="缓存配置">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_download_conf">
 
         <Preference
             app:defaultValue="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
@@ -14,15 +14,15 @@
         <SwitchPreferenceCompat
             android:defaultValue="false"
             app:key="user_download_save_sd_path_switch"
-            app:summaryOff="使用SD卡储存"
-            app:summaryOn="这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。"
-            app:title="用SD卡作为下载路径">
+            app:summaryOff="@string/user_download_save_sd_path_switch_off"
+            app:summaryOn="@string/user_download_save_sd_path_switch_on"
+            app:title="@string/user_download_save_sd_path_switch_title">
 
         </SwitchPreferenceCompat>
 
 
         <EditTextPreference
-            app:defaultValue="{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+            app:defaultValue="@string/user_download_file_name_default"
             app:dialogMessage="@string/dl_file_rename_rules"
             app:key="user_download_file_name_editText"
             app:title="@string/user_download_file_name"
@@ -31,24 +31,24 @@
 
         <Preference
             app:key="rename_user_download_save_path"
-            app:title="还原下载路径"
+            app:title="@string/rename_user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
 
         <Preference
             app:key="rename_user_download_file_name_editText"
-            app:title="还原命名规则"
+            app:title="@string/rename_user_download_file_name_editText_title"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="缓存完成后的行为">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_behavior">
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             app:key="user_dl_finish_automatic_merge_switch"
-            app:summaryOff="默认下载是音频分离的"
-            app:summaryOn="目前音频合并只是一个很简单的行为，因此它可能有BUG，可能合并出问题，请熟知。"
-            app:title="缓存完成后自动合并">
+            app:summaryOff="@string/user_dl_finish_automatic_merge_switch_off"
+            app:summaryOn="@string/user_dl_finish_automatic_merge_switch_on"
+            app:title="@string/user_dl_finish_automatic_merge_switch_title">
 
         </SwitchPreferenceCompat>
 
@@ -56,33 +56,33 @@
         <SwitchPreferenceCompat
             android:icon="@drawable/ic_setting_bilibili"
             app:key="user_dl_finish_automatic_import_switch"
-            app:summaryOff="这需要你单独对文件夹进行授权，需要注意，只对番剧Dash下载有效果。"
-            app:summaryOn="现在下载完成后便会自动导入B站的缓存列表"
-            app:title="缓存完成后自动导入B站" />
+            app:summaryOff="@string/user_dl_finish_automatic_import_switch_off"
+            app:summaryOn="@string/user_dl_finish_automatic_import_switch_on"
+            app:title="@string/user_dl_finish_automatic_import_switch_title" />
 
     </PreferenceCategory>
-    <PreferenceCategory app:title="合并配置">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_merge_conf">
 
         <SwitchPreferenceCompat
             android:defaultValue="true"
             app:key="user_dl_finish_delete_merge_switch"
-            app:title="合并后删除原来音视频文件">
+            app:title="@string/user_dl_finish_delete_merge_switch_title">
 
         </SwitchPreferenceCompat>
 
         <EditTextPreference
-            android:defaultValue="ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
+            android:defaultValue="@string/user_dl_merge_cmd_editText_default"
             android:dialogTitle="RxFFmpeg"
             app:dialogMessage="@string/user_dl_merge_cmd"
             app:key="user_dl_merge_cmd_editText"
-            app:title="合并时FFmpeg命令"
+            app:title="@string/user_dl_merge_cmd_editText_title"
             app:useSimpleSummaryProvider="true">
 
         </EditTextPreference>
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="导入配置">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_import_conf">
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
@@ -93,33 +93,33 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory app:title="Language">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_language">
 
         <ListPreference
             android:defaultValue="System"
             android:entryValues="@array/user_language_value"
             android:entries="@array/user_language"
             app:key="user_language"
-            app:title="设置当前的语言">
+            app:title="@string/user_language_title">
 
         </ListPreference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="隐私政策">
+    <PreferenceCategory app:title="@string/app_root_preferences_title_privacy_policy">
 
         <SwitchPreferenceCompat
             android:icon="@drawable/ic_setting_vscodeignore"
             app:defaultValue="false"
             app:key="microsoft_app_center_type"
-            app:summary="这将匿名传递APP使用的统计数据，如：缓存使用什么方式，FLV还是DASH，帮助我们优化APP。"
-            app:title="允许使用 Microsoft AppCenter"></SwitchPreferenceCompat>
+            app:summary="@string/microsoft_app_center_type_summary"
+            app:title="@string/microsoft_app_center_type_title"></SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
             android:icon="@drawable/baidu_logo"
             app:defaultValue="false"
             app:key="baidu_statistics_type"
-            app:summary="以匿名的方式上传您的使用时长，页面停留时间，和地区信息，这将帮我们统计优化APP。"
-            app:title="允许使用 百度统计"></SwitchPreferenceCompat>
+            app:summary="@string/baidu_statistics_type_summary"
+            app:title="@string/baidu_statistics_type_title"></SwitchPreferenceCompat>
 
     </PreferenceCategory>
 
