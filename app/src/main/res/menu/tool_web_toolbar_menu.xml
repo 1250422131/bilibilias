@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/tool_web_toolbar_menu_finish"
+        android:icon="@drawable/ic_public_check"
+        android:title="完成"
+        android:tooltipText="完成"
+        app:showAsAction="always" />
+
+</menu>

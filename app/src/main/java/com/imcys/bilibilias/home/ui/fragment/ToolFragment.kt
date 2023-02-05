@@ -32,11 +32,13 @@ import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
+import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
@@ -140,16 +142,21 @@ class ToolFragment : Fragment() {
     }
 
     @SuppressLint("ResourceType")
-    private fun parseShare() {
-        val intent = activity?.intent
+    internal fun parseShare(intent:Intent?) {
+
         val action = intent?.action
         val type = intent?.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
+        lifecycleScope.launchWhenResumed {
+            if (Intent.ACTION_SEND == action && type != null) {
+                if ("text/plain" == type) {
+                    asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
+                }
+            }
+            val asUrl = intent?.extras?.getString("asUrl")
+            if (asUrl != null) {
+                asVideoId(asUrl)
             }
         }
-
 
     }
 
@@ -291,28 +298,31 @@ class ToolFragment : Fragment() {
     private fun getVideoCardData(bvid: String) {
 
         fragmentToolBinding.apply {
-            HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .get(BilibiliApi.getVideoDataPath + "?bvid=$bvid", VideoBaseBean::class.java) {
-                    (mAdapter).apply {
-                        //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
-                        //run函数将新准备的视频item合并进去，并返回。
-                        //最终apply利用该段返回执行最外层apply的submitList方法
-                        currentList.filter { it.type == 0 }.run {
-                            mutableListOf(
-                                ToolItemBean(
-                                    type = 1,
-                                    videoBaseBean = it,
-                                    clickEvent = {
-                                        AsVideoActivity.actionStart(requireContext(), bvid)
-                                    }
-                                )
-                            ) + this
-                        }.apply {
-                            submitList(this)
-                        }
 
+            lifecycleScope.launch {
+                val videoBaseBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
+                (mAdapter).apply {
+                    //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
+                    //run函数将新准备的视频item合并进去，并返回。
+                    //最终apply利用该段返回执行最外层apply的submitList方法
+                    currentList.filter { it.type == 0 }.run {
+                        mutableListOf(
+                            ToolItemBean(
+                                type = 1,
+                                videoBaseBean = videoBaseBean,
+                                clickEvent = {
+                                    AsVideoActivity.actionStart(requireContext(), bvid)
+                                }
+                            )
+                        ) + this
+                    }.apply {
+                        submitList(this)
                     }
+
                 }
+            }
+
         }
 
     }
@@ -350,11 +360,10 @@ class ToolFragment : Fragment() {
                             it.img_url,
                             it.color
                         ) {
-                            val intent = Intent(context, SettingActivity::class.java)
+                            val intent = Intent(context, WebAsActivity::class.java)
                             context?.startActivity(intent)
                         })
                     }
-
                 }
             }
 
@@ -381,13 +390,12 @@ class ToolFragment : Fragment() {
 
             }
 
-            //校验分享数据
-            parseShare()
 
         }
 
 
     }
+
 
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {
