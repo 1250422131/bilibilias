@@ -1,14 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name_debug">BILIBILIAS_DEBUG</string>
-    <string name="app_name_release">BILIBILIAS</string>
-
-    <string name="app_channel_release">Official Channel</string>
-    <string name="app_channel_debug">Official Channel Debug</string>
+    <string name="app_name_debug" translatable="false">BILIBILIAS_DEBUG</string>
+    <string name="app_name_release" translatable="false">BILIBILIAS</string>
+    <string name="app_channel_release">官方频道</string>
+    <string name="app_channel_debug">官方频道调试</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_user">UserActivity</string>
-    <string name="dl_file_rename_rules" tools:ignore="ExtraTranslation">
+    <string name="action_settings">设置</string>
+    <string name="title_activity_user">用户活动</string>
+    <string name="dl_file_rename_rules">
         路径开头 / 默认给出，无需添加。\n命名规则：即代表下载文件储存的子目录或者文件的命名方案，我们为你准备了一些变量，帮助你进行重命名。\n下面我简单介绍一些命名变量：\n
         AV号：{AV}\n
         BV号：{BV}\n
@@ -250,4 +249,30 @@
     <string name="app_permission_application_msg">使用BILIBILIAS需要同意此权限，因为缓存视频等需要向系统内申请储存权限。</string>
     <string name="app_guide_home">新版本内容在这里查看</string>
     <string name="app_guide_tool">解析功能移动到这里了</string>
+    <string name="app_root_preferences_title_download_conf">缓存配置</string>
+    <string name="user_download_save_sd_path_switch_title">用存储卡作为下载路径</string>
+    <string name="user_download_save_sd_path_switch_off">使用存储卡储存</string>
+    <string name="user_download_save_sd_path_switch_on">这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。</string>
+    <string name="user_download_file_name_default" translatable="false">{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}</string>
+    <string name="rename_user_download_save_path_title">还原下载路径</string>
+    <string name="rename_user_download_file_name_editText_title">还原命名规则</string>
+    <string name="app_root_preferences_title_behavior">缓存完成后的行为</string>
+    <string name="user_dl_finish_automatic_merge_switch_off">默认下载是音频分离的</string>
+    <string name="user_dl_finish_automatic_merge_switch_on">目前音频合并只是一个很简单的行为，因此它可能有BUG，可能合并出问题，请熟知。</string>
+    <string name="user_dl_finish_automatic_merge_switch_title">缓存完成后自动合并</string>
+    <string name="user_dl_finish_automatic_import_switch_off">这需要你单独对文件夹进行授权，需要注意，只对番剧Dash下载有效果。</string>
+    <string name="user_dl_finish_automatic_import_switch_on">现在下载完成后便会自动导入B站的缓存列表</string>
+    <string name="user_dl_finish_automatic_import_switch_title">缓存完成后自动导入B站</string>
+    <string name="app_root_preferences_title_merge_conf">合并配置</string>
+    <string name="user_dl_finish_delete_merge_switch_title">合并后删除原来音视频文件</string>
+    <string name="user_dl_merge_cmd_editText_default" translatable="false">ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}</string>
+    <string name="user_dl_merge_cmd_editText_title">合并时的FFmpeg命令</string>
+    <string name="app_root_preferences_title_import_conf">导入配置</string>
+    <string name="app_root_preferences_title_language">语言(Language)</string>
+    <string name="user_language_title">设置BILIBILIAS显示的语言</string>
+    <string name="app_root_preferences_title_privacy_policy">隐私政策</string>
+    <string name="microsoft_app_center_type_summary">这将匿名传递APP使用的统计数据，如：缓存使用什么方式，FLV还是DASH，帮助我们优化APP。</string>
+    <string name="microsoft_app_center_type_title">允许使用 Microsoft AppCenter</string>
+    <string name="baidu_statistics_type_summary">以匿名的方式上传您的使用时长，页面停留时间，和地区信息，这将帮我们统计优化APP。</string>
+    <string name="baidu_statistics_type_title">允许使用 百度统计</string>
 </resources>
