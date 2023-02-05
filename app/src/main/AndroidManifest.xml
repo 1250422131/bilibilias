@@ -35,16 +35,6 @@
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".home.ui.activity.tool.WebAsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.favlist.FavListActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
 
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
@@ -77,6 +67,17 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/bilibilias_file_paths" />
         </provider>
+
+        <activity
+            android:name=".home.ui.activity.tool.WebAsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.ui.activity.favlist.FavListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
 
         <activity
             android:name=".home.ui.activity.user.BangumiFollowActivity"
@@ -112,6 +113,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
+            android:launchMode="singleTask"
             android:name=".home.ui.activity.HomeActivity"
             tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>
