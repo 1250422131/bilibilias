@@ -185,7 +185,7 @@ class ToolFragment : Fragment() {
     fun asVideoId(inputString: String) {
 
         if (inputString == "") {
-            asToast(requireContext(), "没有输入任何内容哦")
+            asToast(requireContext(), getString(R.string.app_ToolFragment_asVideoId))
             return
         }
 
@@ -220,7 +220,7 @@ class ToolFragment : Fragment() {
                 submitList(this)
             }
         }
-        Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT).show()
 
     }
 
@@ -269,7 +269,8 @@ class ToolFragment : Fragment() {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(toString, object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.app_ToolFragment_loadShareData),
+                        Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -409,7 +410,7 @@ class ToolFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context, "ToolFragment")
+        StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
 

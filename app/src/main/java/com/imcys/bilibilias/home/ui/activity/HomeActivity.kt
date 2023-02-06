@@ -200,7 +200,7 @@ class HomeActivity : BaseActivity() {
     private fun exit() {
         if (System.currentTimeMillis() - exitTime > 2000) {
             Toast.makeText(
-                applicationContext, "再按一次退出程序",
+                applicationContext, getString(R.string.app_HomeActivity_exit),
                 Toast.LENGTH_SHORT
             ).show()
             exitTime = System.currentTimeMillis()
