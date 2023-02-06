@@ -21,12 +21,12 @@ class WebAsActivity : BaseActivity() {
         webAsBinding =
             DataBindingUtil.setContentView<ActivityWebAsBinding?>(this, R.layout.activity_web_as)
                 .apply {
-                    webAsMaterialToolbar.addStatusBarTopPadding()
                     setSupportActionBar(webAsMaterialToolbar)
                     supportActionBar?.apply {
                         setDisplayHomeAsUpEnabled(true)
                         setHomeButtonEnabled(true)
                     }
+                    webAsTopLy.addStatusBarTopPadding()
                 }
 
 
@@ -46,13 +46,18 @@ class WebAsActivity : BaseActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
-            cookieManager.setCookie("https://m.bilibili.com", asUser.cookie)
+            cookieManager.setCookie("https://bilibili.com", asUser.cookie)
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
 
-
-            val webChromeClient = object : WebChromeClient() {
-
+            webAsWebView.webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(
+                    view: WebView?,
+                    request: WebResourceRequest?,
+                ): Boolean {
+                    view?.loadUrl(request?.url.toString())
+                    return super.shouldOverrideUrlLoading(view, request)
+                }
             }
 
         }
@@ -66,6 +71,7 @@ class WebAsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //配置完成事件
         when (item.itemId) {
+            android.R.id.home -> finish()
             R.id.tool_web_toolbar_menu_finish -> {
                 val thisUrl = webAsBinding.webAsWebView.url
                 thisUrl?.let { HomeActivity.actionStart(this, it) }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_channel_release">Official Channel</string>
-    <string name="app_channel_debug">Official Channel Debug</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="action_settings">Settings</string>

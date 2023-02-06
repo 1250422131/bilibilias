@@ -19,4 +19,6 @@ object ARouterAddress : Serializable {
 
     const val LiveStreamActivity = "tool_livestream/LiveStreamActivity"
 
+    const val LogExportActivity = "tool_log_export/LiveStreamActivity"
+
 }
