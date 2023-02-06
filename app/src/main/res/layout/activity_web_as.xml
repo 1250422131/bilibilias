@@ -14,12 +14,18 @@
         android:orientation="vertical"
         tools:context=".home.ui.activity.tool.WebAsActivity">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/web_as_materialToolbar"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/web_as_top_ly"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/tool_web_toolbar_menu"
-            app:title="@string/app_activity_web_as_title" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/web_as_materialToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/tool_web_toolbar_menu"
+                app:title="网页解析" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <WebView
             android:id="@+id/web_as_webView"

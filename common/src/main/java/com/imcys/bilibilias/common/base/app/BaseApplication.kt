@@ -3,14 +3,10 @@ package com.imcys.bilibilias.common.base.app
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Handler
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
-import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.common.BuildConfig
-import com.imcys.bilibilias.common.R
-import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.xiaojinzi.component.Component
@@ -32,8 +28,6 @@ open class BaseApplication : Application() {
 
         initKComponent()
 
-        initBRV()
-
 
 
     }
@@ -47,16 +41,8 @@ open class BaseApplication : Application() {
         )
         // 手动加载模块
         ModuleManager.registerArr(
-            "app", "common", "tool_livestream",
+            "app", "common", "tool_livestream","tool_log_export"
         )
-    }
-
-    private fun initBRV() {
-        StateConfig.apply {
-            emptyLayout = R.layout.public_layout_empty
-            errorLayout = R.layout.public_layout_error
-            loadingLayout = R.layout.public_layout_loading
-        }
     }
 
 
