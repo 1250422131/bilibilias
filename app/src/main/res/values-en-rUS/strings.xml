@@ -260,4 +260,11 @@
     <string name="app_item_fg_user_tool_play_history">Play\nHistory</string>
     <string name="app_item_fg_user_tool_coin_history">Coin\nHistory</string>
     <string name="user_dl_delete_import_file_switch_title">Delete the original audio and video file after import</string>
+    <string name="app_tool_toolbar_menu_title">Done</string>
+    <string name="app_tool_toolbar_menu_tooltipText">Done</string>
+    <string name="app_HomeActivity_exit">Press again to exit the program</string>
+    <string name="app_activity_web_as_title">Analyze Website</string>
+    <string name="app_ToolFragment_asVideoId">No content entered</string>
+    <string name="app_ToolFragment_asVideoId2">The content entered is incorrect</string>
+    <string name="app_ToolFragment_loadShareData">Check whether it is the wrong address</string>
 </resources>
