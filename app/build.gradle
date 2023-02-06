@@ -20,7 +20,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
         versionCode 201
-        versionName "2.0.1"
+        versionName "2.0.2-天枢-Beta"
         //multiDexEnabled true
 
 
@@ -37,17 +37,14 @@ android {
 
 
 
-
-
-
     }
 
 
     productFlavors {
 
-        community {
-
-
+        communityBeta {
+            resValue "string", "app_name", "@string/app_name_debug"
+            resValue "string", "app_channel", "@string/app_channel_debug"
         }
     }
 
@@ -59,8 +56,6 @@ android {
             //混淆
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "app_name", "@string/app_name_debug"
-            resValue "string", "app_channel", "@string/app_channel_debug"
         }
 
         release {
@@ -71,9 +66,6 @@ android {
             // 移除无用的resource文件
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "app_name", "@string/app_name_release"
-            resValue "string", "app_channel", "@string/app_channel_release"
-
 
         }
 

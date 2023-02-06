@@ -13,7 +13,10 @@ import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
+import com.microsoft.appcenter.distribute.Distribute
+import com.microsoft.appcenter.distribute.UpdateTrack
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
+
 
 open class AbsActivity : AppCompatActivity() {
 
@@ -61,12 +64,17 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 //统计接入
+                Distribute.setEnabledForDebuggableBuild(true)
+
                 AppCenter.start(
                     application,
                     BaseApplication.appSecret,
                     Analytics::class.java,
-                    Crashes::class.java
+                    Crashes::class.java,
+                    Distribute::class.java
                 )
+                Distribute.setUpdateTrack(UpdateTrack.PUBLIC)
+
             }
 
         }
