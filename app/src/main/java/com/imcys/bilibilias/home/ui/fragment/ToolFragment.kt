@@ -48,6 +48,7 @@ import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
 import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
 import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
+import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.launch
@@ -142,7 +143,7 @@ class ToolFragment : Fragment() {
     }
 
     @SuppressLint("ResourceType")
-    internal fun parseShare(intent:Intent?) {
+    internal fun parseShare(intent: Intent?) {
 
         val action = intent?.action
         val type = intent?.type
@@ -301,8 +302,9 @@ class ToolFragment : Fragment() {
         fragmentToolBinding.apply {
 
             lifecycleScope.launch {
-                val videoBaseBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                    .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
+                val videoBaseBean =
+                    KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                        .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
                 (mAdapter).apply {
                     //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
                     //run函数将新准备的视频item合并进去，并返回。
@@ -365,6 +367,15 @@ class ToolFragment : Fragment() {
                             context?.startActivity(intent)
                         })
                     }
+                    4 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color
+                        ) {
+                            LogExportActivity.actionStart(requireContext())
+                        })
+                    }
                 }
             }
 
@@ -396,7 +407,6 @@ class ToolFragment : Fragment() {
 
 
     }
-
 
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {

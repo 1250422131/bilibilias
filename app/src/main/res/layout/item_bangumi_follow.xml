@@ -6,7 +6,7 @@
 
         <variable
             name="ListBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiFollowList.DataBean.ListBean" />
+            type="com.imcys.bilibilias.common.base.model.common.BangumiFollowList.DataBean.ListBean" />
 
     </data>
 
