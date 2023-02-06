@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.BangumiFollowList
+import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 

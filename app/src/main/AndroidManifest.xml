@@ -78,7 +78,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".home.ui.activity.user.BangumiFollowActivity"
             android:exported="false">
@@ -113,8 +112,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
-            android:launchMode="singleTask"
             android:name=".home.ui.activity.HomeActivity"
+            android:launchMode="singleTask"
             tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

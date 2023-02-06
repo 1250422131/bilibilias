@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_channel_release">官方頻道</string>
-    <string name="app_channel_debug">官方頻道調試</string>
-
 
     <string name="action_settings">設定</string>
     <string name="title_activity_user">用戶活動</string>
