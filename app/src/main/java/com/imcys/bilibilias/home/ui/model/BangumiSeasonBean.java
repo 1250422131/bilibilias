@@ -1439,7 +1439,7 @@ public class BangumiSeasonBean implements Serializable {
             private DimensionBean dimension;
             private int duration;
             private String from;
-            private int id;
+            private long id;
             private boolean is_view_hide;
             private String link;
             private String long_title;
@@ -1551,11 +1551,11 @@ public class BangumiSeasonBean implements Serializable {
                 this.from = from;
             }
 
-            public int getId() {
+            public long getId() {
                 return id;
             }
 
-            public void setId(int id) {
+            public void setId(long id) {
                 this.id = id;
             }
 
