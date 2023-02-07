@@ -70,14 +70,17 @@ import kotlin.system.exitProcess
 )
 class HomeFragment : Fragment() {
 
-    lateinit var fragmentHomeBinding: FragmentHomeBinding;
+    lateinit var fragmentHomeBinding: FragmentHomeBinding
     private lateinit var loginQRDialog: BottomSheetDialog
-    private val bottomSheetDialog = context?.let { DialogUtils.loadDialog(it) }
+
+    //懒加载
+    private val bottomSheetDialog by lazy {
+        DialogUtils.loadDialog(requireContext())
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
 
@@ -107,7 +110,9 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val guideVersion = (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
+        //判断用户是否没有被引导
+        val guideVersion =
+            (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
             loadHomeGuide()
         }
@@ -135,10 +140,11 @@ class HomeFragment : Fragment() {
             }
             .setBackgroundColor("#80000000".toColorInt())
             .setOnDismissCallback {
-
+                //让ViewPage来切换页面
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1).isCheckable = true
+                    1
+                ).isCheckable = true
 
             }
             .show()
@@ -157,19 +163,18 @@ class HomeFragment : Fragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=banner",
-            OldHomeBannerDataBean::class.java) {
-
+        lifecycleScope.launch {
+            val oldHomeBannerDataBean =
+                KtHttpUtils.asyncGet<OldHomeBannerDataBean>("${BiliBiliAsApi.updateDataPath}?type=banner")
             //新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(
                 OldHomeBeanAdapter(
-                    it.textList,
-                    it
+                    oldHomeBannerDataBean.textList,
+                    oldHomeBannerDataBean
                 )
-            )
-                .setIndicator(CircleIndicator(context))
+            ).setIndicator(CircleIndicator(context))
         }
+
 
     }
 
@@ -182,8 +187,9 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
 
             val oldUpdateDataBean =
-                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-                    OldUpdateDataBean::class.java)
+                KtHttpUtils.asyncGet<OldUpdateDataBean>(
+                    "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                )
 
             //加载公告
             if (oldUpdateDataBean.notice != "") {
@@ -255,8 +261,10 @@ class HomeFragment : Fragment() {
      */
     private fun postAppData(sha: String, md5: String, crc: String) {
 
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java) {
+        HttpUtils.get(
+            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
+            OldUpdateDataBean::class.java
+        ) {
         }
     }
 
@@ -323,7 +331,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     /**
      * 加载登陆对话框
      */
@@ -360,7 +367,7 @@ class HomeFragment : Fragment() {
     //初始化用户数据
     private fun initUserData() {
 
-        bottomSheetDialog?.show()
+        bottomSheetDialog.show()
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
@@ -376,7 +383,7 @@ class HomeFragment : Fragment() {
     private fun detectUserLogin() {
 
         lifecycleScope.launch {
-            val myUserData = HttpUtils.addHeader("cookie",(context as HomeActivity).asUser.cookie)
+            val myUserData = HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                 .asyncGet(
                     BilibiliApi.getMyUserData, MyUserData::class.java
                 )
@@ -392,8 +399,9 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
-            val userInfoBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+            val userInfoBean =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
 
             //这里需要储存下数据
             val sharedPreferences =
