@@ -165,7 +165,7 @@ class HomeFragment : Fragment() {
     private fun loadBannerData() {
         lifecycleScope.launch {
             val oldHomeBannerDataBean =
-                KtHttpUtils.asyncGet<OldHomeBannerDataBean>("${BiliBiliAsApi.updateDataPath}?type=banner")
+                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=banner",OldHomeBannerDataBean::class.java)
             //新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(
                 OldHomeBeanAdapter(
@@ -187,8 +187,9 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
 
             val oldUpdateDataBean =
-                KtHttpUtils.asyncGet<OldUpdateDataBean>(
+                HttpUtils.asyncGet(
                     "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                    OldUpdateDataBean::class.java
                 )
 
             //加载公告
