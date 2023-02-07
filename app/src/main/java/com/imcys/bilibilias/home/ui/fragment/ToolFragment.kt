@@ -70,6 +70,7 @@ class ToolFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
+        //这里仍然是在判断是否有被引导过了
         val guideVersion =
             (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
@@ -142,6 +143,11 @@ class ToolFragment : Fragment() {
 
     }
 
+    /**
+     * 分享检查
+     * 如果外部有分享内容，就会在这里过滤
+     * @param intent Intent?
+     */
     @SuppressLint("ResourceType")
     internal fun parseShare(intent: Intent?) {
 
@@ -153,6 +159,7 @@ class ToolFragment : Fragment() {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
             }
+            //下面这段代表是从浏览器解析过来的
             val asUrl = intent?.extras?.getString("asUrl")
             if (asUrl != null) {
                 asVideoId(asUrl)
@@ -194,7 +201,7 @@ class ToolFragment : Fragment() {
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
-            loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
+            loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
             return
         } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
             loadShareData(
@@ -286,7 +293,7 @@ class ToolFragment : Fragment() {
      * 利用ep号进行检索
      * @param epId Int
      */
-    private fun loadEpVideoCard(epId: Int) {
+    private fun loadEpVideoCard(epId: Long) {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
                 if (it.code == 0) {
@@ -331,6 +338,9 @@ class ToolFragment : Fragment() {
     }
 
 
+    /**
+     * 加载支持工具的item
+     */
     private fun loadToolItem() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         lifecycleScope.launch {
@@ -338,7 +348,9 @@ class ToolFragment : Fragment() {
             val oldToolItemBean = getOldToolItemBean()
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
+                    //视频解析
                     1 -> {
+
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,
@@ -347,6 +359,7 @@ class ToolFragment : Fragment() {
                             asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
                         })
                     }
+                    //设置
                     2 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
@@ -354,9 +367,10 @@ class ToolFragment : Fragment() {
                             it.color
                         ) {
                             val intent = Intent(context, SettingActivity::class.java)
-                            context?.startActivity(intent)
+                            requireActivity().startActivity(intent)
                         })
                     }
+                    //web解析
                     3 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
@@ -364,9 +378,10 @@ class ToolFragment : Fragment() {
                             it.color
                         ) {
                             val intent = Intent(context, WebAsActivity::class.java)
-                            context?.startActivity(intent)
+                            requireActivity().startActivity(intent)
                         })
                     }
+                    //导出日志
                     4 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,

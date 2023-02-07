@@ -21,11 +21,13 @@ class WebAsActivity : BaseActivity() {
         webAsBinding =
             DataBindingUtil.setContentView<ActivityWebAsBinding?>(this, R.layout.activity_web_as)
                 .apply {
+                    //设置返回按钮可用
                     setSupportActionBar(webAsMaterialToolbar)
                     supportActionBar?.apply {
                         setDisplayHomeAsUpEnabled(true)
                         setHomeButtonEnabled(true)
                     }
+
                     webAsTopLy.addStatusBarTopPadding()
                 }
 
@@ -46,6 +48,7 @@ class WebAsActivity : BaseActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
+            //注入cookie
             cookieManager.setCookie("https://bilibili.com", asUser.cookie)
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
