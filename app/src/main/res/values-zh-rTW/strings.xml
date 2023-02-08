@@ -269,5 +269,13 @@
     <string name="app_ToolFragment_asVideoId">沒有鍵入任何內容哦</string>
     <string name="app_ToolFragment_asVideoId2">鍵入的內容不正確哦</string>
     <string name="app_ToolFragment_loadShareData">檢查是否為錯誤地址</string>
+    <string name="app_LoginQRModel_goToQR">嗚哇，您好像沒有安裝Bilibili</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">下載完成，跳轉掃碼</string>
+    <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
+    <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">查看更新內容</string>
+    <string name="app_HomeFragment_loadNotice_title">最新通知</string>
+    <string name="app_HomeFragment_loadNotice_negativeButtonText">這份公告不行啊</string>
+    <string name="app_HomeFragment_loadNotice_positiveButtonText">我明白了</string>
 
 </resources>
