@@ -221,10 +221,10 @@ class HomeFragment : Fragment() {
         if (BiliBiliAsApi.version.toString() != oldUpdateDataBean.version) {
             DialogUtils.dialog(
                 requireContext(),
-                "有新版本了",
+                getString(R.string.app_HomeFragment_loadVersionData_title),
                 oldUpdateDataBean.gxnotice,
-                "更新",
-                "还是更新",
+                getString(R.string.app_HomeFragment_loadVersionData_positiveButtonText),
+                getString(R.string.app_HomeFragment_loadVersionData_negativeButtonText),
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
@@ -232,9 +232,9 @@ class HomeFragment : Fragment() {
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
-                    val uri = Uri.parse(oldUpdateDataBean.url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
-                    requireContext().startActivity(intent)
+//                    val uri = Uri.parse(oldUpdateDataBean.url)
+//                    val intent = Intent(Intent.ACTION_VIEW, uri);
+//                    requireContext().startActivity(intent)
                 }
             ).show()
         }
@@ -278,10 +278,10 @@ class HomeFragment : Fragment() {
         val mNotice = sharedPreferences.getString("AppNotice", "")
         if (mNotice != notice) {
             DialogUtils.dialog(requireContext(),
-                "最新通知",
+                getString(R.string.app_HomeFragment_loadNotice_title),
                 notice,
-                "我明白了",
-                "这份公告不行啊",
+                getString(R.string.app_HomeFragment_loadNotice_positiveButtonText),
+                getString(R.string.app_HomeFragment_loadNotice_negativeButtonText),
                 true,
                 positiveButtonClickListener = {
                     sharedPreferences.edit().putString("AppNotice", notice).apply()
