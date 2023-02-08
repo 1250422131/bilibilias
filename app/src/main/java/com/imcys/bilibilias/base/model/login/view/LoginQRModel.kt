@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
@@ -129,7 +130,7 @@ class LoginQRModel {
                 if (!photoDir.exists()) {
                     photoDir.mkdirs()
                 }
-                val fileName = "BILIBILIAS扫码.jpg"
+                val fileName = view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_fileName)
                 val photo = File(photoDir, fileName)
                 try {
                     val fos = FileOutputStream(photo)
@@ -143,7 +144,7 @@ class LoginQRModel {
                 }
 
                 updatePhotoMedia(photo,view.context)
-                asToast(view.context,"下载完成，跳转扫码。")
+                asToast(view.context,view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast))
                 goToQR(view)
             }
         })
@@ -172,7 +173,7 @@ class LoginQRModel {
                 context.startActivity(intent)
             } else {
                 Toast.makeText(context,
-                    "呜哇，好像没有安装B站",
+                    context.getString(R.string.app_LoginQRModel_goToQR),
                     Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
