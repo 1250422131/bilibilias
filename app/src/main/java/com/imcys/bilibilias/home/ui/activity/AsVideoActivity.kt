@@ -270,7 +270,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private suspend fun archiveCoins() {
         val archiveHasLikeBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
-            .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?aid=${bvid}")
+            .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?bvid=${bvid}")
         binding.archiveHasLikeBean = archiveHasLikeBean
     }
 
@@ -279,7 +279,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private suspend fun archiveHasLike() {
         val archiveCoinsBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
-            .asyncGet<ArchiveCoinsBean>("${BilibiliApi.archiveCoinsPath}?aid=${bvid}")
+            .asyncGet<ArchiveCoinsBean>("${BilibiliApi.archiveCoinsPath}?bvid=${bvid}")
         binding.archiveCoinsBean = archiveCoinsBean
 
     }
