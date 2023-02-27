@@ -35,3 +35,5 @@ captures/
 .idea/dictionaries
 .idea/libraries
 .idea/caches
+
+.idea/modules.xml
