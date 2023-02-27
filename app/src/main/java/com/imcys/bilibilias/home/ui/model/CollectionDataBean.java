@@ -110,9 +110,9 @@ public class CollectionDataBean implements Serializable {
              * media_count : 479
              */
 
-            private int id;
-            private int fid;
-            private int mid;
+            private long id;
+            private long fid;
+            private long mid;
             private int attr;
             private String title;
             private String cover;
@@ -128,27 +128,27 @@ public class CollectionDataBean implements Serializable {
             private int like_state;
             private int media_count;
 
-            public int getId() {
+            public long getId() {
                 return id;
             }
 
-            public void setId(int id) {
+            public void setId(long id) {
                 this.id = id;
             }
 
-            public int getFid() {
+            public long getFid() {
                 return fid;
             }
 
-            public void setFid(int fid) {
+            public void setFid(long fid) {
                 this.fid = fid;
             }
 
-            public int getMid() {
+            public long getMid() {
                 return mid;
             }
 
-            public void setMid(int mid) {
+            public void setMid(long mid) {
                 this.mid = mid;
             }
 
