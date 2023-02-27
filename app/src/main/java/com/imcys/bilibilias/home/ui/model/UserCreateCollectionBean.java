@@ -108,8 +108,8 @@ public class UserCreateCollectionBean implements Serializable {
              * media_count : 452
              */
 
-            private int id;
-            private int fid;
+            private long id;
+            private long fid;
             private long mid;
             private int attr;
             private String title;
@@ -125,19 +125,19 @@ public class UserCreateCollectionBean implements Serializable {
                 this.selected = selected;
             }
 
-            public int getId() {
+            public long getId() {
                 return id;
             }
 
-            public void setId(int id) {
+            public void setId(long id) {
                 this.id = id;
             }
 
-            public int getFid() {
+            public long getFid() {
                 return fid;
             }
 
-            public void setFid(int fid) {
+            public void setFid(long fid) {
                 this.fid = fid;
             }
 
