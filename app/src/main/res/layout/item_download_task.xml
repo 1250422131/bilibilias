@@ -42,7 +42,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/color_primary"
+                        android:background="?attr/colorPrimary"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -118,7 +118,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
-                            app:tint="@color/color_primary" />
+                            app:tint="?attr/colorPrimary" />
 
                     </RelativeLayout>
 
