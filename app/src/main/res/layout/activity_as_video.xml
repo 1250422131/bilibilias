@@ -289,10 +289,10 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/as_video_user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@{VideoBaseBean.data.owner.name}"
-                            android:textColor="@{UserCardBean.data.card.vip.status == 1 ? UserCardBean.data.card.vip.nickname_color : `#000000`}"
                             android:textSize="16sp" />
 
                         <TextView
@@ -442,7 +442,7 @@
             android:elevation="3dp"
             android:focusable="true"
             android:src="@drawable/ic_as_video_play"
-            android:tint="@color/color_primary"
+            android:tint="?attr/colorPrimary"
             app:backgroundTint="@color/white"
             app:layout_anchor="@id/as_video_appbar"
             app:layout_anchorGravity="bottom|end"

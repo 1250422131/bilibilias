@@ -35,13 +35,13 @@
                 app:tabIndicator="@drawable/download_tablayout_indicator"
                 app:tabIndicatorAnimationDuration="400"
                 app:tabIndicatorAnimationMode="elastic"
-                app:tabIndicatorColor="@color/color_primary"
+                app:tabIndicatorColor="?attr/colorPrimary"
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicatorHeight="10dp"
                 app:tabInlineLabel="true"
                 app:tabMode="scrollable"
                 app:tabRippleColor="@android:color/transparent"
-                app:tabSelectedTextColor="@color/color_primary"
+                app:tabSelectedTextColor="?attr/colorPrimary"
                 app:tabTextAppearance="@style/Download_TabLayoutTextStyle"
                 app:tabTextColor="@color/black">
 

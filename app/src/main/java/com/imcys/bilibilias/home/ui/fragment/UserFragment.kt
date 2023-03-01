@@ -67,11 +67,7 @@ class UserFragment : Fragment() {
     }
 
     private fun checkDataRecovery(savedInstanceState: Bundle?) {
-        if (savedInstanceState!=null){
-            lifecycleScope.launch {
 
-            }
-        }
     }
 
     private fun initView() {
@@ -92,8 +88,9 @@ class UserFragment : Fragment() {
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         lifecycleScope.launch {
-            val userWorksBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+            val userWorksBean =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
             userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
         }
@@ -103,36 +100,32 @@ class UserFragment : Fragment() {
     private fun initUserWorks() {
 
 
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .get(
-                "${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20",
-                UserWorksBean::class.java
-            ) {
-                userWorksBean = it
-                userWorksAd = UserWorksAdapter()
+        lifecycleScope.launch {
+            val userWorksBean =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20")
 
-                fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
-                fragmentUserBinding.fragmentUserWorksRv.layoutManager =
-                    StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
-                    RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-                        if (isSlideToBottom(recyclerView)) {
-                            if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
-                                loadUserWorks()
-                            } else {
-                                Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
-                            }
+            userWorksAd = UserWorksAdapter()
+            this@UserFragment.userWorksBean = userWorksBean
+
+            fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
+            fragmentUserBinding.fragmentUserWorksRv.layoutManager =
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (isSlideToBottom(recyclerView)) {
+                        if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                            loadUserWorks()
+                        } else {
+                            Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
                         }
-
-
                     }
-                })
-
-                userWorksAd.submitList(it.data.list.vlist)
-
-            }
+                }
+            })
+            userWorksAd.submitList(userWorksBean.data.list.vlist)
+        }
 
     }
 
@@ -148,32 +141,36 @@ class UserFragment : Fragment() {
     private fun initUserData() {
 
         //切到后台线程去
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
 
             userDataMutableList.clear()
 
-            val userBaseBean = lifecycleScope.async { getUserData() }
+            val userBaseBean = getUserData()
 
-            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
+            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean))
 
-            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+
+            launch(Dispatchers.Main) {
+                userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            }
 
             // 用户卡片信息
-            val userCardBean = lifecycleScope.async { getUserCardBean() }
+            val userCardBean = getUserCardBean()
 
             //获取up状态
-            val userUpStat = lifecycleScope.async { getUpStat() }
+            val userUpStat = getUpStat()
 
 
             userDataMutableList.add(
                 UserViewItemBean(
                     2,
-                    upStatBeam = userUpStat.await(),
-                    userCardBean = userCardBean.await()
+                    upStatBeam = userUpStat,
+                    userCardBean = userCardBean
                 )
             )
-
-            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            launch(Dispatchers.Main) {
+                userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            }
             initUserTool()
 
 
