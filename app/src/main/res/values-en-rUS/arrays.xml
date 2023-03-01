@@ -20,11 +20,11 @@
     </string-array>
 
     <string-array name="app_theme">
-        <item>跟随系统</item>
-        <item>花嫁白（亮色）</item>
-        <item>暗夜黑（暗色）</item>
-        <item>哔哩粉</item>
-        <item>胖次蓝</item>
+        <item>Auto</item>
+        <item>White Flowers (Bright)</item>
+        <item>Dark Night Black (Dark)</item>
+        <item>Beep Powder</item>
+        <item>Fat Secondary Blue</item>
     </string-array>
 
 
