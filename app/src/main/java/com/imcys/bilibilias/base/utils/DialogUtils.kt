@@ -1786,14 +1786,14 @@ class DialogUtils {
                         //标签，判断这一次是否有重复
                         var tage = true
                         //这里加also标签为的是可以return掉forEachIndexed
-                        videoPageMutableList.also {
-                            it.forEachIndexed { index, dataBean ->
+                        videoPageMutableList.also {range->
+                            range.forEachIndexed { index, dataBean ->
                                 if (dataBean.cid == videoPageListData.data[position].cid) {
                                     tage = false
-                                    itemBinding[position].dataBean?.selected = 0
+                                    itemBinding.dataBean?.selected = 0
                                     videoPageMutableList.removeAt(index)
                                     dialogCollectionRv.adapter?.notifyItemChanged(index)
-                                    return@forEachIndexed
+                                    return@also
                                 }
                             }
                         }
@@ -1801,7 +1801,7 @@ class DialogUtils {
 
 
                         if (tage) {
-                            itemBinding[position].dataBean?.selected = 1
+                            itemBinding.dataBean?.selected = 1
                             videoPageMutableList.add(videoPageListData.data[position])
                         }
 

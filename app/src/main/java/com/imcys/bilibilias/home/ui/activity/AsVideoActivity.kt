@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -526,6 +527,22 @@ class AsVideoActivity : BaseActivity() {
     private fun showUserCard() {
         binding.apply {
             asVideoUserCardLy.visibility = View.VISIBLE
+
+            //判断是否会员，会员情况下展示会员主题色，反之黑色
+            val nameColor = if (userBaseBean.data?.vip?.nickname_color != "") {
+                Color.parseColor(userBaseBean.data?.vip?.nickname_color!!)
+            } else {
+                //低版本兼容
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    getColor(R.color.black)
+                } else {
+                    Color.BLACK
+                }
+            }
+
+            //设置最终获取颜色
+            asVideoUserName.setTextColor(nameColor)
+
         }
     }
 

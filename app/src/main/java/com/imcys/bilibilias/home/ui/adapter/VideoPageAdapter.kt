@@ -12,13 +12,10 @@ import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 class VideoPageAdapter(
     val datas: MutableList<VideoPageListData.DataBean>,
-    val selectedResult: (position: Int, itemBinding: MutableList<ItemDlVideoPageBinding>) -> Unit,
+    val selectedResult: (position: Int, itemBinding: ItemDlVideoPageBinding) -> Unit,
 ) : RecyclerView.Adapter<VideoPageAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-    private var longClickItem = -1
-    private val bindingMutableList = mutableListOf<ItemDlVideoPageBinding>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDlVideoPageBinding =
@@ -33,15 +30,11 @@ class VideoPageAdapter(
             dataBean = datas[position]
         }
 
-
         //回调点击项数
-        binding?.apply {
-            bindingMutableList.add(this)
-            itemCollectionButton.setOnClickListener {
-                selectedResult(position, bindingMutableList)
-            }
-
+        binding?.itemCollectionButton?.setOnClickListener {
+            selectedResult(position, binding)
         }
+
     }
 
     override fun getItemCount(): Int {

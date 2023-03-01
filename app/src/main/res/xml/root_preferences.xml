@@ -92,10 +92,23 @@
         </SwitchPreferenceCompat>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/app_root_preferences_title_theme">
+        <ListPreference
+            android:summary="@string/app_root_preferences_long_title_theme_tip"
+            android:defaultValue="System"
+            android:entryValues="@array/app_theme_value"
+            android:entries="@array/app_theme"
+            android:key="app_theme"
+            android:title="@string/app_root_preferences_long_title_theme">
+
+        </ListPreference>
+    </PreferenceCategory>
+
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_language">
 
         <ListPreference
+
             android:defaultValue="System"
             android:entryValues="@array/user_language_value"
             android:entries="@array/user_language"
@@ -104,6 +117,8 @@
 
         </ListPreference>
     </PreferenceCategory>
+
+
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_privacy_policy">
 
