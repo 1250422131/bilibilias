@@ -34,7 +34,7 @@
                     android:id="@+id/dialog_login_tip_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -175,6 +175,7 @@
 
 
                     <LinearLayout
+                        android:theme="@style/Theme.BILIBILIAS"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
@@ -192,7 +193,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
-                            android:textColor="@color/color_primary" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
                             android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"
@@ -200,7 +201,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_2"
-                            android:textColor="@color/color_primary" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
 
@@ -208,7 +209,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_3"
-                            android:textColor="@color/color_primary" />
+                            android:textColor="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="wrap_content"

@@ -34,7 +34,7 @@
                 <androidx.constraintlayout.utils.widget.ImageFilterView
                    android:id="@+id/tip_face"
                     android:padding="10dp"
-                    app:tint="@color/color_primary"
+                    app:tint="?attr/colorPrimary"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:scaleType="fitXY" />

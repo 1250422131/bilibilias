@@ -184,7 +184,7 @@ class DownloadQueue {
 
 
             //使用多个线程同步下载
-            coroutineScope.launch {
+             coroutineScope.launch {
                 // 使用 XUtils 库来下载文件
                 task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
                     override fun onSuccess(result: File?) {
@@ -979,7 +979,6 @@ class DownloadQueue {
 
 
         }
-
     }
 
 
