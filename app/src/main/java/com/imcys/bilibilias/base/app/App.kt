@@ -62,13 +62,13 @@ class App : BaseApplication() {
 
         //——————————————————B站视频模板——————————————————
         val videoEntry: String by lazy {
-            App().getString(R.string.VideoEntry)
+            context.getString(R.string.VideoEntry)
         }
         val videoIndex: String by lazy {
-            App().getString(R.string.VideoIndex)
+            context.getString(R.string.VideoIndex)
         }
         val bangumiEntry: String by lazy {
-            App().getString(R.string.BangumiEntry)
+            context.getString(R.string.BangumiEntry)
         }
 
         //——————————————————部分内置需要的上下文——————————————————

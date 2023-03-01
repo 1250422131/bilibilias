@@ -30,7 +30,7 @@
             app:tabIndicator="@drawable/home_tablayout_indicator"
             app:tabIndicatorAnimationDuration="400"
             app:tabIndicatorAnimationMode="elastic"
-            app:tabIndicatorColor="@color/color_primary"
+            app:tabIndicatorColor="?attr/colorPrimary"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorGravity="stretch"
             app:tabIndicatorHeight="0dp"

@@ -14,10 +14,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.preference.PreferenceManager
+import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
+import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.AbsActivity
@@ -27,6 +29,7 @@ import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
@@ -53,14 +56,41 @@ class AsVideoViewModel(
         videoPageListData: VideoPageListData,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-            .addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
-                DashVideoPlayBean::class.java) {
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch {
+
+            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
+                val dashVideoPlayBean = KtHttpUtils.addHeader("cookie", context.asUser.cookie)
+                    .addHeader("referer", "https://www.bilibili.com")
+                    .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
+                //这里再检验一次，是否为404内容
                 loadDialog.cancel()
-                DialogUtils.downloadVideoDialog(context, videoBaseBean, videoPageListData, it)
-                    .show()
+                launch(Dispatchers.Main) {
+                    if (dashVideoPlayBean.code == 0) DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        videoPageListData,
+                        dashVideoPlayBean
+                    ).show()
+                }
+
+            } else {
+                AsDialog.build {
+                    config = {
+                        title = "止步于此"
+                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                        positiveButtonText = "知道了"
+                        positiveButton = {
+                            it.cancel()
+                        }
+                    }
+                }.show()
             }
+
+
+        }
 
 
     }
@@ -75,15 +105,42 @@ class AsVideoViewModel(
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-            .addHeader("referer", "https://www.bilibili.com")
-            .get("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1",
-                DashVideoPlayBean::class.java) {
+
+        val coroutineScope = CoroutineScope(Dispatchers.Default)
+        coroutineScope.launch {
+
+            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
+                val dashVideoPlayBean =
+                    KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                        .addHeader("referer", "https://www.bilibili.com")
+                        .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
-                DialogUtils.downloadVideoDialog(context, videoBaseBean, bangumiSeasonBean, it)
-                    .show()
+                launch(Dispatchers.Main) {
+                    if (dashVideoPlayBean.code == 0) DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        bangumiSeasonBean,
+                        dashVideoPlayBean
+                    ).show()
+                }
+
+            } else {
+                AsDialog.build {
+                    config = {
+                        title = "止步于此"
+                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                        positiveButtonText = "知道了"
+                        positiveButton = {
+                            it.cancel()
+                        }
+                    }
+                }.show()
+
             }
 
+        }
 
     }
 
@@ -102,15 +159,16 @@ class AsVideoViewModel(
     }
 
 
-
     fun saveDanmaku(bytes: ByteArray, cid: Int) {
 
         val coroutineScope = CoroutineScope(Dispatchers.Default)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val savePath = sharedPreferences.getString("user_download_save_path",
-            context.getExternalFilesDir("download").toString())
+        val savePath = sharedPreferences.getString(
+            "user_download_save_path",
+            context.getExternalFilesDir("download").toString()
+        )
 
         val bufferedSink: BufferedSink?
         val dest = File("${savePath}/${cid}_danmu.xml")
@@ -139,7 +197,7 @@ class AsVideoViewModel(
         if (asVideoBinding.archiveHasLikeBean?.data == 0) {
             HttpUtils
                 .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                .addParam("csrf",context.asUser.biliJct)
+                .addParam("csrf", context.asUser.biliJct)
                 .addParam("like", "1")
                 .addParam("bvid", bvid)
                 .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
@@ -215,8 +273,10 @@ class AsVideoViewModel(
     fun loadCollectionView(avid: Int) {
         asVideoBinding.apply {
             HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                .get(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid,
-                    UserCreateCollectionBean::class.java) {
+                .get(
+                    BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid,
+                    UserCreateCollectionBean::class.java
+                ) {
                     if (it.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(context as Activity,
                             it, { _, _ ->
@@ -272,7 +332,7 @@ class AsVideoViewModel(
         HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
             .addParam("rid", avid.toString())
             .addParam("add_media_ids", addMediaIds)
-            .addParam("csrf",context.asUser.biliJct)
+            .addParam("csrf", context.asUser.biliJct)
             .addParam("type", "2")
             .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
                 if (it.code == 0) {

@@ -11,7 +11,9 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
+import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
@@ -24,6 +26,7 @@ import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
+import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
@@ -39,6 +42,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var userDownloadFileNameEditText: Preference
     private lateinit var userDlFinishAutomaticMergeSwitch: SwitchPreferenceCompat
     private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
+    private lateinit var appThemeListPreference: ListPreference
+
 
     private lateinit var renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
@@ -46,7 +51,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
     private val saveImport = registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()) {
+        ActivityResultContracts.OpenDocumentTree()
+    ) {
         (context as SettingActivity).asSharedPreferences.edit().apply {
             putString("AppDataUri", it.toString())
             putBoolean("user_dl_finish_automatic_import_switch", true)
@@ -100,8 +106,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    getDefaultSharedPreferences(context).edit().putString("user_download_save_path",
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download")
+                    getDefaultSharedPreferences(context).edit().putString(
+                        "user_download_save_path",
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+                    )
                         .apply()
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                     userDownloadSavePathEditText.summary =
@@ -124,8 +132,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 positiveButtonClickListener = {
                     PreferenceManager.getDefaultSharedPreferences(context).edit {
-                        putString("user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}")
+                        putString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                        )
                         apply()
                     }
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
@@ -141,22 +151,36 @@ class SettingsFragment : PreferenceFragmentCompat() {
         bindingImportFileEvent()
 
         bindingSaveSDPathSwitchEvent()
+        bindingAppThemeListPreferenceEvent()
 
+    }
+
+    private fun bindingAppThemeListPreferenceEvent() {
+        appThemeListPreference.onPreferenceChangeListener =
+            OnPreferenceChangeListener { _, _ ->
+                val intent = Intent("com.imcys.bilibilias.app.THEME_CHANGED")
+                intent.setPackage(requireActivity().packageName)
+                requireActivity().sendBroadcast(intent)
+                true
+            }
     }
 
 
     private fun bindingSaveSDPathSwitchEvent() {
 
         userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
-            val sdPathState = getDefaultSharedPreferences(context).getBoolean("user_download_save_sd_path_switch",
-                false)
+            val sdPathState = getDefaultSharedPreferences(context).getBoolean(
+                "user_download_save_sd_path_switch",
+                false
+            )
             //禁止或者释放下载地址修改
             userDownloadSavePathEditText.isEnabled = !sdPathState
 
             val tip = "这里的路径无法修改，储存位置为:\n${
                 AppFilePathUtils(
                     App.context,
-                    "com.imcys.bilibilias").sdCardDirectory
+                    "com.imcys.bilibilias"
+                ).sdCardDirectory
             }/Android/data/com.imcys.bilibilias/files/download"
 
             userDownloadSaveSDPathSwitch.summaryOn = tip
@@ -269,11 +293,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
         userDlFinishAutomaticImportSwitch =
             findPreference("user_dl_finish_automatic_import_switch")!!
+        appThemeListPreference =     findPreference("app_theme")!!
 
         userDownloadSavePathEditText = findPreference("user_download_save_path")!!
         sharedPreferences.apply {
-            val value = getString("user_download_save_path",
-                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download")
+            val value = getString(
+                "user_download_save_path",
+                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+            )
             userDownloadSavePathEditText.summary = value
 
 
@@ -284,15 +311,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference("rename_user_download_file_name_editText")!!
         userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
 
-        val sdPathState = getDefaultSharedPreferences(context).getBoolean("user_download_save_sd_path_switch",
-            false)
+        val sdPathState = getDefaultSharedPreferences(context).getBoolean(
+            "user_download_save_sd_path_switch",
+            false
+        )
         //禁止或者释放下载地址修改
         userDownloadSavePathEditText.isEnabled = !sdPathState
 
         val tip = "应安卓要求，这里的路径无法修改，储存位置为:\n${
             AppFilePathUtils(
                 App.context,
-                "com.imcys.bilibilias").sdCardDirectory
+                "com.imcys.bilibilias"
+            ).sdCardDirectory
         }/Android/data/com.imcys.bilibilias/files/download"
 
         userDownloadSaveSDPathSwitch.summaryOn = tip
