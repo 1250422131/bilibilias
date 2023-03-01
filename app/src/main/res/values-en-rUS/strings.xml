@@ -273,4 +273,7 @@
     <string name="app_HomeFragment_loadNotice_title">Latest notification</string>
     <string name="app_HomeFragment_loadNotice_negativeButtonText">This announcement doesn\'t work</string>
     <string name="app_HomeFragment_loadNotice_positiveButtonText">Oh, I see</string>
+    <string name="app_root_preferences_title_theme">主题</string>
+    <string name="app_root_preferences_long_title_theme">设置软件主题</string>
+    <string name="app_root_preferences_long_title_theme_tip">注意：这是测试性功能，将持续调整。</string>
 </resources>

@@ -36,7 +36,7 @@
                         android:id="@+id/dialog_dl_type_top_bar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/color_primary_variant"
+                        android:background="?attr/colorPrimaryVariant"
                         android:orientation="vertical" />
                 </androidx.cardview.widget.CardView>
 
@@ -57,6 +57,7 @@
 
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:theme="@style/Theme.BILIBILIAS"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -80,7 +81,7 @@
                                 android:id="@+id/dialog_dl_type_dash_bt"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:background="@color/color_primary"
+                                android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:text="Dash"
                                 android:textColor="@color/white"
@@ -110,7 +111,7 @@
                                 android:id="@+id/dialog_dl_type_flv_bt"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:background="@color/color_primary"
+                                android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:text="FLV"
                                 android:textColor="@color/white"
