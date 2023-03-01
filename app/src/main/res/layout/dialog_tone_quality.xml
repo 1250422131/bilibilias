@@ -31,7 +31,7 @@
                     android:id="@+id/dialog_tone_quality_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -60,6 +60,8 @@
                 android:layout_height="230dp"/>
 
             <androidx.cardview.widget.CardView
+                android:theme="@style/Theme.BILIBILIAS"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
@@ -78,7 +80,7 @@
                         android:id="@+id/dialog_tone_quality_finish_bt"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:background="@color/color_primary"
+                        android:background="?attr/colorPrimary"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:text="@string/app_dialog_tone_quality_finish"
                         android:textColor="@color/white"
