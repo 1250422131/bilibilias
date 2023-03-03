@@ -173,7 +173,7 @@
     <string name="app_fragment_home_version">V2.0.1</string>
     <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
     <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
-    <string name="app_fragment_home_donate_text">Support the development of BILIBILIAS</string>
+    <string name="app_fragment_home_donate_text">Support the development</string>
     <string name="app_fragment_home_donate_doc">BILIBILIAS servers will consume costs. Please have a cup of milk tea.</string>
     <string name="app_fragment_home_donate_list">List of contributions</string>
     <string name="app_fragment_home_feedback">Feedback</string>
