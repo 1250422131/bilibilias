@@ -112,7 +112,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
 
     private fun initView() {
         //加载追番基本信息（追番总数等）
-        laodBangumiFollowData()
+        loadBanguiFollowData()
         //加载支持的表头的rv
         loadDefaultLogHeaders()
         //加载选中表头的rv
@@ -372,7 +372,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     /**
      * 加载番剧情况
      */
-    private fun laodBangumiFollowData() {
+    private fun loadBanguiFollowData() {
         lifecycleScope.launch {
             bangumiFollowList = KtHttpUtils.addHeader("coolie", asUser.cookie)
                 .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15")
