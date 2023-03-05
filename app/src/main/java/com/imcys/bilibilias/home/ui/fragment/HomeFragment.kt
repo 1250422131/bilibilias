@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hyy.highlightpro.HighlightPro
@@ -39,7 +40,9 @@ import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
+import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.view.FragmentHomeViewModel
@@ -49,6 +52,7 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
@@ -154,7 +158,49 @@ class HomeFragment : Fragment() {
     private fun loadServiceData() {
         loadAppData()
         loadBannerData()
+        initHomeAd()
     }
+
+    /**
+     * 加载首页广告
+     */
+    private fun initHomeAd() {
+
+        val userGoogleADSwitch =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("user_google_ad_switch", true)
+
+        if (userGoogleADSwitch) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val oldHomeAdBean = getOldHomeAdBean()
+                //切换主线程
+                launch(Dispatchers.Main) {
+                    val adapter = OldHomeAdAdapter()
+                    fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
+                    fragmentHomeBinding.fragmentHomeAdRv.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+                    adapter.submitList(oldHomeAdBean.data)
+                }
+
+
+            }
+        }
+
+
+    }
+
+    /**
+     * 获取广告请求
+     * @return OldHomeAdBean
+     */
+    private suspend fun getOldHomeAdBean(): OldHomeAdBean {
+        return HttpUtils.asyncGet(
+            "${BiliBiliAsApi.appFunction}?type=oldHomeAd",
+            OldHomeAdBean::class.java
+        )
+    }
+
 
     /**
      * 加载轮播图信息
@@ -162,7 +208,10 @@ class HomeFragment : Fragment() {
     private fun loadBannerData() {
         lifecycleScope.launch {
             val oldHomeBannerDataBean =
-                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=banner",OldHomeBannerDataBean::class.java)
+                HttpUtils.asyncGet(
+                    "${BiliBiliAsApi.updateDataPath}?type=banner",
+                    OldHomeBannerDataBean::class.java
+                )
             //新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(
                 OldHomeBeanAdapter(
