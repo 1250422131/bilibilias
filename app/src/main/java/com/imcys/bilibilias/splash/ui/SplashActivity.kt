@@ -14,11 +14,12 @@ import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : BaseActivity() {
+class SplashActivity : AbsActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
     private var isFirstLoaded = false
     private var delayedHandler: Handler? = null

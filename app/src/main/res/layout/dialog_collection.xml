@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +75,6 @@
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:theme="@style/Theme.BILIBILIAS"
                         android:id="@+id/dialog_collection_finish_bt"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.FragmentUserBinding
@@ -22,6 +23,7 @@ import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.*
 import kotlin.math.ceil
@@ -77,7 +79,10 @@ class UserFragment : Fragment() {
         initUserWorks()
 
 
+
     }
+
+
 
     private fun initUserTool() {
         userDataMutableList.add(UserViewItemBean(3))
@@ -100,31 +105,33 @@ class UserFragment : Fragment() {
     private fun initUserWorks() {
 
 
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val userWorksBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20")
 
-            userWorksAd = UserWorksAdapter()
-            this@UserFragment.userWorksBean = userWorksBean
+            launch(Dispatchers.Main) {
+                userWorksAd = UserWorksAdapter()
+                this@UserFragment.userWorksBean = userWorksBean
 
-            fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
-            fragmentUserBinding.fragmentUserWorksRv.layoutManager =
-                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-            fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
-                RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (isSlideToBottom(recyclerView)) {
-                        if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
-                            loadUserWorks()
-                        } else {
-                            Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
+                fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
+                fragmentUserBinding.fragmentUserWorksRv.layoutManager =
+                    StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
+                    RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        if (isSlideToBottom(recyclerView)) {
+                            if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                                loadUserWorks()
+                            } else {
+                                Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
-                }
-            })
-            userWorksAd.submitList(userWorksBean.data.list.vlist)
+                })
+                userWorksAd.submitList(userWorksBean.data.list.vlist)
+            }
         }
 
     }
@@ -145,33 +152,35 @@ class UserFragment : Fragment() {
 
             userDataMutableList.clear()
 
-            val userBaseBean = getUserData()
 
-            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean))
+            //获取基础内容
+            val userBaseBean = async { getUserData() }
+
+            // 用户卡片信息
+            val userCardBean = async { getUserCardBean() }
+
+            //获取up状态
+            val userUpStat = async { getUpStat() }
+
+            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
 
 
             launch(Dispatchers.Main) {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
             }
-
-            // 用户卡片信息
-            val userCardBean = getUserCardBean()
-
-            //获取up状态
-            val userUpStat = getUpStat()
 
 
             userDataMutableList.add(
                 UserViewItemBean(
                     2,
-                    upStatBeam = userUpStat,
-                    userCardBean = userCardBean
+                    upStatBeam = userUpStat.await(),
+                    userCardBean = userCardBean.await()
                 )
             )
             launch(Dispatchers.Main) {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
+                initUserTool()
             }
-            initUserTool()
 
 
         }
@@ -206,10 +215,12 @@ class UserFragment : Fragment() {
             .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
+
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
         if (recyclerView == null) return false
         return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

@@ -21,6 +21,7 @@ import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 
 open class AbsActivity : AppCompatActivity() {
+
     private val mThemeChangedBroadcast by lazy {
         ThemeChangedBroadcast()
     }
@@ -139,6 +140,7 @@ open class AbsActivity : AppCompatActivity() {
         when (theme) {
             "System" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
             }
             "Light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -148,6 +150,9 @@ open class AbsActivity : AppCompatActivity() {
             }
             "Pink" -> {
                 this.setTheme(R.style.Theme_BILIBILIAS)
+            }
+            "Blue" -> {
+                this.setTheme(R.style.BILIBILIAS_BLUE)
             }
         }
     }
