@@ -41,16 +41,14 @@ import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.OldToolItemBean
-import com.imcys.bilibilias.home.ui.model.ToolItemBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
 import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
 import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -203,9 +201,9 @@ class ToolFragment : Fragment() {
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
             return
-        } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
+        } else if ("""https://b23.tv/([A-z]|\d)*""".toRegex().containsMatchIn(inputString)) {
             loadShareData(
-                """https://b23.tv/([A-z]|[0-9])*""".toRegex()
+                """https://b23.tv/([A-z]|\d)*""".toRegex()
                     .find(inputString)?.value!!.toString()
             )
             return
@@ -214,7 +212,7 @@ class ToolFragment : Fragment() {
             return
         }
 
-        val liveRegex = Regex("""(?<=live.bilibili.com/)([0-9]+)""")
+        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
         //判断是否有搜到
         if (liveRegex.containsMatchIn(inputString)) {
             loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())

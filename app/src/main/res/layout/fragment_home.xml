@@ -144,6 +144,11 @@
                     </LinearLayout>
 
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_home_ad_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                     <LinearLayout
                         android:id="@+id/fragment_home_dedicate_ly"
                         android:layout_width="match_parent"
@@ -164,10 +169,10 @@
                             <ImageView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@drawable/ic_home_trophy"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_home_trophy"
-                                app:tint="?attr/colorPrimary"
-                                android:contentDescription="@drawable/ic_home_trophy"/>
+                                app:tint="?attr/colorPrimary" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
