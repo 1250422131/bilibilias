@@ -7,7 +7,7 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-
+[![Kotlin](https://img.shields.io/badge/kotlin-1.7.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 </div>
 
@@ -33,13 +33,40 @@ UP主可以下载一些剪辑素材，来做视频
 - [x] 支持ffmpeg
 - [x] 支持下载列表操作
 
-
-## 采用的API接口参考
-[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
+## 感谢翻译支持
+[xiwangly：提供英语，繁体翻译](https://github.com/xiwangly2)
 
 ## 感谢开源项目
-[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 
+[Ktor：协程中高效网络请求](https://ktor.io/)
+
+[bilibili-API-collect：API接口参考](https://github.com/SocialSisterYi/bilibili-API-collect)
+
+[flexbox：伸缩布局](https://github.com/google/flexbox-layout)
+
+[jxl：直接生成excel文件时采用](https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl/2.6.12)
+
+[BRV：实现RV的动画效果](https://github.com/liangjingkanji/BRV)
+
+[RxFFmpeg：支持视频合并等操作](https://github.com/microshow/RxFFmpeg)
+
+[KComponent：组件化路由库](https://github.com/xiaojinzi123/KComponent)
+
+[HighLightPro：开屏引导](https://github.com/hyy920109/HighLightPro)
+
+[Appcenter：分发以及用户数据统计](https://appcenter.ms/)
+
+[百度统计：APP使用数据统计](https://mtj.baidu.com/web/welcome/login)
+
+[xutils：下载实现](https://github.com/wyouflf/xUtils3)
+
+[DanmakuFlameMaster：烈焰弹幕使](https://github.com/bilibili/DanmakuFlameMaster)
+
+[饺子播放器](https://github.com/Jzvd/JZVideo)
+
+[lottie：部分动画实现](https://github.com/airbnb/lottie-android)
+
+[UltimateBarX：沉浸式布局](https://github.com/Zackratos/UltimateBarX)
 ## 下载
 |   系统    |                            GitHub                            |                  官网                   |
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
@@ -52,7 +79,8 @@ UP主可以下载一些剪辑素材，来做视频
 
 [![Stargazers repo roster for @1250422131/1250422131](https://reporoster.com/stars/1250422131/bilibilias)](https://github.com/1250422131/bilibilias/stargazers)
 
-
+## 🎢Star进展
+![](https://api.star-history.com/svg?repos=1250422131/bilibilias&type=Date)
 
 ## 问题反馈
 
@@ -60,4 +88,7 @@ UP主可以下载一些剪辑素材，来做视频
 
 哔哩哔哩：[萌新杰少](https://space.bilibili.com/351201307)
 
-[兔小巢 ](https://support.qq.com/product/337496)
+反馈社区：[兔小巢](https://support.qq.com/product/337496)
+
+## 特别感谢
+
