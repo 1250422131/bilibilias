@@ -7,15 +7,19 @@
         <variable
             name="DataBean"
             type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
+
+        <import type="android.view.View"/>
+
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg">
 
         <LinearLayout
+            android:theme="@style/Theme.BILIBILIAS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -33,7 +37,7 @@
                     android:id="@+id/dialog_user_data_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -76,7 +80,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
                 android:text="@{DataBean.data.name}"
-                android:textColor="@color/color_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
 
             <TextView
@@ -85,6 +89,16 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
                 android:text="@{`Level`+DataBean.data.level}"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:visibility="@{DataBean.data.level &lt; 2 ? View.VISIBLE :View.GONE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="13dp"
+                android:text="@{DataBean.data.level &lt; 2 ? `暂时不支持未转正用户`:``}"
                 android:textStyle="bold" />
 
             <TextView
@@ -113,7 +127,7 @@
                     android:id="@+id/dialog_user_data_finish_bt"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary"
+                    android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/app_dialog_user_data_bottomsheet_finish"
                     android:textColor="@color/white"

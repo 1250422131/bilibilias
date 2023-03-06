@@ -2,12 +2,10 @@ package com.imcys.bilibilias.common.base.extend
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Path
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.core.graphics.toColorInt
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 
@@ -36,8 +34,10 @@ fun String.toColorInt(): Int = Color.parseColor(this)
  * @return String
  */
 fun String.extract(startString: String, endString: String): String {
-    return this.substring(this.indexOf(startString) + startString.length,
-        this.indexOf(endString))
+    return this.substring(
+        this.indexOf(startString) + startString.length,
+        this.indexOf(endString)
+    )
 }
 
 /**
@@ -67,19 +67,24 @@ fun String.toAsDownloadSavePath(
 
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    var savePath = sharedPreferences.getString("user_download_save_path",
-        context.getExternalFilesDir("download").toString())
+    var savePath = sharedPreferences.getString(
+        "user_download_save_path",
+        context.getExternalFilesDir("download").toString()
+    )
 
     val sdPathState =
-        sharedPreferences.getBoolean("user_download_save_sd_path_switch",
-            false)
+        sharedPreferences.getBoolean(
+            "user_download_save_sd_path_switch",
+            false
+        )
 
     //获取下载地址
     if (sdPathState) {
         savePath = "${
             AppFilePathUtils(
                 context,
-                "com.imcys.bilibilias").sdCardDirectory
+                "com.imcys.bilibilias"
+            ).sdCardDirectory
         }/Android/data/com.imcys.bilibilias/files/download"
     }
 
@@ -91,8 +96,10 @@ fun String.toAsDownloadSavePath(
     downloadName = downloadName.replace("{CID}", cid)
     downloadName = downloadName.replace("{FILE_TYPE}", fileType)
     downloadName = downloadName.replace("{P}", p)
-    downloadName = downloadName.replace("{TITLE}",
-        title)
+    downloadName = downloadName.replace(
+        "{TITLE}",
+        title
+    )
     downloadName = downloadName.replace("{TYPE}", type)
     downloadName = downloadName.replace(" ", "_")
 
@@ -123,6 +130,8 @@ fun String.toAsFFmpeg(
 
 
 }
+
+
 
 
 

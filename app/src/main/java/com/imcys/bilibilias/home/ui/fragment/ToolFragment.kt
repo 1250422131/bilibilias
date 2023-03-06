@@ -41,16 +41,14 @@ import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.OldToolItemBean
-import com.imcys.bilibilias.home.ui.model.ToolItemBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
 import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
 import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -70,6 +68,7 @@ class ToolFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
+        //这里仍然是在判断是否有被引导过了
         val guideVersion =
             (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
@@ -142,6 +141,11 @@ class ToolFragment : Fragment() {
 
     }
 
+    /**
+     * 分享检查
+     * 如果外部有分享内容，就会在这里过滤
+     * @param intent Intent?
+     */
     @SuppressLint("ResourceType")
     internal fun parseShare(intent: Intent?) {
 
@@ -153,6 +157,7 @@ class ToolFragment : Fragment() {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
             }
+            //下面这段代表是从浏览器解析过来的
             val asUrl = intent?.extras?.getString("asUrl")
             if (asUrl != null) {
                 asVideoId(asUrl)
@@ -186,7 +191,7 @@ class ToolFragment : Fragment() {
     fun asVideoId(inputString: String) {
 
         if (inputString == "") {
-            asToast(requireContext(), "没有输入任何内容哦")
+            asToast(requireContext(), getString(R.string.app_ToolFragment_asVideoId))
             return
         }
 
@@ -194,11 +199,11 @@ class ToolFragment : Fragment() {
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         //判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
-            loadEpVideoCard(epRegex.find(inputString)?.value!!.toInt())
+            loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
             return
-        } else if ("""https://b23.tv/([A-z]|[0-9])*""".toRegex().containsMatchIn(inputString)) {
+        } else if ("""https://b23.tv/([A-z]|\d)*""".toRegex().containsMatchIn(inputString)) {
             loadShareData(
-                """https://b23.tv/([A-z]|[0-9])*""".toRegex()
+                """https://b23.tv/([A-z]|\d)*""".toRegex()
                     .find(inputString)?.value!!.toString()
             )
             return
@@ -207,7 +212,7 @@ class ToolFragment : Fragment() {
             return
         }
 
-        val liveRegex = Regex("""(?<=live.bilibili.com/)([0-9]+)""")
+        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
         //判断是否有搜到
         if (liveRegex.containsMatchIn(inputString)) {
             loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
@@ -221,7 +226,7 @@ class ToolFragment : Fragment() {
                 submitList(this)
             }
         }
-        Toast.makeText(context, "输入的内容不正确", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT).show()
 
     }
 
@@ -270,7 +275,8 @@ class ToolFragment : Fragment() {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(toString, object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(context, "检查是否为错误地址", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.app_ToolFragment_loadShareData),
+                        Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -285,7 +291,7 @@ class ToolFragment : Fragment() {
      * 利用ep号进行检索
      * @param epId Int
      */
-    private fun loadEpVideoCard(epId: Int) {
+    private fun loadEpVideoCard(epId: Long) {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
                 if (it.code == 0) {
@@ -330,6 +336,9 @@ class ToolFragment : Fragment() {
     }
 
 
+    /**
+     * 加载支持工具的item
+     */
     private fun loadToolItem() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         lifecycleScope.launch {
@@ -337,7 +346,9 @@ class ToolFragment : Fragment() {
             val oldToolItemBean = getOldToolItemBean()
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
+                    //视频解析
                     1 -> {
+
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,
@@ -346,6 +357,7 @@ class ToolFragment : Fragment() {
                             asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
                         })
                     }
+                    //设置
                     2 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
@@ -353,9 +365,10 @@ class ToolFragment : Fragment() {
                             it.color
                         ) {
                             val intent = Intent(context, SettingActivity::class.java)
-                            context?.startActivity(intent)
+                            requireActivity().startActivity(intent)
                         })
                     }
+                    //web解析
                     3 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
@@ -363,9 +376,10 @@ class ToolFragment : Fragment() {
                             it.color
                         ) {
                             val intent = Intent(context, WebAsActivity::class.java)
-                            context?.startActivity(intent)
+                            requireActivity().startActivity(intent)
                         })
                     }
+                    //导出日志
                     4 -> {
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
@@ -419,7 +433,7 @@ class ToolFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context, "ToolFragment")
+        StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="user_download_tool">
+        <item>APP</item>
+        <item>ADM</item>
+        <item>IDM</item>
+    </string-array>
+
+    <string-array name="user_language">
+        <item>Auto</item>
+        <item>简体中文 (中国)</item>
+        <item>English (US)</item>
+        <item>繁體中文 (中國台灣)</item>
+    </string-array>
+
+    <string-array name="app_theme">
+        <item>Auto</item>
+        <item>White Flowers (Bright)</item>
+        <item>Dark Night Black (Dark)</item>
+        <item>Beep Powder</item>
+        <item>Fat Secondary Blue</item>
+    </string-array>
+
+
+</resources>

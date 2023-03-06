@@ -7,7 +7,7 @@
     <data></data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
+        android:id="@+id/splash_top"
         android:theme="@style/Theme.SplashOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 app:srcCompat="@mipmap/ic_launcher_foreground"
-                app:tint="@color/color_primary" />
+                app:tint="?attr/colorPrimary" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                 android:ellipsize="none"
                 android:singleLine="true"
                 android:text="@string/app_name"
-                android:textColor="@color/color_primary_text"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="56sp"
                 android:textStyle="normal"
                 app:fontVariationSettings="@null" />

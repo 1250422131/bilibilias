@@ -3,7 +3,7 @@
     <!-- 若不设置 gravity，则 Indicator 宽度会填满整个 item -->
     <item android:left="10dp" android:right="10dp">
         <shape>
-            <solid android:color="@color/color_primary" />
+            <solid android:color="?attr/colorPrimary" />
             <corners android:radius="20dp" />
             <size
                 android:height="20dp" />

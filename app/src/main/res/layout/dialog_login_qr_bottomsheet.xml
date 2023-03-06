@@ -18,10 +18,12 @@
     </data>
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,7 +43,7 @@
                     android:id="@+id/dialog_login_qr_tip_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -55,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_dialog_login_qr_bottomsheet_title"
-                    android:textColor="@color/color_primary_text"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
 
@@ -78,7 +80,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
                 android:text="@{LoginQRModel.loginTip}"
-                android:textColor="@color/color_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:visibility="@{LoginQRModel.loginTip == `` ? View.GONE : View.VISIBLE}" />
 
@@ -95,7 +97,7 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary"
+                    android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcode_key)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_finish"
@@ -117,7 +119,7 @@
                     android:onClick="@{(view) -> LoginQRModel.downloadLoginQR(view,DataBean)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/app_dialog_login_qr_bottomsheet_download"
                     android:textColor="@color/black"
@@ -139,7 +141,7 @@
                     android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/app_dialog_login_qr_bottomsheet_go"
                     android:textColor="@color/black"

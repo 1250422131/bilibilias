@@ -61,7 +61,7 @@ const val STATE_DOWNLOAD_ERROR = -1
 
 
 // 定义一个下载队列类
-class DownloadQueue {
+class DownloadQueue : CoroutineScope by MainScope() {
 
     private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
 
@@ -103,6 +103,8 @@ class DownloadQueue {
         var fileDlSize: Double = 0.0,
         // 定义当前任务的下载请求
         var call: Callback.Cancelable? = null,
+        var job: Job? = null,
+
 
         )
 
@@ -151,8 +153,7 @@ class DownloadQueue {
 
     // 执行下载任务
     private fun executeTask() {
-        //刷新下载对象
-        val coroutineScope = CoroutineScope(Dispatchers.IO)
+
 
         while (currentTasks.size < 3 && queue.isNotEmpty()) {
 
@@ -171,8 +172,9 @@ class DownloadQueue {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
             );
             params.addHeader("referer", "https://www.bilibili.com/")
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
-            params.addHeader("cookie",cookie!!)
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                .getString("cookies", "")
+            params.addHeader("cookie", cookie!!)
             //设置是否根据头信息自动命名文件
             params.isAutoRename = false
             //设储存路径
@@ -184,7 +186,7 @@ class DownloadQueue {
 
 
             //使用多个线程同步下载
-            coroutineScope.launch {
+            task.job = launch {
                 // 使用 XUtils 库来下载文件
                 task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
                     override fun onSuccess(result: File?) {
@@ -201,6 +203,7 @@ class DownloadQueue {
                         updateAdapter()
                         // 执行下一个任务
                         executeTask()
+
                     }
 
                     override fun onCancelled(cex: Callback.CancelledException?) {
@@ -213,6 +216,8 @@ class DownloadQueue {
                         updateAdapter()
                         // 执行下一个任务
                         executeTask()
+                        //关闭协程
+                        task.job?.cancel()
                     }
 
                     override fun onFinished() {
@@ -245,6 +250,8 @@ class DownloadQueue {
 
                         // 执行下一个任务
                         executeTask()
+                        //关闭协程
+                        task.job?.cancel()
                     }
 
                     override fun onWaiting() {
@@ -351,9 +358,7 @@ class DownloadQueue {
 
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-
-        coroutineScope.launch {
+        launch {
             val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
                 .getString("cookies", "")
 
@@ -403,30 +408,28 @@ class DownloadQueue {
         Analytics.trackEvent("缓存成功")
         StatService.onEvent(App.context, "CacheSuccessful", "缓存成功")
 
-        runBlocking {
-            launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
 
-                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
-                val microsoftAppCenterType =
-                    sharedPreferences.getBoolean("microsoft_app_center_type", true)
-                val baiduStatisticsType =
-                    sharedPreferences.getBoolean("baidu_statistics_type", true)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
+            val microsoftAppCenterType =
+                sharedPreferences.getBoolean("microsoft_app_center_type", true)
+            val baiduStatisticsType =
+                sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-                val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                    .getString("cookies", "")
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                .getString("cookies", "")
 
-                val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
-                    .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
+            val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
+                .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
-                val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
-                    "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
-                } else {
-                    "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.data.uname}&UserUID=${myUserData.data.mid}"
-                }
-                //提交数据
-                HttpUtils.asyncGet(url).await()
-
+            val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
+                "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
+            } else {
+                "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.data.uname}&UserUID=${myUserData.data.mid}"
             }
+            //提交数据
+            HttpUtils.asyncGet(url).await()
+
         }
 
 
@@ -437,7 +440,6 @@ class DownloadQueue {
      * @param cid Int
      */
     private fun videoMerge(cid: Int) {
-
 
 
         val mergeState =
@@ -475,10 +477,9 @@ class DownloadQueue {
             //旧的合并方案： MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
 
         } else if (importState) {
-            //分别添加下载完成了
-            saveFinishTask(videoTask!![0], audioTask!![0])
-
-            videoTask[0].downloadTaskDataBean.bangumiSeasonBean?.apply {
+            videoTask!![0].downloadTaskDataBean.bangumiSeasonBean?.apply {
+                //分别添加下载完成了
+                saveFinishTask(videoTask[0], audioTask!![0])
                 importVideo(cid)
             }
 
@@ -506,14 +507,14 @@ class DownloadQueue {
                 "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
             )
 
+        File(videoPath + "_merge.mp4")
 
         val commands = userDLMergeCmd?.toAsFFmpeg(
             videoPath,
             audioPath,
             videoPath + "_merge.mp4"
         )
-
-        File(videoPath + "_merge.mp4")
+        //context.getFileDir().getPath()
 
         RxFFmpegInvoke.getInstance()
             .runCommandRxJava(commands)
@@ -548,8 +549,8 @@ class DownloadQueue {
                         saveFinishTask(videoTask, audioTask)
                         //通知相册更新
                         updatePhotoMedias(App.context, File(videoPath), File(audioPath))
-
                     }
+
 
 
                 }
@@ -562,7 +563,11 @@ class DownloadQueue {
 
             })
 
+
+
+
     }
+
 
     /**
      * 缓存导回B站观看
@@ -614,7 +619,8 @@ class DownloadQueue {
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
+        val cookie =
+            App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies", "")
 
         HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
@@ -741,7 +747,8 @@ class DownloadQueue {
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                .getString("cookies", "")
 
             HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
@@ -781,10 +788,11 @@ class DownloadQueue {
                                 );
 
                                 val impFileDeleteState =
-                                    PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
-                                        "user_dl_delete_import_file_switch",
-                                        true
-                                    )
+                                    PreferenceManager.getDefaultSharedPreferences(App.context)
+                                        .getBoolean(
+                                            "user_dl_delete_import_file_switch",
+                                            true
+                                        )
 
                                 if (impFileDeleteState) {
                                     FileUtils.deleteFile(videoPath)
@@ -825,11 +833,11 @@ class DownloadQueue {
         videoBaseBean: VideoBaseBean,
     ) {
 
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch(Dispatchers.IO) {
+        launch(Dispatchers.IO) {
 
             var videoEntry = videoEntry
-            val appDataUri =  PreferenceManager.getDefaultSharedPreferences(App.context).getString("AppDataUri", "")
+            val appDataUri = PreferenceManager.getDefaultSharedPreferences(App.context)
+                .getString("AppDataUri", "")
 
             val saf = DocumentFile.fromTreeUri(App.context, Uri.parse(appDataUri))
             //找查文件夹
@@ -882,7 +890,8 @@ class DownloadQueue {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies","")
+            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                .getString("cookies", "")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
@@ -979,7 +988,6 @@ class DownloadQueue {
 
 
         }
-
     }
 
 

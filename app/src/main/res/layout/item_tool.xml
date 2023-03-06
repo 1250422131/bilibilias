@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
             name="ToolItemBean"
             type="com.imcys.bilibilias.home.ui.model.ToolItemBean" />
@@ -24,9 +26,36 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+               android:visibility="@{ToolItemBean.bg_color == `` ? View.GONE : View.VISIBLE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@{ToolItemBean.bg_color == `` ? `#fb7299` : ToolItemBean.bg_color}"
+                android:background="@{ToolItemBean.bg_color}"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:imageUrl="@{ToolItemBean.image_url}"
+                    android:src="@drawable/ic_as_video_download"
+                    app:tint="@color/white" />
+
+                <com.imcys.bilibilias.base.view.MarqueeTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@{ToolItemBean.title}"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:visibility="@{ToolItemBean.bg_color == `` ? View.VISIBLE : View.GONE}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorPrimary"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical">

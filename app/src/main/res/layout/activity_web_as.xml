@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:menu="@menu/tool_web_toolbar_menu"
-                app:title="网页解析" />
+                app:title="@string/app_activity_web_as_title" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <WebView

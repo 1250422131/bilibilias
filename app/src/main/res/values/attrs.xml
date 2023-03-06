@@ -13,7 +13,4 @@
     <declare-styleable name="AsTopNavigationLayout">
         <attr name="title" format="string"/>
     </declare-styleable>
-
-
-
 </resources>

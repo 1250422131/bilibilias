@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Reply Preference -->
     <string-array name="reply_entries">
         <item>Reply</item>
@@ -24,15 +24,33 @@
     </integer-array>
 
     <string-array name="user_language">
+        <item>Auto</item>
+        <item>简体中文 (中国)</item>
+        <item>English (US)</item>
+        <item>繁體中文 (中國台灣)</item>
+    </string-array>
+
+    <string-array name="app_theme">
         <item>跟随系统</item>
-        <item>简体中文</item>
-        <item>English</item>
+        <item>花嫁白（亮色）</item>
+        <item>暗夜黑（暗色）</item>
+        <item>哔哩粉</item>
+        <item>胖次蓝</item>
+    </string-array>
+
+    <string-array name="app_theme_value">
+        <item>System</item>
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Pink</item>
+        <item>Blue</item>
     </string-array>
 
     <string-array name="user_language_value">
         <item>System</item>
-        <item>ZH</item>
-        <item>EN</item>
+        <item>zh_CN</item>
+        <item>en_US</item>
+        <item>zh_TW</item>
     </string-array>
 
 </resources>

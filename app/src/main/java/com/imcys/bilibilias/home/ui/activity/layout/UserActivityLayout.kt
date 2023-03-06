@@ -120,7 +120,6 @@ fun FaceCardItem(
                 placeholder = painterResource(id = R.mipmap.ic_launcher),
                 contentScale = ContentScale.FillBounds
             )
-
         }
 
         Spacer(modifier = Modifier

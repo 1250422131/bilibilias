@@ -7,14 +7,18 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 
 @SuppressLint("CustomSplashScreen")
@@ -22,10 +26,14 @@ class SplashActivity : BaseActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
     private var isFirstLoaded = false
     private var delayedHandler: Handler? = null
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         getSavePermissions()
+        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
+        constraintLayout.addStatusBarTopPadding()
     }
 
     override fun onBackPressed() {
@@ -46,8 +54,10 @@ class SplashActivity : BaseActivity() {
             != PackageManager.PERMISSION_GRANTED
         ) {
             // 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
             ) {
                 // 在这里可以弹出一个对话框来说明为什么需要此权限
                 DialogUtils.dialog(
@@ -58,9 +68,11 @@ class SplashActivity : BaseActivity() {
                     getString(R.string.app_permission_application_cancel),
                     false,
                     positiveButtonClickListener = {
-                        ActivityCompat.requestPermissions(this,
+                        ActivityCompat.requestPermissions(
+                            this,
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
+                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE
+                        )
                     },
                     negativeButtonClickListener = {
                         finishAll()
@@ -76,9 +88,11 @@ class SplashActivity : BaseActivity() {
                     getString(R.string.app_permission_application_cancel),
                     false,
                     positiveButtonClickListener = {
-                        ActivityCompat.requestPermissions(this,
+                        ActivityCompat.requestPermissions(
+                            this,
                             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
+                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE
+                        )
                     },
                     negativeButtonClickListener = {
                         // 处理取消按钮点击事件
@@ -106,8 +120,10 @@ class SplashActivity : BaseActivity() {
                     // 跳转到主要活动。
                     startActivity(intent)
                     // 再来个跳转过度动画。
-                    overridePendingTransition(android.R.anim.fade_in,
-                        android.R.anim.fade_out)
+                    overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                    )
                     // 销毁当前活动。
                     finish()
 

@@ -11,15 +11,16 @@
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
         <FrameLayout
+            android:layout_marginStart="10dp"
             android:layout_width="120dp"
             android:layout_height="160dp">
 
@@ -58,8 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
@@ -68,12 +68,12 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:letterSpacing="0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:ellipsize="end"
+                android:letterSpacing="0"
+                android:maxLines="2"
                 android:text="@{ListBean.summary}"
                 android:textSize="15sp" />
 

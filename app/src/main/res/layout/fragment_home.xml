@@ -15,7 +15,6 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
         tools:context=".home.ui.fragment.HomeFragment">
 
         <androidx.core.widget.NestedScrollView
@@ -99,7 +98,7 @@
                                 android:layout_height="50dp"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_tip_info"
-                                app:tint="@color/color_primary" />
+                                app:tint="?attr/colorPrimary" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -145,6 +144,11 @@
                     </LinearLayout>
 
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_home_ad_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
                     <LinearLayout
                         android:id="@+id/fragment_home_dedicate_ly"
                         android:layout_width="match_parent"
@@ -165,10 +169,10 @@
                             <ImageView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
+                                android:contentDescription="@drawable/ic_home_trophy"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_home_trophy"
-                                app:tint="@color/color_primary"
-                                android:contentDescription="@drawable/ic_home_trophy"/>
+                                app:tint="?attr/colorPrimary" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -234,7 +238,7 @@
                                 android:layout_height="50dp"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_home_red_envelopes"
-                                app:tint="@color/color_primary" />
+                                app:tint="?attr/colorPrimary" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -289,7 +293,7 @@
                                 android:letterSpacing="0.1"
                                 android:onClick="@{(view)->FragmentHomeViewModel.toDonateList(view)}"
                                 android:text="@string/app_fragment_home_donate_list"
-                                android:textColor="@color/color_primary"
+                                android:textColor="?attr/colorPrimary"
                                 tools:ignore="HardcodedText" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -317,7 +321,7 @@
                                 android:layout_height="50dp"
                                 android:padding="10dp"
                                 android:src="@drawable/ic_home_rabbit"
-                                app:tint="@color/color_primary" />
+                                app:tint="?attr/colorPrimary" />
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -373,7 +377,7 @@
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/color_primary"
+                            android:background="?attr/colorPrimary"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.logoutLogin(view)}"
                             android:orientation="vertical"

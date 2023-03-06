@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +32,7 @@
                     android:id="@+id/dialog_bottomSheet_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -46,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text=""
-                    android:textColor="@color/color_primary_text"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
 
@@ -92,7 +93,7 @@
                     android:id="@+id/dialog_bottomSheet_positiveButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary"
+                    android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text=""
                     android:textColor="@color/white"
@@ -111,12 +112,11 @@
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp">
 
-                <Button
-                    android:visibility="gone"
+                <Button android:visibility="gone"
                     android:id="@+id/dialog_bottomSheet_negativeButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text=""
                     android:textColor="@color/black"

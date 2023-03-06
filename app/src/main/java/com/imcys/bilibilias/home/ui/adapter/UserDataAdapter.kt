@@ -32,16 +32,22 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = when (viewType) {
             1 -> {
-                DataBindingUtil.inflate<ItemFgUserFaceBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_fg_user_face, parent, false)
+                DataBindingUtil.inflate<ItemFgUserFaceBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_fg_user_face, parent, false
+                )
             }
             2 -> {
-                DataBindingUtil.inflate<ItemFgUserCardDataBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_fg_user_card_data, parent, false)
+                DataBindingUtil.inflate<ItemFgUserCardDataBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_fg_user_card_data, parent, false
+                )
             }
             3 -> {
-                DataBindingUtil.inflate<ItemFgUserToolBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_fg_user_tool, parent, false)
+                DataBindingUtil.inflate<ItemFgUserToolBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_fg_user_tool, parent, false
+                )
             }
             else -> {
                 TODO("错误")
@@ -55,7 +61,7 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
             1 -> {
                 DataBindingUtil.getBinding<ItemFgUserFaceBinding>(holder.itemView)?.apply {
                     userBaseBean = getItem(position).userBaseBean
-                    if (userBaseBean?.data?.vip?.status == 1 ) {
+                    if (userBaseBean?.data?.vip?.status == 1) {
                         val nameColor: String = if (userBaseBean?.data?.vip?.nickname_color != "") {
                             userBaseBean?.data?.vip?.nickname_color!!
                         } else {

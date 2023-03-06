@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:theme="@style/BottomSheetDialog"
+            android:background="@drawable/dialog_bottom_sheet_bg"
             tools:ignore="MissingConstraints">
 
             <LinearLayout
@@ -36,7 +36,7 @@
                         android:id="@+id/dialog_dl_type_top_bar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/color_primary_variant"
+                        android:background="?attr/colorPrimaryVariant"
                         android:orientation="vertical" />
                 </androidx.cardview.widget.CardView>
 
@@ -50,7 +50,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/app_dialog_download_type_title"
-                        android:textColor="@color/color_primary_text"
+                        android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -80,7 +80,7 @@
                                 android:id="@+id/dialog_dl_type_dash_bt"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:background="@color/color_primary"
+                                android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:text="Dash"
                                 android:textColor="@color/white"
@@ -110,7 +110,7 @@
                                 android:id="@+id/dialog_dl_type_flv_bt"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:background="@color/color_primary"
+                                android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                                 android:text="FLV"
                                 android:textColor="@color/white"
