@@ -79,9 +79,7 @@ class UserFragment : Fragment() {
         initUserWorks()
 
 
-
     }
-
 
 
     private fun initUserTool() {
@@ -110,27 +108,29 @@ class UserFragment : Fragment() {
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20")
 
-            launch(Dispatchers.Main) {
-                userWorksAd = UserWorksAdapter()
-                this@UserFragment.userWorksBean = userWorksBean
+            if (userWorksBean.code == 0) {
+                launch(Dispatchers.Main) {
+                    userWorksAd = UserWorksAdapter()
+                    this@UserFragment.userWorksBean = userWorksBean
 
-                fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
-                fragmentUserBinding.fragmentUserWorksRv.layoutManager =
-                    StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
-                    RecyclerView.OnScrollListener() {
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-                        if (isSlideToBottom(recyclerView)) {
-                            if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
-                                loadUserWorks()
-                            } else {
-                                Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
+                    fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
+                    fragmentUserBinding.fragmentUserWorksRv.layoutManager =
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
+                        RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            super.onScrolled(recyclerView, dx, dy)
+                            if (isSlideToBottom(recyclerView)) {
+                                if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                                    loadUserWorks()
+                                } else {
+                                    Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                    }
-                })
-                userWorksAd.submitList(userWorksBean.data.list.vlist)
+                    })
+                    userWorksAd.submitList(userWorksBean.data.list.vlist)
+                }
             }
         }
 
@@ -162,7 +162,13 @@ class UserFragment : Fragment() {
             //获取up状态
             val userUpStat = async { getUpStat() }
 
-            userDataMutableList.add(UserViewItemBean(1, userBaseBean = userBaseBean.await()))
+
+            if (userBaseBean.await().code == 0) userDataMutableList.add(
+                UserViewItemBean(
+                    1,
+                    userBaseBean = userBaseBean.await()
+                )
+            )
 
 
             launch(Dispatchers.Main) {
@@ -170,13 +176,16 @@ class UserFragment : Fragment() {
             }
 
 
-            userDataMutableList.add(
-                UserViewItemBean(
-                    2,
-                    upStatBeam = userUpStat.await(),
-                    userCardBean = userCardBean.await()
+            if (userCardBean.await().code == 0 && userUpStat.await().code == 0) {
+                userDataMutableList.add(
+                    UserViewItemBean(
+                        2,
+                        upStatBeam = userUpStat.await(),
+                        userCardBean = userCardBean.await()
+                    )
                 )
-            )
+            }
+
             launch(Dispatchers.Main) {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
                 initUserTool()
