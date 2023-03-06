@@ -293,7 +293,7 @@
     <string name="app_LoginQRModel_downloadLoginQR_asToast">下载完成，跳转扫码</string>
     <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
     <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
-    <string name="app_HomeFragment_loadVersionData_negativeButtonText">查看更新内容</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">暂不更新</string>
     <string name="app_HomeFragment_loadNotice_title">最新通知</string>
     <string name="app_HomeFragment_loadNotice_negativeButtonText">这份公告不行啊</string>
     <string name="app_HomeFragment_loadNotice_positiveButtonText">我明白了</string>
