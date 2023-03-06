@@ -7,6 +7,7 @@ import android.net.Uri
 import android.view.View
 import androidx.core.content.edit
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -82,21 +83,24 @@ class FragmentHomeViewModel {
                     .getString("cookies", "")
                 val biliJct = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
                     .getString("bili_jct", "")
-                view.context.getSharedPreferences("data", Context.MODE_PRIVATE).edit {
-                    putLong("mid", 0)
-                    putString("cookies", "")
-                    putString("bili_jct", "")
-                    apply()
-                }
+
                 HttpUtils.addHeader("cookie", cookie!!)
                     .addParam("biliCSRF", biliJct!!)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 
                         }
-
                         override fun onResponse(call: Call, response: Response) {
-                            exitProcess(0)
+
+                            val sharedPreferences: SharedPreferences =
+                                view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+                            editor.putLong("mid", 0)
+                            editor.putString("cookies", "")
+                            editor.putString("bili_jct", "")
+                            editor.apply()
+
+                            asToast(view.context,"清除完成，请关闭后台重新进入")
                         }
 
                     })

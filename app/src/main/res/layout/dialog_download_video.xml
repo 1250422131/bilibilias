@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,9 +32,10 @@
                     android:id="@+id/dialog_dl_video_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
+
 
 
             <LinearLayout
@@ -46,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_dialog_dl_video_bar_title"
-                    android:textColor="@color/color_primary_text"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
 
@@ -74,7 +75,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_tip_info"
-                        android:tint="@color/color_primary"
+                        android:tint="?attr/colorPrimary"
                         tools:ignore="UseAppTint" />
 
                     <TextView
@@ -104,7 +105,7 @@
                         android:layout_height="20sp"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_as_video_definition"
-                        app:tint="@color/color_primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -158,7 +159,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_as_video_diversity"
-                        app:tint="@color/color_primary" />
+                        app:tint="?attr/colorPrimary" />
 
 
                     <TextView
@@ -218,7 +219,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_as_video_download"
-                        app:tint="@color/color_primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -272,7 +273,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_as_audio_download_monitor"
-                        app:tint="@color/color_primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -327,21 +328,21 @@
                             android:id="@+id/dialog_dl_video_app_dl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_video_radio_built_download" />
 
                         <RadioButton
                             android:id="@+id/dialog_dl_video_idm_dl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_video_idm_dl" />
 
                         <RadioButton
                             android:id="@+id/dialog_dl_video_adm_dl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_video_adm_dl" />
                     </RadioGroup>
 
@@ -364,21 +365,21 @@
                             android:id="@+id/dialog_dl_video_and_audio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_radio_video_and_audio" />
 
                         <RadioButton
                             android:id="@+id/dialog_dl_only_audio"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_radio_only_audio" />
 
                         <RadioButton
                             android:id="@+id/dialog_dl_only_video"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_radio_only_video" />
                     </RadioGroup>
 
@@ -401,7 +402,7 @@
                     android:id="@+id/dialog_dl_video_button"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/color_primary"
+                    android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/app_dialog_dl_video_button"
                     android:textColor="@color/white"

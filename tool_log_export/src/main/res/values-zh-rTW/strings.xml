@@ -1,23 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
-    <string name="tool_log_export_home_title">日志导出</string>
-    <string name="tool_log_export_bangumi_export_title">标题</string>
-    <string name="tool_log_export_bangumi_export_ssid">SSID</string>
-    <string name="tool_log_export_bangumi_export_evaluate">评价</string>
-    <string name="tool_log_export_bangumi_export_summart">简介</string>
-    <string name="tool_log_export_bangumi_export_subtitle">短简介</string>
-    <string name="tool_log_export_bangumi_export_subtitle14">14字短简介</string>
-    <string name="tool_log_export_bangumi_export_totalcount">总集数</string>
-    <string name="tool_log_export_bangumi_export_progress">观看进度</string>
-    <string name="tool_log_export_bangumi_export_cover">封面海报</string>
-    <string name="tool_log_export_bangumi_export_seasontitle">季度信息</string>
-    <string name="tool_log_export_bangumi_export_seasontypename">创作类型</string>
-    <string name="tool_activity_bangumi_follow_log_data_overview">追番情况</string>
-    <string name="tool_activity_bangumi_follow_log_export_configuration">导出配置</string>
-    <string name="tool_activity_bangumi_follow_log_export_as">导出为</string>
-    <string name="tool_activity_bangumi_follow_log_header_context">表头内容</string>
-    <string name="tool_activity_bangumi_follow_log_header_optional">可选表头</string>
-    <string name="tool_activity_bangumi_follow_log_finish_button">完成</string>
-    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">追番记录导出</string>
-    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">导出追番进度记录的excel</string>
+<string name="tool_log_export_home_title">日誌匯出</string>
+<string name="tool_log_export_bangumi_export_title">標題</string>
+<string name="tool_log_export_bangumi_export_ssid">SSID</string>
+<string name="tool_log_export_bangumi_export_evaluate">評估</string>
+<string name="tool_log_export_bangumi_export_summart">簡介</string>
+<string name="tool_log_export_bangumi_export_subtitle">短簡介</string>
+<string name="tool_log_export_bangumi_export_subtitle14">14字短簡介</string>
+<string name="tool_log_export_bangumi_export_totalcount">總集數</string>
+<string name="tool_log_export_bangumi_export_progress">觀看進度</string>
+<string name="tool_log_export_bangumi_export_cover">封面海報</string>
+<string name="tool_log_export_bangumi_export_seasontitle">季度資訊</string>
+<string name="tool_log_export_bangumi_export_seasontypename">創作類型</string>
+<string name="tool_activity_bangumi_follow_log_data_overview">追番情况</string>
+<string name="tool_activity_bangumi_follow_log_export_configuration">匯出配寘</string>
+<string name="tool_activity_bangumi_follow_log_export_as">匯出為</string>
+<string name="tool_activity_bangumi_follow_log_header_context">表頭內容</string>
+<string name="tool_activity_bangumi_follow_log_header_optional">可選表頭</string>
+<string name="tool_activity_bangumi_follow_log_finish_button">完成</string>
+<string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">追番記錄匯出</string>
+<string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">匯出追番進度記錄的excel</string>
+<string name="tool_log_export_home_top_title">追番日誌匯出</string>
+
 </resources>

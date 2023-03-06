@@ -19,14 +19,15 @@
 
     </style>
 
-    <style name="AsInputStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- 底部线 默认颜色 -->
-        <item name="colorControlNormal">@color/color_primary_variant</item>
-        <!-- 底部线 EditText激活时颜色 -->
-        <item name="colorControlActivated">@color/color_primary</item>
-        <!-- 设置光标 -->
-        <item name="android:textCursorDrawable">@color/color_primary</item>
+    <style  name="BILIBILIAS_BLUE" parent="Theme.BILIBILIAS">
+        <item name="colorPrimary">#3B82F6</item>
+        <item name="colorPrimaryVariant">#BFDBFE</item>
+        <item name="colorSecondary">#BFDBFE</item>
+        <item name="colorSecondaryVariant">#3B82F6</item>
+        <item name="android:statusBarColor" tools:targetApi="l">#BFDBFE</item>
+        <item name="android:letterSpacing">0.05</item>
     </style>
+
 
     <style name="asVideoToolStyle" parent="ThemeOverlay.AppCompat.Light">
         <item name="collapsedTitleTextColor">@color/black</item>

@@ -173,7 +173,7 @@
     <string name="app_fragment_home_version">V2.0.1</string>
     <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
     <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
-    <string name="app_fragment_home_donate_text">Support the development of BILIBILIAS</string>
+    <string name="app_fragment_home_donate_text">Support the development</string>
     <string name="app_fragment_home_donate_doc">BILIBILIAS servers will consume costs. Please have a cup of milk tea.</string>
     <string name="app_fragment_home_donate_list">List of contributions</string>
     <string name="app_fragment_home_feedback">Feedback</string>
@@ -258,4 +258,22 @@
     <string name="app_item_fg_user_tool_play_history">Play\nHistory</string>
     <string name="app_item_fg_user_tool_coin_history">Coin\nHistory</string>
     <string name="user_dl_delete_import_file_switch_title">Delete the original audio and video file after import</string>
+    <string name="app_tool_toolbar_menu_title">Done</string>
+    <string name="app_tool_toolbar_menu_tooltipText">Done</string>
+    <string name="app_HomeActivity_exit">Press again to exit the program</string>
+    <string name="app_activity_web_as_title">Analyze Website</string>
+    <string name="app_ToolFragment_asVideoId">No content entered</string>
+    <string name="app_ToolFragment_asVideoId2">The content entered is incorrect</string>
+    <string name="app_ToolFragment_loadShareData">Check whether it is the wrong address</string>
+    <string name="app_LoginQRModel_goToQR">You don\'t seem to have Bilibili installed</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">Download completed, pls go to scanning</string>
+    <string name="app_HomeFragment_loadVersionData_title">There is a new version</string>
+    <string name="app_HomeFragment_loadVersionData_positiveButtonText">Update</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">View updated content</string>
+    <string name="app_HomeFragment_loadNotice_title">Latest notification</string>
+    <string name="app_HomeFragment_loadNotice_negativeButtonText">This announcement doesn\'t work</string>
+    <string name="app_HomeFragment_loadNotice_positiveButtonText">Oh, I see</string>
+    <string name="app_root_preferences_title_theme">Theme</string>
+    <string name="app_root_preferences_long_title_theme">Change Theme</string>
+    <string name="app_root_preferences_long_title_theme_tip">Note: This is an experimental function and will be continuously adjusted.</string>
 </resources>

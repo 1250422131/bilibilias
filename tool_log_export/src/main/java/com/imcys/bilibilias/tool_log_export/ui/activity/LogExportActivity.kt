@@ -28,8 +28,6 @@ class LogExportActivity : LogExportBaseActivity() {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
 
-        setContentView(R.layout.activity_log_export)
-
         binding = DataBindingUtil.setContentView<ActivityLogExportBinding?>(
             this,
             R.layout.activity_log_export

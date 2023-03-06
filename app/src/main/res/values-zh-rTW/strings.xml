@@ -235,9 +235,9 @@
     <string name="app_guide_tool">解析功能移動到這裡了</string>
     <string name="app_root_preferences_title_language">語言(Language)</string>
     <string name="app_root_preferences_title_download_conf">緩存組態</string>
-    <string name="user_download_save_sd_path_switch_title">用儲存卡作為下載路徑</string>
-    <string name="user_download_save_sd_path_switch_off">使用儲存卡儲存</string>
-    <string name="user_download_save_sd_path_switch_on">這裡的路徑無法修改，儲存位置為：\nSD卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸載該應用，將會清空已儲存的數據。</string>
+    <string name="user_download_save_sd_path_switch_title">用記憶卡作為下載路徑</string>
+    <string name="user_download_save_sd_path_switch_off">使用記憶卡儲存</string>
+    <string name="user_download_save_sd_path_switch_on">這裡的路徑無法修改，儲存位置為：\n記憶卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸載該應用，將會清空已儲存的數據。</string>
     <string name="rename_user_download_save_path_title">還原下載路徑</string>
     <string name="rename_user_download_file_name_editText_title">還原命名規則</string>
     <string name="app_root_preferences_title_behavior">緩存完成後的行為</string>
@@ -262,5 +262,23 @@
     <string name="app_item_fg_user_tool_play_history">觀看</string>
     <string name="app_item_fg_user_tool_coin_history">投幣</string>
     <string name="user_dl_delete_import_file_switch_title">導入後删除原來音視頻檔案</string>
+    <string name="app_tool_toolbar_menu_title">完成</string>
+    <string name="app_tool_toolbar_menu_tooltipText">完成</string>
+    <string name="app_HomeActivity_exit">再按一次退出程式</string>
+    <string name="app_activity_web_as_title">網頁解析</string>
+    <string name="app_ToolFragment_asVideoId">沒有鍵入任何內容哦</string>
+    <string name="app_ToolFragment_asVideoId2">鍵入的內容不正確哦</string>
+    <string name="app_ToolFragment_loadShareData">檢查是否為錯誤地址</string>
+    <string name="app_LoginQRModel_goToQR">嗚哇，您好像沒有安裝Bilibili</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">下載完成，跳轉掃碼</string>
+    <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
+    <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">查看更新內容</string>
+    <string name="app_HomeFragment_loadNotice_title">最新通知</string>
+    <string name="app_HomeFragment_loadNotice_negativeButtonText">這份公告不行啊</string>
+    <string name="app_HomeFragment_loadNotice_positiveButtonText">我明白了</string>
+    <string name="app_root_preferences_title_theme">主題</string>
+    <string name="app_root_preferences_long_title_theme">設定軟件主題</string>
+    <string name="app_root_preferences_long_title_theme_tip">注意：這是實驗性功能，將持續調整。</string>
 
 </resources>

@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ResourceName">
-    <string name="tool_log_export_home_title">日志导出</string>
-    <string name="tool_log_export_bangumi_export_title">标题</string>
+    <string name="tool_log_export_home_title">Log export</string>
+    <string name="tool_log_export_bangumi_export_title">Title</string>
     <string name="tool_log_export_bangumi_export_ssid">SSID</string>
-    <string name="tool_log_export_bangumi_export_evaluate">评价</string>
-    <string name="tool_log_export_bangumi_export_summart">简介</string>
-    <string name="tool_log_export_bangumi_export_subtitle">短简介</string>
-    <string name="tool_log_export_bangumi_export_subtitle14">14字短简介</string>
-    <string name="tool_log_export_bangumi_export_totalcount">总集数</string>
-    <string name="tool_log_export_bangumi_export_progress">观看进度</string>
-    <string name="tool_log_export_bangumi_export_cover">封面海报</string>
-    <string name="tool_log_export_bangumi_export_seasontitle">季度信息</string>
-    <string name="tool_log_export_bangumi_export_seasontypename">创作类型</string>
-    <string name="tool_activity_bangumi_follow_log_data_overview">追番情况</string>
-    <string name="tool_activity_bangumi_follow_log_export_configuration">导出配置</string>
-    <string name="tool_activity_bangumi_follow_log_export_as">导出为</string>
-    <string name="tool_activity_bangumi_follow_log_header_context">表头内容</string>
-    <string name="tool_activity_bangumi_follow_log_header_optional">可选表头</string>
-    <string name="tool_activity_bangumi_follow_log_finish_button">完成</string>
-    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">追番记录导出</string>
-    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">导出追番进度记录的excel</string>
+    <string name="tool_log_export_bangumi_export_evaluate">Comment</string>
+    <string name="tool_log_export_bangumi_export_summart">Introduction</string>
+    <string name="tool_log_export_bangumi_export_subtitle">Short introduction</string>
+    <string name="tool_log_export_bangumi_export_subtitle14">Short introduction</string>
+    <string name="tool_log_export_bangumi_export_totalcount">Total sets</string>
+    <string name="tool_log_export_bangumi_export_progress">Watch the progress</string>
+    <string name="tool_log_export_bangumi_export_cover">Cover poster</string>
+    <string name="tool_log_export_bangumi_export_seasontitle">Quarterly information</string>
+    <string name="tool_log_export_bangumi_export_seasontypename">authoring type</string>
+    <string name="tool_activity_bangumi_follow_log_data_overview">Catch-up</string>
+    <string name="tool_activity_bangumi_follow_log_export_configuration">Export Configuration</string>
+    <string name="tool_activity_bangumi_follow_log_export_as">Export as</string>
+    <string name="tool_activity_bangumi_follow_log_header_context">Header Content</string>
+    <string name="tool_activity_bangumi_follow_log_header_optional">Optional header</string>
+    <string name="tool_activity_bangumi_follow_log_finish_button">Finish</string>
+    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">Export tracking records</string>
+    <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">Export excel for tracking progress records</string>
+    <string name="tool_log_export_home_top_title">Export the tracking log</string>
 
 </resources>

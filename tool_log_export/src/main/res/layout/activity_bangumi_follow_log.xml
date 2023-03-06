@@ -23,7 +23,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="追番日志导出" />
+            app:title="@string/tool_log_export_home_top_title" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/tool_activity_bangumi_follow_log_data_overview"
-                    android:textColor="@color/color_primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -54,7 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{`总追番数：` + BangumiFollowList.data.total}"
-                        android:textColor="@color/color_primary" />
+                        android:textColor="?attr/colorPrimary" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -64,7 +64,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:text="@string/tool_activity_bangumi_follow_log_export_configuration"
-                    android:textColor="@color/color_primary"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -79,7 +79,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tool_activity_bangumi_follow_log_export_as"
-                        android:textColor="@color/color_primary" />
+                        android:textColor="?attr/colorPrimary" />
 
                     <RadioGroup
                         android:layout_marginTop="10dp"
@@ -88,7 +88,7 @@
 
                         <RadioButton
 
-                            android:buttonTint="@color/color_primary"
+                            android:buttonTint="?attr/colorPrimary"
                             android:checked="true"
                             android:text="excel"
                             android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tool_activity_bangumi_follow_log_header_context"
-                        android:textColor="@color/color_primary" />
+                        android:textColor="?attr/colorPrimary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/bangumi_follow_log_selectedLogHeaders_rv"
@@ -122,7 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tool_activity_bangumi_follow_log_header_optional"
-                        android:textColor="@color/color_primary" />
+                        android:textColor="?attr/colorPrimary" />
 
                     <androidx.recyclerview.widget.RecyclerView
                        android:id="@+id/bangumi_follow_log_defaultLogHeaders_rv"

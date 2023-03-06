@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hyy.highlightpro.HighlightPro
@@ -28,7 +28,6 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -41,8 +40,9 @@ import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.activity.UserActivity
+import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
+import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.view.FragmentHomeViewModel
@@ -52,6 +52,7 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
@@ -70,14 +71,17 @@ import kotlin.system.exitProcess
 )
 class HomeFragment : Fragment() {
 
-    lateinit var fragmentHomeBinding: FragmentHomeBinding;
+    lateinit var fragmentHomeBinding: FragmentHomeBinding
     private lateinit var loginQRDialog: BottomSheetDialog
-    private val bottomSheetDialog = context?.let { DialogUtils.loadDialog(it) }
+
+    //懒加载
+    private val bottomSheetDialog by lazy {
+        DialogUtils.loadDialog(requireContext())
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
 
@@ -107,7 +111,9 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val guideVersion = (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
+        //判断用户是否没有被引导
+        val guideVersion =
+            (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
             loadHomeGuide()
         }
@@ -135,10 +141,11 @@ class HomeFragment : Fragment() {
             }
             .setBackgroundColor("#80000000".toColorInt())
             .setOnDismissCallback {
-
+                //让ViewPage来切换页面
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1).isCheckable = true
+                    1
+                ).isCheckable = true
 
             }
             .show()
@@ -151,25 +158,69 @@ class HomeFragment : Fragment() {
     private fun loadServiceData() {
         loadAppData()
         loadBannerData()
+        initHomeAd()
     }
+
+    /**
+     * 加载首页广告
+     */
+    private fun initHomeAd() {
+
+        val userGoogleADSwitch =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("user_google_ad_switch", true)
+
+        if (userGoogleADSwitch) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val oldHomeAdBean = getOldHomeAdBean()
+                //切换主线程
+                launch(Dispatchers.Main) {
+                    val adapter = OldHomeAdAdapter()
+                    fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
+                    fragmentHomeBinding.fragmentHomeAdRv.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+                    adapter.submitList(oldHomeAdBean.data)
+                }
+
+
+            }
+        }
+
+
+    }
+
+    /**
+     * 获取广告请求
+     * @return OldHomeAdBean
+     */
+    private suspend fun getOldHomeAdBean(): OldHomeAdBean {
+        return HttpUtils.asyncGet(
+            "${BiliBiliAsApi.appFunction}?type=oldHomeAd",
+            OldHomeAdBean::class.java
+        )
+    }
+
 
     /**
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=banner",
-            OldHomeBannerDataBean::class.java) {
-
+        lifecycleScope.launch {
+            val oldHomeBannerDataBean =
+                HttpUtils.asyncGet(
+                    "${BiliBiliAsApi.updateDataPath}?type=banner",
+                    OldHomeBannerDataBean::class.java
+                )
             //新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(
                 OldHomeBeanAdapter(
-                    it.textList,
-                    it
+                    oldHomeBannerDataBean.textList,
+                    oldHomeBannerDataBean
                 )
-            )
-                .setIndicator(CircleIndicator(context))
+            ).setIndicator(CircleIndicator(context))
         }
+
 
     }
 
@@ -182,8 +233,10 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
 
             val oldUpdateDataBean =
-                HttpUtils.asyncGet("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-                    OldUpdateDataBean::class.java)
+                HttpUtils.asyncGet(
+                    "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
+                    OldUpdateDataBean::class.java
+                )
 
             //加载公告
             if (oldUpdateDataBean.notice != "") {
@@ -214,10 +267,10 @@ class HomeFragment : Fragment() {
         if (BiliBiliAsApi.version.toString() != oldUpdateDataBean.version) {
             DialogUtils.dialog(
                 requireContext(),
-                "有新版本了",
+                getString(R.string.app_HomeFragment_loadVersionData_title),
                 oldUpdateDataBean.gxnotice,
-                "更新",
-                "还是更新",
+                getString(R.string.app_HomeFragment_loadVersionData_positiveButtonText),
+                getString(R.string.app_HomeFragment_loadVersionData_negativeButtonText),
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
@@ -225,9 +278,9 @@ class HomeFragment : Fragment() {
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
-                    val uri = Uri.parse(oldUpdateDataBean.url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
-                    requireContext().startActivity(intent)
+//                    val uri = Uri.parse(oldUpdateDataBean.url)
+//                    val intent = Intent(Intent.ACTION_VIEW, uri);
+//                    requireContext().startActivity(intent)
                 }
             ).show()
         }
@@ -255,8 +308,10 @@ class HomeFragment : Fragment() {
      */
     private fun postAppData(sha: String, md5: String, crc: String) {
 
-        HttpUtils.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java) {
+        HttpUtils.get(
+            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
+            OldUpdateDataBean::class.java
+        ) {
         }
     }
 
@@ -269,10 +324,10 @@ class HomeFragment : Fragment() {
         val mNotice = sharedPreferences.getString("AppNotice", "")
         if (mNotice != notice) {
             DialogUtils.dialog(requireContext(),
-                "最新通知",
+                getString(R.string.app_HomeFragment_loadNotice_title),
                 notice,
-                "我明白了",
-                "这份公告不行啊",
+                getString(R.string.app_HomeFragment_loadNotice_positiveButtonText),
+                getString(R.string.app_HomeFragment_loadNotice_negativeButtonText),
                 true,
                 positiveButtonClickListener = {
                     sharedPreferences.edit().putString("AppNotice", notice).apply()
@@ -323,7 +378,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     /**
      * 加载登陆对话框
      */
@@ -360,7 +414,7 @@ class HomeFragment : Fragment() {
     //初始化用户数据
     private fun initUserData() {
 
-        bottomSheetDialog?.show()
+        bottomSheetDialog.show()
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(
                 BilibiliApi.getMyUserData, MyUserData::class.java
@@ -376,7 +430,7 @@ class HomeFragment : Fragment() {
     private fun detectUserLogin() {
 
         lifecycleScope.launch {
-            val myUserData = HttpUtils.addHeader("cookie",(context as HomeActivity).asUser.cookie)
+            val myUserData = HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                 .asyncGet(
                     BilibiliApi.getMyUserData, MyUserData::class.java
                 )
@@ -392,8 +446,9 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
-            val userInfoBean = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+            val userInfoBean =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
 
             //这里需要储存下数据
             val sharedPreferences =

@@ -51,6 +51,8 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
 
     }
 
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         DataBindingUtil.getBinding<ItemDownloadTaskFinishBinding>(holder.itemView)?.apply {

@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:theme="@style/BottomSheetDialog">
+        android:background="@drawable/dialog_bottom_sheet_bg"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +32,7 @@
                     android:id="@+id/dialog_collection_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/color_primary_variant"
+                    android:background="?attr/colorPrimaryVariant"
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
@@ -47,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="我创建的收藏夹"
-                    android:textColor="@color/color_primary_text"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
 
@@ -77,7 +78,7 @@
                         android:id="@+id/dialog_collection_finish_bt"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:background="@color/color_primary"
+                        android:background="?attr/colorPrimary"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:text="选定"
                         android:textColor="@color/white"
@@ -103,11 +104,12 @@
                     android:layout_height="wrap_content">
 
                     <Button
+                        android:theme="@style/Theme.BILIBILIAS"
                         android:visibility="gone"
                         android:id="@+id/dialog_collection_all_select_bt"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:background="@color/color_primary"
+                        android:background="?attr/colorPrimary"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:text="全部选择"
                         android:textColor="@color/white"

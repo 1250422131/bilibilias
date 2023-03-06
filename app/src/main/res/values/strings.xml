@@ -252,7 +252,7 @@
     <string name="app_root_preferences_title_download_conf">缓存配置</string>
     <string name="user_download_save_sd_path_switch_title">用存储卡作为下载路径</string>
     <string name="user_download_save_sd_path_switch_off">使用存储卡储存</string>
-    <string name="user_download_save_sd_path_switch_on">这里的路径无法修改，储存位置为:\nSD卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。</string>
+    <string name="user_download_save_sd_path_switch_on">这里的路径无法修改，储存位置为：\n存储卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。</string>
     <string name="user_download_file_name_default" translatable="false">{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}</string>
     <string name="rename_user_download_save_path_title">还原下载路径</string>
     <string name="rename_user_download_file_name_editText_title">还原命名规则</string>
@@ -280,4 +280,24 @@
     <string name="app_item_fg_user_tool_play_history">观看</string>
     <string name="app_item_fg_user_tool_coin_history">投币</string>
     <string name="user_dl_delete_import_file_switch_title">导入后删除原来音视频文件</string>
+    <string name="app_tool_toolbar_menu_title">完成</string>
+    <string name="app_tool_toolbar_menu_tooltipText">完成</string>
+    <string name="app_HomeActivity_exit">再按一次退出程序</string>
+    <string name="app_activity_web_as_title">网页解析</string>
+    <string name="app_ToolFragment_asVideoId">没有输入任何内容哦</string>
+    <string name="app_ToolFragment_asVideoId2">输入的内容不正确</string>
+    <string name="app_ToolFragment_loadShareData">检查是否为错误地址</string>
+    <string name="app_ToolFragment_onDestroy" translatable="false">ToolFragment</string>
+    <string name="app_LoginQRModel_goToQR">呜哇，您好像没有安装Bilibili</string>
+    <string name="app_LoginQRModel_downloadLoginQR_fileName" translatable="false">BILIBILIAS-QR-Code.jpg</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">下载完成，跳转扫码</string>
+    <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
+    <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">暂不更新</string>
+    <string name="app_HomeFragment_loadNotice_title">最新通知</string>
+    <string name="app_HomeFragment_loadNotice_negativeButtonText">这份公告不行啊</string>
+    <string name="app_HomeFragment_loadNotice_positiveButtonText">我明白了</string>
+    <string name="app_root_preferences_title_theme">主题</string>
+    <string name="app_root_preferences_long_title_theme">设置软件主题</string>
+    <string name="app_root_preferences_long_title_theme_tip">注意：这是测试性功能，将持续调整。</string>
 </resources>

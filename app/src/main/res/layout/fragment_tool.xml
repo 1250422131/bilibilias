@@ -81,7 +81,7 @@
                             android:src="@drawable/ic_tool_search" />
 
                         <EditText
-                            android:textColor="@color/color_text_hint"
+                            android:textColor="#000000"
                             android:id="@+id/fragment_tool_editText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

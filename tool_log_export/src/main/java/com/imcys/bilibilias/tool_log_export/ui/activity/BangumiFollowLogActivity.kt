@@ -37,43 +37,13 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
 
     private lateinit var bangumiFollowList: BangumiFollowList
 
+
     lateinit var binding: ActivityBangumiFollowLogBinding
-    var defaultLogHeaders = mutableListOf<BangumiFollowLogHeaderBean>()
 
     var selectedLogHeaders = mutableListOf<BangumiFollowLogHeaderBean>()
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_bangumi_follow_log)
-        binding = DataBindingUtil.setContentView<ActivityBangumiFollowLogBinding?>(
-            this,
-            R.layout.activity_bangumi_follow_log
-        ).apply {
-            bangumiFollowLogTop.addStatusBarTopPadding()
-        }
-
-        initView()
-
-
-    }
-
-    private fun initView() {
-        //加载番剧情况
-        initDefaultData()
-
-        laodBangumiFollowData()
-        loadDefaultLogHeaders()
-        initSelectedLogHeaders()
-        bindingFinishEvent()
-    }
-
-    /**
-     * 加载默认数据
-     */
-    private fun initDefaultData() {
-        defaultLogHeaders = mutableListOf(
+    private val defaultLogHeaders by lazy {
+        mutableListOf(
 
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_title),
@@ -124,6 +94,34 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_bangumi_follow_log)
+        binding = DataBindingUtil.setContentView<ActivityBangumiFollowLogBinding?>(
+            this,
+            R.layout.activity_bangumi_follow_log
+        ).apply {
+            bangumiFollowLogTop.addStatusBarTopPadding()
+        }
+
+        initView()
+
+
+    }
+
+    private fun initView() {
+        //加载追番基本信息（追番总数等）
+        loadBanguiFollowData()
+        //加载支持的表头的rv
+        loadDefaultLogHeaders()
+        //加载选中表头的rv
+        initSelectedLogHeaders()
+        //绑定完成按钮事件
+        bindingFinishEvent()
+    }
+
+
     private fun bindingFinishEvent() {
         binding.apply {
             //绑定完成
@@ -135,20 +133,27 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
 
     private fun createExcel() {
 
+        //获取追番总数和分页数（目前每页30条记录）
         val total = bangumiFollowList.data.total
         val totalPage = ceil(total / 30.0).toInt()
 
         val path = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls"
 
+        //设置表头的字体大小和背景颜色
         val arial14font = WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD)
         arial14font.colour = jxl.format.Colour.LIGHT_BLUE
         val arial14format = WritableCellFormat(arial14font)
+        //居中方式
         arial14format.alignment = Alignment.CENTRE
+        //背景
         arial14format.setBorder(Border.ALL, BorderLineStyle.THIN)
         arial14format.setBackground(jxl.format.Colour.VERY_LIGHT_YELLOW)
 
+        //初始化一个excel表
         val workbook = ExcelUtils.initExcel(path)
+        //设置工作簿
         val sheet = workbook.createSheet("追番", 0)
+        //行高
         sheet.setRowView(0, 340)
 
         //创建标题栏
@@ -161,8 +166,8 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     arial14format
                 ) as WritableCell?
             )
+            //列宽
             sheet.setColumnView(index, 300)
-
         }
 
 
@@ -177,9 +182,12 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                 loadTitle.value = "正在存储第${i}页"
                 editExcel(bangumiFollowList, sheet, i - 1)
             }
+            //完成保存和写入
             workbook.write()
             workbook.close()
+            //关闭弹窗
             loadDialog.cancel()
+            //弹出储存位置
             asToast(
                 this@BangumiFollowLogActivity,
                 "获取成功\n储存位置" +
@@ -364,7 +372,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     /**
      * 加载番剧情况
      */
-    private fun laodBangumiFollowData() {
+    private fun loadBanguiFollowData() {
         lifecycleScope.launch {
             bangumiFollowList = KtHttpUtils.addHeader("coolie", asUser.cookie)
                 .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15")
