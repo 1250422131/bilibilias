@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
@@ -2059,9 +2060,11 @@ class DialogUtils {
                     val linearLayout: View? = view.findViewById(barId)
                     when (newState) {
                         1 -> {
+
                             linearLayout?.background = context.getDrawable(R.color.color_primary)
                         }
                         4 -> {
+
                             linearLayout?.background =
                                 context.getDrawable(R.color.color_primary_variant)
                         }
