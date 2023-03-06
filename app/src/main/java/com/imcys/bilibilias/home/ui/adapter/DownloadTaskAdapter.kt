@@ -34,6 +34,17 @@ class DownloadTaskAdapter :
             }
 
 
+            override fun getChangePayload(
+                oldItem: DownloadQueue.Task,
+                newItem: DownloadQueue.Task,
+            ): Any? {
+
+                if (oldItem.progress != newItem.progress) {
+                    newItem.payloadsType = 1
+                    oldItem.payloadsType = 1
+                }
+                return super.getChangePayload(oldItem, newItem)
+            }
         }
     ) {
 
@@ -54,16 +65,11 @@ class DownloadTaskAdapter :
     }
 
 
-
-
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
 
         val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)
         binding?.apply {
             taskBean = getItem(position)
-
             itemDlTaskDelete.setOnClickListener {
                 val dataBean = getItem(position)
                 AsDialog.init(holder.itemView.context)
