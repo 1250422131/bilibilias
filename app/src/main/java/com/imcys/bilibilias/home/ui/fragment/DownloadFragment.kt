@@ -105,9 +105,11 @@ class DownloadFragment : Fragment() {
 
                     App.downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask
+
                         lifecycleScope.launch(Dispatchers.Main) {
                             submitList(finishTasks)
                         }
+
                     }
 
                 }
@@ -124,7 +126,9 @@ class DownloadFragment : Fragment() {
 
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadTaskAdapter = DownloadTaskAdapter()
+
             fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
+            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 

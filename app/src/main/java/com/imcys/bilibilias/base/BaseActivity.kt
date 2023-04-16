@@ -11,25 +11,12 @@ import com.imcys.bilibilias.common.base.model.user.AsUser
 open class BaseActivity : AbsActivity() {
 
     override val asSharedPreferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.getDefaultSharedPreferences(applicationContext)
     }
 
-    override val asUser: AsUser
-        get() {
-            val sharedPreferences: SharedPreferences =
-                this.getSharedPreferences("data", MODE_PRIVATE)
-           return AsUser.apply {
-                cookie = sharedPreferences.getString("cookies", "").toString()
-                sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-                biliJct = sharedPreferences.getString("bili_jct", "").toString()
-                mid = sharedPreferences.getLong("mid", 0)
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.context = this
-
         // 沉浸式状态栏
         statusBarOnly(this)
     }

@@ -79,6 +79,7 @@
 
 
                     <com.imcys.bilibilias.base.view.AppAsJzvdStd
+                        android:transitionName="videoPic"
                         android:id="@+id/as_video_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -281,7 +282,6 @@
                     </androidx.constraintlayout.utils.widget.ImageFilterView>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="25dp"
@@ -289,6 +289,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:transitionName="videoTitle"
                             android:id="@+id/as_video_user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

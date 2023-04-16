@@ -19,10 +19,6 @@ class App : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
 
-
-
-        handler = Handler(mainLooper)
-
         //xUtils初始化
         x.Ext.init(this)
         x.Ext.setDebug(false) // 是否输出debug日志, 开启debug会影响性能.
@@ -55,9 +51,6 @@ class App : BaseApplication() {
 
         val downloadQueue: DownloadQueue = DownloadQueue()
 
-
-        //——————————————————全局线程处理器——————————————————
-        lateinit var handler: Handler
         //—————————————————————————————————————————————————
 
         //——————————————————B站视频模板——————————————————

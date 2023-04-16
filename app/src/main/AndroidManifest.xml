@@ -35,6 +35,9 @@
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".home.ui.activity.tool.MergeVideoActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
