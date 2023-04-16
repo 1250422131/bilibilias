@@ -6,6 +6,7 @@ object AsUser {
     var sessdata: String = ""
     var biliJct: String = ""
     var mid: Long = 0
+    var asCookie: String = ""
 
 
 }

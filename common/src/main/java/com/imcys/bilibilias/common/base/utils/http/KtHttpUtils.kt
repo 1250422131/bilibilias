@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.utils.http
 
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -10,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import io.ktor.serialization.gson.*
 
 
@@ -18,11 +20,14 @@ object KtHttpUtils {
     var params = mutableMapOf<String, String>()
     var headers = mutableMapOf<String, String>()
 
+    var setCookies = ""
+
     val httpClient = HttpClient(OkHttp) {
 
         expectSuccess = true
 
-        install(Logging)
+        install(Logging) {
+        }
 
         install(ContentNegotiation) {
             gson { }
@@ -33,6 +38,7 @@ object KtHttpUtils {
             retryOnServerErrors(maxRetries = 2)
             exponentialDelay()
         }
+
 
     }
 
@@ -57,23 +63,87 @@ object KtHttpUtils {
 
     suspend inline fun <reified T> asyncPost(url: String): T {
         checkUrl(url)
-        val mBean: T = httpClient.post(url) {
+
+        val response = httpClient.submitForm(
+            url = url,
+            formParameters = Parameters.build {
+                this@KtHttpUtils.params.forEach {
+                    this.append(it.key, it.value)
+                }
+            }
+        ) {
             headers {
                 this@KtHttpUtils.headers.forEach {
                     this.append(it.key, it.value)
                 }
             }
-            formData {
-                this@KtHttpUtils.params.forEach {
+
+        }
+        //清空
+        headers.clear()
+        params.clear()
+        return response.body()
+    }
+
+
+    suspend inline fun <reified T> asyncPostJson(
+        url: String,
+        bodyObject: IPostBody,
+    ): T {
+
+
+        val response = httpClient.post(url) {
+            contentType(ContentType.Application.Json)
+
+            setBody(bodyObject)
+
+
+            headers {
+                this@KtHttpUtils.headers.forEach {
                     this.append(it.key, it.value)
                 }
             }
 
-        }.body()
+        }
+
         //清空
         headers.clear()
-        params.clear()
-        return mBean
+        //设置cookie
+        // 获取所有 Set-Cookie 头部
+        response.headers.getAll(HttpHeaders.SetCookie)?.forEach {
+            setCookies += it
+        }
+
+
+        return response.body()
+    }
+
+
+    suspend inline fun <reified T> asyncDeleteJson(
+        url: String,
+        bodyObject: IPostBody,
+    ): T {
+
+
+        val response = httpClient.delete(url) {
+            contentType(ContentType.Application.Json)
+
+            setBody(bodyObject)
+
+
+            headers {
+                this@KtHttpUtils.headers.forEach {
+                    this.append(it.key, it.value)
+                }
+            }
+
+        }
+
+        //清空
+        headers.clear()
+
+
+        return response.body()
     }
 
     /**
