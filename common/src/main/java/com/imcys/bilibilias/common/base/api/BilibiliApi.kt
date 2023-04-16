@@ -77,6 +77,9 @@ class BilibiliApi {
         //获取用户基本信息
         const val userBaseDataPath = serviceApi + "x/space/acc/info"
 
+        //用户导航栏信息
+        const val userNavDataPath = serviceApi + "x/web-interface/nav"
+
         //用户状态
         const val userUpStat = serviceApi + "x/space/upstat"
 

@@ -86,11 +86,11 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/dialog_login_as"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:onClick="@{(view)->LoginViewModel.tip(view)}"
                     android:orientation="vertical"
                     android:padding="20dp">
 

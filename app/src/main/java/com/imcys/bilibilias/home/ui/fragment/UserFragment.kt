@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -98,6 +99,7 @@ class UserFragment : Fragment() {
             userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
         }
 
+
     }
 
     private fun initUserWorks() {
@@ -108,10 +110,11 @@ class UserFragment : Fragment() {
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20")
 
+            userWorksAd = UserWorksAdapter()
+            this@UserFragment.userWorksBean = userWorksBean
+
             if (userWorksBean.code == 0) {
                 launch(Dispatchers.Main) {
-                    userWorksAd = UserWorksAdapter()
-                    this@UserFragment.userWorksBean = userWorksBean
 
                     fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
@@ -131,6 +134,12 @@ class UserFragment : Fragment() {
                     })
                     userWorksAd.submitList(userWorksBean.data.list.vlist)
                 }
+            } else {
+
+                launch(Dispatchers.Main) {
+                    asToast(requireContext(), userWorksBean.message)
+                }
+
             }
         }
 
@@ -240,6 +249,7 @@ class UserFragment : Fragment() {
     //回收数据留存
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
         outState.putLong("mid", (context as HomeActivity).asUser.mid)
     }
 

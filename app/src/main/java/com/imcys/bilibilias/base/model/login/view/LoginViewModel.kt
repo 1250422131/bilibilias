@@ -7,22 +7,18 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModel
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 
 
-class LoginViewModel {
+class LoginViewModel(val context: Context) : ViewModel() {
 
 
-    lateinit var context: Context
     private lateinit var loginQRDialog: BottomSheetDialog
-    private lateinit var bottomSheetDialog:BottomSheetDialog
-
-    fun tip(view: View){
-        asToast(context,"云端账户正在重建")
-    }
-
+    private lateinit var bottomSheetDialog: BottomSheetDialog
 
 
     fun toBiliAgreement(view: View) {
@@ -36,38 +32,45 @@ class LoginViewModel {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun biliAgreement(context: Context) {
-        asToast(context,"无论如何，你都在间接使用B站")
-        val lLayout = LinearLayout(context)
-        lLayout.orientation = LinearLayout.VERTICAL
+        asToast(context, "无论如何，你都在间接使用B站")
 
-
-        val Privacy = WebView(context)
-        val webChromeClient = object : WebChromeClient() {
+        val lLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
         }
-        Privacy.webChromeClient = webChromeClient
 
-        //监听
-        StatService.trackWebView(context, Privacy, webChromeClient)
+        val privacy = WebView(context).apply {
+            val webChromeClient = object : WebChromeClient() {
+            }
 
-        Privacy.settings.javaScriptCanOpenWindowsAutomatically =
-            true //设置js可以直接打开窗口，如window.open()，默认为false
-        Privacy.settings.javaScriptEnabled = true //是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
-        Privacy.settings.loadWithOverviewMode = true //和setUseWideViewPort(true)一起解决网页自适应问题
-        Privacy.settings.domStorageEnabled = true //DOM Storage 重点是设置这个
-        Privacy.settings.allowFileAccess = false
-        Privacy.loadUrl("https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html")
-        val lParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            1500) //这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
-        lLayout.addView(Privacy, lParams)
-        val builder = AlertDialog.Builder(context)
-        builder.setView(lLayout)
-        builder.setCancelable(false)
-        builder.setTitle("B站账户需要遵守的协议列表")
-        builder.setPositiveButton("使用则代表同意") { dialog, which ->
-            Privacy.destroy()
-            dialog.cancel()
+            //监听
+            StatService.trackWebView(context, this, webChromeClient)
+
+            settings.javaScriptCanOpenWindowsAutomatically = true //设置js可以直接打开窗口，如window.open()，默认为false
+            settings.javaScriptEnabled = true //是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+            settings.loadWithOverviewMode = true //和setUseWideViewPort(true)一起解决网页自适应问题
+            settings.domStorageEnabled = true //DOM Storage 重点是设置这个
+            settings.allowFileAccess = false
+            loadUrl("https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html")
         }
-        builder.show()
+
+
+
+
+        val lParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            1500
+        ) //这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
+        lLayout.addView(privacy, lParams)
+
+        AlertDialog.Builder(context).apply {
+            setView(lLayout)
+            setCancelable(false)
+            setTitle("B站账户需要遵守的协议列表")
+            setPositiveButton("使用则代表同意") { dialog, _ ->
+                privacy.destroy()
+                dialog.cancel()
+            }
+        }.show()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -88,14 +91,17 @@ class LoginViewModel {
         Privacy.settings.domStorageEnabled = true //DOM Storage 重点是设置这个
         Privacy.settings.allowFileAccess = false
         Privacy.loadUrl("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
-        val lParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            1500) //这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
+        val lParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            1500
+        ) //这个属性是设置空间的长宽，其实还可以设置其他的控件的其他属性；
         lLayout.addView(Privacy, lParams)
         val builder = AlertDialog.Builder(context)
         builder.setView(lLayout)
         builder.setCancelable(false)
         builder.setTitle("B站账户需要遵守的协议列表")
-        builder.setPositiveButton("使用则代表同意"
+        builder.setPositiveButton(
+            "使用则代表同意"
         ) { dialog, which ->
             dialog.cancel()
         }

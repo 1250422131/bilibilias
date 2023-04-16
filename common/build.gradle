@@ -52,6 +52,11 @@ android {
 }
 
 dependencies {
+    /**
+     * MMKV 储存框架
+     */
+    api 'com.tencent:mmkv:1.2.15'
+
 
     /**
      * 伸缩布局
@@ -119,7 +124,7 @@ dependencies {
      */
     api "androidx.room:room-runtime:2.4.3"
     api "androidx.room:room-ktx:2.4.3"
-    kapt "androidx.room:room-compiler:2.4.3"
+    ksp "androidx.room:room-compiler:2.4.3"
 
     /**
      * 文件选择器

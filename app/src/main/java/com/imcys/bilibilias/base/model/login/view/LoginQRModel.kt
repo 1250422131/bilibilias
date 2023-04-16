@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.edit
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -25,6 +26,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -78,7 +80,7 @@ class LoginQRModel {
                     BaseApplication.handler.post {
                         //登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
-                            loginSuccessOp(view.context, loginStateBean, response)
+                            loginSuccessOp( loginStateBean, response)
                         } else {
                             //展示登录结果
                             val loginQRModel = binding?.loginQRModel!!
@@ -118,41 +120,44 @@ class LoginQRModel {
     }
 
 
+    fun downloadLoginQR(view: View, loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
 
-    fun downloadLoginQR(view: View,loginQrcodeDataBean: LoginQrcodeBean.DataBean){
+        Glide.with(view.context).asBitmap()
+            .load("https://pan.misakamoe.com/qrcode/?url=" + loginQrcodeDataBean.url)
+            .into(object : SimpleTarget<Bitmap?>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap?>?,
+                ) {
+                    val photoDir = File(Environment.getExternalStorageDirectory(), "BILIBILIAS")
+                    if (!photoDir.exists()) {
+                        photoDir.mkdirs()
+                    }
+                    val fileName =
+                        view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_fileName)
+                    val photo = File(photoDir, fileName)
+                    try {
+                        val fos = FileOutputStream(photo)
+                        resource.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                        fos.flush()
+                        fos.close()
+                    } catch (e: FileNotFoundException) {
+                        e.printStackTrace()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
 
-        Glide.with(view.context).asBitmap().load("https://pan.misakamoe.com/qrcode/?url="+loginQrcodeDataBean.url).into(object : SimpleTarget<Bitmap?>() {
-            override fun onResourceReady(
-                resource: Bitmap,
-                transition: Transition<in Bitmap?>?,
-            ) {
-                val photoDir = File(Environment.getExternalStorageDirectory(), "BILIBILIAS")
-                if (!photoDir.exists()) {
-                    photoDir.mkdirs()
+                    updatePhotoMedia(photo, view.context)
+                    asToast(
+                        view.context,
+                        view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast)
+                    )
+                    goToQR(view)
                 }
-                val fileName = view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_fileName)
-                val photo = File(photoDir, fileName)
-                try {
-                    val fos = FileOutputStream(photo)
-                    resource.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                    fos.flush()
-                    fos.close()
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-                updatePhotoMedia(photo,view.context)
-                asToast(view.context,view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast))
-                goToQR(view)
-            }
-        })
-
+            })
 
 
     }
-
 
 
     //更新图库
@@ -163,7 +168,7 @@ class LoginQRModel {
         context.sendBroadcast(intent)
     }
 
-     fun goToQR(view: View) {
+    fun goToQR(view: View) {
         val context = view.context
         try {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan"))
@@ -172,9 +177,11 @@ class LoginQRModel {
             if (componentName != null) {
                 context.startActivity(intent)
             } else {
-                Toast.makeText(context,
+                Toast.makeText(
+                    context,
                     context.getString(R.string.app_LoginQRModel_goToQR),
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -187,12 +194,12 @@ class LoginQRModel {
      * @param response Response
      */
     @SuppressLint("CommitPrefEdits")
-    fun loginSuccessOp(context: Context, loginStateBean: LoginStateBean, response: Response) {
+    fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
 
-        val sharedPreferences: SharedPreferences =
-            context.getSharedPreferences("data", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("refreshToken", loginStateBean.data.refresh_token)
+        val kv = MMKV.mmkvWithID("data")
+
+        kv.encode("refreshToken", loginStateBean.data.refresh_token)
+
         var cookies = ""
         // 创建 Pattern 对象
         val patternSESSDATA = "SESSDATA=(.*?);"
@@ -207,19 +214,22 @@ class LoginQRModel {
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                editor.putString("SESSDATA", groupStr)
+                kv.encode("SESSDATA", groupStr)
             }
 
             m = rBiliJct.matcher(it)
 
             if (m.find()) {
                 val groupStr = m.group(1)
-                editor.putString("bili_jct", groupStr)
+                kv.encode("bili_jct", groupStr)
             }
         }
-        editor.putString("cookies", cookies)
-        editor.putString("refreshToken", loginStateBean.data.refresh_token)
-        editor.apply()
+        kv.apply {
+            encode("cookies", cookies)
+            encode("refreshToken", loginStateBean.data.refresh_token)
+        }
+
+
     }
 
 }

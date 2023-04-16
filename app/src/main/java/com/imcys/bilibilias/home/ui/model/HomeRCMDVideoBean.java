@@ -25,6 +25,8 @@ public class HomeRCMDVideoBean implements Serializable {
     private int ttl;
     private DataBean data;
 
+
+
     @Override
     public String toString() {
         return "HomeRCMDVideoBean{" +
