@@ -139,8 +139,7 @@ class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
     }
 
     private fun deleteTaskRecords(taskId: Int) {
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.Default).launch {
             val downloadFinishTaskDao =
                 BaseApplication.appDatabase.downloadFinishTaskDao()
             val newTasks = withContext(Dispatchers.IO) {

@@ -48,6 +48,7 @@ class UserViewModel : ViewModel() {
     }
 
     private fun handleIntent() {
+
         viewModelScope.launch {
             userChannel.consumeAsFlow().collect() {
                 when (it) {

@@ -45,6 +45,8 @@ class DownloadTaskAdapter :
                 }
                 return super.getChangePayload(oldItem, newItem)
             }
+
+
         }
     ) {
 
@@ -59,11 +61,8 @@ class DownloadTaskAdapter :
             parent, false
         )
 
-
-
         return ViewHolder(binding.root)
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
@@ -84,4 +83,5 @@ class DownloadTaskAdapter :
             }
         }
     }
+
 }

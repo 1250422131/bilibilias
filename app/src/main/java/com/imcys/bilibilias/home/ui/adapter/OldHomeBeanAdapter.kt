@@ -107,14 +107,13 @@ class OldHomeBeanAdapter(
         Thread {
             var getPost: String = postData
             if (token == 1) {
-                val biliJct = App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("bili_kct","")
+                val biliJct =BaseApplication.dataKv.decodeString("bili_kct","")
 
                 getPost = getPost.replace("{token}",  biliJct!!)
                 println(getPost)
             }
-            val sharedPreferences: SharedPreferences =
-               context.getSharedPreferences("data", Context.MODE_PRIVATE)
-            val  cookie = sharedPreferences.getString("cookies", "").toString()
+
+            val  cookie =  BaseApplication.dataKv.decodeString("cookies").toString()
             val goUrlStr = HttpUtils.doCardPost(url, getPost, cookie)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
@@ -139,9 +138,8 @@ class OldHomeBeanAdapter(
         failToast: String,
         context: Context,
     ) {
-        val sharedPreferences: SharedPreferences =
-            context.getSharedPreferences("data", Context.MODE_PRIVATE)
-        val  cookie = sharedPreferences.getString("cookies", "").toString()
+
+        val  cookie =  BaseApplication.dataKv.decodeString("cookies").toString()
 
         HttpUtils.addHeader("cookie", cookie).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {

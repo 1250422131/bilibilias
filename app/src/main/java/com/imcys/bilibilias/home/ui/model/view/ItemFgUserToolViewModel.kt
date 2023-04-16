@@ -1,11 +1,12 @@
 package com.imcys.bilibilias.home.ui.model.view
 
 import android.view.View
+import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.home.ui.activity.user.BangumiFollowActivity
 import com.imcys.bilibilias.home.ui.activity.user.CollectionActivity
 import com.imcys.bilibilias.home.ui.activity.user.PlayHistoryActivity
 
-class ItemFgUserToolViewModel {
+class ItemFgUserToolViewModel : ViewModel() {
     fun goToCollection(view: View) {
         CollectionActivity.actionStart(view.context)
     }

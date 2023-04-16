@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, ViewHolder>(object :
     DiffUtil.ItemCallback<BangumiFollowList.DataBean.ListBean>() {
@@ -48,21 +53,39 @@ class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, Vi
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
 
-                val sharedPreferences: SharedPreferences =
-                    holder.itemView.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                val cookie = sharedPreferences.getString("cookies", "").toString()
-                HttpUtils.addHeader("cookie", cookie)
-                    .get(
-                        "${BilibiliApi.bangumiVideoDataPath}?ep_id=${getItem(position).first_ep}",
-                        BangumiSeasonBean::class.java
-                    ) {
-                        if (it.code == 0) {
-                            AsVideoActivity.actionStart(
-                                holder.itemView.context,
-                                it.result.episodes[0].bvid
-                            )
+                val cookie = BaseApplication.dataKv.decodeString("cookies").toString()
+
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val bangumiSeasonBean = KtHttpUtils.addHeader("cookie", cookie)
+                        .asyncGet<BangumiSeasonBean>(
+                            "${BilibiliApi.bangumiVideoDataPath}?ep_id=${
+                                getItem(
+                                    position
+                                ).first_ep
+                            }"
+                        )
+
+
+                    launch (Dispatchers.Main){
+                        if (bangumiSeasonBean.code == 0) {
+
+                            if (bangumiSeasonBean.result.episodes.size > 0) {
+                                AsVideoActivity.actionStart(
+                                    holder.itemView.context,
+                                    bangumiSeasonBean.result.episodes[0].bvid
+                                )
+                            } else {
+                                AsVideoActivity.actionStart(
+                                    holder.itemView.context,
+                                    bangumiSeasonBean.result.section[0].episodes[0].bvid
+                                )
+                            }
+
+
                         }
                     }
+                }
             }
         }
 

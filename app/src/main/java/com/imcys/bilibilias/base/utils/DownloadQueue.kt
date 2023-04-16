@@ -103,10 +103,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
         var fileDlSize: Double = 0.0,
         // 定义当前任务的下载请求
         var call: Callback.Cancelable? = null,
-        var job: Job? = null,
-
-
-        )
+    )
 
 
     // 添加下载任务到队列中
@@ -154,10 +151,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
     // 执行下载任务
     private fun executeTask() {
 
-
-        while (currentTasks.size < 3 && queue.isNotEmpty()) {
-
-
+        while (currentTasks.size < 2 && queue.isNotEmpty()) {
             //删除并且返回当前的task
             val task = queue.removeAt(0)
             //更新任务状态
@@ -172,8 +166,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
             );
             params.addHeader("referer", "https://www.bilibili.com/")
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                .getString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString("cookies")
             params.addHeader("cookie", cookie!!)
             //设置是否根据头信息自动命名文件
             params.isAutoRename = false
@@ -186,92 +179,85 @@ class DownloadQueue : CoroutineScope by MainScope() {
 
 
             //使用多个线程同步下载
-            task.job = launch {
-                // 使用 XUtils 库来下载文件
-                task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
-                    override fun onSuccess(result: File?) {
 
-                    }
+            // 使用 XUtils 库来下载文件
+            task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
+                override fun onSuccess(result: File?) {
 
-                    override fun onError(ex: Throwable?, isOnCallback: Boolean) {
-                        currentTasks.remove(task)
-                        //更新任务状态
-                        task.state = STATE_DOWNLOAD_ERROR
-                        // 下载失败，调用任务的完成回调
-                        task.onComplete(false)
-                        //更新
-                        updateAdapter()
-                        // 执行下一个任务
-                        executeTask()
+                }
 
-                    }
+                override fun onError(ex: Throwable?, isOnCallback: Boolean) {
+                    currentTasks.remove(task)
+                    //更新任务状态
+                    task.state = STATE_DOWNLOAD_ERROR
+                    // 下载失败，调用任务的完成回调
+                    task.onComplete(false)
+                    //更新
+                    updateAdapter()
+                    // 执行下一个任务
+                    executeTask()
 
-                    override fun onCancelled(cex: Callback.CancelledException?) {
-                        currentTasks.remove(task)
-                        //更新任务状态
-                        task.state = STATE_DOWNLOAD_PAUSE
-                        // 下载取消，调用任务的完成回调
-                        task.onComplete(false)
-                        //更新
-                        updateAdapter()
-                        // 执行下一个任务
-                        executeTask()
-                        //关闭协程
-                        task.job?.cancel()
-                    }
+                }
 
-                    override fun onFinished() {
-                        currentTasks.remove(task)
-                        //更新任务状态
-                        task.state = STATE_DOWNLOAD_END
-                        // 下载成功，调用任务的完成回调
-                        task.onComplete(true)
-                        //更新
-                        updateAdapter()
+                override fun onCancelled(cex: Callback.CancelledException?) {
+                    currentTasks.remove(task)
+                    //更新任务状态
+                    task.state = STATE_DOWNLOAD_PAUSE
+                    // 下载取消，调用任务的完成回调
+                    task.onComplete(false)
+                    //更新
+                    updateAdapter()
+                    // 执行下一个任务
+                    executeTask()
+                }
 
-                        if (task.isGroupTask) {
-                            // 在map中找到这个任务所属的一组任务
-                            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
-                            // 判断这一组任务是否都已经下载完成
-                            val isGroupTasksCompleted =
-                                groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
-                            if (isGroupTasksCompleted) {
-                                videoDataSubmit(task)
-                                videoMerge(task.downloadTaskDataBean.cid)
-                            }
+                override fun onFinished() {
+                    currentTasks.remove(task)
+                    //更新任务状态
+                    task.state = STATE_DOWNLOAD_END
+                    // 下载成功，调用任务的完成回调
+                    task.onComplete(true)
+                    //更新
+                    updateAdapter()
 
-                        } else {
-                            //TODO FLV或者单独任务不需要合并操作，直接视为下载了。
-                            saveFinishTask(task)
+                    if (task.isGroupTask) {
+                        // 在map中找到这个任务所属的一组任务
+                        val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                        // 判断这一组任务是否都已经下载完成
+                        val isGroupTasksCompleted =
+                            groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
+                        if (isGroupTasksCompleted) {
                             videoDataSubmit(task)
-                            updatePhotoMedias(App.context, File(task.savePath))
+                            videoMerge(task.downloadTaskDataBean.cid)
                         }
 
-
-                        // 执行下一个任务
-                        executeTask()
-                        //关闭协程
-                        task.job?.cancel()
+                    } else {
+                        //TODO FLV或者单独任务不需要合并操作，直接视为下载了。
+                        saveFinishTask(task)
+                        videoDataSubmit(task)
+                        updatePhotoMedias(App.context, File(task.savePath))
                     }
 
-                    override fun onWaiting() {
-                        // 暂时不需要实现
-                    }
 
-                    override fun onStarted() {
-                    }
+                    // 执行下一个任务
+                    executeTask()
+                }
 
-                    override fun onLoading(total: Long, current: Long, isDownloading: Boolean) {
-                        //更新进度
-                        updateProgress(task, (current * 100 / total).toDouble())
-                        task.fileSize = (total / 1048576).toDouble()
-                        task.fileDlSize = (current / 1048576).toDouble()
-                    }
+                override fun onWaiting() {
+                    // 暂时不需要实现
+                }
 
-                })
-            }
+                override fun onStarted() {
+                }
 
+                override fun onLoading(total: Long, current: Long, isDownloading: Boolean) {
+                    //更新进度
+                    updateProgress(task, (current * 100 / total).toDouble())
+                    task.fileSize = (total / 1048576).toDouble()
+                    task.fileDlSize = (current / 1048576).toDouble()
+                }
 
+            })
         }
 
 
@@ -283,8 +269,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
      * @param task Task
      */
     private fun saveFinishTask(task: Task) {
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
 
             var videoTitle = ""
             var videoPageTitle = ""
@@ -359,8 +344,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                .getString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString("cookies")
 
             val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
@@ -416,8 +400,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                .getString("cookies", "")
+            val cookie =  BaseApplication.dataKv.decodeString("cookies")
 
             val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
@@ -552,7 +535,6 @@ class DownloadQueue : CoroutineScope by MainScope() {
                     }
 
 
-
                 }
 
                 override fun onProgress(progress: Int, progressTime: Long) {
@@ -562,8 +544,6 @@ class DownloadQueue : CoroutineScope by MainScope() {
                 }
 
             })
-
-
 
 
     }
@@ -619,9 +599,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie =
-            App.context.getSharedPreferences("data", Context.MODE_PRIVATE).getString("cookies", "")
-
+        val cookie = BaseApplication.dataKv.decodeString("cookies")
         HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
@@ -747,8 +725,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                .getString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString("cookies")
 
             HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
@@ -757,7 +734,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
                         }
 
                         override fun onResponse(call: Call, response: Response) {
-                            App.handler.post {
+                            BaseApplication.handler.post {
                                 val bufferedSink: BufferedSink?
                                 val dest =
                                     File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/danmaku.json")
@@ -833,7 +810,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
         videoBaseBean: VideoBaseBean,
     ) {
 
-        launch(Dispatchers.IO) {
+        launch(Dispatchers.Default) {
 
             var videoEntry = videoEntry
             val appDataUri = PreferenceManager.getDefaultSharedPreferences(App.context)
@@ -855,10 +832,8 @@ class DownloadQueue : CoroutineScope by MainScope() {
             )?.value!!.toInt() else TODO()
 
             val bangumiSeasonBean =
-                HttpUtils.asyncGet(
-                    "${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid",
-                    BangumiSeasonBean::class.java
-                )
+                KtHttpUtils.asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid")
+
             val ssid = bangumiSeasonBean.result.season_id
             videoEntry =
                 videoEntry.replace("SSID编号", (bangumiSeasonBean.result.season_id).toString())
@@ -890,11 +865,12 @@ class DownloadQueue : CoroutineScope by MainScope() {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie = App.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                .getString("cookies", "")
+            val cookie =  BaseApplication.dataKv.decodeString("cookies")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
+
+
             val response = asyncResponse.await()
 
             val bufferedSink: BufferedSink?
