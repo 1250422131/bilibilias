@@ -20,7 +20,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
         versionCode 201
-        versionName "2.0.2-天璇-Beta"
+        versionName "2.0.2-天玑-Beta"
         //multiDexEnabled true
 
 
