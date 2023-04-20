@@ -31,14 +31,19 @@
                  app:title="@string/app_activity_dedicate_title"
                  tools:ignore="MissingConstraints" />
 
-             <androidx.recyclerview.widget.RecyclerView
-                 android:id="@+id/dedicate_rv"
+
+             <me.dkzwm.widget.srl.SmoothRefreshLayout
                  android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:padding="20dp">
+                 android:layout_height="match_parent">
+                 <androidx.recyclerview.widget.RecyclerView
+                     android:id="@+id/dedicate_rv"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:padding="20dp">
 
-             </androidx.recyclerview.widget.RecyclerView>
+                 </androidx.recyclerview.widget.RecyclerView>
 
+             </me.dkzwm.widget.srl.SmoothRefreshLayout>
          </androidx.appcompat.widget.LinearLayoutCompat>
        </androidx.core.widget.NestedScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
