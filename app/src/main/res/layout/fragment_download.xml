@@ -12,89 +12,94 @@
         android:layout_height="match_parent"
         tools:context=".home.ui.fragment.DownloadFragment">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+       <me.dkzwm.widget.srl.SmoothRefreshLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/fragment_download_top_linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal">
+               <LinearLayout
+                   android:id="@+id/fragment_download_top_linearLayout"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginRight="20dp"
+                   android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="5">
+                   <LinearLayout
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="5">
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_fragment_download_title"
-                        android:textSize="30sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                       <com.google.android.material.textview.MaterialTextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@string/app_fragment_download_title"
+                           android:textSize="30sp"
+                           android:textStyle="bold" />
+                   </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="5" />
+                   <LinearLayout
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content"
+                       android:layout_weight="5" />
 
-            </LinearLayout>
-
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/fragment_download_tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:tabIndicator="@drawable/download_tablayout_indicator"
-                    app:tabIndicatorColor="?attr/colorPrimary"
-                    app:tabIndicatorFullWidth="false"
-                    app:tabIndicatorHeight="10dp"
-                    app:tabTextAppearance="@style/Download_TabLayoutTextStyle"
-                    app:tabMode="scrollable"
-                    app:tabIndicatorAnimationDuration="400"
-                    app:tabIndicatorAnimationMode="elastic"
-                    app:tabRippleColor="@android:color/transparent"
-                    app:tabSelectedTextColor="?attr/colorPrimary"
-                    app:tabTextColor="@color/black"
-                    app:tabGravity="start"
-                    app:tabInlineLabel="true"
-                    >
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/fragment_download_tabLayout_downloading"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_fragment_download_task_tab_downloading_title"
-                        tools:ignore="HardcodedText" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:id="@+id/fragment_download_tabLayout_finish"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/app_fragment_download_task_tab_finish_title" />
-                </com.google.android.material.tabs.TabLayout>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+               </LinearLayout>
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_download_RecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="10dp" />
+               <androidx.appcompat.widget.LinearLayoutCompat
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:padding="5dp">
+
+                   <com.google.android.material.tabs.TabLayout
+                       android:id="@+id/fragment_download_tabLayout"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       app:tabIndicator="@drawable/download_tablayout_indicator"
+                       app:tabIndicatorColor="?attr/colorPrimary"
+                       app:tabIndicatorFullWidth="false"
+                       app:tabIndicatorHeight="10dp"
+                       app:tabTextAppearance="@style/Download_TabLayoutTextStyle"
+                       app:tabMode="scrollable"
+                       app:tabIndicatorAnimationDuration="400"
+                       app:tabIndicatorAnimationMode="elastic"
+                       app:tabRippleColor="@android:color/transparent"
+                       app:tabSelectedTextColor="?attr/colorPrimary"
+                       app:tabTextColor="@color/black"
+                       app:tabGravity="start"
+                       app:tabInlineLabel="true"
+                       >
+
+                       <com.google.android.material.tabs.TabItem
+                           android:id="@+id/fragment_download_tabLayout_downloading"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@string/app_fragment_download_task_tab_downloading_title"
+                           tools:ignore="HardcodedText" />
+
+                       <com.google.android.material.tabs.TabItem
+                           android:id="@+id/fragment_download_tabLayout_finish"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@string/app_fragment_download_task_tab_finish_title" />
+
+                   </com.google.android.material.tabs.TabLayout>
+
+               </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-        </LinearLayout>
+               <androidx.recyclerview.widget.RecyclerView
+                   android:id="@+id/fragment_download_RecyclerView"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:padding="10dp" />
+
+
+           </LinearLayout>
+       </me.dkzwm.widget.srl.SmoothRefreshLayout>
 
     </FrameLayout>
 </layout>

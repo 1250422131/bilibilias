@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
@@ -34,6 +35,7 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
+import com.imcys.bilibilias.home.ui.model.view.factory.AsVideoViewModelFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
@@ -132,7 +134,10 @@ class AsVideoActivity : BaseActivity() {
             }
 
             //设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = AsVideoViewModel(this@AsVideoActivity, this)
+            asVideoViewModel = ViewModelProvider(
+                this@AsVideoActivity,
+                AsVideoViewModelFactory(this@AsVideoActivity, binding)
+            )[AsVideoViewModel::class.java]
 
 
         }
@@ -205,15 +210,19 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun initVideoData() {
 
+
+
         //这里必须通过外界获取数据
         val intent = intent
 
         val bvId = intent.getStringExtra("bvId")
 
         lifecycleScope.launch {
-            val videoBaseBean = KtHttpUtils
-                .addHeader("cookie", asUser.cookie)
-                .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
+
+            val videoBaseBean = KtHttpUtils.run {
+                addHeader("cookie", asUser.cookie)
+                asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
+            }
 
             //设置数据
             videoDataBean = videoBaseBean
@@ -293,16 +302,11 @@ class AsVideoActivity : BaseActivity() {
 
         lifecycleScope.launch {
 
-            val bangumiSeasonBean = KtHttpUtils.apply {
-                //漫游设计（该功能随时弃用）
-                if (asSharedPreferences.getBoolean(
-                        "use_roam_cookie_state",
-                        true
-                    )
-                ) this.addHeader("cookie", asUser.cookie)
+            val bangumiSeasonBean = KtHttpUtils.run {
+                //弃用漫游服务
+                addHeader("cookie", asUser.cookie)
+                asyncGet<BangumiSeasonBean>(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid)
             }
-                .asyncGet<BangumiSeasonBean>(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid)
-
             isMember(bangumiSeasonBean)
 
 
@@ -312,10 +316,10 @@ class AsVideoActivity : BaseActivity() {
                     View.GONE
 
                 //到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
-                binding.asVideoBangumiCd.visibility = View.VISIBLE
-                binding.asVideoCd.visibility = View.GONE
+                asVideoBangumiCd.visibility = View.VISIBLE
+                asVideoCd.visibility = View.GONE
+                this.bangumiSeasonBean = bangumiSeasonBean
 
-                binding.bangumiSeasonBean = bangumiSeasonBean
                 asVideoSubsectionRv.adapter =
                     BangumiSubsectionAdapter(
                         bangumiSeasonBean.result.episodes.toMutableList(),
@@ -422,7 +426,8 @@ class AsVideoActivity : BaseActivity() {
 
                 binding.videoPageListData = videoPlayListData
                 asVideoSubsectionRv.adapter =
-                    SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, position ->
+                        //将子集切换后的逻辑交给activity完成
+                    SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                         //更新CID刷新播放页面
                         cid = data.cid
                         //暂停播放
@@ -469,7 +474,7 @@ class AsVideoActivity : BaseActivity() {
 
                     override fun onResponse(call: Call, response: Response) {
 
-                        App.handler.post {
+                        BaseApplication.handler.post {
                             //储存弹幕
                             saveDanmaku(response.body!!.bytes())
                             //初始化弹幕配置
@@ -584,10 +589,12 @@ class AsVideoActivity : BaseActivity() {
     companion object {
 
         fun actionStart(context: Context, bvId: String) {
+
             val intent = Intent(context, AsVideoActivity::class.java)
             intent.putExtra("bvId", bvId)
             context.startActivity(intent)
         }
+
 
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Int) {

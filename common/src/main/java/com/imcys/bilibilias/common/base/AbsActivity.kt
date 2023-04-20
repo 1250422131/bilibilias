@@ -17,8 +17,7 @@ import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
-import com.microsoft.appcenter.distribute.Distribute
-import com.microsoft.appcenter.distribute.UpdateTrack
+import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 
 
@@ -26,22 +25,24 @@ open class AbsActivity : AppCompatActivity() {
 
     private val mThemeChangedBroadcast by lazy {
         ThemeChangedBroadcast()
+
     }
 
     open val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    open val asUser: AsUser by lazy {
-        val sharedPreferences: SharedPreferences =
-            this.getSharedPreferences("data", Context.MODE_PRIVATE)
-        AsUser.apply {
-            cookie = sharedPreferences.getString("cookies", "").toString()
-            sessdata = sharedPreferences.getString("SESSDATA", "").toString()
-            biliJct = sharedPreferences.getString("bili_jct", "").toString()
-            mid = sharedPreferences.getLong("mid", 0)
+    val asUser: AsUser
+        get() = run {
+            val kv = BaseApplication.dataKv
+            AsUser.apply {
+                cookie = kv.decodeString("cookies", "")!!
+                sessdata = kv.decodeString("SESSDATA", "")!!
+                biliJct = kv.decodeString("bili_jct", "")!!
+                mid = kv.decodeLong("mid", 0)
+                asCookie = kv.decodeString("as_cookie", "")!!
+            }
         }
-    }
 
 
     // 存储所有活动的列表
@@ -54,10 +55,14 @@ open class AbsActivity : AppCompatActivity() {
         //启动APP统计
         startAppCenter()
         // 添加当前活动
-        BaseApplication.context = this
         addActivity(this)
         //判断主题
         setTheme()
+
+    }
+
+    private fun initAsUser() {
+
     }
 
 
@@ -77,17 +82,12 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 //统计接入
-                Distribute.setEnabledForDebuggableBuild(true)
-
                 AppCenter.start(
                     application,
                     BaseApplication.appSecret,
                     Analytics::class.java,
-                    Crashes::class.java,
-                    Distribute::class.java
+                    Crashes::class.java
                 )
-                Distribute.setUpdateTrack(UpdateTrack.PUBLIC)
-
             }
 
         }

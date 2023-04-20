@@ -16,7 +16,11 @@ import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.youth.banner.adapter.BannerAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RCMDVideoAdapter(
     val context: Context,
@@ -74,20 +78,26 @@ class RCMDVideoAdapter(
     }
 
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
-        HttpUtils
-            .addHeader("cookie", "")
-            .addParam("bvid", bvid)
-            .addParam("like", "1")
-            .addParam("csrf", "")
-            .post(BilibiliApi.likeVideoPath, LikeVideoBean::class.java) {
-                App.handler.post {
-                    if (it.code == 0) {
-                        asToast(context, "点赞成功")
-                    } else {
-                        itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
-                        asToast(context, "点赞失败，${it.message}")
-                    }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val likeVideoBean = KtHttpUtils .addHeader("cookie", "")
+                .addParam("bvid", bvid)
+                .addParam("like", "1")
+                .addParam("csrf", "")
+                .asyncPost<LikeVideoBean>(BilibiliApi.likeVideoPath)
+
+            launch(Dispatchers.Main) {
+                if (likeVideoBean.code == 0) {
+                    asToast(context, "点赞成功")
+                } else {
+                    itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
+                    asToast(context, "点赞失败，${likeVideoBean.message}")
                 }
             }
+
+
+        }
+
+
     }
 }
