@@ -280,5 +280,6 @@
     <string name="app_root_preferences_title_theme">主題</string>
     <string name="app_root_preferences_long_title_theme">設定軟件主題</string>
     <string name="app_root_preferences_long_title_theme_tip">注意：這是實驗性功能，將持續調整。</string>
+    <string name="app_merge_video_top_ly_title">合并视频</string>
 
 </resources>

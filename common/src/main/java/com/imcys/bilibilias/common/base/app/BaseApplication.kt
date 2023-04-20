@@ -9,6 +9,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.BuildConfig
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.data.AppDatabase
+import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
@@ -19,7 +20,8 @@ open class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        context = this
+        context = applicationContext
+
         handler = Handler(mainLooper)
 
         //百度统计开始
@@ -28,8 +30,15 @@ open class BaseApplication : Application() {
 
         initKComponent()
 
+        //初始化MMKV
+        initMMKV()
 
 
+    }
+
+    private fun initMMKV() {
+        MMKV.initialize(this)
+        dataKv = MMKV.mmkvWithID("data")
     }
 
     private fun initKComponent() {
@@ -41,7 +50,7 @@ open class BaseApplication : Application() {
         )
         // 手动加载模块
         ModuleManager.registerArr(
-            "app", "common", "tool_livestream","tool_log_export"
+            "app", "common", "tool_livestream", "tool_log_export"
         )
     }
 
@@ -70,6 +79,8 @@ open class BaseApplication : Application() {
         const val AppGuideVersion = "1.0"
 
 
+        //全局应用数据的MMKV
+        lateinit var dataKv:MMKV
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
         //—————————————————————————————————————————————————

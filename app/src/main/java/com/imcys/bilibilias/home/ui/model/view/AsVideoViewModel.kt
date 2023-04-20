@@ -41,8 +41,10 @@ import java.io.File
 /**
  * 解析视频的ViewModel
  */
+
 class AsVideoViewModel(
-    val context: Context, private val asVideoBinding: ActivityAsVideoBinding,
+    @SuppressLint("StaticFieldLeak") val context: Context,
+    private val asVideoBinding: ActivityAsVideoBinding,
 ) : ViewModel() {
 
 
@@ -56,8 +58,7 @@ class AsVideoViewModel(
         videoPageListData: VideoPageListData,
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.Default).launch {
 
             if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader("cookie", context.asUser.cookie)
@@ -106,12 +107,11 @@ class AsVideoViewModel(
     ) {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.Default).launch {
 
             if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
                 val dashVideoPlayBean =
-                    KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                    KtHttpUtils.addHeader("cookie", context.asUser.cookie)
                         .addHeader("referer", "https://www.bilibili.com")
                         .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
@@ -146,8 +146,7 @@ class AsVideoViewModel(
 
 
     fun downloadDanMu(videoBaseBean: VideoBaseBean) {
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
 
             val response =
                 HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
@@ -161,7 +160,6 @@ class AsVideoViewModel(
 
     fun saveDanmaku(bytes: ByteArray, cid: Int) {
 
-        val coroutineScope = CoroutineScope(Dispatchers.Default)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -180,7 +178,7 @@ class AsVideoViewModel(
         decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
-        coroutineScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Default).launch {
             asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
             //通知下载成功
             Analytics.trackEvent("下载弹幕")
@@ -194,14 +192,18 @@ class AsVideoViewModel(
      */
     fun likeVideo(view: View, bvid: String) {
 
-        if (asVideoBinding.archiveHasLikeBean?.data == 0) {
-            HttpUtils
-                .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                .addParam("csrf", context.asUser.biliJct)
-                .addParam("like", "1")
-                .addParam("bvid", bvid)
-                .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                    when (it.code) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val likeVideoBean =
+                KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                    .addParam("csrf", context.asUser.biliJct)
+                    .addParam("like", "1")
+                    .addParam("bvid", bvid)
+                    .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
+
+
+            if (asVideoBinding.archiveHasLikeBean?.data == 0) {
+                launch(Dispatchers.Main) {
+                    when (likeVideoBean.code) {
                         0 -> {
                             asVideoBinding.archiveHasLikeBean?.data = 1
                             asVideoBinding.asVideoLikeBt.isSelected = true
@@ -210,12 +212,14 @@ class AsVideoViewModel(
                             cancelLikeVideo(view, bvid)
                         }
                         else -> {
-                            asToast(context, it.message)
+                            asToast(context, likeVideoBean.message)
                         }
                     }
                 }
-        } else {
-            cancelLikeVideo(view, bvid)
+            } else {
+                cancelLikeVideo(view, bvid)
+            }
+
         }
 
 
@@ -226,25 +230,33 @@ class AsVideoViewModel(
      * @param bvid String
      */
     private fun cancelLikeVideo(view: View, bvid: String) {
-        HttpUtils
-            .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-            .addParam("csrf", context.asUser.biliJct)
-            .addParam("like", "2")
-            .addParam("bvid", bvid)
-            .post(BilibiliApi.videLikePath, LikeVideoBean::class.java) {
-                when (it.code) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val likeVideoBean =
+                HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                    .addParam("csrf", context.asUser.biliJct)
+                    .addParam("like", "2")
+                    .addParam("bvid", bvid)
+                    .asyncPost(BilibiliApi.videLikePath, LikeVideoBean::class.java)
+
+            launch(Dispatchers.Main) {
+                when (likeVideoBean.code) {
                     0 -> {
-                        asVideoBinding.archiveHasLikeBean?.data = 0
-                        asVideoBinding.asVideoLikeBt.isSelected = false
+                        asVideoBinding.apply {
+                            archiveHasLikeBean?.data = 0
+                            asVideoLikeBt.isSelected = false
+                        }
                     }
                     65004 -> {
                         likeVideo(view, bvid)
                     }
                     else -> {
-                        asToast(context, it.message)
+                        asToast(context, likeVideoBean.message)
                     }
                 }
             }
+
+        }
+
     }
 
 
@@ -253,16 +265,19 @@ class AsVideoViewModel(
      * @param bvid String
      */
     fun videoCoinAdd(view: View, bvid: String) {
-        HttpUtils
-            .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-            .addParam("bvid", bvid)
-            .addParam("multiply", "2")
-            .addParam("csrf", context.asUser.biliJct)
-            .post(BilibiliApi.videoCoinAddPath, VideoCoinAddBean::class.java) {
+        CoroutineScope(Dispatchers.IO).launch {
+            KtHttpUtils
+                .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                .addParam("bvid", bvid)
+                .addParam("multiply", "2")
+                .addParam("csrf", context.asUser.biliJct)
+                .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
+
+            launch(Dispatchers.Main) {
                 asVideoBinding.archiveCoinsBean?.data?.multiply = 2
                 asVideoBinding.asVideoThrowBt.isSelected = true
-
             }
+        }
     }
 
 
@@ -271,22 +286,30 @@ class AsVideoViewModel(
      */
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(avid: Int) {
+
         asVideoBinding.apply {
-            HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                .get(
-                    BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid,
-                    UserCreateCollectionBean::class.java
-                ) {
-                    if (it.code == 0) {
+
+            CoroutineScope(Dispatchers.IO).launch {
+
+                val userCreateCollectionBean =
+                    KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
+
+
+                launch(Dispatchers.Main) {
+                    if (userCreateCollectionBean.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(context as Activity,
-                            it, { _, _ ->
+                            userCreateCollectionBean, { _, _ ->
                             }, { selects ->
                                 //选取完成了收藏文件夹
                                 setCollection(selects, avid)
                             }).show()
                     }
                 }
+            }
+
         }
+
 
     }
 
@@ -329,19 +352,27 @@ class AsVideoViewModel(
      * @param addMediaIds String
      */
     private fun addCollection(addMediaIds: String, avid: Int) {
-        HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-            .addParam("rid", avid.toString())
-            .addParam("add_media_ids", addMediaIds)
-            .addParam("csrf", context.asUser.biliJct)
-            .addParam("type", "2")
-            .post(BilibiliApi.videoCollectionSetPath, CollectionResultBean::class.java) {
-                if (it.code == 0) {
-                    asVideoBinding.archiveFavouredBean?.data?.isFavoured = true
-                    asVideoBinding.asVideoCollectionBt.isSelected = true
-                } else {
-                    asToast(context, "收藏失败${it.code}")
-                }
+
+
+        CoroutineScope(Dispatchers.Default).launch {
+
+            val collectionResultBean =
+                KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                    .addParam("rid", avid.toString())
+                    .addParam("add_media_ids", addMediaIds)
+                    .addParam("csrf", context.asUser.biliJct)
+                    .addParam("type", "2")
+                    .asyncPost<CollectionResultBean>(BilibiliApi.videoCollectionSetPath)
+
+            if (collectionResultBean.code == 0) {
+                asVideoBinding.archiveFavouredBean?.data?.isFavoured = true
+                asVideoBinding.asVideoCollectionBt.isSelected = true
+            } else {
+                asToast(context, "收藏失败${collectionResultBean.code}")
             }
+
+        }
+
 
     }
 

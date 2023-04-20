@@ -60,6 +60,8 @@ public class BangumiSeasonBean implements Serializable {
         private int season_id;
         private String season_title;
         private SeriesBean series;
+
+        private List<SectionBean> section;
         private String share_copy;
         private String share_sub_title;
         private String share_url;
@@ -76,6 +78,14 @@ public class BangumiSeasonBean implements Serializable {
         private UserStatusBean user_status;
         private List<AreasBean> areas;
         private List<EpisodesBean> episodes;
+
+        public List<SectionBean> getSection() {
+            return section;
+        }
+
+        public void setSection(List<SectionBean> section) {
+            this.section = section;
+        }
 
         public ActivityBean getActivity() {
             return activity;

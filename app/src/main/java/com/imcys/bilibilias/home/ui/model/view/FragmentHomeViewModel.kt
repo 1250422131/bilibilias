@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
 import androidx.core.content.edit
+import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.AbsActivity
@@ -23,7 +24,7 @@ import okhttp3.Response
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class FragmentHomeViewModel {
+class FragmentHomeViewModel:ViewModel() {
 
 
     fun goToPrivacyPolicy(view: View) {
@@ -79,10 +80,9 @@ class FragmentHomeViewModel {
             true,
             positiveButtonClickListener =
             {
-                val cookie = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                    .getString("cookies", "")
-                val biliJct = view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                    .getString("bili_jct", "")
+
+                val cookie = BaseApplication.dataKv.decodeString("cookies")
+                val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
                 HttpUtils.addHeader("cookie", cookie!!)
                     .addParam("biliCSRF", biliJct!!)
@@ -92,13 +92,12 @@ class FragmentHomeViewModel {
                         }
                         override fun onResponse(call: Call, response: Response) {
 
-                            val sharedPreferences: SharedPreferences =
-                                view.context.getSharedPreferences("data", Context.MODE_PRIVATE)
-                            val editor = sharedPreferences.edit()
-                            editor.putLong("mid", 0)
-                            editor.putString("cookies", "")
-                            editor.putString("bili_jct", "")
-                            editor.apply()
+                            BaseApplication.dataKv.apply {
+                                encode("mid", 0)
+                                encode("cookies", "")
+                                encode("bili_jct", "")
+                            }
+
 
                             asToast(view.context,"清除完成，请关闭后台重新进入")
                         }

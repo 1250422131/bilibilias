@@ -11,11 +11,11 @@ data class RoamInfo(
     var id: Int = 0,
 
     @ColumnInfo(name = "name")
-    var romaName: String= "",
+    var romaName: String = "",
 
     //漫游地址
     @ColumnInfo(name = "path")
-    var romaPath: String= "",
+    var romaPath: String = "",
 
     @ColumnInfo(name = "remark")
     var romaRemark: String = "",
@@ -31,4 +31,6 @@ data class RoamInfo(
     var selectState: Int = 0,
     @Ignore
     var checked: Boolean = false,
-)
+) {
+    constructor() : this(0, "", "", "", true, System.currentTimeMillis(), 0, false)
+}

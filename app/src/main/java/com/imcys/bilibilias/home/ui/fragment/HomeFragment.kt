@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +29,7 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -52,8 +54,11 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import me.dkzwm.widget.srl.extra.header.ClassicHeader
+import me.dkzwm.widget.srl.extra.header.MaterialHeader
+import me.dkzwm.widget.srl.indicator.IIndicator
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -66,13 +71,14 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.system.exitProcess
 
+
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeFragment,
 )
 class HomeFragment : Fragment() {
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding
-    private lateinit var loginQRDialog: BottomSheetDialog
+    internal lateinit var loginQRDialog: BottomSheetDialog
 
     //懒加载
     private val bottomSheetDialog by lazy {
@@ -100,7 +106,8 @@ class HomeFragment : Fragment() {
         //添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel = FragmentHomeViewModel()
+            fragmentHomeViewModel =
+                ViewModelProvider(this@HomeFragment)[FragmentHomeViewModel::class.java]
         }
 
 
@@ -352,30 +359,14 @@ class HomeFragment : Fragment() {
 
         //loadRoamData()
 
+        initSmoothRefreshLayout()
+
 
     }
 
-    /**
-     * 加载漫游数据
-     */
-    private fun loadRoamData() {
-
-        val roamId = (context as HomeActivity).asSharedPreferences.getInt("use_roam_id", -1)
-        if (roamId != -1) {
-            queryRoamData(roamId)
-        }
-
+    private fun initSmoothRefreshLayout() {
     }
 
-    private fun queryRoamData(roamId: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val roamDao = AppDatabase.getDatabase(requireContext()).roamDao()
-            roamDao.getByIdQuery(roamId).apply {
-                BilibiliApi.roamApi = romaPath
-            }
-
-        }
-    }
 
 
     /**
@@ -392,6 +383,8 @@ class HomeFragment : Fragment() {
                 if (code == 0) {
                     initUserData()
                     startStatistics()
+                } else {
+                    loadLogin()
                 }
             }.apply {
                 show()
@@ -403,25 +396,47 @@ class HomeFragment : Fragment() {
     /**
      * 启动统计
      */
-    private fun startStatistics() {
+    internal fun startStatistics() {
+
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPreferences.edit()
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
             .apply()
+
+
     }
 
     //初始化用户数据
-    private fun initUserData() {
+    internal fun initUserData() {
 
+        //mid
         bottomSheetDialog.show()
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .get(
-                BilibiliApi.getMyUserData, MyUserData::class.java
-            ) {
-                BaseApplication.myUserData = it.data
-                loadUserData(it)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val myUserData =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
+
+            launch(Dispatchers.Main) {
+
+                if (myUserData.code == 0) {
+
+                    //提交
+                    BaseApplication.myUserData = myUserData.data
+                    loadUserData(myUserData)
+                } else {
+                    asToast(requireContext(), "登录出现意外，请重新完成登录")
+                    loadLogin()
+                }
+
+                bottomSheetDialog.cancel()
+
             }
+
+        }
+
+
     }
 
     /**
@@ -451,12 +466,7 @@ class HomeFragment : Fragment() {
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
 
             //这里需要储存下数据
-            val sharedPreferences =
-                requireActivity().getSharedPreferences("data", Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.putLong("mid", userInfoBean.data.mid)
-            //提交储存
-            editor.apply()
+            BaseApplication.dataKv.encode("mid", userInfoBean.data.mid)
             //关闭登陆登陆弹窗
             loginQRDialog.cancel()
             //加载用户弹窗

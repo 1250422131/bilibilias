@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -24,10 +25,8 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
@@ -38,6 +37,7 @@ import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
+import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
@@ -51,6 +51,9 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import me.dkzwm.widget.srl.extra.header.MaterialHeader
+import me.dkzwm.widget.srl.indicator.IIndicator
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -141,6 +144,8 @@ class ToolFragment : Fragment() {
 
     }
 
+
+
     /**
      * 分享检查
      * 如果外部有分享内容，就会在这里过滤
@@ -226,7 +231,8 @@ class ToolFragment : Fragment() {
                 submitList(this)
             }
         }
-        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT)
+            .show()
 
     }
 
@@ -275,8 +281,10 @@ class ToolFragment : Fragment() {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
             .get(toString, object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(context, getString(R.string.app_ToolFragment_loadShareData),
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context, getString(R.string.app_ToolFragment_loadShareData),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -292,14 +300,21 @@ class ToolFragment : Fragment() {
      * @param epId Int
      */
     private fun loadEpVideoCard(epId: Long) {
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId", BangumiSeasonBean::class.java) {
-                if (it.code == 0) {
-                    it.result.episodes.forEach { it1 ->
-                        if (it1.id == epId) getVideoCardData(it1.bvid)
-                    }
+        lifecycleScope.launch(Dispatchers.Default) {
+
+            val bangumiSeasonBean =
+                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
+
+            if (bangumiSeasonBean.code == 0) {
+                bangumiSeasonBean.result.episodes.forEach { it1 ->
+                    if (it1.id == epId) getVideoCardData(it1.bvid)
                 }
             }
+
+        }
+
+
     }
 
     private fun getVideoCardData(bvid: String) {
@@ -320,7 +335,7 @@ class ToolFragment : Fragment() {
                                 type = 1,
                                 videoBaseBean = videoBaseBean,
                                 clickEvent = {
-                                    AsVideoActivity.actionStart(requireContext(), bvid)
+
                                 }
                             )
                         ) + this
@@ -348,7 +363,6 @@ class ToolFragment : Fragment() {
                 when (it.tool_code) {
                     //视频解析
                     1 -> {
-
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,
@@ -387,6 +401,16 @@ class ToolFragment : Fragment() {
                             it.color
                         ) {
                             LogExportActivity.actionStart(requireContext())
+                        })
+                    }
+                    //独立合并
+                    5 -> {
+                        toolItemMutableList.add(ToolItemBean(
+                            it.title,
+                            it.img_url,
+                            it.color
+                        ) {
+                            MergeVideoActivity.actionStart(requireContext())
                         })
                     }
                 }

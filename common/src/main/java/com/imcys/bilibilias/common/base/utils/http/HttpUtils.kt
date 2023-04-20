@@ -120,9 +120,8 @@ open class HttpUtils {
                 // 设置为 GET 请求
                 get()
             }.build()
-            val coroutineScope = CoroutineScope(Dispatchers.Default)
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            return coroutineScope.async {
+            return CoroutineScope(Dispatchers.Default).async {
                 okHttpClient.newCall(request).awaitResponse()
             }
         }

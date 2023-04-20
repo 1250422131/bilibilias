@@ -75,7 +75,10 @@ class BilibiliApi {
         var bangumiVideoDataPath = roamApi + "pgc/view/web/season"
 
         //获取用户基本信息
-        const val userBaseDataPath = serviceApi + "x/space/acc/info"
+        const val userBaseDataPath = serviceApi + "x/space/wbi/acc/info"
+
+        //用户导航栏信息
+        const val userNavDataPath = serviceApi + "x/web-interface/nav"
 
         //用户状态
         const val userUpStat = serviceApi + "x/space/upstat"

@@ -12,12 +12,14 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 
@@ -114,6 +116,11 @@ class SplashActivity : BaseActivity() {
             isFirstLoaded = true
             delayedHandler = Handler(Looper.getMainLooper())
             delayedHandler?.let {
+
+                //迁移旧的数据
+                initMMVKData()
+
+
                 HandlerCompat.postDelayed(it, {
                     // 创建一个意图，说明我要跳转到那个活动界面。
                     val intent = Intent(this, HomeActivity::class.java)
@@ -131,6 +138,22 @@ class SplashActivity : BaseActivity() {
             }
 
         }
+    }
+
+    /**
+     * 如果存在旧数据，意味着是旧版本的升级用户，这里进行数据迁移
+     */
+    private fun initMMVKData() {
+
+        getSharedPreferences("data", MODE_PRIVATE).apply {
+
+            if (!getString("cookies", "").equals("")) {
+                MMKV.mmkvWithID("data")!!.importFromSharedPreferences(this)
+                this.edit { clear() }
+            }
+
+        }
+
     }
 
     override fun onRequestPermissionsResult(

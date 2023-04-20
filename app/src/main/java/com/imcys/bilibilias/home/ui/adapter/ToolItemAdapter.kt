@@ -1,19 +1,22 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
-
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.asLogI
-
 import com.imcys.bilibilias.databinding.ItemToolBinding
 import com.imcys.bilibilias.databinding.ItemToolLiveCardBinding
 import com.imcys.bilibilias.databinding.ItemToolVideoCardBinding
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
+
 
 class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
     object : DiffUtil.ItemCallback<ToolItemBean>() {
@@ -36,17 +39,23 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
 
         val binding = when (viewType) {
             0 -> {
-                DataBindingUtil.inflate<ItemToolBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_tool, parent, false)
+                DataBindingUtil.inflate<ItemToolBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_tool, parent, false
+                )
 
             }
             1 -> {
-                DataBindingUtil.inflate<ItemToolVideoCardBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_tool_video_card, parent, false)
+                DataBindingUtil.inflate<ItemToolVideoCardBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_tool_video_card, parent, false
+                )
             }
             2 -> {
-                DataBindingUtil.inflate<ItemToolLiveCardBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_tool_live_card, parent, false)
+                DataBindingUtil.inflate<ItemToolLiveCardBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_tool_live_card, parent, false
+                )
             }
             else -> {
                 TODO("无效内容")
@@ -74,6 +83,26 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 binding?.videoBaseBean = getItem(position).videoBaseBean
                 val clickEvent: () -> Unit = getItem(position).clickEvent
                 binding?.root?.setOnClickListener {
+
+                    val videoPic = androidx.core.util.Pair<View, String>(
+                        binding.itemToolVideoCardPic,
+                        "videoPic"
+                    )
+
+                    val i = Intent(holder.itemView.context, AsVideoActivity::class.java)
+
+                    val optionsCompat: ActivityOptionsCompat =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            holder.itemView.context as HomeActivity,
+                            videoPic
+                        )
+
+
+
+                    i.putExtra("bvId", getItem(position).videoBaseBean?.data?.bvid)
+
+                    holder.itemView.context.startActivity(i, optionsCompat.toBundle())
+
                     clickEvent()
                 }
             }
