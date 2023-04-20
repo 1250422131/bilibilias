@@ -25,14 +25,20 @@
                 android:layout_height="wrap_content"
                 app:title="@string/app_activity_play_history_title" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/play_history_top_rv"
+
+            <me.dkzwm.widget.srl.SmoothRefreshLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="20dp">
+                android:layout_height="match_parent">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/play_history_top_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
 
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </me.dkzwm.widget.srl.SmoothRefreshLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

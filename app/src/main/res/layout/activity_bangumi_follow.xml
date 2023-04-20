@@ -9,15 +9,15 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-       android:orientation="vertical"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".home.ui.activity.user.BangumiFollowActivity">
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:orientation="vertical"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
@@ -27,17 +27,21 @@
                 android:layout_height="wrap_content"
                 app:title="@string/app_activity_bangumi_follow_title" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/bangumi_follow_rv"
-                android:padding="20dp"
+            <me.dkzwm.widget.srl.SmoothRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            </androidx.recyclerview.widget.RecyclerView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/bangumi_follow_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
+
+                </androidx.recyclerview.widget.RecyclerView>
 
 
+            </me.dkzwm.widget.srl.SmoothRefreshLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

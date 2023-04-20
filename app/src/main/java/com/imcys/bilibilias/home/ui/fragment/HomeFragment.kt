@@ -4,13 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -56,8 +54,11 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import me.dkzwm.widget.srl.extra.header.ClassicHeader
+import me.dkzwm.widget.srl.extra.header.MaterialHeader
+import me.dkzwm.widget.srl.indicator.IIndicator
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -69,6 +70,7 @@ import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.system.exitProcess
+
 
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeFragment,
@@ -357,30 +359,14 @@ class HomeFragment : Fragment() {
 
         //loadRoamData()
 
+        initSmoothRefreshLayout()
+
 
     }
 
-    /**
-     * 加载漫游数据
-     */
-    private fun loadRoamData() {
-
-        val roamId = (context as HomeActivity).asSharedPreferences.getInt("use_roam_id", -1)
-        if (roamId != -1) {
-            queryRoamData(roamId)
-        }
-
+    private fun initSmoothRefreshLayout() {
     }
 
-    private fun queryRoamData(roamId: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val roamDao = AppDatabase.getDatabase(requireContext()).roamDao()
-            roamDao.getByIdQuery(roamId).apply {
-                BilibiliApi.roamApi = romaPath
-            }
-
-        }
-    }
 
 
     /**

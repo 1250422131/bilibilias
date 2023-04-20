@@ -51,6 +51,9 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import me.dkzwm.widget.srl.extra.header.MaterialHeader
+import me.dkzwm.widget.srl.indicator.IIndicator
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -140,6 +143,8 @@ class ToolFragment : Fragment() {
         loadToolItem()
 
     }
+
+
 
     /**
      * 分享检查
@@ -358,7 +363,6 @@ class ToolFragment : Fragment() {
                 when (it.tool_code) {
                     //视频解析
                     1 -> {
-
                         toolItemMutableList.add(ToolItemBean(
                             it.title,
                             it.img_url,

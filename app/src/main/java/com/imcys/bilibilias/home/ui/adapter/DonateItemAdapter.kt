@@ -36,22 +36,30 @@ class DonateItemAdapter :
         val binding = when (viewType) {
             DonateActivity.PAY_XML -> {
 
-                DataBindingUtil.inflate<ItemDonatePayTypeBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_donate_pay_type, parent, false)
+                DataBindingUtil.inflate<ItemDonatePayTypeBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_donate_pay_type, parent, false
+                )
             }
 
             DonateActivity.PAY_PROGRESS -> {
-                DataBindingUtil.inflate<ItemDonateProgressBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_donate_progress, parent, false)
+                DataBindingUtil.inflate<ItemDonateProgressBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_donate_progress, parent, false
+                )
             }
 
             DonateActivity.PAY_DOC -> {
-                DataBindingUtil.inflate<ItemDonateDocBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_donate_doc, parent, false)
+                DataBindingUtil.inflate<ItemDonateDocBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_donate_doc, parent, false
+                )
             }
             DonateActivity.PAY_TIP -> {
-                DataBindingUtil.inflate<ItemTipBinding>(LayoutInflater.from(parent.context),
-                    R.layout.item_tip, parent, false)
+                DataBindingUtil.inflate<ItemTipBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_tip, parent, false
+                )
             }
             else -> {
                 TODO("触发意外事件")
@@ -91,12 +99,12 @@ class DonateItemAdapter :
             DonateActivity.PAY_PROGRESS -> {
                 DataBindingUtil.getBinding<ItemDonateProgressBinding>(holder.itemView)?.apply {
                     oldDonateBean = getItem(position).oldDonateBean
-                    val surplus = oldDonateBean?.surplus?.toDouble()?.toInt()
-                    val total = oldDonateBean?.total?.toDouble()?.toInt()
-                    val progress = if (surplus == 0) {
+                    val surplus = oldDonateBean?.surplus?.toDouble()
+                    val total = oldDonateBean?.total?.toDouble()
+                    val progress = if (surplus == 0.00) {
                         0
                     } else {
-                        (surplus!! / total!!) * 100
+                        ((surplus!! / total!!) * 100).toInt()
                     }
                     itemDownloadProgressBar.progress = progress
                 }
