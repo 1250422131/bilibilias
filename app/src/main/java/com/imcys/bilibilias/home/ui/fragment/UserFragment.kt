@@ -14,19 +14,16 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.*
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
 import kotlin.math.ceil
 
 
@@ -79,7 +76,44 @@ class UserFragment : Fragment() {
         initUserData()
         initUserWorks()
 
+        initSmoothRefreshLayout()
 
+
+    }
+
+    private fun initSmoothRefreshLayout() {
+
+        fragmentUserBinding.fragmentUserWorksCsr.apply {
+
+            setOnRefreshListener(object : RefreshingListenerAdapter() {
+                override fun onLoadingMore() {
+                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                        val oldMutableList = userWorksBean.data.list.vlist
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val userWorksBean =
+                                KtHttpUtils.addHeader(
+                                    "cookie",
+                                    (context as HomeActivity).asUser.cookie
+                                )
+                                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+                            this@UserFragment.userWorksBean = userWorksBean
+
+                            launch(Dispatchers.Main) {
+                                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
+
+                                //更新数据 -> fragmentUserWorksCsr 支持
+                                refreshComplete()
+                            }
+                        }
+
+                    } else {
+                        //更新数据 -> fragmentUserWorksCsr 支持
+                        refreshComplete()
+                        Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        }
     }
 
 
@@ -91,12 +125,15 @@ class UserFragment : Fragment() {
 
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val userWorksBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
-            userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
+
+            launch(Dispatchers.Main) {
+                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
+            }
         }
 
 
@@ -119,19 +156,6 @@ class UserFragment : Fragment() {
                     fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    fragmentUserBinding.fragmentUserWorksRv.addOnScrollListener(object :
-                        RecyclerView.OnScrollListener() {
-                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                            super.onScrolled(recyclerView, dx, dy)
-                            if (isSlideToBottom(recyclerView)) {
-                                if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
-                                    loadUserWorks()
-                                } else {
-                                    Toast.makeText(context, "真的到底部了", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    })
                     userWorksAd.submitList(userWorksBean.data.list.vlist)
                 }
             } else {
