@@ -101,9 +101,11 @@ class DialogUtils {
                 }
 
                 dialogLoginAs.setOnClickListener {
-                    loginAsDialog(context) {
-                        bottomSheetDialog.cancel()
-                    }.show()
+                    asToast(context,"云端账户即将出炉")
+                    bottomSheetDialog.cancel()
+//                    loginAsDialog(context) {
+//                        bottomSheetDialog.cancel()
+//                    }.show()
                 }
 
             }
