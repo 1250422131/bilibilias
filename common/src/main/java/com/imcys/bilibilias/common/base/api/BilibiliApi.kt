@@ -28,8 +28,9 @@ class BilibiliApi {
         //get，ps和pn
         const val homePopularVideoPath: String = serviceApi + "x/web-interface/popular"
 
+
         //需要传入mid
-        const val getUserInfoPath: String = serviceApi + "x/space/acc/info"
+        const val getUserInfoPath: String = serviceApi + "x/space/wbi/acc/info"
 
         //获取个人基本信息
         const val getMyUserData = serviceApi + "x/member/web/account"
