@@ -205,7 +205,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     true,
                     positiveButtonClickListener = {
                         // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
-                        fileUriUtils.startForRoot(context as Activity, IMPORT_FILE_PATH_CODE)
+                        fileUriUtils.startFor("/storage/emulated/0/Android/data/tv.danmaku.bili",context as Activity, IMPORT_FILE_PATH_CODE)
                     },
                     negativeButtonClickListener = {
                     }
