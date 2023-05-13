@@ -97,6 +97,8 @@ public class fileUriUtils {
         String uri = changeToUri(path);
         Uri parse = Uri.parse(uri);
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+
+
         intent.addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -112,6 +114,28 @@ public class fileUriUtils {
     //直接获取data权限，推荐使用这种方案
     public static void startForRoot(Activity context, int REQUEST_CODE_FOR_DIR) {
         Uri uri1 = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata");
+//        DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri1);
+        String uri = changeToUri(Environment.getExternalStorageDirectory().getPath());
+        uri = uri + "/document/primary%3A" + Environment.getExternalStorageDirectory().getPath().replace("/storage/emulated/0/", "").replace("/", "%2F");
+        Uri parse = Uri.parse(uri);
+        DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri1);
+        Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent1.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+                | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+        intent1.putExtra(DocumentsContract.EXTRA_INITIAL_URI, documentFile.getUri());
+        context.startActivityForResult(intent1, REQUEST_CODE_FOR_DIR);
+
+    }
+
+    /**
+     * 获取哔哩哔哩储存权限
+     * @param context
+     * @param REQUEST_CODE_FOR_DIR
+     */
+    public static void startForBiliBili(Activity context, int REQUEST_CODE_FOR_DIR) {
+        Uri uri1 = Uri.parse("content://com.android.externalstorage.documents/document/primary%3AAndroid%2Fdata%2Ftv.danmaku.bili%2Fdownload");
 //        DocumentFile documentFile = DocumentFile.fromTreeUri(context, uri1);
         String uri = changeToUri(Environment.getExternalStorageDirectory().getPath());
         uri = uri + "/document/primary%3A" + Environment.getExternalStorageDirectory().getPath().replace("/storage/emulated/0/", "").replace("/", "%2F");
