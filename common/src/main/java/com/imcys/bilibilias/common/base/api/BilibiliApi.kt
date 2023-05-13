@@ -85,7 +85,7 @@ class BilibiliApi {
         const val userUpStat = serviceApi + "x/space/upstat"
 
         //用户投稿
-        const val userWorksPath = serviceApi + "x/space/arc/search"
+        const val userWorksPath = serviceApi + "x/space/wbi/arc/search"
 
         //播放历史
         const val userPlayHistoryPath = serviceApi + "x/web-interface/history/cursor"
