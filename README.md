@@ -70,7 +70,7 @@ UP主可以下载一些剪辑素材，来做视频
 ## 下载
 |   系统    |                            GitHub                            |                  官网                   |
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
-| Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakaloli.com/app/) |
+| Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
 
 
 ## 🔭最近关注
