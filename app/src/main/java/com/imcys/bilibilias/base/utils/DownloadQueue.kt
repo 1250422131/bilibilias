@@ -817,11 +817,10 @@ class DownloadQueue : CoroutineScope by MainScope() {
                 .getString("AppDataUri", "")
 
             val saf = DocumentFile.fromTreeUri(App.context, Uri.parse(appDataUri))
-            //找查文件夹
-            var biliBiliDocument = saf?.findFile("tv.danmaku.bili")
 
-            biliBiliDocument = biliBiliDocument?.findFile("download") ?: run {
-                biliBiliDocument?.createDirectory("download")
+
+           var biliBiliDocument = saf?.findFile("download") ?: run {
+               saf?.createDirectory("download")
             }
 
             val epidUrl = videoBaseBean.data.redirect_url
