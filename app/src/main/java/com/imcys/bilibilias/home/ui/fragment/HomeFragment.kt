@@ -73,7 +73,7 @@ import kotlin.system.exitProcess
 
 
 @RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
+    hostAndPath = ARouterAddress.AppHomeFragment
 )
 class HomeFragment : Fragment() {
 
