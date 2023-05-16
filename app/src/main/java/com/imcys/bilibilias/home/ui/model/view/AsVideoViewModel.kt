@@ -60,7 +60,7 @@ class AsVideoViewModel(
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
         CoroutineScope(Dispatchers.Default).launch {
 
-            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
+            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader("cookie", context.asUser.cookie)
                     .addHeader("referer", "https://www.bilibili.com")
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
@@ -76,18 +76,21 @@ class AsVideoViewModel(
                 }
 
             } else {
-                AsDialog.build {
-                    config = {
-                        title = "止步于此"
-                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                        positiveButtonText = "知道了"
-                        positiveButton = {
-                            it.cancel()
+                launch(Dispatchers.Main) {
+                    AsDialog.build {
+                        config = {
+                            title = "止步于此"
+                            content =
+                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                            positiveButtonText = "知道了"
+                            positiveButton = {
+                                it.cancel()
+                            }
                         }
-                    }
-                }.show()
+                    }.show()
+                }
             }
 
 
@@ -125,18 +128,21 @@ class AsVideoViewModel(
                 }
 
             } else {
-                AsDialog.build {
-                    config = {
-                        title = "止步于此"
-                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                        positiveButtonText = "知道了"
-                        positiveButton = {
-                            it.cancel()
+                launch(Dispatchers.Main) {
+                    AsDialog.build {
+                        config = {
+                            title = "止步于此"
+                            content =
+                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                            positiveButtonText = "知道了"
+                            positiveButton = {
+                                it.cancel()
+                            }
                         }
-                    }
-                }.show()
+                    }.show()
+                }
 
             }
 
@@ -208,9 +214,11 @@ class AsVideoViewModel(
                             asVideoBinding.archiveHasLikeBean?.data = 1
                             asVideoBinding.asVideoLikeBt.isSelected = true
                         }
+
                         65006 -> {
                             cancelLikeVideo(view, bvid)
                         }
+
                         else -> {
                             asToast(context, likeVideoBean.message)
                         }
@@ -246,9 +254,11 @@ class AsVideoViewModel(
                             asVideoLikeBt.isSelected = false
                         }
                     }
+
                     65004 -> {
                         likeVideo(view, bvid)
                     }
+
                     else -> {
                         asToast(context, likeVideoBean.message)
                     }
