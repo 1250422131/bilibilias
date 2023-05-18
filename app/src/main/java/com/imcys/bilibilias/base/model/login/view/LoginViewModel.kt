@@ -14,7 +14,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 
 
-class LoginViewModel(val context: Context) : ViewModel() {
+class LoginViewModel : ViewModel() {
 
 
     private lateinit var loginQRDialog: BottomSheetDialog

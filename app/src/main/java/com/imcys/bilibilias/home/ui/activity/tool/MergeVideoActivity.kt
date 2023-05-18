@@ -14,6 +14,7 @@ class MergeVideoActivity : BaseActivity() {
     lateinit var binding: ActivityMergeVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView<ActivityMergeVideoBinding?>(
             this,
             R.layout.activity_merge_video

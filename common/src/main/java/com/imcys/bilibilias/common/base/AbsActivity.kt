@@ -19,8 +19,10 @@ import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 open class AbsActivity : AppCompatActivity() {
 
     private val mThemeChangedBroadcast by lazy {
@@ -32,17 +34,8 @@ open class AbsActivity : AppCompatActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    val asUser: AsUser
-        get() = run {
-            val kv = BaseApplication.dataKv
-            AsUser.apply {
-                cookie = kv.decodeString("cookies", "")!!
-                sessdata = kv.decodeString("SESSDATA", "")!!
-                biliJct = kv.decodeString("bili_jct", "")!!
-                mid = kv.decodeLong("mid", 0)
-                asCookie = kv.decodeString("as_cookie", "")!!
-            }
-        }
+    @Inject
+    lateinit var asUser: AsUser
 
 
     // 存储所有活动的列表

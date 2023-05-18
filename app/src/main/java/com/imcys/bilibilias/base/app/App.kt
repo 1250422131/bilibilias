@@ -10,10 +10,11 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
+import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
 
-
+@HiltAndroidApp
 class App : BaseApplication() {
 
     override fun onCreate() {
@@ -48,7 +49,6 @@ class App : BaseApplication() {
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
-
         val downloadQueue: DownloadQueue = DownloadQueue()
 
         //—————————————————————————————————————————————————

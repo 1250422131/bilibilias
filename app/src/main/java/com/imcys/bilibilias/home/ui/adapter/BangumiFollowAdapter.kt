@@ -19,8 +19,9 @@ import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BangumiFollowAdapter : ListAdapter<BangumiFollowList.DataBean.ListBean, ViewHolder>(object :
+class  BangumiFollowAdapter @Inject constructor() : ListAdapter<BangumiFollowList.DataBean.ListBean, ViewHolder>(object :
     DiffUtil.ItemCallback<BangumiFollowList.DataBean.ListBean>() {
     override fun areItemsTheSame(
         oldItem: BangumiFollowList.DataBean.ListBean,

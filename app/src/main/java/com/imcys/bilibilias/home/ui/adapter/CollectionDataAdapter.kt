@@ -10,8 +10,9 @@ import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import javax.inject.Inject
 
-class CollectionDataAdapter :
+class CollectionDataAdapter @Inject constructor() :
     ListAdapter<CollectionDataBean.DataBean.MediasBean, ViewHolder>(object :
         DiffUtil.ItemCallback<CollectionDataBean.DataBean.MediasBean>() {
         override fun areItemsTheSame(
@@ -31,8 +32,10 @@ class CollectionDataAdapter :
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemCollectionWorksBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_collection_works, parent, false)
+            DataBindingUtil.inflate<ItemCollectionWorksBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_collection_works, parent, false
+            )
         return ViewHolder(binding.root)
     }
 

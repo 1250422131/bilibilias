@@ -29,6 +29,7 @@ import com.xiaojinzi.component.anno.RouterAnno
 class HomeActivity : BaseActivity() {
     private var exitTime: Long = 0
     lateinit var activityHomeBinding: ActivityHomeBinding
+
     lateinit var toolFragment: ToolFragment
     lateinit var homeFragment: HomeFragment
     lateinit var downloadFragment: DownloadFragment
