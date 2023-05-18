@@ -150,9 +150,7 @@ class HomeFragment : Fragment() {
             .setOnDismissCallback {
                 //让ViewPage来切换页面
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1
-                ).isCheckable = true
+                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(1).isCheckable = true
 
             }
             .show()

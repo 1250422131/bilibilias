@@ -62,6 +62,7 @@ import java.io.IOException
 @RouterAnno(
     hostAndPath = ARouterAddress.ToolFragment,
 )
+
 class ToolFragment : Fragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding

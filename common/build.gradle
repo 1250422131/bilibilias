@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 
 
 }
@@ -53,6 +54,11 @@ android {
 
 dependencies {
 
+
+    // hilt库，实现控制反转
+    api "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
+
     // 核心代码库
     api 'com.liulishuo.okdownload:okdownload:1.0.7'
 
@@ -68,7 +74,6 @@ dependencies {
     api 'com.github.dkzwm:srl-core:1.7.2.4'
     api 'com.github.dkzwm:srl-ext-material:1.7.2.4' //md刷新头
     api 'com.github.dkzwm:srl-ext-classics:1.7.2.4'
-
 
 
     /**
