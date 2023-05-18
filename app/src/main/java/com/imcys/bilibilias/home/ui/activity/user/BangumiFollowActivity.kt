@@ -16,11 +16,16 @@ import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.math.ceil
 
+@AndroidEntryPoint
 class BangumiFollowActivity : BaseActivity() {
 
     lateinit var binding: ActivityBangumiFollowBinding
+
+    @Inject
     lateinit var bangumiFollowAdapter: BangumiFollowAdapter
     private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
     private lateinit var bangumiFollowList: BangumiFollowList
@@ -41,13 +46,14 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun initRv() {
-        bangumiFollowAdapter = BangumiFollowAdapter()
         binding.apply {
             bangumiFollowRv.adapter = bangumiFollowAdapter
             bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
 
-            HttpUtils.addHeader("coolie", asUser.cookie).get("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
-                BangumiFollowList::class.java) {
+            HttpUtils.addHeader("coolie", asUser.cookie).get(
+                "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
+                BangumiFollowList::class.java
+            ) {
                 if (it.code == 0) {
                     bangumiFollowList = it
                     bangumiFollowMutableList.addAll(it.data.list)
@@ -70,8 +76,10 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun loadBangumiFollow(pn: Int) {
-        HttpUtils.get("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=15",
-            BangumiFollowList::class.java) {
+        HttpUtils.get(
+            "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=15",
+            BangumiFollowList::class.java
+        ) {
             if (it.code == 0) {
                 bangumiFollowList = it
                 bangumiFollowMutableList.addAll(it.data.list)
@@ -90,9 +98,9 @@ class BangumiFollowActivity : BaseActivity() {
         StatService.onPause(this)
     }
 
-    companion object{
-        fun actionStart(context: Context){
-            val intent = Intent(context,BangumiFollowActivity::class.java)
+    companion object {
+        fun actionStart(context: Context) {
+            val intent = Intent(context, BangumiFollowActivity::class.java)
             context.startActivity(intent)
 
         }
