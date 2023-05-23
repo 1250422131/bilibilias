@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,6 @@ import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -55,10 +55,7 @@ import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import me.dkzwm.widget.srl.extra.header.ClassicHeader
-import me.dkzwm.widget.srl.extra.header.MaterialHeader
-import me.dkzwm.widget.srl.indicator.IIndicator
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -368,7 +365,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     /**
      * 加载登陆对话框
      */
@@ -461,9 +457,29 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
+
+            val tokenJson = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                .asyncGet<String>("https://api.bilibili.com/x/web-interface/nav")
+
+            val info = JSONObject(tokenJson)
+            val imgUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("img_url");
+            val subUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("sub_url")
+
+            var tempImgs = imgUrl.split('/')
+            val imgVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+            tempImgs = subUrl.split('/')
+            val subVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+
+            val preToken = imgVal + subVal
+            val security = TokenUtils.getBiliMixin(preToken)
+
+            val params = HashMap<String, String>()
+            params["mid"] = myUserData.data.mid.toString()
+            val paramsStr = TokenUtils.genBiliSign(params, security)
+
             val userInfoBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据
             BaseApplication.dataKv.encode("mid", userInfoBean.data.mid)
@@ -473,7 +489,6 @@ class HomeFragment : Fragment() {
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
 
         }
-
 
     }
 
