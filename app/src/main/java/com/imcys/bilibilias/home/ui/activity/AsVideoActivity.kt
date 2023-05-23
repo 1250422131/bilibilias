@@ -33,6 +33,7 @@ import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
+import com.imcys.bilibilias.home.ui.fragment.TokenUtils
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import com.imcys.bilibilias.home.ui.model.view.factory.AsVideoViewModelFactory
@@ -407,8 +408,14 @@ class AsVideoActivity : BaseActivity() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
+
+        val params = mutableMapOf<String?, String?>()
+        params["mid"] = asUser.mid.toString()
+        val paramsStr = TokenUtils.getParamStr(this, params)
+
+
         return KtHttpUtils.addHeader("cookie", asUser.cookie)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${asUser.mid}")
+            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
     }
 
 
