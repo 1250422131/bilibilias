@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,12 +39,12 @@ import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
+import com.imcys.bilibilias.home.ui.fragment.TokenUtils.getParamStr
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -55,10 +56,7 @@ import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import me.dkzwm.widget.srl.extra.header.ClassicHeader
-import me.dkzwm.widget.srl.extra.header.MaterialHeader
-import me.dkzwm.widget.srl.indicator.IIndicator
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -368,7 +366,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     /**
      * 加载登陆对话框
      */
@@ -461,9 +458,14 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
+
+            val params = mutableMapOf<String?, String?>()
+            params["mid"] = myUserData.data.mid.toString()
+            val paramsStr = getParamStr(context as HomeActivity, params)
+
             val userInfoBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据
             BaseApplication.dataKv.encode("mid", userInfoBean.data.mid)
@@ -473,7 +475,6 @@ class HomeFragment : Fragment() {
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
 
         }
-
 
     }
 
