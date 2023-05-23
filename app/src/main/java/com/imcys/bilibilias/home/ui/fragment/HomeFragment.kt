@@ -44,6 +44,7 @@ import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
+import com.imcys.bilibilias.home.ui.fragment.TokenUtils.getParamStr
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -458,24 +459,9 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
 
-            val tokenJson = KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet<String>("https://api.bilibili.com/x/web-interface/nav")
-
-            val info = JSONObject(tokenJson)
-            val imgUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("img_url");
-            val subUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("sub_url")
-
-            var tempImgs = imgUrl.split('/')
-            val imgVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
-            tempImgs = subUrl.split('/')
-            val subVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
-
-            val preToken = imgVal + subVal
-            val security = TokenUtils.getBiliMixin(preToken)
-
-            val params = HashMap<String, String>()
+            val params = mutableMapOf<String?, String?>()
             params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = TokenUtils.genBiliSign(params, security)
+            val paramsStr = getParamStr(context as HomeActivity, params)
 
             val userInfoBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)

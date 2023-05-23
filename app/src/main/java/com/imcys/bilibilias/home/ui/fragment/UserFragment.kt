@@ -253,8 +253,12 @@ class UserFragment : Fragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
+        val params = mutableMapOf<String?, String?>()
+        params["mid"] = (context as HomeActivity).asUser.mid.toString()
+        val paramsStr = TokenUtils.getParamStr((context as HomeActivity), params)
+
         return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${(context as HomeActivity).asUser.mid}")
+            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
     }
 
 

@@ -1,75 +1,92 @@
-package com.imcys.bilibilias.home.ui.fragment;
+package com.imcys.bilibilias.home.ui.fragment
 
-import android.util.Log;
+import com.imcys.bilibilias.common.base.AbsActivity
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import org.json.JSONObject
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
+import java.security.MessageDigest
+import java.util.TreeMap
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.util.Map;
-import java.util.TreeMap;
-
-public class TokenUtils {
-    private static String requestToken = "";
-
-    private static String md5(String string) {
-        try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] hash = md5.digest(string.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder(2 * hash.length);
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b & 0xff));
+object TokenUtils {
+    private var requestToken = ""
+    private fun md5(string: String): String? {
+        return try {
+            val md5 = MessageDigest.getInstance("MD5")
+            val hash = md5.digest(string.toByteArray(charset("UTF-8")))
+            val sb = StringBuilder(2 * hash.size)
+            for (b in hash) {
+                sb.append(String.format("%02x", b.toInt() and 0xff))
             }
-            return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            sb.toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
-
-    public static String getBiliMixin(String val) {
-
-        if (!requestToken.equals("")) {
-            return requestToken;
+    fun getBiliMixin(`val`: String): String {
+        if (requestToken != "") {
+            return requestToken
         }
-        int[] OE = {46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45,
-                35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38,
-                41, 13, 37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60,
-                51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36,
-                20, 34, 44, 52};
-
-        StringBuilder requestTokenBuilder = new StringBuilder();
-        for (int v : OE) {
-            requestTokenBuilder.append(val.charAt(v));
+        val OE = intArrayOf(
+            46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45,
+            35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38,
+            41, 13, 37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60,
+            51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36,
+            20, 34, 44, 52
+        )
+        val requestTokenBuilder = StringBuilder()
+        for (v in OE) {
+            requestTokenBuilder.append(`val`[v])
         }
-        requestToken = requestTokenBuilder.toString().substring(0, 32);
-        return requestToken;
+        requestToken = requestTokenBuilder.toString().substring(0, 32)
+        return requestToken
     }
 
-    public static String genBiliSign(Map<String, String> params, String secret) throws UnsupportedEncodingException {
-        long wts = System.currentTimeMillis() / 1000;
-        params.put("wts", Long.toString(wts));
-        Map<String, String> sortedParams = new TreeMap<>(params);
-        StringBuilder dataStrBuilder = new StringBuilder();
-        for (String k : sortedParams.keySet()) {
-            dataStrBuilder.append(k).append("=").append(sortedParams.get(k)).append("&");
-        }
-        String dataStr = dataStrBuilder.substring(0, dataStrBuilder.length() - 1);
+    suspend fun getParamStr(context: AbsActivity, params: MutableMap<String?, String?>): String? {
+        val tokenJson = KtHttpUtils.addHeader("cookie", (context).asUser.cookie)
+            .asyncGet<String>("https://api.bilibili.com/x/web-interface/nav")
 
-        dataStr += (secret);
-        params.put("w_rid", md5(dataStr));
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (sb.length() > 0) {
-                sb.append("&");
+        val info = JSONObject(tokenJson)
+        val imgUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("img_url");
+        val subUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("sub_url")
+
+        var tempImgs = imgUrl.split('/')
+        val imgVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+        tempImgs = subUrl.split('/')
+        val subVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+
+        val preToken = imgVal + subVal
+        val security = TokenUtils.getBiliMixin(preToken)
+
+        val paramsStr = TokenUtils.genBiliSign(params, security)
+        return paramsStr
+    }
+
+
+    @Throws(UnsupportedEncodingException::class)
+    fun genBiliSign(params: MutableMap<String?, String?>, secret: String): String {
+        val wts = System.currentTimeMillis() / 1000
+        params["wts"] = wts.toString()
+        val sortedParams: Map<String?, String?> = TreeMap(params)
+        val dataStrBuilder = StringBuilder()
+        for (k in sortedParams.keys) {
+            dataStrBuilder.append(k).append("=").append(sortedParams[k]).append("&")
+        }
+        var dataStr = dataStrBuilder.substring(0, dataStrBuilder.length - 1)
+        dataStr += secret
+        params["w_rid"] = md5(dataStr)
+        val sb = StringBuilder()
+        for ((key, value) in params) {
+            if (sb.length > 0) {
+                sb.append("&")
             }
-            sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            sb.append("=");
-            sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            sb.append(URLEncoder.encode(key, "UTF-8"))
+            sb.append("=")
+            sb.append(URLEncoder.encode(value, "UTF-8"))
         }
-
-        return sb.toString();
+        return sb.toString()
     }
-
-
 }
