@@ -1,9 +1,8 @@
-package com.imcys.bilibilias.home.ui.fragment
+package com.imcys.bilibilias.base.utils
 
-import com.imcys.bilibilias.common.base.AbsActivity
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import org.json.JSONObject
+import com.imcys.bilibilias.home.ui.model.UserNavDataModel
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.security.MessageDigest
@@ -26,7 +25,7 @@ object TokenUtils {
         }
     }
 
-    fun getBiliMixin(`val`: String): String {
+    private fun getBiliMixin(`val`: String): String {
         if (requestToken != "") {
             return requestToken
         }
@@ -45,24 +44,27 @@ object TokenUtils {
         return requestToken
     }
 
-    suspend fun getParamStr(context: AbsActivity, params: MutableMap<String?, String?>): String? {
-        val tokenJson = KtHttpUtils.addHeader("cookie", (context).asUser.cookie)
-            .asyncGet<String>("https://api.bilibili.com/x/web-interface/nav")
+    suspend fun getParamStr(params: MutableMap<String?, String?>): String? {
+        var security = requestToken
+        if (requestToken == "") {
+            //当没有获取过Token
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val userNavDataModel = KtHttpUtils.addHeader("cookie", cookie!!)
+                .asyncGet<UserNavDataModel>("https://api.bilibili.com/x/web-interface/nav")
 
-        val info = JSONObject(tokenJson)
-        val imgUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("img_url");
-        val subUrl = info.getJSONObject("data").getJSONObject("wbi_img").getString("sub_url")
+            val imgUrl = userNavDataModel.data.wbiImg.imgUrl
+            val subUrl = userNavDataModel.data.wbiImg.subUrl
 
-        var tempImgs = imgUrl.split('/')
-        val imgVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
-        tempImgs = subUrl.split('/')
-        val subVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+            var tempImgs = imgUrl.split('/')
+            val imgVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
+            tempImgs = subUrl.split('/')
+            val subVal: String = tempImgs[tempImgs.size - 1].replace(".png", "")
 
-        val preToken = imgVal + subVal
-        val security = TokenUtils.getBiliMixin(preToken)
+            val preToken = imgVal + subVal
+            security = getBiliMixin(preToken)
+        }
 
-        val paramsStr = TokenUtils.genBiliSign(params, security)
-        return paramsStr
+        return genBiliSign(params, security)
     }
 
 
@@ -80,7 +82,7 @@ object TokenUtils {
         params["w_rid"] = md5(dataStr)
         val sb = StringBuilder()
         for ((key, value) in params) {
-            if (sb.length > 0) {
+            if (sb.isNotEmpty()) {
                 sb.append("&")
             }
             sb.append(URLEncoder.encode(key, "UTF-8"))

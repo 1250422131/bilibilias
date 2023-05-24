@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +19,6 @@ import com.baidu.mobstat.StatService
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -33,7 +31,7 @@ import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
-import com.imcys.bilibilias.home.ui.fragment.TokenUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import com.imcys.bilibilias.home.ui.model.view.factory.AsVideoViewModelFactory
@@ -411,8 +409,7 @@ class AsVideoActivity : BaseActivity() {
 
         val params = mutableMapOf<String?, String?>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(this, params)
-
+        val paramsStr = TokenUtils.getParamStr(params)
 
         return KtHttpUtils.addHeader("cookie", asUser.cookie)
             .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
