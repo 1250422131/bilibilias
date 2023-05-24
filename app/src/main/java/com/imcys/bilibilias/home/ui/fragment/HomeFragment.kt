@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
-import com.imcys.bilibilias.home.ui.fragment.TokenUtils.getParamStr
+import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -56,7 +55,6 @@ import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -459,7 +457,7 @@ class HomeFragment : Fragment() {
 
             val params = mutableMapOf<String?, String?>()
             params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = getParamStr(context as HomeActivity, params)
+            val paramsStr = getParamStr( params)
 
             val userInfoBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
