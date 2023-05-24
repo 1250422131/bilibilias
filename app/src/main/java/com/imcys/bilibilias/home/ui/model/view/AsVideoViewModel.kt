@@ -60,7 +60,7 @@ class AsVideoViewModel(
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
         CoroutineScope(Dispatchers.Default).launch {
 
-            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
+            if ((context as AsVideoActivity).userBaseBean.data.level  >= 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader("cookie", context.asUser.cookie)
                     .addHeader("referer", "https://www.bilibili.com")
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
@@ -77,7 +77,7 @@ class AsVideoViewModel(
 
             } else {
                 launch(Dispatchers.Main) {
-                    AsDialog.build {
+                    AsDialog.init(context).build {
                         config = {
                             title = "止步于此"
                             content =
@@ -112,7 +112,7 @@ class AsVideoViewModel(
 
         CoroutineScope(Dispatchers.Default).launch {
 
-            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
+            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean =
                     KtHttpUtils.addHeader("cookie", context.asUser.cookie)
                         .addHeader("referer", "https://www.bilibili.com")
@@ -129,7 +129,7 @@ class AsVideoViewModel(
 
             } else {
                 launch(Dispatchers.Main) {
-                    AsDialog.build {
+                    AsDialog.init(context).build {
                         config = {
                             title = "止步于此"
                             content =
