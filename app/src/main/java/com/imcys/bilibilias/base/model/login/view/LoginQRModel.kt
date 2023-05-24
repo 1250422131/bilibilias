@@ -58,6 +58,8 @@ class LoginQRModel {
     fun finishLogin(view: View, qrcode_key: String) {
         val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
+
+
         //登录完成
         HttpUtils.get(
             BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcode_key,
