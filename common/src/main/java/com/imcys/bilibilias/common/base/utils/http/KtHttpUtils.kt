@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.common.base.utils.http
 
+import android.util.Log
 import com.baidu.mobstat.cl
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.model.common.IPostBody
@@ -33,7 +34,7 @@ object KtHttpUtils {
 
         install(Logging)
 
-        install(ContentNegotiation) { gson () }
+        install(ContentNegotiation) { gson() }
 
         //请求失败
         install(HttpRequestRetry) {
@@ -44,7 +45,6 @@ object KtHttpUtils {
     }
 
     suspend inline fun <reified T> asyncGet(url: String): T {
-
         checkUrl(url)
         val mBean: T = httpClient.get(url) {
             headers {
@@ -90,7 +90,7 @@ object KtHttpUtils {
         bodyObject: IPostBody,
     ): T {
 
-
+        checkUrl(url)
         val response = httpClient.post(url) {
             contentType(ContentType.Application.Json)
 
@@ -123,7 +123,7 @@ object KtHttpUtils {
         bodyObject: IPostBody,
     ): T {
 
-
+        checkUrl(url)
         val response = httpClient.delete(url) {
             contentType(ContentType.Application.Json)
 

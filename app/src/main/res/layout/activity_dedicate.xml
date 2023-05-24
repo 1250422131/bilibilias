@@ -14,37 +14,31 @@
         tools:context=".home.ui.activity.DedicateActivity">
 
 
-       <androidx.core.widget.NestedScrollView
-
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           tools:ignore="ScrollViewCount">
-
-         <androidx.appcompat.widget.LinearLayoutCompat
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
-             <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-                 android:id="@+id/dedicate_top_ly"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 app:title="@string/app_activity_dedicate_title"
-                 tools:ignore="MissingConstraints" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
+                android:id="@+id/dedicate_top_ly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/app_activity_dedicate_title"
+                tools:ignore="MissingConstraints" />
 
 
-             <me.dkzwm.widget.srl.SmoothRefreshLayout
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent">
-                 <androidx.recyclerview.widget.RecyclerView
-                     android:id="@+id/dedicate_rv"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:padding="20dp">
+            <me.dkzwm.widget.srl.SmoothRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dedicate_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp">
 
-                 </androidx.recyclerview.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
-             </me.dkzwm.widget.srl.SmoothRefreshLayout>
-         </androidx.appcompat.widget.LinearLayoutCompat>
-       </androidx.core.widget.NestedScrollView>
+            </me.dkzwm.widget.srl.SmoothRefreshLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>
