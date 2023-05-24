@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.common.base.model.user
 
-import javax.inject.Inject
-
-class AsUser @Inject constructor() {
+object AsUser {
 
     var cookie: String = ""
     var sessdata: String = ""
