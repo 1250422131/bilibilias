@@ -206,7 +206,7 @@ data class UserNavDataModel(
 
         data class Wallet(
             @SerializedName("bcoin_balance")
-            val bcoinBalance: Int, // 1
+            val bcoinBalance: Double, // 1
             @SerializedName("coupon_balance")
             val couponBalance: Int, // 0
             @SerializedName("coupon_due_time")

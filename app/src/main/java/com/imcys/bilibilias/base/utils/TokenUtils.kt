@@ -44,11 +44,12 @@ object TokenUtils {
         return requestToken
     }
 
-    suspend fun getParamStr(params: MutableMap<String?, String?>): String? {
+    suspend fun getParamStr(params: MutableMap<String?, String?>): String {
         var security = requestToken
         if (requestToken == "") {
             //当没有获取过Token
             val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+
             val userNavDataModel = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<UserNavDataModel>("https://api.bilibili.com/x/web-interface/nav")
 

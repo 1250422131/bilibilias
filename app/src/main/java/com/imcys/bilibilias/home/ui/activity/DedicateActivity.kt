@@ -23,6 +23,7 @@ class DedicateActivity : BaseActivity() {
 
             dedicateTopLy.addStatusBarTopPadding()
         }
+
         initView()
     }
 
