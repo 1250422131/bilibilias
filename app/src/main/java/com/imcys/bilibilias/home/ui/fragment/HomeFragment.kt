@@ -44,6 +44,7 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.myUserData
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -146,7 +147,9 @@ class HomeFragment : Fragment() {
             .setOnDismissCallback {
                 //让ViewPage来切换页面
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(1).isCheckable = true
+                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
+                    1
+                ).isCheckable = true
 
             }
             .show()
@@ -376,8 +379,6 @@ class HomeFragment : Fragment() {
                 if (code == 0) {
                     initUserData()
                     startStatistics()
-                } else {
-                    loadLogin()
                 }
             }.apply {
                 show()
@@ -414,7 +415,6 @@ class HomeFragment : Fragment() {
             launch(Dispatchers.Main) {
 
                 if (myUserData.code == 0) {
-
                     //提交
                     BaseApplication.myUserData = myUserData.data
                     loadUserData(myUserData)
@@ -457,14 +457,16 @@ class HomeFragment : Fragment() {
 
             val params = mutableMapOf<String?, String?>()
             params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = getParamStr( params)
+            val paramsStr = getParamStr(params)
 
             val userInfoBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies","")!!).addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据
-            BaseApplication.dataKv.encode("mid", userInfoBean.data.mid)
+            BaseApplication.dataKv.encode("mid", myUserData.data.mid)
+
+
             //关闭登陆登陆弹窗
             loginQRDialog.cancel()
             //加载用户弹窗
