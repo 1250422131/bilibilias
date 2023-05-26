@@ -12,9 +12,10 @@ import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import javax.inject.Inject
 
-class PlayHistoryAdapter :
+class PlayHistoryAdapter @Inject constructor() :
     ListAdapter<PlayHistoryBean.DataBean.ListBean, ViewHolder>(object :
         DiffUtil.ItemCallback<PlayHistoryBean.DataBean.ListBean>() {
+
         override fun areItemsTheSame(
             oldItem: PlayHistoryBean.DataBean.ListBean,
             newItem: PlayHistoryBean.DataBean.ListBean,

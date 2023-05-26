@@ -127,7 +127,7 @@
                         android:layout_marginEnd="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:onLongClick="@{()->AsVideoViewModel.addClipboardMessage(VideoBaseBean.data.title)}"
+                        android:onLongClick="@{(view)->AsVideoViewModel.addClipboardMessage(view,VideoBaseBean.data.title)}"
                         android:text="@{VideoBaseBean.data.title}"
                         android:textColor="@color/black"
                         android:textSize="30sp"
@@ -213,7 +213,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{()->AsVideoViewModel.loadCollectionView(VideoBaseBean.data.aid)}">
+                            android:onClick="@{(view)->AsVideoViewModel.loadCollectionView(view,VideoBaseBean.data.aid)}">
 
 
                             <ImageView
@@ -343,7 +343,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{()->AsVideoViewModel.downloadVideo(VideoBaseBean,VideoPageListData)}"
+                                android:onClick="@{(view)->AsVideoViewModel.downloadVideo(view,VideoBaseBean,VideoPageListData)}"
                                 android:text="@string/app_activity_as_video_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
@@ -361,7 +361,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_danmu_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{()->AsVideoViewModel.downloadDanMu(VideoBaseBean)}"
+                                android:onClick="@{(view)->AsVideoViewModel.downloadDanMu(view,VideoBaseBean)}"
                                 android:src="@drawable/ic_as_danmu"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
@@ -399,7 +399,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{()->AsVideoViewModel.downloadBangumiVideo(VideoBaseBean,BangumiSeasonBean)}"
+                                android:onClick="@{(view)->AsVideoViewModel.downloadBangumiVideo(view,VideoBaseBean,BangumiSeasonBean)}"
                                 android:text="@string/app_activity_as_bangumi_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
@@ -417,7 +417,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_danmu_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{()->AsVideoViewModel.downloadDanMu(VideoBaseBean)}"
+                                android:onClick="@{(view)->AsVideoViewModel.downloadDanMu(view,VideoBaseBean)}"
                                 android:src="@drawable/ic_as_danmu"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
