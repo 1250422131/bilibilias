@@ -34,7 +34,6 @@ import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
-import com.imcys.bilibilias.home.ui.model.view.factory.AsVideoViewModelFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
@@ -125,6 +124,7 @@ class AsVideoActivity : BaseActivity() {
                         asVideoFaButton.visibility = View.GONE
                         asJzvdStd.startVideo()
                     }
+
                     Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
                         //恢复播放/暂停播放
                         asJzvdStd.startButton.performClick()
@@ -134,8 +134,7 @@ class AsVideoActivity : BaseActivity() {
 
             //设置点击事件->这里将点击事件都放这个类了
             asVideoViewModel = ViewModelProvider(
-                this@AsVideoActivity,
-                AsVideoViewModelFactory(this@AsVideoActivity, binding)
+                this@AsVideoActivity
             )[AsVideoViewModel::class.java]
 
 
@@ -183,6 +182,7 @@ class AsVideoActivity : BaseActivity() {
                     binding.asVideoBangumiCd.visibility = View.GONE
                 }
             }
+
             "bangumi" -> {
                 lifecycleScope.launch {
                     val bangumiPlayBean = KtHttpUtils
@@ -197,6 +197,7 @@ class AsVideoActivity : BaseActivity() {
                 }
 
             }
+
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
         }
 
@@ -208,7 +209,6 @@ class AsVideoActivity : BaseActivity() {
      * 加载视频数据
      */
     private fun initVideoData() {
-
 
 
         //这里必须通过外界获取数据
