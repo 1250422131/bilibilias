@@ -18,13 +18,15 @@ import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.xiaojinzi.component.impl.Router
+import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class FragmentHomeViewModel:ViewModel() {
+class FragmentHomeViewModel :ViewModel() {
 
 
     fun goToPrivacyPolicy(view: View) {
