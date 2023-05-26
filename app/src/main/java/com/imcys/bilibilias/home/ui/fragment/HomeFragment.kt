@@ -66,6 +66,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
 
@@ -73,6 +74,11 @@ import kotlin.system.exitProcess
     hostAndPath = ARouterAddress.AppHomeFragment
 )
 class HomeFragment : Fragment() {
+
+
+    lateinit var viewModel: FragmentHomeViewModel
+
+
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
@@ -460,7 +466,13 @@ class HomeFragment : Fragment() {
             val paramsStr = getParamStr(params)
 
             val userInfoBean =
-                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies","")!!).addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
+                KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                ).addHeader(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+                )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据

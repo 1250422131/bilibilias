@@ -18,16 +18,19 @@ import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity() {
     private lateinit var binding: ActivityPlayHistoryBinding
 
+    //自动装配
     @Inject
     lateinit var playHistoryAdapter: PlayHistoryAdapter
+
     private var max = 0L
     private var viewAt = 0L
-
 
     private val playHistoryDataMutableList: MutableList<PlayHistoryBean.DataBean.ListBean> =
         mutableListOf()
@@ -50,7 +53,6 @@ class PlayHistoryActivity : BaseActivity() {
 
     private fun initPlayHistory() {
         binding.apply {
-            playHistoryAdapter = PlayHistoryAdapter()
             playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
