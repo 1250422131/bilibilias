@@ -277,4 +277,6 @@
     <string name="app_root_preferences_long_title_theme">Change Theme</string>
     <string name="app_root_preferences_long_title_theme_tip">Note: This is an experimental function and will be continuously adjusted.</string>
     <string name="app_merge_video_top_ly_title">合并视频</string>
+    <string name="download_barrage">Download Barrage</string>
+    <string name="Copied">Copied</string>
 </resources>
