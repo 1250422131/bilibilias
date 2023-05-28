@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -184,7 +185,7 @@ class AsVideoViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
             //通知下载成功
-            Analytics.trackEvent("下载弹幕")
+            Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
 
     }
@@ -342,7 +343,7 @@ class AsVideoViewModel : ViewModel() {
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
         // Only show a toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
-            Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
 
         return true
 
