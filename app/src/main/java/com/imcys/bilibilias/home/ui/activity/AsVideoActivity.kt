@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -31,7 +34,6 @@ import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
 import kotlinx.coroutines.launch
@@ -95,6 +97,10 @@ class AsVideoActivity : BaseActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//
+//    }
     /**
      * 加载用户信息，为了确保会员视频及时通知用户
      */
@@ -162,7 +168,7 @@ class AsVideoActivity : BaseActivity() {
                     //有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
                     if (videoPlayBean.code != 0) {
                         //弹出通知弹窗
-                        AsDialog.build {
+                        AsDialog.init(this@AsVideoActivity).build {
                             title = "视频文件特殊"
                             config = {
                                 content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
@@ -174,6 +180,30 @@ class AsVideoActivity : BaseActivity() {
                         }.show()
 
                     } else {
+
+                        val dashVideoPlayBean = KtHttpUtils.addHeader(
+                            "cookie",
+                            BaseApplication.dataKv.decodeString("cookies", "")!!
+                        )
+                            .addHeader("referer", "https://www.bilibili.com")
+                            .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
+
+                        if (dashVideoPlayBean.code != 0) setAsJzvdConfig(
+                            videoPlayBean.data.durl[0].url,
+                            ""
+                        )
+
+                        dashVideoPlayBean.data.dash.video[0].also {
+
+                            if (it.width < it.height) {
+                                //竖屏
+                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                    height = windowManager.defaultDisplay.height / 4 * 3
+                                }
+                            }
+
+                        }
+
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }

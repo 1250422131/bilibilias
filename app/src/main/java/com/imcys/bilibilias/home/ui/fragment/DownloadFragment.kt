@@ -128,7 +128,7 @@ class DownloadFragment : Fragment() {
             App.downloadQueue.downloadTaskAdapter = DownloadTaskAdapter()
 
             fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
-            fragmentDownloadRecyclerView.itemAnimator = null
+//            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
