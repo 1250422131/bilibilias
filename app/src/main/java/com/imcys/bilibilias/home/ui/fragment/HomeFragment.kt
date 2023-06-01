@@ -79,7 +79,6 @@ class HomeFragment : Fragment() {
     lateinit var viewModel: FragmentHomeViewModel
 
 
-
     lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
