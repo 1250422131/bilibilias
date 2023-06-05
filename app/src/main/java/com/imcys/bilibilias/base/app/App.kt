@@ -50,7 +50,7 @@ class App : BaseApplication() {
 
         const val appSecret = BuildConfig.APP_CENTER_SECRET
         const val AppGuideVersion = "1.0"
-        val downloadQueue: DownloadQueue = DownloadQueue()
+        val downloadQueue: DownloadQueue by lazy { DownloadQueue() }
 
         //—————————————————————————————————————————————————
 

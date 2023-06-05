@@ -41,6 +41,7 @@ import com.liulishuo.okdownload.core.download.DownloadStrategy
 import com.liulishuo.okdownload.core.file.DownloadUriOutputStream
 import com.liulishuo.okdownload.core.file.ProcessFileStrategy
 import com.microsoft.appcenter.analytics.Analytics
+import io.ktor.client.utils.EmptyContent.contentLength
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.*
@@ -79,45 +80,6 @@ class DownloadQueue :
     CoroutineScope by MainScope() {
 
     private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
-
-    init {
-        val okBuilder = OkDownload.Builder(App.context)
-            .downloadStore(Util.createDefaultDatabase(App.context)) // //断点信息存储的位置，默认是SQLite数据库
-            .callbackDispatcher(object : CallbackDispatcher() {})
-            .downloadDispatcher(object : DownloadDispatcher() {})
-            .connectionFactory(Util.createDefaultConnectionFactory()) //选择网络请求框架，默认是OkHttp
-            .outputStreamFactory(DownloadUriOutputStream.Factory()) // //构建文件输出流DownloadOutputStream，是否支持随机位置写入
-            .downloadStrategy(DownloadStrategy()) //下载策略，文件分为几个线程下载
-            .processFileStrategy(ProcessFileStrategy()) //多文件写文件的方式，默认是根据每个线程写文件的不同位置，支持同时写入
-            .monitor(object : DownloadMonitor {
-                override fun taskStart(task: DownloadTask) {
-
-                }
-
-                override fun taskDownloadFromBreakpoint(task: DownloadTask, info: BreakpointInfo) {
-
-                }
-
-                override fun taskDownloadFromBeginning(
-                    task: DownloadTask,
-                    info: BreakpointInfo,
-                    cause: ResumeFailedCause?
-                ) {
-
-                }
-
-                override fun taskEnd(
-                    task: DownloadTask?,
-                    cause: EndCause?,
-                    realCause: Exception?
-                ) {
-
-
-                }
-
-            })
-        OkDownload.setSingletonInstance(okBuilder.build())
-    }
 
 
     var downloadTaskAdapter: DownloadTaskAdapter? = null
@@ -212,7 +174,7 @@ class DownloadQueue :
             val fileRegex = ".+/(.+)\$"
             val rFile: Pattern = Pattern.compile(fileRegex)
             val m = rFile.matcher(mTask.savePath)
-            var fileName = "00000.mp4"
+            var fileName = ""
             if (m.find()) {
                 fileName = m.group(1)!!
             }
@@ -273,14 +235,6 @@ class DownloadQueue :
                 }
 
                 override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
-                    //更新进度
-                    val downloadedBytes = task.file?.length() ?: 0L
-                    val totalBytes = task.file?.totalSpace ?: 0L
-                    val progress = (downloadedBytes * 1.0 / totalBytes) * 100
-
-                    updateProgress(mTask, progress)
-                    mTask.fileSize = (contentLength / 1048576).toDouble()
-                    mTask.fileDlSize = (blockIndex / 1048576).toDouble()
                 }
 
                 override fun fetchProgress(
@@ -288,6 +242,15 @@ class DownloadQueue :
                     blockIndex: Int,
                     increaseBytes: Long
                 ) {
+                    val totalOffset = task.info?.totalOffset ?: 0L
+                    val totalLength = task.info?.totalLength ?: 0L
+                    val progress = ((totalOffset.toFloat() / totalLength) * 100)
+                    updateProgress(mTask, progress.toDouble())
+
+
+                    mTask.fileSize = (totalOffset / 1048576).toDouble()
+                    mTask.fileDlSize = (totalLength / 1048576).toDouble()
+                    // 下载进度更新时的回调，可以在这里处理下载百分比
                 }
 
                 override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
