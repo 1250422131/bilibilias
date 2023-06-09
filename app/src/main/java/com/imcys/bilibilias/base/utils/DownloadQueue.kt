@@ -3,15 +3,14 @@ package com.imcys.bilibilias.base.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
+import androidx.compose.foundation.layout.R
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -24,12 +23,25 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.liulishuo.okdownload.DownloadListener
+import com.liulishuo.okdownload.DownloadMonitor
+import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.OkDownload
+import com.liulishuo.okdownload.core.Util
+import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
+import com.liulishuo.okdownload.core.cause.EndCause
+import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import com.liulishuo.okdownload.core.dispatcher.CallbackDispatcher
+import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
+import com.liulishuo.okdownload.core.download.DownloadStrategy
+import com.liulishuo.okdownload.core.file.DownloadUriOutputStream
+import com.liulishuo.okdownload.core.file.ProcessFileStrategy
 import com.microsoft.appcenter.analytics.Analytics
+import io.ktor.client.utils.EmptyContent.contentLength
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.*
@@ -45,6 +57,8 @@ import org.xutils.x
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import java.util.zip.Inflater
 
 
@@ -61,7 +75,9 @@ const val STATE_DOWNLOAD_ERROR = -1
 
 
 // 定义一个下载队列类
-class DownloadQueue : CoroutineScope by MainScope() {
+
+class DownloadQueue :
+    CoroutineScope by MainScope() {
 
     private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
 
@@ -102,7 +118,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
         // 定义当前已经下载的大小
         var fileDlSize: Double = 0.0,
         // 定义当前任务的下载请求
-        var call: Callback.Cancelable? = null,
+        var call: DownloadTask? = null,
     )
 
 
@@ -153,89 +169,138 @@ class DownloadQueue : CoroutineScope by MainScope() {
 
         while (currentTasks.size < 2 && queue.isNotEmpty()) {
             //删除并且返回当前的task
-            val task = queue.removeAt(0)
+            val mTask = queue.removeAt(0)
+
+            val fileRegex = ".+/(.+)\$"
+            val rFile: Pattern = Pattern.compile(fileRegex)
+            val m = rFile.matcher(mTask.savePath)
+            var fileName = ""
+            if (m.find()) {
+                fileName = m.group(1)!!
+            }
+
+            val filePath = mTask.savePath.replace("/$fileName", "")
+
+            val okDownloadTask = createTasK(mTask.url, filePath, fileName)
+
+
             //更新任务状态
-            task.state = STATE_DOWNLOADING
+            mTask.state = STATE_DOWNLOADING
             // 添加任务到当前任务列表中
-            currentTasks.add(task)
-            // 创建一个 RequestParams 对象，用来指定下载地址和文件保存路径
-            val params = RequestParams(task.url)
-            //设置header头
-            params.addHeader(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
-            );
-            params.addHeader("referer", "https://www.bilibili.com/")
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
-            params.addHeader("cookie", cookie!!)
-            //设置是否根据头信息自动命名文件
-            params.isAutoRename = false
-            //设储存路径
-            params.saveFilePath = task.savePath
-            //自定义线程池,有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
-            params.executor = PriorityExecutor(1, true)
-            //是否可以被立即停止.
-            params.isCancelFast = true
+            currentTasks.add(mTask)
 
+            mTask.call = okDownloadTask
 
-            //使用多个线程同步下载
-
-            // 使用 XUtils 库来下载文件
-            task.call = x.http().get(params, object : Callback.ProgressCallback<File> {
-                override fun onSuccess(result: File?) {
+            okDownloadTask.enqueue(object : DownloadListener {
+                override fun taskStart(task: DownloadTask) {
 
                 }
 
-                override fun onError(ex: Throwable?, isOnCallback: Boolean) {
-                    currentTasks.remove(task)
-                    //更新任务状态
-                    task.state = STATE_DOWNLOAD_ERROR
-                    // 下载失败，调用任务的完成回调
-                    task.onComplete(false)
-                    //更新
-                    updateAdapter()
-                    // 执行下一个任务
-                    executeTask()
-
+                override fun connectTrialStart(
+                    task: DownloadTask,
+                    requestHeaderFields: MutableMap<String, MutableList<String>>
+                ) {
                 }
 
-                override fun onCancelled(cex: Callback.CancelledException?) {
-                    currentTasks.remove(task)
-                    //更新任务状态
-                    task.state = STATE_DOWNLOAD_PAUSE
-                    // 下载取消，调用任务的完成回调
-                    task.onComplete(false)
-                    //更新
-                    updateAdapter()
-                    // 执行下一个任务
-                    executeTask()
+                override fun connectTrialEnd(
+                    task: DownloadTask,
+                    responseCode: Int,
+                    responseHeaderFields: MutableMap<String, MutableList<String>>
+                ) {
                 }
 
-                override fun onFinished() {
-                    currentTasks.remove(task)
+                override fun downloadFromBeginning(
+                    task: DownloadTask,
+                    info: BreakpointInfo,
+                    cause: ResumeFailedCause
+                ) {
+                }
+
+                override fun downloadFromBreakpoint(task: DownloadTask, info: BreakpointInfo) {
+                }
+
+                override fun connectStart(
+                    task: DownloadTask,
+                    blockIndex: Int,
+                    requestHeaderFields: MutableMap<String, MutableList<String>>
+                ) {
+                }
+
+                override fun connectEnd(
+                    task: DownloadTask,
+                    blockIndex: Int,
+                    responseCode: Int,
+                    responseHeaderFields: MutableMap<String, MutableList<String>>
+                ) {
+                }
+
+                override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
+                }
+
+                override fun fetchProgress(
+                    task: DownloadTask,
+                    blockIndex: Int,
+                    increaseBytes: Long
+                ) {
+                    val totalOffset = task.info?.totalOffset ?: 0L
+                    val totalLength = task.info?.totalLength ?: 0L
+                    val progress = ((totalOffset.toFloat() / totalLength) * 100)
+                    updateProgress(mTask, progress.toDouble())
+
+
+                    mTask.fileSize = (totalOffset / 1048576).toDouble()
+                    mTask.fileDlSize = (totalLength / 1048576).toDouble()
+                    // 下载进度更新时的回调，可以在这里处理下载百分比
+                }
+
+                override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
+                }
+
+                override fun taskEnd(
+                    task: DownloadTask,
+                    cause: EndCause,
+                    realCause: Exception?
+                ) {
+
+                    //异常
+                    if (realCause != null) {
+                        currentTasks.remove(mTask)
+                        //更新任务状态
+                        mTask.state = STATE_DOWNLOAD_ERROR
+                        // 下载失败，调用任务的完成回调
+                        mTask.onComplete(false)
+                        //更新
+                        updateAdapter()
+                        // 执行下一个任务
+                        executeTask()
+
+                        return
+                    }
+
+                    currentTasks.remove(mTask)
                     //更新任务状态
-                    task.state = STATE_DOWNLOAD_END
+                    mTask.state = STATE_DOWNLOAD_END
                     // 下载成功，调用任务的完成回调
-                    task.onComplete(true)
+                    mTask.onComplete(true)
                     //更新
                     updateAdapter()
 
-                    if (task.isGroupTask) {
+                    if (mTask.isGroupTask) {
                         // 在map中找到这个任务所属的一组任务
-                        val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                        val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
                         // 判断这一组任务是否都已经下载完成
                         val isGroupTasksCompleted =
                             groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
                         if (isGroupTasksCompleted) {
-                            videoDataSubmit(task)
-                            videoMerge(task.downloadTaskDataBean.cid)
+                            videoDataSubmit(mTask)
+                            videoMerge(mTask.downloadTaskDataBean.cid)
                         }
 
                     } else {
-                        //TODO FLV或者单独任务不需要合并操作，直接视为下载了。
-                        saveFinishTask(task)
-                        videoDataSubmit(task)
-                        updatePhotoMedias(App.context, File(task.savePath))
+                        //FLV或者单独任务不需要合并操作，直接视为下载了。
+                        saveFinishTask(mTask)
+                        videoDataSubmit(mTask)
+                        updatePhotoMedias(App.context, File(mTask.savePath))
                     }
 
 
@@ -243,21 +308,9 @@ class DownloadQueue : CoroutineScope by MainScope() {
                     executeTask()
                 }
 
-                override fun onWaiting() {
-                    // 暂时不需要实现
-                }
-
-                override fun onStarted() {
-                }
-
-                override fun onLoading(total: Long, current: Long, isDownloading: Boolean) {
-                    //更新进度
-                    updateProgress(task, (current * 100 / total).toDouble())
-                    task.fileSize = (total / 1048576).toDouble()
-                    task.fileDlSize = (current / 1048576).toDouble()
-                }
-
             })
+
+
         }
 
 
@@ -400,7 +453,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie =  BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies")
 
             val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
@@ -630,12 +683,14 @@ class DownloadQueue : CoroutineScope by MainScope() {
                             width = downloadTaskDataBean.videoPageDataData?.dimension?.width
                             downloadTaskDataBean.videoPageDataData?.dimension?.height
                         }
+
                         BANGUMI_TYPE -> {
                             timeLength =
                                 downloadTaskDataBean.dashBangumiPlayBean?.result?.timelength
                             width = downloadTaskDataBean.bangumiSeasonBean?.dimension?.width
                             downloadTaskDataBean.bangumiSeasonBean?.dimension?.height
                         }
+
                         else -> {
                             TODO("判断错误")
                         }
@@ -819,8 +874,8 @@ class DownloadQueue : CoroutineScope by MainScope() {
             val saf = DocumentFile.fromTreeUri(App.context, Uri.parse(appDataUri))
 
 
-           var biliBiliDocument = saf?.findFile("download") ?: run {
-               saf?.createDirectory("download")
+            var biliBiliDocument = saf?.findFile("download") ?: run {
+                saf?.createDirectory("download")
             }
 
             val epidUrl = videoBaseBean.data.redirect_url
@@ -864,7 +919,7 @@ class DownloadQueue : CoroutineScope by MainScope() {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie =  BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
@@ -1034,6 +1089,43 @@ class DownloadQueue : CoroutineScope by MainScope() {
             intent.data = Uri.fromFile(it)
             context.sendBroadcast(intent)
         }
+    }
+
+    /**
+     * 创建下载任务实例
+     *
+     * @param url
+     * @param parentPath
+     * @param fileName
+     * @return
+     */
+    fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
+        val task = DownloadTask.Builder(url, parentPath, fileName)
+            .setFilenameFromResponse(false) //是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
+            .setPassIfAlreadyCompleted(true) //如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setConnectionCount(3) //需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+            .setPreAllocateLength(false) //在获取资源长度后，设置是否需要为文件预分配长度，默认false
+            .setMinIntervalMillisCallbackProcess(1500) //通知调用者的频率，避免anr，默认3000
+            .setWifiRequired(false) //是否只允许wifi下载，默认为false
+            .setAutoCallbackToUIThread(true) //是否在主线程通知调用者，默认为true
+            //.setHeaderMapFields(new HashMap<String, List<String>>())//设置请求头
+            //.addHeader(String key, String value)//追加请求头
+            //.setPriority(0) //设置优先级，默认值是0，值越大下载优先级越高
+            .setReadBufferSize(4096) //设置读取缓存区大小，默认4096
+            .setFlushBufferSize(16384) //设置写入缓存区大小，默认16384
+            .setSyncBufferSize(65536) //写入到文件的缓冲区大小，默认65536
+            .setSyncBufferIntervalMillis(2000) //写入文件的最小时间间隔，默认2000
+        task.addHeader(
+            "User-Agent",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
+        )
+        task.addHeader("referer", "https://www.bilibili.com/")
+        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        task.addHeader("cookie", cookie!!)
+
+
+
+        return task.build()
     }
 }
 

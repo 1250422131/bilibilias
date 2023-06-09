@@ -7,7 +7,9 @@ import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.model.user.AsUser
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 open class BaseActivity : AbsActivity() {
 
     override val asSharedPreferences: SharedPreferences by lazy {

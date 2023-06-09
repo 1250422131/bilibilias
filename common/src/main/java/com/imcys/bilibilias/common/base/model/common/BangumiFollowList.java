@@ -707,8 +707,8 @@ public class BangumiFollowList implements Serializable {
                 private int danmaku;
                 private int reply;
                 private int coin;
-                private int series_follow;
-                private int series_view;
+                private Long series_follow;
+                private Long series_view;
                 private int likes;
                 private int favorite;
 
@@ -752,19 +752,19 @@ public class BangumiFollowList implements Serializable {
                     this.coin = coin;
                 }
 
-                public int getSeries_follow() {
+                public Long getSeries_follow() {
                     return series_follow;
                 }
 
-                public void setSeries_follow(int series_follow) {
+                public void setSeries_follow(Long series_follow) {
                     this.series_follow = series_follow;
                 }
 
-                public int getSeries_view() {
+                public Long getSeries_view() {
                     return series_view;
                 }
 
-                public void setSeries_view(int series_view) {
+                public void setSeries_view(Long series_view) {
                     this.series_view = series_view;
                 }
 

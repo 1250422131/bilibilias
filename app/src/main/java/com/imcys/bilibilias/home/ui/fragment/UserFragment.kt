@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -13,8 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -27,7 +31,7 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter
 import kotlin.math.ceil
 
 
-class UserFragment : Fragment() {
+class UserFragment : BaseFragment() {
 
 
     private lateinit var userWorksAd: UserWorksAdapter
@@ -37,7 +41,6 @@ class UserFragment : Fragment() {
     private lateinit var userWorksBean: UserWorksBean
 
 
-    //
     lateinit var fragmentUserBinding: FragmentUserBinding
 
 
@@ -90,12 +93,20 @@ class UserFragment : Fragment() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
                         val oldMutableList = userWorksBean.data.list.vlist
                         lifecycleScope.launch(Dispatchers.IO) {
+
+                            //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
+                            val params = mutableMapOf<String?, String?>()
+                            params["mid"] = (context as HomeActivity).asUser.mid.toString()
+                            params["pn"] = (userWorksBean.data.page.pn + 1).toString()
+                            params["ps"] = "20"
+                            val paramsStr = TokenUtils.getParamStr(params)
+
                             val userWorksBean =
                                 KtHttpUtils.addHeader(
                                     "cookie",
                                     (context as HomeActivity).asUser.cookie
                                 )
-                                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+                                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launch(Dispatchers.Main) {
@@ -127,7 +138,10 @@ class UserFragment : Fragment() {
         val oldMutableList = userWorksBean.data.list.vlist
         lifecycleScope.launch(Dispatchers.IO) {
             val userWorksBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                )
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
 
@@ -143,19 +157,32 @@ class UserFragment : Fragment() {
 
 
         lifecycleScope.launch(Dispatchers.IO) {
+
+            //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
+            val params = mutableMapOf<String?, String?>()
+            params["mid"] = (context as HomeActivity).asUser.mid.toString()
+            params["qn"] = "1"
+            params["ps"] = "20"
+            val paramsStr = TokenUtils.getParamStr(params)
+
             val userWorksBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&qn=1&ps=20")
+                KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                )
+                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
 
             if (userWorksBean.code == 0) {
                 launch(Dispatchers.Main) {
-
+                    //设置用户主页的作品的adapter
                     fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
+                    //设置布局管理器，让作品呈瀑布流的形式展示。
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    //刷新刚刚请求的代码
                     userWorksAd.submitList(userWorksBean.data.list.vlist)
                 }
             } else {
@@ -235,8 +262,12 @@ class UserFragment : Fragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .asyncGet("${BilibiliApi.getUserCardPath}?mid=${(context as HomeActivity).asUser.mid}")
+        val params = mutableMapOf<String?, String?>()
+        params["mid"] = (context as HomeActivity).asUser.mid.toString()
+        val paramsStr = TokenUtils.getParamStr(params)
+
+        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+            .asyncGet("${BilibiliApi.getUserCardPath}?$paramsStr")
     }
 
     /**
@@ -244,7 +275,7 @@ class UserFragment : Fragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
             .asyncGet("${BilibiliApi.userUpStat}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
@@ -253,8 +284,12 @@ class UserFragment : Fragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?mid=${(context as HomeActivity).asUser.mid}")
+        val params = mutableMapOf<String?, String?>()
+        params["mid"] = (context as HomeActivity).asUser.mid.toString()
+        val paramsStr = TokenUtils.getParamStr(params)
+
+        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
     }
 
 
@@ -273,7 +308,7 @@ class UserFragment : Fragment() {
     //回收数据留存
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
+        //保留当前页面的用户信息
         outState.putLong("mid", (context as HomeActivity).asUser.mid)
     }
 

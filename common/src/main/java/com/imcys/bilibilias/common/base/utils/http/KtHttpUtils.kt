@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.common.base.utils.http
 
+import android.util.Log
+import com.baidu.mobstat.cl
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
@@ -11,8 +13,12 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
+import io.ktor.util.reflect.TypeInfo
+import io.ktor.util.reflect.typeInfo
+import kotlin.reflect.KClass
 
 
 object KtHttpUtils {
@@ -26,12 +32,9 @@ object KtHttpUtils {
 
         expectSuccess = true
 
-        install(Logging) {
-        }
+        install(Logging)
 
-        install(ContentNegotiation) {
-            gson { }
-        }
+        install(ContentNegotiation) { gson() }
 
         //请求失败
         install(HttpRequestRetry) {
@@ -39,14 +42,10 @@ object KtHttpUtils {
             exponentialDelay()
         }
 
-
     }
 
-
     suspend inline fun <reified T> asyncGet(url: String): T {
-
         checkUrl(url)
-
         val mBean: T = httpClient.get(url) {
             headers {
                 this@KtHttpUtils.headers.forEach {
@@ -91,7 +90,7 @@ object KtHttpUtils {
         bodyObject: IPostBody,
     ): T {
 
-
+        checkUrl(url)
         val response = httpClient.post(url) {
             contentType(ContentType.Application.Json)
 
@@ -124,7 +123,7 @@ object KtHttpUtils {
         bodyObject: IPostBody,
     ): T {
 
-
+        checkUrl(url)
         val response = httpClient.delete(url) {
             contentType(ContentType.Application.Json)
 

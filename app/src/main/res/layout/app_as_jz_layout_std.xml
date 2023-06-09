@@ -275,8 +275,8 @@
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:background="#000000"
-            android:scaleType="fitXY"
-            android:visibility="gone"></ImageView>
+            android:scaleType="centerCrop"
+            android:visibility="gone"/>
 
         <androidx.constraintlayout.utils.widget.ImageFilterView
             android:id="@+id/app_as_jz_std_load_image"

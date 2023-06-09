@@ -1,28 +1,21 @@
 package com.imcys.bilibilias.home.ui.model.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Build
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
-import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
@@ -30,7 +23,6 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import okio.BufferedSink
@@ -42,10 +34,7 @@ import java.io.File
  * 解析视频的ViewModel
  */
 
-class AsVideoViewModel(
-    @SuppressLint("StaticFieldLeak") val context: Context,
-    private val asVideoBinding: ActivityAsVideoBinding,
-) : ViewModel() {
+class AsVideoViewModel : ViewModel() {
 
 
     /**
@@ -54,14 +43,19 @@ class AsVideoViewModel(
      * @param videoPageListData VideoPageListData
      */
     fun downloadVideo(
+        view: View,
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
     ) {
+        val context = view.context
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
-        CoroutineScope(Dispatchers.Default).launch {
 
-            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
-                val dashVideoPlayBean = KtHttpUtils.addHeader("cookie", context.asUser.cookie)
+        viewModelScope.launch(Dispatchers.IO) {
+            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
+                val dashVideoPlayBean = KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                )
                     .addHeader("referer", "https://www.bilibili.com")
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 //这里再检验一次，是否为404内容
@@ -76,21 +70,22 @@ class AsVideoViewModel(
                 }
 
             } else {
-                AsDialog.build {
-                    config = {
-                        title = "止步于此"
-                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                        positiveButtonText = "知道了"
-                        positiveButton = {
-                            it.cancel()
+                launch(Dispatchers.Main) {
+                    AsDialog.init(context).build {
+                        config = {
+                            title = "止步于此"
+                            content =
+                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                            positiveButtonText = "知道了"
+                            positiveButton = {
+                                it.cancel()
+                            }
                         }
-                    }
-                }.show()
+                    }.show()
+                }
             }
-
-
         }
 
 
@@ -102,18 +97,23 @@ class AsVideoViewModel(
      * @param bangumiSeasonBean BangumiSeasonBean
      */
     fun downloadBangumiVideo(
+        view: View,
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
+        val context = view.context
+
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        CoroutineScope(Dispatchers.Default).launch {
-
-            if ((context as AsVideoActivity).userBaseBean.data.level > 2) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean =
-                    KtHttpUtils.addHeader("cookie", context.asUser.cookie)
+                    KtHttpUtils.addHeader(
+                        "cookie",
+                        BaseApplication.dataKv.decodeString("cookies", "")!!
+                    )
                         .addHeader("referer", "https://www.bilibili.com")
-                        .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${(context as AsVideoActivity).bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
+                        .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
                 launch(Dispatchers.Main) {
                     if (dashVideoPlayBean.code == 0) DialogUtils.downloadVideoDialog(
@@ -125,40 +125,44 @@ class AsVideoViewModel(
                 }
 
             } else {
-                AsDialog.build {
-                    config = {
-                        title = "止步于此"
-                        content = "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                        positiveButtonText = "知道了"
-                        positiveButton = {
-                            it.cancel()
+                launch(Dispatchers.Main) {
+                    AsDialog.init(context).build {
+                        config = {
+                            title = "止步于此"
+                            content =
+                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                            positiveButtonText = "知道了"
+                            positiveButton = {
+                                it.cancel()
+                            }
                         }
-                    }
-                }.show()
+                    }.show()
+                }
 
             }
-
         }
+
 
     }
 
 
-    fun downloadDanMu(videoBaseBean: VideoBaseBean) {
-        CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
+    fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
+        val context = view.context
+        viewModelScope.launch(Dispatchers.IO) {
 
             val response =
                 HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
 
-            saveDanmaku(response.await().body!!.bytes(), videoBaseBean.data.cid)
+            saveDanmaku(context, response.await().body!!.bytes(), videoBaseBean.data.cid)
 
         }
 
     }
 
 
-    fun saveDanmaku(bytes: ByteArray, cid: Int) {
+    fun saveDanmaku(context: AsVideoActivity, bytes: ByteArray, cid: Int) {
 
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -178,10 +182,10 @@ class AsVideoViewModel(
         decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.Main) {
             asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
             //通知下载成功
-            Analytics.trackEvent("下载弹幕")
+            Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
 
     }
@@ -191,26 +195,29 @@ class AsVideoViewModel(
      * @param bvid String aid
      */
     fun likeVideo(view: View, bvid: String) {
+        val context = view.context
 
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
-                KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                    .addParam("csrf", context.asUser.biliJct)
+                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
+                    .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                     .addParam("like", "1")
                     .addParam("bvid", bvid)
                     .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
 
 
-            if (asVideoBinding.archiveHasLikeBean?.data == 0) {
+            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
                 launch(Dispatchers.Main) {
                     when (likeVideoBean.code) {
                         0 -> {
-                            asVideoBinding.archiveHasLikeBean?.data = 1
-                            asVideoBinding.asVideoLikeBt.isSelected = true
+                            context.binding.archiveHasLikeBean?.data = 1
+                            context.binding.asVideoLikeBt.isSelected = true
                         }
+
                         65006 -> {
                             cancelLikeVideo(view, bvid)
                         }
+
                         else -> {
                             asToast(context, likeVideoBean.message)
                         }
@@ -230,10 +237,12 @@ class AsVideoViewModel(
      * @param bvid String
      */
     private fun cancelLikeVideo(view: View, bvid: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        val context = view.context
+
+        viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
-                HttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                    .addParam("csrf", context.asUser.biliJct)
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+                    .addParam("csrf", (context as AsVideoActivity).asUser.biliJct)
                     .addParam("like", "2")
                     .addParam("bvid", bvid)
                     .asyncPost(BilibiliApi.videLikePath, LikeVideoBean::class.java)
@@ -241,14 +250,16 @@ class AsVideoViewModel(
             launch(Dispatchers.Main) {
                 when (likeVideoBean.code) {
                     0 -> {
-                        asVideoBinding.apply {
+                        context.binding.apply {
                             archiveHasLikeBean?.data = 0
                             asVideoLikeBt.isSelected = false
                         }
                     }
+
                     65004 -> {
                         likeVideo(view, bvid)
                     }
+
                     else -> {
                         asToast(context, likeVideoBean.message)
                     }
@@ -265,17 +276,19 @@ class AsVideoViewModel(
      * @param bvid String
      */
     fun videoCoinAdd(view: View, bvid: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        val context = view.context
+
+        viewModelScope.launch(Dispatchers.IO) {
             KtHttpUtils
-                .addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                .addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
                 .addParam("bvid", bvid)
                 .addParam("multiply", "2")
-                .addParam("csrf", context.asUser.biliJct)
+                .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                 .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
 
             launch(Dispatchers.Main) {
-                asVideoBinding.archiveCoinsBean?.data?.multiply = 2
-                asVideoBinding.asVideoThrowBt.isSelected = true
+                (context as AsVideoActivity).binding.archiveCoinsBean?.data?.multiply = 2
+                context.binding.asVideoThrowBt.isSelected = true
             }
         }
     }
@@ -285,24 +298,29 @@ class AsVideoViewModel(
      * 加载用户收藏夹
      */
     @SuppressLint("NotifyDataSetChanged")
-    fun loadCollectionView(avid: Int) {
+    fun loadCollectionView(view: View, avid: Int) {
+        val context = view.context
+        (context as AsVideoActivity).binding.apply {
 
-        asVideoBinding.apply {
 
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
 
                 val userCreateCollectionBean =
-                    KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
-                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
+                    KtHttpUtils.addHeader(
+                        "cookie",
+                        BaseApplication.dataKv.decodeString("cookies", "")!!
+                    )
+                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + (context as AsVideoActivity).asUser.mid)
 
 
                 launch(Dispatchers.Main) {
                     if (userCreateCollectionBean.code == 0) {
-                        DialogUtils.loadUserCreateCollectionDialog(context as Activity,
+                        DialogUtils.loadUserCreateCollectionDialog(
+                            context,
                             userCreateCollectionBean, { _, _ ->
                             }, { selects ->
                                 //选取完成了收藏文件夹
-                                setCollection(selects, avid)
+                                setCollection(context, selects, avid)
                             }).show()
                     }
                 }
@@ -317,13 +335,15 @@ class AsVideoViewModel(
      * 复制内容
      * @param inputStr String
      */
-    fun addClipboardMessage(inputStr: String): Boolean {
+    fun addClipboardMessage(view: View, inputStr: String): Boolean {
+        val context = view.context
+
         val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         // When setting the clip board text.
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
         // Only show a toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2)
-            Toast.makeText(context, "复制成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
 
         return true
 
@@ -334,7 +354,7 @@ class AsVideoViewModel(
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
-    private fun setCollection(selects: MutableList<Long>, avid: Int) {
+    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Int) {
 
         var addMediaIds = ""
         selects.forEachIndexed { index, l ->
@@ -343,7 +363,7 @@ class AsVideoViewModel(
             }
             addMediaIds = "$addMediaIds,$l"
         }
-        addCollection(addMediaIds, avid)
+        addCollection(context, addMediaIds, avid)
     }
 
 
@@ -351,22 +371,22 @@ class AsVideoViewModel(
      * 新增收藏夹内容
      * @param addMediaIds String
      */
-    private fun addCollection(addMediaIds: String, avid: Int) {
+    private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Int) {
 
 
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.Default) {
 
             val collectionResultBean =
-                KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                KtHttpUtils.addHeader("cookie", context.asUser.cookie)
                     .addParam("rid", avid.toString())
                     .addParam("add_media_ids", addMediaIds)
-                    .addParam("csrf", context.asUser.biliJct)
+                    .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                     .addParam("type", "2")
                     .asyncPost<CollectionResultBean>(BilibiliApi.videoCollectionSetPath)
 
             if (collectionResultBean.code == 0) {
-                asVideoBinding.archiveFavouredBean?.data?.isFavoured = true
-                asVideoBinding.asVideoCollectionBt.isSelected = true
+                context.binding.archiveFavouredBean?.data?.isFavoured = true
+                context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
             }

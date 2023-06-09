@@ -11,20 +11,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DownloadFragment : Fragment() {
+@AndroidEntryPoint
+class DownloadFragment : BaseFragment() {
 
 
     lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
+    @Inject
+    lateinit var downloadFinishTaskAd: DownloadFinishTaskAd
+
+    @Inject
+    lateinit var downloadTaskAdapter: DownloadTaskAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +78,7 @@ class DownloadFragment : Fragment() {
                                 fragmentDownloadRecyclerView.adapter =
                                     App.downloadQueue.downloadTaskAdapter
                             }
+
                             1 -> {
                                 loadDownloadTask()
                             }
@@ -92,8 +102,8 @@ class DownloadFragment : Fragment() {
     private fun loadDownloadTask() {
 
         fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadFinishTaskAd = DownloadFinishTaskAd()
-            fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadFinishTaskAd
+            App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
+            fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
 
 
             lifecycleScope.launch(Dispatchers.IO) {
@@ -125,10 +135,10 @@ class DownloadFragment : Fragment() {
     private fun initDownloadList() {
 
         fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadTaskAdapter = DownloadTaskAdapter()
+            App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
 
             fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
-            fragmentDownloadRecyclerView.itemAnimator = null
+//            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 

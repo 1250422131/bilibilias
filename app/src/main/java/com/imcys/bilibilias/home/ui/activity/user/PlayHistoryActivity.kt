@@ -18,22 +18,29 @@ import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity() {
     private lateinit var binding: ActivityPlayHistoryBinding
-    private lateinit var playHistoryAdapter: PlayHistoryAdapter
-    private var max  = 0L
+
+    //自动装配
+    @Inject
+    lateinit var playHistoryAdapter: PlayHistoryAdapter
+
+    private var max = 0L
     private var viewAt = 0L
 
-
-
-
-    private val playHistoryDataMutableList:MutableList<PlayHistoryBean.DataBean.ListBean> = mutableListOf()
+    private val playHistoryDataMutableList: MutableList<PlayHistoryBean.DataBean.ListBean> =
+        mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityPlayHistoryBinding?>(this,
-            R.layout.activity_play_history).apply {
+        binding = DataBindingUtil.setContentView<ActivityPlayHistoryBinding?>(
+            this,
+            R.layout.activity_play_history
+        ).apply {
             playHistoryTopLy.addStatusBarTopPadding()
         }
         initView()
@@ -46,18 +53,19 @@ class PlayHistoryActivity : BaseActivity() {
 
     private fun initPlayHistory() {
         binding.apply {
-            playHistoryAdapter = PlayHistoryAdapter()
             playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
             HttpUtils.addHeader("cookie", asUser.cookie)
-                .get("${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
-                    PlayHistoryBean::class.java) {
+                .get(
+                    "${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
+                    PlayHistoryBean::class.java
+                ) {
                     max = it.data.cursor.max
                     viewAt = it.data.cursor.view_at
                     playHistoryDataMutableList.addAll(it.data.list)
-                    playHistoryAdapter.submitList(playHistoryDataMutableList+ mutableListOf())
+                    playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
                 }
 
             playHistoryTopRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -72,12 +80,14 @@ class PlayHistoryActivity : BaseActivity() {
 
     private fun loadPlayHistory() {
         HttpUtils.addHeader("cookie", asUser.cookie)
-            .get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
-                PlayHistoryBean::class.java) {
+            .get(
+                "${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
+                PlayHistoryBean::class.java
+            ) {
                 max = it.data.cursor.max
                 viewAt = it.data.cursor.view_at
                 playHistoryDataMutableList.addAll(it.data.list)
-                playHistoryAdapter.submitList(playHistoryDataMutableList+ mutableListOf())
+                playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
             }
     }
 

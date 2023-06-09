@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -38,12 +40,14 @@ import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
+import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
+import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.myUserData
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -53,12 +57,9 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import me.dkzwm.widget.srl.extra.header.ClassicHeader
-import me.dkzwm.widget.srl.extra.header.MaterialHeader
-import me.dkzwm.widget.srl.indicator.IIndicator
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -69,13 +70,18 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
 
 @RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
+    hostAndPath = ARouterAddress.AppHomeFragment
 )
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
+
+
+    lateinit var viewModel: FragmentHomeViewModel
+
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
@@ -132,6 +138,7 @@ class HomeFragment : Fragment() {
      * 加载引导
      */
     private fun loadHomeGuide() {
+
 
         HighlightPro.with(this)
             .setHighlightParameter {
@@ -368,7 +375,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
     /**
      * 加载登陆对话框
      */
@@ -383,8 +389,6 @@ class HomeFragment : Fragment() {
                 if (code == 0) {
                     initUserData()
                     startStatistics()
-                } else {
-                    loadLogin()
                 }
             }.apply {
                 show()
@@ -421,7 +425,6 @@ class HomeFragment : Fragment() {
             launch(Dispatchers.Main) {
 
                 if (myUserData.code == 0) {
-
                     //提交
                     BaseApplication.myUserData = myUserData.data
                     loadUserData(myUserData)
@@ -445,10 +448,11 @@ class HomeFragment : Fragment() {
     private fun detectUserLogin() {
 
         lifecycleScope.launch {
-            val myUserData = HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet(
-                    BilibiliApi.getMyUserData, MyUserData::class.java
-                )
+            val myUserData =
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
+                    .asyncGet(
+                        BilibiliApi.getMyUserData, MyUserData::class.java
+                    )
             if (myUserData.code != 0) DialogUtils.loginDialog(requireContext())
                 .show() else BaseApplication.myUserData = myUserData.data
         }
@@ -461,19 +465,31 @@ class HomeFragment : Fragment() {
     private fun loadUserData(myUserData: MyUserData) {
 
         lifecycleScope.launch {
+
+            val params = mutableMapOf<String?, String?>()
+            params["mid"] = myUserData.data.mid.toString()
+            val paramsStr = getParamStr(params)
+
             val userInfoBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?mid=${myUserData.data.mid}")
+                KtHttpUtils.addHeader(
+                    "cookie",
+                   BaseApplication.dataKv.decodeString("cookies","")!!
+                ).addHeader(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+                )
+                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据
-            BaseApplication.dataKv.encode("mid", userInfoBean.data.mid)
+            BaseApplication.dataKv.encode("mid", myUserData.data.mid)
+
+
             //关闭登陆登陆弹窗
             loginQRDialog.cancel()
             //加载用户弹窗
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
 
         }
-
 
     }
 

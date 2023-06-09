@@ -11,18 +11,26 @@ import com.imcys.bilibilias.databinding.ActivityDedicateBinding
 import com.imcys.bilibilias.home.ui.adapter.DedicateAdapter
 import com.imcys.bilibilias.home.ui.model.DedicateBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import javax.inject.Inject
 
 class DedicateActivity : BaseActivity() {
     lateinit var binding: ActivityDedicateBinding
 
+    @Inject
+    lateinit var adapter: DedicateAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView<ActivityDedicateBinding?>(this,
-            R.layout.activity_dedicate).apply {
+        binding = DataBindingUtil.setContentView<ActivityDedicateBinding?>(
+            this,
+            R.layout.activity_dedicate
+        ).apply {
 
             dedicateTopLy.addStatusBarTopPadding()
         }
+
         initView()
     }
 
@@ -34,7 +42,6 @@ class DedicateActivity : BaseActivity() {
     }
 
     private fun loadDedicate() {
-        val adapter = DedicateAdapter()
         val dedicateMutableList = mutableListOf(
             DedicateBean(
                 "BILIBILIAS捐款名单",
@@ -54,8 +61,8 @@ class DedicateActivity : BaseActivity() {
                 "萌新交流社",
                 "BILIBILIAS反馈群",
                 "感谢萌新交流社的风纪委员会全体成员，几年来不离不弃，尽职尽责的维护着群内治安。",
-                "http://p.qlogo.cn/gh/703180724/703180724/640/",
-                "https://jq.qq.com/?_wv=1027&k=c5H1Juvc"
+                "http://p.qlogo.cn/gh/812128563/812128563/640/",
+                "https://qm.qq.com/cgi-bin/qm/qr?k=NYCx2UMEC0yBvi2YYsPHSGge3b5Lolv4&jump_from=webapi&authKey=/Ag6VpX3P8PczmAD80GE2nuMUNkvY+ra6N8s15IzgxdPts4b4gcUg60w5EAuzSHa"
             ),
             DedicateBean(
                 "萌新杰少 | IMCYS",

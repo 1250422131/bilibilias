@@ -21,16 +21,21 @@ import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.ceil
 
 //收藏夹
+@AndroidEntryPoint
 class CollectionActivity : BaseActivity() {
 
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<CollectionDataBean.DataBean.MediasBean>()
     private lateinit var binding: ActivityCollectionBinding
-    private lateinit var collectionDataAd: CollectionDataAdapter
+
+    @Inject
+    lateinit var collectionDataAd: CollectionDataAdapter
     private lateinit var userCreateCollectionBean: UserCreateCollectionBean
     private lateinit var createCollectionList: UserCreateCollectionBean.DataBean.ListBean
 
@@ -54,7 +59,6 @@ class CollectionActivity : BaseActivity() {
 
     private fun initCollectionRv() {
         binding.apply {
-            collectionDataAd = CollectionDataAdapter()
             collectionRecyclerView.adapter = collectionDataAd
             collectionRecyclerView.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -79,7 +83,10 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         lifecycleScope.launch {
-            val userCreateCollectionBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+            val userCreateCollectionBean = KtHttpUtils.addHeader(
+                "cookie",
+                BaseApplication.dataKv.decodeString("cookies", "")!!
+            )
                 .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
             userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {

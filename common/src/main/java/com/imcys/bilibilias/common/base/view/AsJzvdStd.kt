@@ -8,8 +8,10 @@ import android.net.Uri
 import android.os.Environment
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
+import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -52,7 +54,7 @@ open class AsJzvdStd : JzvdStd {
         this.jzbdStdInfo = jzbdStdInfo
     }
 
-    fun updatePoster(url:String){
+    fun updatePoster(url: String) {
         posterImageUrl = url
         Glide.with(this.context)
             .load(url)
@@ -114,12 +116,12 @@ open class AsJzvdStd : JzvdStd {
             clickClarity()
         } else if (i == R.id.retry_btn) {
             clickRetryBtn()
-        }else if (i==R.id.as_jzvdstd_pic_dl_bt){
+        } else if (i == R.id.as_jzvdstd_pic_dl_bt) {
             clickPicDownload()
         }
     }
 
-     private fun clickPicDownload() {
+    private fun clickPicDownload() {
 
         if (posterImageUrl != "") {
             downloadPic()
@@ -171,9 +173,11 @@ open class AsJzvdStd : JzvdStd {
 
     override fun clickPoster() {
         if (jzDataSource == null || jzDataSource.urlsMap.isEmpty() || jzDataSource.currentUrl == null) {
-            Toast.makeText(jzvdContext,
+            Toast.makeText(
+                jzvdContext,
                 resources.getString(cn.jzvd.R.string.no_url),
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
             return
         } else if (state == STATE_AUTO_COMPLETE) {
@@ -195,6 +199,50 @@ open class AsJzvdStd : JzvdStd {
         }*/
     }
 
+    override fun gotoFullscreen() {
+
+
+        gotoFullscreenTime = System.currentTimeMillis()
+        var vg = parent as ViewGroup
+        jzvdContext = vg.context
+        blockLayoutParams = layoutParams
+        blockIndex = vg.indexOfChild(this)
+        blockWidth = width
+        blockHeight = height
+
+        vg.removeView(this)
+        cloneAJzvd(vg)
+        CONTAINER_LIST.add(vg)
+        vg = JZUtils.scanForActivity(jzvdContext).window.decorView as ViewGroup
+
+        val fullLayout: ViewGroup.LayoutParams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        vg.addView(this, fullLayout)
+
+        setScreenFullscreen()
+        JZUtils.hideStatusBar(jzvdContext)
+
+        if (isHorizontalAsVideo()) {
+            JZUtils.setRequestedOrientation(jzvdContext, FULLSCREEN_ORIENTATION)
+        } else {
+            JZUtils.setRequestedOrientation(jzvdContext, NORMAL_ORIENTATION)
+
+        }
+        JZUtils.hideSystemUI(jzvdContext) //华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
+
+    }
+
+    private fun isHorizontalAsVideo(): Boolean {
+        val picImage = findViewById<ImageView>(R.id.poster)
+        val imageWidth = picImage.width
+        val imageHeight = picImage.height
+
+        return width > height
+
+
+    }
+
 
     override fun onStatePlaying() {
         //先一步返回状态，确保外部明确因为什么原因开启了播放
@@ -203,8 +251,6 @@ open class AsJzvdStd : JzvdStd {
         super.onStatePlaying()
 
     }
-
-
 
 
     override fun onStopTrackingTouch(seekBar: SeekBar) {

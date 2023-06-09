@@ -10,28 +10,34 @@ import com.imcys.bilibilias.databinding.ItemPlayHistoryWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import javax.inject.Inject
 
-class PlayHistoryAdapter : ListAdapter<PlayHistoryBean.DataBean.ListBean, ViewHolder>(object :
-    DiffUtil.ItemCallback<PlayHistoryBean.DataBean.ListBean>() {
-    override fun areItemsTheSame(
-        oldItem: PlayHistoryBean.DataBean.ListBean,
-        newItem: PlayHistoryBean.DataBean.ListBean,
-    ): Boolean {
-        return oldItem.title == newItem.title
-    }
+class PlayHistoryAdapter @Inject constructor() :
+    ListAdapter<PlayHistoryBean.DataBean.ListBean, ViewHolder>(object :
+        DiffUtil.ItemCallback<PlayHistoryBean.DataBean.ListBean>() {
 
-    override fun areContentsTheSame(
-        oldItem: PlayHistoryBean.DataBean.ListBean,
-        newItem: PlayHistoryBean.DataBean.ListBean,
-    ): Boolean {
-        return oldItem.author_mid == newItem.author_mid
-    }
+        override fun areItemsTheSame(
+            oldItem: PlayHistoryBean.DataBean.ListBean,
+            newItem: PlayHistoryBean.DataBean.ListBean,
+        ): Boolean {
+            return oldItem.title == newItem.title
+        }
 
-}) {
+        override fun areContentsTheSame(
+            oldItem: PlayHistoryBean.DataBean.ListBean,
+            newItem: PlayHistoryBean.DataBean.ListBean,
+        ): Boolean {
+            return oldItem.author_mid == newItem.author_mid
+        }
+
+    }) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemPlayHistoryWorksBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_play_history_works, parent, false)
+            DataBindingUtil.inflate<ItemPlayHistoryWorksBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_play_history_works, parent, false
+            )
         return ViewHolder(binding.root)
     }
 
