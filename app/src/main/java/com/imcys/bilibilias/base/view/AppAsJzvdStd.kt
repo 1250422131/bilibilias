@@ -45,6 +45,7 @@ class AppAsJzvdStd : AsJzvdStd {
                     //播放视频
                     startVideo()
                 }
+
                 Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
                     //恢复播放/暂停播放
                     startButton.performClick()

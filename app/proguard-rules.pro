@@ -99,7 +99,6 @@
 -keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
 -keep class com.imcys.bilibilias.base.view.AppAsJzvdStd{*; }
 -keep class com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer{*; }
--keep class com.imcys.bilibilias.tool_livestream.base.ijkplayer.JZMediaIjk {*; }
 
 -keep class cn.jzvd.JZUtils{*; }
 
@@ -145,6 +144,26 @@
 
 -keep public class com.alibaba.android.arouter.routes.**{*;}
 -keep public class com.alibaba.android.arouter.facade.**{*;}
+
+-keep class com.baidu.mobstat.** { *; }
+-keep class com.bun.miitmdid.core.** {*;}
+
+
+-keep class com.baidu.helios.OnGetIdResultCallback
+-keep class com.squareup.picasso.Picasso
+-keep class com.squareup.picasso.RequestCreator
+-keep class edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+-keep class org.bouncycastle.jsse.BCSSLParameters
+-keep class org.bouncycastle.jsse.BCSSLSocket
+-keep class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+-keep class org.conscrypt.Conscrypt$Version
+-keep class org.conscrypt.Conscrypt
+-keep class org.conscrypt.ConscryptHostnameVerifier
+-keep class org.openjsse.javax.net.ssl.SSLParameters
+-keep class org.openjsse.javax.net.ssl.SSLSocket
+-keep class org.openjsse.net.ssl.OpenJSSE
+-keep class org.slf4j.impl.StaticLoggerBinder
+
 
 # 如果使用了 单类注入，即不定义接口实现 IProvider，需添加下面规则，保护实现
 # -keep class * implements com.alibaba.android.arouter.facade.template.IProvider

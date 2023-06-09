@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
@@ -62,7 +64,7 @@ import java.io.IOException
 @RouterAnno(
     hostAndPath = ARouterAddress.ToolFragment,
 )
-class ToolFragment : Fragment() {
+class ToolFragment : BaseFragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding
     lateinit var mRecyclerView: RecyclerView

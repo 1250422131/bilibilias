@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
 
+    id 'com.google.dagger.hilt.android'
+
 
 }
 apply plugin: "com.google.devtools.ksp"
@@ -42,16 +44,24 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
+}
+kotlin {
+    jvmToolchain(11)
 }
 
 dependencies {
+
+
+    // hilt库，实现控制反转
+    api "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
 
     // 核心代码库
     api 'com.liulishuo.okdownload:okdownload:1.0.7'
@@ -68,7 +78,6 @@ dependencies {
     api 'com.github.dkzwm:srl-core:1.7.2.4'
     api 'com.github.dkzwm:srl-ext-material:1.7.2.4' //md刷新头
     api 'com.github.dkzwm:srl-ext-classics:1.7.2.4'
-
 
 
     /**

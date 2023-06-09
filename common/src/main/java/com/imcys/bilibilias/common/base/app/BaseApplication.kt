@@ -13,7 +13,7 @@ import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
-
+import dagger.hilt.android.HiltAndroidApp
 
 open class BaseApplication : Application() {
 

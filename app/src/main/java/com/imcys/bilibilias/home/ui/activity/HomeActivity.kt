@@ -12,7 +12,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
@@ -29,6 +28,7 @@ import com.xiaojinzi.component.anno.RouterAnno
 class HomeActivity : BaseActivity() {
     private var exitTime: Long = 0
     lateinit var activityHomeBinding: ActivityHomeBinding
+
     lateinit var toolFragment: ToolFragment
     lateinit var homeFragment: HomeFragment
     lateinit var downloadFragment: DownloadFragment
@@ -148,14 +148,17 @@ class HomeActivity : BaseActivity() {
                         it.homeViewPage.currentItem = 0
                         it.homeBottomNavigationView.menu.getItem(0).isChecked = true
                     }
+
                     R.id.home_bottom_menu_discipline_admin -> {
                         it.homeViewPage.currentItem = 1
                         it.homeBottomNavigationView.menu.getItem(1).isChecked = true
                     }
+
                     R.id.home_bottom_menu_operation_log -> {
                         it.homeViewPage.currentItem = 2
                         it.homeBottomNavigationView.menu.getItem(2).isChecked = true
                     }
+
                     R.id.home_bottom_menu_statistics -> {
                         it.homeViewPage.currentItem = 3
                         it.homeBottomNavigationView.menu.getItem(3).isChecked = true
