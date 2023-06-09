@@ -83,7 +83,10 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         lifecycleScope.launch {
-            val userCreateCollectionBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+            val userCreateCollectionBean = KtHttpUtils.addHeader(
+                "cookie",
+                BaseApplication.dataKv.decodeString("cookies", "")!!
+            )
                 .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
             userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {

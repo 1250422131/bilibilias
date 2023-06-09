@@ -20,9 +20,10 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import kotlinx.coroutines.*
 import java.io.File
+import javax.inject.Inject
 
 
-class DownloadFinishTaskAd : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
+class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
     object : DiffUtil.ItemCallback<DownloadFinishTaskInfo>() {
         override fun areItemsTheSame(
             oldItem: DownloadFinishTaskInfo,

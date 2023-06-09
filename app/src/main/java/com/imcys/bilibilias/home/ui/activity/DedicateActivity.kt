@@ -11,15 +11,22 @@ import com.imcys.bilibilias.databinding.ActivityDedicateBinding
 import com.imcys.bilibilias.home.ui.adapter.DedicateAdapter
 import com.imcys.bilibilias.home.ui.model.DedicateBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import javax.inject.Inject
 
 class DedicateActivity : BaseActivity() {
     lateinit var binding: ActivityDedicateBinding
 
+    @Inject
+    lateinit var adapter: DedicateAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView<ActivityDedicateBinding?>(this,
-            R.layout.activity_dedicate).apply {
+        binding = DataBindingUtil.setContentView<ActivityDedicateBinding?>(
+            this,
+            R.layout.activity_dedicate
+        ).apply {
 
             dedicateTopLy.addStatusBarTopPadding()
         }
@@ -35,7 +42,6 @@ class DedicateActivity : BaseActivity() {
     }
 
     private fun loadDedicate() {
-        val adapter = DedicateAdapter()
         val dedicateMutableList = mutableListOf(
             DedicateBean(
                 "BILIBILIAS捐款名单",

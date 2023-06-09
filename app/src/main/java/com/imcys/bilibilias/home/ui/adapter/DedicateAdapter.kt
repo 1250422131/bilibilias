@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemDedicateBinding
 import com.imcys.bilibilias.home.ui.model.DedicateBean
+import javax.inject.Inject
 
-class DedicateAdapter :
+class DedicateAdapter @Inject constructor() :
     ListAdapter<DedicateBean, ViewHolder>(object : DiffUtil.ItemCallback<DedicateBean>() {
         override fun areItemsTheSame(oldItem: DedicateBean, newItem: DedicateBean): Boolean {
             return oldItem.title == newItem.title

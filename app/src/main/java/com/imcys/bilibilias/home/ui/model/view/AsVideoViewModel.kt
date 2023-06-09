@@ -199,14 +199,14 @@ class AsVideoViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
-                KtHttpUtils.addHeader("cookie", (context as AsVideoActivity).asUser.cookie)
+                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                     .addParam("like", "1")
                     .addParam("bvid", bvid)
                     .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
 
 
-            if (context.binding.archiveHasLikeBean?.data == 0) {
+            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
                 launch(Dispatchers.Main) {
                     when (likeVideoBean.code) {
                         0 -> {
