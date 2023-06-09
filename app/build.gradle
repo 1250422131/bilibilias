@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 apply plugin: "com.google.devtools.ksp"
 
@@ -19,9 +20,11 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
-        versionCode 201
-        versionName "2.0.2-天玑-Beta"
+        versionCode 203
+        versionName "2.0.4-天枢-Beta"
         //multiDexEnabled true
+        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
+        buildConfigField('String', 'APP_CENTER_SECRET', '"' + appCenterSecret + '"')
 
 
         ndk {
@@ -80,13 +83,13 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
 
@@ -115,6 +118,11 @@ android {
 
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
+
 dependencies {
 
     implementation project(":common")
@@ -123,6 +131,9 @@ dependencies {
     implementation project(":tool_log_export")
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation "com.google.dagger:hilt-android:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.44"
 
     ksp "com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4"
     implementation 'com.google.android.material:material:1.8.0'
