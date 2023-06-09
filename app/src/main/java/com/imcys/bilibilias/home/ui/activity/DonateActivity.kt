@@ -15,10 +15,13 @@ import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.TipBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import javax.inject.Inject
 
 class DonateActivity : BaseActivity() {
     private val donateMutableList = mutableListOf<DonateViewBean>()
     lateinit var binding: ActivityDonateBinding
+
+    @Inject
     lateinit var donateAdapter: DonateItemAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +41,6 @@ class DonateActivity : BaseActivity() {
 
     private fun initRv() {
 
-        donateAdapter = DonateItemAdapter()
         binding.apply {
             donateRv.adapter = donateAdapter
             donateRv.layoutManager =
@@ -75,7 +77,7 @@ class DonateActivity : BaseActivity() {
                 )
             )
 
-            donateAdapter.submitList(donateMutableList +  newMutableList)
+            donateAdapter.submitList(donateMutableList + newMutableList)
         }
     }
 
