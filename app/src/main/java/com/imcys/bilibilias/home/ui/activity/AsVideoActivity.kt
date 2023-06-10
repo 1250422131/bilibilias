@@ -338,6 +338,12 @@ class AsVideoActivity : BaseActivity() {
             }
             isMember(bangumiSeasonBean)
 
+            //获取真实的cid
+            bangumiSeasonBean.result.episodes.forEach { episode ->
+                if (episode.bvid == bvid) {
+                    cid = episode.cid
+                }
+            }
 
             binding.apply {
                 //如果就只有一个子集，就不要显示子集列表了
