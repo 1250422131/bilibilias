@@ -24,8 +24,8 @@ android {
         versionCode 203
         versionName "2.0.31"
         //multiDexEnabled true
-        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
-        buildConfigField('String', 'APP_CENTER_SECRET', '"' + appCenterSecret + '"')
+//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
+//        buildConfigField('String', 'APP_CENTER_SECRET', '"' + appCenterSecret + '"')
 
 
         ndk {
