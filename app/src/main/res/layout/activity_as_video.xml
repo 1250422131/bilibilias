@@ -63,6 +63,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/as_video_appbar"
             android:layout_width="match_parent"
+            android:background="#000000"
             android:layout_height="280dp">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout

@@ -212,7 +212,7 @@ data class UserNavDataModel(
             @SerializedName("coupon_due_time")
             val couponDueTime: Int, // 0
             @SerializedName("mid")
-            val mid: Int // 351201307
+            val mid: Long // 351201307
         ): Serializable
 
         data class WbiImg(

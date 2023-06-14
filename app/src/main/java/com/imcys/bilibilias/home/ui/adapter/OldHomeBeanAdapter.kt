@@ -113,7 +113,7 @@ class OldHomeBeanAdapter(
                 println(getPost)
             }
 
-            val  cookie =  BaseApplication.dataKv.decodeString("cookies").toString()
+            val  cookie =  BaseApplication.dataKv.decodeString("cookies","").toString()
             val goUrlStr = HttpUtils.doCardPost(url, getPost, cookie)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
@@ -139,7 +139,7 @@ class OldHomeBeanAdapter(
         context: Context,
     ) {
 
-        val  cookie =  BaseApplication.dataKv.decodeString("cookies").toString()
+        val  cookie =  BaseApplication.dataKv.decodeString("cookies","").toString()
 
         HttpUtils.addHeader("cookie", cookie).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {

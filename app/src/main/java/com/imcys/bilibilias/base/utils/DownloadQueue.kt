@@ -397,7 +397,7 @@ class DownloadQueue :
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies","")
 
             val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
@@ -453,7 +453,7 @@ class DownloadQueue :
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies","")
 
             val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
@@ -652,7 +652,7 @@ class DownloadQueue :
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        val cookie = BaseApplication.dataKv.decodeString("cookies","")
         HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
@@ -780,7 +780,7 @@ class DownloadQueue :
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies","")
 
             HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
@@ -919,7 +919,7 @@ class DownloadQueue :
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies","")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
@@ -1099,11 +1099,11 @@ class DownloadQueue :
      * @param fileName
      * @return
      */
-    fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
+    private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) //是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
             .setPassIfAlreadyCompleted(true) //如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
-            .setConnectionCount(3) //需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+            .setConnectionCount(1) //需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) //在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) //通知调用者的频率，避免anr，默认3000
             .setWifiRequired(false) //是否只允许wifi下载，默认为false
@@ -1120,7 +1120,7 @@ class DownloadQueue :
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
         )
         task.addHeader("referer", "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        val cookie = BaseApplication.dataKv.decodeString("cookies","")
         task.addHeader("cookie", cookie!!)
 
 
