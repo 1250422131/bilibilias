@@ -15,8 +15,9 @@ import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.TipBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
+@AndroidEntryPoint
 class DonateActivity : BaseActivity() {
     private val donateMutableList = mutableListOf<DonateViewBean>()
     lateinit var binding: ActivityDonateBinding

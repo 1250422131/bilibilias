@@ -48,7 +48,7 @@ class App : BaseApplication() {
     companion object {
 
 
-        const val appSecret = BuildConfig.APP_CENTER_SECRET
+        const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
         val downloadQueue: DownloadQueue by lazy { DownloadQueue() }
 
