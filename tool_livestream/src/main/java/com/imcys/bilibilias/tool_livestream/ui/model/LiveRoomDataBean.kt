@@ -65,7 +65,7 @@ data class LiveRoomDataBean(
         @SerializedName("pk_status")
         val pkStatus: Int, // 0
         @SerializedName("room_id")
-        val roomId: Int, // 732111
+        val roomId: Long, // 732111
         @SerializedName("room_silent_level")
         val roomSilentLevel: Int, // 0
         @SerializedName("room_silent_second")
