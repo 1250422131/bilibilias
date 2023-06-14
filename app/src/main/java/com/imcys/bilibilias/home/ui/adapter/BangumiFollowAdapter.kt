@@ -54,7 +54,7 @@ class  BangumiFollowAdapter @Inject constructor() : ListAdapter<BangumiFollowLis
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
 
-                val cookie = BaseApplication.dataKv.decodeString("cookies").toString()
+                val cookie = BaseApplication.dataKv.decodeString("cookies","").toString()
 
 
                 CoroutineScope(Dispatchers.IO).launch {

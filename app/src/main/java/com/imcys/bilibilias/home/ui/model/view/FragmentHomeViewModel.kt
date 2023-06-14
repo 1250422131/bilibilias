@@ -83,7 +83,7 @@ class FragmentHomeViewModel :ViewModel() {
             positiveButtonClickListener =
             {
 
-                val cookie = BaseApplication.dataKv.decodeString("cookies")
+                val cookie = BaseApplication.dataKv.decodeString("cookies","")
                 val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
                 HttpUtils.addHeader("cookie", cookie!!)
