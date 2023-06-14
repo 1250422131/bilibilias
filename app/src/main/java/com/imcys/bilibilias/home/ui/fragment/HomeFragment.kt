@@ -449,7 +449,7 @@ class HomeFragment : BaseFragment() {
 
         lifecycleScope.launch {
             val myUserData =
-                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies","")!!)
                     .asyncGet(
                         BilibiliApi.getMyUserData, MyUserData::class.java
                     )

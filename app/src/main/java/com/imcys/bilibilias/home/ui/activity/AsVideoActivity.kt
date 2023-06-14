@@ -9,8 +9,10 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.adapters.ViewBindingAdapter.setPadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,6 +57,7 @@ import okio.buffer
 import okio.sink
 import java.io.*
 import java.util.zip.Inflater
+import kotlin.math.abs
 
 
 class AsVideoActivity : BaseActivity() {
@@ -201,6 +204,20 @@ class AsVideoActivity : BaseActivity() {
                                     height = windowManager.defaultDisplay.height / 4 * 3
                                 }
                             }
+
+
+//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+//                                // 计算折叠程度（0为完全展开，1为完全折叠）
+//
+//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
+//                                    // 根据当前滚动百分比计算内边距
+//                                    val totalScrollRange = appBarLayout.totalScrollRange
+//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
+//                                    val padding = (currentScrollPercentage * 100).toInt()
+//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
+//                                }
+//
+//                            }
 
                         }
 
@@ -720,6 +737,7 @@ class AsVideoActivity : BaseActivity() {
     }
 
     private fun changeFaButtonToRedo() {
+        binding.asVideoFaButton.isVisible = true
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
 
