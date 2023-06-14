@@ -45,5 +45,6 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/1250422131/bilibilias' }
     ]
-  }
+  },
+  ignoreDeadLinks: true
 })
