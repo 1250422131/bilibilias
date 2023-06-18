@@ -10,9 +10,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@drawable/dialog_bottom_sheet_bg"
-        >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,10 +37,10 @@
 
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/dialog_collection_title"
@@ -58,7 +57,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dialog_tone_quality_rv"
                 android:layout_width="match_parent"
-                android:layout_height="230dp"/>
+                android:layout_height="230dp" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -72,8 +71,8 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <Button
                         android:id="@+id/dialog_tone_quality_finish_bt"

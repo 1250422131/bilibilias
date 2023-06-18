@@ -25,7 +25,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/fragment_tool_top_linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,6 @@
                             android:src="@drawable/ic_tool_search" />
 
                         <EditText
-                            android:textColor="#000000"
                             android:id="@+id/fragment_tool_editText"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -90,7 +89,8 @@
                             android:hint="@string/app_fragment_tool_input_tip"
                             android:imeOptions="actionSearch"
                             android:maxLines="1"
-                            android:singleLine="true" />
+                            android:singleLine="true"
+                            android:textColor="#000000" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.cardview.widget.CardView>
@@ -99,20 +99,21 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-          <me.dkzwm.widget.srl.SmoothRefreshLayout
-              android:id="@+id/fragment_tool_sr"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-              <androidx.recyclerview.widget.RecyclerView
-                  android:id="@+id/fragment_tool_recyclerView"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:foregroundGravity="center"
-                  android:paddingLeft="20dp"
-                  android:paddingTop="10dp"
-                  android:paddingRight="20dp"
-                  android:paddingBottom="20dp" />
-          </me.dkzwm.widget.srl.SmoothRefreshLayout>
+            <me.dkzwm.widget.srl.SmoothRefreshLayout
+                android:id="@+id/fragment_tool_sr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_tool_recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:foregroundGravity="center"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="20dp" />
+            </me.dkzwm.widget.srl.SmoothRefreshLayout>
 
         </LinearLayout>
 

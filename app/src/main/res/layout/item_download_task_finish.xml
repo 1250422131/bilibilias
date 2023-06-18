@@ -6,7 +6,8 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.common.base.extend.LongKt"/>
+        <import type="com.imcys.bilibilias.common.base.extend.LongKt" />
+
         <variable
             name="DownloadFinishTaskInfo"
             type="com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo" />
@@ -21,18 +22,18 @@
         app:cardElevation="0dp">
 
         <LinearLayout
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:gravity="center_vertical"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="10dp"
-                android:layout_height="wrap_content">
+                android:padding="10dp">
+
                 <androidx.cardview.widget.CardView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
@@ -63,32 +64,32 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_weight="1"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
-                            android:textSize="18sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="@{DownloadFinishTaskInfo.videoPageTitle}" />
+                            android:text="@{DownloadFinishTaskInfo.videoPageTitle}"
+                            android:textSize="18sp" />
 
                     </LinearLayout>
 
                     <RelativeLayout
-                        android:layout_weight="1"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp">
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
 
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="wrap_content"
-                            android:orientation="vertical"
+                            android:layout_height="match_parent"
                             android:gravity="center_vertical"
-                            android:layout_height="match_parent">
+                            android:orientation="vertical">
 
 
                             <TextView
@@ -113,11 +114,11 @@
 
                         <ImageView
                             android:id="@+id/item_dl_finish_task_delete"
-                            android:src="@drawable/ic_item_task_delete"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:src="@drawable/ic_item_task_delete"
                             app:tint="?attr/colorPrimary" />
 
                     </RelativeLayout>

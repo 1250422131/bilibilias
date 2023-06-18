@@ -56,7 +56,7 @@ public class DashVideoPlayBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * from : local
          * result : suee
@@ -231,7 +231,7 @@ public class DashVideoPlayBean implements Serializable {
             this.support_formats = support_formats;
         }
 
-        public static class DashBean  implements Serializable{
+        public static class DashBean implements Serializable {
             /**
              * duration : 177
              * minBufferTime : 1.5
@@ -306,7 +306,7 @@ public class DashVideoPlayBean implements Serializable {
                 this.audio = audio;
             }
 
-            public static class DolbyBean  implements Serializable{
+            public static class DolbyBean implements Serializable {
                 /**
                  * type : 0
                  * audio : null
@@ -332,7 +332,7 @@ public class DashVideoPlayBean implements Serializable {
                 }
             }
 
-            public static class VideoBean  implements Serializable{
+            public static class VideoBean implements Serializable {
                 /**
                  * id : 80
                  * baseUrl : https://xy60x214x170x244xy.mcdn.bilivideo.cn:4483/upgcxcode/35/90/553099035/553099035-1-30080.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1670324260&gen=playurlv2&os=mcdn&oi=1935005709&trid=00008e89791a59cc407abaa7ba05acf7c490u&mid=351201307&platform=pc&upsig=f245043243ea8369e3b572c1539af306&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=12000195&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=125095&logo=A0000800
@@ -527,7 +527,7 @@ public class DashVideoPlayBean implements Serializable {
                     this.backup_url = backup_url;
                 }
 
-                public static class SegmentBaseBean  implements Serializable{
+                public static class SegmentBaseBean implements Serializable {
                     /**
                      * Initialization : 0-991
                      * indexRange : 992-1443
@@ -553,7 +553,7 @@ public class DashVideoPlayBean implements Serializable {
                     }
                 }
 
-                public static class SegmentBaseBeanX  implements Serializable{
+                public static class SegmentBaseBeanX implements Serializable {
                     /**
                      * initialization : 0-991
                      * index_range : 992-1443
@@ -580,7 +580,7 @@ public class DashVideoPlayBean implements Serializable {
                 }
             }
 
-            public static class AudioBean  implements Serializable{
+            public static class AudioBean implements Serializable {
                 /**
                  * id : 30280
                  * baseUrl : https://xy60x214x170x244xy.mcdn.bilivideo.cn:4483/upgcxcode/35/90/553099035/553099035-1-30280.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1670324260&gen=playurlv2&os=mcdn&oi=1935005709&trid=00008e89791a59cc407abaa7ba05acf7c490u&mid=351201307&platform=pc&upsig=eea3841d3665bc56bc68b18082a4fbc5&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=12000195&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=16255&logo=A0000800
@@ -784,7 +784,7 @@ public class DashVideoPlayBean implements Serializable {
                     this.backup_url = backup_url;
                 }
 
-                public static class SegmentBaseBeanXX  implements Serializable{
+                public static class SegmentBaseBeanXX implements Serializable {
                     /**
                      * Initialization : 0-907
                      * indexRange : 908-1371
@@ -810,7 +810,7 @@ public class DashVideoPlayBean implements Serializable {
                     }
                 }
 
-                public static class SegmentBaseBeanXXX  implements Serializable{
+                public static class SegmentBaseBeanXXX implements Serializable {
                     /**
                      * initialization : 0-907
                      * index_range : 908-1371
@@ -838,7 +838,7 @@ public class DashVideoPlayBean implements Serializable {
             }
         }
 
-        public static class SupportFormatsBean  implements Serializable{
+        public static class SupportFormatsBean implements Serializable {
             /**
              * quality : 112
              * format : hdflv2

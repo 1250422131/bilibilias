@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--https://blog.csdn.net/u013719138/article/details/89964674-->
 <!--在 API 23 以上，支持直接在 layer-list 里给 <item> 标签设置宽度和高度：-->
-<layer-list xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <item
         android:width="20dp"
         android:height="3dp"

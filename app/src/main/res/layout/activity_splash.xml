@@ -8,9 +8,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/splash_top"
-        android:theme="@style/Theme.SplashOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:theme="@style/Theme.SplashOverlay"
         tools:context=".splash.ui.SplashActivity">
 
         <com.imcys.bilibilias.base.helper.SplashHelper
@@ -24,9 +24,8 @@
             tools:ignore="MissingConstraints" />
 
 
-
         <androidx.appcompat.widget.LinearLayoutCompat
-           android:id="@+id/splash_linearLayoutCompat"
+            android:id="@+id/splash_linearLayoutCompat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="top|center_horizontal"

@@ -131,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit {
+                    getDefaultSharedPreferences(context).edit {
                         putString(
                             "user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
@@ -205,7 +205,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     true,
                     positiveButtonClickListener = {
                         // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
-                        fileUriUtils.startFor("/storage/emulated/0/Android/data/tv.danmaku.bili",context as Activity, IMPORT_FILE_PATH_CODE)
+                        fileUriUtils.startFor(
+                            "/storage/emulated/0/Android/data/tv.danmaku.bili",
+                            context as Activity,
+                            IMPORT_FILE_PATH_CODE
+                        )
                     },
                     negativeButtonClickListener = {
                     }
@@ -269,7 +273,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         when (requestCode) {
             SAVE_FILE_PATH_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val list = FilePickerManager.obtainData().forEach {
+                    FilePickerManager.obtainData().forEach {
                         sharedPreferences.edit {
                             putString("user_download_save_path", it)
                             apply()
@@ -293,7 +297,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
         userDlFinishAutomaticImportSwitch =
             findPreference("user_dl_finish_automatic_import_switch")!!
-        appThemeListPreference =     findPreference("app_theme")!!
+        appThemeListPreference = findPreference("app_theme")!!
 
         userDownloadSavePathEditText = findPreference("user_download_save_path")!!
         sharedPreferences.apply {

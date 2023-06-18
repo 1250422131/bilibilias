@@ -9,7 +9,7 @@ data class OldHomeAdBean(
     val code: Int, // 0
     @SerializedName("data")
     val `data`: List<Data>,
-): Serializable {
+) : Serializable {
     data class Data(
         @SerializedName("long_title")
         val longTitle: String, // awa
@@ -19,5 +19,5 @@ data class OldHomeAdBean(
         val title: String, // 老王梯子
         @SerializedName("content")
         val content: String,
-    ): Serializable
+    ) : Serializable
 }
