@@ -92,11 +92,6 @@ class HomeFragment : BaseFragment() {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -288,12 +283,12 @@ class HomeFragment : BaseFragment() {
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
 //                    val uri = Uri.parse(oldUpdateDataBean.url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri);
+//                    val intent = Intent(Intent.ACTION_VIEW, uri)
 //                    requireContext().startActivity(intent)
                 }
             ).show()
@@ -449,7 +444,7 @@ class HomeFragment : BaseFragment() {
 
         lifecycleScope.launch {
             val myUserData =
-                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies","")!!)
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
                     .asyncGet(
                         BilibiliApi.getMyUserData, MyUserData::class.java
                     )
@@ -473,7 +468,7 @@ class HomeFragment : BaseFragment() {
             val userInfoBean =
                 KtHttpUtils.addHeader(
                     "cookie",
-                   BaseApplication.dataKv.decodeString("cookies","")!!
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
                 ).addHeader(
                     "User-Agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"

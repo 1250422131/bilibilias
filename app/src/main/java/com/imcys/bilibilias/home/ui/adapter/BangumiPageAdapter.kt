@@ -12,17 +12,18 @@ import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 class BangumiPageAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
     val selectedResult: (position: Int, itemBinding: ItemDlBangumiPageBinding) -> Unit,
-):
+) :
     RecyclerView.Adapter<BangumiPageAdapter.ViewHolder>() {
-
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDlBangumiPageBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context),
-                R.layout.item_dl_bangumi_page, parent, false)
+            DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.item_dl_bangumi_page, parent, false
+            )
         return ViewHolder(binding.root)
     }
 
@@ -40,6 +41,6 @@ class BangumiPageAdapter(
     }
 
     override fun getItemCount(): Int {
-       return datas.size
+        return datas.size
     }
 }

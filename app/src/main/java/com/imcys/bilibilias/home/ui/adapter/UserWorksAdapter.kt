@@ -31,8 +31,10 @@ class UserWorksAdapter : ListAdapter<UserWorksBean.DataBean.ListBean.VlistBean, 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val binding =
-            DataBindingUtil.inflate<ItemUserWorksBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_user_works, parent, false)
+            DataBindingUtil.inflate<ItemUserWorksBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_user_works, parent, false
+            )
 
         return ViewHolder(binding.root)
     }

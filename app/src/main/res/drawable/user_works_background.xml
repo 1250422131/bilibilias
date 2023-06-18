@@ -8,8 +8,8 @@
         <shape>
             <corners
                 android:bottomLeftRadius="0dp"
-                android:topLeftRadius="25dp"
                 android:bottomRightRadius="0dp"
+                android:topLeftRadius="25dp"
                 android:topRightRadius="25dp" /> <!--外面的角度 矩形也不用管-->
             <solid android:color="@color/user_work_bg" /> <!--里面的颜色-->
         </shape>

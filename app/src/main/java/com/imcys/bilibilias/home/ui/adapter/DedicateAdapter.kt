@@ -25,8 +25,10 @@ class DedicateAdapter @Inject constructor() :
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemDedicateBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_dedicate, parent, false)
+            DataBindingUtil.inflate<ItemDedicateBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_dedicate, parent, false
+            )
         return ViewHolder(binding.root)
     }
 
@@ -36,7 +38,7 @@ class DedicateAdapter @Inject constructor() :
             holder.itemView.setOnClickListener {
                 if (getItem(position).link != "") {
                     val uri = Uri.parse(getItem(position).link)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
                     holder.itemView.context.startActivity(intent)
                 }
             }

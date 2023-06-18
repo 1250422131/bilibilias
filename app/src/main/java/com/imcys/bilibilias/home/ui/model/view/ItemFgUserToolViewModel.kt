@@ -15,7 +15,7 @@ class ItemFgUserToolViewModel : ViewModel() {
         PlayHistoryActivity.actionStart(view.context)
     }
 
-    fun goToBangumiFollowr(view: View){
+    fun goToBangumiFollowr(view: View) {
         BangumiFollowActivity.actionStart(view.context)
     }
 }
