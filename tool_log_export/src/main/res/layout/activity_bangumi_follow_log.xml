@@ -70,9 +70,9 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
                     android:layout_height="wrap_content"
                     android:background="@drawable/log_export_tool_item_bg"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -82,27 +82,27 @@
                         android:textColor="?attr/colorPrimary" />
 
                     <RadioGroup
-                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
 
                         <RadioButton
 
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:buttonTint="?attr/colorPrimary"
                             android:checked="true"
-                            android:text="excel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:text="excel" />
                     </RadioGroup>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/log_export_tool_item_bg"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -113,30 +113,30 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/bangumi_follow_log_selectedLogHeaders_rv"
-                        android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" />
 
                     <com.google.android.material.textview.MaterialTextView
-                        android:layout_marginTop="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:text="@string/tool_activity_bangumi_follow_log_header_optional"
                         android:textColor="?attr/colorPrimary" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                       android:id="@+id/bangumi_follow_log_defaultLogHeaders_rv"
-                        android:layout_marginTop="10dp"
+                        android:id="@+id/bangumi_follow_log_defaultLogHeaders_rv"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <Button
                     android:id="@+id/bangumi_follow_log_finish_bt"
-                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/log_export_bt_bg"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:text="@string/tool_activity_bangumi_follow_log_finish_button"

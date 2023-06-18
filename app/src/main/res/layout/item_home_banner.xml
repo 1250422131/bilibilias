@@ -16,29 +16,29 @@
             tools:ignore="MissingConstraints">
 
             <androidx.constraintlayout.utils.widget.ImageFilterView
-               android:id="@+id/item_home_banner_image"
+                android:id="@+id/item_home_banner_image"
                 android:layout_width="match_parent"
-                android:scaleType="center"
                 android:layout_height="180dp"
+                android:scaleType="center"
                 tools:ignore="MissingConstraints" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:background="#80a1a3a6"
-                android:layout_gravity="bottom"
-                android:padding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="#80a1a3a6"
+                android:padding="5dp">
 
                 <TextView
                     android:id="@+id/item_home_banner_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
                     android:text=""
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

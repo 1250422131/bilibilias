@@ -7,11 +7,11 @@ import java.io.Serializable
 
 data class UserBiliBiliCookieModel(
     @SerializedName("code")
-     val code: Int, // 0
+    val code: Int, // 0
     @SerializedName("data")
     val `data`: List<Data>,
     @SerializedName("msg")
-     val msg: String, // 获取成功啦
+    val msg: String, // 获取成功啦
 ) : Serializable {
     data class Data(
         @SerializedName("cookie")
@@ -24,5 +24,5 @@ data class UserBiliBiliCookieModel(
         val name: String, // 萌新杰少
         @SerializedName("type")
         val type: Int, // 1
-    ) : Serializable,IPostBody
+    ) : Serializable, IPostBody
 }

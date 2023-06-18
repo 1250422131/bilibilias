@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 
-        if (Config.isApplicationMode){
+        if (Config.isApplicationMode) {
 
             applicationId "com.imcys.bilibilias.tool_livestream"
 

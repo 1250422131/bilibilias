@@ -60,7 +60,7 @@ class RCMDVideoAdapter(
         itemRcmdVideoBinding?.apply {
 
             holder.itemView.setOnClickListener {
-                AsVideoActivity.actionStart(context,data.bvid)
+                AsVideoActivity.actionStart(context, data.bvid)
             }
 
             itemRcmdLikeLottie.setAnimation(R.raw.home_like)
@@ -80,7 +80,7 @@ class RCMDVideoAdapter(
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val likeVideoBean = KtHttpUtils .addHeader("cookie", "")
+            val likeVideoBean = KtHttpUtils.addHeader("cookie", "")
                 .addParam("bvid", bvid)
                 .addParam("like", "1")
                 .addParam("csrf", "")
