@@ -5,9 +5,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.model.user.AsUser
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -28,7 +26,19 @@ open class BaseActivity : AbsActivity() {
         setAppLanguage()
     }
 
+
+    override fun attachBaseContext(base: Context) {
+        val updatedContext = updateBaseContextLocale(base)
+        super.attachBaseContext(updatedContext)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateBaseContextLocale(this)
+    }
+
     private fun setAppLanguage() {
+        // 获取语言设置
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val language = sharedPreferences.getString("app_language", "System") ?: "System"
 
@@ -45,22 +55,15 @@ open class BaseActivity : AbsActivity() {
         Locale.setDefault(locale)
         configuration.setLocale(locale)
         resources.updateConfiguration(configuration, resources.displayMetrics)
+
+        // 重新创建活动
+//        recreate()
     }
 
-    override fun attachBaseContext(base: Context) {
-        val updatedContext = updateBaseContextLocale(base)
-        super.attachBaseContext(updatedContext)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        updateBaseContextLocale(this)
-    }
-
+    // 更新上下文的语言配置
     private fun updateBaseContextLocale(context: Context): Context {
-        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val language = sharedPreferences.getString("app_language", "System") ?: "System"
-        val locale = when (language) {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val locale = when (val language = sharedPreferences.getString("app_language", "System") ?: "System") {
             "System" -> Locale.getDefault()
             else -> Locale(language)
         }
@@ -72,5 +75,4 @@ open class BaseActivity : AbsActivity() {
 
         return context.createConfigurationContext(configuration)
     }
-
 }
