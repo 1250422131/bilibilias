@@ -111,12 +111,6 @@ class AppAsJzvdStd : AsJzvdStd {
         return R.layout.app_as_jz_layout_std
     }
 
-    //预留->布局修改
-    override fun setScreenFullscreen() {
-        super.setScreenFullscreen()
-
-    }
-
     override fun onStatePlaying() {
         super.onStatePlaying()
         asJzvdstdPosterFL.setBackgroundColor(0x00000000)

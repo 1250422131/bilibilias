@@ -11,6 +11,7 @@ import com.google.android.material.textview.MaterialTextView;
 
 /**
  * <h2>选框文本视图</h2>
+ *
  * @author 紫叶工作室
  */
 public class MarqueeTextView extends MaterialTextView {

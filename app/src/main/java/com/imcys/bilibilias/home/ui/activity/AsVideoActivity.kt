@@ -97,7 +97,7 @@ class AsVideoActivity : BaseActivity() {
         //加载控件
         initView()
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
 //    override fun attachBaseContext(newBase: Context?) {
@@ -673,9 +673,9 @@ class AsVideoActivity : BaseActivity() {
         val jzDataSource = JZDataSource(url, title)
 
         jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
+        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid"
         jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 
@@ -758,7 +758,7 @@ class AsVideoActivity : BaseActivity() {
         val decompressBytes =
             decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
         bufferedSink = sink.buffer()
-        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        decompressBytes.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
     }

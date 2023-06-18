@@ -397,7 +397,7 @@ class DownloadQueue :
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = BaseApplication.dataKv.decodeString("cookies","")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
@@ -453,7 +453,7 @@ class DownloadQueue :
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies","")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
@@ -652,7 +652,7 @@ class DownloadQueue :
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString("cookies","")
+        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
         HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
@@ -780,7 +780,7 @@ class DownloadQueue :
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString("cookies","")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
@@ -813,11 +813,11 @@ class DownloadQueue :
                                 AppFilePathUtils.copyFile(
                                     videoPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
-                                );
+                                )
                                 AppFilePathUtils.copyFile(
                                     audioPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"
-                                );
+                                )
 
                                 val impFileDeleteState =
                                     PreferenceManager.getDefaultSharedPreferences(App.context)
@@ -919,7 +919,7 @@ class DownloadQueue :
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie = BaseApplication.dataKv.decodeString("cookies","")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
@@ -1053,7 +1053,7 @@ class DownloadQueue :
 
 
     //解压deflate数据的函数
-    fun decompress(data: ByteArray): ByteArray? {
+    fun decompress(data: ByteArray): ByteArray {
         var output: ByteArray
         val decompresser = Inflater(true) //这个true是关键
         decompresser.reset()
@@ -1120,7 +1120,7 @@ class DownloadQueue :
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
         )
         task.addHeader("referer", "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString("cookies","")
+        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
         task.addHeader("cookie", cookie!!)
 
 

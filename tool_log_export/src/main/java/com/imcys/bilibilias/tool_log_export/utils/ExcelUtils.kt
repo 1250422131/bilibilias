@@ -21,11 +21,15 @@ object ExcelUtils {
     }
 
 
-    fun WritableSheet.addCell(column: Int, row: Int, content: String, st: CellFormat): WritableSheet {
+    fun WritableSheet.addCell(
+        column: Int,
+        row: Int,
+        content: String,
+        st: CellFormat
+    ): WritableSheet {
         this.addCell(Label(column, row, content, st))
         return this
     }
-
 
 
 }

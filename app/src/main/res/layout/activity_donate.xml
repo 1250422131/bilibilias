@@ -8,17 +8,17 @@
     </data>
 
     <LinearLayout
-        android:background="@color/white"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
         tools:context=".home.ui.activity.DonateActivity">
 
         <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-            app:title="@string/app_activity_donate_title"
             android:id="@+id/donate_top_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:title="@string/app_activity_donate_title"
             tools:ignore="MissingConstraints">
 
         </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
@@ -27,11 +27,12 @@
         <me.dkzwm.widget.srl.SmoothRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/donate_rv"
                 android:layout_width="match_parent"
-                android:padding="20dp"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:padding="20dp" />
         </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </LinearLayout>
 </layout>

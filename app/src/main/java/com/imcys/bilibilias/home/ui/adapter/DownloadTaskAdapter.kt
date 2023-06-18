@@ -15,7 +15,7 @@ import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.databinding.ItemDownloadTaskBinding
 import javax.inject.Inject
 
-class DownloadTaskAdapter @Inject constructor():
+class DownloadTaskAdapter @Inject constructor() :
     ListAdapter<DownloadQueue.Task, DownloadTaskAdapter.ViewHolder>(
         object : DiffUtil.ItemCallback<DownloadQueue.Task>() {
 

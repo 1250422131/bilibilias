@@ -13,7 +13,6 @@
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" /> <!-- 百度移动统计SDK -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
@@ -107,10 +106,11 @@
             android:name=".home.ui.activity.AsVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
             android:name=".home.ui.activity.HomeActivity"
+            android:exported="true"
             android:launchMode="singleTask"
             tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>

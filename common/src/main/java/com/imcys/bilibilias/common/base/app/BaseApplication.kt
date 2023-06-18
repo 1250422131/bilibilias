@@ -80,7 +80,8 @@ open class BaseApplication : Application() {
 
 
         //全局应用数据的MMKV
-        lateinit var dataKv:MMKV
+        lateinit var dataKv: MMKV
+
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
         //—————————————————————————————————————————————————

@@ -82,7 +82,7 @@ class LoginQRModel {
                     BaseApplication.handler.post {
                         //登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
-                            loginSuccessOp( loginStateBean, response)
+                            loginSuccessOp(loginStateBean, response)
                         } else {
                             //展示登录结果
                             val loginQRModel = binding?.loginQRModel!!

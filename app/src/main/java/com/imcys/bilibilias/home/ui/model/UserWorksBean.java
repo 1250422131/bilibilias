@@ -395,7 +395,7 @@ public class UserWorksBean implements Serializable {
                  * pic : http://i2.hdslb.com/bfs/archive/f1746f70771901b20b28310afeb794c56ca3e06c.jpg
                  * subtitle :
                  * description : 如果视频对你有用记得点赞+关注
-                 视频代码后面补充在评论区
+                 * 视频代码后面补充在评论区
                  * copyright : 1
                  * title : 【教程】PHP爬虫之正则表达式使用
                  * review : 0

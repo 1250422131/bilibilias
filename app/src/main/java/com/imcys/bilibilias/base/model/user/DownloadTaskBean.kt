@@ -5,7 +5,7 @@ import com.imcys.bilibilias.home.ui.model.*
 data class DownloadTaskDataBean(
     val cid: Int,
     val pageTitle: String,
-    val bvid:String,
+    val bvid: String,
     //分辨率
     val qn: String,
     //视频获取方式选择

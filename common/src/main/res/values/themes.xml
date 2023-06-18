@@ -19,7 +19,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style  name="BILIBILIAS_BLUE" parent="Theme.BILIBILIAS">
+    <style name="BILIBILIAS_BLUE" parent="Theme.BILIBILIAS">
         <item name="colorPrimary">#3B82F6</item>
         <item name="colorPrimaryVariant">#BFDBFE</item>
         <item name="colorSecondary">#BFDBFE</item>

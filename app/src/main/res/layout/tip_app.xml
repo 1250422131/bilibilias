@@ -12,13 +12,13 @@
 
         <TextView
             android:id="@+id/tip_app_title"
-            android:letterSpacing="0.1"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:padding="5dp"
-            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:letterSpacing="0.1"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

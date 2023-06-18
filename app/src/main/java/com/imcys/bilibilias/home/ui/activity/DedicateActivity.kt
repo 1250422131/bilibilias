@@ -13,6 +13,7 @@ import com.imcys.bilibilias.home.ui.model.DedicateBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class DedicateActivity : BaseActivity() {
     lateinit var binding: ActivityDedicateBinding

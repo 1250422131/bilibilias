@@ -1,4 +1,3 @@
-
 apply plugin: "com.android.library"
 apply plugin: "kotlin-kapt"
 apply plugin: "com.google.devtools.ksp"
