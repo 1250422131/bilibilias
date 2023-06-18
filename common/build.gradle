@@ -18,7 +18,7 @@ ksp {
 
 android {
     namespace 'com.imcys.bilibilias.common'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
