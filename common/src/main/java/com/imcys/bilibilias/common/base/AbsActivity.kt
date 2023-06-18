@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.base
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
+import java.util.Locale
 
 
 open class AbsActivity : AppCompatActivity() {
@@ -52,11 +54,11 @@ open class AbsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // 打印活动名称
         asLogD(this, javaClass.simpleName)
-        //启动APP统计
+        // 启动APP统计
         startAppCenter()
         // 添加当前活动
         addActivity(this)
-        //判断主题
+        // 判断主题
         setTheme()
 
     }
@@ -68,7 +70,7 @@ open class AbsActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //取消注册（防止泄露）
+        // 取消注册（防止泄露）
         unregisterReceiver(mThemeChangedBroadcast)
         // 移除当前活动
         removeActivity(this)
@@ -81,7 +83,7 @@ open class AbsActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
-                //统计接入
+                // 统计接入
                 AppCenter.start(
                     application,
                     BaseApplication.appSecret,
@@ -97,9 +99,9 @@ open class AbsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        //注册广播
+        // 注册广播
         registerReceiver(
-            //这块是主题广播
+            // 这块是主题广播
             mThemeChangedBroadcast,
             IntentFilter("com.imcys.bilibilias.app.THEME_CHANGED")
         )
@@ -134,12 +136,12 @@ open class AbsActivity : AppCompatActivity() {
 
 
     open fun updateTheme() {
-        //重启activity（）
+        // 重启activity（）
         recreate()
     }
 
 
-    //检查主题
+    // 检查主题
     private fun setTheme() {
         val theme = PreferenceManager.getDefaultSharedPreferences(this).run {
             getString("app_theme", "System")
@@ -168,5 +170,46 @@ open class AbsActivity : AppCompatActivity() {
         }
     }
 
+    private fun setLanguage() {
+        val language = PreferenceManager.getDefaultSharedPreferences(this).run {
+            getString("app_language", "System")
+        }
+
+        val config = resources.configuration
+        val locale = when (language) {
+            "System" -> {
+                // Let the system handle the language
+                Locale.setDefault(Locale(""))
+                config.setLocale(Locale(""))
+                config
+            }
+            "zh_CN" -> {
+                Locale.setDefault(Locale("zh", "CN"))
+                config.setLocale(Locale("zh", "CN"))
+                config
+            }
+            "en_US" -> {
+                Locale.setDefault(Locale("en", "US"))
+                config.setLocale(Locale("en", "US"))
+                config
+            }
+            "zh_TW" -> {
+                Locale.setDefault(Locale("zh", "TW"))
+                config.setLocale(Locale("zh", "TW"))
+                config
+            }
+            else -> config
+        }
+
+        // Update the configuration
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        // Save the language preference
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences.edit().putString("app_language", language).apply()
+
+        // Restart the activity
+        recreate()
+    }
 
 }
