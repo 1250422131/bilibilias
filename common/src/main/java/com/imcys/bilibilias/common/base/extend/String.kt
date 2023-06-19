@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base.extend
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT

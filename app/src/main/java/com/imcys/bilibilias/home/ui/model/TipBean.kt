@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.model
 
-import android.app.Activity
 import android.graphics.drawable.Drawable
 
 data class TipBean<T>(

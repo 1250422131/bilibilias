@@ -1,24 +1,28 @@
 package com.imcys.bilibilias.common.base.utils.http
 
-import android.util.Log
-import com.baidu.mobstat.cl
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.*
-import io.ktor.serialization.gson.*
-import io.ktor.util.reflect.TypeInfo
-import io.ktor.util.reflect.typeInfo
-import kotlin.reflect.KClass
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.delete
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
+import io.ktor.serialization.gson.gson
+import kotlin.collections.forEach
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 
 
 object KtHttpUtils {
