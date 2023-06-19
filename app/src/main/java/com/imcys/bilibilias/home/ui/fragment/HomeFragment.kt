@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.home.ui.fragment
 
+import androidx.core.os.ConfigurationCompat
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -68,6 +70,7 @@ import java.math.BigInteger
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.inject.Inject
@@ -83,7 +86,7 @@ class HomeFragment : BaseFragment() {
     lateinit var viewModel: FragmentHomeViewModel
 
 
-    lateinit var fragmentHomeBinding: FragmentHomeBinding
+    private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
     //懒加载
@@ -209,6 +212,8 @@ class HomeFragment : BaseFragment() {
             OldHomeAdBean::class.java
         )
     }
+
+
 
 
     /**
@@ -580,6 +585,6 @@ class HomeFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context, "HomeFragment")
+        StatService.onPageEnd(requireContext(), "HomeFragment")
     }
 }

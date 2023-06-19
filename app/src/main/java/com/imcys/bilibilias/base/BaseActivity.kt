@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 
 @AndroidEntryPoint
 open class BaseActivity : AbsActivity() {
@@ -16,63 +15,9 @@ open class BaseActivity : AbsActivity() {
         PreferenceManager.getDefaultSharedPreferences(applicationContext)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 沉浸式状态栏
         statusBarOnly(this)
-
-        // 设置显示的语言
-        setAppLanguage()
-    }
-
-
-    override fun attachBaseContext(base: Context) {
-        val updatedContext = updateBaseContextLocale(base)
-        super.attachBaseContext(updatedContext)
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        updateBaseContextLocale(this)
-    }
-
-    private fun setAppLanguage() {
-        // 获取语言设置
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val language = sharedPreferences.getString("app_language", "System") ?: "System"
-
-        val configuration = Configuration(resources.configuration)
-        val locale = when (language) {
-            "System" -> {
-                Locale.setDefault(Locale.getDefault())
-                configuration.locale = Locale.getDefault()
-                return
-            }
-            else -> Locale(language)
-        }
-
-        Locale.setDefault(locale)
-        configuration.setLocale(locale)
-        resources.updateConfiguration(configuration, resources.displayMetrics)
-
-        // 重新创建活动
-//        recreate()
-    }
-
-    // 更新上下文的语言配置
-    private fun updateBaseContextLocale(context: Context): Context {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val locale = when (val language = sharedPreferences.getString("app_language", "System") ?: "System") {
-            "System" -> Locale.getDefault()
-            else -> Locale(language)
-        }
-
-        Locale.setDefault(locale)
-
-        val configuration = Configuration(context.resources.configuration)
-        configuration.setLocale(locale)
-
-        return context.createConfigurationContext(configuration)
     }
 }
