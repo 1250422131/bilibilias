@@ -71,6 +71,15 @@ class FragmentHomeViewModel:ViewModel() {
 
 
     fun logoutLogin(view: View) {
+
+        val cookie = BaseApplication.dataKv.decodeString("cookies")
+
+        // cookie存在空隐患
+        if (cookie.isNullOrEmpty()){
+            asToast(view.context,"你还没登录噢")
+            return
+        }
+
         DialogUtils.dialog(
             view.context,
             "退出登录",
@@ -80,11 +89,9 @@ class FragmentHomeViewModel:ViewModel() {
             true,
             positiveButtonClickListener =
             {
-
-                val cookie = BaseApplication.dataKv.decodeString("cookies")
                 val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
-                HttpUtils.addHeader("cookie", cookie!!)
+                HttpUtils.addHeader("cookie", cookie)
                     .addParam("biliCSRF", biliJct!!)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
