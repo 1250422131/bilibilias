@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.base
 
-import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity

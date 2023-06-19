@@ -9,7 +9,6 @@ import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.view.AsJzvdStd

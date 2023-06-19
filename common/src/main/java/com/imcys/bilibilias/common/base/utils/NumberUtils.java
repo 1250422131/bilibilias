@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.common.base.utils;
 
-import android.graphics.Color;
-
 /**
  * @author:imcys
  * @create: 2022-11-14 22:54

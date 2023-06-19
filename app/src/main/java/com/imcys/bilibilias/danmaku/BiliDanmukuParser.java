@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Locale;
 
 import master.flame.danmaku.danmaku.model.AlphaValue;
-
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.Duration;
 import master.flame.danmaku.danmaku.model.IDisplayer;
