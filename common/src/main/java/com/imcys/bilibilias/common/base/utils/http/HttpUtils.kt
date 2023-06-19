@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base.utils.http
 
 import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
@@ -10,9 +9,6 @@ import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.xutils.common.task.PriorityExecutor
-import org.xutils.http.RequestParams
-import org.xutils.x
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL

@@ -1,10 +1,10 @@
 package com.imcys.bilibilias.common.base
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -18,11 +18,8 @@ import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
-import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import java.util.Locale
-import android.content.res.Configuration
-import java.util.*
 import kotlin.system.exitProcess
 
 
