@@ -1,11 +1,8 @@
 package com.imcys.bilibilias.home.ui.model.view.factory
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.databinding.DialogAsLoginBottomsheetBinding
 import com.imcys.bilibilias.home.ui.model.view.AsLoginBsViewModel
 

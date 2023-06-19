@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.adapters.ViewBindingAdapter.setPadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,7 +56,6 @@ import okio.buffer
 import okio.sink
 import java.io.*
 import java.util.zip.Inflater
-import kotlin.math.abs
 
 
 class AsVideoActivity : BaseActivity() {

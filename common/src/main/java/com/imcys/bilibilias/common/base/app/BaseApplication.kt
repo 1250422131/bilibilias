@@ -14,7 +14,7 @@ import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
 
-open class BaseApplication() : Application() {
+open class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
