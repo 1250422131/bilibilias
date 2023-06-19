@@ -21,6 +21,9 @@ import com.microsoft.appcenter.crashes.Crashes
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import java.util.Locale
+import android.content.res.Configuration
+import java.util.*
+import kotlin.system.exitProcess
 
 
 open class AbsActivity : AppCompatActivity() {
@@ -175,41 +178,78 @@ open class AbsActivity : AppCompatActivity() {
             getString("app_language", "System")
         }
 
-        val config = resources.configuration
+        val config = Configuration(resources.configuration)
         val locale = when (language) {
             "System" -> {
-                // Let the system handle the language
+                // 让系统处理语言
                 Locale.setDefault(Locale(""))
                 config.setLocale(Locale(""))
                 config
             }
+
             "zh_CN" -> {
                 Locale.setDefault(Locale("zh", "CN"))
                 config.setLocale(Locale("zh", "CN"))
                 config
             }
+
             "en_US" -> {
                 Locale.setDefault(Locale("en", "US"))
                 config.setLocale(Locale("en", "US"))
                 config
             }
+
             "zh_TW" -> {
                 Locale.setDefault(Locale("zh", "TW"))
                 config.setLocale(Locale("zh", "TW"))
                 config
             }
+
             else -> config
         }
+
+        // 更新配置
+        applicationContext.resources.updateConfiguration(
+            config,
+            applicationContext.resources.displayMetrics
+        )
+
+        // 保存语言首选项
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences.edit().putString("app_language", language).apply()
+
+        // 重新启动活动
+        restartApplication()
+    }
+
+    private fun restartApplication() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val language = sharedPreferences.getString("app_language", "System") ?: "System"
+
+        val config = Configuration(resources.configuration)
+        val locale = when (language) {
+            "System" -> Locale.getDefault()
+            "zh_CN" -> Locale("zh", "CN")
+            "en_US" -> Locale("en", "US")
+            "zh_TW" -> Locale("zh", "TW")
+            else -> Locale.getDefault()
+        }
+
+        Locale.setDefault(locale)
+        config.setLocale(locale)
 
         // Update the configuration
         resources.updateConfiguration(config, resources.displayMetrics)
 
         // Save the language preference
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         sharedPreferences.edit().putString("app_language", language).apply()
 
-        // Restart the activity
-        recreate()
+        val packageManager = packageManager
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+        val componentName = intent!!.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        startActivity(mainIntent)
+        exitProcess(0)
     }
 
 }
