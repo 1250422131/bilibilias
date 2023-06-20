@@ -475,8 +475,10 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         lifecycleScope.launch {
+
             val videoPlayListData = KtHttpUtils.addHeader("cookie", asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
+
             binding.apply {
 
                 if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
