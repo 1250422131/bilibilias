@@ -25,8 +25,6 @@ class MergeVideoActivity : BaseActivity() {
         binding.margeVideoViewModel = MargeVideoViewModel()
 
 
-
-
     }
 
     companion object {

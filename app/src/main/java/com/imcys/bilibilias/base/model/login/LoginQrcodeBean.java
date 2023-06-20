@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @create: 2022-10-26 17:25
  * @Description: 登陆二维码数据
  */
-public class LoginQrcodeBean  implements Serializable {
+public class LoginQrcodeBean implements Serializable {
 
     /**
      * code : 0
@@ -53,7 +53,7 @@ public class LoginQrcodeBean  implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * url : https://passport.bilibili.com/h5-app/passport/login/scan?navhide=1&qrcode_key=ede6c0dde9d2a25eee16ff596b4385e3&from=
          * qrcode_key : ede6c0dde9d2a25eee16ff596b4385e3

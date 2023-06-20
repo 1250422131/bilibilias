@@ -9,9 +9,11 @@ import com.imcys.bilibilias.common.data.dao.RoamDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.entity.RoamInfo
 
-@Database(entities = [
-    DownloadFinishTaskInfo::class, RoamInfo::class
-], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        DownloadFinishTaskInfo::class, RoamInfo::class
+    ], version = 1, exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun downloadFinishTaskDao(): DownloadFinishTaskDao

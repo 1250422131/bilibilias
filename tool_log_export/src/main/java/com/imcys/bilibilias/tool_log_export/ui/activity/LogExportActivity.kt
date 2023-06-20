@@ -76,6 +76,7 @@ class LogExportActivity : LogExportBaseActivity() {
             ExportItemEnum.BangumiFollowLog -> {
                 BangumiFollowLogActivity.actionStart(this)
             }
+
             ExportItemEnum.VideoLog -> {
 
             }

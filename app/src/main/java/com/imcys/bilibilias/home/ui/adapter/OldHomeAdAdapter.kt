@@ -47,12 +47,14 @@ class OldHomeAdAdapter : ListAdapter<OldHomeAdBean.Data, ViewHolder>(
                     R.layout.item_home_ad, parent, false
                 )
             }
+
             2 -> {
                 DataBindingUtil.inflate<ItemHomeWebAdBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_home_web_ad, parent, false
                 )
             }
+
             else -> {
                 DataBindingUtil.inflate<ItemHomeAdBinding>(
                     LayoutInflater.from(parent.context),

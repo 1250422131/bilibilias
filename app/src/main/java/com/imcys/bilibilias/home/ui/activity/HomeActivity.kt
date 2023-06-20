@@ -197,7 +197,7 @@ class HomeActivity : BaseActivity() {
             exit()
             return false
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun exit() {

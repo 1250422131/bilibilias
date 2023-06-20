@@ -55,7 +55,7 @@ public class UserCardBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * card : {"mid":"488009671","name":"千雅折一湖Official","approve":false,"sex":"女","rank":"10000","face":"https://i1.hdslb.com/bfs/face/80718d76952753c6770b8497fd2b9b95fe9061cd.jpg","face_nft":0,"face_nft_type":0,"DisplayRank":"0","regtime":0,"spacesta":0,"birthday":"","place":"","description":"","article":0,"attentions":[],"fans":1286881,"friend":13,"attention":13,"sign":"在日本出生的中国籍宝宝????全家都是中国人\n????：baby133102","level_info":{"current_level":6,"current_min":0,"current_exp":0,"next_exp":0},"pendant":{"pid":0,"name":"","image":"","expire":0,"image_enhance":"","image_enhance_frame":""},"nameplate":{"nid":1,"name":"黄金殿堂","image":"https://i0.hdslb.com/bfs/face/82896ff40fcb4e7c7259cb98056975830cb55695.png","image_small":"https://i1.hdslb.com/bfs/face/627e342851dfda6fe7380c2fa0cbd7fae2e61533.png","level":"稀有勋章","condition":"单个自制视频总播放数>=100万"},"Official":{"role":2,"title":"千雅折一湖官方账号，vlog UP主","desc":"","type":0},"official_verify":{"type":0,"desc":"千雅折一湖官方账号，vlog UP主"},"vip":{"type":2,"status":1,"due_date":1698681600000,"vip_pay_type":0,"theme_type":0,"label":{"path":"","text":"年度大会员","label_theme":"annual_vip","text_color":"#FFFFFF","bg_style":1,"bg_color":"#FB7299","border_color":"","use_img_label":true,"img_label_uri_hans":"","img_label_uri_hant":"","img_label_uri_hans_static":"https://i0.hdslb.com/bfs/vip/8d4f8bfc713826a5412a0a27eaaac4d6b9ede1d9.png","img_label_uri_hant_static":"https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/VEW8fCC0hg.png"},"avatar_subscript":1,"nickname_color":"#FB7299","role":3,"avatar_subscript_url":"","tv_vip_status":0,"tv_vip_pay_type":0,"vipType":2,"vipStatus":1},"is_senior_member":0}
          * following : false
@@ -120,7 +120,7 @@ public class UserCardBean implements Serializable {
             this.like_num = like_num;
         }
 
-        public static class CardBean implements Serializable{
+        public static class CardBean implements Serializable {
             /**
              * mid : 488009671
              * name : 千雅折一湖Official
@@ -142,7 +142,7 @@ public class UserCardBean implements Serializable {
              * friend : 13
              * attention : 13
              * sign : 在日本出生的中国籍宝宝????全家都是中国人
-             ????：baby133102
+             * ????：baby133102
              * level_info : {"current_level":6,"current_min":0,"current_exp":0,"next_exp":0}
              * pendant : {"pid":0,"name":"","image":"","expire":0,"image_enhance":"","image_enhance_frame":""}
              * nameplate : {"nid":1,"name":"黄金殿堂","image":"https://i0.hdslb.com/bfs/face/82896ff40fcb4e7c7259cb98056975830cb55695.png","image_small":"https://i1.hdslb.com/bfs/face/627e342851dfda6fe7380c2fa0cbd7fae2e61533.png","level":"稀有勋章","condition":"单个自制视频总播放数>=100万"}
@@ -508,7 +508,7 @@ public class UserCardBean implements Serializable {
                 }
             }
 
-            public static class NameplateBean implements Serializable{
+            public static class NameplateBean implements Serializable {
                 /**
                  * nid : 1
                  * name : 黄金殿堂
@@ -574,7 +574,7 @@ public class UserCardBean implements Serializable {
                 }
             }
 
-            public static class OfficialBean implements Serializable{
+            public static class OfficialBean implements Serializable {
                 /**
                  * role : 2
                  * title : 千雅折一湖官方账号，vlog UP主
@@ -620,7 +620,7 @@ public class UserCardBean implements Serializable {
                 }
             }
 
-            public static class OfficialVerifyBean implements Serializable{
+            public static class OfficialVerifyBean implements Serializable {
                 /**
                  * type : 0
                  * desc : 千雅折一湖官方账号，vlog UP主
@@ -646,7 +646,7 @@ public class UserCardBean implements Serializable {
                 }
             }
 
-            public static class VipBean implements Serializable{
+            public static class VipBean implements Serializable {
                 /**
                  * type : 2
                  * status : 1
@@ -791,7 +791,7 @@ public class UserCardBean implements Serializable {
                     this.vipStatus = vipStatus;
                 }
 
-                public static class LabelBean implements Serializable{
+                public static class LabelBean implements Serializable {
                     /**
                      * path :
                      * text : 年度大会员
