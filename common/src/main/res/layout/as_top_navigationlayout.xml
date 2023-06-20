@@ -22,7 +22,6 @@
             tools:ignore="UnusedAttribute,UseAppTint" />
 
         <TextView
-            android:textColor="@color/black"
             android:id="@+id/as_top_navigation_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,6 +29,7 @@
             android:layout_marginStart="10dp"
             android:layout_toRightOf="@id/as_top_navigation_layout_back"
             android:letterSpacing="0.1"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:ignore="RtlHardcoded" />

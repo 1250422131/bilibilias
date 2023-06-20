@@ -16,6 +16,6 @@ class AsLoginBsViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AsLoginBsViewModel(asLoginBottomsheetBinding,bottomSheetDialog,finish) as T
+        return AsLoginBsViewModel(asLoginBottomsheetBinding, bottomSheetDialog, finish) as T
     }
 }

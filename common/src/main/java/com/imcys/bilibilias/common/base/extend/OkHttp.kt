@@ -21,7 +21,7 @@ suspend fun Call.awaitResponse(): Response {
             }
 
             override fun onResponse(call: Call, response: Response) {
-               it.resume(response){}
+                it.resume(response) {}
 
             }
 

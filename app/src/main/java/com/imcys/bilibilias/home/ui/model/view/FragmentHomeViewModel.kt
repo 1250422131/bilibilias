@@ -26,13 +26,13 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class FragmentHomeViewModel :ViewModel() {
+class FragmentHomeViewModel : ViewModel() {
 
 
     fun goToPrivacyPolicy(view: View) {
         val uri =
             Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
@@ -45,7 +45,7 @@ class FragmentHomeViewModel :ViewModel() {
 
     fun goToNewVersionDoc(view: View) {
         val uri = Uri.parse("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
@@ -61,13 +61,13 @@ class FragmentHomeViewModel :ViewModel() {
 
     fun toDonateList(view: View) {
         val uri = Uri.parse("https://api.misakamoe.com/as-donate.html")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
     fun goToCommunity(view: View) {
         val uri = Uri.parse("https://support.qq.com/product/337496")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
@@ -83,7 +83,7 @@ class FragmentHomeViewModel :ViewModel() {
             positiveButtonClickListener =
             {
 
-                val cookie = BaseApplication.dataKv.decodeString("cookies","")
+                val cookie = BaseApplication.dataKv.decodeString("cookies", "")
                 val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
                 HttpUtils.addHeader("cookie", cookie!!)
@@ -92,6 +92,7 @@ class FragmentHomeViewModel :ViewModel() {
                         override fun onFailure(call: Call, e: IOException) {
 
                         }
+
                         override fun onResponse(call: Call, response: Response) {
 
                             BaseApplication.dataKv.apply {
@@ -101,7 +102,7 @@ class FragmentHomeViewModel :ViewModel() {
                             }
 
 
-                            asToast(view.context,"清除完成，请关闭后台重新进入")
+                            asToast(view.context, "清除完成，请关闭后台重新进入")
                         }
 
                     })

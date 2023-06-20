@@ -82,7 +82,6 @@ public class VideoPageListData implements Serializable {
         private DimensionBean dimension;
 
 
-
         @Override
         public String toString() {
             return "DataBean{" +

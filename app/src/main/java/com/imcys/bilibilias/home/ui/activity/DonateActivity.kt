@@ -17,6 +17,7 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class DonateActivity : BaseActivity() {
     private val donateMutableList = mutableListOf<DonateViewBean>()

@@ -18,7 +18,6 @@
         tools:context=".home.ui.activity.tool.MergeVideoActivity">
 
 
-
         <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
             android:id="@+id/merge_video_top_ly"
             android:layout_width="match_parent"
@@ -63,15 +62,14 @@
 
 
             <com.google.android.material.textfield.TextInputEditText
-                android:textSize="14sp"
-                android:text="ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/log_export_tool_item_bg"
                 android:hint="合并命令"
-                android:padding="20dp" />
-
+                android:padding="20dp"
+                android:text="ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
+                android:textSize="14sp" />
 
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -163,7 +161,6 @@
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

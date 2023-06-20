@@ -813,11 +813,11 @@ class DownloadQueue :
                                 AppFilePathUtils.copyFile(
                                     videoPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
-                                );
+                                )
                                 AppFilePathUtils.copyFile(
                                     audioPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"
-                                );
+                                )
 
                                 val impFileDeleteState =
                                     PreferenceManager.getDefaultSharedPreferences(App.context)
@@ -1053,7 +1053,7 @@ class DownloadQueue :
 
 
     //解压deflate数据的函数
-    fun decompress(data: ByteArray): ByteArray? {
+    fun decompress(data: ByteArray): ByteArray {
         var output: ByteArray
         val decompresser = Inflater(true) //这个true是关键
         decompresser.reset()

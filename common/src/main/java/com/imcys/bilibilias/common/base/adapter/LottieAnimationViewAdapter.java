@@ -6,7 +6,6 @@ import androidx.databinding.BindingMethods;
 import com.airbnb.lottie.LottieAnimationView;
 
 /**
- *
  * @author:imcys
  * @create: 2022-12-07 10:19
  * @Description: LottieAnimation的数据适配器

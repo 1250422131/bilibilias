@@ -148,12 +148,12 @@
                 app:cardElevation="0dp">
 
                 <Button
-                    android:onClick="@{(view) -> asLoginBsViewModel.loginFinish(view)}"
                     android:id="@+id/dialog_dl_video_button"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view) -> asLoginBsViewModel.loginFinish(view)}"
                     android:text="登录"
                     android:textColor="@color/white"
                     android:textSize="15sp"
