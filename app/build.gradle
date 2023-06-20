@@ -20,7 +20,7 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdk 21
         //noinspecton ExpiredTargetSdkVersion
-        targetSdk 29
+        targetSdk 33
         versionCode 203
         versionName "2.0.31"
         //multiDexEnabled true
@@ -86,13 +86,13 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 
 
@@ -115,12 +115,17 @@ android {
         }
     }
     namespace 'com.imcys.bilibilias'
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    buildToolsVersion '33.0.2'
 
 
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
 }
 
 dependencies {

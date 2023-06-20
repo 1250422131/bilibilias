@@ -259,21 +259,20 @@
         </ImageView>
 
 
-
-            <TextView
-                android:padding="5dp"
-                android:id="@+id/as_jzvdstd_pic_dl_bt"
-                android:layout_gravity="right"
-                android:layout_marginTop="30dp"
-                android:layout_marginRight="25dp"
-                android:background="@drawable/jz_layout_pic_dl_bg"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_jz_layout_std_download_cover"
-                android:textColor="@color/white"
-                android:focusable="true" />
+        <TextView
+            android:id="@+id/as_jzvdstd_pic_dl_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/jz_layout_pic_dl_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="5dp"
+            android:text="@string/app_jz_layout_std_download_cover"
+            android:textColor="@color/white" />
 
     </FrameLayout>
 

@@ -19,7 +19,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件（后缀指定转码格式）
      * @return 转码后的文件
      */
-    fun transformAudio(srcFile: String?, targetFile: String?): Array<String?>? {
+    fun transformAudio(srcFile: String?, targetFile: String?): Array<String?> {
         var transformAudioCmd = "-i %s %s"
         transformAudioCmd = String.format(transformAudioCmd, srcFile, targetFile)
         return transformAudioCmd.split(" ") //以空格分割为字符串数组
@@ -57,7 +57,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 合并后的文件
      */
-    fun concatAudio(srcFile: String?, appendFile: String?, targetFile: String?): Array<String?>? {
+    fun concatAudio(srcFile: String?, appendFile: String?, targetFile: String?): Array<String?> {
         var concatAudioCmd = "-i concat:%s|%s -acodec copy %s"
         concatAudioCmd = String.format(concatAudioCmd, srcFile, appendFile, targetFile)
         return concatAudioCmd.split(" ") //以空格分割为字符串数组
@@ -72,7 +72,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 混合后的文件
      */
-    fun mixAudio(srcFile: String?, mixFile: String?, targetFile: String?): Array<String?>? {
+    fun mixAudio(srcFile: String?, mixFile: String?, targetFile: String?): Array<String?> {
         var mixAudioCmd = "-i %s -i %s -filter_complex amix=inputs=2:duration=first -strict -2 %s"
         mixAudioCmd = String.format(mixAudioCmd, srcFile, mixFile, targetFile)
         return mixAudioCmd.split(" ") //以空格分割为字符串数组
@@ -130,7 +130,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 需要执行命令行
      */
-    fun extractAudio(srcFile: String?, targetFile: String?): Array<String?>? {
+    fun extractAudio(srcFile: String?, targetFile: String?): Array<String?> {
         //-vn:video not
         var mixAudioCmd = "-i %s -acodec copy -vn %s"
         mixAudioCmd = String.format(mixAudioCmd, srcFile, targetFile)
@@ -145,7 +145,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 需要执行命令行
      */
-    fun extractVideo(srcFile: String?, targetFile: String?): Array<String?>? {
+    fun extractVideo(srcFile: String?, targetFile: String?): Array<String?> {
         //-an audio not
         var mixAudioCmd = "-i %s -vcodec copy -an %s"
         mixAudioCmd = String.format(mixAudioCmd, srcFile, targetFile)
@@ -185,7 +185,7 @@ object FFmpegUtil {
         startTime: String?,
         endTime: String?,
         targetFile: String?,
-    ): Array<String?>? {
+    ): Array<String?> {
         var cutVideoCmd =
             "-ss %s -t %s -i %s -c:v libx264 -c:a aac -strict experimental -b:a 98k %s"
         cutVideoCmd = String.format(cutVideoCmd, startTime, endTime, srcFile, targetFile)
@@ -201,7 +201,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 需要执行命令行
      */
-    fun screenShot(srcFile: String?, size: String?, targetFile: String?): Array<String?>? {
+    fun screenShot(srcFile: String?, size: String?, targetFile: String?): Array<String?> {
         var screenShotCmd = "-i %s -f image2 -t 0.001 -s %s %s"
         screenShotCmd = String.format(screenShotCmd, srcFile, size, targetFile)
         return screenShotCmd.split(" ") //以空格分割为字符串数组
@@ -216,7 +216,7 @@ object FFmpegUtil {
      * @param targetFile 目标文件
      * @return 需要执行命令行
      */
-    fun addWaterMark(srcFile: String?, waterMark: String?, targetFile: String?): Array<String?>? {
+    fun addWaterMark(srcFile: String?, waterMark: String?, targetFile: String?): Array<String?> {
         var waterMarkCmd = "-i %s -i %s -filter_complex overlay=0:0 %s"
         waterMarkCmd = String.format(waterMarkCmd, srcFile, waterMark, targetFile)
         return waterMarkCmd.split(" ") //以空格分割为字符串数组
@@ -255,7 +255,7 @@ object FFmpegUtil {
      * @return 需要执行命令行
      */
     @SuppressLint("DefaultLocale")
-    fun screenRecord(size: String?, recordTime: Int, targetFile: String?): Array<String?>? {
+    fun screenRecord(size: String?, recordTime: Int, targetFile: String?): Array<String?> {
         //-vd x11:0,0 指录制所使用的偏移为 x=0 和 y=0
         //String screenRecordCmd = "-vcodec mpeg4 -b 1000 -r 10 -g 300 -vd x11:0,0 -s %s %s";
         var screenRecordCmd = "-vcodec mpeg4 -b 1000 -r 10 -g 300 -vd x11:0,0 -s %s -t %d %s"
@@ -273,7 +273,7 @@ object FFmpegUtil {
      * @return 需要执行命令行
      */
     @SuppressLint("DefaultLocale")
-    fun pictureToVideo(srcFile: String?, targetFile: String?): Array<String?>? {
+    fun pictureToVideo(srcFile: String?, targetFile: String?): Array<String?> {
         //-f image2：代表使用image2格式，需要放在输入文件前面
         var combineVideo = "-f image2 -r 1 -i %simg#d.jpg -vcodec mpeg4 %s"
         combineVideo = String.format(combineVideo, srcFile, targetFile)
@@ -298,7 +298,7 @@ object FFmpegUtil {
         targetFile: String?,
         sampleRate: Int,
         channel: Int,
-    ): Array<String?>? {
+    ): Array<String?> {
         var combineVideo = "-f s16le -ar %d -ac %d -i %s %s"
         combineVideo = String.format(combineVideo, sampleRate, channel, srcFile, targetFile)
         return combineVideo.split(" ").toTypedArray()
@@ -318,7 +318,7 @@ object FFmpegUtil {
         input2: String?,
         targetFile: String?,
         videoLayout: Int,
-    ): Array<String?>? {
+    ): Array<String?> {
 //        String multiVideo = "-i %s -i %s -i %s -i %s -filter_complex " +
 //                "\"[0:v]pad=iw*2:ih*2[a];[a][1:v]overlay=w[b];[b][2:v]overlay=0:h[c];[c][3:v]overlay=w:h\" %s";
         var multiVideo = "-i %s -i %s -filter_complex hstack %s" //hstack:水平拼接，默认
@@ -336,7 +336,7 @@ object FFmpegUtil {
      * @param targetFile 反序文件
      * @return 视频反序的命令行
      */
-    fun reverseVideo(inputFile: String?, targetFile: String?): Array<String?>? {
+    fun reverseVideo(inputFile: String?, targetFile: String?): Array<String?> {
         //FIXME 音频也反序
 //        String reverseVideo = "-i %s -filter_complex [0:v]reverse[v];[0:a]areverse[a] -map [v] -map [a] %s";
         var reverseVideo = "-i %s -filter_complex [0:v]reverse[v] -map [v] %s" //单纯视频反序
@@ -351,7 +351,7 @@ object FFmpegUtil {
      * @param targetFile 输出文件
      * @return 视频降噪的命令行
      */
-    fun denoiseVideo(inputFile: String?, targetFile: String?): Array<String?>? {
+    fun denoiseVideo(inputFile: String?, targetFile: String?): Array<String?> {
         var reverseVideo = "-i %s -nr 500 %s"
         reverseVideo = String.format(reverseVideo, inputFile, targetFile)
         return reverseVideo.split(" ").toTypedArray()
@@ -378,13 +378,15 @@ object FFmpegUtil {
         //-t：持续时间，单位为秒
         //-r：帧率，每秒抽多少帧
         var toImage = "-i %s -ss %s -t %s -r %s %s"
-        toImage = java.lang.String.format(Locale.CHINESE,
+        toImage = java.lang.String.format(
+            Locale.CHINESE,
             toImage,
             inputFile,
             startTime,
             duration,
             frameRate,
-            targetFile)
+            targetFile
+        )
         toImage = "$toImage%3d.jpg"
         return toImage.split(" ").toTypedArray()
     }

@@ -43,7 +43,7 @@ public class CollectionResultBean implements Serializable {
         this.message = message;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * prompt : false
          */

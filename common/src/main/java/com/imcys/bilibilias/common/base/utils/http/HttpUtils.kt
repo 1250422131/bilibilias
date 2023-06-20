@@ -340,8 +340,10 @@ open class HttpUtils {
                 conn.setRequestProperty("connection", "Keep-Alive")
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("referer", " https://www.bilibili.com/")
-                conn.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                conn.setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                )
                 conn.setRequestProperty("cookie", Cookie)
                 conn.setRequestProperty("charset", "utf-8")
                 conn.useCaches = false
@@ -364,7 +366,8 @@ open class HttpUtils {
 
                 // 定义BufferedReader输入流来读取URL的响应
                 `in` = BufferedReader(
-                    InputStreamReader(conn.inputStream))
+                    InputStreamReader(conn.inputStream)
+                )
                 var line: String?
                 while (`in`.readLine().also { line = it } != null) {
                     result += line
@@ -392,7 +395,6 @@ open class HttpUtils {
         }
 
     }
-
 
 
 }

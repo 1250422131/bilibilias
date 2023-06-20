@@ -20,9 +20,9 @@
         android:paddingBottom="10dp">
 
         <FrameLayout
-            android:layout_marginStart="10dp"
             android:layout_width="120dp"
-            android:layout_height="160dp">
+            android:layout_height="160dp"
+            android:layout_marginStart="10dp">
 
             <androidx.constraintlayout.utils.widget.ImageFilterView
                 android:layout_width="match_parent"

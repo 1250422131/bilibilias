@@ -16,7 +16,6 @@ public class PanBean implements Serializable {
     private String publicPath;
 
 
-
     @Override
     public String toString() {
         return "PanBean{" +
@@ -50,7 +49,7 @@ public class PanBean implements Serializable {
         this.publicPath = publicPath;
     }
 
-    public static class ResBean implements Serializable{
+    public static class ResBean implements Serializable {
         /**
          * code : 0
          * message : ok
@@ -60,8 +59,6 @@ public class PanBean implements Serializable {
         private int code;
         private String message;
         private DataBean data;
-
-
 
 
         public int getCode() {
@@ -88,7 +85,7 @@ public class PanBean implements Serializable {
             this.data = data;
         }
 
-        public static class DataBean implements Serializable{
+        public static class DataBean implements Serializable {
             /**
              * UserNickName : tallsister
              * ShareName : WeChat 8.0.30(2240).apk
@@ -210,7 +207,22 @@ public class PanBean implements Serializable {
             this.data = data;
         }
 
-        public static class DataBeanX implements Serializable{
+        public static class DataBeanX implements Serializable {
+            /**
+             * Next : -1
+             * Len : 1
+             * IsFirst : true
+             * Expired : false
+             * InfoList : [{"FileId":1835306,"FileName":"WeChat 8.0.30(2240).apk","Type":0,"Size":488103719,"ContentType":"0","S3KeyFlag":"1813124589-0","CreateAt":"2022-11-21T23:46:35+08:00","UpdateAt":"2022-11-22T17:00:40+08:00","Etag":"79fca5071213d611c1910491a2a66772","DownloadUrl":"","Status":2,"ParentFileId":1766237,"Category":0,"PunishFlag":0,"checked":false}]
+             */
+
+
+            private String Next;
+            private int Len;
+            private boolean IsFirst;
+            private boolean Expired;
+            private List<InfoListBean> InfoList;
+
             @Override
             public String toString() {
                 return "DataBeanX{" +
@@ -221,22 +233,6 @@ public class PanBean implements Serializable {
                         ", InfoList=" + InfoList +
                         '}';
             }
-
-            /**
-             * Next : -1
-             * Len : 1
-             * IsFirst : true
-             * Expired : false
-             * InfoList : [{"FileId":1835306,"FileName":"WeChat 8.0.30(2240).apk","Type":0,"Size":488103719,"ContentType":"0","S3KeyFlag":"1813124589-0","CreateAt":"2022-11-21T23:46:35+08:00","UpdateAt":"2022-11-22T17:00:40+08:00","Etag":"79fca5071213d611c1910491a2a66772","DownloadUrl":"","Status":2,"ParentFileId":1766237,"Category":0,"PunishFlag":0,"checked":false}]
-             */
-
-
-
-            private String Next;
-            private int Len;
-            private boolean IsFirst;
-            private boolean Expired;
-            private List<InfoListBean> InfoList;
 
             public String getNext() {
                 return Next;
@@ -278,7 +274,7 @@ public class PanBean implements Serializable {
                 this.InfoList = InfoList;
             }
 
-            public static class InfoListBean implements Serializable{
+            public static class InfoListBean implements Serializable {
                 /**
                  * FileId : 1835306
                  * FileName : WeChat 8.0.30(2240).apk

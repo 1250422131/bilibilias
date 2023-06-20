@@ -3,5 +3,5 @@
 
 
     <item android:drawable="@drawable/ic_home_download_four_true" android:state_selected="true" tools:ignore="StateListReachable" />
-    <item android:drawable="@drawable/ic_home_download_four"  android:state_selected="false" />
+    <item android:drawable="@drawable/ic_home_download_four" android:state_selected="false" />
 </selector>
