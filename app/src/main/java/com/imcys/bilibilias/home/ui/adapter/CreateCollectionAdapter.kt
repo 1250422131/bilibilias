@@ -21,8 +21,10 @@ class CreateCollectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemCollectionBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context),
-                R.layout.item_collection, parent, false)
+            DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.item_collection, parent, false
+            )
         return ViewHolder(binding.root)
     }
 

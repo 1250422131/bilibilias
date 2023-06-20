@@ -12,7 +12,7 @@ import java.io.Serializable
 
 data class AsUserLoginModel(
     @SerializedName("code")
-     val code: Int, // 0
+    val code: Int, // 0
     @SerializedName("msg")
     val msg: String, // 登录成功
 ) : Serializable

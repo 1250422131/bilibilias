@@ -27,9 +27,9 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:orientation="vertical">
 
                 <FrameLayout
@@ -44,12 +44,12 @@
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
-                        android:padding="1dp"
-                        android:background="#80a1a3a6"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
+                        android:background="#80a1a3a6"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:padding="1dp">
 
                         <ImageView
                             android:layout_width="14dp"

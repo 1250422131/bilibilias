@@ -57,7 +57,7 @@ public class UserBaseBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * mid : 351201307
          * name : 萌新杰少
@@ -432,7 +432,7 @@ public class UserBaseBean implements Serializable {
             this.tags = tags;
         }
 
-        public static class FansMedalBean implements Serializable{
+        public static class FansMedalBean implements Serializable {
             /**
              * show : true
              * wear : true
@@ -467,7 +467,7 @@ public class UserBaseBean implements Serializable {
                 this.medal = medal;
             }
 
-            public static class MedalBean implements Serializable{
+            public static class MedalBean implements Serializable {
                 /**
                  * uid : 351201307
                  * target_id : 351201307
@@ -634,7 +634,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class OfficialBean implements Serializable{
+        public static class OfficialBean implements Serializable {
             /**
              * role : 0
              * title :
@@ -680,7 +680,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class VipBean implements Serializable{
+        public static class VipBean implements Serializable {
             /**
              * type : 1
              * status : 0
@@ -805,7 +805,7 @@ public class UserBaseBean implements Serializable {
                 this.tv_vip_pay_type = tv_vip_pay_type;
             }
 
-            public static class LabelBean implements Serializable{
+            public static class LabelBean implements Serializable {
                 /**
                  * path :
                  * text :
@@ -932,7 +932,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class PendantBean implements Serializable{
+        public static class PendantBean implements Serializable {
             /**
              * pid : 1416
              * name : 拜年祭粉丝专鼠
@@ -998,7 +998,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class NameplateBean implements Serializable{
+        public static class NameplateBean implements Serializable {
             /**
              * nid : 9
              * name : 出道偶像
@@ -1073,7 +1073,7 @@ public class UserBaseBean implements Serializable {
         public static class SysNoticeBean {
         }
 
-        public static class LiveRoomBean implements Serializable{
+        public static class LiveRoomBean implements Serializable {
             /**
              * roomStatus : 1
              * liveStatus : 0
@@ -1168,7 +1168,7 @@ public class UserBaseBean implements Serializable {
                 this.watched_show = watched_show;
             }
 
-            public static class WatchedShowBean implements Serializable{
+            public static class WatchedShowBean implements Serializable {
                 /**
                  * switch : true
                  * num : 1
@@ -1246,7 +1246,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class SchoolBean implements Serializable{
+        public static class SchoolBean implements Serializable {
             /**
              * name :
              */
@@ -1262,7 +1262,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class ProfessionBean implements Serializable{
+        public static class ProfessionBean implements Serializable {
             /**
              * name :
              * department :
@@ -1334,7 +1334,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class ElecBean implements Serializable{
+        public static class ElecBean implements Serializable {
             /**
              * show_info : {"show":true,"state":2,"title":"为TA充电","icon":"","jump_url":"https://www.bilibili.com/h5/upower/index?mid=351201307&navhide=1"}
              */
@@ -1349,7 +1349,7 @@ public class UserBaseBean implements Serializable {
                 this.show_info = show_info;
             }
 
-            public static class ShowInfoBean implements Serializable{
+            public static class ShowInfoBean implements Serializable {
                 /**
                  * show : true
                  * state : 2
@@ -1406,7 +1406,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class ContractBean implements Serializable{
+        public static class ContractBean implements Serializable {
             /**
              * is_display : false
              * is_follow_display : false

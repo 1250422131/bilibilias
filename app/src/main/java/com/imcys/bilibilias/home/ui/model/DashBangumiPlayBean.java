@@ -44,7 +44,7 @@ public class DashBangumiPlayBean implements Serializable {
         this.result = result;
     }
 
-    public static class ResultBean implements Serializable{
+    public static class ResultBean implements Serializable {
         /**
          * accept_format : flv720,flv480,mp4
          * code : 0
@@ -319,7 +319,7 @@ public class DashBangumiPlayBean implements Serializable {
             this.accept_description = accept_description;
         }
 
-        public static class RecordInfoBean implements Serializable{
+        public static class RecordInfoBean implements Serializable {
             /**
              * record_icon :
              * record :
@@ -345,7 +345,7 @@ public class DashBangumiPlayBean implements Serializable {
             }
         }
 
-        public static class DashBean implements Serializable{
+        public static class DashBean implements Serializable {
             /**
              * duration : 181
              * minBufferTime : 1.5
@@ -410,7 +410,7 @@ public class DashBangumiPlayBean implements Serializable {
                 this.audio = audio;
             }
 
-            public static class DolbyBean implements Serializable{
+            public static class DolbyBean implements Serializable {
                 /**
                  * audio : []
                  * type : 0
@@ -436,7 +436,7 @@ public class DashBangumiPlayBean implements Serializable {
                 }
             }
 
-            public static class VideoBean implements Serializable{
+            public static class VideoBean implements Serializable {
                 /**
                  * start_with_sap : 1
                  * bandwidth : 661565
@@ -651,7 +651,7 @@ public class DashBangumiPlayBean implements Serializable {
                     this.backup_url = backup_url;
                 }
 
-                public static class SegmentBaseBean implements Serializable{
+                public static class SegmentBaseBean implements Serializable {
                     /**
                      * initialization : 0-1010
                      * index_range : 1011-1474
@@ -677,7 +677,7 @@ public class DashBangumiPlayBean implements Serializable {
                     }
                 }
 
-                public static class SegmentBaseBeanX implements Serializable{
+                public static class SegmentBaseBeanX implements Serializable {
                     /**
                      * Initialization : 0-1010
                      * indexRange : 1011-1474
@@ -704,7 +704,7 @@ public class DashBangumiPlayBean implements Serializable {
                 }
             }
 
-            public static class AudioBean implements Serializable{
+            public static class AudioBean implements Serializable {
                 /**
                  * start_with_sap : 0
                  * bandwidth : 97723
@@ -919,7 +919,7 @@ public class DashBangumiPlayBean implements Serializable {
                     this.backup_url = backup_url;
                 }
 
-                public static class SegmentBaseBeanXX implements Serializable{
+                public static class SegmentBaseBeanXX implements Serializable {
                     /**
                      * initialization : 0-907
                      * index_range : 908-1383
@@ -945,7 +945,7 @@ public class DashBangumiPlayBean implements Serializable {
                     }
                 }
 
-                public static class SegmentBaseBeanXXX implements Serializable{
+                public static class SegmentBaseBeanXXX implements Serializable {
                     /**
                      * Initialization : 0-907
                      * indexRange : 908-1383
@@ -973,7 +973,7 @@ public class DashBangumiPlayBean implements Serializable {
             }
         }
 
-        public static class SupportFormatsBean implements Serializable{
+        public static class SupportFormatsBean implements Serializable {
             /**
              * display_desc : 720P
              * superscript :
@@ -1059,7 +1059,7 @@ public class DashBangumiPlayBean implements Serializable {
             }
         }
 
-        public static class ClipInfoListBean implements Serializable{
+        public static class ClipInfoListBean implements Serializable {
             /**
              * materialNo : 0
              * start : 15

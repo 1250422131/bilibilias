@@ -14,4 +14,4 @@ open class ResponseResult(
     open val code: Int, // 0
     @SerializedName("msg")
     open val msg: String, // 登录成功
-): Serializable
+) : Serializable

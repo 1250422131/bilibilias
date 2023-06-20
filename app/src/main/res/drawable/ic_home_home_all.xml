@@ -3,6 +3,6 @@
 
 
     <item android:drawable="@drawable/ic_home_home_true" android:state_selected="true" tools:ignore="StateListReachable" />
-    <item android:drawable="@drawable/ic_home_home"  android:state_selected="false" />
+    <item android:drawable="@drawable/ic_home_home" android:state_selected="false" />
 
 </selector>

@@ -28,8 +28,10 @@ class BangumiSubsectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemBangumiSubsectionBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_bangumi_subsection, parent, false)
+            DataBindingUtil.inflate<ItemBangumiSubsectionBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_bangumi_subsection, parent, false
+            )
 
         return ViewHolder(binding.root)
 
