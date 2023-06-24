@@ -90,10 +90,11 @@
 
                     <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
                         android:id="@+id/fragment_user_works_csr"
-                        app:sr_enableRefresh="false"
-                        app:sr_enableLoadMore="true"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        app:sr_enableLoadMore="true"
+                        app:sr_enableRefresh="false">
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/fragment_user_works_rv"
                             android:layout_width="match_parent"

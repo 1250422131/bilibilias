@@ -37,7 +37,8 @@ class GrayFrameLayout : FrameLayout {
             //还可以对其颜色、透明度、混合模式等属性进行更改
             mPaint.colorFilter = ColorMatrixColorFilter(cm)
             // 解析graylessSubviews属性的值
-            val graylessSubviews = typedArray.getResourceId(R.styleable.GrayFrameLayout_graylessSubviews, 0)
+            val graylessSubviews =
+                typedArray.getResourceId(R.styleable.GrayFrameLayout_graylessSubviews, 0)
         }
 
 

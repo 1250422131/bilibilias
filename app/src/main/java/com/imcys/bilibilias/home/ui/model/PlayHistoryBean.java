@@ -54,7 +54,7 @@ public class PlayHistoryBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * cursor : {"max":563393014,"view_at":1672294922,"business":"archive","ps":20}
          * tab : [{"type":"archive","name":"视频"},{"type":"live","name":"直播"},{"type":"article","name":"专栏"}]
@@ -89,7 +89,7 @@ public class PlayHistoryBean implements Serializable {
             this.list = list;
         }
 
-        public static class CursorBean  implements Serializable{
+        public static class CursorBean implements Serializable {
             /**
              * max : 563393014
              * view_at : 1672294922
@@ -135,7 +135,7 @@ public class PlayHistoryBean implements Serializable {
             }
         }
 
-        public static class TabBean  implements Serializable{
+        public static class TabBean implements Serializable {
             /**
              * type : archive
              * name : 视频
@@ -161,7 +161,7 @@ public class PlayHistoryBean implements Serializable {
             }
         }
 
-        public static class ListBean  implements Serializable{
+        public static class ListBean implements Serializable {
             /**
              * title : 现在的客服只会让你自己克服
              * long_title :
@@ -396,7 +396,7 @@ public class PlayHistoryBean implements Serializable {
                 this.live_status = live_status;
             }
 
-            public static class HistoryBean  implements Serializable{
+            public static class HistoryBean implements Serializable {
                 /**
                  * oid : 390459720
                  * epid : 0
