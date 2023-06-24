@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
@@ -29,9 +30,9 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:imageUrl="@{data.icoUrl}"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:imageUrl="@{data.icoUrl}"
                 android:padding="10dp"
                 app:tint="?attr/colorPrimary" />
 
@@ -68,10 +69,10 @@
             android:layout_marginTop="5dp">
 
             <TextView
-                android:visibility="@{data.content == `` ? View.GONE : View.VISIBLE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{data.content}"
+                android:visibility="@{data.content == `` ? View.GONE : View.VISIBLE}"
                 tools:ignore="HardcodedText" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

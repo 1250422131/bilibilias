@@ -24,7 +24,6 @@
         tools:ignore="MissingConstraints">
 
         <Button
-            tools:ignore="SpeakableTextPresentCheck"
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -32,9 +31,10 @@
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@{DataBean.part}"
             android:textColor="@{DataBean.selected == 0 ? @color/black  : @color/white}"
-
             android:textSize="15sp"
-            android:textStyle="bold" />
+
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck" />
     </androidx.cardview.widget.CardView>
 </layout>
 

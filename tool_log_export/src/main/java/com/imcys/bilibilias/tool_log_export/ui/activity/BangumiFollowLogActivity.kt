@@ -218,6 +218,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                         }
 
                     }
+
                     SeasonID -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
@@ -229,6 +230,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             )
                         }
                     }
+
                     Evaluate -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
@@ -236,12 +238,14 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                         }
 
                     }
+
                     Summary -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.summary ?: "", arial10format)
                         }
                     }
+
                     TotalCount -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
@@ -253,36 +257,42 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             )
                         }
                     }
+
                     Progress -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.progress ?: "", arial10format)
                         }
                     }
+
                     Cover -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.cover ?: "", arial10format)
                         }
                     }
+
                     SeasonTitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.season_title ?: "", arial10format)
                         }
                     }
+
                     Subtitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.subtitle ?: "", arial10format)
                         }
                     }
+
                     Subtitle14 -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.subtitle_14 ?: "", arial10format)
                         }
                     }
+
                     SeasonTypeName -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEachIndexed { index, listBean ->

@@ -12,7 +12,7 @@ class HttpCallback(val method: (data: String) -> Unit) : Callback {
 
     override fun onResponse(call: Call, response: Response) {
         if (response.isSuccessful) {
-            method(response.body!!.string())
+            method(response.body?.string() ?: "")
         }
     }
 }
