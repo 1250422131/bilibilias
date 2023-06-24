@@ -8,6 +8,4 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 class ToolViewHolder(
     val context: Context,
     private val binding: FragmentToolBinding,
-) {
-
-}
+)

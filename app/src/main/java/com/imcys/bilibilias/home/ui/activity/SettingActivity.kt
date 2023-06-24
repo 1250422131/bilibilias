@@ -41,8 +41,10 @@ class SettingActivity : BaseActivity() {
                 if (resultData != null) {
                     val takeFlags =
                         resultData.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    this.contentResolver.takePersistableUriPermission(resultData.data!!,
-                        takeFlags)
+                    this.contentResolver.takePersistableUriPermission(
+                        resultData.data!!,
+                        takeFlags
+                    )
                 }
 
                 asSharedPreferences.edit().apply {
@@ -58,7 +60,6 @@ class SettingActivity : BaseActivity() {
         super.onResume()
         StatService.onResume(this)
     }
-
 
 
     override fun onPause() {

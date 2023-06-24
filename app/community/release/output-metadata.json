@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.imcys.bilibilias",
+  "variantName": "communityRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 203,
+      "versionName": "2.0.31",
+      "outputFile": "app-community-release.apk"
+    }
+  ],
+  "elementType": "File"
+}

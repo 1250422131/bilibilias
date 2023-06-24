@@ -1,4 +1,5 @@
 package com.imcys.bilibilias.tool_livestream.ui.model
+
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -20,7 +21,7 @@ data class LiveMasterUserBean(
         @SerializedName("follower_num")
         val followerNum: Int, // 11663
         @SerializedName("glory_count")
-        val gloryCount: Int , // 1
+        val gloryCount: Int, // 1
         @SerializedName("info")
         val info: Info,
         @SerializedName("link_group_num")
@@ -47,7 +48,7 @@ data class LiveMasterUserBean(
                 val level: Int, // 27
                 @SerializedName("next")
                 val next: List<Int>
-            ): Serializable
+            ) : Serializable
         }
 
         data class Info(
@@ -77,6 +78,6 @@ data class LiveMasterUserBean(
             val ctime: String, // 2020-10-14 07:57:29
             @SerializedName("ctime_text")
             val ctimeText: String // 2020-10-14
-        ): Serializable
+        ) : Serializable
     }
 }

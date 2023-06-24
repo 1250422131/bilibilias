@@ -4,16 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author:imcys
  * @create: 2022-11-16 20:19
  * @Description: 用户创建收藏夹数据
- *
  */
-
-
-
-
 
 
 public class UserCreateCollectionBean implements Serializable {
@@ -62,7 +56,7 @@ public class UserCreateCollectionBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * count : 6
          * list : [{"id":196026807,"fid":1960268,"mid":351201307,"attr":0,"title":"默认收藏夹","fav_state":0,"media_count":452},{"id":1429039607,"fid":14290396,"mid":351201307,"attr":2,"title":"物理学习","fav_state":0,"media_count":1},{"id":1426414307,"fid":14264143,"mid":351201307,"attr":2,"title":"设计学习","fav_state":0,"media_count":1},{"id":1292535107,"fid":12925351,"mid":351201307,"attr":54,"title":"致我童年","fav_state":0,"media_count":8},{"id":1274129407,"fid":12741294,"mid":351201307,"attr":2,"title":"生物学习","fav_state":0,"media_count":3},{"id":1224727107,"fid":12247271,"mid":351201307,"attr":2,"title":"思想政治","fav_state":0,"media_count":11}]
@@ -97,7 +91,7 @@ public class UserCreateCollectionBean implements Serializable {
             this.list = list;
         }
 
-        public static class ListBean  implements Serializable{
+        public static class ListBean implements Serializable {
             /**
              * id : 196026807
              * fid : 1960268

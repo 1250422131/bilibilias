@@ -38,7 +38,7 @@ public class BangumiSeasonBean implements Serializable {
         this.result = result;
     }
 
-    public static class ResultBean implements Serializable{
+    public static class ResultBean implements Serializable {
 
         private ActivityBean activity;
         private String alias;
@@ -376,7 +376,7 @@ public class BangumiSeasonBean implements Serializable {
         }
 
 
-        public static class ActivityBean implements Serializable{
+        public static class ActivityBean implements Serializable {
             /**
              * head_bg_url :
              * id : 1634
@@ -412,7 +412,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class FreyaBean implements Serializable{
+        public static class FreyaBean implements Serializable {
             /**
              * bubble_desc : 你收到1个打招呼
              * bubble_show_cnt : 10000
@@ -448,7 +448,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class NewEpBean implements Serializable{
+        public static class NewEpBean implements Serializable {
             /**
              * desc : 连载中, 每周六11点，第5集起会员专享
              * id : 704475
@@ -494,7 +494,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class PaymentBean implements Serializable{
+        public static class PaymentBean implements Serializable {
             /**
              * discount : 100
              * pay_type : {"allow_discount":0,"allow_pack":0,"allow_ticket":0,"allow_time_limit":0,"allow_vip_discount":0,"forbid_bb":0}
@@ -589,7 +589,7 @@ public class BangumiSeasonBean implements Serializable {
                 this.vip_promotion = vip_promotion;
             }
 
-            public static class PayTypeBean implements Serializable{
+            public static class PayTypeBean implements Serializable {
                 /**
                  * allow_discount : 0
                  * allow_pack : 0
@@ -656,7 +656,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class PositiveBean implements Serializable{
+        public static class PositiveBean implements Serializable {
             /**
              * id : 35659
              * title : 正片
@@ -682,7 +682,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class PublishBean implements Serializable{
+        public static class PublishBean implements Serializable {
             /**
              * is_finish : 0
              * is_started : 1
@@ -748,7 +748,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class RatingBean implements Serializable{
+        public static class RatingBean implements Serializable {
             /**
              * count : 7575
              * score : 8.2
@@ -774,7 +774,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class RightsBean implements Serializable{
+        public static class RightsBean implements Serializable {
             /**
              * allow_bp : 0
              * allow_bp_rank : 0
@@ -930,7 +930,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class SeriesBean implements Serializable{
+        public static class SeriesBean implements Serializable {
             /**
              * display_type : 0
              * series_id : 4260
@@ -966,7 +966,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class ShowBean implements Serializable{
+        public static class ShowBean implements Serializable {
             /**
              * wide_screen : 0
              */
@@ -982,7 +982,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class StatBean implements Serializable{
+        public static class StatBean implements Serializable {
             /**
              * coins : 1642423
              * danmakus : 330118
@@ -1068,7 +1068,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class UpInfoBean implements Serializable{
+        public static class UpInfoBean implements Serializable {
             /**
              * avatar : https://i2.hdslb.com/bfs/face/38fbf0a10f7fb0e8910be0e662b05bcb0aed830c.jpg
              * avatar_subscript_url :
@@ -1203,7 +1203,7 @@ public class BangumiSeasonBean implements Serializable {
                 this.vip_type = vip_type;
             }
 
-            public static class PendantBean implements Serializable{
+            public static class PendantBean implements Serializable {
                 /**
                  * image : https://i2.hdslb.com/bfs/garb/item/4ab1a5a6e07a99e649cde625c06eeb1c15585156.png
                  * name : 罗小黑战记
@@ -1239,7 +1239,7 @@ public class BangumiSeasonBean implements Serializable {
                 }
             }
 
-            public static class VipLabelBean implements Serializable{
+            public static class VipLabelBean implements Serializable {
                 /**
                  * bg_color : #FB7299
                  * bg_style : 1
@@ -1296,7 +1296,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class UserStatusBean implements Serializable{
+        public static class UserStatusBean implements Serializable {
             /**
              * area_limit : 0
              * ban_area_show : 0
@@ -1382,7 +1382,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class AreasBean implements Serializable{
+        public static class AreasBean implements Serializable {
             /**
              * id : 1
              * name : 中国大陆
@@ -1408,7 +1408,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class EpisodesBean implements Serializable{
+        public static class EpisodesBean implements Serializable {
             /**
              * aid : 476022007
              * badge :
@@ -1681,7 +1681,7 @@ public class BangumiSeasonBean implements Serializable {
                 this.vid = vid;
             }
 
-            public static class BadgeInfoBean implements Serializable{
+            public static class BadgeInfoBean implements Serializable {
                 /**
                  * bg_color : #FB7299
                  * bg_color_night : #BB5B76
@@ -1717,7 +1717,7 @@ public class BangumiSeasonBean implements Serializable {
                 }
             }
 
-            public static class DimensionBean implements Serializable{
+            public static class DimensionBean implements Serializable {
                 /**
                  * height : 2160
                  * rotate : 0
@@ -1753,7 +1753,7 @@ public class BangumiSeasonBean implements Serializable {
                 }
             }
 
-            public static class RightsBeanX implements Serializable{
+            public static class RightsBeanX implements Serializable {
                 /**
                  * allow_demand : 0
                  * allow_dm : 1
@@ -1800,7 +1800,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class SeasonsBean implements Serializable{
+        public static class SeasonsBean implements Serializable {
             /**
              * badge : 出品
              * badge_info : {"bg_color":"#00C0FF","bg_color_night":"#0B91BE","text":"出品"}
@@ -1925,7 +1925,7 @@ public class BangumiSeasonBean implements Serializable {
                 this.stat = stat;
             }
 
-            public static class BadgeInfoBeanX implements Serializable{
+            public static class BadgeInfoBeanX implements Serializable {
                 /**
                  * bg_color : #00C0FF
                  * bg_color_night : #0B91BE
@@ -1961,7 +1961,7 @@ public class BangumiSeasonBean implements Serializable {
                 }
             }
 
-            public static class NewEpBeanX implements Serializable{
+            public static class NewEpBeanX implements Serializable {
                 /**
                  * cover : http://i0.hdslb.com/bfs/archive/487cbe9ca8f35dc043a907c5c81097c1ec3da7db.jpg
                  * id : 704475
@@ -1997,7 +1997,7 @@ public class BangumiSeasonBean implements Serializable {
                 }
             }
 
-            public static class StatBeanX implements Serializable{
+            public static class StatBeanX implements Serializable {
                 /**
                  * favorites : 6512751
                  * series_follow : 6521332
@@ -2034,7 +2034,7 @@ public class BangumiSeasonBean implements Serializable {
             }
         }
 
-        public static class SectionBean implements Serializable{
+        public static class SectionBean implements Serializable {
             private int attr;
             private int episode_id;
             private int id;
@@ -2099,7 +2099,7 @@ public class BangumiSeasonBean implements Serializable {
                 this.episodes = episodes;
             }
 
-            public static class EpisodesBeanX implements Serializable{
+            public static class EpisodesBeanX implements Serializable {
                 /**
                  * aid : 648575736
                  * badge :
@@ -2364,7 +2364,7 @@ public class BangumiSeasonBean implements Serializable {
                     this.vid = vid;
                 }
 
-                public static class BadgeInfoBeanXX implements Serializable{
+                public static class BadgeInfoBeanXX implements Serializable {
                     /**
                      * bg_color : #FB7299
                      * bg_color_night : #BB5B76
@@ -2400,7 +2400,7 @@ public class BangumiSeasonBean implements Serializable {
                     }
                 }
 
-                public static class DimensionBeanX implements Serializable{
+                public static class DimensionBeanX implements Serializable {
                     /**
                      * height : 1080
                      * rotate : 0
@@ -2436,7 +2436,7 @@ public class BangumiSeasonBean implements Serializable {
                     }
                 }
 
-                public static class RightsBeanXX implements Serializable{
+                public static class RightsBeanXX implements Serializable {
                     /**
                      * allow_demand : 0
                      * allow_dm : 1
@@ -2482,7 +2482,7 @@ public class BangumiSeasonBean implements Serializable {
                     }
                 }
 
-                public static class StatBeanXX implements Serializable{
+                public static class StatBeanXX implements Serializable {
                     /**
                      * coin : 7039
                      * danmakus : 442

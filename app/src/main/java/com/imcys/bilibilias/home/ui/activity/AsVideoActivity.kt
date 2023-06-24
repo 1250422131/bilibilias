@@ -8,7 +8,11 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.adapters.ViewBindingAdapter.setPadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +24,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -31,10 +36,8 @@ import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel
-import com.imcys.bilibilias.home.ui.model.view.factory.AsVideoViewModelFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
@@ -54,6 +57,7 @@ import okio.buffer
 import okio.sink
 import java.io.*
 import java.util.zip.Inflater
+import kotlin.math.abs
 
 
 class AsVideoActivity : BaseActivity() {
@@ -93,9 +97,13 @@ class AsVideoActivity : BaseActivity() {
         //加载控件
         initView()
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//
+//    }
     /**
      * 加载用户信息，为了确保会员视频及时通知用户
      */
@@ -125,6 +133,7 @@ class AsVideoActivity : BaseActivity() {
                         asVideoFaButton.visibility = View.GONE
                         asJzvdStd.startVideo()
                     }
+
                     Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
                         //恢复播放/暂停播放
                         asJzvdStd.startButton.performClick()
@@ -134,8 +143,7 @@ class AsVideoActivity : BaseActivity() {
 
             //设置点击事件->这里将点击事件都放这个类了
             asVideoViewModel = ViewModelProvider(
-                this@AsVideoActivity,
-                AsVideoViewModelFactory(this@AsVideoActivity, binding)
+                this@AsVideoActivity
             )[AsVideoViewModel::class.java]
 
 
@@ -163,7 +171,7 @@ class AsVideoActivity : BaseActivity() {
                     //有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
                     if (videoPlayBean.code != 0) {
                         //弹出通知弹窗
-                        AsDialog.build {
+                        AsDialog.init(this@AsVideoActivity).build {
                             title = "视频文件特殊"
                             config = {
                                 content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
@@ -175,6 +183,44 @@ class AsVideoActivity : BaseActivity() {
                         }.show()
 
                     } else {
+
+                        val dashVideoPlayBean = KtHttpUtils.addHeader(
+                            "cookie",
+                            BaseApplication.dataKv.decodeString("cookies", "")!!
+                        )
+                            .addHeader("referer", "https://www.bilibili.com")
+                            .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
+
+                        if (dashVideoPlayBean.code != 0) setAsJzvdConfig(
+                            videoPlayBean.data.durl[0].url,
+                            ""
+                        )
+
+                        dashVideoPlayBean.data.dash.video[0].also {
+
+                            if (it.width < it.height) {
+                                //竖屏
+                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                    height = windowManager.defaultDisplay.height / 4 * 3
+                                }
+                            }
+
+
+//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+//                                // 计算折叠程度（0为完全展开，1为完全折叠）
+//
+//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
+//                                    // 根据当前滚动百分比计算内边距
+//                                    val totalScrollRange = appBarLayout.totalScrollRange
+//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
+//                                    val padding = (currentScrollPercentage * 100).toInt()
+//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
+//                                }
+//
+//                            }
+
+                        }
+
                         //真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
@@ -183,6 +229,7 @@ class AsVideoActivity : BaseActivity() {
                     binding.asVideoBangumiCd.visibility = View.GONE
                 }
             }
+
             "bangumi" -> {
                 lifecycleScope.launch {
                     val bangumiPlayBean = KtHttpUtils
@@ -197,6 +244,7 @@ class AsVideoActivity : BaseActivity() {
                 }
 
             }
+
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
         }
 
@@ -208,7 +256,6 @@ class AsVideoActivity : BaseActivity() {
      * 加载视频数据
      */
     private fun initVideoData() {
-
 
 
         //这里必须通过外界获取数据
@@ -308,6 +355,12 @@ class AsVideoActivity : BaseActivity() {
             }
             isMember(bangumiSeasonBean)
 
+            //获取真实的cid
+            bangumiSeasonBean.result.episodes.forEach { episode ->
+                if (episode.bvid == bvid) {
+                    cid = episode.cid
+                }
+            }
 
             binding.apply {
                 //如果就只有一个子集，就不要显示子集列表了
@@ -422,8 +475,10 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         lifecycleScope.launch {
+
             val videoPlayListData = KtHttpUtils.addHeader("cookie", asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
+
             binding.apply {
 
                 if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
@@ -620,9 +675,9 @@ class AsVideoActivity : BaseActivity() {
         val jzDataSource = JZDataSource(url, title)
 
         jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
+        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid"
         jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 
@@ -684,6 +739,7 @@ class AsVideoActivity : BaseActivity() {
     }
 
     private fun changeFaButtonToRedo() {
+        binding.asVideoFaButton.isVisible = true
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
 
@@ -704,7 +760,7 @@ class AsVideoActivity : BaseActivity() {
         val decompressBytes =
             decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
         bufferedSink = sink.buffer()
-        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        decompressBytes.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
     }

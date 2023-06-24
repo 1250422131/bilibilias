@@ -3,7 +3,10 @@
     <!-- 边框颜色值 -->
 
 
-    <item  android:left="10dp" android:right="10dp" android:state_selected="true">
+    <item
+        android:left="10dp"
+        android:right="10dp"
+        android:state_selected="true">
 
         <shape>
             <corners android:radius="20dp" />
@@ -12,7 +15,10 @@
 
     </item>
 
-    <item android:left="10dp" android:right="10dp" android:state_selected="false">
+    <item
+        android:left="10dp"
+        android:right="10dp"
+        android:state_selected="false">
 
         <shape>
             <corners android:radius="20dp" />

@@ -53,7 +53,7 @@ public class ArchiveCoinsBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable  {
+    public static class DataBean implements Serializable {
         /**
          * multiply : 2
          */

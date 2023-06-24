@@ -8,21 +8,21 @@
             name="DataBean"
             type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/dialog_bottom_sheet_bg">
+        android:background="@drawable/dialog_bottom_sheet_bg"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:theme="@style/Theme.BILIBILIAS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:theme="@style/Theme.BILIBILIAS">
 
             <androidx.cardview.widget.CardView
 
@@ -93,23 +93,23 @@
 
 
             <TextView
-                android:visibility="@{DataBean.data.level &lt; 2 ? View.VISIBLE :View.GONE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
                 android:text="@{DataBean.data.level &lt; 2 ? `暂时不支持未转正用户`:``}"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="@{DataBean.data.level &lt; 2 ? View.VISIBLE :View.GONE}" />
 
             <TextView
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:ellipsize="end"
-                android:lines="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginLeft="40dp"
                 android:layout_marginTop="13dp"
+                android:layout_marginRight="40dp"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@{DataBean.data.sign}"
                 android:textStyle="bold" />
 

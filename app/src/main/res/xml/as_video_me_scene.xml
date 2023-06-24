@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/imageView"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="50dp"
             android:layout_height="50dp"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent" >
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent">
             <CustomAttribute
                 motion:attributeName="crossfade"
                 motion:customFloatValue="0" />
@@ -21,12 +20,12 @@
     <ConstraintSet android:id="@+id/end">
         <Constraint
             android:id="@+id/imageView"
-            motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="50dp"
             android:layout_height="50dp"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent">
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent">
             <CustomAttribute
                 motion:attributeName="crossfade"
                 motion:customFloatValue="1" />
@@ -34,23 +33,23 @@
     </ConstraintSet>
     <ConstraintSet
         android:id="@+id/zj"
-        motion:deriveConstraintsFrom="@+id/start" >
+        motion:deriveConstraintsFrom="@+id/start">
         <Constraint
-            motion:layout_constraintVertical_bias="0.32"
+            android:id="@+id/imageView"
+            android:layout_width="50dp"
             android:layout_height="50dp"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="50dp"
-            android:id="@+id/imageView" />
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintVertical_bias="0.32" />
     </ConstraintSet>
     <Transition
-        motion:constraintSetStart="@+id/start"
+        motion:autoTransition="jumpToStart"
         motion:constraintSetEnd="@+id/zj"
-        motion:autoTransition="jumpToStart" />
+        motion:constraintSetStart="@+id/start" />
     <Transition
-        motion:constraintSetStart="@+id/zj"
+        motion:autoTransition="jumpToStart"
         motion:constraintSetEnd="@+id/end"
-        motion:autoTransition="jumpToStart" />
+        motion:constraintSetStart="@+id/zj" />
 </MotionScene>

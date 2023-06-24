@@ -21,8 +21,10 @@ class SubsectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemSubsectionBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_subsection, parent, false)
+            DataBindingUtil.inflate<ItemSubsectionBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_subsection, parent, false
+            )
 
         return ViewHolder(binding.root)
     }
