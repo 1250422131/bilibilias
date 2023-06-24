@@ -51,11 +51,11 @@
 
 
                         <TextView
-                            android:padding="2dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
                             android:background="#80a1a3a6"
+                            android:padding="2dp"
                             android:text="@{LongKt.timeStampDateStr(MediasBean.fav_time,`MM-dd`)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />

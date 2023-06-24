@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @create: 2023-01-03 16:23
  * @Description: 收藏检验
  */
-public class ArchiveFavouredBean  implements Serializable {
+public class ArchiveFavouredBean implements Serializable {
 
     /**
      * code : 0
@@ -53,7 +53,7 @@ public class ArchiveFavouredBean  implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable {
+    public static class DataBean implements Serializable {
         /**
          * count : 1
          * favoured : true

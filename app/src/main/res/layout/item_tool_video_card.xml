@@ -30,19 +30,19 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
                     android:id="@+id/item_tool_video_card_pic"
-                    android:transitionName="videoPic"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="6"
                     android:imageUrl="@{VideoBaseBean.data.pic}"
+                    android:transitionName="videoPic"
                     app:round="10dp" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -59,7 +59,6 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:transitionName="videoTitle"
                             android:id="@+id/item_tool_video_card_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -67,7 +66,8 @@
                             android:maxLines="2"
                             android:text="@{VideoBaseBean.data.title}"
                             android:textSize="16dp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:transitionName="videoTitle" />
 
                         <TextView
                             android:layout_width="match_parent"

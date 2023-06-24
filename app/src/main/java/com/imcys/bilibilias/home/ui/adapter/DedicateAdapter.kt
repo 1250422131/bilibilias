@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemDedicateBinding
 import com.imcys.bilibilias.home.ui.model.DedicateBean
+import javax.inject.Inject
 
-class DedicateAdapter :
+class DedicateAdapter @Inject constructor() :
     ListAdapter<DedicateBean, ViewHolder>(object : DiffUtil.ItemCallback<DedicateBean>() {
         override fun areItemsTheSame(oldItem: DedicateBean, newItem: DedicateBean): Boolean {
             return oldItem.title == newItem.title
@@ -24,8 +25,10 @@ class DedicateAdapter :
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemDedicateBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_dedicate, parent, false)
+            DataBindingUtil.inflate<ItemDedicateBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_dedicate, parent, false
+            )
         return ViewHolder(binding.root)
     }
 
@@ -35,7 +38,7 @@ class DedicateAdapter :
             holder.itemView.setOnClickListener {
                 if (getItem(position).link != "") {
                     val uri = Uri.parse(getItem(position).link)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
                     holder.itemView.context.startActivity(intent)
                 }
             }

@@ -10,11 +10,11 @@
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
         android:id="@+id/log_export_item_bangumi_log_header_ly"
-        android:layout_margin="5dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless">
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -29,9 +29,9 @@
                 android:padding="8dp">
 
                 <TextView
-                    android:maxLines="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:text="@{data.title}"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
