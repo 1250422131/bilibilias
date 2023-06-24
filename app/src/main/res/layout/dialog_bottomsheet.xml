@@ -10,8 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/dialog_bottom_sheet_bg"
-        >
+        android:background="@drawable/dialog_bottom_sheet_bg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,18 +62,18 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/dialog_bottomSheet_message"
-                    android:text=""
-                    android:textSize="18sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="18sp" />
 
                 <ImageView
-                    android:visibility="gone"
-                    android:maxHeight="400dp"
                     android:id="@+id/dialog_bottomSheet_image"
-                    android:padding="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:maxHeight="400dp"
+                    android:padding="10dp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -89,7 +88,6 @@
                 app:cardElevation="0dp">
 
                 <Button
-                    android:visibility="gone"
                     android:id="@+id/dialog_bottomSheet_positiveButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -98,7 +96,8 @@
                     android:text=""
                     android:textColor="@color/white"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
             </androidx.cardview.widget.CardView>
 
@@ -112,7 +111,7 @@
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp">
 
-                <Button android:visibility="gone"
+                <Button
                     android:id="@+id/dialog_bottomSheet_negativeButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -121,7 +120,8 @@
                     android:text=""
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
             </androidx.cardview.widget.CardView>
 

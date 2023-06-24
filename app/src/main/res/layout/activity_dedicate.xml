@@ -15,9 +15,10 @@
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
                 android:id="@+id/dedicate_top_ly"
                 android:layout_width="match_parent"
@@ -29,6 +30,7 @@
             <me.dkzwm.widget.srl.SmoothRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dedicate_rv"
                     android:layout_width="match_parent"

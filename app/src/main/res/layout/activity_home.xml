@@ -13,9 +13,9 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:background="@color/app_default_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/app_default_bg"
             android:orientation="vertical">
 
             <androidx.viewpager2.widget.ViewPager2
