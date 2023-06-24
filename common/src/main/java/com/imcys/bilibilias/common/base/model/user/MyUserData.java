@@ -4,10 +4,11 @@ import java.io.Serializable;
 
 /**
  * imcys
+ *
  * @create: 2022-10-30 08:12
  * @Description: 我的个人信息类
  */
-public class MyUserData implements Serializable{
+public class MyUserData implements Serializable {
 
     /**
      * code : 0

@@ -20,7 +20,7 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdk 21
         //noinspecton ExpiredTargetSdkVersion
-        targetSdk 29
+        targetSdk 33
         versionCode 203
         versionName "2.0.31"
         //multiDexEnabled true
@@ -86,13 +86,13 @@ android {
 
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
 
@@ -115,8 +115,17 @@ android {
         }
     }
     namespace 'com.imcys.bilibilias'
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    buildToolsVersion '33.0.2'
 
 
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -128,7 +137,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation "com.google.dagger:hilt-android:2.38.1"
+    implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
 
 

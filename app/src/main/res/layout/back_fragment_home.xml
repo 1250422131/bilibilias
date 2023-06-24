@@ -82,10 +82,10 @@
             </com.google.android.material.tabs.TabLayout>
 
             <LinearLayout
-                android:layout_marginBottom="30dp"
-                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="30dp"
                 android:gravity="center"
                 android:orientation="vertical">
 

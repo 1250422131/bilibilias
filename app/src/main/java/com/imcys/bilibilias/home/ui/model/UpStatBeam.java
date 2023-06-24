@@ -53,7 +53,7 @@ public class UpStatBeam implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * archive : {"view":2538635}
          * article : {"view":27607}
@@ -88,7 +88,7 @@ public class UpStatBeam implements Serializable {
             this.likes = likes;
         }
 
-        public static class ArchiveBean implements Serializable{
+        public static class ArchiveBean implements Serializable {
             /**
              * view : 2538635
              */
@@ -104,7 +104,7 @@ public class UpStatBeam implements Serializable {
             }
         }
 
-        public static class ArticleBean implements Serializable{
+        public static class ArticleBean implements Serializable {
             /**
              * view : 27607
              */

@@ -26,7 +26,6 @@ public class HomeRCMDVideoBean implements Serializable {
     private DataBean data;
 
 
-
     @Override
     public String toString() {
         return "HomeRCMDVideoBean{" +
@@ -69,8 +68,7 @@ public class HomeRCMDVideoBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable{
-
+    public static class DataBean implements Serializable {
 
 
         /**
@@ -149,15 +147,7 @@ public class HomeRCMDVideoBean implements Serializable {
             this.item = item;
         }
 
-        public static class ItemBean  implements Serializable{
-            public float getLikeState() {
-                return likeState;
-            }
-
-            public void setLikeState(float likeState) {
-                this.likeState = likeState;
-            }
-
+        public static class ItemBean implements Serializable {
             /**
              * id : 603445521
              * bvid : BV1kB4y1J75Q
@@ -205,6 +195,14 @@ public class HomeRCMDVideoBean implements Serializable {
             private Object ogv_info;
             private Object business_info;
             private int is_stock;
+
+            public float getLikeState() {
+                return likeState;
+            }
+
+            public void setLikeState(float likeState) {
+                this.likeState = likeState;
+            }
 
             public int getId() {
                 return id;
@@ -374,7 +372,7 @@ public class HomeRCMDVideoBean implements Serializable {
                 this.is_stock = is_stock;
             }
 
-            public static class OwnerBean  implements Serializable{
+            public static class OwnerBean implements Serializable {
                 /**
                  * mid : 349564817
                  * name : 鱼丸粗面木有木有碗
@@ -410,7 +408,7 @@ public class HomeRCMDVideoBean implements Serializable {
                 }
             }
 
-            public static class StatBean  implements Serializable{
+            public static class StatBean implements Serializable {
                 /**
                  * view : 83993
                  * like : 3283
@@ -446,7 +444,7 @@ public class HomeRCMDVideoBean implements Serializable {
                 }
             }
 
-            public static class RcmdReasonBean  implements Serializable{
+            public static class RcmdReasonBean implements Serializable {
                 /**
                  * reason_type : 0
                  */

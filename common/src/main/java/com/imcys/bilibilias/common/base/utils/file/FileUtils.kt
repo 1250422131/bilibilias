@@ -40,7 +40,7 @@ object FileUtils {
      * @param delFile 要删除的文件夹或文件名
      * @return 删除成功返回true，否则返回false
      */
-     fun delete(delFile: String): Boolean {
+    fun delete(delFile: String): Boolean {
         val file = File(delFile)
         return if (!file.exists()) {
             false

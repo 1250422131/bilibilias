@@ -12,7 +12,7 @@ data class LiveRoomDataBean(
     val message: String, // ok
     @SerializedName("msg")
     val msg: String // ok
-): Serializable  {
+) : Serializable {
     data class Data(
         @SerializedName("allow_change_area_time")
         val allowChangeAreaTime: Int, // 0
@@ -65,7 +65,7 @@ data class LiveRoomDataBean(
         @SerializedName("pk_status")
         val pkStatus: Int, // 0
         @SerializedName("room_id")
-        val roomId: Int, // 732111
+        val roomId: Long, // 732111
         @SerializedName("room_silent_level")
         val roomSilentLevel: Int, // 0
         @SerializedName("room_silent_second")
@@ -88,7 +88,7 @@ data class LiveRoomDataBean(
         val userCover: String, // https://i0.hdslb.com/bfs/live/new_room_cover/12a64e8c2235edafb28d04125b61e526c94e575d.jpg
         @SerializedName("verify")
         val verify: String
-    ): Serializable {
+    ) : Serializable {
         data class NewPendants(
             @SerializedName("badge")
             val badge: Badge,
@@ -108,7 +108,7 @@ data class LiveRoomDataBean(
                 val position: Int, // 3
                 @SerializedName("value")
                 val value: String
-            ): Serializable
+            ) : Serializable
 
             data class Frame(
                 @SerializedName("area")
@@ -129,7 +129,7 @@ data class LiveRoomDataBean(
                 val useOldArea: Boolean, // false
                 @SerializedName("value")
                 val value: String
-            ): Serializable
+            ) : Serializable
 
             data class MobileFrame(
                 @SerializedName("area")
@@ -150,7 +150,7 @@ data class LiveRoomDataBean(
                 val useOldArea: Boolean, // false
                 @SerializedName("value")
                 val value: String
-            ): Serializable
+            ) : Serializable
         }
 
         data class StudioInfo(
@@ -158,6 +158,6 @@ data class LiveRoomDataBean(
             val masterList: List<Any>,
             @SerializedName("status")
             val status: Int // 0
-        ): Serializable
+        ) : Serializable
     }
 }

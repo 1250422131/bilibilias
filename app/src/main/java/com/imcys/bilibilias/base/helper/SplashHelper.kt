@@ -6,14 +6,18 @@ import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintHelper
 import androidx.constraintlayout.widget.ConstraintLayout
 
-class SplashHelper: ConstraintHelper {
+class SplashHelper : ConstraintHelper {
 
 
     constructor(context: Context?) : super(context)
 
-    constructor(context: Context?,attributeSet: AttributeSet):super(context,attributeSet)
+    constructor(context: Context?, attributeSet: AttributeSet) : super(context, attributeSet)
 
-    constructor(context: Context?,attributeSet: AttributeSet,defStyleAttr: Int):super(context,attributeSet,defStyleAttr)
+    constructor(context: Context?, attributeSet: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attributeSet,
+        defStyleAttr
+    )
 
     override fun updatePostLayout(container: ConstraintLayout?) {
         super.updatePostLayout(container)

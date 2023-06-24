@@ -54,17 +54,21 @@ object VideoMergerUtils {
                 val videoInputBuffer = videoDecoder.getInputBuffer(videoInputBufferIndex)
                 val size = videoInputBuffer?.let { videoExtractor.readSampleData(it, 0) }
                 if (size!! < 0) {
-                    videoDecoder.queueInputBuffer(videoInputBufferIndex,
+                    videoDecoder.queueInputBuffer(
+                        videoInputBufferIndex,
                         0,
                         0,
                         0,
-                        MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                    )
                 } else {
-                    videoDecoder.queueInputBuffer(videoInputBufferIndex,
+                    videoDecoder.queueInputBuffer(
+                        videoInputBufferIndex,
                         0,
                         size,
                         videoExtractor.sampleTime,
-                        0)
+                        0
+                    )
                     videoExtractor.advance()
                 }
             }
@@ -75,17 +79,21 @@ object VideoMergerUtils {
                 val audioInputBuffer = audioDecoder.getInputBuffer(audioInputBufferIndex)
                 val size = audioInputBuffer?.let { audioExtractor.readSampleData(it, 0) }
                 if (size!! < 0) {
-                    audioDecoder.queueInputBuffer(audioInputBufferIndex,
+                    audioDecoder.queueInputBuffer(
+                        audioInputBufferIndex,
                         0,
                         0,
                         0,
-                        MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                        MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                    )
                 } else {
-                    audioDecoder.queueInputBuffer(audioInputBufferIndex,
+                    audioDecoder.queueInputBuffer(
+                        audioInputBufferIndex,
                         0,
                         size,
                         audioExtractor.sampleTime,
-                        0)
+                        0
+                    )
                     audioExtractor.advance()
                 }
             }
@@ -102,11 +110,13 @@ object VideoMergerUtils {
                     val videoInputBuffer = videoEncoder.getInputBuffer(videoInputBufferIndex)
                     videoInputBuffer!!.clear()
                     videoInputBuffer.put(videoOutputBuffer)
-                    videoEncoder.queueInputBuffer(videoInputBufferIndex,
+                    videoEncoder.queueInputBuffer(
+                        videoInputBufferIndex,
                         0,
                         videoBufferInfo.size,
                         videoBufferInfo.presentationTimeUs,
-                        0)
+                        0
+                    )
                 }
                 videoDecoder.releaseOutputBuffer(videoOutputBufferIndex, false)
             }
@@ -123,11 +133,13 @@ object VideoMergerUtils {
                     val audioInputBuffer = audioEncoder.getInputBuffer(audioInputBufferIndex)
                     audioInputBuffer!!.clear()
                     audioInputBuffer.put(audioOutputBuffer)
-                    audioEncoder.queueInputBuffer(audioInputBufferIndex,
+                    audioEncoder.queueInputBuffer(
+                        audioInputBufferIndex,
                         0,
                         audioBufferInfo.size,
                         audioBufferInfo.presentationTimeUs,
-                        0)
+                        0
+                    )
                 }
                 audioDecoder.releaseOutputBuffer(audioOutputBufferIndex, false)
             }
@@ -141,8 +153,10 @@ object VideoMergerUtils {
                 val videoEncoderOutputBuffer =
                     videoEncoder.getOutputBuffer(videoEncoderOutputBufferIndex)
                 videoEncoderOutputBuffer?.let {
-                    muxer.writeSampleData(videoTrackIndex,
-                        it, videoEncoderBufferInfo)
+                    muxer.writeSampleData(
+                        videoTrackIndex,
+                        it, videoEncoderBufferInfo
+                    )
                 }
                 videoEncoder.releaseOutputBuffer(videoEncoderOutputBufferIndex, false)
             }
@@ -157,8 +171,10 @@ object VideoMergerUtils {
                 val audioEncoderOutputBuffer =
                     audioEncoder.getOutputBuffer(audioEncoderOutputBufferIndex)
                 audioEncoderOutputBuffer?.let {
-                    muxer.writeSampleData(audioTrackIndex,
-                        it, audioEncoderBufferInfo)
+                    muxer.writeSampleData(
+                        audioTrackIndex,
+                        it, audioEncoderBufferInfo
+                    )
                 }
                 audioEncoder.releaseOutputBuffer(audioEncoderOutputBufferIndex, false)
             }

@@ -7,9 +7,9 @@
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:background="@drawable/dialog_bottom_sheet_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bottom_sheet_bg"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
@@ -50,15 +50,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dialog_as_account_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             />
+            android:layout_height="wrap_content" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="23dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
             android:layout_marginBottom="25dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp">

@@ -12,9 +12,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
         <LinearLayout
 
@@ -32,12 +32,12 @@
                 android:orientation="horizontal">
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
-                   android:id="@+id/tip_face"
-                    android:padding="10dp"
-                    app:tint="?attr/colorPrimary"
+                    android:id="@+id/tip_face"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:scaleType="fitXY" />
+                    android:padding="10dp"
+                    android:scaleType="fitXY"
+                    app:tint="?attr/colorPrimary" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"

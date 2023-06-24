@@ -16,12 +16,14 @@ class VideoToneQualityAdapter(
 ) :
     RecyclerView.Adapter<ViewHolder>() {
     private var selectedItem = 0
-    lateinit var selectedBinding:ItemToneQualityBinding
+    lateinit var selectedBinding: ItemToneQualityBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemToneQualityBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_tone_quality, parent, false)
+            DataBindingUtil.inflate<ItemToneQualityBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_tone_quality, parent, false
+            )
 
         return ViewHolder(binding.root)
     }
@@ -36,7 +38,8 @@ class VideoToneQualityAdapter(
                 this.audioBean?.selected = 1
             }
 
-            itemToneQualityButton.text = AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
+            itemToneQualityButton.text =
+                AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
 
 
             itemToneQualityButton.setOnClickListener {

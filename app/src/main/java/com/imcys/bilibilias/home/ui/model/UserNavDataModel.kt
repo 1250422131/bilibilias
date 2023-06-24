@@ -1,4 +1,5 @@
 package com.imcys.bilibilias.home.ui.model
+
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -88,7 +89,7 @@ data class UserNavDataModel(
             val currentMin: Int, // 28800
             @SerializedName("next_exp")
             val nextExp: String // --
-        ): Serializable
+        ) : Serializable
 
         data class Official(
             @SerializedName("desc")
@@ -99,14 +100,14 @@ data class UserNavDataModel(
             val title: String,
             @SerializedName("type")
             val type: Int // -1
-        ): Serializable
+        ) : Serializable
 
         data class OfficialVerify(
             @SerializedName("desc")
             val desc: String,
             @SerializedName("type")
             val type: Int // -1
-        ): Serializable
+        ) : Serializable
 
         data class Pendant(
             @SerializedName("expire")
@@ -121,7 +122,7 @@ data class UserNavDataModel(
             val name: String, // 拜年祭粉丝专鼠
             @SerializedName("pid")
             val pid: Int // 1416
-        ): Serializable
+        ) : Serializable
 
         data class Vip(
             @SerializedName("avatar_subscript")
@@ -148,7 +149,7 @@ data class UserNavDataModel(
             val type: Int, // 1
             @SerializedName("vip_pay_type")
             val vipPayType: Int // 0
-        ): Serializable  {
+        ) : Serializable {
             data class Label(
                 @SerializedName("bg_color")
                 val bgColor: String,
@@ -174,7 +175,7 @@ data class UserNavDataModel(
                 val textColor: String,
                 @SerializedName("use_img_label")
                 val useImgLabel: Boolean // true
-            ): Serializable
+            ) : Serializable
         }
 
         data class VipLabel(
@@ -202,7 +203,7 @@ data class UserNavDataModel(
             val textColor: String,
             @SerializedName("use_img_label")
             val useImgLabel: Boolean // true
-        ): Serializable
+        ) : Serializable
 
         data class Wallet(
             @SerializedName("bcoin_balance")
@@ -212,14 +213,14 @@ data class UserNavDataModel(
             @SerializedName("coupon_due_time")
             val couponDueTime: Int, // 0
             @SerializedName("mid")
-            val mid: Int // 351201307
-        ): Serializable
+            val mid: Long // 351201307
+        ) : Serializable
 
         data class WbiImg(
             @SerializedName("img_url")
             val imgUrl: String, // https://i0.hdslb.com/bfs/wbi/668e41e42b0544a88cbd311d52799d9f.png
             @SerializedName("sub_url")
             val subUrl: String // https://i0.hdslb.com/bfs/wbi/ce03d395ec2346f0b84bb3c090c11ac4.png
-        ): Serializable
+        ) : Serializable
     }
 }
