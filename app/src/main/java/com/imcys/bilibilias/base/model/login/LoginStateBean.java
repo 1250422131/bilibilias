@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @create: 2022-10-26 17:30
  * @Description: 登陆状态数据
  */
-public class LoginStateBean  implements Serializable {
+public class LoginStateBean implements Serializable {
 
     /**
      * code : 0
@@ -53,7 +53,7 @@ public class LoginStateBean  implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean implements Serializable{
+    public static class DataBean implements Serializable {
         /**
          * url :
          * refresh_token :

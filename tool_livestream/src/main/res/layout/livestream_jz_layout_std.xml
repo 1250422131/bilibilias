@@ -33,7 +33,6 @@
             android:textColor="#ffffff" />
 
         <SeekBar
-            android:visibility="invisible"
             android:id="@+id/bottom_seek_progress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,15 +47,16 @@
             android:paddingRight="12dp"
             android:paddingBottom="8dp"
             android:progressDrawable="@drawable/jz_bottom_seek_progress"
-            android:thumb="@drawable/jz_bottom_seek_poster" />
+            android:thumb="@drawable/jz_bottom_seek_poster"
+            android:visibility="invisible" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/clarity"
@@ -80,14 +80,14 @@
     </LinearLayout>
 
     <ProgressBar
-        android:visibility="gone"
         android:id="@+id/bottom_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="1.5dp"
         android:layout_alignParentBottom="true"
         android:max="100"
-        android:progressDrawable="@drawable/jz_bottom_progress" />
+        android:progressDrawable="@drawable/jz_bottom_progress"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/back_tiny"
@@ -264,21 +264,20 @@
         </ImageView>
 
 
-
         <TextView
-            android:padding="5dp"
             android:id="@+id/as_jzvdstd_pic_dl_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginTop="30dp"
             android:layout_marginRight="25dp"
             android:background="@drawable/jz_layout_pic_dl_bg"
             android:clickable="true"
+            android:focusable="true"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="封面下载"
-            android:textColor="@color/white"
-            android:focusable="true" />
+            android:textColor="@color/white" />
 
     </FrameLayout>
 

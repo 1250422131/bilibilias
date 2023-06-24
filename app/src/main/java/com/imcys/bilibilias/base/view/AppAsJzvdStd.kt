@@ -45,6 +45,7 @@ class AppAsJzvdStd : AsJzvdStd {
                     //播放视频
                     startVideo()
                 }
+
                 Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
                     //恢复播放/暂停播放
                     startButton.performClick()
@@ -108,12 +109,6 @@ class AppAsJzvdStd : AsJzvdStd {
 
     override fun getLayoutId(): Int {
         return R.layout.app_as_jz_layout_std
-    }
-
-    //预留->布局修改
-    override fun setScreenFullscreen() {
-        super.setScreenFullscreen()
-
     }
 
     override fun onStatePlaying() {

@@ -13,4 +13,4 @@ data class ToolItemBean(
     val liveRoomDataBean: LiveRoomDataBean? = null,
     val clickEvent: () -> Unit = {},
 
-)
+    )

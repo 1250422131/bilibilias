@@ -21,9 +21,8 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@drawable/dialog_bottom_sheet_bg"
-        >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,11 +115,11 @@
                 app:cardElevation="0dp">
 
                 <Button
-                    android:onClick="@{(view) -> LoginQRModel.downloadLoginQR(view,DataBean)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view) -> LoginQRModel.downloadLoginQR(view,DataBean)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_download"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -138,11 +137,11 @@
                 app:cardElevation="0dp">
 
                 <Button
-                    android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_go"
                     android:textColor="@color/black"
                     android:textSize="15sp"

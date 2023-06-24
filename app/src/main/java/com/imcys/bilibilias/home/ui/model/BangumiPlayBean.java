@@ -44,7 +44,7 @@ public class BangumiPlayBean implements Serializable {
         this.result = result;
     }
 
-    public static class ResultBean implements Serializable{
+    public static class ResultBean implements Serializable {
         /**
          * accept_format : mp4720,mp4
          * code : 0
@@ -319,7 +319,7 @@ public class BangumiPlayBean implements Serializable {
             this.accept_description = accept_description;
         }
 
-        public static class RecordInfoBean implements Serializable{
+        public static class RecordInfoBean implements Serializable {
             /**
              * record_icon :
              * record :
@@ -345,7 +345,7 @@ public class BangumiPlayBean implements Serializable {
             }
         }
 
-        public static class DurlBean implements Serializable{
+        public static class DurlBean implements Serializable {
             /**
              * size : 10413610
              * ahead :
@@ -431,7 +431,7 @@ public class BangumiPlayBean implements Serializable {
             }
         }
 
-        public static class SupportFormatsBean implements Serializable{
+        public static class SupportFormatsBean implements Serializable {
             /**
              * display_desc : 720P
              * superscript :
@@ -517,7 +517,7 @@ public class BangumiPlayBean implements Serializable {
             }
         }
 
-        public static class ClipInfoListBean implements Serializable{
+        public static class ClipInfoListBean implements Serializable {
             /**
              * materialNo : 0
              * start : 15
