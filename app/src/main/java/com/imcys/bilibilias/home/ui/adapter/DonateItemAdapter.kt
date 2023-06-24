@@ -15,8 +15,9 @@ import com.imcys.bilibilias.databinding.ItemDonateProgressBinding
 import com.imcys.bilibilias.databinding.ItemTipBinding
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.home.ui.model.DonateViewBean
+import javax.inject.Inject
 
-class DonateItemAdapter :
+class DonateItemAdapter @Inject constructor() :
     ListAdapter<DonateViewBean, ViewHolder>(object : DiffUtil.ItemCallback<DonateViewBean>() {
         override fun areItemsTheSame(oldItem: DonateViewBean, newItem: DonateViewBean): Boolean {
             return oldItem.type == newItem.type
@@ -55,12 +56,14 @@ class DonateItemAdapter :
                     R.layout.item_donate_doc, parent, false
                 )
             }
+
             DonateActivity.PAY_TIP -> {
                 DataBindingUtil.inflate<ItemTipBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_tip, parent, false
                 )
             }
+
             else -> {
                 TODO("触发意外事件")
             }
@@ -109,9 +112,11 @@ class DonateItemAdapter :
                     itemDownloadProgressBar.progress = progress
                 }
             }
+
             DonateActivity.PAY_DOC -> {
                 DataBindingUtil.getBinding<ItemDonateDocBinding>(holder.itemView)
             }
+
             DonateActivity.PAY_TIP -> {
                 DataBindingUtil.getBinding<ItemTipBinding>(holder.itemView)?.apply {
                     tipBean = getItem(position)?.tipBean
@@ -124,6 +129,7 @@ class DonateItemAdapter :
                 }
 
             }
+
             else -> {
                 TODO("触发意外事件")
             }

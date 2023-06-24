@@ -50,7 +50,7 @@ class UserViewModel : ViewModel() {
     private fun handleIntent() {
 
         viewModelScope.launch {
-            userChannel.consumeAsFlow().collect() {
+            userChannel.consumeAsFlow().collect {
                 when (it) {
                     is UserIntent.GetUserBaseBean -> getUserBaseData()
                     is UserIntent.GetUserCardData -> getUserCardData()
@@ -78,8 +78,10 @@ class UserViewModel : ViewModel() {
     private fun getUserWorksBean(qn: Int, ps: Int) {
         viewModelScope.launch {
             val userWorksBean = withContext(viewModelScope.coroutineContext) {
-                return@withContext HttpUtils.asyncGet("${BilibiliApi.userWorksPath}?mid=1&qn=$qn&ps=$ps",
-                    UserWorksBean::class.java)
+                return@withContext HttpUtils.asyncGet(
+                    "${BilibiliApi.userWorksPath}?mid=1&qn=$qn&ps=$ps",
+                    UserWorksBean::class.java
+                )
             }
             viewStates = viewStates.copy(
                 userWorksBean = userWorksBean
@@ -119,8 +121,10 @@ class UserViewModel : ViewModel() {
     private val latestUserBaseData: Flow<UserBaseBean> = flow {
         val userBaseBean = withContext(Dispatchers.IO) {
             HttpUtils.addHeader("cookie", "")
-                .asyncGet("${BilibiliApi.userBaseDataPath}?mid=1",
-                    UserBaseBean::class.java)
+                .asyncGet(
+                    "${BilibiliApi.userBaseDataPath}?mid=1",
+                    UserBaseBean::class.java
+                )
         }
         //返回拉取结果
         emit(userBaseBean)
@@ -129,8 +133,10 @@ class UserViewModel : ViewModel() {
     private val latestUserCardData: Flow<UserCardBean> = flow {
         val userCardBean = withContext(Dispatchers.IO) {
             HttpUtils.addHeader("cookie", "等待填充")
-                .asyncGet("${BilibiliApi.getUserCardPath}?mid=1",
-                    UserCardBean::class.java)
+                .asyncGet(
+                    "${BilibiliApi.getUserCardPath}?mid=1",
+                    UserCardBean::class.java
+                )
         }
         //返回拉取结果
         emit(userCardBean)
@@ -138,9 +144,11 @@ class UserViewModel : ViewModel() {
 
     private val latestUpStatBeamData: Flow<UpStatBeam> = flow {
         val upStatBeam = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie","等待填充")
-                .asyncGet("${BilibiliApi.userUpStat}?mid=1",
-                    UpStatBeam::class.java)
+            HttpUtils.addHeader("cookie", "等待填充")
+                .asyncGet(
+                    "${BilibiliApi.userUpStat}?mid=1",
+                    UpStatBeam::class.java
+                )
         }
         //返回拉取结果
         emit(upStatBeam)

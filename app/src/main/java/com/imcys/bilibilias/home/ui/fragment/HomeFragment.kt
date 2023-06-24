@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -29,7 +28,9 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -43,8 +44,6 @@ import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
-import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.myUserData
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -72,7 +71,11 @@ import kotlin.system.exitProcess
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeFragment
 )
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
+
+
+    lateinit var viewModel: FragmentHomeViewModel
+
 
     lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
@@ -80,11 +83,6 @@ class HomeFragment : Fragment() {
     //懒加载
     private val bottomSheetDialog by lazy {
         DialogUtils.loadDialog(requireContext())
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
 
@@ -129,6 +127,7 @@ class HomeFragment : Fragment() {
      * 加载引导
      */
     private fun loadHomeGuide() {
+
 
         HighlightPro.with(this)
             .setHighlightParameter {
@@ -185,6 +184,7 @@ class HomeFragment : Fragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
                     adapter.submitList(oldHomeAdBean.data)
+
                 }
 
 
@@ -278,12 +278,12 @@ class HomeFragment : Fragment() {
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
 //                    val uri = Uri.parse(oldUpdateDataBean.url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri);
+//                    val intent = Intent(Intent.ACTION_VIEW, uri)
 //                    requireContext().startActivity(intent)
                 }
             ).show()
@@ -438,10 +438,11 @@ class HomeFragment : Fragment() {
     private fun detectUserLogin() {
 
         lifecycleScope.launch {
-            val myUserData = HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet(
-                    BilibiliApi.getMyUserData, MyUserData::class.java
-                )
+            val myUserData =
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+                    .asyncGet(
+                        BilibiliApi.getMyUserData, MyUserData::class.java
+                    )
             if (myUserData.code != 0) DialogUtils.loginDialog(requireContext())
                 .show() else BaseApplication.myUserData = myUserData.data
         }
@@ -460,7 +461,13 @@ class HomeFragment : Fragment() {
             val paramsStr = getParamStr(params)
 
             val userInfoBean =
-                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies","")!!).addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54")
+                KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                ).addHeader(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+                )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
             //这里需要储存下数据
@@ -484,7 +491,6 @@ class HomeFragment : Fragment() {
         @JvmStatic
         fun newInstance() = HomeFragment()
 
-        //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
 
         //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
         /**

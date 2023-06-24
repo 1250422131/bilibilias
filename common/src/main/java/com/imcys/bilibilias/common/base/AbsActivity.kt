@@ -149,15 +149,19 @@ open class AbsActivity : AppCompatActivity() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
             }
+
             "Light" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
+
             "Dark" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
+
             "Pink" -> {
                 this.setTheme(R.style.Theme_BILIBILIAS)
             }
+
             "Blue" -> {
                 this.setTheme(R.style.BILIBILIAS_BLUE)
             }

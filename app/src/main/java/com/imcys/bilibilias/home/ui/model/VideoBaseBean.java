@@ -55,7 +55,7 @@ public class VideoBaseBean implements Serializable {
         this.data = data;
     }
 
-    public static class DataBean  implements Serializable {
+    public static class DataBean implements Serializable {
         /**
          * bvid : BV1Sd4y1y7A7
          * aid : 389458988
@@ -389,7 +389,7 @@ public class VideoBaseBean implements Serializable {
             this.pages = pages;
         }
 
-        public static class RightsBean  implements Serializable {
+        public static class RightsBean implements Serializable {
             /**
              * bp : 0
              * elec : 0
@@ -575,7 +575,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class OwnerBean  implements Serializable {
+        public static class OwnerBean implements Serializable {
             /**
              * mid : 397857697
              * name : 黄方块和粉星星a
@@ -611,7 +611,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class StatBean implements Serializable{
+        public static class StatBean implements Serializable {
             /**
              * aid : 389458988
              * view : 1679675
@@ -747,7 +747,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class DimensionBean  implements Serializable{
+        public static class DimensionBean implements Serializable {
             /**
              * width : 1440
              * height : 1080
@@ -783,7 +783,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class SubtitleBean  implements Serializable{
+        public static class SubtitleBean implements Serializable {
             /**
              * allow_submit : false
              * list : [{"id":1079830025387542784,"lan":"ai-zh","lan_doc":"中文（自动生成）","is_lock":false,"subtitle_url":"http://i0.hdslb.com/bfs/ai_subtitle/prod/3894589888736506442d117b7417b54c4df6c5915e2b79c7f8","type":1,"id_str":"1079830025387542784","ai_type":0,"ai_status":2,"author":{"mid":0,"name":"","sex":"","face":"","sign":"","rank":0,"birthday":0,"is_fake_account":0,"is_deleted":0,"in_reg_audit":0,"is_senior_member":0}}]
@@ -808,7 +808,7 @@ public class VideoBaseBean implements Serializable {
                 this.list = list;
             }
 
-            public static class ListBean implements Serializable{
+            public static class ListBean implements Serializable {
                 /**
                  * id : 1079830025387542784
                  * lan : ai-zh
@@ -1031,7 +1031,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class UserGarbBean  implements Serializable{
+        public static class UserGarbBean implements Serializable {
             /**
              * url_image_ani_cut :
              */
@@ -1047,7 +1047,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class HonorReplyBean  implements Serializable{
+        public static class HonorReplyBean implements Serializable {
             private List<HonorBean> honor;
 
             public List<HonorBean> getHonor() {
@@ -1058,7 +1058,7 @@ public class VideoBaseBean implements Serializable {
                 this.honor = honor;
             }
 
-            public static class HonorBean implements Serializable{
+            public static class HonorBean implements Serializable {
                 /**
                  * aid : 389458988
                  * type : 4
@@ -1105,7 +1105,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class DescV2Bean  implements Serializable{
+        public static class DescV2Bean implements Serializable {
             /**
              * raw_text : BGM：LIKPIA - 夏·烟火
              * type : 1
@@ -1141,7 +1141,7 @@ public class VideoBaseBean implements Serializable {
             }
         }
 
-        public static class PagesBean  implements Serializable{
+        public static class PagesBean implements Serializable {
             /**
              * cid : 873650644
              * page : 1
@@ -1236,7 +1236,7 @@ public class VideoBaseBean implements Serializable {
                 this.first_frame = first_frame;
             }
 
-            public static class DimensionBeanX implements Serializable{
+            public static class DimensionBeanX implements Serializable {
                 /**
                  * width : 1440
                  * height : 1080
