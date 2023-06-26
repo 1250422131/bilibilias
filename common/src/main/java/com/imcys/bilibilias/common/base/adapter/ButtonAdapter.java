@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base.adapter;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 
 import androidx.databinding.BindingConversion;
 

@@ -1,6 +1,11 @@
 package com.imcys.bilibilias.base.model.user
 
-import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
+import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
+import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.home.ui.model.VideoPlayBean
 
 data class DownloadTaskDataBean(
     val cid: Int,

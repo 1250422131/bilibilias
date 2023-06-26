@@ -12,14 +12,13 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

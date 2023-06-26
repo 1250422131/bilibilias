@@ -2,12 +2,9 @@ package com.imcys.bilibilias.home.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebSettings
-import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
