@@ -1,30 +1,22 @@
 package com.imcys.bilibilias.home.ui.model.view
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.xiaojinzi.component.impl.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import javax.inject.Inject
-import kotlin.system.exitProcess
 
 class FragmentHomeViewModel : ViewModel() {
 

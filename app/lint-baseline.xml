@@ -2,9 +2,9 @@
 <issues name="AGP (7.3.1)" by="lint 7.3.1" client="gradle" dependencies="false" format="6"
     type="baseline" variant="fatal" version="7.3.1">
 
-    <issue errorLine1="        targetSdk 29"
-        errorLine2="        ~~~~~~~~~~~~"
-        id="ExpiredTargetSdkVersion" message="Google Play requires that apps target API level 31 or higher.&#xA;">
+    <issue errorLine1="        targetSdk 29" errorLine2="        ~~~~~~~~~~~~"
+        id="ExpiredTargetSdkVersion"
+        message="Google Play requires that apps target API level 31 or higher.&#xA;">
         <location column="9" file="build.gradle" line="17" />
     </issue>
 

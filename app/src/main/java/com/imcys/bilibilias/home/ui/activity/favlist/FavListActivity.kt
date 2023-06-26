@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.home.ui.activity.favlist
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.imcys.bilibilias.R
 
 class FavListActivity : AppCompatActivity() {

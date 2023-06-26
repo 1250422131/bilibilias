@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.compose.foundation.layout.R
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
@@ -28,20 +27,11 @@ import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.liulishuo.okdownload.DownloadListener
-import com.liulishuo.okdownload.DownloadMonitor
 import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.OkDownload
-import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
-import com.liulishuo.okdownload.core.dispatcher.CallbackDispatcher
-import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
-import com.liulishuo.okdownload.core.download.DownloadStrategy
-import com.liulishuo.okdownload.core.file.DownloadUriOutputStream
-import com.liulishuo.okdownload.core.file.ProcessFileStrategy
 import com.microsoft.appcenter.analytics.Analytics
-import io.ktor.client.utils.EmptyContent.contentLength
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.*
@@ -50,14 +40,9 @@ import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import org.xutils.common.Callback
-import org.xutils.common.task.PriorityExecutor
-import org.xutils.http.RequestParams
-import org.xutils.x
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 
@@ -798,7 +783,7 @@ class DownloadQueue :
                                 val decompressBytes =
                                     decompress(response.body!!.bytes()) //调用解压函数进行解压，返回包含解压后数据的byte数组
                                 bufferedSink = sink.buffer()
-                                decompressBytes?.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+                                decompressBytes.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
                                 bufferedSink.close()
 
                                 FileUtils.fileWrite(
@@ -937,7 +922,7 @@ class DownloadQueue :
             val decompressBytes =
                 decompress(response.body!!.bytes()) //调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
-            decompressBytes?.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+            decompressBytes.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
             bufferedSink.close()
 
 
