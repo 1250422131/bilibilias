@@ -43,6 +43,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var userDlFinishAutomaticMergeSwitch: SwitchPreferenceCompat
     private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
     private lateinit var appThemeListPreference: ListPreference
+    private lateinit var appLanguageListPreference: ListPreference
 
 
     private lateinit var renameUserDownloadSavePath: Preference
@@ -152,6 +153,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         bindingSaveSDPathSwitchEvent()
         bindingAppThemeListPreferenceEvent()
+        bindingAppLanguageListPreferenceEvent()
+    }
+
+    private fun bindingAppLanguageListPreferenceEvent() {
+        appLanguageListPreference.onPreferenceChangeListener =
+            OnPreferenceChangeListener { _, _ ->
+                val intent = Intent("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
+                intent.setPackage(requireActivity().packageName)
+                requireActivity().sendBroadcast(intent)
+                true
+            }
 
     }
 
@@ -298,6 +310,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         userDlFinishAutomaticImportSwitch =
             findPreference("user_dl_finish_automatic_import_switch")!!
         appThemeListPreference = findPreference("app_theme")!!
+        appLanguageListPreference = findPreference("app_language")!!
 
         userDownloadSavePathEditText = findPreference("user_download_save_path")!!
         sharedPreferences.apply {

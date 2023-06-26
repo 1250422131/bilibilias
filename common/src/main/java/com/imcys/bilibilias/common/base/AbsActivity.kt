@@ -4,7 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.os.LocaleList
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
@@ -19,6 +22,7 @@ import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
+import java.util.Locale
 
 
 open class AbsActivity : AppCompatActivity() {
@@ -59,6 +63,26 @@ open class AbsActivity : AppCompatActivity() {
         //判断主题
         setTheme()
 
+        setLanguage()
+
+    }
+
+    private fun setLanguage() {
+        val configuration = Configuration()
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val locale = when (val language =
+            sharedPreferences.getString("app_language", "System") ?: "System") {
+            "System" -> {
+                Locale.getDefault()
+            }
+            "Default" -> {
+                Locale("zh")
+            }
+            else -> Locale(language.split("-")[0], language.split("-")[1])
+        }
+        configuration.setLocale(locale)
+        resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
     private fun initAsUser() {
@@ -101,7 +125,10 @@ open class AbsActivity : AppCompatActivity() {
         registerReceiver(
             //这块是主题广播
             mThemeChangedBroadcast,
-            IntentFilter("com.imcys.bilibilias.app.THEME_CHANGED")
+            IntentFilter().apply {
+                addAction("com.imcys.bilibilias.app.THEME_CHANGED")
+                addAction("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
+            }
         )
 
     }
