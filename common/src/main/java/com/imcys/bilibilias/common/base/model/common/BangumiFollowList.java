@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.common.base.model.common;
 
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
 import java.util.List;
 

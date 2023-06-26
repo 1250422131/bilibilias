@@ -2,15 +2,11 @@ package com.imcys.bilibilias.home.ui.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding

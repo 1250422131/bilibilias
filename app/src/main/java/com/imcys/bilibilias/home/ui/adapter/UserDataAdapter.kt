@@ -12,7 +12,6 @@ import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
 import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel
 

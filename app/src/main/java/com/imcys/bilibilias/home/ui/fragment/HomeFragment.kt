@@ -77,7 +77,7 @@ class HomeFragment : BaseFragment() {
     lateinit var viewModel: FragmentHomeViewModel
 
 
-    lateinit var fragmentHomeBinding: FragmentHomeBinding
+    private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
     //懒加载
@@ -574,6 +574,6 @@ class HomeFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context, "HomeFragment")
+        StatService.onPageEnd(requireContext(), "HomeFragment")
     }
 }
