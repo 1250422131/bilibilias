@@ -104,6 +104,18 @@
         </ListPreference>
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="Language">
+        <ListPreference
+            android:defaultValue="System"
+            android:entries="@array/app_language"
+            android:entryValues="@array/app_language_value"
+            android:key="app_language"
+            android:summary="试验性功能，翻译可能有差异。"
+            android:title="设置软件语言">
+
+        </ListPreference>
+    </PreferenceCategory>
+
 
     <PreferenceCategory app:title="广告配置">
 
