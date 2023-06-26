@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil

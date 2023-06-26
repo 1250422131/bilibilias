@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,13 +11,11 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback

@@ -10,11 +10,11 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
-import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

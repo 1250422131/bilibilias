@@ -2,8 +2,6 @@ package com.imcys.bilibilias.base.app
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.Handler
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.R

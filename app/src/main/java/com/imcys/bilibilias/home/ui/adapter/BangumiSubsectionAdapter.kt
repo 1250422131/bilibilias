@@ -7,9 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemBangumiSubsectionBinding
-import com.imcys.bilibilias.databinding.ItemSubsectionBinding
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 class BangumiSubsectionAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,

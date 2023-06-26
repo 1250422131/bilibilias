@@ -18,7 +18,10 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
