@@ -19,6 +19,6 @@
     <string name="tool_activity_bangumi_follow_log_finish_button">完成</string>
     <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">追番記錄匯出</string>
     <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">匯出追番進度記錄的excel</string>
-    <string name="tool_log_export_home_top_title">追番日誌匯出</string>
+    <string name="tool_log_export_home_top_title">追番記錄匯出</string>
 
 </resources>
