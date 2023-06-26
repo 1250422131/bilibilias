@@ -62,7 +62,7 @@ open class AbsActivity : AppCompatActivity() {
         addActivity(this)
         //判断主题
         setTheme()
-
+        //判断语言
         setLanguage()
 
     }
