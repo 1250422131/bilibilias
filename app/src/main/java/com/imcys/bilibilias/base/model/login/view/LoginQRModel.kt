@@ -77,8 +77,8 @@ class LoginQRModel {
                             loginSuccessOp(loginStateBean, response)
                         } else {
                             //展示登录结果
-                            val loginQRModel = binding?.loginQRModel!!
-                            loginQRModel.loginTip = loginStateBean.data.message
+                            val loginQRModel = binding?.loginQRModel
+                            loginQRModel?.loginTip = loginStateBean.data.message
                             binding?.loginQRModel = loginQRModel
 
                         }

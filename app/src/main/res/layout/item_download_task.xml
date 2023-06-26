@@ -134,7 +134,6 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-
                 <ProgressBar
                     android:id="@+id/item_download_progressBar"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"

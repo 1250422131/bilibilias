@@ -149,20 +149,20 @@
 -keep class com.bun.miitmdid.core.** {*;}
 
 
--keep class com.baidu.helios.OnGetIdResultCallback
--keep class com.squareup.picasso.Picasso
--keep class com.squareup.picasso.RequestCreator
--keep class edu.umd.cs.findbugs.annotations.SuppressFBWarnings
--keep class org.bouncycastle.jsse.BCSSLParameters
--keep class org.bouncycastle.jsse.BCSSLSocket
--keep class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
--keep class org.conscrypt.Conscrypt$Version
--keep class org.conscrypt.Conscrypt
--keep class org.conscrypt.ConscryptHostnameVerifier
--keep class org.openjsse.javax.net.ssl.SSLParameters
--keep class org.openjsse.javax.net.ssl.SSLSocket
--keep class org.openjsse.net.ssl.OpenJSSE
--keep class org.slf4j.impl.StaticLoggerBinder
+#-keep class com.baidu.helios.OnGetIdResultCallback
+#-keep class com.squareup.picasso.Picasso
+#-keep class com.squareup.picasso.RequestCreator
+#-keep class edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+#-keep class org.bouncycastle.jsse.BCSSLParameters
+#-keep class org.bouncycastle.jsse.BCSSLSocket
+#-keep class org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+#-keep class org.conscrypt.Conscrypt$Version
+#-keep class org.conscrypt.Conscrypt
+#-keep class org.conscrypt.ConscryptHostnameVerifier
+#-keep class org.openjsse.javax.net.ssl.SSLParameters
+#-keep class org.openjsse.javax.net.ssl.SSLSocket
+#-keep class org.openjsse.net.ssl.OpenJSSE
+#-keep class org.slf4j.impl.StaticLoggerBinder
 
 
 # 如果使用了 单类注入，即不定义接口实现 IProvider，需添加下面规则，保护实现

@@ -2,10 +2,10 @@
 
 BILIBILIAS拥抱开源、开放，在GPL-3.0 license规则下我们欢迎其他开发者有自己的想法，对BILIBILIAS进行改造和二次开发。
 
+
 ## 拉取源代码
 
 ### 必要条件
-
 - 自1.1.5版本开始，bilibilias重构改用[**Kotlin**](https://kotlinlang.org/)编写，因此你需要了解一些Kotlin。
 - 请确保[**Java JDK**](https://www.injdk.cn/)在**11**及以上版本，**不支持Java8**
 
@@ -30,19 +30,18 @@ $ git clone -b develop_beta https://github.com/1250422131/bilibilias.git
 ```sh [开发版]
 $ git clone -b develop_imcys https://github.com/1250422131/bilibilias.git
 ```
-
 :::tip Github可能在某些地区无法访问
 因为一些原因Github在部分地区是无法访问的，你需要考虑使用镜像站或者其他方式拉取。
 
 :::
 因此，建议拉取正式版代码，如果想要获得更多能力代码，就拉取测试版，最激进的开发版并不建议拉取。
 
+
 ## 目录结构
 
 BILIBILIAS目前使用[KComponent](https://github.com/xiaojinzi123/KComponent)进行组件化开发，因此项目文件夹会稍微复杂一些。
 
 emmm，比较难搞，因为目录结构太多，一次性粘贴过来也说不了什么，我们还是粘贴下大致内容吧
-
 ```
 .
 ├─ app
@@ -59,6 +58,8 @@ emmm，比较难搞，因为目录结构太多，一次性粘贴过来也说不�
 `tool_log_export`模块是一个日志导出模块，此模块后续的设计是支持导出更多B站日志记录，如播放记录，收藏记录，硬币记录等。
 
 当然，内部的结构仍然复杂，我们后面会介绍到。
+
+
 
 ## 配置文件
 
