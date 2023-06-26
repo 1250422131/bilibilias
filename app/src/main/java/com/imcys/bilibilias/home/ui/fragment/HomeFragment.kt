@@ -184,6 +184,7 @@ class HomeFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
                     adapter.submitList(oldHomeAdBean.data)
+
                 }
 
 
@@ -490,7 +491,6 @@ class HomeFragment : BaseFragment() {
         @JvmStatic
         fun newInstance() = HomeFragment()
 
-        //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
 
         //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
         /**
