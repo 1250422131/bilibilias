@@ -186,6 +186,7 @@ open class HttpUtils {
         private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
             return withContext(Dispatchers.IO) {
                 Gson().fromJson(response.body?.string() ?: "empty string", clz)
+
             }
         }
 

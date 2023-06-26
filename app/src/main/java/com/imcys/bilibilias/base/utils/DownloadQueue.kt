@@ -161,7 +161,7 @@ class DownloadQueue :
             val m = rFile.matcher(mTask.savePath)
             var fileName = ""
             if (m.find()) {
-                fileName = m.group(1)!!
+                fileName = m.group(1) ?: ""
             }
 
             val filePath = mTask.savePath.replace("/$fileName", "")
