@@ -3,6 +3,9 @@
 
 # Java class files
 *.class
+doc/.vitepress/cache
+doc/.vitepress/dist
+doc/node_modules
 
 # Gradle files
 .gradle/
