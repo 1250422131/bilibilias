@@ -410,6 +410,7 @@ class AsVideoActivity : BaseActivity() {
         } else {
             //更新CID刷新播放页面
             cid = data.cid
+            bvid = data.bvid
             epid = data.id
 
             //更新海报->确保可以下载每一个子集的海报
