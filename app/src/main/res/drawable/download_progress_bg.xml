@@ -3,7 +3,7 @@
     <!--进度条背景-->
     <item>
         <shape>
-            <corners android:radius="10dp"/>
+            <corners android:radius="10dp" />
             <solid android:color="?attr/colorPrimaryVariant" />
         </shape>
     </item>
@@ -12,7 +12,7 @@
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
-                <corners android:radius="10dp"/>
+                <corners android:radius="10dp" />
                 <solid android:color="?attr/colorPrimary" />
             </shape>
         </clip>
@@ -22,7 +22,7 @@
     <item>
         <clip>
             <shape>
-                <corners android:radius="10dp"/>
+                <corners android:radius="10dp" />
                 <solid android:color="?attr/colorPrimary" />
             </shape>
         </clip>

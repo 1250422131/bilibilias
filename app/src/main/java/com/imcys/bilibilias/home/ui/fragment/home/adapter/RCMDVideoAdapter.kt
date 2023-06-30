@@ -7,16 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.youth.banner.adapter.BannerAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +57,7 @@ class RCMDVideoAdapter(
         itemRcmdVideoBinding?.apply {
 
             holder.itemView.setOnClickListener {
-                AsVideoActivity.actionStart(context,data.bvid)
+                AsVideoActivity.actionStart(context, data.bvid)
             }
 
             itemRcmdLikeLottie.setAnimation(R.raw.home_like)
@@ -80,7 +77,7 @@ class RCMDVideoAdapter(
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val likeVideoBean = KtHttpUtils .addHeader("cookie", "")
+            val likeVideoBean = KtHttpUtils.addHeader("cookie", "")
                 .addParam("bvid", bvid)
                 .addParam("like", "1")
                 .addParam("csrf", "")

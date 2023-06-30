@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.common.base.utils;
 
-import android.graphics.Color;
-
 /**
  * @author:imcys
  * @create: 2022-11-14 22:54
@@ -10,25 +8,28 @@ import android.graphics.Color;
 public class NumberUtils {
 
 
-
     public static String digitalConversion(int num) {
         String originallyNum = num + "";
-        String result = "";
+        String result;
         if (num >= 10000) {
             int count = lengthNum(num);
             switch (count) {
-                case 5:
+                case 5 -> {
                     result = originallyNum.charAt(0) + "." + originallyNum.charAt(1) + "万";
                     return result;
-                case 6:
+                }
+                case 6 -> {
                     result = originallyNum.substring(0, 2) + "." + originallyNum.charAt(2) + "万";
                     return result;
-                case 7:
+                }
+                case 7 -> {
                     result = originallyNum.substring(0, 3) + "." + originallyNum.charAt(3) + "万";
                     return result;
-                default:
+                }
+                default -> {
                     result = originallyNum.substring(0, 4) + "." + originallyNum.charAt(4) + "万";
                     return result;
+                }
             }
         } else {
             return num + "";

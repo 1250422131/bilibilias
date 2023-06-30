@@ -139,7 +139,7 @@
 
     <string name="new_version_doc">V2.0.4-天枢-Beta修改了多线程下载方案和竖屏视频全屏优化</string>
     <string name="app_donate_doc">BILIBILIAS自運營之初，就有後端支持，我們現時採用的是學生伺服器，但即使如此，每月也會產生費用。\n囙此，希望BILIBILIAS的用戶們可以支援一些費用，一次早餐費，一次奶茶費，一次午飯費就可以滿足BILIBILIAS絕大部分的費用。\n最後，感謝所有為BILIBILIAS捐款和支持AS的用戶。\n你可以不匿名和匿名捐款，推薦不匿名捐款。\n帶上AS和QQ號等聯繫方式</string>
-    <string name="user_dl_merge_cmd" >
+    <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
         {VIDEO_PATH} 视频下载路径\n
@@ -280,8 +280,10 @@
     <string name="app_root_preferences_title_theme">主題</string>
     <string name="app_root_preferences_long_title_theme">設定軟件主題</string>
     <string name="app_root_preferences_long_title_theme_tip">注意：這是實驗性功能，將持續調整。</string>
-    <string name="app_merge_video_top_ly_title">合并视频</string>
+    <string name="app_merge_video_top_ly_title">合并視頻</string>
     <string name="download_barrage">下載彈幕</string>
     <string name="Copied">複製成功</string>
+    <string name="app_root_preferences_long_title_language">設置軟件顯示的語言</string>
+    <string name="app_root_preferences_long_title_language_tip">設置軟件顯示的語言（測試功能）</string>
 
 </resources>

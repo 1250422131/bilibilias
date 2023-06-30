@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -94,7 +95,7 @@ class AsVideoActivity : BaseActivity() {
         //加载控件
         initView()
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
 //    override fun attachBaseContext(newBase: Context?) {
@@ -201,6 +202,20 @@ class AsVideoActivity : BaseActivity() {
                                     height = windowManager.defaultDisplay.height / 4 * 3
                                 }
                             }
+
+
+//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+//                                // 计算折叠程度（0为完全展开，1为完全折叠）
+//
+//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
+//                                    // 根据当前滚动百分比计算内边距
+//                                    val totalScrollRange = appBarLayout.totalScrollRange
+//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
+//                                    val padding = (currentScrollPercentage * 100).toInt()
+//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
+//                                }
+//
+//                            }
 
                         }
 
@@ -338,6 +353,12 @@ class AsVideoActivity : BaseActivity() {
             }
             isMember(bangumiSeasonBean)
 
+            //获取真实的cid
+            bangumiSeasonBean.result.episodes.forEach { episode ->
+                if (episode.bvid == bvid) {
+                    cid = episode.cid
+                }
+            }
 
             binding.apply {
                 //如果就只有一个子集，就不要显示子集列表了
@@ -389,6 +410,7 @@ class AsVideoActivity : BaseActivity() {
         } else {
             //更新CID刷新播放页面
             cid = data.cid
+            bvid = data.bvid
             epid = data.id
 
             //更新海报->确保可以下载每一个子集的海报
@@ -452,8 +474,10 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         lifecycleScope.launch {
+
             val videoPlayListData = KtHttpUtils.addHeader("cookie", asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
+
             binding.apply {
 
                 if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
@@ -650,9 +674,9 @@ class AsVideoActivity : BaseActivity() {
         val jzDataSource = JZDataSource(url, title)
 
         jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid";
+        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid"
         jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 
@@ -714,6 +738,7 @@ class AsVideoActivity : BaseActivity() {
     }
 
     private fun changeFaButtonToRedo() {
+        binding.asVideoFaButton.isVisible = true
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
 
@@ -734,7 +759,7 @@ class AsVideoActivity : BaseActivity() {
         val decompressBytes =
             decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
         bufferedSink = sink.buffer()
-        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        decompressBytes.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
     }

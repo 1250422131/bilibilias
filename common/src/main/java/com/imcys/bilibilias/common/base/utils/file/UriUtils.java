@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.common.base.utils.file;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,10 +9,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-
-import androidx.loader.content.CursorLoader;
-
-import com.youth.banner.util.LogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,8 +32,8 @@ public class UriUtils {
             File file = new File(context.getFilesDir(), name);
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
             FileOutputStream outputStream = new FileOutputStream(file);
-            int read = 0;
-            int maxBufferSize = 1 * 1024 * 1024;
+            int read;
+            int maxBufferSize = 1024 * 1024;
             int bytesAvailable = inputStream.available();
 
             int bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -108,7 +102,7 @@ public class UriUtils {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -146,7 +140,7 @@ public class UriUtils {
                 final int column_index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(column_index);
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             //do nothing
         } finally {
             if (cursor != null)

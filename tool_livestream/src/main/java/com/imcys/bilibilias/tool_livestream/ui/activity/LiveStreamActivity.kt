@@ -9,7 +9,6 @@ import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
@@ -150,6 +149,7 @@ class LiveStreamActivity : BaseActivity() {
                         //播放视频
                         asJzvdStd.startVideo()
                     }
+
                     Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
                         //恢复播放/暂停播放
                         asJzvdStd.startButton.performClick()
@@ -175,7 +175,7 @@ class LiveStreamActivity : BaseActivity() {
         jzDataSource.headerMap["Cookie"] = asUser.cookie
         jzDataSource.headerMap["Referer"] = "https://live.bilibili.com"
         jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76"
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 

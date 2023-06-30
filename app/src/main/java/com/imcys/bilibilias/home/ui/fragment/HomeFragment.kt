@@ -9,10 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -31,7 +28,9 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -45,9 +44,6 @@ import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
-import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
-import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.myUserData
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
@@ -57,7 +53,6 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -70,7 +65,6 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
-import javax.inject.Inject
 import kotlin.system.exitProcess
 
 
@@ -83,17 +77,12 @@ class HomeFragment : BaseFragment() {
     lateinit var viewModel: FragmentHomeViewModel
 
 
-    lateinit var fragmentHomeBinding: FragmentHomeBinding
+    private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
     //懒加载
     private val bottomSheetDialog by lazy {
         DialogUtils.loadDialog(requireContext())
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
 
@@ -195,6 +184,7 @@ class HomeFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
                     adapter.submitList(oldHomeAdBean.data)
+
                 }
 
 
@@ -288,12 +278,12 @@ class HomeFragment : BaseFragment() {
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
                     val uri = Uri.parse(oldUpdateDataBean.url)
-                    val intent = Intent(Intent.ACTION_VIEW, uri);
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
 //                    val uri = Uri.parse(oldUpdateDataBean.url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri);
+//                    val intent = Intent(Intent.ACTION_VIEW, uri)
 //                    requireContext().startActivity(intent)
                 }
             ).show()
@@ -449,7 +439,7 @@ class HomeFragment : BaseFragment() {
 
         lifecycleScope.launch {
             val myUserData =
-                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
+                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
                     .asyncGet(
                         BilibiliApi.getMyUserData, MyUserData::class.java
                     )
@@ -473,7 +463,7 @@ class HomeFragment : BaseFragment() {
             val userInfoBean =
                 KtHttpUtils.addHeader(
                     "cookie",
-                   BaseApplication.dataKv.decodeString("cookies","")!!
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
                 ).addHeader(
                     "User-Agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
@@ -501,7 +491,6 @@ class HomeFragment : BaseFragment() {
         @JvmStatic
         fun newInstance() = HomeFragment()
 
-        //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
 
         //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
         /**
@@ -585,6 +574,6 @@ class HomeFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StatService.onPageEnd(context, "HomeFragment")
+        StatService.onPageEnd(requireContext(), "HomeFragment")
     }
 }

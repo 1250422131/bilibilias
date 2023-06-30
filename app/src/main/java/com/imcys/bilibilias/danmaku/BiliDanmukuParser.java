@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Locale;
 
 import master.flame.danmaku.danmaku.model.AlphaValue;
-
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.Duration;
 import master.flame.danmaku.danmaku.model.IDisplayer;
@@ -61,6 +60,14 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
         }
 
         return null;
+    }
+
+    @Override
+    public BaseDanmakuParser setDisplayer(IDisplayer disp) {
+        super.setDisplayer(disp);
+        mDispScaleX = mDispWidth / DanmakuFactory.BILI_PLAYER_WIDTH;
+        mDispScaleY = mDispHeight / DanmakuFactory.BILI_PLAYER_HEIGHT;
+        return this;
     }
 
     public class XmlContentHandler extends DefaultHandler {
@@ -139,7 +146,7 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
         }
 
         @Override
-        public void characters(char[] ch, int start, int length)  {
+        public void characters(char[] ch, int start, int length) {
             if (item != null) {
                 DanmakuUtils.fillText(item, decodeXmlString(new String(ch, start, length)));
                 item.index = index++;
@@ -153,7 +160,7 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
                     try {
                         JSONArray jsonArray = new JSONArray(text);
                         textArr = new String[jsonArray.length()];
-                        for(int i=0;i<textArr.length;i++){
+                        for (int i = 0; i < textArr.length; i++) {
                             textArr[i] = jsonArray.getString(i);
                         }
                     } catch (JSONException e) {
@@ -186,10 +193,10 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
                     if (textArr.length >= 11) {
                         endX = Float.parseFloat(textArr[7]);
                         endY = Float.parseFloat(textArr[8]);
-                        if(!"".equals(textArr[9])){
+                        if (!"".equals(textArr[9])) {
                             translationDuration = Integer.parseInt(textArr[9]);
                         }
-                        if(!"".equals(textArr[10])){
+                        if (!"".equals(textArr[10])) {
                             translationStartDelay = (long) (Float.parseFloat(textArr[10]));
                         }
                     }
@@ -224,7 +231,7 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
                                     points[i][0] = Float.parseFloat(pointArray[0]);
                                     points[i][1] = Float.parseFloat(pointArray[1]);
                                 }
-                                mContext.mDanmakuFactory.fillLinePathData(item, points, mDispScaleX,
+                                DanmakuFactory.fillLinePathData(item, points, mDispScaleX,
                                         mDispScaleY);
                             }
                         }
@@ -250,13 +257,5 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
             return title;
         }
 
-    }
-
-    @Override
-    public BaseDanmakuParser setDisplayer(IDisplayer disp) {
-        super.setDisplayer(disp);
-        mDispScaleX = mDispWidth / DanmakuFactory.BILI_PLAYER_WIDTH;
-        mDispScaleY = mDispHeight / DanmakuFactory.BILI_PLAYER_HEIGHT;
-        return this;
     }
 }

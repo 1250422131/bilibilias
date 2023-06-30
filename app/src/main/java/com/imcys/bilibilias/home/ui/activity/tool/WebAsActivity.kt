@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.home.ui.activity.tool
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem

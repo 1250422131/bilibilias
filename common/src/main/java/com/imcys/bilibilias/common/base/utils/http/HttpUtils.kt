@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base.utils.http
 
 import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
@@ -10,9 +9,6 @@ import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.xutils.common.task.PriorityExecutor
-import org.xutils.http.RequestParams
-import org.xutils.x
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -190,6 +186,7 @@ open class HttpUtils {
         private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
             return withContext(Dispatchers.IO) {
                 Gson().fromJson(response.body?.string() ?: "empty string", clz)
+
             }
         }
 
@@ -339,8 +336,10 @@ open class HttpUtils {
                 conn.setRequestProperty("connection", "Keep-Alive")
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("referer", " https://www.bilibili.com/")
-                conn.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                conn.setRequestProperty(
+                    "User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                )
                 conn.setRequestProperty("cookie", Cookie)
                 conn.setRequestProperty("charset", "utf-8")
                 conn.useCaches = false
@@ -363,7 +362,8 @@ open class HttpUtils {
 
                 // 定义BufferedReader输入流来读取URL的响应
                 `in` = BufferedReader(
-                    InputStreamReader(conn.inputStream))
+                    InputStreamReader(conn.inputStream)
+                )
                 var line: String?
                 while (`in`.readLine().also { line = it } != null) {
                     result += line
@@ -391,7 +391,6 @@ open class HttpUtils {
         }
 
     }
-
 
 
 }

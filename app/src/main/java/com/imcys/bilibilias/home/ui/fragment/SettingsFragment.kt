@@ -15,18 +15,14 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
-import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
@@ -43,6 +39,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var userDlFinishAutomaticMergeSwitch: SwitchPreferenceCompat
     private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
     private lateinit var appThemeListPreference: ListPreference
+    private lateinit var appLanguageListPreference: ListPreference
 
 
     private lateinit var renameUserDownloadSavePath: Preference
@@ -131,7 +128,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    PreferenceManager.getDefaultSharedPreferences(context).edit {
+                    getDefaultSharedPreferences(context).edit {
                         putString(
                             "user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
@@ -152,6 +149,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         bindingSaveSDPathSwitchEvent()
         bindingAppThemeListPreferenceEvent()
+        bindingAppLanguageListPreferenceEvent()
+    }
+
+    private fun bindingAppLanguageListPreferenceEvent() {
+        appLanguageListPreference.onPreferenceChangeListener =
+            OnPreferenceChangeListener { _, _ ->
+                val intent = Intent("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
+                intent.setPackage(requireActivity().packageName)
+                requireActivity().sendBroadcast(intent)
+                true
+            }
 
     }
 
@@ -205,7 +213,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     true,
                     positiveButtonClickListener = {
                         // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
-                        fileUriUtils.startFor("/storage/emulated/0/Android/data/tv.danmaku.bili",context as Activity, IMPORT_FILE_PATH_CODE)
+                        fileUriUtils.startFor(
+                            "/storage/emulated/0/Android/data/tv.danmaku.bili",
+                            context as Activity,
+                            IMPORT_FILE_PATH_CODE
+                        )
                     },
                     negativeButtonClickListener = {
                     }
@@ -269,7 +281,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         when (requestCode) {
             SAVE_FILE_PATH_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val list = FilePickerManager.obtainData().forEach {
+                    FilePickerManager.obtainData().forEach {
                         sharedPreferences.edit {
                             putString("user_download_save_path", it)
                             apply()
@@ -293,7 +305,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
         userDlFinishAutomaticImportSwitch =
             findPreference("user_dl_finish_automatic_import_switch")!!
-        appThemeListPreference =     findPreference("app_theme")!!
+        appThemeListPreference = findPreference("app_theme")!!
+        appLanguageListPreference = findPreference("app_language")!!
 
         userDownloadSavePathEditText = findPreference("user_download_save_path")!!
         sharedPreferences.apply {

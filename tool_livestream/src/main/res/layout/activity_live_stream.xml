@@ -40,10 +40,10 @@
 
 
                     <com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer
-                        android:imageUrl="@{LiveRoomDataBean.data.userCover}"
                         android:id="@+id/live_stream_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:imageUrl="@{LiveRoomDataBean.data.userCover}"
                         app:layout_collapseMode="parallax"
                         app:showPlayButton="false" />
 
@@ -88,13 +88,13 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:textColor="@color/color_text_hint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="4"
                         android:text="@{LiveMasterUserBean.data.roomNews.content}"
+                        android:textColor="@color/color_text_hint"
                         android:textSize="19sp"
                         android:textStyle="bold" />
 

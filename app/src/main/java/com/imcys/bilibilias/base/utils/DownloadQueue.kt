@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.compose.foundation.layout.R
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
@@ -28,20 +27,11 @@ import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.liulishuo.okdownload.DownloadListener
-import com.liulishuo.okdownload.DownloadMonitor
 import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.OkDownload
-import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
-import com.liulishuo.okdownload.core.dispatcher.CallbackDispatcher
-import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
-import com.liulishuo.okdownload.core.download.DownloadStrategy
-import com.liulishuo.okdownload.core.file.DownloadUriOutputStream
-import com.liulishuo.okdownload.core.file.ProcessFileStrategy
 import com.microsoft.appcenter.analytics.Analytics
-import io.ktor.client.utils.EmptyContent.contentLength
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.*
@@ -50,14 +40,9 @@ import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import org.xutils.common.Callback
-import org.xutils.common.task.PriorityExecutor
-import org.xutils.http.RequestParams
-import org.xutils.x
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 
@@ -176,7 +161,7 @@ class DownloadQueue :
             val m = rFile.matcher(mTask.savePath)
             var fileName = ""
             if (m.find()) {
-                fileName = m.group(1)!!
+                fileName = m.group(1) ?: ""
             }
 
             val filePath = mTask.savePath.replace("/$fileName", "")
@@ -397,7 +382,7 @@ class DownloadQueue :
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
@@ -453,7 +438,7 @@ class DownloadQueue :
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
@@ -652,7 +637,7 @@ class DownloadQueue :
         //临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
         HttpUtils.addHeader("cookie", cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
@@ -780,7 +765,7 @@ class DownloadQueue :
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             HttpUtils.addHeader("cookie", cookie!!)
                 .get("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
@@ -798,7 +783,7 @@ class DownloadQueue :
                                 val decompressBytes =
                                     decompress(response.body!!.bytes()) //调用解压函数进行解压，返回包含解压后数据的byte数组
                                 bufferedSink = sink.buffer()
-                                decompressBytes?.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+                                decompressBytes.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
                                 bufferedSink.close()
 
                                 FileUtils.fileWrite(
@@ -813,11 +798,11 @@ class DownloadQueue :
                                 AppFilePathUtils.copyFile(
                                     videoPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/video.m4s"
-                                );
+                                )
                                 AppFilePathUtils.copyFile(
                                     audioPath,
                                     "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_${ssid}/${epid}/${downloadTaskDataBean.qn}/audio.m4s"
-                                );
+                                )
 
                                 val impFileDeleteState =
                                     PreferenceManager.getDefaultSharedPreferences(App.context)
@@ -919,7 +904,7 @@ class DownloadQueue :
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex
             )
-            val cookie = BaseApplication.dataKv.decodeString("cookies")
+            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
 
             val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
@@ -937,7 +922,7 @@ class DownloadQueue :
             val decompressBytes =
                 decompress(response.body!!.bytes()) //调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
-            decompressBytes?.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+            decompressBytes.let { it -> bufferedSink.write(it) } //将解压后数据写入文件（sink）中
             bufferedSink.close()
 
 
@@ -1053,7 +1038,7 @@ class DownloadQueue :
 
 
     //解压deflate数据的函数
-    fun decompress(data: ByteArray): ByteArray? {
+    fun decompress(data: ByteArray): ByteArray {
         var output: ByteArray
         val decompresser = Inflater(true) //这个true是关键
         decompresser.reset()
@@ -1099,11 +1084,11 @@ class DownloadQueue :
      * @param fileName
      * @return
      */
-    fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
+    private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) //是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
             .setPassIfAlreadyCompleted(true) //如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
-            .setConnectionCount(3) //需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+            .setConnectionCount(1) //需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) //在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) //通知调用者的频率，避免anr，默认3000
             .setWifiRequired(false) //是否只允许wifi下载，默认为false
@@ -1120,7 +1105,7 @@ class DownloadQueue :
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
         )
         task.addHeader("referer", "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
         task.addHeader("cookie", cookie!!)
 
 

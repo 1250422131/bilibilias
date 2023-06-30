@@ -2,11 +2,8 @@ package com.imcys.bilibilias.base.app
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.Handler
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
-import com.imcys.bilibilias.BuildConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -48,7 +45,7 @@ class App : BaseApplication() {
     companion object {
 
 
-        const val appSecret = BuildConfig.APP_CENTER_SECRET
+        const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
         val downloadQueue: DownloadQueue by lazy { DownloadQueue() }
 

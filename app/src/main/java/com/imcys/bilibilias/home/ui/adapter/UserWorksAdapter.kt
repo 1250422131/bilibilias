@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -31,8 +30,10 @@ class UserWorksAdapter : ListAdapter<UserWorksBean.DataBean.ListBean.VlistBean, 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val binding =
-            DataBindingUtil.inflate<ItemUserWorksBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_user_works, parent, false)
+            DataBindingUtil.inflate<ItemUserWorksBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_user_works, parent, false
+            )
 
         return ViewHolder(binding.root)
     }

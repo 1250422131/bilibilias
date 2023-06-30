@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
-import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.databinding.ItemDownloadTaskBinding
 import javax.inject.Inject
 
-class DownloadTaskAdapter @Inject constructor():
+class DownloadTaskAdapter @Inject constructor() :
     ListAdapter<DownloadQueue.Task, DownloadTaskAdapter.ViewHolder>(
         object : DiffUtil.ItemCallback<DownloadQueue.Task>() {
 

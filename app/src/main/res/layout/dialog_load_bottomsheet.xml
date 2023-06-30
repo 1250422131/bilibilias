@@ -25,7 +25,6 @@
                 android:orientation="vertical" />
 
 
-
         </androidx.cardview.widget.CardView>
 
         <LinearLayout

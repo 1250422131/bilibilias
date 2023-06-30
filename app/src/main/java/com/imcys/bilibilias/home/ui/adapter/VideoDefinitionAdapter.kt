@@ -1,14 +1,12 @@
 package com.imcys.bilibilias.home.ui.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.databinding.ItemDlVideoPageBinding
 import com.imcys.bilibilias.databinding.ItemVideoDefinitionBinding
 
 class VideoDefinitionAdapter(
@@ -24,8 +22,10 @@ class VideoDefinitionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemVideoDefinitionBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_video_definition, parent, false)
+            DataBindingUtil.inflate<ItemVideoDefinitionBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_video_definition, parent, false
+            )
 
 
         return ViewHolder(binding.root)

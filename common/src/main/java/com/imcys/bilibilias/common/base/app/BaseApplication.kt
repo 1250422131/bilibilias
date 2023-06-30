@@ -13,7 +13,6 @@ import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
-import dagger.hilt.android.HiltAndroidApp
 
 open class BaseApplication : Application() {
 
@@ -32,7 +31,6 @@ open class BaseApplication : Application() {
 
         //初始化MMKV
         initMMKV()
-
 
     }
 
@@ -59,15 +57,10 @@ open class BaseApplication : Application() {
      * 百度统计
      */
     private fun startBaiDuService() {
-
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (sharedPreferences.getBoolean("baidu_statistics_type", false)) {
-            StatService.setAuthorizedState(applicationContext, true)
-        } else {
-            StatService.setAuthorizedState(applicationContext, false)
-        }
+        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
+        StatService.setAuthorizedState(applicationContext, authorizedState)
         StatService.autoTrace(applicationContext)
-
     }
 
 
@@ -80,7 +73,8 @@ open class BaseApplication : Application() {
 
 
         //全局应用数据的MMKV
-        lateinit var dataKv:MMKV
+        lateinit var dataKv: MMKV
+
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
         //—————————————————————————————————————————————————
@@ -99,5 +93,4 @@ open class BaseApplication : Application() {
 
 
     }
-
 }

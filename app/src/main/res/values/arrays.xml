@@ -46,11 +46,20 @@
         <item>Blue</item>
     </string-array>
 
-    <string-array name="user_language_value">
+    <string-array name="app_language">
         <item>System</item>
-        <item>zh_CN</item>
-        <item>en_US</item>
-        <item>zh_TW</item>
+        <item>Default</item>
+        <item>Chinese(Simplified)</item>
+        <item>Chinese(Traditional)</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="app_language_value">
+        <item>System</item>
+        <item>Default</item>
+        <item>Default</item>
+        <item>zh-TW</item>
+        <item>en-rUS</item>
     </string-array>
 
 </resources>

@@ -1,38 +1,30 @@
 package com.imcys.bilibilias.home.ui.model.view
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.xiaojinzi.component.impl.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import javax.inject.Inject
-import kotlin.system.exitProcess
 
-class FragmentHomeViewModel :ViewModel() {
+class FragmentHomeViewModel : ViewModel() {
 
 
     fun goToPrivacyPolicy(view: View) {
         val uri =
             Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
@@ -45,7 +37,7 @@ class FragmentHomeViewModel :ViewModel() {
 
     fun goToNewVersionDoc(view: View) {
         val uri = Uri.parse("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
@@ -61,18 +53,27 @@ class FragmentHomeViewModel :ViewModel() {
 
     fun toDonateList(view: View) {
         val uri = Uri.parse("https://api.misakamoe.com/as-donate.html")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
     fun goToCommunity(view: View) {
         val uri = Uri.parse("https://support.qq.com/product/337496")
-        val intent = Intent(Intent.ACTION_VIEW, uri);
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
 
 
     fun logoutLogin(view: View) {
+
+        val cookie = BaseApplication.dataKv.decodeString("cookies")
+
+        // cookie存在空隐患
+        if (cookie.isNullOrEmpty()){
+            asToast(view.context,"你还没登录噢")
+            return
+        }
+
         DialogUtils.dialog(
             view.context,
             "退出登录",
@@ -82,16 +83,15 @@ class FragmentHomeViewModel :ViewModel() {
             true,
             positiveButtonClickListener =
             {
-
-                val cookie = BaseApplication.dataKv.decodeString("cookies")
                 val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
-                HttpUtils.addHeader("cookie", cookie!!)
+                HttpUtils.addHeader("cookie", cookie)
                     .addParam("biliCSRF", biliJct!!)
                     .post(BilibiliApi.exitLogin, object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
 
                         }
+
                         override fun onResponse(call: Call, response: Response) {
 
                             BaseApplication.dataKv.apply {
@@ -101,7 +101,7 @@ class FragmentHomeViewModel :ViewModel() {
                             }
 
 
-                            asToast(view.context,"清除完成，请关闭后台重新进入")
+                            asToast(view.context, "清除完成，请关闭后台重新进入")
                         }
 
                     })

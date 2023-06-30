@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="ToolItemBean"
@@ -26,13 +26,13 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-               android:visibility="@{ToolItemBean.bg_color == `` ? View.GONE : View.VISIBLE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@{ToolItemBean.bg_color}"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="@{ToolItemBean.bg_color == `` ? View.GONE : View.VISIBLE}">
 
                 <ImageView
                     android:layout_width="35dp"
@@ -51,14 +51,15 @@
                     android:textStyle="bold" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:visibility="@{ToolItemBean.bg_color == `` ? View.VISIBLE : View.GONE}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/colorPrimary"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="@{ToolItemBean.bg_color == `` ? View.VISIBLE : View.GONE}">
 
                 <ImageView
                     android:layout_width="35dp"

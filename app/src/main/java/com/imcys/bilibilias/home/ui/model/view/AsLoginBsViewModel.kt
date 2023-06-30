@@ -2,10 +2,8 @@ package com.imcys.bilibilias.home.ui.model.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,7 +52,7 @@ class AsLoginBsViewModel(
     fun refreshVerification(view: View) {
 
         //添加验证码 -> 很蠢的办法
-        val asCookie =  BaseApplication.dataKv.decodeString("as_cookies")
+        val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
 
 
         refresCerifictionCode(asCookie, view)
@@ -108,12 +106,13 @@ class AsLoginBsViewModel(
                 asLoginBottomsheetBinding.dgAsLoginVerificationEditText.text.toString()
             )
 
-            val asCookie =  BaseApplication.dataKv.decodeString("as_cookies")
+            val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
 
-            val asUserLoginModel = KtHttpUtils.addHeader("cookie",asCookie!!).asyncPostJson<AsUserLoginModel>(
-                "${BiliBiliAsApi.serviceTestApi}users/login",
-                asLoginInfo
-            )
+            val asUserLoginModel =
+                KtHttpUtils.addHeader("cookie", asCookie!!).asyncPostJson<AsUserLoginModel>(
+                    "${BiliBiliAsApi.serviceTestApi}users/login",
+                    asLoginInfo
+                )
 
 
             launch(Dispatchers.Main) {
@@ -122,10 +121,9 @@ class AsLoginBsViewModel(
                     //关闭加载对话框
                     loadDialog.cancel()
                     //登录成功
-                     var asCookie =  BaseApplication.dataKv.decodeString("as_cookies")
+                    var asCookie = BaseApplication.dataKv.decodeString("as_cookies")
                     asCookie += KtHttpUtils.setCookies
                     asCookie += ";"
-
 
 
                     //储存cookie
@@ -170,7 +168,7 @@ class AsLoginBsViewModel(
         }
 
         //设置item点击事件
-        val biliBiliCookieAdapter = BiliBiliCookieAdapter() { _, data ->
+        val biliBiliCookieAdapter = BiliBiliCookieAdapter { _, data ->
 
             AsDialog.init(view.context).build {
                 config = {
