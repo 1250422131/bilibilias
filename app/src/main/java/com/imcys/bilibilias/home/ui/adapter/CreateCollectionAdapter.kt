@@ -1,10 +1,8 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.BindingMethod
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
@@ -21,8 +19,10 @@ class CreateCollectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemCollectionBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context),
-                R.layout.item_collection, parent, false)
+            DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.item_collection, parent, false
+            )
         return ViewHolder(binding.root)
     }
 

@@ -12,17 +12,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import okio.BufferedSink
@@ -177,9 +176,9 @@ class AsVideoViewModel : ViewModel() {
         if (!FileUtils.isFileExists(dest)) dest.createNewFile()
         val sink = dest.sink() //打开目标文件路径的sink
         val decompressBytes =
-            (context as AsVideoActivity).decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
+            context.decompress(bytes) //调用解压函数进行解压，返回包含解压后数据的byte数组
         bufferedSink = sink.buffer()
-        decompressBytes?.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
+        decompressBytes.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -199,7 +198,10 @@ class AsVideoViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
-                KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies")!!)
+                KtHttpUtils.addHeader(
+                    "cookie",
+                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                )
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                     .addParam("like", "1")
                     .addParam("bvid", bvid)
@@ -310,7 +312,7 @@ class AsVideoViewModel : ViewModel() {
                         "cookie",
                         BaseApplication.dataKv.decodeString("cookies", "")!!
                     )
-                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + (context as AsVideoActivity).asUser.mid)
+                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
 
 
                 launch(Dispatchers.Main) {

@@ -7,7 +7,6 @@ package com.imcys.bilibilias.common.base.utils.file;
  */
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
@@ -15,13 +14,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-import android.webkit.MimeTypeMap;
 
 import androidx.documentfile.provider.DocumentFile;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
 //此类来源
 //https://blog.csdn.net/qq_26280383/article/details/113995727
@@ -131,6 +125,7 @@ public class fileUriUtils {
 
     /**
      * 获取哔哩哔哩储存权限
+     *
      * @param context
      * @param REQUEST_CODE_FOR_DIR
      */

@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 
 
@@ -45,15 +44,14 @@ class LoginViewModel : ViewModel() {
             //监听
             StatService.trackWebView(context, this, webChromeClient)
 
-            settings.javaScriptCanOpenWindowsAutomatically = true //设置js可以直接打开窗口，如window.open()，默认为false
+            settings.javaScriptCanOpenWindowsAutomatically =
+                true //设置js可以直接打开窗口，如window.open()，默认为false
             settings.javaScriptEnabled = true //是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
             settings.loadWithOverviewMode = true //和setUseWideViewPort(true)一起解决网页自适应问题
             settings.domStorageEnabled = true //DOM Storage 重点是设置这个
             settings.allowFileAccess = false
             loadUrl("https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html")
         }
-
-
 
 
         val lParams = LinearLayout.LayoutParams(

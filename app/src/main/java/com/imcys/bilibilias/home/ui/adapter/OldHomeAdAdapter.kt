@@ -2,12 +2,9 @@ package com.imcys.bilibilias.home.ui.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebSettings
-import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
@@ -47,12 +44,14 @@ class OldHomeAdAdapter : ListAdapter<OldHomeAdBean.Data, ViewHolder>(
                     R.layout.item_home_ad, parent, false
                 )
             }
+
             2 -> {
                 DataBindingUtil.inflate<ItemHomeWebAdBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_home_web_ad, parent, false
                 )
             }
+
             else -> {
                 DataBindingUtil.inflate<ItemHomeAdBinding>(
                     LayoutInflater.from(parent.context),

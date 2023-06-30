@@ -13,21 +13,6 @@ public class VideoNumConversion {
     private VideoNumConversion() {
     }
 
-    static class Data {
-        static final char[] TABLE, TR;
-
-        static final byte[] S = new byte[]{11, 10, 3, 8, 4, 6};
-
-        static final long XOR = 177451812, ADD = 8728348608L;
-
-        static {
-            TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF".toCharArray();
-            TR = new char[124];
-            for (char i = 0; i < 58; i++)
-                TR[TABLE[i]] = i;
-        }
-    }
-
     public static int toAvidOffline(String bvid) {
 //		if(!bvid.startsWith("BV")) throw new IllegalArgumentException("bvid must start with \"BV\"");
         long r = 0L, m = 1L;
@@ -44,6 +29,21 @@ public class VideoNumConversion {
         for (int i = 0; i < 6; i++, m *= 58)
             r[Data.S[i]] = Data.TABLE[(int) (x / m % 58)];
         return String.valueOf(r);
+    }
+
+    static class Data {
+        static final char[] TABLE, TR;
+
+        static final byte[] S = new byte[]{11, 10, 3, 8, 4, 6};
+
+        static final long XOR = 177451812, ADD = 8728348608L;
+
+        static {
+            TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF".toCharArray();
+            TR = new char[124];
+            for (char i = 0; i < 58; i++)
+                TR[TABLE[i]] = i;
+        }
     }
 
 }

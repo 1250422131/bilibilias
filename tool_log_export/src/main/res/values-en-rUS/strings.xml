@@ -19,6 +19,6 @@
     <string name="tool_activity_bangumi_follow_log_finish_button">Finish</string>
     <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_title">Export tracking records</string>
     <string name="tool_activity_log_export_tool_item_Trace_up_historical_export_long_title">Export excel for tracking progress records</string>
-    <string name="tool_log_export_home_top_title">Export the tracking log</string>
+    <string name="tool_log_export_home_top_title">Export tracking records</string>
 
 </resources>

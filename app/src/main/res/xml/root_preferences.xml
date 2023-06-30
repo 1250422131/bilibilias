@@ -1,5 +1,4 @@
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_download_conf">
@@ -101,6 +100,19 @@
             android:key="app_theme"
             android:summary="@string/app_root_preferences_long_title_theme_tip"
             android:title="@string/app_root_preferences_long_title_theme">
+
+        </ListPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/app_root_preferences_title_language">
+        <ListPreference
+            android:defaultValue="System"
+            android:entries="@array/app_language"
+            android:entryValues="@array/app_language_value"
+            android:key="app_language"
+            android:summary="@string/app_root_preferences_long_title_language_tip"
+            android:title="@string/app_root_preferences_long_title_language">
+
 
         </ListPreference>
     </PreferenceCategory>

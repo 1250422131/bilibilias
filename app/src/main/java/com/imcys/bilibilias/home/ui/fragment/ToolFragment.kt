@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -36,7 +33,6 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
@@ -53,9 +49,6 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import me.dkzwm.widget.srl.extra.header.MaterialHeader
-import me.dkzwm.widget.srl.indicator.IIndicator
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -110,10 +103,6 @@ class ToolFragment : BaseFragment() {
 
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -145,7 +134,6 @@ class ToolFragment : BaseFragment() {
         loadToolItem()
 
     }
-
 
 
     /**

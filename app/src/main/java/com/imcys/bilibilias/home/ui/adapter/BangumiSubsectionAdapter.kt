@@ -7,9 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemBangumiSubsectionBinding
-import com.imcys.bilibilias.databinding.ItemSubsectionBinding
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 class BangumiSubsectionAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
@@ -28,8 +26,10 @@ class BangumiSubsectionAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
-            DataBindingUtil.inflate<ItemBangumiSubsectionBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_bangumi_subsection, parent, false)
+            DataBindingUtil.inflate<ItemBangumiSubsectionBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_bangumi_subsection, parent, false
+            )
 
         return ViewHolder(binding.root)
 

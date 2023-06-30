@@ -18,12 +18,15 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
 
-class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
+class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
     object : DiffUtil.ItemCallback<DownloadFinishTaskInfo>() {
         override fun areItemsTheSame(
             oldItem: DownloadFinishTaskInfo,
@@ -45,13 +48,14 @@ class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTa
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val binding =
-            DataBindingUtil.inflate<ItemDownloadTaskFinishBinding>(LayoutInflater.from(parent.context),
-                R.layout.item_download_task_finish, parent, false)
+            DataBindingUtil.inflate<ItemDownloadTaskFinishBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_download_task_finish, parent, false
+            )
 
         return ViewHolder(binding.root)
 
     }
-
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -72,12 +76,16 @@ class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTa
                             } else {
                                 "audio/*"
                             }
-                            shareFile(holder.itemView.context,
+                            shareFile(
+                                holder.itemView.context,
                                 "分享文件",
-                                FileProvider.getUriForFile(holder.itemView.context,
+                                FileProvider.getUriForFile(
+                                    holder.itemView.context,
                                     "com.imcys.bilibilias.fileProvider",
-                                    File(task.savePath)),
-                                fileType)
+                                    File(task.savePath)
+                                ),
+                                fileType
+                            )
                             it.cancel()
                         }
                         .setNeutralButton("播放文件") {
@@ -89,11 +97,15 @@ class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTa
                             val intent = Intent()
                             intent.apply {
                                 action = Intent.ACTION_VIEW
-                                setDataAndType(FileProvider.getUriForFile(holder.itemView.context,
-                                    "com.imcys.bilibilias.fileProvider",
-                                    File(task.savePath)), fileType)
+                                setDataAndType(
+                                    FileProvider.getUriForFile(
+                                        holder.itemView.context,
+                                        "com.imcys.bilibilias.fileProvider",
+                                        File(task.savePath)
+                                    ), fileType
+                                )
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 holder.itemView.context.startActivity(this)
                             }
 
@@ -103,7 +115,10 @@ class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTa
                         }.build().show()
 
                 } else {
-                    asToast(holder.itemView.context, "该文件可能被删除\n或执行了导回B站，且删除了源文件。")
+                    asToast(
+                        holder.itemView.context,
+                        "该文件可能被删除\n或执行了导回B站，且删除了源文件。"
+                    )
                 }
 
             }
@@ -145,7 +160,8 @@ class DownloadFinishTaskAd @Inject constructor()  : ListAdapter<DownloadFinishTa
                 BaseApplication.appDatabase.downloadFinishTaskDao()
             val newTasks = withContext(Dispatchers.IO) {
                 DownloadFinishTaskRepository(downloadFinishTaskDao).deleteAndReturnList(
-                    downloadFinishTaskDao.findById(taskId))
+                    downloadFinishTaskDao.findById(taskId)
+                )
             }
             //更新数据
             submitList(newTasks)

@@ -12,7 +12,6 @@ import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
 import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel
 
@@ -40,18 +39,21 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
                     R.layout.item_fg_user_face, parent, false
                 )
             }
+
             2 -> {
                 DataBindingUtil.inflate<ItemFgUserCardDataBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_fg_user_card_data, parent, false
                 )
             }
+
             3 -> {
                 DataBindingUtil.inflate<ItemFgUserToolBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_fg_user_tool, parent, false
                 )
             }
+
             else -> {
                 TODO("错误")
             }
@@ -75,12 +77,14 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
 
                 }
             }
+
             2 -> {
                 DataBindingUtil.getBinding<ItemFgUserCardDataBinding>(holder.itemView)?.apply {
                     upStatBeam = getItem(position).upStatBeam
                     userCardBean = getItem(position).userCardBean
                 }
             }
+
             3 -> {
                 DataBindingUtil.getBinding<ItemFgUserToolBinding>(holder.itemView)?.apply {
                     //由于ItemFgUserTool 子属于 UserFragment 又依附于 HomeActivity 因此这么转换
@@ -88,6 +92,7 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
                         ViewModelProvider(holder.itemView.context as HomeActivity)[ItemFgUserToolViewModel::class.java]
                 }
             }
+
             else -> {
                 TODO("错误")
             }

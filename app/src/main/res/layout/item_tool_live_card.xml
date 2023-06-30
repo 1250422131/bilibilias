@@ -42,10 +42,10 @@
                     android:layout_weight="6">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
-                        android:scaleType="fitXY"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:imageUrl="@{LiveRoomDataBean.data.userCover}"
+                        android:scaleType="fitXY"
                         app:round="10dp" />
 
                     <androidx.cardview.widget.CardView

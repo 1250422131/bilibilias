@@ -2,34 +2,26 @@ package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.edit
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -82,11 +74,11 @@ class LoginQRModel {
                     BaseApplication.handler.post {
                         //登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
-                            loginSuccessOp( loginStateBean, response)
+                            loginSuccessOp(loginStateBean, response)
                         } else {
                             //展示登录结果
-                            val loginQRModel = binding?.loginQRModel!!
-                            loginQRModel.loginTip = loginStateBean.data.message
+                            val loginQRModel = binding?.loginQRModel
+                            loginQRModel?.loginTip = loginStateBean.data.message
                             binding?.loginQRModel = loginQRModel
 
                         }

@@ -2,19 +2,14 @@ package com.imcys.bilibilias.base.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Paint.Style
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
 
 class AppAsJzvdStd : AsJzvdStd {
@@ -109,12 +104,6 @@ class AppAsJzvdStd : AsJzvdStd {
 
     override fun getLayoutId(): Int {
         return R.layout.app_as_jz_layout_std
-    }
-
-    //预留->布局修改
-    override fun setScreenFullscreen() {
-        super.setScreenFullscreen()
-
     }
 
     override fun onStatePlaying() {

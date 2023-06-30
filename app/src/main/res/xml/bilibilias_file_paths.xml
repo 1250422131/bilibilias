@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
+<paths>
     <!-- /storage/emulated/0/Download/${applicationId}/.beta/apk-->
 
     <files-path
@@ -7,14 +7,14 @@
         path="/" />
     <external-path
         name="ext_root"
-        path="/"/>
+        path="/" />
     <external-files-path
         name="ext_file"
-        path="/"/>
+        path="/" />
     />
     <external-cache-path
         name="ext_path"
-        path="/"/>
+        path="/" />
 
     />
 

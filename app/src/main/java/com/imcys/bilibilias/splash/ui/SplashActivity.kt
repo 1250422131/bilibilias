@@ -7,8 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,7 +15,6 @@ import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding

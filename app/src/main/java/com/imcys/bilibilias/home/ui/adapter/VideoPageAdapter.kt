@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +18,14 @@ class VideoPageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDlVideoPageBinding =
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context),
-                R.layout.item_dl_video_page, parent, false)
+            DataBindingUtil.inflate(
+                LayoutInflater.from(parent.context),
+                R.layout.item_dl_video_page, parent, false
+            )
         return ViewHolder(binding.root)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder,position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<ItemDlVideoPageBinding>(holder.itemView)
         binding?.apply {
             dataBean = datas[position]

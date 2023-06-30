@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -45,18 +44,21 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 )
 
             }
+
             1 -> {
                 DataBindingUtil.inflate<ItemToolVideoCardBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_tool_video_card, parent, false
                 )
             }
+
             2 -> {
                 DataBindingUtil.inflate<ItemToolLiveCardBinding>(
                     LayoutInflater.from(parent.context),
                     R.layout.item_tool_live_card, parent, false
                 )
             }
+
             else -> {
                 TODO("无效内容")
             }
@@ -77,6 +79,7 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                     clickEvent()
                 }
             }
+
             1 -> {
                 //视频/番剧Item
                 val binding = DataBindingUtil.getBinding<ItemToolVideoCardBinding>(holder.itemView)
@@ -106,6 +109,7 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                     clickEvent()
                 }
             }
+
             2 -> {
                 //视频/番剧Item
                 val binding = DataBindingUtil.getBinding<ItemToolLiveCardBinding>(holder.itemView)
