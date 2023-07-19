@@ -2,11 +2,16 @@ package com.imcys.bilibilias.splash.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,6 +21,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.liulishuo.okdownload.OkDownloadProvider.context
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
@@ -23,6 +29,8 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
+    private val REQUEST_CODE_POST_NOTIFICATIONS = 1
+
     private var isFirstLoaded = false
     private var delayedHandler: Handler? = null
 
@@ -33,6 +41,8 @@ class SplashActivity : BaseActivity() {
         getSavePermissions()
         val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
         constraintLayout.addStatusBarTopPadding()
+
+
     }
 
     override fun onBackPressed() {
@@ -49,7 +59,15 @@ class SplashActivity : BaseActivity() {
 
     private fun getSavePermissions() {
         // 首先检查是否已经授予了储存权限
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            //安卓13废弃对写入权限检测
+            //TODO 将准备改为SAF，届时不在对软件检查储存权限
+            toHome()
+        }
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
             != PackageManager.PERMISSION_GRANTED
         ) {
             // 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
@@ -69,8 +87,9 @@ class SplashActivity : BaseActivity() {
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(
                             this,
-                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE
+                            arrayOf(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ), REQUEST_CODE_WRITE_EXTERNAL_STORAGE
                         )
                     },
                     negativeButtonClickListener = {
@@ -89,8 +108,9 @@ class SplashActivity : BaseActivity() {
                     positiveButtonClickListener = {
                         ActivityCompat.requestPermissions(
                             this,
-                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE
+                            arrayOf(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ), REQUEST_CODE_WRITE_EXTERNAL_STORAGE
                         )
                     },
                     negativeButtonClickListener = {
@@ -162,14 +182,7 @@ class SplashActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> {
                 // 如果权限被授予，则可以进行相应的操作
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 已经授予了储存权限，可以进行相应的操作
-                    toHome()
-
-                } else {
-                    // 用户拒绝了权限请求，可以提醒用户为什么需要此权限
-                }
-                return
+                toHome()
             }
         }
     }
