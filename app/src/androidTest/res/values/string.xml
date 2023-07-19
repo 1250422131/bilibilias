@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_debug" translatable="false">BILIBILIAS_DEBUG</string>
+    <string name="app_name_release" translatable="false">BILIBILIAS</string>
+    <string name="app_channel_release" translatable="false">Official Channel</string>
+    <string name="app_channel_debug" translatable="false">Official Channel Debug</string>
+</resources>

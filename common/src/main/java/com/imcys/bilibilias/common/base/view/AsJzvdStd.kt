@@ -201,7 +201,6 @@ open class AsJzvdStd : JzvdStd {
 
     override fun gotoFullscreen() {
 
-
         gotoFullscreenTime = System.currentTimeMillis()
         var vg = parent as ViewGroup
         jzvdContext = vg.context
@@ -227,7 +226,6 @@ open class AsJzvdStd : JzvdStd {
             JZUtils.setRequestedOrientation(jzvdContext, FULLSCREEN_ORIENTATION)
         } else {
             JZUtils.setRequestedOrientation(jzvdContext, NORMAL_ORIENTATION)
-
         }
         JZUtils.hideSystemUI(jzvdContext) //华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
 
