@@ -20,7 +20,7 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdk 21
         //noinspecton ExpiredTargetSdkVersion
-        targetSdk 33
+        targetSdk 32
         versionCode 203
         versionName "2.0.31"
         //multiDexEnabled true
