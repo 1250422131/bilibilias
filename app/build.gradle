@@ -132,7 +132,6 @@ dependencies {
 
     implementation project(":common")
     implementation project(":model_ffmpeg")
-    implementation project(":tool_livestream")
     implementation project(":tool_log_export")
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
