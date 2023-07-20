@@ -20,6 +20,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
@@ -180,6 +181,11 @@ class AsVideoViewModel : ViewModel() {
         bufferedSink = sink.buffer()
         decompressBytes.let { bufferedSink.write(it) } //将解压后数据写入文件（sink）中
         bufferedSink.close()
+
+        val fileName = "${savePath}/${cid}_danmu.ass"
+        val content = File("${savePath}/${cid}_danmu.xml").readText()
+
+        File(fileName).writeText(DmXmlToAss.xmlToAss(content, "测试", "1920", "1080", context))
 
         viewModelScope.launch(Dispatchers.Main) {
             asToast(context, "下载弹幕储存于\n${savePath}/${cid}_danmu.xml")
