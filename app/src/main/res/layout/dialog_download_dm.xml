@@ -28,7 +28,7 @@
                 app:cardElevation="0dp">
 
                 <LinearLayout
-                    android:id="@+id/dialog_dl_video_bar"
+                    android:id="@+id/dialog_dl_dm_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?attr/colorPrimaryVariant"
@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="15dp"
-                        android:text="实验功能暂时稳定"
+                        android:text="实验功能暂时不稳定"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -102,18 +102,13 @@
                         android:orientation="horizontal">
 
                         <RadioButton
+                            android:checked="true"
                             android:id="@+id/dialog_dl_video_app_dl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:buttonTint="?attr/colorPrimary"
                             android:text="下载弹幕" />
 
-                        <RadioButton
-                            android:id="@+id/dialog_dl_video_idm_dl"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="?attr/colorPrimary"
-                            android:text="下载字幕" />
 
                     </RadioGroup>
 
@@ -126,24 +121,25 @@
                     android:layout_height="wrap_content">
 
                     <RadioGroup
+                        android:checkedButton="@id/dialog_dl_dm_ass"
                         android:id="@+id/dialog_dl_dm_type_radioGroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <RadioButton
-                            android:id="@+id/dialog_dl_video_and_audio"
+                            android:id="@+id/dialog_dl_dm_ass"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:buttonTint="?attr/colorPrimary"
                             android:text="ASS" />
 
                         <RadioButton
-                            android:id="@+id/dialog_dl_only_audio"
+                            android:id="@+id/dialog_dl_dm_xml"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:buttonTint="?attr/colorPrimary"
-                            android:text="JSON" />
+                            android:text="XML" />
 
                     </RadioGroup>
 
@@ -163,7 +159,7 @@
                 app:cardElevation="0dp">
 
                 <Button
-                    android:id="@+id/dialog_dl_video_button"
+                    android:id="@+id/dialog_dl_dm_button"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
