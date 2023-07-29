@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.danmaku.change
 
 import android.content.Context
+import android.util.Log
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.danmaku.enmu.DanmakuType
 import org.w3c.dom.Element
@@ -10,6 +11,7 @@ import java.io.StringReader
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.math.log
 
 
 /**
@@ -52,7 +54,7 @@ object DmXmlToAss {
         val danmakuInfo = buildDanmakuInfo(xmlString, context)
 
         //封装身体
-        return headersInfo + "\n$fontStyleInfo\n\n" + context.getString(R.string.ass_script_info_model) + "\n\n" + danmakuInfo
+        return headersInfo + "\n$fontStyleInfo\n\n" + danmakuInfo
 
     }
 
@@ -62,11 +64,9 @@ object DmXmlToAss {
     private fun buildDanmakuInfo(xmlString: String, context: Context): String {
 
         //使用原生的XML解析
-
-
+        Log.e("测试",xmlString)
         var danmakus = context.getString(R.string.ass_events_info_model) + "\n"
         //拿到xml文档对象
-
         val dbf = DocumentBuilderFactory.newInstance()
         val db = dbf.newDocumentBuilder()
         val inputSource = InputSource(StringReader(xmlString))
@@ -116,7 +116,7 @@ object DmXmlToAss {
                             "{\\pos(960,1050)$textColor}"
                         } else {
                             //产生一个随机Y轴位置
-                            val y = listOf(30, 90, 150, 210)[(0 until 4).random()]
+                            val y = (0 until 18).random() * 60
                             val starX = (2000..2400).random()
                             //清除连续
                             oldDmPosition = 0
