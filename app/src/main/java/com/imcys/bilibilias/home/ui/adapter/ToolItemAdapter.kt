@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemToolBinding
-import com.imcys.bilibilias.databinding.ItemToolLiveCardBinding
 import com.imcys.bilibilias.databinding.ItemToolVideoCardBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -52,12 +51,6 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 )
             }
 
-            2 -> {
-                DataBindingUtil.inflate<ItemToolLiveCardBinding>(
-                    LayoutInflater.from(parent.context),
-                    R.layout.item_tool_live_card, parent, false
-                )
-            }
 
             else -> {
                 TODO("无效内容")
@@ -110,15 +103,6 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 }
             }
 
-            2 -> {
-                //视频/番剧Item
-                val binding = DataBindingUtil.getBinding<ItemToolLiveCardBinding>(holder.itemView)
-                binding?.liveRoomDataBean = getItem(position).liveRoomDataBean
-                val clickEvent: () -> Unit = getItem(position).clickEvent
-                binding?.root?.setOnClickListener {
-                    clickEvent()
-                }
-            }
         }
 
 

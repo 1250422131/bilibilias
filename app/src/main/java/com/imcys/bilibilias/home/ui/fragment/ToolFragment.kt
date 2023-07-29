@@ -27,6 +27,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.arouter.ARouterAddress.LiveStreamActivity
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -41,8 +42,7 @@ import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.model.view.ToolViewHolder
-import com.imcys.bilibilias.tool_livestream.ui.activity.LiveStreamActivity
-import com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean
+
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -207,12 +207,12 @@ class ToolFragment : BaseFragment() {
             return
         }
 
-        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
-        //判断是否有搜到
-        if (liveRegex.containsMatchIn(inputString)) {
-            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
-            return
-        }
+//        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
+//        //判断是否有搜到
+//        if (liveRegex.containsMatchIn(inputString)) {
+//            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
+//            return
+//        }
         //至此，视频的检索没有超过，开始判断是不是直播内容
 
 
@@ -226,42 +226,9 @@ class ToolFragment : BaseFragment() {
 
     }
 
-    private fun loadLiveRoomCard(roomId: String) {
-        lifecycleScope.launch {
-            //获取数据
-            val liveRoomData = getLiveRoomData(roomId)
-            mAdapter.apply {
-                currentList.filter { it.type == 0 }.run {
-                    //由于返回list不可变，这里采用相加
-                    mutableListOf(
-                        ToolItemBean(
-                            type = 2,
-                            liveRoomDataBean = liveRoomData,
-                            clickEvent = {
-                                LiveStreamActivity.actionStart(requireContext(), roomId)
-                            }
-                        )
-                    ) + this
-                }.apply {
-                    submitList(this)
-                }
-            }
 
 
-        }
 
-    }
-
-
-    private suspend fun getLiveRoomData(roomId: String): LiveRoomDataBean {
-        return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-                .asyncGet(
-                    "${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
-                    LiveRoomDataBean::class.java
-                )
-        }
-    }
 
     /**
      * 加载APP端分享视频
