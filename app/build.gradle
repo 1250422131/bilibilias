@@ -20,7 +20,7 @@ android {
         applicationId "com.imcys.bilibilias"
         minSdk 21
         //noinspecton ExpiredTargetSdkVersion
-        targetSdk 33
+        targetSdk 32
         versionCode 203
         versionName "2.0.4-天璇-Beta"
         //multiDexEnabled true
@@ -128,12 +128,12 @@ dependencies {
 
     implementation project(":common")
     implementation project(":model_ffmpeg")
-    implementation project(":tool_livestream")
     implementation project(":tool_log_export")
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation "com.google.dagger:hilt-android:2.44"
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
     kapt "com.google.dagger:hilt-compiler:2.44"
 
 
@@ -142,7 +142,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    //新增
-//    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.3.3"
-//    debugImplementation "androidx.compose.ui:ui-test-manifest:1.3.3"
+
 }

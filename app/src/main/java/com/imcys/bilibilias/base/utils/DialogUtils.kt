@@ -5,10 +5,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
@@ -90,6 +94,7 @@ object DialogUtils {
 
         binding.apply {
 
+
             dialogLoginBiliQr.setOnClickListener {
                 context.homeFragment.loadLogin()
                 bottomSheetDialog.cancel()
@@ -104,6 +109,7 @@ object DialogUtils {
             }
 
         }
+
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
 
@@ -720,6 +726,42 @@ object DialogUtils {
 
     }
 
+    /**
+     * 下载弹幕/字幕文件
+     */
+    fun downloadDMDialog(
+        context: Context,
+        videoBaseBean: VideoBaseBean,
+        clickEvent:(binding:DialogDownloadDmBinding)->Unit,
+    ): BottomSheetDialog {
+        val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                window?.apply {
+                    // 设置动态高斯模糊效果
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        setBackgroundBlurRadius(40)
+                    }//设置背景模糊程度
+                }
+            }
+
+        }
+        //设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
+        binding.apply {
+            dialogDlDmButton.setOnClickListener {
+                clickEvent.invoke(this)
+            }
+        }
+
+
+        return bottomSheetDialog
+
+    }
+
 
     /**
      * 缓存视频弹窗
@@ -750,7 +792,19 @@ object DialogUtils {
 
         val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
 
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                window?.apply {
+                    // 设置动态高斯模糊效果
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        setBackgroundBlurRadius(40)
+                    }//设置背景模糊程度
+                }
+            }
+
+        }
         //设置布局
         bottomSheetDialog.setContentView(binding.root)
 

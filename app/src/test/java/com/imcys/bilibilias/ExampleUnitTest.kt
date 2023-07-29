@@ -1,5 +1,6 @@
 package com.imcys.bilibilias
 
+import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
