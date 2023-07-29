@@ -138,7 +138,7 @@
             }
         }
     </string>
-    <string name="new_version_doc">"V2.0.4-天枢-Beta修改了多线程下载方案和竖屏视频全屏优化"</string>
+    <string name="new_version_doc">"V2.0.4-天玑-Beta实现了弹幕转Ass字幕的功能（正在测试）"</string>
     <string name="user_dl_merge_cmd" >"If you do not know the FFmpeg command, please do not modify it. \nBILIBILIAS provides you with simple command parameters. \n{VIDEO_PATH} video download path. \n{AUDIO_PATH} audio storage path. \n{VIDEO_MERGE_PATH} Storage path after merging. "</string>
 
     <string name="app_activity_bangumi_follow_title">Follow Series</string>
@@ -170,7 +170,7 @@
     <string name="app_fragment_home_donate">Donate</string>
     <string name="app_fragment_home_salute">Salute List</string>
     <string name="app_fragment_home_update_content">Update_content</string>
-    <string name="app_fragment_home_version">V2.0.4-天枢-Beta</string>
+    <string name="app_fragment_home_version">V2.0.4-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
     <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
     <string name="app_fragment_home_donate_text">Support the development</string>

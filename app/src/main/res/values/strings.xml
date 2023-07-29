@@ -170,7 +170,7 @@
             }
         }
     </string>
-    <string name="new_version_doc">2.0.31紧急修复了B站接口改动的问题（但不确定是否后面还会有其他接口改动）</string>
+    <string name="new_version_doc">V2.0.4-天玑-Beta实现了弹幕转Ass字幕的功能（正在测试）</string>
     <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
@@ -208,7 +208,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.31</string>
+    <string name="app_fragment_home_version">V2.0.4-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">向全体BILIBILIAS用户致敬</string>
     <string name="app_fragment_home_salute_doc">爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户</string>
     <string name="app_fragment_home_donate_text">为BILIBILIAS的开发提供支持</string>

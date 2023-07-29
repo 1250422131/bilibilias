@@ -137,7 +137,7 @@
         }
     </string>
 
-    <string name="new_version_doc">V2.0.4-天枢-Beta修改了多线程下载方案和竖屏视频全屏优化</string>
+    <string name="new_version_doc">V2.0.4-天玑-Beta实现了弹幕转Ass字幕的功能（正在测试）</string>
     <string name="app_donate_doc">BILIBILIAS自運營之初，就有後端支持，我們現時採用的是學生伺服器，但即使如此，每月也會產生費用。\n囙此，希望BILIBILIAS的用戶們可以支援一些費用，一次早餐費，一次奶茶費，一次午飯費就可以滿足BILIBILIAS絕大部分的費用。\n最後，感謝所有為BILIBILIAS捐款和支持AS的用戶。\n你可以不匿名和匿名捐款，推薦不匿名捐款。\n帶上AS和QQ號等聯繫方式</string>
     <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
@@ -174,7 +174,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.4-天枢-Beta</string>
+    <string name="app_fragment_home_version">V2.0.4-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">向全體BILIBILIAS用戶致敬</string>
     <string name="app_fragment_home_salute_doc">愛好和追求不分年齡，無論何時，對生活有份熱愛，才是最快樂的事，生命才能多姿多彩！—— BILIBILIAS用戶</string>
     <string name="app_fragment_home_donate_text">為BILIBILIAS的開發提供支援</string>
