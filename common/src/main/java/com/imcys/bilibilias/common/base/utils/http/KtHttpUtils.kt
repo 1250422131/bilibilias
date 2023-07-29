@@ -24,7 +24,6 @@ import kotlin.collections.forEach
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
-
 object KtHttpUtils {
 
     var params = mutableMapOf<String, String>()
@@ -40,12 +39,11 @@ object KtHttpUtils {
 
         install(ContentNegotiation) { gson() }
 
-        //请求失败
+        // 请求失败
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)
             exponentialDelay()
         }
-
     }
 
     suspend inline fun <reified T> asyncGet(url: String): T {
@@ -57,9 +55,8 @@ object KtHttpUtils {
                 }
             }
         }.body()
-        //清空
+        // 清空
         headers.clear()
-
 
         return mBean
     }
@@ -73,78 +70,67 @@ object KtHttpUtils {
                 this@KtHttpUtils.params.forEach {
                     this.append(it.key, it.value)
                 }
-            }
+            },
         ) {
             headers {
                 this@KtHttpUtils.headers.forEach {
                     this.append(it.key, it.value)
                 }
             }
-
         }
-        //清空
+        // 清空
         headers.clear()
         params.clear()
         return response.body()
     }
 
-
     suspend inline fun <reified T> asyncPostJson(
         url: String,
         bodyObject: IPostBody,
     ): T {
-
         checkUrl(url)
         val response = httpClient.post(url) {
             contentType(ContentType.Application.Json)
 
             setBody(bodyObject)
 
-
             headers {
                 this@KtHttpUtils.headers.forEach {
                     this.append(it.key, it.value)
                 }
             }
-
         }
 
-        //清空
+        // 清空
         headers.clear()
-        //设置cookie
+        // 设置cookie
         // 获取所有 Set-Cookie 头部
         response.headers.getAll(HttpHeaders.SetCookie)?.forEach {
             setCookies += it
         }
 
-
         return response.body()
     }
-
 
     suspend inline fun <reified T> asyncDeleteJson(
         url: String,
         bodyObject: IPostBody,
     ): T {
-
         checkUrl(url)
         val response = httpClient.delete(url) {
             contentType(ContentType.Application.Json)
 
             setBody(bodyObject)
 
-
             headers {
                 this@KtHttpUtils.headers.forEach {
                     this.append(it.key, it.value)
                 }
             }
-
         }
 
-        //清空
+        // 清空
         headers.clear()
-
 
         return response.body()
     }
@@ -159,7 +145,6 @@ object KtHttpUtils {
         params[key] = value
         return this
     }
-
 
     /**
      * 添加请求头
@@ -179,5 +164,4 @@ object KtHttpUtils {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
         }
     }
-
 }
