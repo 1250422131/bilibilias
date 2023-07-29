@@ -67,44 +67,39 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.system.exitProcess
 
-
 @RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment
+    hostAndPath = ARouterAddress.AppHomeFragment,
 )
 class HomeFragment : BaseFragment() {
 
-
     lateinit var viewModel: FragmentHomeViewModel
-
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
-    //懒加载
+    // 懒加载
     private val bottomSheetDialog by lazy {
         DialogUtils.loadDialog(requireContext())
     }
 
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         fragmentHomeBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_home,
             container,
-            false
+            false,
         )
 
-
-        //添加边距
+        // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
             fragmentHomeViewModel =
                 ViewModelProvider(this@HomeFragment)[FragmentHomeViewModel::class.java]
         }
-
 
         initView()
         loadServiceData()
@@ -113,7 +108,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        //判断用户是否没有被引导
+        // 判断用户是否没有被引导
         val guideVersion =
             (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
@@ -122,13 +117,10 @@ class HomeFragment : BaseFragment() {
         StatService.onPageStart(context, "HomeFragment")
     }
 
-
     /**
      * 加载引导
      */
     private fun loadHomeGuide() {
-
-
         HighlightPro.with(this)
             .setHighlightParameter {
                 val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
@@ -144,15 +136,13 @@ class HomeFragment : BaseFragment() {
             }
             .setBackgroundColor("#80000000".toColorInt())
             .setOnDismissCallback {
-                //让ViewPage来切换页面
+                // 让ViewPage来切换页面
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1
+                    1,
                 ).isCheckable = true
-
             }
             .show()
-
     }
 
     /**
@@ -168,7 +158,6 @@ class HomeFragment : BaseFragment() {
      * 加载首页广告
      */
     private fun initHomeAd() {
-
         val userGoogleADSwitch =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("user_google_ad_switch", true)
@@ -176,7 +165,7 @@ class HomeFragment : BaseFragment() {
         if (userGoogleADSwitch) {
             lifecycleScope.launch(Dispatchers.IO) {
                 val oldHomeAdBean = getOldHomeAdBean()
-                //切换主线程
+                // 切换主线程
                 launch(Dispatchers.Main) {
                     val adapter = OldHomeAdAdapter()
                     fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
@@ -184,14 +173,9 @@ class HomeFragment : BaseFragment() {
                         LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
                     adapter.submitList(oldHomeAdBean.data)
-
                 }
-
-
             }
         }
-
-
     }
 
     /**
@@ -201,10 +185,9 @@ class HomeFragment : BaseFragment() {
     private suspend fun getOldHomeAdBean(): OldHomeAdBean {
         return HttpUtils.asyncGet(
             "${BiliBiliAsApi.appFunction}?type=oldHomeAd",
-            OldHomeAdBean::class.java
+            OldHomeAdBean::class.java,
         )
     }
-
 
     /**
      * 加载轮播图信息
@@ -214,18 +197,16 @@ class HomeFragment : BaseFragment() {
             val oldHomeBannerDataBean =
                 HttpUtils.asyncGet(
                     "${BiliBiliAsApi.updateDataPath}?type=banner",
-                    OldHomeBannerDataBean::class.java
+                    OldHomeBannerDataBean::class.java,
                 )
-            //新增BannerLifecycleObserver
+            // 新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(
                 OldHomeBeanAdapter(
                     oldHomeBannerDataBean.textList,
-                    oldHomeBannerDataBean
-                )
+                    oldHomeBannerDataBean,
+                ),
             ).setIndicator(CircleIndicator(context))
         }
-
-
     }
 
     /**
@@ -235,18 +216,17 @@ class HomeFragment : BaseFragment() {
         AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
 
         lifecycleScope.launch {
-
             val oldUpdateDataBean =
                 HttpUtils.asyncGet(
                     "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-                    OldUpdateDataBean::class.java
+                    OldUpdateDataBean::class.java,
                 )
 
-            //加载公告
+            // 加载公告
             if (oldUpdateDataBean.notice != "") {
                 loadNotice(oldUpdateDataBean.notice.toString())
             }
-            //送出签名信息
+            // 送出签名信息
             val sha = apkVerifyWithSHA(requireContext(), "")
             val md5 = apkVerifyWithMD5(requireContext(), "")
             val crc = apkVerifyWithCRC(requireContext(), "")
@@ -256,13 +236,10 @@ class HomeFragment : BaseFragment() {
                 "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
             }
 
-            //检测更新
+            // 检测更新
             loadVersionData(oldUpdateDataBean)
-
         }
-
     }
-
 
     /**
      * 加载版本信息
@@ -285,7 +262,7 @@ class HomeFragment : BaseFragment() {
 //                    val uri = Uri.parse(oldUpdateDataBean.url)
 //                    val intent = Intent(Intent.ACTION_VIEW, uri)
 //                    requireContext().startActivity(intent)
-                }
+                },
             ).show()
         }
     }
@@ -311,10 +288,9 @@ class HomeFragment : BaseFragment() {
      * 送出此版本的数据信息
      */
     private fun postAppData(sha: String, md5: String, crc: String) {
-
         HttpUtils.get(
             "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java
+            OldUpdateDataBean::class.java,
         ) {
         }
     }
@@ -327,7 +303,8 @@ class HomeFragment : BaseFragment() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val mNotice = sharedPreferences.getString("AppNotice", "")
         if (mNotice != notice) {
-            DialogUtils.dialog(requireContext(),
+            DialogUtils.dialog(
+                requireContext(),
                 getString(R.string.app_HomeFragment_loadNotice_title),
                 notice,
                 getString(R.string.app_HomeFragment_loadNotice_positiveButtonText),
@@ -337,33 +314,27 @@ class HomeFragment : BaseFragment() {
                     sharedPreferences.edit().putString("AppNotice", notice).apply()
                 },
                 negativeButtonClickListener = {
-                }
+                },
             ).show()
         }
-
     }
 
-
-    //初始化列表
+    // 初始化列表
     private fun initView() {
-
-        //登陆检测
-        //context?.let { DialogUtils.loginDialog(it).show() }
-        //加载推荐视频
-        //loadRCMDVideoData()
-        //检测用户是否登陆
+        // 登陆检测
+        // context?.let { DialogUtils.loginDialog(it).show() }
+        // 加载推荐视频
+        // loadRCMDVideoData()
+        // 检测用户是否登陆
         detectUserLogin()
 
-        //loadRoamData()
+        // loadRoamData()
 
         initSmoothRefreshLayout()
-
-
     }
 
     private fun initSmoothRefreshLayout() {
     }
-
 
     /**
      * 加载登陆对话框
@@ -373,9 +344,9 @@ class HomeFragment : BaseFragment() {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
             loginQRDialog = DialogUtils.loginQRDialog(
                 context as Activity,
-                it
+                it,
             ) { code: Int, _: LoginStateBean ->
-                //登陆成功
+                // 登陆成功
                 if (code == 0) {
                     initUserData()
                     startStatistics()
@@ -383,7 +354,6 @@ class HomeFragment : BaseFragment() {
             }.apply {
                 show()
             }
-
         }
     }
 
@@ -391,20 +361,16 @@ class HomeFragment : BaseFragment() {
      * 启动统计
      */
     internal fun startStatistics() {
-
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         sharedPreferences.edit()
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
             .apply()
-
-
     }
 
-    //初始化用户数据
+    // 初始化用户数据
     internal fun initUserData() {
-
-        //mid
+        // mid
         bottomSheetDialog.show()
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -413,9 +379,8 @@ class HomeFragment : BaseFragment() {
                     .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             launch(Dispatchers.Main) {
-
                 if (myUserData.code == 0) {
-                    //提交
+                    // 提交
                     BaseApplication.myUserData = myUserData.data
                     loadUserData(myUserData)
                 } else {
@@ -424,38 +389,34 @@ class HomeFragment : BaseFragment() {
                 }
 
                 bottomSheetDialog.cancel()
-
             }
-
         }
-
-
     }
 
     /**
      * 检查用户是否登陆
      */
     private fun detectUserLogin() {
-
         lifecycleScope.launch {
             val myUserData =
                 HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
                     .asyncGet(
-                        BilibiliApi.getMyUserData, MyUserData::class.java
+                        BilibiliApi.getMyUserData,
+                        MyUserData::class.java,
                     )
-            if (myUserData.code != 0) DialogUtils.loginDialog(requireContext())
-                .show() else BaseApplication.myUserData = myUserData.data
+            if (myUserData.code != 0) {
+                DialogUtils.loginDialog(requireContext())
+                    .show()
+            } else {
+                BaseApplication.myUserData = myUserData.data
+            }
         }
-
     }
 
-
-    //加载用户数据
+    // 加载用户数据
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
-
         lifecycleScope.launch {
-
             val params = mutableMapOf<String?, String?>()
             params["mid"] = myUserData.data.mid.toString()
             val paramsStr = getParamStr(params)
@@ -463,26 +424,22 @@ class HomeFragment : BaseFragment() {
             val userInfoBean =
                 KtHttpUtils.addHeader(
                     "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                    BaseApplication.dataKv.decodeString("cookies", "")!!,
                 ).addHeader(
                     "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54",
                 )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
-            //这里需要储存下数据
+            // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)
 
-
-            //关闭登陆登陆弹窗
+            // 关闭登陆登陆弹窗
             loginQRDialog.cancel()
-            //加载用户弹窗
+            // 加载用户弹窗
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
-
         }
-
     }
-
 
     companion object {
 
@@ -491,8 +448,7 @@ class HomeFragment : BaseFragment() {
         @JvmStatic
         fun newInstance() = HomeFragment()
 
-
-        //底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
+        // 底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
         /**
          * 通过检查签名文件classes.dex文件的哈希值来判断代码文件是否被篡改
          *
@@ -568,8 +524,6 @@ class HomeFragment : BaseFragment() {
             }
             return orginalCRC
         }
-
-
     }
 
     override fun onDestroy() {
