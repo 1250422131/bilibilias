@@ -95,7 +95,6 @@ object DialogUtils {
         binding.apply {
 
 
-
             dialogLoginBiliQr.setOnClickListener {
                 context.homeFragment.loadLogin()
                 bottomSheetDialog.cancel()
@@ -724,6 +723,42 @@ object DialogUtils {
 
         return bottomSheetDialog
 
+
+    }
+
+    /**
+     * 下载弹幕/字幕文件
+     */
+    fun downloadDMDialog(
+        context: Context,
+        videoBaseBean: VideoBaseBean,
+        clickEvent:(binding:DialogDownloadDmBinding)->Unit,
+    ): BottomSheetDialog {
+        val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                window?.apply {
+                    // 设置动态高斯模糊效果
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        setBackgroundBlurRadius(40)
+                    }//设置背景模糊程度
+                }
+            }
+
+        }
+        //设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
+        binding.apply {
+            dialogDlDmButton.setOnClickListener {
+                clickEvent.invoke(this)
+            }
+        }
+
+
+        return bottomSheetDialog
 
     }
 
