@@ -13,6 +13,11 @@
 
 ---
 
+**Language:**
+- [English (United States)](./README-en_US.md)
+- 简体中文
+- [繁体中文(台湾)](./README-zh_TW.md)
+
 ## 简介
 
 **BILIBILIAS**是一款B站，哔哩哔哩视频缓存的辅助工具，一键解析缓存
@@ -34,9 +39,9 @@ UP主可以下载一些剪辑素材，来做视频
 - [x] 支持ffmpeg
 - [x] 支持下载列表操作
 
-## 感谢翻译支持
+## 感谢国际化支持
 
-[xiwangly：提供英语，繁体翻译](https://github.com/xiwangly2)
+[xiwangly：提供en_US，zh_TW语言支持](https://github.com/xiwangly2)
 
 ## 感谢开源项目
 
