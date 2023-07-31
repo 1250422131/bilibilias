@@ -46,19 +46,33 @@ UP主可以下載一些剪輯素材，來做視頻。
 ## 感謝開源項目
 
 [Ktor：協程中高效網路請求](https://ktor.io/)
+
 [bilibili-API-collect：API接口參考](https://github.com/SocialSisterYi/bilibili-API-collect)
+
 [flexbox：伸縮佈局](https://github.com/google/flexbox-layout)
+
 [jxl：直接生成excel文件時採用](https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl/2.6.12)
+
 [BRV：實現RV的動畫效果](https://github.com/liangjingkanji/BRV)
+
 [RxFFmpeg：支持視頻合併等操作](https://github.com/microshow/RxFFmpeg)
+
 [KComponent：組件化路由庫](https://github.com/xiaojinzi123/KComponent)
+
 [HighLightPro：開屏引導](https://github.com/hyy920109/HighLightPro)
+
 [Appcenter：分發以及用戶數據統計](https://appcenter.ms/)
+
 [百度統計：APP使用數據統計](https://mtj.baidu.com/web/welcome/login)
+
 [xutils：下載實現](https://github.com/wyouflf/xUtils3)
+
 [DanmakuFlameMaster：烈焰彈幕使](https://github.com/bilibili/DanmakuFlameMaster)
+
 [饺子播放器](https://github.com/Jzvd/JZVideo)
+
 [lottie：部分動畫實現](https://github.com/airbnb/lottie-android)
+
 [UltimateBarX：沉浸式佈局](https://github.com/Zackratos/UltimateBarX)
 
 ## 下載
