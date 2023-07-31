@@ -46,19 +46,33 @@ Please note that the project's maintenance may be stopped at any time.
 ## Special Thanks to Open Source Projects
 
 [Ktor: Efficient network requests in coroutines](https://ktor.io/)
+
 [bilibili-API-collect: API interface reference](https://github.com/SocialSisterYi/bilibili-API-collect)
+
 [flexbox: Flexbox layout](https://github.com/google/flexbox-layout)
+
 [jxl: Used for direct generation of Excel files](https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl/2.6.12)
+
 [BRV: Realize animation effects for RecyclerView](https://github.com/liangjingkanji/BRV)
+
 [RxFFmpeg: Support video merging and other operations](https://github.com/microshow/RxFFmpeg)
+
 [KComponent: Component-based routing library](https://github.com/xiaojinzi123/KComponent)
+
 [HighLightPro: Splash screen guide](https://github.com/hyy920109/HighLightPro)
+
 [Appcenter: Distribution and user data statistics](https://appcenter.ms/)
+
 [Baidu Statistics: APP usage data statistics](https://mtj.baidu.com/web/welcome/login)
+
 [xutils: Download implementation](https://github.com/wyouflf/xUtils3)
+
 [DanmakuFlameMaster: Bilibili danmaku engine](https://github.com/bilibili/DanmakuFlameMaster)
+
 [JZVideoPlayer: Jiaozi video player](https://github.com/Jzvd/JZVideo)
+
 [lottie: Partial animation implementation](https://github.com/airbnb/lottie-android)
+
 [UltimateBarX: Immersive layout](https://github.com/Zackratos/UltimateBarX)
 
 ## Download
