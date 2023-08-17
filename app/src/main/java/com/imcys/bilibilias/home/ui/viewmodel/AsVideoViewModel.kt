@@ -1,7 +1,6 @@
-package com.imcys.bilibilias.home.ui.model.view
+package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog.show
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE

@@ -22,7 +22,7 @@
 
         <variable
             name="AsVideoViewModel"
-            type="com.imcys.bilibilias.home.ui.model.view.AsVideoViewModel" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel" />
 
 
         <variable

@@ -47,8 +47,8 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.model.view.AsLoginBsViewModel
-import com.imcys.bilibilias.home.ui.model.view.factory.AsLoginBsViewModelFactory
+import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.factory.AsLoginBsViewModelFactory
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
