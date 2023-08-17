@@ -1,10 +1,10 @@
-package com.imcys.bilibilias.home.ui.model.view.factory
+package com.imcys.bilibilias.home.ui.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.databinding.DialogAsLoginBottomsheetBinding
-import com.imcys.bilibilias.home.ui.model.view.AsLoginBsViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 
 class AsLoginBsViewModelFactory(
     private val asLoginBottomsheetBinding: DialogAsLoginBottomsheetBinding,

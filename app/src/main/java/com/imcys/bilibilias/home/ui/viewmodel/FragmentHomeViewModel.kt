@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model.view
+package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.content.Intent
 import android.net.Uri
@@ -20,7 +20,6 @@ import java.io.IOException
 
 class FragmentHomeViewModel : ViewModel() {
 
-
     fun goToPrivacyPolicy(view: View) {
         val uri =
             Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
@@ -29,7 +28,7 @@ class FragmentHomeViewModel : ViewModel() {
     }
 
     fun goToRoam(view: View) {
-        //跳转
+        // 跳转
         Router
             .with(view.context)
             .hostAndPath(hostAndPath = ARouterAddress.LiveStreamActivity).forward()
@@ -63,14 +62,12 @@ class FragmentHomeViewModel : ViewModel() {
         view.context.startActivity(intent)
     }
 
-
     fun logoutLogin(view: View) {
-
         val cookie = BaseApplication.dataKv.decodeString("cookies")
 
         // cookie存在空隐患
-        if (cookie.isNullOrEmpty()){
-            asToast(view.context,"你还没登录噢")
+        if (cookie.isNullOrEmpty()) {
+            asToast(view.context, "你还没登录噢")
             return
         }
 
@@ -87,28 +84,25 @@ class FragmentHomeViewModel : ViewModel() {
 
                 HttpUtils.addHeader("cookie", cookie)
                     .addParam("biliCSRF", biliJct!!)
-                    .post(BilibiliApi.exitLogin, object : Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-
-                        }
-
-                        override fun onResponse(call: Call, response: Response) {
-
-                            BaseApplication.dataKv.apply {
-                                encode("mid", 0)
-                                encode("cookies", "")
-                                encode("bili_jct", "")
+                    .post(
+                        BilibiliApi.exitLogin,
+                        object : Callback {
+                            override fun onFailure(call: Call, e: IOException) {
                             }
 
+                            override fun onResponse(call: Call, response: Response) {
+                                BaseApplication.dataKv.apply {
+                                    encode("mid", 0)
+                                    encode("cookies", "")
+                                    encode("bili_jct", "")
+                                }
 
-                            asToast(view.context, "清除完成，请关闭后台重新进入")
-                        }
-
-                    })
+                                asToast(view.context, "清除完成，请关闭后台重新进入")
+                            }
+                        },
+                    )
             },
-            negativeButtonClickListener = {}
+            negativeButtonClickListener = {},
         ).show()
     }
-
-
 }

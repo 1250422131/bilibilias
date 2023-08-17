@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -16,6 +17,7 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.home.ui.viewmodel.FragmentDownloadViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +27,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DownloadFragment : BaseFragment() {
 
-
     lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
     @Inject
@@ -34,33 +35,34 @@ class DownloadFragment : BaseFragment() {
     @Inject
     lateinit var downloadTaskAdapter: DownloadTaskAdapter
 
+    private val fragmentDownloadViewModel by lazy {
+        ViewModelProvider(this)[FragmentDownloadViewModel::class.java].apply {
+            fragmentDownloadBinding.fragmentDownloadViewModel = this
+        }
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
         fragmentDownloadBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
-        //添加边距
+        // 添加边距
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
-
 
         initView()
 
         return fragmentDownloadBinding.root
-
     }
 
     /**
      * 初始化布局
      */
     private fun initView() {
-
         initDownloadList()
 
         initTabLayout()
-
-
     }
 
     private fun initTabLayout() {
@@ -85,8 +87,7 @@ class DownloadFragment : BaseFragment() {
 
                     override fun onTabReselected(tab: TabLayout.Tab?) {
                     }
-
-                }
+                },
             )
         }
     }
@@ -95,40 +96,32 @@ class DownloadFragment : BaseFragment() {
      * 加载下载完成列表
      */
     private fun loadDownloadTask() {
-
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
-
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val downloadFinishTaskDao =
                     AppDatabase.getDatabase(App.context.applicationContext).downloadFinishTaskDao()
 
-                //协程提交
+                // 协程提交
                 DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
-
                     App.downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask
 
                         lifecycleScope.launch(Dispatchers.Main) {
                             submitList(finishTasks)
                         }
-
                     }
-
                 }
             }
-
         }
-
     }
 
     /**
      * 下载列表
      */
     private fun initDownloadList() {
-
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
 
@@ -136,7 +129,6 @@ class DownloadFragment : BaseFragment() {
 //            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
         }
     }
 

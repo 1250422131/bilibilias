@@ -7,7 +7,7 @@
 
         <variable
             name="MargeVideoViewModel"
-            type="com.imcys.bilibilias.home.ui.model.view.MargeVideoViewModel" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.MargeVideoViewModel" />
 
     </data>
 
