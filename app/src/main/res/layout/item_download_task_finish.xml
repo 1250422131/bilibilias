@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <import type="com.imcys.bilibilias.common.base.extend.LongKt" />
 
         <variable
@@ -120,6 +122,15 @@
                             android:layout_alignParentBottom="true"
                             android:src="@drawable/ic_item_task_delete"
                             app:tint="?attr/colorPrimary" />
+
+                        <CheckBox
+                            android:checked="@={DownloadFinishTaskInfo.selectState}"
+                            android:theme="@style/CheckBoxTheme"
+                            android:id="@+id/item_dl_finish_task_edit_checkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true" />
 
                     </RelativeLayout>
 

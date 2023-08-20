@@ -7,7 +7,7 @@ import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 class DownloadFinishTaskRepository(private val dao: DownloadFinishTaskDao) {
 
 
-    val allDownloadFinishTask = dao.getByIdOrderList()
+    suspend fun allDownloadFinishTask() = dao.getByIdOrderList()
 
     suspend fun insert(todo: DownloadFinishTaskInfo) {
         dao.insert(todo)
@@ -19,5 +19,8 @@ class DownloadFinishTaskRepository(private val dao: DownloadFinishTaskDao) {
         return dao.getByIdOrderList()
     }
 
+    suspend fun delete(todo: DownloadFinishTaskInfo) {
+        dao.delete(todo)
+    }
 
 }

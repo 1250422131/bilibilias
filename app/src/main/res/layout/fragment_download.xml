@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="fragmentDownloadViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.FragmentDownloadViewModel" />
-    </data>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -100,18 +93,25 @@
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
+                        android:visibility="gone"
+                        android:id="@+id/fg_download_top_edit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:padding="5dp">
 
+
                         <TextView
+                            android:id="@+id/fg_download_edit_cancel"
+                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:text="取消" />
 
                         <TextView
+                            android:id="@+id/fg_download_edit_select_all"
+                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
@@ -119,6 +119,8 @@
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
+                            android:id="@+id/fg_download_edit_invert"
+                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
@@ -136,6 +138,8 @@
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
+                    android:visibility="gone"
+                    android:id="@+id/fg_download_bottom_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -155,12 +159,13 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/fg_download_edit_delete"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentEnd="true"
                             android:padding="10dp"
-                            android:text="反选"
+                            android:text="删除"
                             android:textColor="?attr/colorPrimary" />
 
                     </RelativeLayout>
