@@ -133,13 +133,15 @@ dependencies {
     implementation project(":common")
     implementation project(":model_ffmpeg")
     implementation project(":tool_log_export")
+
+    ksp 'com.imcys.deeprecopy:compiler:0.0.1-Alpha-12'
+
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation "com.google.dagger:hilt-android:2.44"
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     kapt "com.google.dagger:hilt-compiler:2.44"
-
 
     ksp "com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4"
     implementation 'com.google.android.material:material:1.8.0'

@@ -5,5 +5,4 @@ import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 
 class FragmentDownloadViewModel : ViewModel() {
     lateinit var binding: FragmentDownloadBinding
-
 }

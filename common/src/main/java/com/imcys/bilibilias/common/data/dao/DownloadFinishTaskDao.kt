@@ -13,13 +13,11 @@ interface DownloadFinishTaskDao {
     suspend fun insert(downloadFinishTaskInfo: DownloadFinishTaskInfo)
 
     @Query("SELECT * from as_download_finish_task ORDER BY id DESC")
-    fun getByIdOrderList(): MutableList<DownloadFinishTaskInfo>
+    suspend fun getByIdOrderList(): MutableList<DownloadFinishTaskInfo>
 
     @Delete
     suspend fun delete(downloadFinishTaskInfo: DownloadFinishTaskInfo)
 
     @Query("SELECT * from as_download_finish_task WHERE id = :taskId LIMIT 1")
     suspend fun findById(taskId: Int): DownloadFinishTaskInfo
-
 }
-

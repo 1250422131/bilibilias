@@ -58,6 +58,8 @@ kotlin {
 
 dependencies {
 
+    api 'com.imcys.deeprecopy:core:0.0.1-Alpha-12'
+    ksp 'com.imcys.deeprecopy:compiler:0.0.1-Alpha-12'
 
     // hilt库，实现控制反转
     api "com.google.dagger:hilt-android:2.44"
