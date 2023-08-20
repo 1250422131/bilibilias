@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.databinding.ActivityMergeVideoBinding
-import com.imcys.bilibilias.home.ui.model.view.MargeVideoViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.MargeVideoViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 class MergeVideoActivity : BaseActivity() {

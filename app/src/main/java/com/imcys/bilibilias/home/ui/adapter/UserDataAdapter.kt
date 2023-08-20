@@ -13,7 +13,7 @@ import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
 import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
-import com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.ItemFgUserToolViewModel
 
 class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     ItemCallback<UserViewItemBean>() {

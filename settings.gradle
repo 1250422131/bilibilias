@@ -31,7 +31,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BILIBILIAS"
 include ':app'
-include ':tool_livestream'
 include ':common'
 include ':model_ffmpeg'
 include ':tool_log_export'
