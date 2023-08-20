@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model.view
+package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -44,21 +44,17 @@ class AsLoginBsViewModel(
 ) :
     ViewModel() {
 
-
     /**
      * 刷新验证码
      * @param view View
      */
     fun refreshVerification(view: View) {
-
-        //添加验证码 -> 很蠢的办法
+        // 添加验证码 -> 很蠢的办法
         val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
-
 
         refresCerifictionCode(asCookie, view)
 
         asToast(view.context, "验证码已经更新")
-
     }
 
     /**
@@ -71,9 +67,8 @@ class AsLoginBsViewModel(
             "${BiliBiliAsApi.serviceTestApi}users/getCaptchaImage?${System.currentTimeMillis()}",
             LazyHeaders.Builder()
                 .addHeader("Cookie", asCookie!!)
-                .build()
+                .build(),
         )
-
 
         Glide.with(view.context)
             .load(glideUrl)
@@ -88,22 +83,19 @@ class AsLoginBsViewModel(
         val security: String,
     ) : IPostBody
 
-
     /**
      * 输入完成点击登录
      * @param view View
      */
     fun loginFinish(view: View) {
-
-
         val loadDialog = DialogUtils.loadDialog(view.context).apply { show() }
 
         viewModelScope.launch(Dispatchers.IO) {
-            //构建登录
+            // 构建登录
             val asLoginInfo = AsLoginInfo(
                 asLoginBottomsheetBinding.dgAsLoginEmailEditText.text.toString(),
                 asLoginBottomsheetBinding.dgAsLoginPwEditText.text.toString(),
-                asLoginBottomsheetBinding.dgAsLoginVerificationEditText.text.toString()
+                asLoginBottomsheetBinding.dgAsLoginVerificationEditText.text.toString(),
             )
 
             val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
@@ -111,32 +103,28 @@ class AsLoginBsViewModel(
             val asUserLoginModel =
                 KtHttpUtils.addHeader("cookie", asCookie!!).asyncPostJson<AsUserLoginModel>(
                     "${BiliBiliAsApi.serviceTestApi}users/login",
-                    asLoginInfo
+                    asLoginInfo,
                 )
 
-
             launch(Dispatchers.Main) {
-                //判断登录
+                // 判断登录
                 if (asUserLoginModel.code == 0) {
-                    //关闭加载对话框
+                    // 关闭加载对话框
                     loadDialog.cancel()
-                    //登录成功
+                    // 登录成功
                     var asCookie = BaseApplication.dataKv.decodeString("as_cookies")
                     asCookie += KtHttpUtils.setCookies
                     asCookie += ";"
 
-
-                    //储存cookie
+                    // 储存cookie
                     BaseApplication.dataKv.encode("as_cookies", asCookie)
-
 
                     (view.context as HomeActivity).asUser.asCookie = asCookie!!
 
-
                     finish()
-                    //关闭当前弹窗
+                    // 关闭当前弹窗
                     bottomSheetDialog.cancel()
-                    //展示用户数据
+                    // 展示用户数据
                     showAccountList(view).show()
                 } else {
                     val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
@@ -146,9 +134,7 @@ class AsLoginBsViewModel(
                 asToast(view.context, asUserLoginModel.msg)
             }
         }
-
     }
-
 
     /**
      * 展示用户数据
@@ -156,18 +142,18 @@ class AsLoginBsViewModel(
      * @return BottomSheetDialog
      */
     private fun showAccountList(view: View): BottomSheetDialog {
-        //先获取View实例
+        // 先获取View实例
         val binding = DialogAsAccountListBinding.inflate(LayoutInflater.from(view.context))
 
         val bottomSheetDialog = BottomSheetDialog(view.context, R.style.BottomSheetDialog)
-        //设置布局
+        // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         binding.dialogAsAccountButton.setOnClickListener {
             addCloudAccount(view)
             bottomSheetDialog.cancel()
         }
 
-        //设置item点击事件
+        // 设置item点击事件
         val biliBiliCookieAdapter = BiliBiliCookieAdapter { _, data ->
 
             AsDialog.init(view.context).build {
@@ -181,8 +167,6 @@ class AsLoginBsViewModel(
                     }
                 }
             }.show()
-
-
         }
 
         binding.dialogAsAccountRv.apply {
@@ -193,13 +177,11 @@ class AsLoginBsViewModel(
         DialogUtils.initDialogBehaviorBinding(
             binding.dialogAsAccountBar,
             view.context,
-            binding.root.parent
+            binding.root.parent,
         )
-
 
         viewModelScope.launch {
             val asCookie = BaseApplication.dataKv.decodeString("as_cookies")
-
 
             val userBiliBiliCookieModel =
                 KtHttpUtils.addHeader("Cookie", asCookie!!)
@@ -207,7 +189,6 @@ class AsLoginBsViewModel(
 
             biliBiliCookieAdapter.submitList(userBiliBiliCookieModel.data)
         }
-
 
         return bottomSheetDialog
     }
@@ -224,7 +205,6 @@ class AsLoginBsViewModel(
         view: View,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-
             val cookies = AESUtils.decrypt(data.cookie)
             val myUserData = KtHttpUtils.addHeader("cookie", cookies)
                 .asyncGet<MyUserData>(
@@ -237,19 +217,14 @@ class AsLoginBsViewModel(
                     deleteCloudAccount(view.context, data)
                     asToast(view.context, "账户失效,为您跳转到添加账户页面")
                 } else {
-                    //为0则代表用户数据仍然有效果，开始为全局设置
+                    // 为0则代表用户数据仍然有效果，开始为全局设置
                     saveBiliCookieData(view.context, cookies)
                 }
 
                 bottomSheetDialog.cancel()
-
             }
-
         }
-
-
     }
-
 
     /**
      * 由于用户cookie失效，这里干掉服务器上的cookie
@@ -261,18 +236,15 @@ class AsLoginBsViewModel(
 
             KtHttpUtils.addHeader("cookie", asCookie!!).asyncDeleteJson<ResponseResult>(
                 "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
-                data
+                data,
             )
-
         }
     }
 
     @SuppressLint("CommitPrefEdits")
     private fun saveBiliCookieData(context: Context, cookie: String) {
         viewModelScope.launch {
-
-            //Cookie过滤操作
-
+            // Cookie过滤操作
 
             val kv = BaseApplication.dataKv
 
@@ -282,8 +254,7 @@ class AsLoginBsViewModel(
             val patternBiliJct = "bili_jct=(.*?);"
             val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
 
-
-            //正则表达式检验
+            // 正则表达式检验
             var m = rSESSDATA.matcher(cookie)
 
             if (m.find()) {
@@ -298,26 +269,20 @@ class AsLoginBsViewModel(
                 kv.encode("bili_jct", groupStr)
             }
 
-            //cookies储存
+            // cookies储存
             kv.encode("cookies", cookie)
 
-
-            //获取用户数据
+            // 获取用户数据
             val userNavDataModel =
                 KtHttpUtils.addHeader(HttpHeaders.Cookie, cookie)
                     .asyncGet<UserNavDataModel>(BilibiliApi.userNavDataPath)
 
-            //储存
+            // 储存
             kv.apply {
                 encode("mid", userNavDataModel.data.mid)
             }
-
-
         }
-
-
     }
-
 
     /**
      * 添加账户
@@ -339,13 +304,13 @@ class AsLoginBsViewModel(
                 }
             val loginQRDialog = DialogUtils.loginQRDialog(
                 context,
-                loginQrcodeBean
+                loginQrcodeBean,
             ) { code: Int, _: LoginStateBean ->
-                //登陆成功
+                // 登陆成功
                 if (code == 0) {
                     (context as HomeActivity).homeFragment.initUserData()
                     context.homeFragment.startStatistics()
-                    //提交云端资料
+                    // 提交云端资料
                     postCloudCookie(context)
                 } else {
                     asToast(context, "登录异常")
@@ -356,7 +321,6 @@ class AsLoginBsViewModel(
 
             (context as HomeActivity).homeFragment.loginQRDialog = loginQRDialog
         }
-
     }
 
     /**
@@ -372,35 +336,25 @@ class AsLoginBsViewModel(
         val type: Int = 1,
     ) : IPostBody
 
-
     private fun postCloudCookie(context: HomeActivity) {
         viewModelScope.launch {
-
-
-            //获取用户数据
+            // 获取用户数据
             val userNavDataModel = KtHttpUtils.addHeader(HttpHeaders.Cookie, context.asUser.cookie)
                 .asyncGet<UserNavDataModel>(BilibiliApi.userNavDataPath)
-
 
             val biliBiliCookieInfo = BiliBiliCookieInfo(
                 userNavDataModel.data.uname,
                 userNavDataModel.data.levelInfo.currentLevel,
                 userNavDataModel.data.face,
-                AESUtils.encrypt(context.asUser.cookie)
+                AESUtils.encrypt(context.asUser.cookie),
             )
 
-
-            //提交云端 采用默认数据
+            // 提交云端 采用默认数据
             KtHttpUtils.addHeader("cookie", context.asUser.asCookie)
                 .asyncPostJson<BiLiCookieResponseModel>(
                     "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
-                    biliBiliCookieInfo
+                    biliBiliCookieInfo,
                 )
-
-
         }
-
     }
-
-
 }

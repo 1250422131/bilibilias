@@ -487,8 +487,8 @@ public class UserBaseBean implements Serializable {
                  * score : 1349
                  */
 
-                private int uid;
-                private int target_id;
+                private long uid;
+                private long target_id;
                 private int medal_id;
                 private int level;
                 private String medal_name;
@@ -504,7 +504,7 @@ public class UserBaseBean implements Serializable {
                 private int wearing_status;
                 private int score;
 
-                public int getUid() {
+                public long getUid() {
                     return uid;
                 }
 
@@ -512,7 +512,7 @@ public class UserBaseBean implements Serializable {
                     this.uid = uid;
                 }
 
-                public int getTarget_id() {
+                public long getTarget_id() {
                     return target_id;
                 }
 
