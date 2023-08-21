@@ -134,7 +134,7 @@ dependencies {
     implementation project(":model_ffmpeg")
     implementation project(":tool_log_export")
 
-    ksp 'com.imcys.deeprecopy:compiler:0.0.1-Alpha-12'
+    ksp 'com.imcys.deeprecopy:compiler:0.0.1-Alpha-13'
 
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

@@ -4,9 +4,9 @@
 
     <data>
 
-        <variable
-            name="asLoginBsViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel" />
+        <!--        <variable-->
+        <!--            name="asLoginBsViewModel"-->
+        <!--            type="com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel" />-->
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -115,7 +115,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginRight="10dp"
                     android:layout_weight="4"
-                    android:onClick="@{(view)->asLoginBsViewModel.refreshVerification(view)}"
                     android:padding="10dp"
                     app:round="10dp" />
 
@@ -153,7 +152,6 @@
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> asLoginBsViewModel.loginFinish(view)}"
                     android:text="登录"
                     android:textColor="@color/white"
                     android:textSize="15sp"

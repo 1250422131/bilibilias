@@ -17,14 +17,12 @@ class MergeVideoActivity : BaseActivity() {
 
         binding = DataBindingUtil.setContentView<ActivityMergeVideoBinding?>(
             this,
-            R.layout.activity_merge_video
+            R.layout.activity_merge_video,
         ).apply {
             mergeVideoTopLy.addStatusBarTopPadding()
         }
 
         binding.margeVideoViewModel = MargeVideoViewModel()
-
-
     }
 
     companion object {
@@ -33,6 +31,4 @@ class MergeVideoActivity : BaseActivity() {
             context.startActivity(intent)
         }
     }
-
-
 }
