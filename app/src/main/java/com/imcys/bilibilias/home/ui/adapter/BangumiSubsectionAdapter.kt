@@ -11,7 +11,7 @@ import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 
 class BangumiSubsectionAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-    val defaultCid: Int,
+    val defaultCid: Long,
     val onClickMethod: (datas: BangumiSeasonBean.ResultBean.EpisodesBean, position: Int) -> Unit,
 ) : RecyclerView.Adapter<BangumiSubsectionAdapter.ViewHolder>() {
 

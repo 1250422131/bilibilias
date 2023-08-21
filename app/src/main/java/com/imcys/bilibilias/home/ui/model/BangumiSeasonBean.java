@@ -1439,12 +1439,12 @@ public class BangumiSeasonBean implements Serializable {
 
             private int checkState = 0;
             private int selected = 0;
-            private int aid;
+            private Long aid;
             private String badge;
             private BadgeInfoBean badge_info;
             private int badge_type;
             private String bvid;
-            private int cid;
+            private Long cid;
             private String cover;
             private DimensionBean dimension;
             private int duration;
@@ -1481,11 +1481,11 @@ public class BangumiSeasonBean implements Serializable {
                 this.selected = selected;
             }
 
-            public int getAid() {
+            public Long getAid() {
                 return aid;
             }
 
-            public void setAid(int aid) {
+            public void setAid(Long aid) {
                 this.aid = aid;
             }
 
@@ -1521,11 +1521,11 @@ public class BangumiSeasonBean implements Serializable {
                 this.bvid = bvid;
             }
 
-            public int getCid() {
+            public Long getCid() {
                 return cid;
             }
 
-            public void setCid(int cid) {
+            public void setCid(Long cid) {
                 this.cid = cid;
             }
 
@@ -2129,12 +2129,12 @@ public class BangumiSeasonBean implements Serializable {
                  * vid :
                  */
 
-                private int aid;
+                private Long aid;
                 private String badge;
                 private BadgeInfoBeanXX badge_info;
                 private int badge_type;
                 private String bvid;
-                private int cid;
+                private Long cid;
                 private String cover;
                 private DimensionBeanX dimension;
                 private int duration;
@@ -2156,11 +2156,11 @@ public class BangumiSeasonBean implements Serializable {
                 private String title;
                 private String vid;
 
-                public int getAid() {
+                public Long getAid() {
                     return aid;
                 }
 
-                public void setAid(int aid) {
+                public void setAid(Long aid) {
                     this.aid = aid;
                 }
 
@@ -2196,11 +2196,11 @@ public class BangumiSeasonBean implements Serializable {
                     this.bvid = bvid;
                 }
 
-                public int getCid() {
+                public Long getCid() {
                     return cid;
                 }
 
-                public void setCid(int cid) {
+                public void setCid(Long cid) {
                     this.cid = cid;
                 }
 

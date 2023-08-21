@@ -26,6 +26,7 @@ import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.deeprecopy.an.EnhancedData
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
@@ -62,7 +63,7 @@ const val STATE_DOWNLOAD_ERROR = -1
 class DownloadQueue :
     CoroutineScope by MainScope() {
 
-    private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
+    private val groupTasksMap: MutableMap<Long, MutableList<Task>> = mutableMapOf()
 
     var downloadTaskAdapter: DownloadTaskAdapter? = null
     var downloadFinishTaskAd: DownloadFinishTaskAd? = null
@@ -292,8 +293,8 @@ class DownloadQueue :
         CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
             var videoTitle = ""
             var videoPageTitle = ""
-            var avid = 0
-            var cid = 0
+            var avid = 0L
+            var cid = 0L
             var videoBvid = ""
             task.downloadTaskDataBean.bangumiSeasonBean?.apply {
                 videoTitle = share_copy
@@ -329,7 +330,7 @@ class DownloadQueue :
                 insert(downloadFinishTaskInfo)
 
                 downloadFinishTaskAd?.apply {
-                    val finishTasks = allDownloadFinishTask
+                    val finishTasks = allDownloadFinishTask()
                     submitList(finishTasks)
                 }
             }
@@ -351,7 +352,7 @@ class DownloadQueue :
      * @param task Task
      */
     private fun videoDataSubmit(task: Task) {
-        var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
+        var aid: Long? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
             val cookie = BaseApplication.dataKv.decodeString("cookies", "")
@@ -388,7 +389,7 @@ class DownloadQueue :
      */
     private fun addAsVideoData(
         bvid: String?,
-        aid: Int,
+        aid: Long,
         mid: Long,
         name: String?,
         copyright: Int,
@@ -424,7 +425,7 @@ class DownloadQueue :
      * 参数合并
      * @param cid Int
      */
-    private fun videoMerge(cid: Int) {
+    private fun videoMerge(cid: Long) {
         val mergeState =
             PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                 "user_dl_finish_automatic_merge_switch",
@@ -540,7 +541,7 @@ class DownloadQueue :
      * 缓存导回B站观看
      * @param cid Int
      */
-    private fun importVideo(cid: Int) {
+    private fun importVideo(cid: Long) {
         val VIDEO_TYPE = 1
         val BANGUMI_TYPE = 2
         val taskMutableList = groupTasksMap[cid]
@@ -1020,7 +1021,7 @@ class DownloadQueue :
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-            .setPassIfAlreadyCompleted(true) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
             .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000

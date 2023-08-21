@@ -426,11 +426,11 @@ public class UserWorksBean implements Serializable {
                 private String title;
                 private int review;
                 private String author;
-                private int mid;
+                private Long mid;
                 private int created;
                 private String length;
                 private int video_review;
-                private int aid;
+                private Long aid;
                 private String bvid;
                 private boolean hide_click;
                 private int is_pay;
@@ -521,11 +521,11 @@ public class UserWorksBean implements Serializable {
                     this.author = author;
                 }
 
-                public int getMid() {
+                public Long getMid() {
                     return mid;
                 }
 
-                public void setMid(int mid) {
+                public void setMid(Long mid) {
                     this.mid = mid;
                 }
 
@@ -553,11 +553,11 @@ public class UserWorksBean implements Serializable {
                     this.video_review = video_review;
                 }
 
-                public int getAid() {
+                public Long getAid() {
                     return aid;
                 }
 
-                public void setAid(int aid) {
+                public void setAid(Long aid) {
                     this.aid = aid;
                 }
 

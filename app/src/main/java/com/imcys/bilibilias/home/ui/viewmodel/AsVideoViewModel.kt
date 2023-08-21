@@ -1,7 +1,6 @@
-package com.imcys.bilibilias.home.ui.model.view
+package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog.show
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
@@ -363,7 +362,7 @@ class AsVideoViewModel : ViewModel() {
      * 加载用户收藏夹
      */
     @SuppressLint("NotifyDataSetChanged")
-    fun loadCollectionView(view: View, avid: Int) {
+    fun loadCollectionView(view: View, avid: Long) {
         val context = view.context
         (context as AsVideoActivity).binding.apply {
             viewModelScope.launch(Dispatchers.IO) {
@@ -414,7 +413,7 @@ class AsVideoViewModel : ViewModel() {
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
-    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Int) {
+    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Long) {
         var addMediaIds = ""
         selects.forEachIndexed { index, l ->
             if (index == selects.size) {
@@ -429,7 +428,7 @@ class AsVideoViewModel : ViewModel() {
      * 新增收藏夹内容
      * @param addMediaIds String
      */
-    private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Int) {
+    private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             val collectionResultBean =
                 KtHttpUtils.addHeader("cookie", context.asUser.cookie)

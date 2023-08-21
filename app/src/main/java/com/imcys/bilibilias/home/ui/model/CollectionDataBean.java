@@ -274,18 +274,18 @@ public class CollectionDataBean implements Serializable {
                  * vip_statue : 0
                  */
 
-                private int mid;
+                private Long mid;
                 private String name;
                 private String face;
                 private boolean followed;
                 private int vip_type;
                 private int vip_statue;
 
-                public int getMid() {
+                public Long getMid() {
                     return mid;
                 }
 
-                public void setMid(int mid) {
+                public void setMid(Long mid) {
                     this.mid = mid;
                 }
 
@@ -400,7 +400,7 @@ public class CollectionDataBean implements Serializable {
              * ugc : {"first_cid":906929529}
              */
 
-            private int id;
+            private Long id;
             private int type;
             private String title;
             private String cover;
@@ -420,11 +420,11 @@ public class CollectionDataBean implements Serializable {
             private Object ogv;
             private UgcBean ugc;
 
-            public int getId() {
+            public Long getId() {
                 return id;
             }
 
-            public void setId(int id) {
+            public void setId(Long id) {
                 this.id = id;
             }
 

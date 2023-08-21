@@ -20,6 +20,10 @@
 
     </style>
 
+    <style name="CheckBoxTheme">
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorControlNormal">?attr/colorPrimary</item>    </style>
+
     <style name="Home_TabLayoutTextStyle">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
