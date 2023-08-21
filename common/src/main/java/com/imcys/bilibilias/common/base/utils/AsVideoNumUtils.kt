@@ -17,7 +17,7 @@ object AsVideoNumUtils {
         if (epRegex.containsMatchIn(string)) return VideoNumConversion.toBvidOffline(
             epRegex.find(
                 string
-            )?.value!!.toInt()
+            )?.value!!.toInt().toLong()
         )
 
 

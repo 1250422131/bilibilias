@@ -8,10 +8,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.AppDatabase
+import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
@@ -25,42 +29,105 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DownloadFragment : BaseFragment() {
 
-
     lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
-    @Inject
-    lateinit var downloadFinishTaskAd: DownloadFinishTaskAd
+    private val downloadFinishTaskAd: DownloadFinishTaskAd by lazy {
+        DownloadFinishTaskAd {
+            fragmentDownloadBinding.run {
+                if (fgDownloadTopEdit.visibility == View.VISIBLE) {
+                    editCancel()
+                    false
+                } else {
+                    editShow()
+                    true
+                }
+            }
+        }
+    }
 
     @Inject
     lateinit var downloadTaskAdapter: DownloadTaskAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
         fragmentDownloadBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
-        //添加边距
+        // 添加边距
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
-
 
         initView()
 
         return fragmentDownloadBinding.root
-
     }
 
     /**
      * 初始化布局
      */
     private fun initView() {
-
+        initEditLayout()
         initDownloadList()
 
         initTabLayout()
+    }
 
+    private fun editCancel() {
+        fragmentDownloadBinding.apply {
+            fgDownloadTopEdit.visibility = View.GONE
+            fgDownloadBottomEdit.visibility = View.GONE
+            fragmentDownloadTabLayout.visibility = View.VISIBLE
 
+            val newTaskList =
+                downloadFinishTaskAd.currentList.map {
+                    it.deepCopy {
+                        selectState = false
+                        showEdit = false
+                    }
+                }
+            downloadFinishTaskAd.submitList(newTaskList)
+        }
+    }
+
+    private fun editShow() {
+        fragmentDownloadBinding.apply {
+            fgDownloadTopEdit.visibility = View.VISIBLE
+            fgDownloadBottomEdit.visibility = View.VISIBLE
+            fragmentDownloadTabLayout.visibility = View.GONE
+        }
+    }
+
+    private fun initEditLayout() {
+        fragmentDownloadBinding.apply {
+            // 全选
+            fgDownloadEditSelectAll.setOnClickListener {
+                val newTaskList =
+                    downloadFinishTaskAd.currentList.map { it.deepCopy { selectState = true } }
+                downloadFinishTaskAd.submitList(newTaskList)
+            }
+            // 反选
+            fgDownloadEditInvert.setOnClickListener {
+                val newTaskList =
+                    downloadFinishTaskAd.currentList.map {
+                        if (it.selectState) {
+                            it.deepCopy { selectState = false }
+                        } else {
+                            it.deepCopy { selectState = true }
+                        }
+                    }
+                downloadFinishTaskAd.submitList(newTaskList)
+            }
+
+            // 取消
+            fgDownloadEditCancel.setOnClickListener {
+                editCancel()
+            }
+
+            fgDownloadEditDelete.setOnClickListener {
+                deleteFinishTaskTip()
+            }
+        }
     }
 
     private fun initTabLayout() {
@@ -85,9 +152,65 @@ class DownloadFragment : BaseFragment() {
 
                     override fun onTabReselected(tab: TabLayout.Tab?) {
                     }
-
-                }
+                },
             )
+        }
+    }
+
+    /**
+     * 弹出警告对话框
+     */
+    private fun deleteFinishTaskTip() {
+        AsDialog.init(this).build {
+            config = {
+                title = "警告"
+                content = "请选择删除方式？"
+                positiveButtonText = "仅删除记录"
+                neutralButtonText = "删除记录和文件"
+                negativeButtonText = "取消"
+                negativeButton = {
+                    it.cancel()
+                }
+                neutralButton = {
+                    deleteSelectTaskAndFile()
+                    it.cancel()
+                }
+                positiveButton = {
+                    deleteSelectTaskRecords()
+                    it.cancel()
+                }
+            }
+        }.show()
+    }
+
+    /**
+     * 删除记录以及文件
+     */
+    private fun deleteSelectTaskAndFile() {
+        downloadFinishTaskAd.currentList.filter { it.selectState }
+            .forEach { FileUtils.deleteFile(it.savePath) }
+        deleteSelectTaskRecords()
+    }
+
+    /**
+     * 删除下载记录
+     */
+    private fun deleteSelectTaskRecords() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val downloadFinishTaskDao =
+                BaseApplication.appDatabase.downloadFinishTaskDao()
+
+            val repository = DownloadFinishTaskRepository(downloadFinishTaskDao)
+            downloadFinishTaskAd.currentList.filter { it.selectState }
+                .forEach { repository.delete(it) }
+
+            val newTasks = repository.allDownloadFinishTask()
+
+            launch(Dispatchers.Main) {
+                editCancel()
+                // 更新数据
+                downloadFinishTaskAd.submitList(newTasks)
+            }
         }
     }
 
@@ -95,40 +218,31 @@ class DownloadFragment : BaseFragment() {
      * 加载下载完成列表
      */
     private fun loadDownloadTask() {
-
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
-
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val downloadFinishTaskDao =
                     AppDatabase.getDatabase(App.context.applicationContext).downloadFinishTaskDao()
 
-                //协程提交
+                // 协程提交
                 DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
-
                     App.downloadQueue.downloadFinishTaskAd?.apply {
-                        val finishTasks = allDownloadFinishTask
-
+                        val finishTasks = allDownloadFinishTask()
                         lifecycleScope.launch(Dispatchers.Main) {
                             submitList(finishTasks)
                         }
-
                     }
-
                 }
             }
-
         }
-
     }
 
     /**
      * 下载列表
      */
     private fun initDownloadList() {
-
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
 
@@ -136,7 +250,6 @@ class DownloadFragment : BaseFragment() {
 //            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
         }
     }
 
