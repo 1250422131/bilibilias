@@ -7,10 +7,10 @@
     <data>
 
         <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
+        <!--com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean-->
         <variable
             name="LiveRoomDataBean"
-            type="com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean" />
+            type="java.lang.Void" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,11 +40,10 @@
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="6">
-
+                    <!--android:imageUrl="@{LiveRoomDataBean.data.userCover}"-->
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:imageUrl="@{LiveRoomDataBean.data.userCover}"
                         android:scaleType="fitXY"
                         app:round="10dp" />
 
@@ -84,13 +83,12 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
+                        <!-- android:text="@{LiveRoomDataBean.data.title}"-->
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="@{LiveRoomDataBean.data.title}"
                             android:textSize="16dp"
                             android:textStyle="bold" />
 
@@ -109,12 +107,11 @@
                             android:layout_height="18dp"
                             android:src="@drawable/ic_play_num"
                             app:tint="@color/color_text_hint" />
-
+                        <!--android:text="@{NumberUtils.digitalConversion(LiveRoomDataBean.data.online)}"-->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(LiveRoomDataBean.data.online)}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 
