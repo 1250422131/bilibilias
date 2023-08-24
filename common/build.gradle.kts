@@ -41,7 +41,6 @@ android {
         isEnabled = true
     }
 
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -57,93 +56,89 @@ kotlin {
 
 dependencies {
 
-    api("com.imcys.deeprecopy:core:0.0.1-Alpha-12")
-    ksp("com.imcys.deeprecopy:compiler:0.0.1-Alpha-12")
+    api(libs.core)
+    ksp(libs.compiler)
 
     // hilt库，实现控制反转
-    api("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-compiler:2.44")
+    api(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     // 核心代码库
-    api("com.liulishuo.okdownload:okdownload:1.0.7")
-
-    api("com.liulishuo.okdownload:ktx:1.0.7")
+    api(libs.okdownload)
 
     // 提供kotlin extension，可以不引入
-    api("com.liulishuo.okdownload:ktx:1.0.7")
-
+    api(libs.ktx)
 
     /**
      * SmoothRefreshLayout支持
      */
-    api("com.github.dkzwm:srl-core:1.7.2.4")
-    api("com.github.dkzwm:srl-ext-material:1.7.2.4")//md刷新头
-    api("com.github.dkzwm:srl-ext-classics:1.7.2.4")
+    api(libs.srl.core)
+    api(libs.srl.ext.material)//md刷新头
+    api(libs.srl.ext.classics)
 
 
     /**
      * MMKV 储存框架
      */
-    api("com.tencent:mmkv:1.2.15")
+    api(libs.mmkv)
 
 
     /**
      * 伸缩布局
      */
-    api("com.google.android.flexbox:flexbox:3.0.0")
+    api(libs.flexbox)
 
     /**
      * jxl库
      * 直接生成excel文件时采用
      */
-    api("net.sourceforge.jexcelapi:jxl:2.6.12")
+    api(libs.jxl)
 
     /**
      * 网络图片加载库
      * 专为compose打造
      */
-    api("io.coil-kt:coil-compose:2.2.2")
+    api(libs.coil.compose)
 
     /**
      * rv框架
      * 实现RV的动画效果
      */
-    api("com.github.liangjingkanji:BRV:1.3.90")
+    api(libs.brv)
 
     /**
      * 底部对话框库
      * 为AS专门打造适配的对话框库
      */
-    api("com.github.1250422131:AsBottomDialog:0.0.1beta10")
+    api(libs.asBottomDialog)
 
     //协程
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    api(libs.kotlinx.coroutines.android)
 
     /**
      * RxFFmpeg
      * 支持视频合并等操作
      */
-    api("com.github.microshow:RxFFmpeg:4.9.0-lite")
+    api(libs.rxFFmpeg)
 
 
     /**
      * 组件化路由库
      */
-    api("com.github.xiaojinzi123.KComponent:kcomponent-rx:1.0.0-rc4")
-    ksp("com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4")
+    api(libs.kcomponent.rx)
+    ksp(libs.kcomponent.compiler)
 
     //百度统计
-    api("com.baidu.mobstat:mtj-sdk-circle:4.0.7.5")
+    api(libs.mtj.sdk.circle)
 
     //开屏引导
-    api("com.github.hyy920109:GuidePro:1.1.0")
+    api(libs.hyy920109.guidePro)
 
     //微软分发
-    val appCenterSdkVersion = "5.0.0"
-    api("com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}")
+    api(libs.appcenter.distribute)
     //微软统计
-    api("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
-    api("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
+    api(libs.appcenter.analytics)
+    api(libs.appcenter.crashes)
 
     //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
@@ -151,26 +146,26 @@ dependencies {
      * room
      * 本地化数据库
      */
-    api("androidx.room:room-runtime:2.4.3")
-    api("androidx.room:room-ktx:2.4.3")
-    ksp("androidx.room:room-compiler:2.4.3")
+    api(libs.room.runtime)
+    api(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     /**
      * 文件选择器
      */
-    api("me.rosuh:AndroidFilePicker:0.8.2")
+    api(libs.androidFilePicker)
 
     /**
      * xutils
      * 下载文件支持
      */
-    api("org.xutils:xutils:3.9.0")
+    api(libs.xutils)
 
     /**
      * DanmakuFlameMaster
      * 烈焰弹幕使
      */
-    api("com.github.ctiao:dfm:0.6.0")
+    api(libs.dfm)
 
 
     /**
@@ -188,50 +183,57 @@ dependencies {
 
 
     //饺子播放器
-    api("cn.jzvd:jiaozivideoplayer:7.7.0")
+    api(libs.jiaozivideoplayer)
 
     //lottie动画库
-    api("com.airbnb.android:lottie:4.1.0")
+    api(libs.lottie)
 
     //implementation "androidx.palette:palette:1.0.0"
 
-    api("io.github.youth5201314:banner:2.2.2")
+    api(libs.banner)
 
-    api("com.github.bumptech.glide:glide:4.13.2")
+    api(libs.glide)
     //implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
      */
-    api("com.gitee.zackratos:UltimateBarX:0.8.0")
+    api(libs.uiTimateBarX)
 
     /**
      * ktor全局支持
      */
-    api("io.ktor:ktor-client-android:2.2.2")
-    api("io.ktor:ktor-client-okhttp:2.2.2")
+    api(libs.ktor.client.android)
+    api(libs.ktor.client.okhttp)
     //日志
-    api("io.ktor:ktor-client-logging:2.2.2")//Logging
+    api(libs.ktor.client.logging)//Logging
     //json解析支持
-    api("io.ktor:ktor-client-content-negotiation:2.2.2")
-    api("io.ktor:ktor-serialization-gson:2.2.2")
-    api("com.google.code.gson:gson:2.10")
+    api(libs.ktor.client.content.negotiation)
+    api(libs.ktor.serialization.gson)
+    api(libs.gson)
 
 
     //implementation "com.squareup.retrofit2:retrofit:2.9.0"
 
-    api("androidx.constraintlayout:constraintlayout:2.0.4")
-    api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    api(libs.constraintlayout)
+    api(libs.androidx.lifecycle.viewmodel.ktx)
     //新增
     // api( "androidx.compose.ui:ui-tooling-preview:1.3.2"
-    api("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    api("androidx.preference:preference:1.1.1")
+    api(libs.androidx.lifecycle.runtime.ktx)
+    api(libs.androidx.preference.ktx)
 
+//    api(libs.activity.compose)
+//    api(platform(libs.compose.bom))
+//    api(libs.ui)
+//    api(libs.ui.graphics)
+//    api(libs.ui.tooling.preview)
+//    api(libs.material3)
+//    androidTestImplementation(platform(libs.compose.bom))
 
-    api("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.4.2")
-    implementation("com.google.android.material:material:1.6.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    api(libs.androidx.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }

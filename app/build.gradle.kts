@@ -1,17 +1,19 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    kotlin("kapt")
 }
 
 ksp {
-    arg("ModuleName", project.getName())
+    arg("ModuleName", project.name)
 }
 android {
+    namespace = "com.imcys.bilibilias"
     compileSdk = 33
-
+    buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
@@ -96,12 +98,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace = "com.imcys.bilibilias"
+
     dependenciesInfo {
         includeInApk = true
         includeInBundle = true
     }
-    buildToolsVersion = "33.0.2"
 }
 
 kotlin {
@@ -113,18 +114,18 @@ dependencies {
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
 
-    ksp("com.imcys.deeprecopy:compiler:0.0.1-Alpha-12")
+    ksp(libs.compiler)
 
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(libs.appcompat)
+    implementation(libs.constraintlayout)
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    kapt("com.google.dagger:hilt-compiler:2.44")
+    implementation(libs.hilt.android)
+    implementation(libs.work.runtime.ktx)
+    kapt(libs.hilt.compiler)
 
-    ksp("com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4")
-    implementation("com.google.android.material:material:1.8.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    ksp(libs.kcomponent.compiler)
+    implementation(libs.material)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }
