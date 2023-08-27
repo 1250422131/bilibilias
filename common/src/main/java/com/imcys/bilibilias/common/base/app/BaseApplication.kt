@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.common.base.app
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Handler
@@ -8,7 +7,7 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.BuildConfig
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.data.AppDatabase
+import com.liulishuo.okdownload.OkDownloadProvider.context
 import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
@@ -16,16 +15,17 @@ import com.xiaojinzi.component.impl.application.ModuleManager
 
 open class BaseApplication : Application() {
 
+    init {
+        instance = this
+    }
+
     override fun onCreate() {
         super.onCreate()
-
-        context = applicationContext
 
         handler = Handler(mainLooper)
 
         //百度统计开始
         startBaiDuService()
-        appDatabase = AppDatabase.getDatabase(this)
 
         initKComponent()
 
@@ -66,27 +66,31 @@ open class BaseApplication : Application() {
 
     companion object {
 
-        lateinit var appDatabase: AppDatabase
-
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
 
 
         //全局应用数据的MMKV
         lateinit var dataKv: MMKV
+            private set
 
         //——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
+            private set
         //—————————————————————————————————————————————————
 
         //——————————————————B站视频模板——————————————————
 
-        var roamApi: String = "https://api.bilibili.com/"
-
+        const val roamApi: String = "https://api.bilibili.com/"
 
         //——————————————————部分内置需要的上下文——————————————————
-        @SuppressLint("StaticFieldLeak")
-        lateinit var context: Context
+
+        private var instance: BaseApplication? = null
+        @JvmStatic
+        fun applicationContext(): Context {
+            return instance!!.applicationContext
+        }
+
         var mid: Long = 0
         lateinit var myUserData: MyUserData.DataBean
         //—————————————————————————————————————————————————
