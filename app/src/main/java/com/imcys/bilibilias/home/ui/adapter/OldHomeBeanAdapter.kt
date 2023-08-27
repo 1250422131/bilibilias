@@ -12,6 +12,8 @@ import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -120,7 +122,7 @@ class OldHomeBeanAdapter(
                 println(getPost)
             }
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "").toString()
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
             val goUrlStr = HttpUtils.doCardPost(url, getPost, cookie)
             try {
                 val goUrlJson = JSONObject(goUrlStr.toString())
@@ -146,9 +148,9 @@ class OldHomeBeanAdapter(
         context: Context,
     ) {
 
-        val cookie = BaseApplication.dataKv.decodeString("cookies", "").toString()
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
 
-        HttpUtils.addHeader("cookie", cookie).get(url, object : Callback {
+        HttpUtils.addHeader(COOKIE, cookie).get(url, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
             }

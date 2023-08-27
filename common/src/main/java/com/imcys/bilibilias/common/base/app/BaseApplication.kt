@@ -81,7 +81,7 @@ open class BaseApplication : Application() {
 
         //——————————————————B站视频模板——————————————————
 
-        const val roamApi: String = "https://api.bilibili.com/"
+
 
         //——————————————————部分内置需要的上下文——————————————————
 

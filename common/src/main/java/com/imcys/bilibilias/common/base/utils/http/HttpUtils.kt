@@ -5,6 +5,9 @@ import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
@@ -337,12 +340,12 @@ open class HttpUtils {
                 conn.setRequestProperty("accept", "*/*")
                 conn.setRequestProperty("connection", "Keep-Alive")
                 conn.requestMethod = "POST"
-                conn.setRequestProperty("referer", "$BILIBILI_URL/")
+                conn.setRequestProperty(REFERER, "$BILIBILI_URL/")
                 conn.setRequestProperty(
-                    "User-Agent",
+                    USER_AGENT,
                     BROWSER_USER_AGENT
                 )
-                conn.setRequestProperty("cookie", Cookie)
+                conn.setRequestProperty(COOKIE, Cookie)
                 conn.setRequestProperty("charset", "utf-8")
                 conn.useCaches = false
                 // 发送POST请求必须设置如下两行
@@ -385,7 +388,7 @@ open class HttpUtils {
         }
 
         private fun checkUrl(url: String) {
-            headers["user-agent"] = if (url.contains("misakamoe.com")) {
+            headers[USER_AGENT] = if (url.contains("misakamoe.com")) {
                 misakaMoeUa + " BILIBILIAS/${BiliBiliAsApi.version}"
             } else {
                 BROWSER_USER_AGENT

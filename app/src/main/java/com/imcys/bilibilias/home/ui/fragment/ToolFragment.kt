@@ -27,6 +27,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -234,7 +235,7 @@ class ToolFragment : BaseFragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+        HttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
             .get(toString, object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     Toast.makeText(
@@ -259,7 +260,7 @@ class ToolFragment : BaseFragment() {
         lifecycleScope.launch(Dispatchers.Default) {
 
             val bangumiSeasonBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                     .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
 
             if (bangumiSeasonBean.code == 0) {
@@ -279,7 +280,7 @@ class ToolFragment : BaseFragment() {
 
             lifecycleScope.launch {
                 val videoBaseBean =
-                    KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                         .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
                 (mAdapter).apply {
                     //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
