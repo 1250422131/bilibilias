@@ -36,6 +36,9 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -376,7 +379,7 @@ class HomeFragment : BaseFragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val myUserData =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                     .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             launch(Dispatchers.Main) {
@@ -400,7 +403,7 @@ class HomeFragment : BaseFragment() {
     private fun detectUserLogin() {
         lifecycleScope.launch {
             val myUserData =
-                HttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+                HttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
                     .asyncGet(
                         BilibiliApi.getMyUserData,
                         MyUserData::class.java,
@@ -424,10 +427,10 @@ class HomeFragment : BaseFragment() {
 
             val userInfoBean =
                 KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!,
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 ).addHeader(
-                    "User-Agent",
+                    USER_AGENT,
                     BROWSER_USER_AGENT
                 )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")

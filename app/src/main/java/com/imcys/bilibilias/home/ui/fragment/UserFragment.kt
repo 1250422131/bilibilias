@@ -17,6 +17,8 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -107,7 +109,7 @@ class UserFragment : BaseFragment() {
 
                             val userWorksBean =
                                 KtHttpUtils.addHeader(
-                                    "cookie",
+                                    COOKIE,
                                     (context as HomeActivity).asUser.cookie
                                 )
                                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
@@ -143,8 +145,8 @@ class UserFragment : BaseFragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val userWorksBean =
                 KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!
                 )
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
@@ -171,8 +173,8 @@ class UserFragment : BaseFragment() {
 
             val userWorksBean =
                 KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!
                 )
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
 
@@ -270,7 +272,7 @@ class UserFragment : BaseFragment() {
         params["mid"] = (context as HomeActivity).asUser.mid.toString()
         val paramsStr = TokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
             .asyncGet("${BilibiliApi.getUserCardPath}?$paramsStr")
     }
 
@@ -279,7 +281,7 @@ class UserFragment : BaseFragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
             .asyncGet("${BilibiliApi.userUpStat}?mid=${(context as HomeActivity).asUser.mid}")
     }
 
@@ -292,7 +294,7 @@ class UserFragment : BaseFragment() {
         params["mid"] = (context as HomeActivity).asUser.mid.toString()
         val paramsStr = TokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
             .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
     }
 

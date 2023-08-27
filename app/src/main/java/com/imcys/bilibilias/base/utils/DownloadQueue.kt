@@ -14,6 +14,10 @@ import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
@@ -356,9 +360,9 @@ class DownloadQueue :
         var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
+            val videoBaseBean = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
             val mid = videoBaseBean.data.owner.mid
             val name = videoBaseBean.data.owner.name
@@ -407,9 +411,9 @@ class DownloadQueue :
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
+            val myUserData = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
@@ -590,8 +594,8 @@ class DownloadQueue :
         // 临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
-        HttpUtils.addHeader("cookie", cookie!!)
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        HttpUtils.addHeader(COOKIE, cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
                     videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
@@ -717,9 +721,9 @@ class DownloadQueue :
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            HttpUtils.addHeader("cookie", cookie!!)
+            HttpUtils.addHeader(COOKIE, cookie!!)
                 .get(
                     "${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
                     object : okhttp3.Callback {
@@ -852,9 +856,9 @@ class DownloadQueue :
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex,
             )
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
+            val asyncResponse = HttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
 
             val response = asyncResponse.await()
@@ -1036,12 +1040,12 @@ class DownloadQueue :
             .setSyncBufferSize(65536) // 写入到文件的缓冲区大小，默认65536
             .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
         task.addHeader(
-            "User-Agent",
+            USER_AGENT,
             BROWSER_USER_AGENT
         )
-        task.addHeader("referer", "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
-        task.addHeader("cookie", cookie!!)
+        task.addHeader(REFERER, "https://www.bilibili.com/")
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        task.addHeader(COOKIE, cookie!!)
 
         return task.build()
     }

@@ -10,6 +10,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
@@ -55,7 +56,7 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-            HttpUtils.addHeader("cookie", asUser.cookie)
+            HttpUtils.addHeader(COOKIE, asUser.cookie)
                 .get(
                     "${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
                     PlayHistoryBean::class.java
@@ -77,7 +78,7 @@ class PlayHistoryActivity : BaseActivity() {
     }
 
     private fun loadPlayHistory() {
-        HttpUtils.addHeader("cookie", asUser.cookie)
+        HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
                 PlayHistoryBean::class.java
