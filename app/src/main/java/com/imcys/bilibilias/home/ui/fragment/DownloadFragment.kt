@@ -12,9 +12,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
@@ -47,6 +45,9 @@ class DownloadFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadTaskAdapter: DownloadTaskAdapter
+
+    @Inject
+    lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -197,14 +198,10 @@ class DownloadFragment : BaseFragment() {
      */
     private fun deleteSelectTaskRecords() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val downloadFinishTaskDao =
-                BaseApplication.appDatabase.downloadFinishTaskDao()
-
-            val repository = DownloadFinishTaskRepository(downloadFinishTaskDao)
             downloadFinishTaskAd.currentList.filter { it.selectState }
-                .forEach { repository.delete(it) }
+                .forEach { downloadFinishTaskRepository.delete(it) }
 
-            val newTasks = repository.allDownloadFinishTask()
+            val newTasks = downloadFinishTaskRepository.allDownloadFinishTask()
 
             launch(Dispatchers.Main) {
                 editCancel()
@@ -223,11 +220,9 @@ class DownloadFragment : BaseFragment() {
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
 
             lifecycleScope.launch(Dispatchers.IO) {
-                val downloadFinishTaskDao =
-                    AppDatabase.getDatabase(App.context.applicationContext).downloadFinishTaskDao()
 
                 // 协程提交
-                DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
+                downloadFinishTaskRepository.apply {
                     App.downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask()
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -254,8 +249,6 @@ class DownloadFragment : BaseFragment() {
     }
 
     companion object {
-
-        @JvmStatic
         fun newInstance() = DownloadFragment()
     }
 }
