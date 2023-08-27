@@ -11,12 +11,17 @@ coil-compose = "2.4.0"
 compiler = "0.0.1-Alpha-12"
 constraintlayout = "2.1.4"
 coreKtx = "1.9.0"
+detekt = "1.23.1"
+detektRulesLibraries = "1.23.1"
+detektRulesRuleauthors = "1.23.1"
 dfm = "0.6.0"
 espresso-core = "3.5.1"
 flexbox = "3.0.0"
 github-GuidePro = "1.1.0"
+gitlab-detektFormatting = "1.23.1"
 glide = "4.13.2"
 gson = "2.10"
+hbmartinDetektRules = "0.1.0"
 hilt = "2.44"
 jiaozivideoplayer = "7.7.0"
 junit = "4.13.2"
@@ -26,7 +31,7 @@ kapt = "1.9.10"
 kotlin = "1.8.10"
 kotlinx-coroutines-android = "1.6.4"
 ksp = "1.8.10-1.0.9"
-ktor = "2.2.2"
+ktor = "2.3.1"
 lifecycle = "2.5.1"
 lottie = "6.1.0"
 material = "1.8.0"
@@ -44,10 +49,16 @@ activity-compose = "1.7.2"
 compose-bom = "2023.08.00"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
+detekt-rules-ruleauthors = { module = "io.gitlab.arturbosch.detekt:detekt-rules-ruleauthors", version.ref = "detekt" }
+gitlab-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+hbmartin-detekt-rules = { module = "com.github.hbmartin:hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -103,7 +114,7 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
-
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 ktx = { group = "com.liulishuo.okdownload", name = "ktx", version.ref = "okdownload" }
 
@@ -140,3 +151,4 @@ android-library = { id = "com.android.library", version.ref = "android" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
