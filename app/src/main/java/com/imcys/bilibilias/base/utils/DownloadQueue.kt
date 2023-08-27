@@ -13,6 +13,7 @@ import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
@@ -20,13 +21,13 @@ import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.deeprecopy.an.EnhancedData
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
@@ -46,6 +47,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
+import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -322,8 +324,7 @@ class DownloadQueue :
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao =
-                BaseApplication.appDatabase.downloadFinishTaskDao()
+            val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
 
             // 协程提交
             DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
@@ -477,7 +478,7 @@ class DownloadQueue :
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -1036,7 +1037,7 @@ class DownloadQueue :
             .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
         task.addHeader(
             "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0",
+            BROWSER_USER_AGENT
         )
         task.addHeader("referer", "https://www.bilibili.com/")
         val cookie = BaseApplication.dataKv.decodeString("cookies", "")
