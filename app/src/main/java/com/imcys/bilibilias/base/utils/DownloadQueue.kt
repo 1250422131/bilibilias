@@ -21,6 +21,7 @@ import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
@@ -46,6 +47,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
+import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -322,8 +324,7 @@ class DownloadQueue :
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao =
-                BaseApplication.appDatabase.downloadFinishTaskDao()
+            val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
 
             // 协程提交
             DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
@@ -477,7 +478,7 @@ class DownloadQueue :
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
