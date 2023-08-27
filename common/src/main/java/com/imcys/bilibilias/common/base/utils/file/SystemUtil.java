@@ -87,7 +87,7 @@ public class SystemUtil {
     public static String getUserAgent() {
         String userAgent = "";
         try {
-            userAgent = WebSettings.getDefaultUserAgent(BaseApplication.context);
+            userAgent = WebSettings.getDefaultUserAgent(BaseApplication.applicationContext());
         } catch (Exception e) {
             userAgent = System.getProperty("http.agent");
         }
