@@ -17,6 +17,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -57,7 +58,7 @@ class AsVideoViewModel : ViewModel() {
                     "cookie",
                     BaseApplication.dataKv.decodeString("cookies", "")!!,
                 )
-                    .addHeader("referer", "https://www.bilibili.com")
+                    .addHeader("referer", BILIBILI_URL)
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 // 这里再检验一次，是否为404内容
                 loadDialog.cancel()
@@ -112,7 +113,7 @@ class AsVideoViewModel : ViewModel() {
                         "cookie",
                         BaseApplication.dataKv.decodeString("cookies", "")!!,
                     )
-                        .addHeader("referer", "https://www.bilibili.com")
+                        .addHeader("referer", BILIBILI_URL)
                         .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
                 launch(Dispatchers.Main) {

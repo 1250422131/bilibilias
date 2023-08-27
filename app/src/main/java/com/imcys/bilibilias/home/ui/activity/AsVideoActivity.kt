@@ -27,6 +27,8 @@ import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -150,7 +152,7 @@ class AsVideoActivity : BaseActivity() {
                 lifecycleScope.launchWhenCreated {
                     // 获取播放信息
                     val videoPlayBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
+                        .addHeader("referer", BILIBILI_URL)
                         .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
@@ -173,7 +175,7 @@ class AsVideoActivity : BaseActivity() {
                             "cookie",
                             BaseApplication.dataKv.decodeString("cookies", "")!!,
                         )
-                            .addHeader("referer", "https://www.bilibili.com")
+                            .addHeader("referer", BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
 
                         if (dashVideoPlayBean.code != 0) {
@@ -218,7 +220,7 @@ class AsVideoActivity : BaseActivity() {
                 lifecycleScope.launch {
                     val bangumiPlayBean = KtHttpUtils
                         .addHeader("cookie", asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
+                        .addHeader("referer", BILIBILI_URL)
                         .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
                     // 设置布局视频播放数据
                     binding.bangumiPlayBean = bangumiPlayBean
@@ -449,7 +451,7 @@ class AsVideoActivity : BaseActivity() {
 
                 binding.videoPageListData = videoPlayListData
                 asVideoSubsectionRv.adapter =
-                    // 将子集切换后的逻辑交给activity完成
+                        // 将子集切换后的逻辑交给activity完成
                     SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                         // 更新CID刷新播放页面
                         cid = data.cid
@@ -620,9 +622,8 @@ class AsVideoActivity : BaseActivity() {
         val jzDataSource = JZDataSource(url, title)
 
         jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid"
-        jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
+        jzDataSource.headerMap["Referer"] = "$BILIBILI_URL/video/$bvid"
+        jzDataSource.headerMap["User-Agent"] = BROWSER_USER_AGENT
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 
