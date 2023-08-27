@@ -3,6 +3,8 @@ package com.imcys.bilibilias.common.base.utils.http
 import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
@@ -28,8 +30,8 @@ open class HttpUtils {
 
         private val okHttpClient = OkHttpClient()
 
-        private var params = mutableMapOf<String, String>()
-        private var headers = mutableMapOf<String, String>()
+        private val params = mutableMapOf<String, String>()
+        private val headers = mutableMapOf<String, String>()
 
         private val misakaMoeUa by lazy {
             SystemUtil.getUserAgent()
@@ -335,10 +337,10 @@ open class HttpUtils {
                 conn.setRequestProperty("accept", "*/*")
                 conn.setRequestProperty("connection", "Keep-Alive")
                 conn.requestMethod = "POST"
-                conn.setRequestProperty("referer", " https://www.bilibili.com/")
+                conn.setRequestProperty("referer", "$BILIBILI_URL/")
                 conn.setRequestProperty(
                     "User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                    BROWSER_USER_AGENT
                 )
                 conn.setRequestProperty("cookie", Cookie)
                 conn.setRequestProperty("charset", "utf-8")
@@ -386,11 +388,9 @@ open class HttpUtils {
             headers["user-agent"] = if (url.contains("misakamoe.com")) {
                 misakaMoeUa + " BILIBILIAS/${BiliBiliAsApi.version}"
             } else {
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+                BROWSER_USER_AGENT
             }
         }
 
     }
-
-
 }
