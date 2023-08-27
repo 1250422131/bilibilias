@@ -29,7 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-
         //获取实例
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -39,8 +38,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DB_NAME
                 )
-                    //是否允许在主线程进行查询
-                    .allowMainThreadQueries()
                     //数据库升级异常之后的回滚
                     .fallbackToDestructiveMigration()
                     .build()
@@ -49,8 +46,5 @@ abstract class AppDatabase : RoomDatabase() {
                 instance
             }
         }
-
-
     }
-
 }

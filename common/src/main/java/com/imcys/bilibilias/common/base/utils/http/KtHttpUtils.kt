@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.utils.http
 
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import io.ktor.client.HttpClient
@@ -20,14 +21,12 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.serialization.gson.gson
-import kotlin.collections.forEach
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 
 object KtHttpUtils {
 
-    var params = mutableMapOf<String, String>()
-    var headers = mutableMapOf<String, String>()
+    val params = mutableMapOf<String, String>()
+    val headers = mutableMapOf<String, String>()
 
     var setCookies = ""
 
@@ -161,7 +160,7 @@ object KtHttpUtils {
         headers["user-agent"] = if (url in "misakamoe") {
             SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
         } else {
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+            BROWSER_USER_AGENT
         }
     }
 }

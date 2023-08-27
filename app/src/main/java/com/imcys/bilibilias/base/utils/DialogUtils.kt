@@ -36,6 +36,8 @@ import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -1127,11 +1129,11 @@ object DialogUtils {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = KtHttpUtils
                         .addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
+                        .addHeader("referer", BILIBILI_URL)
                         .asyncGet<DashBangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
@@ -1215,7 +1217,7 @@ object DialogUtils {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
                         KtHttpUtils.addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                            .addHeader("referer", "https://www.bilibili.com")
+                            .addHeader("referer", BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
@@ -1310,11 +1312,11 @@ object DialogUtils {
                 videoPageMutableList.forEach {
                     val videoPlayBean =
                         KtHttpUtils.addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                            .addHeader("referer", "https://www.bilibili.com")
+                            .addHeader("referer", BILIBILI_URL)
                             .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(videoPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 addFlvTask(
                     context,
@@ -1359,11 +1361,11 @@ object DialogUtils {
                 bangumiPageMutableList.forEach {
                     val bangumiPlayBean = KtHttpUtils
                         .addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
+                        .addHeader("referer", BILIBILI_URL)
                         .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(bangumiPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 addFlvTask(
                     context,
@@ -1822,10 +1824,10 @@ object DialogUtils {
         intent.addCategory("android.intent.category.APP_BROWSER")
         intent.data = Uri.parse(url)
         intent.putExtra("Cookie", (context as AbsActivity).asUser.cookie)
-        intent.putExtra("Referer", "https://www.bilibili.com/")
+        intent.putExtra("Referer", "$BILIBILI_URL/")
         intent.putExtra(
             "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
+            BROWSER_USER_AGENT
         )
         if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager.plus")
         ) {
@@ -1854,7 +1856,7 @@ object DialogUtils {
         intent.putExtra("Referer", "https://www.bilibili.com/")
         intent.putExtra(
             "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36",
+            BROWSER_USER_AGENT
         )
         if (AppFilePathUtils.isInstallApp(context, "com.dv.adm")) {
             Toast.makeText(context, "正在拉起ADM", Toast.LENGTH_SHORT).show()
