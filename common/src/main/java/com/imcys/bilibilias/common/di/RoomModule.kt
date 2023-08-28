@@ -16,23 +16,28 @@ class RoomModule {
     @Provides
     @Singleton
     fun provideRoomDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ) = Room.databaseBuilder(
         context,
         AppDatabase::class.java,
-        "BILIBILIAS_DATABASE"
+        "BILIBILIAS_DATABASE",
     )
+        // 是否允许在主线程进行查询
+        .allowMainThreadQueries()
+        // 数据库升级异常之后的回滚
         .fallbackToDestructiveMigration()
+        .addMigrations(AppDatabase.MIGRATION_1_2)
         .build()
 
     @Provides
     @Singleton
     fun provideDownloadFinishTaskDao(
-        roomDatabase: AppDatabase
+        roomDatabase: AppDatabase,
     ) = roomDatabase.downloadFinishTaskDao()
+
     @Provides
     @Singleton
     fun provideRoamDao(
-        roomDatabase: AppDatabase
+        roomDatabase: AppDatabase,
     ) = roomDatabase.roamDao()
 }

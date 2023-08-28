@@ -19,6 +19,7 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -98,7 +99,7 @@ class UserFragment : BaseFragment() {
                 override fun onLoadingMore() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
                         val oldMutableList = userWorksBean.data.list.vlist
-                        lifecycleScope.launch(Dispatchers.IO) {
+                        launchIO {
 
                             //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
                             val params = mutableMapOf<String?, String?>()
@@ -115,7 +116,7 @@ class UserFragment : BaseFragment() {
                                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
                             this@UserFragment.userWorksBean = userWorksBean
 
-                            launch(Dispatchers.Main) {
+                            launchUI {
                                 userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
 
                                 //更新数据 -> fragmentUserWorksCsr 支持
@@ -142,7 +143,7 @@ class UserFragment : BaseFragment() {
 
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
-        lifecycleScope.launch(Dispatchers.IO) {
+        launchIO {
             val userWorksBean =
                 KtHttpUtils.addHeader(
                     COOKIE,
@@ -151,7 +152,7 @@ class UserFragment : BaseFragment() {
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
             }
         }
@@ -162,7 +163,7 @@ class UserFragment : BaseFragment() {
     private fun initUserWorks() {
 
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        launchIO {
 
             //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
             val params = mutableMapOf<String?, String?>()
@@ -182,7 +183,7 @@ class UserFragment : BaseFragment() {
             this@UserFragment.userWorksBean = userWorksBean
 
             if (userWorksBean.code == 0) {
-                launch(Dispatchers.Main) {
+                launchUI {
                     //设置用户主页的作品的adapter
                     fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
                     //设置布局管理器，让作品呈瀑布流的形式展示。
@@ -193,7 +194,7 @@ class UserFragment : BaseFragment() {
                 }
             } else {
 
-                launch(Dispatchers.Main) {
+                launchUI {
                     asToast(requireContext(), userWorksBean.message)
                 }
 
@@ -214,7 +215,7 @@ class UserFragment : BaseFragment() {
     private fun initUserData() {
 
         //切到后台线程去
-        lifecycleScope.launch(Dispatchers.IO) {
+        launchIO {
 
             userDataMutableList.clear()
 
@@ -237,7 +238,7 @@ class UserFragment : BaseFragment() {
             )
 
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
             }
 
@@ -252,7 +253,7 @@ class UserFragment : BaseFragment() {
                 )
             }
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
                 initUserTool()
             }

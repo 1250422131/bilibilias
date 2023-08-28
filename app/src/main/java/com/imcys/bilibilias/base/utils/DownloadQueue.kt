@@ -20,6 +20,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
@@ -56,7 +57,6 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
-import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -273,7 +273,7 @@ class DownloadQueue :
      * @param task Task
      */
     private fun saveFinishTask(task: DownloadTaskInfo) {
-        CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.Default).launchIO {
             var videoTitle = ""
             var videoPageTitle = ""
             var avid = 0L
@@ -381,7 +381,7 @@ class DownloadQueue :
         Analytics.trackEvent("缓存成功")
         StatService.onEvent(App.context, "CacheSuccessful", "缓存成功")
 
-        launch(Dispatchers.IO) {
+        launchIO {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
             val microsoftAppCenterType =
                 sharedPreferences.getBoolean("microsoft_app_center_type", true)
@@ -459,7 +459,7 @@ class DownloadQueue :
         videoPath: String,
         audioPath: String,
 
-        ) {
+    ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -1018,7 +1018,7 @@ class DownloadQueue :
             .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
         task.addHeader(
             USER_AGENT,
-            BROWSER_USER_AGENT
+            BROWSER_USER_AGENT,
         )
         task.addHeader(REFERER, "https://www.bilibili.com/")
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
