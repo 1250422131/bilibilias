@@ -32,10 +32,10 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
@@ -55,7 +55,6 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
-import com.imcys.bilibilias.home.ui.viewmodel.factory.AsLoginBsViewModelFactory
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -225,6 +224,12 @@ object DialogUtils {
 
         return bottomSheetDialog
     }
+
+    class AsLoginBsViewModelFactory(
+        binding: DialogAsLoginBottomsheetBinding,
+        bottomSheetDialog: BottomSheetDialog,
+        function: () -> Unit
+    ) : ViewModelProvider.Factory
 
     /**
      * 构建底部对话框
@@ -1134,9 +1139,11 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<DashBangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
+                        .asyncGet<DashBangumiPlayBean>(
+                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                        )
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1222,9 +1229,11 @@ object DialogUtils {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
+                            .asyncGet<DashVideoPlayBean>(
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                            )
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
@@ -1317,9 +1326,11 @@ object DialogUtils {
             flow {
                 videoPageMutableList.forEach {
                     val videoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
+                            .asyncGet<VideoPlayBean>(
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                            )
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1366,9 +1377,11 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
+                        .asyncGet<BangumiPlayBean>(
+                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                        )
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -1829,7 +1842,7 @@ object DialogUtils {
         val intent = Intent("android.intent.action.VIEW")
         intent.addCategory("android.intent.category.APP_BROWSER")
         intent.data = Uri.parse(url)
-        intent.putExtra(COOKIE, (context as AbsActivity).asUser.cookie)
+        intent.putExtra(COOKIE, asUser.cookie)
         intent.putExtra(REFERER, "$BILIBILI_URL/")
         intent.putExtra(
             USER_AGENT,
@@ -1858,7 +1871,7 @@ object DialogUtils {
         val intent = Intent("android.intent.action.VIEW")
         intent.addCategory("android.intent.category.APP_BROWSER")
         intent.data = Uri.parse(url)
-        intent.putExtra(COOKIE, (context as AbsActivity).asUser.cookie)
+        intent.putExtra(COOKIE, asUser.cookie)
         intent.putExtra(REFERER, "https://www.bilibili.com/")
         intent.putExtra(
             USER_AGENT,

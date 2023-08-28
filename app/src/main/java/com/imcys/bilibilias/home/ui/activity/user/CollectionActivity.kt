@@ -13,6 +13,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.ceil
 
-//收藏夹
+// 收藏夹
 @AndroidEntryPoint
 class CollectionActivity : BaseActivity() {
 
@@ -55,7 +56,6 @@ class CollectionActivity : BaseActivity() {
     private fun initView() {
         initCollectionRv()
         loadCollectionList()
-
     }
 
     private fun initCollectionRv() {
@@ -73,7 +73,6 @@ class CollectionActivity : BaseActivity() {
                     }
                 }
             })
-
         }
     }
 
@@ -97,20 +96,20 @@ class CollectionActivity : BaseActivity() {
                 }
             }
 
-            //让监听器可以知道有多少内容加载
+            // 让监听器可以知道有多少内容加载
             createCollectionList = userCreateCollectionBean.data.list[0]
-            //加载第一个收藏夹
+            // 加载第一个收藏夹
             loadCollectionData(userCreateCollectionBean.data.list[0])
 
-            //设置监听器
+            // 设置监听器
             binding.apply {
-                //这里监听选择的是哪个收藏夹
+                // 这里监听选择的是哪个收藏夹
                 collectionTabLayout.addOnTabSelectedListener(object :
                     TabLayout.OnTabSelectedListener {
                     override fun onTabSelected(tab: TabLayout.Tab?) {
                         userCreateCollectionBean.data.list.forEach { it1 ->
                             if (it1.title == tab?.text) {
-                                //更新数据
+                                // 更新数据
                                 pn = 0
                                 collectionDataMutableList.clear()
                                 createCollectionList = it1
@@ -124,14 +123,9 @@ class CollectionActivity : BaseActivity() {
 
                     override fun onTabReselected(tab: TabLayout.Tab?) {
                     }
-
                 })
             }
-
-
         }
-
-
     }
 
     /**
@@ -139,7 +133,6 @@ class CollectionActivity : BaseActivity() {
      * @param listBean ListBean
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
-
         HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
@@ -148,15 +141,12 @@ class CollectionActivity : BaseActivity() {
                 collectionDataMutableList.addAll(it.data.medias)
                 collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
             }
-
     }
-
 
     override fun onResume() {
         super.onResume()
         StatService.onResume(this)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -168,7 +158,5 @@ class CollectionActivity : BaseActivity() {
             val intent = Intent(context, CollectionActivity::class.java)
             context.startActivity(intent)
         }
-
     }
-
 }

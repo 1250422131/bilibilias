@@ -1,7 +1,11 @@
 package com.imcys.bilibilias.common.di
 
-import android.util.Log
+import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +27,8 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
@@ -32,7 +38,13 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient = HttpClient(OkHttp) {
+    fun provideHttpClient(): HttpClient = HttpClient(
+        OkHttp.create {
+            addInterceptor { chain ->
+                chain.proceed(chain.request())
+            }
+        }
+    ) {
         defaultRequest {
             url(BILIBILI_URL)
         }
@@ -42,15 +54,17 @@ class NetworkModule {
         }
         install(ResponseObserver) {
             onResponse { response ->
-                Log.d("Http status:", "${response.status.value}")
+                asLogD("Http status:", "${response.status.value}")
             }
         }
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                }
+            )
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)
@@ -66,6 +80,14 @@ class NetworkModule {
         }
     }.apply {
         plugin(HttpSend).intercept { request ->
+            if (request.headers.contains("misakamoe")) {
+                request.userAgent(SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}")
+            }
+            // todo 注意是否还有其他方法使用cookie
+            if (request.method == HttpMethod.Get) {
+                request.header(COOKIE, UserInfoRepository.cookie)
+            }
+
             val originalCall = execute(request)
             if (originalCall.response.status.value !in 100..399) {
                 execute(request)

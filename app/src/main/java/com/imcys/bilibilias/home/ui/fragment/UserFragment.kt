@@ -17,6 +17,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -102,7 +103,7 @@ class UserFragment : BaseFragment() {
 
                             //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
                             val params = mutableMapOf<String?, String?>()
-                            params["mid"] = (context as HomeActivity).asUser.mid.toString()
+                            params["mid"] = asUser.mid.toString()
                             params["pn"] = (userWorksBean.data.page.pn + 1).toString()
                             params["ps"] = "20"
                             val paramsStr = TokenUtils.getParamStr(params)
@@ -110,7 +111,7 @@ class UserFragment : BaseFragment() {
                             val userWorksBean =
                                 KtHttpUtils.addHeader(
                                     COOKIE,
-                                    (context as HomeActivity).asUser.cookie
+                                    asUser.cookie
                                 )
                                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
                             this@UserFragment.userWorksBean = userWorksBean
@@ -148,7 +149,7 @@ class UserFragment : BaseFragment() {
                     COOKIE,
                     BaseApplication.dataKv.decodeString(COOKIES, "")!!
                 )
-                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${(context as HomeActivity).asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
             this@UserFragment.userWorksBean = userWorksBean
 
             launch(Dispatchers.Main) {
@@ -166,7 +167,7 @@ class UserFragment : BaseFragment() {
 
             //添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
             val params = mutableMapOf<String?, String?>()
-            params["mid"] = (context as HomeActivity).asUser.mid.toString()
+            params["mid"] = asUser.mid.toString()
             params["qn"] = "1"
             params["ps"] = "20"
             val paramsStr = TokenUtils.getParamStr(params)
@@ -269,7 +270,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUserCardBean(): UserCardBean {
         val params = mutableMapOf<String?, String?>()
-        params["mid"] = (context as HomeActivity).asUser.mid.toString()
+        params["mid"] = asUser.mid.toString()
         val paramsStr = TokenUtils.getParamStr(params)
 
         return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
@@ -282,7 +283,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUpStat(): UpStatBeam {
         return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.userUpStat}?mid=${(context as HomeActivity).asUser.mid}")
+            .asyncGet("${BilibiliApi.userUpStat}?mid=${asUser.mid}")
     }
 
     /**
@@ -291,7 +292,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUserData(): UserBaseBean {
         val params = mutableMapOf<String?, String?>()
-        params["mid"] = (context as HomeActivity).asUser.mid.toString()
+        params["mid"] = asUser.mid.toString()
         val paramsStr = TokenUtils.getParamStr(params)
 
         return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
@@ -315,7 +316,7 @@ class UserFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         //保留当前页面的用户信息
-        outState.putLong("mid", (context as HomeActivity).asUser.mid)
+        outState.putLong("mid", asUser.mid)
     }
 
     companion object {

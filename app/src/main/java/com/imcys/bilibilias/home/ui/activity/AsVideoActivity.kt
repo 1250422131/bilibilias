@@ -24,9 +24,11 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -44,6 +46,10 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
@@ -63,7 +69,9 @@ import okio.buffer
 import okio.sink
 import java.io.*
 import java.util.zip.Inflater
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
 
     // 视频基本数据类，方便全局调用
@@ -282,6 +290,9 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
+    @Inject
+    lateinit var http: HttpClient
+
     /**
      * 检查三连情况
      */
@@ -306,6 +317,9 @@ class AsVideoActivity : BaseActivity() {
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
+        val likeBean =
+            http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid").body<ArchiveHasLikeBean>()
+        asLogD("archiveCoins", likeBean.toString())
         val archiveHasLikeBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
         binding.archiveHasLikeBean = archiveHasLikeBean
