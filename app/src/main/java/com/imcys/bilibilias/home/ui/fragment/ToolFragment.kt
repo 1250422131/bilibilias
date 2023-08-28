@@ -41,7 +41,6 @@ import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
-
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -65,7 +64,7 @@ class ToolFragment : BaseFragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        //这里仍然是在判断是否有被引导过了
+        // 这里仍然是在判断是否有被引导过了
         val guideVersion =
             (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
@@ -89,24 +88,22 @@ class ToolFragment : BaseFragment() {
                     .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
                     .setMarginOffset(MarginOffset(start = 8.dp))
                     .build()
-
             }
             .setOnDismissCallback {
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0
+                    0,
                 ).isCheckable = true
             }
             .setBackgroundColor("#80000000".toColorInt())
             .show()
-
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
 
@@ -116,24 +113,22 @@ class ToolFragment : BaseFragment() {
     }
 
     private fun initView() {
-        //设置布局不浸入
+        // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 
-        //设置点击事件
+        // 设置点击事件
         fragmentToolBinding.toolViewHolder =
             context?.let { ToolViewHolder(it, fragmentToolBinding) }
 
-        //绑定列表
+        // 绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
-        //设置监听
+        // 设置监听
         setEditListener()
 
-        //加载工具item
+        // 加载工具item
         loadToolItem()
-
     }
-
 
     /**
      * 分享检查
@@ -142,7 +137,6 @@ class ToolFragment : BaseFragment() {
      */
     @SuppressLint("ResourceType")
     internal fun parseShare(intent: Intent?) {
-
         val action = intent?.action
         val type = intent?.type
         lifecycleScope.launchWhenResumed {
@@ -151,22 +145,19 @@ class ToolFragment : BaseFragment() {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
             }
-            //下面这段代表是从浏览器解析过来的
+            // 下面这段代表是从浏览器解析过来的
             val asUrl = intent?.extras?.getString("asUrl")
             if (asUrl != null) {
                 asVideoId(asUrl)
             }
         }
-
     }
-
 
     /**
      * 设置输入框的搜索监听器
      * 当搜索除发时执行
      */
     private fun setEditListener() {
-
         fragmentToolBinding.apply {
             fragmentToolEditText.setOnEditorActionListener { textView, i, keyEvent ->
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
@@ -175,7 +166,6 @@ class ToolFragment : BaseFragment() {
                 false
             }
         }
-
     }
 
     /**
@@ -183,22 +173,21 @@ class ToolFragment : BaseFragment() {
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
-
         if (inputString == "") {
             asToast(requireContext(), getString(R.string.app_ToolFragment_asVideoId))
             return
         }
 
-        //ep过滤
+        // ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
-        //判断是否有搜到
+        // 判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
             return
         } else if ("""https://b23.tv/([A-z]|\d)*""".toRegex().containsMatchIn(inputString)) {
             loadShareData(
                 """https://b23.tv/([A-z]|\d)*""".toRegex()
-                    .find(inputString)?.value!!.toString()
+                    .find(inputString)?.value!!.toString(),
             )
             return
         } else if (AsVideoNumUtils.getBvid(inputString) != "") {
@@ -212,8 +201,7 @@ class ToolFragment : BaseFragment() {
 //            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
 //            return
 //        }
-        //至此，视频的检索没有超过，开始判断是不是直播内容
-
+        // 至此，视频的检索没有超过，开始判断是不是直播内容
 
         mAdapter.apply {
             currentList.filter { it.type == 0 }.run {
@@ -222,12 +210,7 @@ class ToolFragment : BaseFragment() {
         }
         Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT)
             .show()
-
     }
-
-
-
-
 
     /**
      * 加载APP端分享视频
@@ -235,21 +218,24 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadShareData(toString: String) {
         HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .get(toString, object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(
-                        context, getString(R.string.app_ToolFragment_loadShareData),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            .get(
+                toString,
+                object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.app_ToolFragment_loadShareData),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
 
-                override fun onResponse(call: Call, response: Response) {
-                    val str = response.request.url.toString()
-                    asVideoId(str)
-                }
-            })
+                    override fun onResponse(call: Call, response: Response) {
+                        val str = response.request.url.toString()
+                        asVideoId(str)
+                    }
+                },
+            )
     }
-
 
     /**
      * 利用ep号进行检索
@@ -257,7 +243,6 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-
             val bangumiSeasonBean =
                 KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                     .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
@@ -267,45 +252,35 @@ class ToolFragment : BaseFragment() {
                     if (it1.id == epId) getVideoCardData(it1.bvid)
                 }
             }
-
         }
-
-
     }
 
     private fun getVideoCardData(bvid: String) {
-
         fragmentToolBinding.apply {
-
             lifecycleScope.launch {
                 val videoBaseBean =
                     KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
                         .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
                 (mAdapter).apply {
-                    //这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
-                    //run函数将新准备的视频item合并进去，并返回。
-                    //最终apply利用该段返回执行最外层apply的submitList方法
+                    // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
+                    // run函数将新准备的视频item合并进去，并返回。
+                    // 最终apply利用该段返回执行最外层apply的submitList方法
                     currentList.filter { it.type == 0 }.run {
                         mutableListOf(
                             ToolItemBean(
                                 type = 1,
                                 videoBaseBean = videoBaseBean,
                                 clickEvent = {
-
-                                }
-                            )
+                                },
+                            ),
                         ) + this
                     }.apply {
                         submitList(this)
                     }
-
                 }
             }
-
         }
-
     }
-
 
     /**
      * 加载支持工具的item
@@ -313,66 +288,76 @@ class ToolFragment : BaseFragment() {
     private fun loadToolItem() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         lifecycleScope.launch {
-            //通过远程数据获取item
+            // 通过远程数据获取item
             val oldToolItemBean = getOldToolItemBean()
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
-                    //视频解析
+                    // 视频解析
                     1 -> {
-                        toolItemMutableList.add(ToolItemBean(
-                            it.title,
-                            it.img_url,
-                            it.color
-                        ) {
-                            asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-                        })
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
+                            },
+                        )
                     }
-                    //设置
+                    // 设置
                     2 -> {
-                        toolItemMutableList.add(ToolItemBean(
-                            it.title,
-                            it.img_url,
-                            it.color
-                        ) {
-                            val intent = Intent(context, SettingActivity::class.java)
-                            requireActivity().startActivity(intent)
-                        })
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                val intent = Intent(context, SettingActivity::class.java)
+                                requireActivity().startActivity(intent)
+                            },
+                        )
                     }
-                    //web解析
+                    // web解析
                     3 -> {
-                        toolItemMutableList.add(ToolItemBean(
-                            it.title,
-                            it.img_url,
-                            it.color
-                        ) {
-                            val intent = Intent(context, WebAsActivity::class.java)
-                            requireActivity().startActivity(intent)
-                        })
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                val intent = Intent(context, WebAsActivity::class.java)
+                                requireActivity().startActivity(intent)
+                            },
+                        )
                     }
-                    //导出日志
+                    // 导出日志
                     4 -> {
-                        toolItemMutableList.add(ToolItemBean(
-                            it.title,
-                            it.img_url,
-                            it.color
-                        ) {
-                            LogExportActivity.actionStart(requireContext())
-                        })
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                LogExportActivity.actionStart(requireContext())
+                            },
+                        )
                     }
-                    //独立合并
+                    // 独立合并
                     5 -> {
-                        toolItemMutableList.add(ToolItemBean(
-                            it.title,
-                            it.img_url,
-                            it.color
-                        ) {
-                            MergeVideoActivity.actionStart(requireContext())
-                        })
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                MergeVideoActivity.actionStart(requireContext())
+                            },
+                        )
                     }
                 }
             }
 
-            //展示item
+            // 展示item
             fragmentToolBinding.apply {
                 fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
@@ -388,25 +373,18 @@ class ToolFragment : BaseFragment() {
                                     2 -> 3
                                     else -> 1
                                 }
-
                             }
                         }
                     }
-
             }
-
-
         }
-
-
     }
-
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {
         return withContext(lifecycleScope.coroutineContext) {
             HttpUtils.asyncGet(
                 "${BiliBiliAsApi.appFunction}?type=oldToolItem",
-                OldToolItemBean::class.java
+                OldToolItemBean::class.java,
             )
         }
     }
@@ -415,7 +393,6 @@ class ToolFragment : BaseFragment() {
         super.onDestroy()
         StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
-
 
     companion object {
 

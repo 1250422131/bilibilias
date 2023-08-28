@@ -31,10 +31,9 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
-
     }
 
     dataBinding {
@@ -56,8 +55,9 @@ kotlin {
 
 dependencies {
 
-    api(libs.core)
-    ksp(libs.compiler)
+    // 深拷贝
+    api(libs.deeprecopy.core)
+    ksp(libs.deeprecopy.compiler)
 
     // hilt库，实现控制反转
     api(libs.hilt.android)
@@ -73,15 +73,13 @@ dependencies {
      * SmoothRefreshLayout支持
      */
     api(libs.srl.core)
-    api(libs.srl.ext.material)//md刷新头
+    api(libs.srl.ext.material) // md刷新头
     api(libs.srl.ext.classics)
-
 
     /**
      * MMKV 储存框架
      */
     api(libs.mmkv)
-
 
     /**
      * 伸缩布局
@@ -112,7 +110,7 @@ dependencies {
      */
     api(libs.asBottomDialog)
 
-    //协程
+    // 协程
     api(libs.kotlinx.coroutines.android)
 
     /**
@@ -121,26 +119,25 @@ dependencies {
      */
     api(libs.rxFFmpeg)
 
-
     /**
      * 组件化路由库
      */
     api(libs.kcomponent.rx)
     ksp(libs.kcomponent.compiler)
 
-    //百度统计
+    // 百度统计
     api(libs.mtj.sdk.circle)
 
-    //开屏引导
+    // 开屏引导
     api(libs.hyy920109.guidePro)
 
-    //微软分发
+    // 微软分发
     api(libs.appcenter.distribute)
-    //微软统计
+    // 微软统计
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
+    // api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     /**
      * room
@@ -167,7 +164,6 @@ dependencies {
      */
     api(libs.dfm)
 
-
     /**
      * Compose全局支持
      */
@@ -181,19 +177,18 @@ dependencies {
 //    // 将 Activity 支持 Compose
 //    api( "androidx.activity:activity-compose:1.5.0"
 
-
-    //饺子播放器
+    // 饺子播放器
     api(libs.jiaozivideoplayer)
 
-    //lottie动画库
+    // lottie动画库
     api(libs.lottie)
 
-    //implementation "androidx.palette:palette:1.0.0"
+    // implementation "androidx.palette:palette:1.0.0"
 
     api(libs.banner)
 
     api(libs.glide)
-    //implementation("jp.wasabeef:glide-transformations:4.3.0")
+    // implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
@@ -205,19 +200,18 @@ dependencies {
      */
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
-    //日志
-    api(libs.ktor.client.logging)//Logging
-    //json解析支持
+    // 日志
+    api(libs.ktor.client.logging) // Logging
+    // json解析支持
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
     api(libs.gson)
 
-
-    //implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    // implementation "com.squareup.retrofit2:retrofit:2.9.0"
 
     api(libs.constraintlayout)
     api(libs.androidx.lifecycle.viewmodel.ktx)
-    //新增
+    // 新增
     // api( "androidx.compose.ui:ui-tooling-preview:1.3.2"
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)

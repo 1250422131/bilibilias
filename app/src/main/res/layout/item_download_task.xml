@@ -9,7 +9,7 @@
 
         <variable
             name="TaskBean"
-            type="com.imcys.bilibilias.base.utils.DownloadQueue.Task" />
+            type="com.imcys.bilibilias.base.model.task.DownloadTaskInfo" />
 
     </data>
 

@@ -19,9 +19,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
@@ -33,28 +30,20 @@ import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
-import com.imcys.bilibilias.home.ui.viewmodel.factory.AsLoginBsViewModelFactory
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
 
 /**
  * 全局使用弹窗工具类
@@ -156,67 +145,67 @@ object DialogUtils {
      * @param context Context
      * @return BottomSheetDialog
      */
-    private fun loginAsDialog(context: Context, finish: () -> Unit): BottomSheetDialog {
-        val binding: DialogAsLoginBottomsheetBinding =
-            DialogAsLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
-
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).also {
-            it.setContentView(binding.root)
-            it.setCancelable(true)
-        }
-
-        // 这里务必拆开看一下，这里kotlin的语法题混合后已经不容易看出来在做什么了，其中第三个参数是当完成登录时要做的事情
-        binding.asLoginBsViewModel =
-            ViewModelProvider(
-                this as HomeActivity,
-                AsLoginBsViewModelFactory(
-                    binding,
-                    bottomSheetDialog,
-                ) { finish() },
-            )[AsLoginBsViewModel::class.java]
-
-        initDialogBehaviorBinding(
-            binding.dialogAsLoginBar,
-            context,
-            binding.root.parent,
-        )
-
-        // 添加验证码 -> 很蠢的办法
-        HttpUtils.get(
-            "${serviceTestApi}users/getCaptchaImage",
-            object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    var cookie = ""
-                    response.headers.values("Set-Cookie").forEach {
-                        cookie += it
-                    }
-                    cookie += ";"
-
-                    BaseApplication.dataKv.encode("as_cookies", cookie)
-
-                    val glideUrl = GlideUrl(
-                        "${serviceTestApi}users/getCaptchaImage",
-                        LazyHeaders.Builder()
-                            .addHeader("cookie", cookie)
-                            .build(),
-                    )
-
-                    BaseApplication.handler.post {
-                        Glide.with(context)
-                            .load(glideUrl)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE) // 不缓存任何图片，即禁用磁盘缓存
-                            .error(R.mipmap.ic_launcher)
-                            .into(binding.dgAsLoginVerificationImage)
-                    }
-                }
-            },
-        )
-
-        return bottomSheetDialog
-    }
+//    private fun loginAsDialog(context: Context, finish: () -> Unit): BottomSheetDialog {
+//        val binding: DialogAsLoginBottomsheetBinding =
+//            DialogAsLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
+//
+//        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).also {
+//            it.setContentView(binding.root)
+//            it.setCancelable(true)
+//        }
+//
+//        // 这里务必拆开看一下，这里kotlin的语法题混合后已经不容易看出来在做什么了，其中第三个参数是当完成登录时要做的事情
+//        binding.asLoginBsViewModel =
+//            ViewModelProvider(
+//                this as HomeActivity,
+//                AsLoginBsViewModelFactory(
+//                    binding,
+//                    bottomSheetDialog,
+//                ) { finish() },
+//            )[AsLoginBsViewModel::class.java]
+//
+//        initDialogBehaviorBinding(
+//            binding.dialogAsLoginBar,
+//            context,
+//            binding.root.parent,
+//        )
+//
+//        // 添加验证码 -> 很蠢的办法
+//        HttpUtils.get(
+//            "${serviceTestApi}users/getCaptchaImage",
+//            object : Callback {
+//                override fun onFailure(call: Call, e: IOException) {
+//                }
+//
+//                override fun onResponse(call: Call, response: Response) {
+//                    var cookie = ""
+//                    response.headers.values("Set-Cookie").forEach {
+//                        cookie += it
+//                    }
+//                    cookie += ";"
+//
+//                    BaseApplication.dataKv.encode("as_cookies", cookie)
+//
+//                    val glideUrl = GlideUrl(
+//                        "${serviceTestApi}users/getCaptchaImage",
+//                        LazyHeaders.Builder()
+//                            .addHeader("cookie", cookie)
+//                            .build(),
+//                    )
+//
+//                    BaseApplication.handler.post {
+//                        Glide.with(context)
+//                            .load(glideUrl)
+//                            .diskCacheStrategy(DiskCacheStrategy.NONE) // 不缓存任何图片，即禁用磁盘缓存
+//                            .error(R.mipmap.ic_launcher)
+//                            .into(binding.dgAsLoginVerificationImage)
+//                    }
+//                }
+//            },
+//        )
+//
+//        return bottomSheetDialog
+//    }
 
     /**
      * 构建底部对话框
@@ -445,7 +434,7 @@ object DialogUtils {
 
     private fun addThirdPartyData(
         bvid: String,
-        aid: Int,
+        aid: Long,
         mid: Long,
         name: String,
         copyright: Int,
@@ -1131,7 +1120,7 @@ object DialogUtils {
                         .asyncGet<DashBangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
@@ -1314,7 +1303,7 @@ object DialogUtils {
                             .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(videoPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 addFlvTask(
                     context,
@@ -1363,7 +1352,7 @@ object DialogUtils {
                         .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(bangumiPlayBean, it))
                 }
-            }.collect{
+            }.collect {
                 delay(300)
                 addFlvTask(
                     context,

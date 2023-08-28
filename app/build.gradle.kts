@@ -17,11 +17,11 @@ android {
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
-        //noinspecton ExpiredTargetSdkVersion
+        // noinspecton ExpiredTargetSdkVersion
         targetSdk = 32
         versionCode = 203
         versionName = "2.0.31"
-        //multiDexEnabled true
+        // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
 
@@ -39,26 +39,24 @@ android {
 
     buildTypes {
         debug {
-            //混淆
+            // 混淆
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
         }
 
         release {
-            //混淆
+            // 混淆
             isMinifyEnabled = true
-            //Zipalign优化
-            isZipAlignEnabled = true
             // 移除无用的resource文件
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
@@ -114,7 +112,7 @@ dependencies {
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
 
-    ksp(libs.compiler)
+    ksp(libs.deeprecopy.compiler)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
