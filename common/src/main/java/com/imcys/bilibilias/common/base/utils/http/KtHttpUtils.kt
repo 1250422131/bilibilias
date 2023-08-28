@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.base.utils.http
 
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import io.ktor.client.HttpClient
@@ -157,7 +158,7 @@ object KtHttpUtils {
     }
 
     fun checkUrl(url: String) {
-        headers["user-agent"] = if (url in "misakamoe") {
+        headers[USER_AGENT] = if (url in "misakamoe") {
             SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
         } else {
             BROWSER_USER_AGENT

@@ -18,6 +18,9 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -55,10 +58,10 @@ class AsVideoViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!,
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 )
-                    .addHeader("referer", BILIBILI_URL)
+                    .addHeader(REFERER, BILIBILI_URL)
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 // 这里再检验一次，是否为404内容
                 loadDialog.cancel()
@@ -110,10 +113,10 @@ class AsVideoViewModel : ViewModel() {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean =
                     KtHttpUtils.addHeader(
-                        "cookie",
-                        BaseApplication.dataKv.decodeString("cookies", "")!!,
+                        COOKIE,
+                        BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                     )
-                        .addHeader("referer", BILIBILI_URL)
+                        .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
                 launch(Dispatchers.Main) {
@@ -267,8 +270,8 @@ class AsVideoViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
                 KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!,
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 )
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                     .addParam("like", "1")
@@ -308,8 +311,8 @@ class AsVideoViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val likeVideoBean =
                 KtHttpUtils.addHeader(
-                    "cookie",
-                    BaseApplication.dataKv.decodeString("cookies", "")!!,
+                    COOKIE,
+                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 )
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "") ?: "")
                     .addParam("like", "2")
@@ -346,7 +349,7 @@ class AsVideoViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             KtHttpUtils
-                .addHeader("cookie", BaseApplication.dataKv.decodeString("cookies", "")!!)
+                .addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
                 .addParam("bvid", bvid)
                 .addParam("multiply", "2")
                 .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
@@ -369,8 +372,8 @@ class AsVideoViewModel : ViewModel() {
             viewModelScope.launch(Dispatchers.IO) {
                 val userCreateCollectionBean =
                     KtHttpUtils.addHeader(
-                        "cookie",
-                        BaseApplication.dataKv.decodeString("cookies", "")!!,
+                        COOKIE,
+                        BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                     )
                         .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
 
@@ -432,7 +435,7 @@ class AsVideoViewModel : ViewModel() {
     private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Int) {
         viewModelScope.launch(Dispatchers.Default) {
             val collectionResultBean =
-                KtHttpUtils.addHeader("cookie", context.asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, context.asUser.cookie)
                     .addParam("rid", avid.toString())
                     .addParam("add_media_ids", addMediaIds)
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)

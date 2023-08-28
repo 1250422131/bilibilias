@@ -14,6 +14,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.tool_log_export.R
@@ -328,7 +329,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return KtHttpUtils.addHeader("cookie", asUser.cookie)
+        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=30")
     }
 

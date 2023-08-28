@@ -13,6 +13,8 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
@@ -83,8 +85,8 @@ class CollectionActivity : BaseActivity() {
     private fun loadCollectionList() {
         lifecycleScope.launch {
             val userCreateCollectionBean = KtHttpUtils.addHeader(
-                "cookie",
-                BaseApplication.dataKv.decodeString("cookies", "")!!
+                COOKIE,
+                BaseApplication.dataKv.decodeString(COOKIES, "")!!
             )
                 .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
             userCreateCollectionBean.data.list.forEach { it1 ->
@@ -138,7 +140,7 @@ class CollectionActivity : BaseActivity() {
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
 
-        HttpUtils.addHeader("cookie", asUser.cookie)
+        HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
                 CollectionDataBean::class.java
