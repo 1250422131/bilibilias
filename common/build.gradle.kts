@@ -17,11 +17,11 @@ ksp {
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -200,13 +200,13 @@ dependencies {
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
 
-//    api(libs.activity.compose)
-//    api(platform(libs.compose.bom))
-//    api(libs.ui)
-//    api(libs.ui.graphics)
-//    api(libs.ui.tooling.preview)
-//    api(libs.material3)
-//    androidTestImplementation(platform(libs.compose.bom))
+    api(libs.activity.compose)
+    api(platform(libs.compose.bom))
+    api(libs.ui)
+    api(libs.ui.graphics)
+    api(libs.ui.tooling.preview)
+    api(libs.material3)
+    androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)

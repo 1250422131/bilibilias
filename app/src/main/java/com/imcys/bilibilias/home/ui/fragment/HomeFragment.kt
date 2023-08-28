@@ -304,7 +304,7 @@ class HomeFragment : BaseFragment() {
      * @param notice String
      */
     private fun loadNotice(notice: String) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val mNotice = sharedPreferences.getString("AppNotice", "")
         if (mNotice != notice) {
             DialogUtils.dialog(
@@ -365,7 +365,7 @@ class HomeFragment : BaseFragment() {
      * 启动统计
      */
     internal fun startStatistics() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sharedPreferences.edit()
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
