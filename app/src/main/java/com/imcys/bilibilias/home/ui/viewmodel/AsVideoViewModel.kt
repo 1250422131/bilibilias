@@ -17,6 +17,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
@@ -375,7 +376,7 @@ class AsVideoViewModel : ViewModel() {
                         COOKIE,
                         BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                     )
-                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
+                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + asUser.mid)
 
                 launch(Dispatchers.Main) {
                     if (userCreateCollectionBean.code == 0) {
@@ -435,7 +436,7 @@ class AsVideoViewModel : ViewModel() {
     private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             val collectionResultBean =
-                KtHttpUtils.addHeader(COOKIE, context.asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                     .addParam("rid", avid.toString())
                     .addParam("add_media_ids", addMediaIds)
                     .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
