@@ -453,7 +453,7 @@ object DialogUtils {
 
     private fun addThirdPartyData(
         bvid: String,
-        aid: Int,
+        aid: Long,
         mid: Long,
         name: String,
         copyright: Int,

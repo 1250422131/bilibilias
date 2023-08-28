@@ -92,7 +92,7 @@ public class VideoBaseBean implements Serializable {
          */
 
         private String bvid;
-        private int aid;
+        private Long aid;
         private int videos;
         private int tid;
         private String tname;
@@ -109,7 +109,7 @@ public class VideoBaseBean implements Serializable {
         private OwnerBean owner;
         private StatBean stat;
         private String dynamic;
-        private int cid;
+        private Long cid;
         private DimensionBean dimension;
         private Object premiere;
         private int teenage_mode;
@@ -141,11 +141,11 @@ public class VideoBaseBean implements Serializable {
             this.bvid = bvid;
         }
 
-        public int getAid() {
+        public Long getAid() {
             return aid;
         }
 
-        public void setAid(int aid) {
+        public void setAid(Long aid) {
             this.aid = aid;
         }
 
@@ -277,11 +277,11 @@ public class VideoBaseBean implements Serializable {
             this.dynamic = dynamic;
         }
 
-        public int getCid() {
+        public Long getCid() {
             return cid;
         }
 
-        public void setCid(int cid) {
+        public void setCid(Long cid) {
             this.cid = cid;
         }
 
@@ -628,7 +628,7 @@ public class VideoBaseBean implements Serializable {
              * argue_msg :
              */
 
-            private int aid;
+            private Long aid;
             private int view;
             private int danmaku;
             private int reply;
@@ -642,11 +642,11 @@ public class VideoBaseBean implements Serializable {
             private String evaluation;
             private String argue_msg;
 
-            public int getAid() {
+            public Long getAid() {
                 return aid;
             }
 
-            public void setAid(int aid) {
+            public void setAid(Long aid) {
                 this.aid = aid;
             }
 
@@ -928,7 +928,7 @@ public class VideoBaseBean implements Serializable {
                      * is_senior_member : 0
                      */
 
-                    private int mid;
+                    private Long mid;
                     private String name;
                     private String sex;
                     private String face;
@@ -940,11 +940,11 @@ public class VideoBaseBean implements Serializable {
                     private int in_reg_audit;
                     private int is_senior_member;
 
-                    public int getMid() {
+                    public Long getMid() {
                         return mid;
                     }
 
-                    public void setMid(int mid) {
+                    public void setMid(Long mid) {
                         this.mid = mid;
                     }
 
@@ -1066,16 +1066,16 @@ public class VideoBaseBean implements Serializable {
                  * weekly_recommend_num : 0
                  */
 
-                private int aid;
+                private Long aid;
                 private int type;
                 private String desc;
                 private int weekly_recommend_num;
 
-                public int getAid() {
+                public Long getAid() {
                     return aid;
                 }
 
-                public void setAid(int aid) {
+                public void setAid(Long aid) {
                     this.aid = aid;
                 }
 
@@ -1154,7 +1154,7 @@ public class VideoBaseBean implements Serializable {
              * first_frame : http://i2.hdslb.com/bfs/storyff/n221027a21ph6uu8ui2xn310a41s8hf9_firsti.jpg
              */
 
-            private int cid;
+            private Long cid;
             private int page;
             private String from;
             private String part;
@@ -1164,11 +1164,11 @@ public class VideoBaseBean implements Serializable {
             private DimensionBeanX dimension;
             private String first_frame;
 
-            public int getCid() {
+            public Long getCid() {
                 return cid;
             }
 
-            public void setCid(int cid) {
+            public void setCid(Long cid) {
                 this.cid = cid;
             }
 

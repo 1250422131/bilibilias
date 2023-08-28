@@ -175,7 +175,7 @@ public class HomeRCMDVideoBean implements Serializable {
             private float likeState = 0f;
             private int id;
             private String bvid;
-            private int cid;
+            private Long cid;
             @SerializedName("goto")
             private String gotoX;
             private String uri;
@@ -220,11 +220,11 @@ public class HomeRCMDVideoBean implements Serializable {
                 this.bvid = bvid;
             }
 
-            public int getCid() {
+            public Long getCid() {
                 return cid;
             }
 
-            public void setCid(int cid) {
+            public void setCid(Long cid) {
                 this.cid = cid;
             }
 

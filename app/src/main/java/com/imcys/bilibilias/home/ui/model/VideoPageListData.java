@@ -71,7 +71,7 @@ public class VideoPageListData implements Serializable {
 
         private int selected = 0;
         private int checkState = 0;
-        private int cid;
+        private Long cid;
         private int page;
         private String from;
         private String part;
@@ -114,11 +114,11 @@ public class VideoPageListData implements Serializable {
             this.checkState = checkState;
         }
 
-        public int getCid() {
+        public Long getCid() {
             return cid;
         }
 
-        public void setCid(int cid) {
+        public void setCid(Long cid) {
             this.cid = cid;
         }
 

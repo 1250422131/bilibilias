@@ -63,28 +63,28 @@ class LoginQRModel {
                     bottomSheetDialog?.cancel()
                 }
 
-                //————————————————————————————————————————————————
+                // ————————————————————————————————————————————————
                 @SuppressLint("CommitPrefEdits")
                 override fun onResponse(call: Call, response: Response) {
-                    //数据解析
+                    // 数据解析
                     val loginStateBean: LoginStateBean =
                         Gson().fromJson(response.body?.string(), LoginStateBean::class.java)
-                    //————————————————————————————————————————————————
-                    //关闭加载弹窗
+                    // ————————————————————————————————————————————————
+                    // 关闭加载弹窗
                     bottomSheetDialog?.cancel()
-                    //更新UI线程
+                    // 更新UI线程
                     BaseApplication.handler.post {
-                        //登录成功则去储存cookie
+                        // 登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
                             loginSuccessOp(loginStateBean, response)
                         } else {
-                            //展示登录结果
+                            // 展示登录结果
                             val loginQRModel = binding?.loginQRModel
                             loginQRModel?.loginTip = loginStateBean.data.message
                             binding?.loginQRModel = loginQRModel
 
                         }
-                        //将登录完成事件返回给Fragment
+                        // 将登录完成事件返回给Fragment
                         responseResult(loginStateBean.data.code, loginStateBean)
                     }
 

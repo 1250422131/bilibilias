@@ -1356,15 +1356,15 @@ public class BangumiFollowList implements Serializable {
                  * is_contribute : 1
                  */
 
-                private int mid;
+                private Long mid;
                 private int type;
                 private int is_contribute;
 
-                public int getMid() {
+                public Long getMid() {
                     return mid;
                 }
 
-                public void setMid(int mid) {
+                public void setMid(Long mid) {
                     this.mid = mid;
                 }
 
