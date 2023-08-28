@@ -28,9 +28,7 @@ import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
 import me.rosuh.filepicker.config.FilePickerManager
 
-
 class SettingsFragment : PreferenceFragmentCompat() {
-
 
     private lateinit var userDownloadSaveSDPathSwitch: SwitchPreferenceCompat
     private lateinit var renameUserDownloadFileNameEditText: Preference
@@ -41,14 +39,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var appThemeListPreference: ListPreference
     private lateinit var appLanguageListPreference: ListPreference
 
-
     private lateinit var renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
 
-
     private val saveImport = registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
+        ActivityResultContracts.OpenDocumentTree(),
     ) {
         (context as SettingActivity).asSharedPreferences.edit().apply {
             putString("AppDataUri", it.toString())
@@ -57,15 +53,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-
     private val saveSDFile =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 setSavePath()
             }
-
         }
-
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -76,7 +69,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         initPreference()
 
         bindingEvent()
-
     }
 
     private fun bindingEvent() {
@@ -91,7 +83,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if (!this) Toast.makeText(context, "存在特殊符号", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
 
         renameUserDownloadSavePath.setOnPreferenceClickListener {
@@ -105,7 +96,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 positiveButtonClickListener = {
                     getDefaultSharedPreferences(context).edit().putString(
                         "user_download_save_path",
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
                     )
                         .apply()
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
@@ -113,11 +104,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
                 },
                 negativeButtonClickListener = {
-                }
+                },
             ).show()
             true
         }
-
 
         renameUserDownloadFileNameEditText.setOnPreferenceClickListener {
             DialogUtils.dialog(
@@ -131,14 +121,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     getDefaultSharedPreferences(context).edit {
                         putString(
                             "user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
                         )
                         apply()
                     }
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                 },
                 negativeButtonClickListener = {
-                }
+                },
             ).show()
             true
         }
@@ -160,7 +150,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 requireActivity().sendBroadcast(intent)
                 true
             }
-
     }
 
     private fun bindingAppThemeListPreferenceEvent() {
@@ -173,21 +162,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
-
     private fun bindingSaveSDPathSwitchEvent() {
-
         userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
             val sdPathState = getDefaultSharedPreferences(context).getBoolean(
                 "user_download_save_sd_path_switch",
-                false
+                false,
             )
-            //禁止或者释放下载地址修改
+            // 禁止或者释放下载地址修改
             userDownloadSavePathEditText.isEnabled = !sdPathState
 
             val tip = "这里的路径无法修改，储存位置为:\n${
                 AppFilePathUtils(
                     App.context,
-                    "com.imcys.bilibilias"
+                    "com.imcys.bilibilias",
                 ).sdCardDirectory
             }/Android/data/com.imcys.bilibilias/files/download"
 
@@ -200,10 +187,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingImportFileEvent() {
         userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
-
-            //判断是否有权限
+            // 判断是否有权限
             if (!fileUriUtils.isGrant(context)) {
-                //申请权限
+                // 申请权限
                 DialogUtils.dialog(
                     context!!,
                     "授权须知",
@@ -216,30 +202,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         fileUriUtils.startFor(
                             "/storage/emulated/0/Android/data/tv.danmaku.bili",
                             context as Activity,
-                            IMPORT_FILE_PATH_CODE
+                            IMPORT_FILE_PATH_CODE,
                         )
                     },
                     negativeButtonClickListener = {
-                    }
+                    },
                 ).show()
                 false
             } else {
                 true
             }
-
-
         }
-
     }
-
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingGetSavePathEvent() {
-
-
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-
-
             // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
@@ -250,26 +228,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     false
                 }
             } else {
-                //小于安卓11
+                // 小于安卓11
                 setSavePath()
                 false
             }
-
-
         }
-
     }
 
     private fun setSavePath() {
-
         FilePickerManager
             .from(this)
             .maxSelectable(1)
             .filter(object : AbstractFileFilter() {
                 override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                    return ArrayList(listData.filter { item ->
-                        item.isDir
-                    })
+                    return ArrayList(
+                        listData.filter { item ->
+                            item.isDir
+                        },
+                    )
                 }
             }).skipDirWhenSelect(false)
             .forResult(SAVE_FILE_PATH_CODE)
@@ -290,17 +266,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
-
         }
-
     }
-
 
     /**
      * 初始化控件
      */
     private fun initPreference() {
-
         userDownloadFileNameEditText = findPreference("user_download_file_name_editText")!!
         userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
         userDlFinishAutomaticImportSwitch =
@@ -312,11 +284,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         sharedPreferences.apply {
             val value = getString(
                 "user_download_save_path",
-                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
             )
             userDownloadSavePathEditText.summary = value
-
-
         }
 
         renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
@@ -326,21 +296,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val sdPathState = getDefaultSharedPreferences(context).getBoolean(
             "user_download_save_sd_path_switch",
-            false
+            false,
         )
-        //禁止或者释放下载地址修改
+        // 禁止或者释放下载地址修改
         userDownloadSavePathEditText.isEnabled = !sdPathState
 
         val tip = "应安卓要求，这里的路径无法修改，储存位置为:\n${
             AppFilePathUtils(
                 App.context,
-                "com.imcys.bilibilias"
+                "com.imcys.bilibilias",
             ).sdCardDirectory
         }/Android/data/com.imcys.bilibilias/files/download"
 
         userDownloadSaveSDPathSwitch.summaryOn = tip
-
     }
-
-
 }
