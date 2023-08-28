@@ -1,4 +1,8 @@
+@file:JvmName("ArchiveHasLikeBean")
+
 package com.imcys.bilibilias.home.ui.model
+
+import kotlinx.serialization.Serializable
 
 /**
  * @author:imcys
@@ -11,9 +15,10 @@ package com.imcys.bilibilias.home.ui.model
  * ttl : 1
  * data : 1
  */
+@Serializable
 data class ArchiveHasLikeBean(
-    val code: Int = 0,
+    val code: Int,
     val message: String,
-    val ttl: Int = 0,
-    var data: Int = 0,
+    val ttl: Int,
+    var data: Int
 )

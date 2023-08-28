@@ -357,7 +357,7 @@ class AsVideoViewModel : ViewModel() {
                 .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
 
             launch(Dispatchers.Main) {
-                (context as AsVideoActivity).binding.archiveCoinsBean?.data?.multiply = 2
+                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
                 context.binding.asVideoThrowBt.isSelected = true
             }
         }
@@ -444,7 +444,7 @@ class AsVideoViewModel : ViewModel() {
                     .asyncPost<CollectionResultBean>(BilibiliApi.videoCollectionSetPath)
 
             if (collectionResultBean.code == 0) {
-                context.binding.archiveFavouredBean?.data?.isFavoured = true
+                context.binding.archiveFavouredBean?.isFavoured = true
                 context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")

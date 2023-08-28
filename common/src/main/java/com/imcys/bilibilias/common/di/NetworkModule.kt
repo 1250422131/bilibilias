@@ -2,7 +2,7 @@ package com.imcys.bilibilias.common.di
 
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.config.UserInfoRepository
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
@@ -85,7 +85,7 @@ class NetworkModule {
             }
             // todo 注意是否还有其他方法使用cookie
             if (request.method == HttpMethod.Get) {
-                request.header(COOKIE, UserInfoRepository.cookie)
+                request.header(COOKIE, BaseApplication.asUser.cookie)
             }
 
             val originalCall = execute(request)
