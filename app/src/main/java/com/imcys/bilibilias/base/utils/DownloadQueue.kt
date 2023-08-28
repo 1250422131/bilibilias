@@ -9,6 +9,8 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -40,7 +42,10 @@ import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
 import okio.BufferedSink
@@ -65,49 +70,21 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
-
 class DownloadQueue :
     CoroutineScope by MainScope() {
 
-    private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
+    private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
 
     var downloadTaskAdapter: DownloadTaskAdapter? = null
     var downloadFinishTaskAd: DownloadFinishTaskAd? = null
 
     // 存储待下载的任务
-    private val queue = mutableListOf<Task>()
+    private val queue = mutableListOf<DownloadTaskInfo>()
 
     // 当前正在下载的任务
-    private val currentTasks = mutableListOf<Task>()
+    private val currentTasks = mutableListOf<DownloadTaskInfo>()
 
-    var allTask = mutableListOf<Task>()
-
-    // 下载任务类
-    data class Task(
-        // 下载地址
-        val url: String,
-        // 下载文件保存路径
-        var savePath: String,
-        // 文件类型，0为视频，1为音频
-        var fileType: Int,
-        // 下载任务的其他参撒
-        val downloadTaskDataBean: DownloadTaskDataBean,
-        // 标识这个任务是否是一组任务的一部分
-        var isGroupTask: Boolean = true,
-        // 定义下载完成回调
-        val onComplete: (Boolean) -> Unit,
-        var payloadsType: Int = 0,
-        // 下载状态
-        var state: Int = STATE_DOWNLOAD_WAIT,
-        // 定义当前任务的下载进度
-        var progress: Double = 0.0,
-        // 定义当前文件大小
-        var fileSize: Double = 0.0,
-        // 定义当前已经下载的大小
-        var fileDlSize: Double = 0.0,
-        // 定义当前任务的下载请求
-        var call: DownloadTask? = null,
-    )
+    var allTask = mutableListOf<DownloadTaskInfo>()
 
     // 添加下载任务到队列中
     fun addTask(
@@ -120,7 +97,7 @@ class DownloadQueue :
     ) {
         // 创建一个下载任务
         val task =
-            Task(
+            DownloadTaskInfo(
                 url,
                 savePath,
                 fileType,
@@ -134,7 +111,7 @@ class DownloadQueue :
             val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
             if (groupTasks == null) {
                 // 创建一个新的任务列表
-                val newGroupTasks = mutableListOf<Task>()
+                val newGroupTasks = mutableListOf<DownloadTaskInfo>()
                 // 将这个任务加入到这个任务列表中
                 newGroupTasks.add(task)
                 // 将这个任务列表加入到map中
@@ -295,12 +272,12 @@ class DownloadQueue :
      * 储存完成的下载任务
      * @param task Task
      */
-    private fun saveFinishTask(task: Task) {
+    private fun saveFinishTask(task: DownloadTaskInfo) {
         CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
             var videoTitle = ""
             var videoPageTitle = ""
-            var avid = 0
-            var cid = 0
+            var avid = 0L
+            var cid = 0L
             var videoBvid = ""
             task.downloadTaskDataBean.bangumiSeasonBean?.apply {
                 videoTitle = share_copy
@@ -346,7 +323,7 @@ class DownloadQueue :
      * 储存完成的下载任务集合
      * @param tasks Array<out Task>
      */
-    private fun saveFinishTask(vararg tasks: Task) {
+    private fun saveFinishTask(vararg tasks: DownloadTaskInfo) {
         tasks.forEach {
             saveFinishTask(it)
         }
@@ -356,8 +333,8 @@ class DownloadQueue :
      * 数据解析
      * @param task Task
      */
-    private fun videoDataSubmit(task: Task) {
-        var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
+    private fun videoDataSubmit(task: DownloadTaskInfo) {
+        var aid: Long? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
@@ -394,7 +371,7 @@ class DownloadQueue :
      */
     private fun addAsVideoData(
         bvid: String?,
-        aid: Int,
+        aid: Long,
         mid: Long,
         name: String?,
         copyright: Int,
@@ -430,7 +407,7 @@ class DownloadQueue :
      * 参数合并
      * @param cid Int
      */
-    private fun videoMerge(cid: Int) {
+    private fun videoMerge(cid: Long) {
         val mergeState =
             PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                 "user_dl_finish_automatic_merge_switch",
@@ -478,7 +455,7 @@ class DownloadQueue :
     }
 
     private fun runFFmpegRxJavaVideoMerge(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
 
@@ -546,7 +523,7 @@ class DownloadQueue :
      * 缓存导回B站观看
      * @param cid Int
      */
-    private fun importVideo(cid: Int) {
+    private fun importVideo(cid: Long) {
         val VIDEO_TYPE = 1
         val BANGUMI_TYPE = 2
         val taskMutableList = groupTasksMap[cid]
@@ -695,7 +672,7 @@ class DownloadQueue :
     }
 
     private fun fileImpVideo(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -794,7 +771,7 @@ class DownloadQueue :
     }
 
     private fun safImpVideo(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -955,14 +932,14 @@ class DownloadQueue :
         // 通知 RecyclerView 适配器数据发生了改变
 
         downloadTaskAdapter?.apply {
-            val newMutableList = mutableListOf<Task>().apply {
+            val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
-                    add(it.copy())
+                    add(it.deepCopy())
                 }
 
                 queue.forEach {
-                    add(it.copy())
+                    add(it.deepCopy())
                 }
             }
 
@@ -971,7 +948,7 @@ class DownloadQueue :
     }
 
     // 在 DownloadQueue 类中
-    fun updateProgress(task: Task, progress: Double) {
+    fun updateProgress(task: DownloadTaskInfo, progress: Double) {
         // 更新当前任务的下载进度
         task.progress = progress
         updateAdapter()

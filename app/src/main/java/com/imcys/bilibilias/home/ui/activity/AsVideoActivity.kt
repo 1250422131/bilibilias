@@ -85,9 +85,9 @@ class AsVideoActivity : BaseActivity() {
 
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
-    var avid: Int = 0
-    var cid: Int = 0
-    var epid: Long = 0
+    var avid: Long = 0L
+    var cid: Long = 0L
+    var epid: Long = 0L
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -609,7 +609,7 @@ class AsVideoActivity : BaseActivity() {
         }
 
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
-        fun actionStart(context: Context, aid: Int) {
+        fun actionStart(context: Context, aid: Long) {
             val intent = Intent(context, AsVideoActivity::class.java)
             intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
             context.startActivity(intent)

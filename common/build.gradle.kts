@@ -34,6 +34,7 @@ android {
                 "proguard-rules.pro"
             )
         }
+
     }
 
     dataBinding {
@@ -55,8 +56,9 @@ kotlin {
 
 dependencies {
 
-    api(libs.core)
-    ksp(libs.compiler)
+    // 深拷贝
+    api(libs.deeprecopy.core)
+    ksp(libs.deeprecopy.compiler)
 
     // hilt库，实现控制反转
     api(libs.hilt.android)
@@ -72,7 +74,7 @@ dependencies {
      * SmoothRefreshLayout支持
      */
     api(libs.srl.core)
-    api(libs.srl.ext.material)//md刷新头
+    api(libs.srl.ext.material) // md刷新头
     api(libs.srl.ext.classics)
 
 
@@ -111,7 +113,7 @@ dependencies {
      */
     api(libs.asBottomDialog)
 
-    //协程
+    // 协程
     api(libs.kotlinx.coroutines.android)
 
     /**
@@ -120,24 +122,25 @@ dependencies {
      */
     api(libs.rxFFmpeg)
 
-
     /**
      * 组件化路由库
      */
     api(libs.kcomponent.rx)
     ksp(libs.kcomponent.compiler)
 
-    //百度统计
+    // 百度统计
     api(libs.mtj.sdk.circle)
 
-    //开屏引导
+    // 开屏引导
     api(libs.hyy920109.guidePro)
 
-    //微软分发
+    // 微软分发
     api(libs.appcenter.distribute)
-    //微软统计
+    // 微软统计
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
+
+    //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     /**
      * room

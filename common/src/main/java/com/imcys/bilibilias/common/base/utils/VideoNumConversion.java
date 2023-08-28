@@ -22,7 +22,7 @@ public class VideoNumConversion {
         return (int) ((r - Data.ADD) ^ Data.XOR);
     }
 
-    public static String toBvidOffline(int avid) {
+    public static String toBvidOffline(Long avid) {
 //		if(aid < 0) throw new IllegalArgumentException("aid must greater than 0");
         long x = (avid ^ Data.XOR) + Data.ADD, m = 1L;
         char[] r = "BV1  4 1 7  ".toCharArray();
