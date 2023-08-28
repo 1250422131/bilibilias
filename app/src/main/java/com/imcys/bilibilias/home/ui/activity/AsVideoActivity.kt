@@ -24,7 +24,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -308,30 +307,27 @@ class AsVideoActivity : BaseActivity() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        val archiveFavouredBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveFavouredBean>("${BilibiliApi.archiveFavoured}?aid=$bvid")
-        binding.archiveFavouredBean = archiveFavouredBean
+        val bean = http.get("${BilibiliApi.archiveFavoured}?aid=$bvid")
+            .body<ResBean<ArchiveFavouredBean>>()
+        binding.archiveFavouredBean = bean.data
     }
 
     /**
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        val likeBean =
-            http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid").body<ArchiveHasLikeBean>()
-        asLogD("archiveCoins", likeBean.toString())
-        val archiveHasLikeBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
-        binding.archiveHasLikeBean = archiveHasLikeBean
+        val bean = http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
+            .body<ArchiveHasLikeBean>()
+        binding.archiveHasLikeBean = bean
     }
 
     /**
      * 检验是否点赞
      */
     private suspend fun archiveHasLike() {
-        val archiveCoinsBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveCoinsBean>("${BilibiliApi.archiveCoinsPath}?bvid=$bvid")
-        binding.archiveCoinsBean = archiveCoinsBean
+        val bean =
+            http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
+        binding.archiveCoinsBean = bean.data
     }
 
     /**
@@ -592,6 +588,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 释放播放器
         if (JzvdStd.backPress()) {
