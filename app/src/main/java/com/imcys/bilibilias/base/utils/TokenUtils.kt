@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.base.utils
 
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.model.UserNavDataModel
 import java.io.UnsupportedEncodingException
@@ -48,9 +50,9 @@ object TokenUtils {
         var security = requestToken
         if (requestToken == "") {
             //当没有获取过Token
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val userNavDataModel = KtHttpUtils.addHeader("cookie", cookie!!)
+            val userNavDataModel = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<UserNavDataModel>("https://api.bilibili.com/x/web-interface/nav")
 
             val imgUrl = userNavDataModel.data.wbiImg.imgUrl

@@ -64,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        sharedPreferences = getDefaultSharedPreferences(context)
+        sharedPreferences = getDefaultSharedPreferences(requireContext())
 
         initPreference()
 
@@ -94,7 +94,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    getDefaultSharedPreferences(context).edit().putString(
+                    getDefaultSharedPreferences(requireContext()).edit().putString(
                         "user_download_save_path",
                         "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
                     )
@@ -118,7 +118,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 "否",
                 true,
                 positiveButtonClickListener = {
-                    getDefaultSharedPreferences(context).edit {
+                    getDefaultSharedPreferences(requireContext()).edit {
                         putString(
                             "user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
@@ -164,7 +164,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun bindingSaveSDPathSwitchEvent() {
         userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
-            val sdPathState = getDefaultSharedPreferences(context).getBoolean(
+            val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
                 "user_download_save_sd_path_switch",
                 false,
             )
@@ -294,7 +294,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference("rename_user_download_file_name_editText")!!
         userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
 
-        val sdPathState = getDefaultSharedPreferences(context).getBoolean(
+        val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
             "user_download_save_sd_path_switch",
             false,
         )

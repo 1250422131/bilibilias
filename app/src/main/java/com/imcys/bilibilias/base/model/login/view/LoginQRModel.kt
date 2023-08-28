@@ -19,6 +19,8 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.SET_COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
@@ -32,12 +34,15 @@ import java.io.IOException
 import java.net.URLEncoder
 import java.util.regex.Pattern
 
+
 class LoginQRModel {
+
 
     var binding: DialogLoginQrBottomsheetBinding? = null
     var loginTip = ""
 
     lateinit var responseResult: (Int, LoginStateBean) -> Unit
+
 
     /**
      * 完成登录方法
@@ -48,7 +53,8 @@ class LoginQRModel {
         val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
 
-        // 登录完成
+
+        //登录完成
         HttpUtils.get(
             BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcode_key,
             object : Callback {
@@ -76,14 +82,20 @@ class LoginQRModel {
                             val loginQRModel = binding?.loginQRModel
                             loginQRModel?.loginTip = loginStateBean.data.message
                             binding?.loginQRModel = loginQRModel
+
                         }
                         // 将登录完成事件返回给Fragment
                         responseResult(loginStateBean.data.code, loginStateBean)
                     }
+
+
                 }
-            },
+            }
         )
+
+
     }
+
 
     /**
      * 重新加载二维码视图
@@ -91,17 +103,21 @@ class LoginQRModel {
      * @param loginQrcodeDataBean DataBean
      */
     fun reloadLoginQR(loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+
         HttpUtils.get(
             BilibiliApi.getLoginQRPath,
-            LoginQrcodeBean::class.java,
+            LoginQrcodeBean::class.java
         ) {
             loginQrcodeDataBean.url = URLEncoder.encode(it.data.url, "UTF-8")
             loginQrcodeDataBean.qrcode_key = it.data.qrcode_key
             binding?.dataBean = loginQrcodeDataBean
         }
+
     }
 
+
     fun downloadLoginQR(view: View, loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+
         Glide.with(view.context).asBitmap()
             .load("https://pan.misakamoe.com/qrcode/?url=" + loginQrcodeDataBean.url)
             .into(object : SimpleTarget<Bitmap?>() {
@@ -130,14 +146,17 @@ class LoginQRModel {
                     updatePhotoMedia(photo, view.context)
                     asToast(
                         view.context,
-                        view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast),
+                        view.context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast)
                     )
                     goToQR(view)
                 }
             })
+
+
     }
 
-    // 更新图库
+
+    //更新图库
     private fun updatePhotoMedia(file: File, context: Context) {
         val intent = Intent()
         intent.action = Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
@@ -157,7 +176,7 @@ class LoginQRModel {
                 Toast.makeText(
                     context,
                     context.getString(R.string.app_LoginQRModel_goToQR),
-                    Toast.LENGTH_SHORT,
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         } catch (e: Exception) {
@@ -172,6 +191,7 @@ class LoginQRModel {
      */
     @SuppressLint("CommitPrefEdits")
     fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
+
         val kv = MMKV.mmkvWithID("data")
 
         kv.encode("refreshToken", loginStateBean.data.refresh_token)
@@ -183,7 +203,8 @@ class LoginQRModel {
         val patternBiliJct = "bili_jct=(.*?);"
         val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
 
-        response.headers.values("Set-Cookie").forEach {
+
+        response.headers.values(SET_COOKIE).forEach {
             cookies += it
             var m = rSESSDATA.matcher(it)
 
@@ -200,8 +221,11 @@ class LoginQRModel {
             }
         }
         kv.apply {
-            encode("cookies", cookies)
+            encode(COOKIES, cookies)
             encode("refreshToken", loginStateBean.data.refresh_token)
         }
+
+
     }
+
 }

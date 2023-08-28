@@ -1,12 +1,13 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.detekt)
+    kotlin("kapt")
 }
 apply {
-    from("/../version.gradle.kts")
     from("/../config.gradle")
 }
 
@@ -16,14 +17,13 @@ ksp {
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -31,9 +31,10 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
+
     }
 
     dataBinding {
@@ -76,10 +77,12 @@ dependencies {
     api(libs.srl.ext.material) // md刷新头
     api(libs.srl.ext.classics)
 
+
     /**
      * MMKV 储存框架
      */
     api(libs.mmkv)
+
 
     /**
      * 伸缩布局
@@ -137,7 +140,7 @@ dependencies {
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    // api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
+    //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     /**
      * room
@@ -164,31 +167,18 @@ dependencies {
      */
     api(libs.dfm)
 
-    /**
-     * Compose全局支持
-     */
-//    api( platform("androidx.compose:compose-bom:2022.11.00")
-//    // Compose ui 相关的基础支持
-//    api( "androidx.compose.ui:ui"
-//    // 将 Compose 支持预览，类似 XML 的预览模式，并支持 点击、滑动等 XML 不支持的交互操作
-//    api( "androidx.compose.ui:ui-tooling"
-//    // Compose 库的主体包，具体在上面介绍
-//    api( "androidx.compose.material:material"
-//    // 将 Activity 支持 Compose
-//    api( "androidx.activity:activity-compose:1.5.0"
-
-    // 饺子播放器
+    //饺子播放器
     api(libs.jiaozivideoplayer)
 
-    // lottie动画库
+    //lottie动画库
     api(libs.lottie)
 
-    // implementation "androidx.palette:palette:1.0.0"
+    //implementation "androidx.palette:palette:1.0.0"
 
     api(libs.banner)
 
     api(libs.glide)
-    // implementation("jp.wasabeef:glide-transformations:4.3.0")
+    //implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
@@ -200,29 +190,26 @@ dependencies {
      */
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
-    // 日志
-    api(libs.ktor.client.logging) // Logging
-    // json解析支持
+    //日志
+    api(libs.ktor.client.logging)//Logging
+    //json解析支持
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
     api(libs.gson)
-
-    // implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    api(libs.ktor.serialization.kotlinx.json)
 
     api(libs.constraintlayout)
     api(libs.androidx.lifecycle.viewmodel.ktx)
-    // 新增
-    // api( "androidx.compose.ui:ui-tooling-preview:1.3.2"
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
 
-//    api(libs.activity.compose)
-//    api(platform(libs.compose.bom))
-//    api(libs.ui)
-//    api(libs.ui.graphics)
-//    api(libs.ui.tooling.preview)
-//    api(libs.material3)
-//    androidTestImplementation(platform(libs.compose.bom))
+    api(libs.activity.compose)
+    api(platform(libs.compose.bom))
+    api(libs.ui)
+    api(libs.ui.graphics)
+    api(libs.ui.tooling.preview)
+    api(libs.material3)
+    androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
@@ -230,4 +217,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+}
+
+tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
+    reports {
+        // Enable/Disable XML report (default: true)
+        xml.required.set(true)
+        xml.outputLocation.set(file("$projectDir/config/detekt.xml"))
+        // Enable/Disable HTML report (default: true)
+        html.required.set(true)
+        html.outputLocation.set(file("$projectDir/config/detekt.html"))
+        // Enable/Disable MD report (default: false)
+        md.required.set(true)
+        md.outputLocation.set(file("$projectDir/config/detekt.md"))
+    }
 }

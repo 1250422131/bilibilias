@@ -26,7 +26,7 @@ class App : BaseApplication() {
         //BRV初始化
         initBRV()
 
-        context = BaseApplication.context
+        context = applicationContext()
 
     }
 

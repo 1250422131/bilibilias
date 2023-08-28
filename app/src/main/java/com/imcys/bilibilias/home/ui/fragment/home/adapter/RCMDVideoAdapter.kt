@@ -10,6 +10,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -77,7 +78,7 @@ class RCMDVideoAdapter(
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val likeVideoBean = KtHttpUtils.addHeader("cookie", "")
+            val likeVideoBean = KtHttpUtils.addHeader(COOKIE, "")
                 .addParam("bvid", bvid)
                 .addParam("like", "1")
                 .addParam("csrf", "")

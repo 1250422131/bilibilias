@@ -27,6 +27,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -41,6 +42,7 @@ import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
+
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -64,7 +66,7 @@ class ToolFragment : BaseFragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        // 这里仍然是在判断是否有被引导过了
+        //这里仍然是在判断是否有被引导过了
         val guideVersion =
             (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
@@ -88,15 +90,17 @@ class ToolFragment : BaseFragment() {
                     .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
                     .setMarginOffset(MarginOffset(start = 8.dp))
                     .build()
+
             }
             .setOnDismissCallback {
                 (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
                 (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0,
+                    0
                 ).isCheckable = true
             }
             .setBackgroundColor("#80000000".toColorInt())
             .show()
+
     }
 
     override fun onCreateView(
@@ -104,6 +108,7 @@ class ToolFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
 
@@ -137,6 +142,7 @@ class ToolFragment : BaseFragment() {
      */
     @SuppressLint("ResourceType")
     internal fun parseShare(intent: Intent?) {
+
         val action = intent?.action
         val type = intent?.type
         lifecycleScope.launchWhenResumed {
@@ -145,19 +151,22 @@ class ToolFragment : BaseFragment() {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
             }
-            // 下面这段代表是从浏览器解析过来的
+            //下面这段代表是从浏览器解析过来的
             val asUrl = intent?.extras?.getString("asUrl")
             if (asUrl != null) {
                 asVideoId(asUrl)
             }
         }
+
     }
+
 
     /**
      * 设置输入框的搜索监听器
      * 当搜索除发时执行
      */
     private fun setEditListener() {
+
         fragmentToolBinding.apply {
             fragmentToolEditText.setOnEditorActionListener { textView, i, keyEvent ->
                 if (i == EditorInfo.IME_ACTION_SEARCH) {
@@ -166,6 +175,7 @@ class ToolFragment : BaseFragment() {
                 false
             }
         }
+
     }
 
     /**
@@ -173,6 +183,7 @@ class ToolFragment : BaseFragment() {
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
+
         if (inputString == "") {
             asToast(requireContext(), getString(R.string.app_ToolFragment_asVideoId))
             return
@@ -217,17 +228,14 @@ class ToolFragment : BaseFragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
-            .get(
-                toString,
-                object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Toast.makeText(
-                            context,
-                            getString(R.string.app_ToolFragment_loadShareData),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
+        HttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
+            .get(toString, object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Toast.makeText(
+                        context, getString(R.string.app_ToolFragment_loadShareData),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
                     override fun onResponse(call: Call, response: Response) {
                         val str = response.request.url.toString()
@@ -237,14 +245,16 @@ class ToolFragment : BaseFragment() {
             )
     }
 
+
     /**
      * 利用ep号进行检索
      * @param epId Int
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
+
             val bangumiSeasonBean =
-                KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                     .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
 
             if (bangumiSeasonBean.code == 0) {
@@ -252,14 +262,19 @@ class ToolFragment : BaseFragment() {
                     if (it1.id == epId) getVideoCardData(it1.bvid)
                 }
             }
+
         }
+
+
     }
 
     private fun getVideoCardData(bvid: String) {
+
         fragmentToolBinding.apply {
+
             lifecycleScope.launch {
                 val videoBaseBean =
-                    KtHttpUtils.addHeader("cookie", (context as HomeActivity).asUser.cookie)
+                    KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                         .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
                 (mAdapter).apply {
                     // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
@@ -277,10 +292,14 @@ class ToolFragment : BaseFragment() {
                     }.apply {
                         submitList(this)
                     }
+
                 }
             }
+
         }
+
     }
+
 
     /**
      * 加载支持工具的item
@@ -357,7 +376,7 @@ class ToolFragment : BaseFragment() {
                 }
             }
 
-            // 展示item
+            //展示item
             fragmentToolBinding.apply {
                 fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
@@ -373,18 +392,25 @@ class ToolFragment : BaseFragment() {
                                     2 -> 3
                                     else -> 1
                                 }
+
                             }
                         }
                     }
+
             }
+
+
         }
+
+
     }
+
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {
         return withContext(lifecycleScope.coroutineContext) {
             HttpUtils.asyncGet(
                 "${BiliBiliAsApi.appFunction}?type=oldToolItem",
-                OldToolItemBean::class.java,
+                OldToolItemBean::class.java
             )
         }
     }
@@ -393,6 +419,7 @@ class ToolFragment : BaseFragment() {
         super.onDestroy()
         StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
+
 
     companion object {
 

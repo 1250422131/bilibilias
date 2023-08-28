@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.imcys.bilibilias.common.data.dao.DownloadFinishTaskDao
 import com.imcys.bilibilias.common.data.dao.RoamDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
@@ -65,5 +63,8 @@ abstract class AppDatabase : RoomDatabase() {
                 instance
             }
         }
+
+
     }
+
 }
