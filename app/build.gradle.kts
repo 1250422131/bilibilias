@@ -12,7 +12,7 @@ ksp {
 }
 android {
     namespace = "com.imcys.bilibilias"
-    compileSdk = 33
+    compileSdk = 34
     buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
@@ -90,10 +90,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

@@ -29,6 +29,7 @@ class SettingActivity : BaseActivity() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     @SuppressLint("WrongConstant")
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
