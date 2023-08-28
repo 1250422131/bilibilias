@@ -15,6 +15,7 @@ import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
@@ -40,7 +41,7 @@ open class AbsActivity : AppCompatActivity() {
         get() = run {
             val kv = BaseApplication.dataKv
             AsUser.apply {
-                cookie = kv.decodeString("cookies", "")!!
+                cookie = kv.decodeString(COOKIES, "")!!
                 sessdata = kv.decodeString("SESSDATA", "")!!
                 biliJct = kv.decodeString("bili_jct", "")!!
                 mid = kv.decodeLong("mid", 0)

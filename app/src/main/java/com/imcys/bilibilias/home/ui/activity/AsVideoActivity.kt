@@ -27,6 +27,13 @@ import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.ROAM_API
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -149,8 +156,8 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 lifecycleScope.launchWhenCreated {
                     // 获取播放信息
-                    val videoPlayBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
+                    val videoPlayBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
+                        .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
@@ -170,10 +177,10 @@ class AsVideoActivity : BaseActivity() {
                         }.show()
                     } else {
                         val dashVideoPlayBean = KtHttpUtils.addHeader(
-                            "cookie",
-                            BaseApplication.dataKv.decodeString("cookies", "")!!,
+                            COOKIE,
+                            BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                         )
-                            .addHeader("referer", "https://www.bilibili.com")
+                            .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
 
                         if (dashVideoPlayBean.code != 0) {
@@ -217,9 +224,9 @@ class AsVideoActivity : BaseActivity() {
             "bangumi" -> {
                 lifecycleScope.launch {
                     val bangumiPlayBean = KtHttpUtils
-                        .addHeader("cookie", asUser.cookie)
-                        .addHeader("referer", "https://www.bilibili.com")
-                        .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
+                        .addHeader(COOKIE, asUser.cookie)
+                        .addHeader(REFERER, BILIBILI_URL)
+                        .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
                     // 设置布局视频播放数据
                     binding.bangumiPlayBean = bangumiPlayBean
                     // 真正调用饺子播放器设置视频数据
@@ -242,7 +249,7 @@ class AsVideoActivity : BaseActivity() {
 
         lifecycleScope.launch {
             val videoBaseBean = KtHttpUtils.run {
-                addHeader("cookie", asUser.cookie)
+                addHeader(COOKIE, asUser.cookie)
                 asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
             }
 
@@ -290,7 +297,7 @@ class AsVideoActivity : BaseActivity() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        val archiveFavouredBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+        val archiveFavouredBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet<ArchiveFavouredBean>("${BilibiliApi.archiveFavoured}?aid=$bvid")
         binding.archiveFavouredBean = archiveFavouredBean
     }
@@ -299,7 +306,7 @@ class AsVideoActivity : BaseActivity() {
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        val archiveHasLikeBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+        val archiveHasLikeBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
         binding.archiveHasLikeBean = archiveHasLikeBean
     }
@@ -308,7 +315,7 @@ class AsVideoActivity : BaseActivity() {
      * 检验是否点赞
      */
     private suspend fun archiveHasLike() {
-        val archiveCoinsBean = KtHttpUtils.addHeader("cookie", asUser.cookie)
+        val archiveCoinsBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet<ArchiveCoinsBean>("${BilibiliApi.archiveCoinsPath}?bvid=$bvid")
         binding.archiveCoinsBean = archiveCoinsBean
     }
@@ -321,8 +328,8 @@ class AsVideoActivity : BaseActivity() {
         lifecycleScope.launch {
             val bangumiSeasonBean = KtHttpUtils.run {
                 // 弃用漫游服务
-                addHeader("cookie", asUser.cookie)
-                asyncGet<BangumiSeasonBean>(BaseApplication.roamApi + "pgc/view/web/season?ep_id=" + epid)
+                addHeader(COOKIE, asUser.cookie)
+                asyncGet<BangumiSeasonBean>(ROAM_API + "pgc/view/web/season?ep_id=" + epid)
             }
             isMember(bangumiSeasonBean)
 
@@ -431,7 +438,7 @@ class AsVideoActivity : BaseActivity() {
         params["mid"] = asUser.mid.toString()
         val paramsStr = TokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader("cookie", asUser.cookie)
+        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
     }
 
@@ -441,7 +448,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         lifecycleScope.launch {
-            val videoPlayListData = KtHttpUtils.addHeader("cookie", asUser.cookie)
+            val videoPlayListData = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
 
             binding.apply {
@@ -449,7 +456,7 @@ class AsVideoActivity : BaseActivity() {
 
                 binding.videoPageListData = videoPlayListData
                 asVideoSubsectionRv.adapter =
-                    // 将子集切换后的逻辑交给activity完成
+                        // 将子集切换后的逻辑交给activity完成
                     SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                         // 更新CID刷新播放页面
                         cid = data.cid
@@ -484,7 +491,7 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-        HttpUtils.addHeader("cookie", asUser.cookie)
+        HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.videoDanMuPath}?oid=$cid",
                 object : Callback {
@@ -528,7 +535,7 @@ class AsVideoActivity : BaseActivity() {
     private fun loadUserCardData(mid: Long) {
         lifecycleScope.launch {
             val userCardBean = KtHttpUtils
-                .addHeader("cookie", asUser.cookie)
+                .addHeader(COOKIE, asUser.cookie)
                 .asyncGet<UserCardBean>(BilibiliApi.getUserCardPath + "?mid=$mid")
 
             // 显示用户卡片
@@ -619,10 +626,9 @@ class AsVideoActivity : BaseActivity() {
         // map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://www.bilibili.com/video/$bvid"
-        jzDataSource.headerMap["User-Agent"] =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0"
+        jzDataSource.headerMap[COOKIE] = asUser.cookie
+        jzDataSource.headerMap[REFERER] = "$BILIBILI_URL/video/$bvid"
+        jzDataSource.headerMap[USER_AGENT] = BROWSER_USER_AGENT
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 

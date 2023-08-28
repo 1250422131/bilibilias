@@ -9,6 +9,8 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
@@ -63,7 +65,7 @@ class FragmentHomeViewModel : ViewModel() {
     }
 
     fun logoutLogin(view: View) {
-        val cookie = BaseApplication.dataKv.decodeString("cookies")
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES)
 
         // cookie存在空隐患
         if (cookie.isNullOrEmpty()) {
@@ -82,7 +84,7 @@ class FragmentHomeViewModel : ViewModel() {
             {
                 val biliJct = BaseApplication.dataKv.decodeString("bili_jct")
 
-                HttpUtils.addHeader("cookie", cookie)
+                HttpUtils.addHeader(COOKIE, cookie)
                     .addParam("biliCSRF", biliJct!!)
                     .post(
                         BilibiliApi.exitLogin,
@@ -93,7 +95,7 @@ class FragmentHomeViewModel : ViewModel() {
                             override fun onResponse(call: Call, response: Response) {
                                 BaseApplication.dataKv.apply {
                                     encode("mid", 0)
-                                    encode("cookies", "")
+                                    encode(COOKIES, "")
                                     encode("bili_jct", "")
                                 }
 
