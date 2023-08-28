@@ -80,12 +80,8 @@ android {
         jvmTarget = "17"
     }
 
-    dataBinding {
-        isEnabled = true
-    }
-
     buildFeatures {
-        viewBinding = true
+        dataBinding = true
         compose = true
     }
 
