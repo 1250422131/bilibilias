@@ -2,8 +2,6 @@ package com.imcys.bilibilias.common.data.repository
 
 import com.imcys.bilibilias.common.data.dao.DownloadFinishTaskDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import javax.inject.Inject
-
 
 class DownloadFinishTaskRepository(private val dao: DownloadFinishTaskDao) {
 

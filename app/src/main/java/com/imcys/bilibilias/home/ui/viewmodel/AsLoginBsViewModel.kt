@@ -24,6 +24,8 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
 import com.imcys.bilibilias.common.base.utils.AESUtils
@@ -93,7 +95,7 @@ class AsLoginBsViewModel(
     fun loginFinish(view: View) {
         val loadDialog = DialogUtils.loadDialog(view.context).apply { show() }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             // 构建登录
             val asLoginInfo = AsLoginInfo(
                 asLoginBottomsheetBinding.dgAsLoginEmailEditText.text.toString(),
@@ -109,7 +111,7 @@ class AsLoginBsViewModel(
                     asLoginInfo,
                 )
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 // 判断登录
                 if (asUserLoginModel.code == 0) {
                     // 关闭加载对话框
@@ -183,14 +185,16 @@ class AsLoginBsViewModel(
             binding.root.parent,
         )
 
-        viewModelScope.launch {
+        viewModelScope.launchIO {
             val asCookie = BaseApplication.dataKv.decodeString(AS_COOKIES)
 
             val userBiliBiliCookieModel =
                 KtHttpUtils.addHeader(COOKIE, asCookie!!)
                     .asyncGet<UserBiliBiliCookieModel>("${BiliBiliAsApi.serviceTestApi}BiliBiliCookie")
 
-            biliBiliCookieAdapter.submitList(userBiliBiliCookieModel.data)
+            launchUI {
+                biliBiliCookieAdapter.submitList(userBiliBiliCookieModel.data)
+            }
         }
 
         return bottomSheetDialog
@@ -207,14 +211,14 @@ class AsLoginBsViewModel(
         bottomSheetDialog: BottomSheetDialog,
         view: View,
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             val cookies = AESUtils.decrypt(data.cookie)
             val myUserData = KtHttpUtils.addHeader(COOKIE, cookies)
                 .asyncGet<MyUserData>(
                     BilibiliApi.getMyUserData,
                 )
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 if (myUserData.code != 0) {
                     loadCloudAccountLogin(view.context)
                     deleteCloudAccount(view.context, data)

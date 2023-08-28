@@ -15,6 +15,6 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideDownloadFinishTaskRepository(
-        dao: DownloadFinishTaskDao
+        dao: DownloadFinishTaskDao,
     ): DownloadFinishTaskRepository = DownloadFinishTaskRepository(dao)
 }

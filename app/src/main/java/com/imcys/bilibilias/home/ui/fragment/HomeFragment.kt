@@ -39,6 +39,8 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -57,7 +59,6 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
@@ -167,10 +168,10 @@ class HomeFragment : BaseFragment() {
                 .getBoolean("user_google_ad_switch", true)
 
         if (userGoogleADSwitch) {
-            lifecycleScope.launch(Dispatchers.IO) {
+            launchIO {
                 val oldHomeAdBean = getOldHomeAdBean()
                 // 切换主线程
-                launch(Dispatchers.Main) {
+                launchUI {
                     val adapter = OldHomeAdAdapter()
                     fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
                     fragmentHomeBinding.fragmentHomeAdRv.layoutManager =
@@ -197,19 +198,22 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        lifecycleScope.launch {
+        launchIO {
             val oldHomeBannerDataBean =
                 HttpUtils.asyncGet(
                     "${BiliBiliAsApi.updateDataPath}?type=banner",
                     OldHomeBannerDataBean::class.java,
                 )
-            // 新增BannerLifecycleObserver
-            fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                OldHomeBeanAdapter(
-                    oldHomeBannerDataBean.textList,
-                    oldHomeBannerDataBean,
-                ),
-            ).setIndicator(CircleIndicator(context))
+
+            launchUI {
+                // 新增BannerLifecycleObserver
+                fragmentHomeBinding.fragmentHomeBanner.setAdapter(
+                    OldHomeBeanAdapter(
+                        oldHomeBannerDataBean.textList,
+                        oldHomeBannerDataBean,
+                    ),
+                ).setIndicator(CircleIndicator(context))
+            }
         }
     }
 
@@ -219,29 +223,30 @@ class HomeFragment : BaseFragment() {
     private fun loadAppData() {
         AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
 
-        lifecycleScope.launch {
+        launchIO {
             val oldUpdateDataBean =
                 HttpUtils.asyncGet(
                     "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
                     OldUpdateDataBean::class.java,
                 )
 
-            // 加载公告
-            if (oldUpdateDataBean.notice != "") {
-                loadNotice(oldUpdateDataBean.notice.toString())
-            }
-            // 送出签名信息
-            val sha = apkVerifyWithSHA(requireContext(), "")
-            val md5 = apkVerifyWithMD5(requireContext(), "")
-            val crc = apkVerifyWithCRC(requireContext(), "")
+            launchUI { // 加载公告
+                if (oldUpdateDataBean.notice != "") {
+                    loadNotice(oldUpdateDataBean.notice.toString())
+                }
+                // 送出签名信息
+                val sha = apkVerifyWithSHA(requireContext(), "")
+                val md5 = apkVerifyWithMD5(requireContext(), "")
+                val crc = apkVerifyWithCRC(requireContext(), "")
 
-            when (oldUpdateDataBean.id) {
-                "0" -> postAppData(sha, md5, crc)
-                "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
-            }
+                when (oldUpdateDataBean.id) {
+                    "0" -> postAppData(sha, md5, crc)
+                    "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
+                }
 
-            // 检测更新
-            loadVersionData(oldUpdateDataBean)
+                // 检测更新
+                loadVersionData(oldUpdateDataBean)
+            }
         }
     }
 
@@ -377,12 +382,12 @@ class HomeFragment : BaseFragment() {
         // mid
         bottomSheetDialog.show()
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        launchIO {
             val myUserData =
                 KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
                     .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 if (myUserData.code == 0) {
                     // 提交
                     BaseApplication.myUserData = myUserData.data
@@ -401,18 +406,21 @@ class HomeFragment : BaseFragment() {
      * 检查用户是否登陆
      */
     private fun detectUserLogin() {
-        lifecycleScope.launch {
+        launchIO {
             val myUserData =
                 HttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
                     .asyncGet(
                         BilibiliApi.getMyUserData,
                         MyUserData::class.java,
                     )
-            if (myUserData.code != 0) {
-                DialogUtils.loginDialog(requireContext())
-                    .show()
-            } else {
-                BaseApplication.myUserData = myUserData.data
+
+            launchUI {
+                if (myUserData.code != 0) {
+                    DialogUtils.loginDialog(requireContext())
+                        .show()
+                } else {
+                    BaseApplication.myUserData = myUserData.data
+                }
             }
         }
     }
@@ -420,7 +428,7 @@ class HomeFragment : BaseFragment() {
     // 加载用户数据
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
-        lifecycleScope.launch {
+        launchIO {
             val params = mutableMapOf<String?, String?>()
             params["mid"] = myUserData.data.mid.toString()
             val paramsStr = getParamStr(params)
@@ -431,17 +439,20 @@ class HomeFragment : BaseFragment() {
                     BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 ).addHeader(
                     USER_AGENT,
-                    BROWSER_USER_AGENT
+                    BROWSER_USER_AGENT,
                 )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
 
-            // 这里需要储存下数据
-            BaseApplication.dataKv.encode("mid", myUserData.data.mid)
 
-            // 关闭登陆登陆弹窗
-            loginQRDialog.cancel()
-            // 加载用户弹窗
-            DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
+            launchUI {
+                // 这里需要储存下数据
+                BaseApplication.dataKv.encode("mid", myUserData.data.mid)
+
+                // 关闭登陆登陆弹窗
+                loginQRDialog.cancel()
+                // 加载用户弹窗
+                DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -20,8 +21,6 @@ import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -197,13 +196,13 @@ class DownloadFragment : BaseFragment() {
      * 删除下载记录
      */
     private fun deleteSelectTaskRecords() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        launchIO {
             downloadFinishTaskAd.currentList.filter { it.selectState }
                 .forEach { downloadFinishTaskRepository.delete(it) }
 
             val newTasks = downloadFinishTaskRepository.allDownloadFinishTask()
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 editCancel()
                 // 更新数据
                 downloadFinishTaskAd.submitList(newTasks)
@@ -219,13 +218,12 @@ class DownloadFragment : BaseFragment() {
             App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
 
-            lifecycleScope.launch(Dispatchers.IO) {
-
+            launchIO {
                 // 协程提交
                 downloadFinishTaskRepository.apply {
                     App.downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask()
-                        lifecycleScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launchUI {
                             submitList(finishTasks)
                         }
                     }

@@ -34,6 +34,8 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -44,7 +46,6 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -110,10 +111,10 @@ class AsVideoActivity : BaseActivity() {
      * 加载用户信息，为了确保会员视频及时通知用户
      */
     private fun loadUserData() {
-        lifecycleScope.launch {
+        launchIO {
             userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
             // 加载视频首要信息
-            initVideoData()
+            launchUI { initVideoData() }
         }
     }
 
@@ -154,7 +155,7 @@ class AsVideoActivity : BaseActivity() {
 
         when (type) {
             "video" -> {
-                lifecycleScope.launchWhenCreated {
+                launchIO {
                     // 获取播放信息
                     val videoPlayBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
@@ -215,22 +216,27 @@ class AsVideoActivity : BaseActivity() {
                         // 真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
-                    // 这里要展示视频信息卡片
-                    binding.asVideoCd.visibility = View.VISIBLE
-                    binding.asVideoBangumiCd.visibility = View.GONE
+
+                    launchUI { // 这里要展示视频信息卡片
+                        binding.asVideoCd.visibility = View.VISIBLE
+                        binding.asVideoBangumiCd.visibility = View.GONE
+                    }
                 }
             }
 
             "bangumi" -> {
-                lifecycleScope.launch {
+                launchIO {
                     val bangumiPlayBean = KtHttpUtils
                         .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
-                    // 设置布局视频播放数据
-                    binding.bangumiPlayBean = bangumiPlayBean
-                    // 真正调用饺子播放器设置视频数据
-                    setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
+
+                    launchUI {
+                        // 设置布局视频播放数据
+                        binding.bangumiPlayBean = bangumiPlayBean
+                        // 真正调用饺子播放器设置视频数据
+                        setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
+                    }
                 }
             }
 
@@ -247,38 +253,40 @@ class AsVideoActivity : BaseActivity() {
 
         val bvId = intent.getStringExtra("bvId")
 
-        lifecycleScope.launch {
+        launchIO {
             val videoBaseBean = KtHttpUtils.run {
                 addHeader(COOKIE, asUser.cookie)
                 asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
             }
 
-            // 设置数据
-            videoDataBean = videoBaseBean
-            // 这里需要显示视频数据
-            showVideoData()
-            // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
-            setBaseData(videoBaseBean)
-            // 加载用户卡片
-            loadUserCardData(videoBaseBean.data.owner.mid)
-            // 加载弹幕信息
-            loadDanmakuFlameMaster()
-            // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-            videoBaseBean.data.redirect_url?.apply {
-                // 通过正则表达式检查该视频是不是番剧
-                val epRegex = Regex("""(?<=ep)(\d*)""")
-                if (epRegex.containsMatchIn(this)) {
-                    // 加载番剧视频列表
-                    epid = epRegex.find(this)?.value?.toLong()!!
-                    loadBangumiVideoList()
+            launchUI {
+                // 设置数据
+                videoDataBean = videoBaseBean
+                // 这里需要显示视频数据
+                showVideoData()
+                // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
+                setBaseData(videoBaseBean)
+                // 加载用户卡片
+                loadUserCardData(videoBaseBean.data.owner.mid)
+                // 加载弹幕信息
+                loadDanmakuFlameMaster()
+                // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
+                videoBaseBean.data.redirect_url?.apply {
+                    // 通过正则表达式检查该视频是不是番剧
+                    val epRegex = Regex("""(?<=ep)(\d*)""")
+                    if (epRegex.containsMatchIn(this)) {
+                        // 加载番剧视频列表
+                        epid = epRegex.find(this)?.value?.toLong()!!
+                        loadBangumiVideoList()
+                    }
+                } ?: apply {
+                    // 加载视频播放信息
+                    loadVideoPlay("video")
+                    loadVideoList() // 加载正常列表
                 }
-            } ?: apply {
-                // 加载视频播放信息
-                loadVideoPlay("video")
-                loadVideoList() // 加载正常列表
+                // 检查三连情况
+                archiveHasLikeTriple()
             }
-            // 检查三连情况
-            archiveHasLikeTriple()
         }
     }
 
@@ -286,7 +294,7 @@ class AsVideoActivity : BaseActivity() {
      * 检查三连情况
      */
     private fun archiveHasLikeTriple() {
-        lifecycleScope.launch {
+        launchIO {
             archiveHasLike()
             archiveCoins()
             archiveFavoured()
@@ -325,13 +333,13 @@ class AsVideoActivity : BaseActivity() {
      *
      */
     private fun loadBangumiVideoList() {
-        lifecycleScope.launch {
+        launchIO {
             val bangumiSeasonBean = KtHttpUtils.run {
                 // 弃用漫游服务
                 addHeader(COOKIE, asUser.cookie)
                 asyncGet<BangumiSeasonBean>(ROAM_API + "pgc/view/web/season?ep_id=" + epid)
             }
-            isMember(bangumiSeasonBean)
+            launchUI { isMember(bangumiSeasonBean) }
 
             // 获取真实的cid
             bangumiSeasonBean.result.episodes.forEach { episode ->
@@ -340,29 +348,35 @@ class AsVideoActivity : BaseActivity() {
                 }
             }
 
-            binding.apply {
-                // 如果就只有一个子集，就不要显示子集列表了
-                if (bangumiSeasonBean.result.episodes.size == 1) {
-                    asVideoSubsectionRv.visibility =
-                        View.GONE
-                }
-
-                // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
-                asVideoBangumiCd.visibility = View.VISIBLE
-                asVideoCd.visibility = View.GONE
-                this.bangumiSeasonBean = bangumiSeasonBean
-
-                asVideoSubsectionRv.adapter =
-                    BangumiSubsectionAdapter(
-                        bangumiSeasonBean.result.episodes.toMutableList(),
-                        cid,
-                    ) { data, _ ->
-                        // 这里需要判断子集选择，我们得确定这并不是一个会员视频。或者说用户有会员可以去播放
-                        updateBangumiInformation(data)
+            launchUI {
+                binding.apply {
+                    // 如果就只有一个子集，就不要显示子集列表了
+                    if (bangumiSeasonBean.result.episodes.size == 1) {
+                        asVideoSubsectionRv.visibility =
+                            View.GONE
                     }
 
-                asVideoSubsectionRv.layoutManager =
-                    LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
+                    // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
+                    asVideoBangumiCd.visibility = View.VISIBLE
+                    asVideoCd.visibility = View.GONE
+                    this.bangumiSeasonBean = bangumiSeasonBean
+
+                    asVideoSubsectionRv.adapter =
+                        BangumiSubsectionAdapter(
+                            bangumiSeasonBean.result.episodes.toMutableList(),
+                            cid,
+                        ) { data, _ ->
+                            // 这里需要判断子集选择，我们得确定这并不是一个会员视频。或者说用户有会员可以去播放
+                            updateBangumiInformation(data)
+                        }
+
+                    asVideoSubsectionRv.layoutManager =
+                        LinearLayoutManager(
+                            this@AsVideoActivity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false,
+                        )
+                }
             }
         }
     }
@@ -447,31 +461,37 @@ class AsVideoActivity : BaseActivity() {
      *
      */
     private fun loadVideoList() {
-        lifecycleScope.launch {
+        launchIO {
             val videoPlayListData = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
 
-            binding.apply {
-                if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
+            launchUI {
+                binding.apply {
+                    if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
 
-                binding.videoPageListData = videoPlayListData
-                asVideoSubsectionRv.adapter =
+                    binding.videoPageListData = videoPlayListData
+                    asVideoSubsectionRv.adapter =
                         // 将子集切换后的逻辑交给activity完成
-                    SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
-                        // 更新CID刷新播放页面
-                        cid = data.cid
-                        // 暂停播放
-                        changeFaButtonToPlay()
-                        // 刷新播放器
-                        loadVideoPlay("video")
-                        // 清空弹幕
-                        asDanmaku.release()
-                        // 更新弹幕
-                        loadDanmakuFlameMaster()
-                    }
+                        SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
+                            // 更新CID刷新播放页面
+                            cid = data.cid
+                            // 暂停播放
+                            changeFaButtonToPlay()
+                            // 刷新播放器
+                            loadVideoPlay("video")
+                            // 清空弹幕
+                            asDanmaku.release()
+                            // 更新弹幕
+                            loadDanmakuFlameMaster()
+                        }
 
-                asVideoSubsectionRv.layoutManager =
-                    LinearLayoutManager(this@AsVideoActivity, LinearLayoutManager.HORIZONTAL, false)
+                    asVideoSubsectionRv.layoutManager =
+                        LinearLayoutManager(
+                            this@AsVideoActivity,
+                            LinearLayoutManager.HORIZONTAL,
+                            false,
+                        )
+                }
             }
         }
     }
@@ -533,15 +553,16 @@ class AsVideoActivity : BaseActivity() {
      * @param mid Long
      */
     private fun loadUserCardData(mid: Long) {
-        lifecycleScope.launch {
+        launchIO {
             val userCardBean = KtHttpUtils
                 .addHeader(COOKIE, asUser.cookie)
                 .asyncGet<UserCardBean>(BilibiliApi.getUserCardPath + "?mid=$mid")
-
-            // 显示用户卡片
-            showUserCard()
-            // 将数据交给viewModel
-            binding.userCardBean = userCardBean
+            launchUI {
+                // 显示用户卡片
+                showUserCard()
+                // 将数据交给viewModel
+                binding.userCardBean = userCardBean
+            }
         }
     }
 

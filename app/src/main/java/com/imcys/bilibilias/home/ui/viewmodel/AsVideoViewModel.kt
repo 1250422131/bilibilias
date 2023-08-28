@@ -21,6 +21,8 @@ import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -55,7 +57,7 @@ class AsVideoViewModel : ViewModel() {
         val context = view.context
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader(
                     COOKIE,
@@ -65,7 +67,7 @@ class AsVideoViewModel : ViewModel() {
                     .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 // 这里再检验一次，是否为404内容
                 loadDialog.cancel()
-                launch(Dispatchers.Main) {
+                launchUI {
                     if (dashVideoPlayBean.code == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
@@ -76,7 +78,7 @@ class AsVideoViewModel : ViewModel() {
                     }
                 }
             } else {
-                launch(Dispatchers.Main) {
+                launchUI {
                     AsDialog.init(context).build {
                         config = {
                             title = "止步于此"
@@ -109,7 +111,7 @@ class AsVideoViewModel : ViewModel() {
 
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 val dashVideoPlayBean =
                     KtHttpUtils.addHeader(
@@ -119,7 +121,7 @@ class AsVideoViewModel : ViewModel() {
                         .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
                 loadDialog.cancel()
-                launch(Dispatchers.Main) {
+                launchUI {
                     if (dashVideoPlayBean.code == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
@@ -130,7 +132,7 @@ class AsVideoViewModel : ViewModel() {
                     }
                 }
             } else {
-                launch(Dispatchers.Main) {
+                launchUI {
                     AsDialog.init(context).build {
                         config = {
                             title = "止步于此"
@@ -153,7 +155,7 @@ class AsVideoViewModel : ViewModel() {
         val context = view.context
 
         DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launchIO {
                 val response =
                     HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
 
@@ -215,7 +217,7 @@ class AsVideoViewModel : ViewModel() {
             ),
         )
 
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launchUI {
             asToast(
                 context,
                 "下载弹幕储存于\n$fileName",
@@ -250,7 +252,7 @@ class AsVideoViewModel : ViewModel() {
         decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
         bufferedSink.close()
 
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launchUI {
             asToast(
                 context,
                 "下载弹幕储存于\n$savePath/${(context.bvid)}/${context.cid}_danmu.xml",
@@ -267,7 +269,7 @@ class AsVideoViewModel : ViewModel() {
     fun likeVideo(view: View, bvid: String) {
         val context = view.context
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             val likeVideoBean =
                 KtHttpUtils.addHeader(
                     COOKIE,
@@ -279,7 +281,7 @@ class AsVideoViewModel : ViewModel() {
                     .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
 
             if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-                launch(Dispatchers.Main) {
+                launchUI {
                     when (likeVideoBean.code) {
                         0 -> {
                             context.binding.archiveHasLikeBean?.data = 1
@@ -308,7 +310,7 @@ class AsVideoViewModel : ViewModel() {
     private fun cancelLikeVideo(view: View, bvid: String) {
         val context = view.context
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             val likeVideoBean =
                 KtHttpUtils.addHeader(
                     COOKIE,
@@ -319,7 +321,7 @@ class AsVideoViewModel : ViewModel() {
                     .addParam("bvid", bvid)
                     .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 when (likeVideoBean.code) {
                     0 -> {
                         (context as AsVideoActivity).binding.apply {
@@ -347,7 +349,7 @@ class AsVideoViewModel : ViewModel() {
     fun videoCoinAdd(view: View, bvid: String) {
         val context = view.context
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchIO {
             KtHttpUtils
                 .addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
                 .addParam("bvid", bvid)
@@ -355,7 +357,7 @@ class AsVideoViewModel : ViewModel() {
                 .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                 .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 (context as AsVideoActivity).binding.archiveCoinsBean?.data?.multiply = 2
                 context.binding.asVideoThrowBt.isSelected = true
             }
@@ -369,7 +371,7 @@ class AsVideoViewModel : ViewModel() {
     fun loadCollectionView(view: View, avid: Long) {
         val context = view.context
         (context as AsVideoActivity).binding.apply {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launchIO {
                 val userCreateCollectionBean =
                     KtHttpUtils.addHeader(
                         COOKIE,
@@ -377,7 +379,7 @@ class AsVideoViewModel : ViewModel() {
                     )
                         .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + context.asUser.mid)
 
-                launch(Dispatchers.Main) {
+                launchUI {
                     if (userCreateCollectionBean.code == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(
                             context,
