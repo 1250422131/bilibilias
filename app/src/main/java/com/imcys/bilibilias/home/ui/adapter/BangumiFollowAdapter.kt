@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
@@ -52,11 +54,11 @@ class BangumiFollowAdapter @Inject constructor() :
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
 
-                val cookie = BaseApplication.dataKv.decodeString("cookies", "").toString()
+                val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
 
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val bangumiSeasonBean = KtHttpUtils.addHeader("cookie", cookie)
+                    val bangumiSeasonBean = KtHttpUtils.addHeader(COOKIE, cookie)
                         .asyncGet<BangumiSeasonBean>(
                             "${BilibiliApi.bangumiVideoDataPath}?ep_id=${
                                 getItem(

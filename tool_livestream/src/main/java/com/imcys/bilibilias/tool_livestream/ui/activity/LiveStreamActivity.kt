@@ -108,7 +108,7 @@ class LiveStreamActivity : BaseActivity() {
 
     private suspend fun getRoomInfo(): LiveRoomDataBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", asUser.cookie)
+            HttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet(
                     "${BilibiliApi.liveRoomDataPath}?room_id=$roomId",
                     LiveRoomDataBean::class.java
@@ -118,7 +118,7 @@ class LiveStreamActivity : BaseActivity() {
 
     private suspend fun getLiveMasterUserData(uid: Long): LiveMasterUserBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", asUser.cookie)
+            HttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet(
                     "${BilibiliApi.liveUserMasterInfo}?uid=$uid",
                     LiveMasterUserBean::class.java
@@ -128,7 +128,7 @@ class LiveStreamActivity : BaseActivity() {
 
     private suspend fun getRoomPlayUrlInfo(): RoomPlayUrlInfoBean {
         return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.addHeader("cookie", asUser.cookie)
+            HttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet(
                     "${BilibiliApi.liveRoomPlayUrl}?cid=$roomId&qn=0&platform=h5",
                     RoomPlayUrlInfoBean::class.java
@@ -172,9 +172,9 @@ class LiveStreamActivity : BaseActivity() {
         //map["760P"] = url
         val jzDataSource = JZDataSource(url, title)
 
-        jzDataSource.headerMap["Cookie"] = asUser.cookie
-        jzDataSource.headerMap["Referer"] = "https://live.bilibili.com"
-        jzDataSource.headerMap["User-Agent"] =
+        jzDataSource.headerMap[COOKIE] = asUser.cookie
+        jzDataSource.headerMap[REFERER] = "https://live.bilibili.com"
+        jzDataSource.headerMap[USER_AGENT] =
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
 

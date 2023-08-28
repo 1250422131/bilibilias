@@ -19,6 +19,8 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.SET_COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
@@ -202,7 +204,7 @@ class LoginQRModel {
         val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
 
 
-        response.headers.values("Set-Cookie").forEach {
+        response.headers.values(SET_COOKIE).forEach {
             cookies += it
             var m = rSESSDATA.matcher(it)
 
@@ -219,7 +221,7 @@ class LoginQRModel {
             }
         }
         kv.apply {
-            encode("cookies", cookies)
+            encode(COOKIES, cookies)
             encode("refreshToken", loginStateBean.data.refresh_token)
         }
 

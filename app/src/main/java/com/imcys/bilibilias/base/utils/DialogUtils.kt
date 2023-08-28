@@ -36,8 +36,14 @@ import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.ROAM_API
+import com.imcys.bilibilias.common.base.constant.SET_COOKIE
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -192,17 +198,17 @@ object DialogUtils {
 
                 override fun onResponse(call: Call, response: Response) {
                     var cookie = ""
-                    response.headers.values("Set-Cookie").forEach {
+                    response.headers.values(SET_COOKIE).forEach {
                         cookie += it
                     }
                     cookie += ";"
 
-                    BaseApplication.dataKv.encode("as_cookies", cookie)
+                    BaseApplication.dataKv.encode(AS_COOKIES, cookie)
 
                     val glideUrl = GlideUrl(
                         "${serviceTestApi}users/getCaptchaImage",
                         LazyHeaders.Builder()
-                            .addHeader("cookie", cookie)
+                            .addHeader(COOKIE, cookie)
                             .build(),
                     )
 
@@ -1128,9 +1134,9 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = KtHttpUtils
-                        .addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                        .addHeader("referer", BILIBILI_URL)
-                        .asyncGet<DashBangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
+                        .addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        .addHeader(REFERER, BILIBILI_URL)
+                        .asyncGet<DashBangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1216,8 +1222,8 @@ object DialogUtils {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
-                        KtHttpUtils.addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                            .addHeader("referer", BILIBILI_URL)
+                        KtHttpUtils.addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                            .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1")
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
@@ -1311,8 +1317,8 @@ object DialogUtils {
             flow {
                 videoPageMutableList.forEach {
                     val videoPlayBean =
-                        KtHttpUtils.addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                            .addHeader("referer", BILIBILI_URL)
+                        KtHttpUtils.addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                            .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(videoPlayBean, it))
                 }
@@ -1360,9 +1366,9 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val bangumiPlayBean = KtHttpUtils
-                        .addHeader("cookie", (context as AbsActivity).asUser.cookie)
-                        .addHeader("referer", BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>("${BaseApplication.roamApi}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
+                        .addHeader(COOKIE, (context as AbsActivity).asUser.cookie)
+                        .addHeader(REFERER, BILIBILI_URL)
+                        .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1")
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -1823,10 +1829,10 @@ object DialogUtils {
         val intent = Intent("android.intent.action.VIEW")
         intent.addCategory("android.intent.category.APP_BROWSER")
         intent.data = Uri.parse(url)
-        intent.putExtra("Cookie", (context as AbsActivity).asUser.cookie)
-        intent.putExtra("Referer", "$BILIBILI_URL/")
+        intent.putExtra(COOKIE, (context as AbsActivity).asUser.cookie)
+        intent.putExtra(REFERER, "$BILIBILI_URL/")
         intent.putExtra(
-            "User-Agent",
+            USER_AGENT,
             BROWSER_USER_AGENT
         )
         if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager.plus")
@@ -1852,10 +1858,10 @@ object DialogUtils {
         val intent = Intent("android.intent.action.VIEW")
         intent.addCategory("android.intent.category.APP_BROWSER")
         intent.data = Uri.parse(url)
-        intent.putExtra("Cookie", (context as AbsActivity).asUser.cookie)
-        intent.putExtra("Referer", "https://www.bilibili.com/")
+        intent.putExtra(COOKIE, (context as AbsActivity).asUser.cookie)
+        intent.putExtra(REFERER, "https://www.bilibili.com/")
         intent.putExtra(
-            "User-Agent",
+            USER_AGENT,
             BROWSER_USER_AGENT
         )
         if (AppFilePathUtils.isInstallApp(context, "com.dv.adm")) {

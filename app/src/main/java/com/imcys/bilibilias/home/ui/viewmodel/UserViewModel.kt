@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
@@ -123,7 +124,7 @@ class UserViewModel : ViewModel() {
 
     private val latestUserBaseData: Flow<UserBaseBean> = flow {
         val userBaseBean = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", "")
+            HttpUtils.addHeader(COOKIE, "")
                 .asyncGet(
                     "${BilibiliApi.userBaseDataPath}?mid=1",
                     UserBaseBean::class.java
@@ -135,7 +136,7 @@ class UserViewModel : ViewModel() {
 
     private val latestUserCardData: Flow<UserCardBean> = flow {
         val userCardBean = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", "等待填充")
+            HttpUtils.addHeader(COOKIE, "等待填充")
                 .asyncGet(
                     "${BilibiliApi.getUserCardPath}?mid=1",
                     UserCardBean::class.java
@@ -147,7 +148,7 @@ class UserViewModel : ViewModel() {
 
     private val latestUpStatBeamData: Flow<UpStatBeam> = flow {
         val upStatBeam = withContext(Dispatchers.IO) {
-            HttpUtils.addHeader("cookie", "等待填充")
+            HttpUtils.addHeader(COOKIE, "等待填充")
                 .asyncGet(
                     "${BilibiliApi.userUpStat}?mid=1",
                     UpStatBeam::class.java
