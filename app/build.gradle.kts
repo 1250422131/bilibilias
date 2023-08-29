@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
 
@@ -78,12 +79,8 @@ android {
         jvmTarget = "17"
     }
 
-    dataBinding {
-        isEnabled = true
-    }
-
     buildFeatures {
-        viewBinding = true
+        dataBinding = true
         compose = true
     }
 

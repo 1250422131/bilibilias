@@ -173,3 +173,5 @@
 -dontwarn com.squareup.picasso.RequestCreator
 -dontwarn edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean$DataBean
+-dontwarn com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean$DataBean

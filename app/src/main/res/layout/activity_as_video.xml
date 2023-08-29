@@ -195,7 +195,7 @@
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
                                 android:tint="@color/as_like_seletor"
-                                app:isSelected="@{ArchiveCoinsBean.data.multiply != 0}"
+                                app:isSelected="@{ArchiveCoinsBean.multiply != 0}"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -223,7 +223,7 @@
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"
                                 android:tint="@color/as_like_seletor"
-                                app:isSelected="@{ArchiveFavouredBean.data.favoured}"
+                                app:isSelected="@{ArchiveFavouredBean.favoured}"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
