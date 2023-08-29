@@ -34,6 +34,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -384,7 +385,7 @@ class HomeFragment : BaseFragment() {
 
         launchIO {
             val myUserData =
-                KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                     .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             launchUI {

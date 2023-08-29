@@ -26,6 +26,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchIO
@@ -220,7 +221,7 @@ class ToolFragment : BaseFragment() {
      * @param toString String
      */
     private fun loadShareData(toString: String) {
-        HttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
+        HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 toString,
                 object : Callback {
@@ -247,7 +248,7 @@ class ToolFragment : BaseFragment() {
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
             val bangumiSeasonBean =
-                KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
+                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                     .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
 
             if (bangumiSeasonBean.code == 0) {
@@ -262,7 +263,7 @@ class ToolFragment : BaseFragment() {
         fragmentToolBinding.apply {
             launchIO {
                 val videoBaseBean =
-                    KtHttpUtils.addHeader(COOKIE, (context as HomeActivity).asUser.cookie)
+                    KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                         .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
                 launchUI {
                     (mAdapter).apply {
@@ -362,27 +363,27 @@ class ToolFragment : BaseFragment() {
                         }
                     }
                 }
+            }
 
-                // 展示item
-                fragmentToolBinding.apply {
-                    fragmentToolRecyclerView.adapter = ToolItemAdapter()
+            // 展示item
+            fragmentToolBinding.apply {
+                fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
-                    mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-                    mAdapter.submitList(toolItemMutableList)
+                mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
+                mAdapter.submitList(toolItemMutableList)
 
-                    fragmentToolRecyclerView.layoutManager =
-                        GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                                override fun getSpanSize(position: Int): Int {
-                                    return when ((mAdapter.currentList)[position].type) {
-                                        1 -> 3
-                                        2 -> 3
-                                        else -> 1
-                                    }
+                fragmentToolRecyclerView.layoutManager =
+                    GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
+                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when ((mAdapter.currentList)[position].type) {
+                                    1 -> 3
+                                    2 -> 3
+                                    else -> 1
                                 }
                             }
                         }
-                }
+                    }
             }
         }
     }

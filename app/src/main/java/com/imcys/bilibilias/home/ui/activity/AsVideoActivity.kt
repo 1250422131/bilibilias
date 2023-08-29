@@ -27,6 +27,7 @@ import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -46,6 +47,10 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -62,9 +67,15 @@ import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
 import java.util.zip.Inflater
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
 
     // 视频基本数据类，方便全局调用
@@ -290,6 +301,9 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
+    @Inject
+    lateinit var http: HttpClient
+
     /**
      * 检查三连情况
      */
@@ -305,27 +319,27 @@ class AsVideoActivity : BaseActivity() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        val archiveFavouredBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveFavouredBean>("${BilibiliApi.archiveFavoured}?aid=$bvid")
-        binding.archiveFavouredBean = archiveFavouredBean
+        val bean = http.get("${BilibiliApi.archiveFavoured}?aid=$bvid")
+            .body<ResBean<ArchiveFavouredBean>>()
+        binding.archiveFavouredBean = bean.data
     }
 
     /**
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        val archiveHasLikeBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveHasLikeBean>("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
-        binding.archiveHasLikeBean = archiveHasLikeBean
+        val bean = http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
+            .body<ArchiveHasLikeBean>()
+        binding.archiveHasLikeBean = bean
     }
 
     /**
      * 检验是否点赞
      */
     private suspend fun archiveHasLike() {
-        val archiveCoinsBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet<ArchiveCoinsBean>("${BilibiliApi.archiveCoinsPath}?bvid=$bvid")
-        binding.archiveCoinsBean = archiveCoinsBean
+        val bean =
+            http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
+        binding.archiveCoinsBean = bean.data
     }
 
     /**
@@ -599,6 +613,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 释放播放器
         if (JzvdStd.backPress()) {
