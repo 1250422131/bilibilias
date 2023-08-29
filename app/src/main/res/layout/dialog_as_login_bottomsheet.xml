@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <variable
+            name="asLoginBsViewModel"
+            type="com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

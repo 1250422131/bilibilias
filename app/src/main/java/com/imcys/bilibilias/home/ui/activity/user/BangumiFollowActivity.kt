@@ -10,6 +10,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -41,7 +42,6 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun initView() {
-
         initRv()
     }
 
@@ -61,7 +61,6 @@ class BangumiFollowActivity : BaseActivity() {
                 }
             }
 
-
             bangumiFollowRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -77,7 +76,7 @@ class BangumiFollowActivity : BaseActivity() {
 
     private fun loadBangumiFollow(pn: Int) {
         HttpUtils.get(
-            "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=15",
+            "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=15",
             BangumiFollowList::class.java
         ) {
             if (it.code == 0) {
@@ -102,8 +101,6 @@ class BangumiFollowActivity : BaseActivity() {
         fun actionStart(context: Context) {
             val intent = Intent(context, BangumiFollowActivity::class.java)
             context.startActivity(intent)
-
         }
     }
-
 }

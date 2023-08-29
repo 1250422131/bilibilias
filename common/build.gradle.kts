@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
 apply {

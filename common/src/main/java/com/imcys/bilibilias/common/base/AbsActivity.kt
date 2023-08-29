@@ -36,17 +36,7 @@ open class AbsActivity : AppCompatActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
-    val asUser: AsUser
-        get() = run {
-            val kv = BaseApplication.dataKv
-            AsUser.apply {
-                cookie = kv.decodeString(COOKIES, "")!!
-                sessdata = kv.decodeString("SESSDATA", "")!!
-                biliJct = kv.decodeString("bili_jct", "")!!
-                mid = kv.decodeLong("mid", 0)
-                asCookie = kv.decodeString("as_cookie", "")!!
-            }
-        }
+
 
     // 存储所有活动的列表
     private val activities = mutableListOf<Activity>()

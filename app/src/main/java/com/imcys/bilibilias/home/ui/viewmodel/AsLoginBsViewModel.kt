@@ -21,6 +21,7 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
@@ -124,7 +125,7 @@ class AsLoginBsViewModel(
                     // 储存cookie
                     BaseApplication.dataKv.encode(AS_COOKIES, asCookie)
 
-                    (view.context as HomeActivity).asUser.asCookie = asCookie!!
+                    asUser.asCookie = asCookie!!
 
                     finish()
                     // 关闭当前弹窗
@@ -346,18 +347,18 @@ class AsLoginBsViewModel(
     private fun postCloudCookie(context: HomeActivity) {
         viewModelScope.launch {
             // 获取用户数据
-            val userNavDataModel = KtHttpUtils.addHeader(HttpHeaders.Cookie, context.asUser.cookie)
+            val userNavDataModel = KtHttpUtils.addHeader(HttpHeaders.Cookie, asUser.cookie)
                 .asyncGet<UserNavDataModel>(BilibiliApi.userNavDataPath)
 
             val biliBiliCookieInfo = BiliBiliCookieInfo(
                 userNavDataModel.data.uname,
                 userNavDataModel.data.levelInfo.currentLevel,
                 userNavDataModel.data.face,
-                AESUtils.encrypt(context.asUser.cookie),
+                AESUtils.encrypt(asUser.cookie),
             )
 
             // 提交云端 采用默认数据
-            KtHttpUtils.addHeader(COOKIE, context.asUser.asCookie)
+            KtHttpUtils.addHeader(COOKIE, asUser.asCookie)
                 .asyncPostJson<BiLiCookieResponseModel>(
                     "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
                     biliBiliCookieInfo,
