@@ -35,6 +35,7 @@ lottie = "6.1.0"
 material = "1.9.0"
 mmkv = "1.2.15"
 mtjSdkCircle = "4.0.7.5"
+navigationCompose = "2.7.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
@@ -50,6 +51,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
+
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 detekt-rules-ruleauthors = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-ruleauthors", version.ref = "detekt" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -59,6 +61,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 

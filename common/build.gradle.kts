@@ -37,8 +37,13 @@ android {
         }
     }
 
-    dataBinding {
-        isEnabled = true
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.3"
+    }
+
+    buildFeatures {
+        dataBinding = true
+        compose = true
     }
 
     compileOptions {
@@ -208,6 +213,8 @@ dependencies {
     api(libs.ui.tooling.preview)
     api(libs.material3)
     api(libs.accompanist.systemuicontroller)
+
+    api(libs.androidx.navigation.compose)
     androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
