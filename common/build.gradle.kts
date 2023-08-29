@@ -35,7 +35,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-
     }
 
     dataBinding {
@@ -78,12 +77,10 @@ dependencies {
     api(libs.srl.ext.material) // md刷新头
     api(libs.srl.ext.classics)
 
-
     /**
      * MMKV 储存框架
      */
     api(libs.mmkv)
-
 
     /**
      * 伸缩布局
@@ -141,7 +138,7 @@ dependencies {
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
+    // api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
 
     /**
      * room
@@ -168,18 +165,18 @@ dependencies {
      */
     api(libs.dfm)
 
-    //饺子播放器
+    // 饺子播放器
     api(libs.jiaozivideoplayer)
 
-    //lottie动画库
+    // lottie动画库
     api(libs.lottie)
 
-    //implementation "androidx.palette:palette:1.0.0"
+    // implementation "androidx.palette:palette:1.0.0"
 
     api(libs.banner)
 
     api(libs.glide)
-    //implementation("jp.wasabeef:glide-transformations:4.3.0")
+    // implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
@@ -191,9 +188,9 @@ dependencies {
      */
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
-    //日志
-    api(libs.ktor.client.logging)//Logging
-    //json解析支持
+    // 日志
+    api(libs.ktor.client.logging) // Logging
+    // json解析支持
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
     api(libs.gson)
@@ -210,6 +207,7 @@ dependencies {
     api(libs.ui.graphics)
     api(libs.ui.tooling.preview)
     api(libs.material3)
+    api(libs.accompanist.systemuicontroller)
     androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
