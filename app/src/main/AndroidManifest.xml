@@ -136,17 +136,18 @@
             android:name=".splash.ui.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.SplashOverlay">
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|smallestScreenSize"
+            android:exported="true"
+            android:theme="@style/Theme.BILIBILIAS" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="keyboardHidden|smallestScreenSize"
-            android:exported="false"
-            android:theme="@style/Theme.BILIBILIAS" />
     </application>
 
 </manifest>
