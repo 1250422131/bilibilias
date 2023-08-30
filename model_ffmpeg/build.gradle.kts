@@ -10,13 +10,11 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            //过滤的so库版本
+            // 过滤的so库版本
         }
     }
 

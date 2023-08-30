@@ -5,12 +5,13 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 ksp {
     arg("ModuleName", project.name)
 }
+
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
@@ -18,8 +19,6 @@ android {
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
-        // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 32
         versionCode = 203
         versionName = "2.0.31"
         // multiDexEnabled true
@@ -35,7 +34,7 @@ android {
             useSupportLibrary = true
         }
 
-        flavorDimensions(project.name)
+        flavorDimensions += project.name
     }
 
     buildTypes {
@@ -85,7 +84,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     packaging {
