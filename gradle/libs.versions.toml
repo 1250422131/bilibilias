@@ -26,9 +26,10 @@ jiaozivideoplayer = "7.7.0"
 junit = "4.13.2"
 jxl = "2.6.12"
 kcomponent-compiler = "1.0.0-rc4"
-kotlin = "1.8.10"
+kotlin = "1.9.10"
 kotlinx-coroutines-android = "1.7.1"
-ksp = "1.8.10-1.0.9"
+kotlinxSerializationJson = "1.6.0"
+ksp = "1.9.10-1.0.13"
 ktor = "2.3.1"
 lifecycle = "2.6.1"
 lottie = "6.1.0"
@@ -62,6 +63,8 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
@@ -157,4 +160,5 @@ kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "1.9.0" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version = "1.9.10" }

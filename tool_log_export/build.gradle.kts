@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 ksp {
@@ -16,8 +16,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,7 +36,7 @@ android {
         jvmTarget = "17"
     }
     dataBinding {
-        isEnabled = true
+        enable = true
     }
 }
 

@@ -6,8 +6,9 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
+
 apply {
     from("/../config.gradle")
 }
@@ -22,8 +23,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     buildFeatures {
@@ -143,8 +142,6 @@ dependencies {
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    // api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
-
     /**
      * room
      * 本地化数据库
@@ -176,12 +173,9 @@ dependencies {
     // lottie动画库
     api(libs.lottie)
 
-    // implementation "androidx.palette:palette:1.0.0"
-
     api(libs.banner)
 
     api(libs.glide)
-    // implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
@@ -194,7 +188,7 @@ dependencies {
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
     // 日志
-    api(libs.ktor.client.logging) // Logging
+    api(libs.ktor.client.logging)
     // json解析支持
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
@@ -216,6 +210,8 @@ dependencies {
 
     api(libs.androidx.navigation.compose)
     androidTestImplementation(platform(libs.compose.bom))
+
+    api (libs.kotlinx.serialization.json)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
