@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -121,7 +123,11 @@ fun NavigationCard(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp)
         ) {
-            Column {
+            Column(
+                Modifier.align(Alignment.CenterVertically),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Image(
                     painter = painterResource(iconId),
                     contentDescription = "icon",
@@ -129,13 +135,15 @@ fun NavigationCard(
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             }
-            Column(Modifier.padding(start = 20.dp)) {
+            Column(Modifier.padding(start = 20.dp), verticalArrangement = Arrangement.Center) {
                 Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(text = longTitle, modifier = Modifier.padding(top = 5.dp), color = Color.Black)
-                Text(
-                    text = doc,
-                    modifier = Modifier.padding(top = 5.dp)
-                )
+                if (doc.isNotBlank()) {
+                    Text(
+                        text = doc,
+                        modifier = Modifier.padding(top = 5.dp)
+                    )
+                }
             }
         }
     }
