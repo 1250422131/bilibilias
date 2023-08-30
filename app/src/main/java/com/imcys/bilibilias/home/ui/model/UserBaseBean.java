@@ -117,16 +117,12 @@ public class UserBaseBean implements Serializable {
         private VipBean vip;
         private PendantBean pendant;
         private NameplateBean nameplate;
-        private UserHonourInfoBean user_honour_info;
         private boolean is_followed;
         private String top_photo;
-        private ThemeBean theme;
-        private SysNoticeBean sys_notice;
         private LiveRoomBean live_room;
         private String birthday;
         private SchoolBean school;
         private ProfessionBean profession;
-        private SeriesBean series;
         private int is_senior_member;
         private Object mcn_info;
         private int gaia_res_type;
@@ -288,13 +284,6 @@ public class UserBaseBean implements Serializable {
             this.nameplate = nameplate;
         }
 
-        public UserHonourInfoBean getUser_honour_info() {
-            return user_honour_info;
-        }
-
-        public void setUser_honour_info(UserHonourInfoBean user_honour_info) {
-            this.user_honour_info = user_honour_info;
-        }
 
         public boolean isIs_followed() {
             return is_followed;
@@ -312,21 +301,7 @@ public class UserBaseBean implements Serializable {
             this.top_photo = top_photo;
         }
 
-        public ThemeBean getTheme() {
-            return theme;
-        }
 
-        public void setTheme(ThemeBean theme) {
-            this.theme = theme;
-        }
-
-        public SysNoticeBean getSys_notice() {
-            return sys_notice;
-        }
-
-        public void setSys_notice(SysNoticeBean sys_notice) {
-            this.sys_notice = sys_notice;
-        }
 
         public LiveRoomBean getLive_room() {
             return live_room;
@@ -358,14 +333,6 @@ public class UserBaseBean implements Serializable {
 
         public void setProfession(ProfessionBean profession) {
             this.profession = profession;
-        }
-
-        public SeriesBean getSeries() {
-            return series;
-        }
-
-        public void setSeries(SeriesBean series) {
-            this.series = series;
         }
 
         public int getIs_senior_member() {
@@ -1064,14 +1031,7 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class UserHonourInfoBean {
-        }
 
-        public static class ThemeBean {
-        }
-
-        public static class SysNoticeBean {
-        }
 
         public static class LiveRoomBean implements Serializable {
             /**
@@ -1308,31 +1268,6 @@ public class UserBaseBean implements Serializable {
             }
         }
 
-        public static class SeriesBean {
-            /**
-             * user_upgrade_status : 3
-             * show_upgrade_window : false
-             */
-
-            private int user_upgrade_status;
-            private boolean show_upgrade_window;
-
-            public int getUser_upgrade_status() {
-                return user_upgrade_status;
-            }
-
-            public void setUser_upgrade_status(int user_upgrade_status) {
-                this.user_upgrade_status = user_upgrade_status;
-            }
-
-            public boolean isShow_upgrade_window() {
-                return show_upgrade_window;
-            }
-
-            public void setShow_upgrade_window(boolean show_upgrade_window) {
-                this.show_upgrade_window = show_upgrade_window;
-            }
-        }
 
         public static class ElecBean implements Serializable {
             /**

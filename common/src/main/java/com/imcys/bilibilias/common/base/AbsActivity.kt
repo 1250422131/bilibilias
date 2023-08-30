@@ -13,8 +13,6 @@ import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -35,8 +33,6 @@ open class AbsActivity : AppCompatActivity() {
     open val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
-
-
 
     // 存储所有活动的列表
     private val activities = mutableListOf<Activity>()
@@ -62,7 +58,7 @@ open class AbsActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO, start, block)
     }
 
-    private fun launchUI(
+    fun launchUI(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
