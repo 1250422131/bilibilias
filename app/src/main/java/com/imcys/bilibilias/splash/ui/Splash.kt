@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.router.SplashRouter
 import kotlinx.coroutines.delay
 
 @Composable
