@@ -26,9 +26,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
-class DownloadFinishTaskAd(
-    val mLongClickEvent: () -> Boolean,
-) : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
+class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
+
     object : DiffUtil.ItemCallback<DownloadFinishTaskInfo>() {
         override fun areItemsTheSame(
             oldItem: DownloadFinishTaskInfo,
@@ -51,7 +50,7 @@ class DownloadFinishTaskAd(
 
     @Inject
     lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
-
+    var mLongClickEvent: () -> Boolean = { false }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<ItemDownloadTaskFinishBinding>(
