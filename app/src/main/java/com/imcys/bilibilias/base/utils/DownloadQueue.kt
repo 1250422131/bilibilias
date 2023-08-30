@@ -57,6 +57,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
+import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -70,7 +71,7 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
-class DownloadQueue :
+class DownloadQueue @Inject constructor() :
     CoroutineScope by MainScope() {
 
     private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
