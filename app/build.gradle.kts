@@ -18,6 +18,7 @@ android {
     buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
+        targetSdk = 32
         minSdk = 21
         versionCode = 203
         versionName = "2.0.31"
@@ -39,8 +40,8 @@ android {
 
     buildTypes {
         debug {
-            // 混淆
-            isMinifyEnabled = true
+            applicationIdSuffix = ".debug"
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
