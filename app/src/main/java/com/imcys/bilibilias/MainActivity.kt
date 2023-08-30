@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -109,9 +111,13 @@ fun Screen() {
                 }
             }
         }
-    ) {
+    ) { innerPadding ->
         CompositionLocalProvider(LocalNavController provides navController) {
-            NavHost(navController, startDestination = Screen.Home.route, Modifier.statusBarsPadding()) {
+            NavHost(
+                navController,
+                startDestination = Screen.Home.route,
+                Modifier.padding(innerPadding).statusBarsPadding().navigationBarsPadding()
+            ) {
                 composable(Screen.Home.route) { Home() }
                 composable(Screen.Tool.route) { Tool() }
                 composable(Screen.Download.route) { Download() }
