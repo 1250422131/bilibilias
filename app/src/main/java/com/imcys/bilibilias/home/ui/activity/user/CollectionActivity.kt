@@ -88,15 +88,16 @@ class CollectionActivity : BaseActivity() {
                 BaseApplication.dataKv.decodeString(COOKIES, "")!!,
             )
                 .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
-            userCreateCollectionBean.data.list.forEach { it1 ->
-                binding.apply {
-                    val tab = collectionTabLayout.newTab()
-                    tab.text = it1.title
-                    collectionTabLayout.addTab(tab)
-                }
-            }
 
             launchUI {
+                userCreateCollectionBean.data.list.forEach { it1 ->
+                    binding.apply {
+                        val tab = collectionTabLayout.newTab()
+                        tab.text = it1.title
+                        collectionTabLayout.addTab(tab)
+                    }
+                }
+
                 // 让监听器可以知道有多少内容加载
                 createCollectionList = userCreateCollectionBean.data.list[0]
                 // 加载第一个收藏夹
