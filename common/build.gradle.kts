@@ -67,6 +67,7 @@ dependencies {
     // hilt库，实现控制反转
     api(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    api(libs.androidx.hilt.navigation.compose)
 
     // 核心代码库
     api(libs.okdownload)
@@ -189,6 +190,8 @@ dependencies {
     api(libs.ktor.client.okhttp)
     // 日志
     api(libs.ktor.client.logging)
+    api(libs.slf4j.api)
+
     // json解析支持
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
@@ -211,7 +214,7 @@ dependencies {
     api(libs.androidx.navigation.compose)
     androidTestImplementation(platform(libs.compose.bom))
 
-    api (libs.kotlinx.serialization.json)
+    api(libs.kotlinx.serialization.json)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
