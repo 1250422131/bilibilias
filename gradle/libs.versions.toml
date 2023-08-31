@@ -22,6 +22,7 @@ glide = "4.13.2"
 gson = "2.10"
 hbmartinDetektRules = "0.1.0"
 hilt = "2.47"
+hiltNavigationCompose = "1.0.0"
 jiaozivideoplayer = "7.7.0"
 junit = "4.13.2"
 jxl = "2.6.12"
@@ -41,6 +42,7 @@ okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
+slf4jApi = "2.0.7"
 srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.0"
 work-runtime-ktx = "2.8.1"
@@ -52,7 +54,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
-
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 detekt-rules-ruleauthors = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-ruleauthors", version.ref = "detekt" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -66,6 +68,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -92,12 +95,12 @@ brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
 
 deeprecopy-compiler = { group = "com.imcys.deeprecopy", name = "compiler", version.ref = "deeprecopy-compiler" }
-
 deeprecopy-core = { group = "com.imcys.deeprecopy", name = "core", version.ref = "deeprecopy-compiler" }
 
 dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
 
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
