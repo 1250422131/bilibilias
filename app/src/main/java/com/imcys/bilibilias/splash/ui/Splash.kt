@@ -34,7 +34,8 @@ fun Splash(navController: NavHostController) {
     LaunchedEffect(Unit) {
         delay(200)
         show = true
-        navController.navigate(SplashRouter.Screen.route) {
+        delay(1200)
+        navController.navigate(SplashRouter.AuthMethod.route) {
             popUpTo(SplashRouter.App.route) {
                 inclusive = true
             }
@@ -60,6 +61,7 @@ fun Splash(navController: NavHostController) {
                 text = stringResource(id = R.string.app_name),
                 maxLines = 1,
                 fontSize = 56.sp,
+                softWrap = false,
                 color = MaterialTheme.colorScheme.primary
             )
         }
