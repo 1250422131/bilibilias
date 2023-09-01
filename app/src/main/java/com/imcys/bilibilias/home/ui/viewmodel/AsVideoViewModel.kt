@@ -408,7 +408,7 @@ class AsVideoViewModel : ViewModel() {
         val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         // When setting the clip board text.
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
-        // Only show a toast for Android 12 and lower.
+        // Only show AuthenticationMethod toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
             Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
         }

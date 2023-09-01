@@ -13,7 +13,7 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.gson.Gson
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -102,21 +102,21 @@ class LoginQRModel {
      * @param view View
      * @param loginQrcodeDataBean DataBean
      */
-    fun reloadLoginQR(loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+    fun reloadLoginQR(loginQrcodeDataBean: AuthQrCodeBean.Data) {
 
         HttpUtils.get(
             BilibiliApi.getLoginQRPath,
-            LoginQrcodeBean::class.java
+            AuthQrCodeBean::class.java
         ) {
             loginQrcodeDataBean.url = URLEncoder.encode(it.data.url, "UTF-8")
-            loginQrcodeDataBean.qrcode_key = it.data.qrcode_key
+            loginQrcodeDataBean.qrcodeKey = it.data.qrcodeKey
             binding?.dataBean = loginQrcodeDataBean
         }
 
     }
 
 
-    fun downloadLoginQR(view: View, loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
+    fun downloadLoginQR(view: View, loginQrcodeDataBean: AuthQrCodeBean.Data) {
 
         Glide.with(view.context).asBitmap()
             .load("https://pan.misakamoe.com/qrcode/?url=" + loginQrcodeDataBean.url)

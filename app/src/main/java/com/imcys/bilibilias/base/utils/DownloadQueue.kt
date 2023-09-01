@@ -10,7 +10,6 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
-import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -935,11 +934,11 @@ class DownloadQueue :
             val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
-                    add(it.deepCopy())
+//                    add(it.deepCopy())
                 }
 
                 queue.forEach {
-                    add(it.deepCopy())
+//                    add(it.deepCopy())
                 }
             }
 

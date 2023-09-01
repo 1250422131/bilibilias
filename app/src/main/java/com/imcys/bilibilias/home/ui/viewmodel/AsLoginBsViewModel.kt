@@ -14,7 +14,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -305,7 +305,7 @@ class AsLoginBsViewModel(
      */
     private fun loadCloudAccountLogin(context: Context) {
         viewModelScope.launch {
-            val loginQrcodeBean = KtHttpUtils.asyncGet<LoginQrcodeBean>(BilibiliApi.getLoginQRPath)
+            val loginQrcodeBean = KtHttpUtils.asyncGet<AuthQrCodeBean>(BilibiliApi.getLoginQRPath)
             loginQrcodeBean.data.url =
                 withContext(Dispatchers.IO) {
                     URLEncoder.encode(loginQrcodeBean.data.url, "UTF-8")
