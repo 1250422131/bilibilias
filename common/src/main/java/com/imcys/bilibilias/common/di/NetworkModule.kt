@@ -43,7 +43,7 @@ class NetworkModule {
             addInterceptor { chain ->
                 chain.proceed(chain.request())
             }
-        }
+        },
     ) {
         defaultRequest {
             url(BILIBILI_URL)
@@ -63,7 +63,7 @@ class NetworkModule {
                     prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
-                }
+                },
             )
         }
         install(HttpRequestRetry) {

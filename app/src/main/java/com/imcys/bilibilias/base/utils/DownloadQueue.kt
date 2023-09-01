@@ -936,6 +936,7 @@ class DownloadQueue @Inject constructor() :
             val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
+                    //实验性的，请选择copy，我只是在测试自己的库
                     add(it.deepCopy())
                 }
 
