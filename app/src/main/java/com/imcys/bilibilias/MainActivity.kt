@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,6 +31,8 @@ import com.imcys.bilibilias.base.router.Screen
 import com.imcys.bilibilias.base.router.SplashRouter
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.splash.ui.Splash
+import com.imcys.bilibilias.ui.authentication.AuthScreen
+import com.imcys.bilibilias.ui.authentication.AuthenticationMethodScreen
 import com.imcys.bilibilias.ui.download.Download
 import com.imcys.bilibilias.ui.home.Home
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
@@ -37,7 +40,9 @@ import com.imcys.bilibilias.ui.theme.color_text_hint
 import com.imcys.bilibilias.ui.theme.white
 import com.imcys.bilibilias.ui.tool.Tool
 import com.imcys.bilibilias.ui.user.User
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +61,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(SplashRouter.App.route) { Splash(navController) }
                         composable(SplashRouter.Screen.route) { Screen() }
+                        composable(SplashRouter.AuthMethod.route) { AuthenticationMethodScreen(navController) }
+                        composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
                     }
                 }
             }
@@ -73,7 +80,8 @@ fun Screen() {
         bottomBar = {
             NavigationBar(containerColor = white) {
                 items.forEach { screen ->
-                    val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                    val selected =
+                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
                     NavigationBarItem(
                         selected = selected,
                         onClick = {
@@ -116,7 +124,10 @@ fun Screen() {
             NavHost(
                 navController,
                 startDestination = Screen.Home.route,
-                Modifier.padding(innerPadding).statusBarsPadding().navigationBarsPadding()
+                Modifier
+                    .padding(innerPadding)
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
             ) {
                 composable(Screen.Home.route) { Home() }
                 composable(Screen.Tool.route) { Tool() }
