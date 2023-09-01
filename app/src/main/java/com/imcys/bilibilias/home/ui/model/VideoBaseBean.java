@@ -913,7 +913,7 @@ public class VideoBaseBean implements Serializable {
                     this.author = author;
                 }
 
-                public static class AuthorBean {
+                public static class AuthorBean implements Serializable{
                     /**
                      * mid : 0
                      * name :

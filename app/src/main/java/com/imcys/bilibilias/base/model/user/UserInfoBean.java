@@ -1338,7 +1338,7 @@ public class UserInfoBean implements Serializable {
                 this.show_info = show_info;
             }
 
-            public static class ShowInfoBean {
+            public static class ShowInfoBean implements Serializable {
                 /**
                  * show : true
                  * state : 1
