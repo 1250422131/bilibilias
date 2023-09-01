@@ -190,10 +190,11 @@ dependencies {
     api(libs.ktor.client.okhttp)
     // 日志
     api(libs.ktor.client.logging)
-    api(libs.slf4j.api)
+    debugImplementation(libs.monitor)
+    releaseImplementation(libs.monitor.no.op)
 
     // json解析支持
-    api(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
     api(libs.gson)
     api(libs.ktor.serialization.kotlinx.json)

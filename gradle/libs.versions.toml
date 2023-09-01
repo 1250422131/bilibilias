@@ -36,13 +36,13 @@ lifecycle = "2.6.1"
 lottie = "6.1.0"
 material = "1.9.0"
 mmkv = "1.2.15"
+monitor = "1.3.2"
 mtjSdkCircle = "4.0.7.5"
 navigationCompose = "2.7.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
-slf4jApi = "2.0.7"
 srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.0"
 work-runtime-ktx = "2.8.1"
@@ -68,7 +68,9 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
+monitor = { module = "com.github.leavesCZY.Monitor:monitor", version.ref = "monitor" }
+monitor-no-op = { module = "com.github.leavesCZY.Monitor:monitor-no-op", version.ref = "monitor" }
+
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
