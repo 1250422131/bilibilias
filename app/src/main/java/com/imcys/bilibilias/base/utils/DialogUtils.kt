@@ -23,7 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
@@ -123,7 +123,7 @@ object DialogUtils {
      */
     fun loginQRDialog(
         context: Context,
-        loginQrcodeBean: LoginQrcodeBean,
+        loginQrcodeBean: AuthQrCodeBean,
         responseResult: (Int, LoginStateBean) -> Unit,
     ): BottomSheetDialog {
         val binding: DialogLoginQrBottomsheetBinding =

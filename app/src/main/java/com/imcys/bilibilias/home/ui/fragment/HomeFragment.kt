@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -24,7 +23,7 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -60,7 +59,6 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -350,7 +348,7 @@ class HomeFragment : BaseFragment() {
      * 加载登陆对话框
      */
     internal fun loadLogin() {
-        HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
+        HttpUtils.get(BilibiliApi.getLoginQRPath, AuthQrCodeBean::class.java) {
             it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
             loginQRDialog = DialogUtils.loginQRDialog(
                 context as Activity,
@@ -443,7 +441,6 @@ class HomeFragment : BaseFragment() {
                     BROWSER_USER_AGENT,
                 )
                     .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
-
 
             launchUI {
                 // 这里需要储存下数据
