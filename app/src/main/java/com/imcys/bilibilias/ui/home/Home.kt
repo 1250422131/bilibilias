@@ -1,43 +1,41 @@
 package com.imcys.bilibilias.ui.home
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
+import com.imcys.bilibilias.common.base.components.NavigationCard
+import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
 
 @Composable
 fun Home() {
+    val fragmentHomeViewModel = hiltViewModel<FragmentHomeViewModel>()
+    ScreenContent(Modifier.padding(horizontal = 20.dp))
+}
+
+@Composable
+private fun ScreenContent(modifier: Modifier = Modifier) {
     FullScreenScaffold(
-        Modifier
-            .padding(horizontal = 20.dp)
+        modifier
             .fillMaxSize(),
         topBar = {
             Text(
@@ -54,39 +52,64 @@ fun Home() {
                 .verticalScroll(rememberScrollState())
         ) {
             Banner()
-            NavigationCard(
-                R.drawable.ic_tip_info,
-                stringResource(R.string.app_fragment_home_update_content),
-                stringResource(R.string.app_fragment_home_version),
-                stringResource(R.string.new_version_doc)
-            )
-            NavigationCard(
-                R.drawable.ic_home_trophy,
-                stringResource(R.string.app_fragment_home_salute),
-                stringResource(R.string.app_fragment_home_salute_text),
-                stringResource(R.string.app_fragment_home_salute_doc)
-            )
+            TipInfo()
+            HomeTrophy()
             // todo 捐款有特殊处理
-            NavigationCard(
-                R.drawable.ic_home_red_envelopes,
-                stringResource(R.string.app_fragment_home_donate),
-                stringResource(R.string.app_fragment_home_donate_text),
-                stringResource(R.string.app_fragment_home_donate_doc)
-            )
-            NavigationCard(
-                R.drawable.ic_home_rabbit,
-                stringResource(R.string.app_fragment_home_feedback),
-                stringResource(R.string.app_fragment_home_feedback_text),
-                stringResource(R.string.app_fragment_home_feedback_doc)
-            )
-            NavigationCard(
-                R.drawable.home_logout,
-                stringResource(R.string.app_fragment_home_logout),
-                stringResource(R.string.app_fragment_home_logout_text),
-                ""
-            )
+            RedEnvelopes()
+            Rabbit()
+            Logout()
         }
     }
+}
+
+@Composable
+private fun Logout() {
+    NavigationCard(
+        R.drawable.home_logout,
+        stringResource(R.string.app_fragment_home_logout),
+        stringResource(R.string.app_fragment_home_logout_text),
+        ""
+    )
+}
+
+@Composable
+private fun Rabbit() {
+    NavigationCard(
+        R.drawable.ic_home_rabbit,
+        stringResource(R.string.app_fragment_home_feedback),
+        stringResource(R.string.app_fragment_home_feedback_text),
+        stringResource(R.string.app_fragment_home_feedback_doc)
+    )
+}
+
+@Composable
+private fun RedEnvelopes() {
+    NavigationCard(
+        R.drawable.ic_home_red_envelopes,
+        stringResource(R.string.app_fragment_home_donate),
+        stringResource(R.string.app_fragment_home_donate_text),
+        stringResource(R.string.app_fragment_home_donate_doc)
+    )
+}
+
+@Composable
+private fun HomeTrophy() {
+    NavigationCard(
+        R.drawable.ic_home_trophy,
+        stringResource(R.string.app_fragment_home_salute),
+        stringResource(R.string.app_fragment_home_salute_text),
+        stringResource(R.string.app_fragment_home_salute_doc)
+    )
+}
+
+@Composable
+private fun TipInfo() {
+    NavigationCard(
+        R.drawable.ic_tip_info,
+        stringResource(R.string.app_fragment_home_update_content),
+        stringResource(R.string.app_fragment_home_version),
+        stringResource(R.string.new_version_doc)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,55 +125,4 @@ fun Banner(modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(10.dp)
     ) {
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NavigationCard(
-    @DrawableRes iconId: Int,
-    title: String,
-    longTitle: String,
-    doc: String,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        onClick = { /*TODO*/ },
-        modifier = modifier.padding(top = 20.dp),
-        border = BorderStroke(2.dp, Color(0XFFDEDEDE)),
-    ) {
-        Row(
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-        ) {
-            Column(
-                Modifier.align(Alignment.CenterVertically),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(iconId),
-                    contentDescription = "icon",
-                    Modifier.size(50.dp),
-                    colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
-                )
-            }
-            Column(Modifier.padding(start = 20.dp), verticalArrangement = Arrangement.Center) {
-                Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Text(text = longTitle, modifier = Modifier.padding(top = 5.dp), color = Color.Black)
-                if (doc.isNotBlank()) {
-                    Text(
-                        text = doc,
-                        modifier = Modifier.padding(top = 5.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewHome() {
-    Home()
 }
