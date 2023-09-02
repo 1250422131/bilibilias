@@ -28,19 +28,8 @@ class DownloadFragment : BaseFragment() {
 
     lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
-    private val downloadFinishTaskAd: DownloadFinishTaskAd by lazy {
-        DownloadFinishTaskAd {
-            fragmentDownloadBinding.run {
-                if (fgDownloadTopEdit.visibility == View.VISIBLE) {
-                    editCancel()
-                    false
-                } else {
-                    editShow()
-                    true
-                }
-            }
-        }
-    }
+    @Inject
+    lateinit var downloadFinishTaskAd: DownloadFinishTaskAd
 
     @Inject
     lateinit var downloadTaskAdapter: DownloadTaskAdapter
@@ -67,10 +56,25 @@ class DownloadFragment : BaseFragment() {
      * 初始化布局
      */
     private fun initView() {
+        initDownloadListAd()
         initEditLayout()
         initDownloadList()
 
         initTabLayout()
+    }
+
+    private fun initDownloadListAd() {
+        downloadFinishTaskAd.mLongClickEvent = {
+            fragmentDownloadBinding.run {
+                if (fgDownloadTopEdit.visibility == View.VISIBLE) {
+                    editCancel()
+                    false
+                } else {
+                    editShow()
+                    true
+                }
+            }
+        }
     }
 
     private fun editCancel() {

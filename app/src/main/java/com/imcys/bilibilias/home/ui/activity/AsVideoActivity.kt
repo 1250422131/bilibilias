@@ -173,42 +173,39 @@ class AsVideoActivity : BaseActivity() {
                         .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
-
-                    // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
-                    if (videoPlayBean.code != 0) {
-                        // 弹出通知弹窗
-                        AsDialog.init(this@AsVideoActivity).build {
-                            title = "视频文件特殊"
-                            config = {
-                                content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
-                                positiveButtonText = "知道啦"
-                                positiveButton = {
-                                    it.cancel()
+                    launchUI {
+                        // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
+                        if (videoPlayBean.code != 0) {
+                            // 弹出通知弹窗
+                            AsDialog.init(this@AsVideoActivity).build {
+                                title = "视频文件特殊"
+                                config = {
+                                    content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
+                                    positiveButtonText = "知道啦"
+                                    positiveButton = {
+                                        it.cancel()
+                                    }
                                 }
-                            }
-                        }.show()
-                    } else {
-                        val dashVideoPlayBean = KtHttpUtils.addHeader(
-                            COOKIE,
-                            BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                        )
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
-
-                        if (dashVideoPlayBean.code != 0) {
-                            setAsJzvdConfig(
-                                videoPlayBean.data.durl[0].url,
-                                "",
+                            }.show()
+                        } else {
+                            val dashVideoPlayBean = KtHttpUtils.addHeader(
+                                COOKIE,
+                                BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                             )
-                        }
+                                .addHeader(REFERER, BILIBILI_URL)
+                                .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
 
-                        dashVideoPlayBean.data.dash.video[0].also {
-                            if (it.width < it.height) {
-                                // 竖屏
-                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                    height = windowManager.defaultDisplay.height / 4 * 3
-                                }
+                            if (dashVideoPlayBean.code != 0) {
+                                setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                             }
+
+                            dashVideoPlayBean.data.dash.video[0].also {
+                                if (it.width < it.height) {
+                                    // 竖屏
+                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                        height = windowManager.defaultDisplay.height / 4 * 3
+                                    }
+                                }
 
 //                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
 //                                // 计算折叠程度（0为完全展开，1为完全折叠）
@@ -222,13 +219,11 @@ class AsVideoActivity : BaseActivity() {
 //                                }
 //
 //                            }
+                            }
+                            // 真正调用饺子播放器设置视频数据
+                            setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
 
-                        // 真正调用饺子播放器设置视频数据
-                        setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
-                    }
-
-                    launchUI { // 这里要展示视频信息卡片
                         binding.asVideoCd.visibility = View.VISIBLE
                         binding.asVideoBangumiCd.visibility = View.GONE
                     }

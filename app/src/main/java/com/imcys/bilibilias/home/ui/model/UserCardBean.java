@@ -396,7 +396,7 @@ public class UserCardBean implements Serializable {
                 this.attentions = attentions;
             }
 
-            public static class LevelInfoBean {
+            public static class LevelInfoBean implements Serializable {
                 /**
                  * current_level : 6
                  * current_min : 0
@@ -405,9 +405,9 @@ public class UserCardBean implements Serializable {
                  */
 
                 private int current_level;
-                private int current_min;
-                private int current_exp;
-                private int next_exp;
+                private Long current_min;
+                private Long current_exp;
+                private Long next_exp;
 
                 public int getCurrent_level() {
                     return current_level;
@@ -417,27 +417,27 @@ public class UserCardBean implements Serializable {
                     this.current_level = current_level;
                 }
 
-                public int getCurrent_min() {
+                public Long getCurrent_min() {
                     return current_min;
                 }
 
-                public void setCurrent_min(int current_min) {
+                public void setCurrent_min(Long current_min) {
                     this.current_min = current_min;
                 }
 
-                public int getCurrent_exp() {
+                public Long getCurrent_exp() {
                     return current_exp;
                 }
 
-                public void setCurrent_exp(int current_exp) {
+                public void setCurrent_exp(Long current_exp) {
                     this.current_exp = current_exp;
                 }
 
-                public int getNext_exp() {
+                public Long getNext_exp() {
                     return next_exp;
                 }
 
-                public void setNext_exp(int next_exp) {
+                public void setNext_exp(Long next_exp) {
                     this.next_exp = next_exp;
                 }
             }
