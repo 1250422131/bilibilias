@@ -10,6 +10,7 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -69,7 +70,7 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
-class DownloadQueue :
+class DownloadQueue @Inject constructor() :
     CoroutineScope by MainScope() {
 
     private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
@@ -934,11 +935,12 @@ class DownloadQueue :
             val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
-//                    add(it.deepCopy())
+                    //实验性的，请选择copy，我只是在测试自己的库
+                    add(it.deepCopy())
                 }
 
                 queue.forEach {
-//                    add(it.deepCopy())
+                    add(it.deepCopy())
                 }
             }
 

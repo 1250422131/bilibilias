@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.compose.runtime.mutableStateOf
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.drake.brv.utils.setDifferModels
 import com.drake.brv.utils.setup
 import com.google.android.flexbox.AlignItems
@@ -180,30 +179,29 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             sheet.setColumnView(index, 300)
         }
 
-        launchIO {
+        launchUI {
             val loadTitle by lazy { mutableStateOf("开始获取数据") }
             val loadDialog =
                 ExportDialogUtils.loadDialog(this@BangumiFollowLogActivity, loadTitle.value)
                     .apply { show() }
             for (i in 1..totalPage) {
                 loadTitle.value = "正在获取第${i}页"
-                val bangumiFollowList = getBangumiFollowList(i)
+                launchIO { val bangumiFollowList = getBangumiFollowList(i) }
                 loadTitle.value = "正在存储第${i}页"
                 editExcel(bangumiFollowList, sheet, i - 1)
             }
             // 完成保存和写入
             workbook.write()
             workbook.close()
-            launchUI {
-                // 关闭弹窗
-                loadDialog.cancel()
-                // 弹出储存位置
-                asToast(
-                    this@BangumiFollowLogActivity,
-                    "获取成功\n储存位置" +
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
-                )
-            }
+
+            // 关闭弹窗
+            loadDialog.cancel()
+            // 弹出储存位置
+            asToast(
+                this@BangumiFollowLogActivity,
+                "获取成功\n储存位置" +
+                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
+            )
         }
     }
 

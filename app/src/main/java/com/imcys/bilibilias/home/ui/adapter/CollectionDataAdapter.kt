@@ -28,13 +28,14 @@ class CollectionDataAdapter @Inject constructor() :
         ): Boolean {
             return oldItem.bvid == newItem.bvid
         }
-
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<ItemCollectionWorksBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_collection_works, parent, false
+                R.layout.item_collection_works,
+                parent,
+                false,
             )
         return ViewHolder(binding.root)
     }

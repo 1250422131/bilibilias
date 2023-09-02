@@ -683,7 +683,7 @@ public class BangumiFollowList implements Serializable {
                     this.is_rcmd = is_rcmd;
                 }
 
-                public static class DemandEndTimeBean {
+                public static class DemandEndTimeBean implements Serializable  {
                 }
             }
 

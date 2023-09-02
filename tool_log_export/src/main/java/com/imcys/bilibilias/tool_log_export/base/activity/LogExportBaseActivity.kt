@@ -6,7 +6,7 @@ import com.imcys.bilibilias.common.base.AbsActivity
 open class LogExportBaseActivity : AbsActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //沉浸式
+        // 沉浸式
         statusBarOnly(this)
     }
 }

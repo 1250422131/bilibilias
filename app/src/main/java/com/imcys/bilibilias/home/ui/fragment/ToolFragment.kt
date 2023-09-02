@@ -363,27 +363,27 @@ class ToolFragment : BaseFragment() {
                         }
                     }
                 }
-            }
 
-            // 展示item
-            fragmentToolBinding.apply {
-                fragmentToolRecyclerView.adapter = ToolItemAdapter()
+                // 展示item
+                fragmentToolBinding.apply {
+                    fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
-                mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-                mAdapter.submitList(toolItemMutableList)
+                    mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
+                    mAdapter.submitList(toolItemMutableList)
 
-                fragmentToolRecyclerView.layoutManager =
-                    GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                return when ((mAdapter.currentList)[position].type) {
-                                    1 -> 3
-                                    2 -> 3
-                                    else -> 1
+                    fragmentToolRecyclerView.layoutManager =
+                        GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
+                            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                                override fun getSpanSize(position: Int): Int {
+                                    return when ((mAdapter.currentList)[position].type) {
+                                        1 -> 3
+                                        2 -> 3
+                                        else -> 1
+                                    }
                                 }
                             }
                         }
-                    }
+                }
             }
         }
     }
