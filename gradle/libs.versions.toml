@@ -38,6 +38,7 @@ material = "1.9.0"
 mmkv = "1.2.15"
 monitor = "1.3.2"
 mtjSdkCircle = "4.0.7.5"
+napier = "2.6.1"
 navigationCompose = "2.7.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
@@ -49,12 +50,13 @@ work-runtime-ktx = "2.8.1"
 xutils = "3.9.0"
 activity-compose = "1.7.2"
 compose-bom = "2023.08.00"
+
 [libraries]
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 detekt-rules-ruleauthors = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-ruleauthors", version.ref = "detekt" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
@@ -64,15 +66,13 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-
-monitor = { module = "com.github.leavesCZY.Monitor:monitor", version.ref = "monitor" }
-monitor-no-op = { module = "com.github.leavesCZY.Monitor:monitor-no-op", version.ref = "monitor" }
+monitor = { group = "com.github.leavesCZY.Monitor", name = "monitor", version.ref = "monitor" }
+monitor-no-op = { group = "com.github.leavesCZY.Monitor", name = "monitor-no-op", version.ref = "monitor" }
 
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 
@@ -94,8 +94,6 @@ banner = { group = "io.github.youth5201314", name = "banner", version.ref = "ban
 
 brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
 
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
-
 deeprecopy-compiler = { group = "com.imcys.deeprecopy", name = "compiler", version.ref = "deeprecopy-compiler" }
 deeprecopy-core = { group = "com.imcys.deeprecopy", name = "core", version.ref = "deeprecopy-compiler" }
 
@@ -104,6 +102,7 @@ dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
@@ -121,6 +120,7 @@ kcomponent-compiler = { group = "com.github.xiaojinzi123.KComponent", name = "kc
 kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-rx", version.ref = "kcomponent-compiler" }
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
@@ -148,8 +148,13 @@ srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", vers
 uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
 
 xutils = { group = "org.xutils", name = "xutils", version.ref = "xutils" }
-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil-compose" }
+
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -158,6 +163,8 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+material3-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }
 android-library = { id = "com.android.library", version.ref = "android" }
@@ -167,3 +174,27 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "1.9.0" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version = "1.9.10" }
+
+[bundles]
+room-bundles = [
+    "androidx-room-ktx",
+    "androidx-room-compiler",
+]
+ktor-bundles = [
+    "ktor-client-content-negotiation",
+    "ktor-client-logging",
+    "ktor-client-okhttp",
+    "ktor-client-android",
+    "ktor-serialization-gson",
+    "ktor-serialization-kotlinx-json"
+]
+compose-bundles = [
+    "activity-compose",
+    "ui",
+    "ui-graphics",
+    "ui-tooling",
+    "ui-tooling-preview",
+    "ui-test-manifest",
+    "ui-test-junit4",
+    "material3"
+]
