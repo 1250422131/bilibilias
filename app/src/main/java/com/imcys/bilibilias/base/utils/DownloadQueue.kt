@@ -57,6 +57,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
+import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0

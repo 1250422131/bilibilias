@@ -35,13 +35,16 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -116,14 +119,29 @@ class NetworkModule {
     private val convertPlugin =
         createClientPlugin("ConvertPlugin") {
             transformResponseBody { response, content, requestedType ->
-                val jsonObject = Json.parseToJsonElement(response.bodyAsText()).jsonObject
-                val code = jsonObject["code"]?.jsonPrimitive?.intOrNull
-                if (code == 0) {
-                    val jsonElement = jsonObject["data"]
-                    val obj = jsonElement?.jsonObject
+                try {
+                    val res = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                    val code = res["code"]?.jsonPrimitive?.intOrNull
+                    if (code != SUCCESS) {
+                        val message = res["message"]?.jsonPrimitive?.contentOrNull
+                        if (message?.isBlank() == true) {
+                            throw ApiIOException("发生未知服务器异常")
+                        }
+                        throw ApiIOException(message)
+                    }
+                    val data = res["data"]?.jsonObject ?: throw NullResponseDataIOException()
+                    val type = requestedType.type
+                    Json.decodeFromJsonElement(type.serializer(), data)
+                } catch (e: Exception) {
+                    throw IOException(e.localizedMessage)
                 }
-                val type = requestedType.type.serializer()
-                Json.decodeFromJsonElement(type, jsonObject["data"]!!)
             }
         }
+
+    companion object {
+        private const val SUCCESS = 0
+    }
+
+    internal class ApiIOException(errorMessage: String?) : IOException(errorMessage)
+    internal class NullResponseDataIOException : Exception()
 }
