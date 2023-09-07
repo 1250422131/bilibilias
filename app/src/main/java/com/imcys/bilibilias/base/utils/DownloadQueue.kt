@@ -10,7 +10,6 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
-import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -397,7 +396,7 @@ class DownloadQueue @Inject constructor() :
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
             } else {
-                "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.data.uname}&UserUID=${myUserData.data.mid}"
+                "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.uname}&UserUID=${myUserData.mid}"
             }
             // 提交数据
             HttpUtils.asyncGet(url).await()
@@ -937,11 +936,11 @@ class DownloadQueue @Inject constructor() :
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
                     //实验性的，请选择copy，我只是在测试自己的库
-                    add(it.deepCopy())
+//                    add(it.deepCopy())
                 }
 
                 queue.forEach {
-                    add(it.deepCopy())
+//                    add(it.deepCopy())
                 }
             }
 
