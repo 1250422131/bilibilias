@@ -11,6 +11,7 @@ import com.imcys.bilibilias.tool_log_export.BR
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
+import timber.log.Timber
 
 @HiltAndroidApp
 class App : BaseApplication() {
@@ -27,6 +28,7 @@ class App : BaseApplication() {
         initBRV()
 
         context = applicationContext()
+        Timber.plant(Timber.DebugTree())
     }
 
     private fun initBRV() {
