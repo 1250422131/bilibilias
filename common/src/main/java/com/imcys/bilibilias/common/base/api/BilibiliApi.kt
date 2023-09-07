@@ -28,7 +28,7 @@ object BilibiliApi {
     const val getUserInfoPath = ROAM_API + "x/space/wbi/acc/info"
 
     // 获取个人基本信息
-    const val getMyUserData = ROAM_API + "x/member/web/account"
+    const val getMyUserData = "x/member/web/account"
 
     // 获取用户卡片信息
     const val getUserCardPath = ROAM_API + "x/web-interface/card"
