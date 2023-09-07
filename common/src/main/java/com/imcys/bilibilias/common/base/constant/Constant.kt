@@ -9,6 +9,8 @@ const val BILIBILI_URL = "https://www.bilibili.com"
 
 const val ROAM_API = "https://api.bilibili.com/"
 
+const val ROAM_HOST = "api.bilibili.com"
+
 const val AS_COOKIES = "as_cookies"
 
 const val SET_COOKIE = "Set-Cookie"
