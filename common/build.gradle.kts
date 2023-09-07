@@ -59,7 +59,6 @@ kotlin {
 }
 
 dependencies {
-
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
@@ -203,6 +202,7 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
+    api(libs.androidx.lifecycle.viewmodel.compose)
 
     api(libs.activity.compose)
     api(platform(libs.compose.bom))
@@ -211,6 +211,11 @@ dependencies {
     api(libs.ui.tooling.preview)
     api(libs.material3)
     api(libs.accompanist.systemuicontroller)
+    api (libs.accompanist.permissions)
+    api(libs.material3.window.size)
+    api(libs.material.icons.extended)
+
+    api(libs.timber)
 
     api(libs.androidx.navigation.compose)
     androidTestImplementation(platform(libs.compose.bom))
