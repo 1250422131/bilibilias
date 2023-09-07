@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.SplashRouter
@@ -50,7 +51,13 @@ fun AuthMethod(navController: NavHostController, modifier: Modifier = Modifier) 
             R.string.app_dialog_login_bottomsheet_option_1,
             Modifier
                 .weight(1f)
-                .clickable { navController.navigate(SplashRouter.AuthScreen.route) }
+                .clickable {
+                    navController.navigate(SplashRouter.AuthScreen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                }
         )
         LoginMethodItem(
             R.mipmap.ic_launcher,
