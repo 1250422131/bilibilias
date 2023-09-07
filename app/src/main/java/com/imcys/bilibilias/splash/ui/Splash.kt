@@ -1,11 +1,15 @@
 package com.imcys.bilibilias.splash.ui
 
+import android.Manifest
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,22 +28,60 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.SplashRouter
+import com.imcys.bilibilias.common.base.config.CookieManagerRepository
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Splash(navController: NavHostController) {
+    val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    if (permissionState.status.isGranted) {
+        Text("Camera permission Granted")
+    } else {
+        Column {
+            val textToShow = if (permissionState.status.shouldShowRationale) {
+                "The camera is important for this app. Please grant the permission."
+            } else {
+                "Camera not available"
+            }
+
+            Text(textToShow)
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { permissionState.launchPermissionRequest() }) {
+                Text("Request permission")
+            }
+        }
+    }
+
     var show by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(200)
         show = true
         delay(1200)
-        navController.navigate(SplashRouter.AuthMethod.route) {
-            popUpTo(SplashRouter.App.route) {
-                inclusive = true
+        if (CookieManagerRepository.isExpired) {
+            navController.navigate(SplashRouter.AuthMethod.route) {
+                popUpTo(SplashRouter.App.route) {
+                    inclusive = true
+                }
+            }
+        } else {
+            navController.navigate(SplashRouter.Screen.route) {
+                popUpTo(SplashRouter.App.route) {
+                    inclusive = true
+                }
             }
         }
+        Timber.d("Splash: ${CookieManagerRepository.timestamp}=" +
+                "${CookieManagerRepository.isExpired}=" +
+                CookieManagerRepository.SESSDATA
+        )
     }
     Column(
         Modifier.fillMaxSize(),
