@@ -220,7 +220,7 @@ class AsLoginBsViewModel(
                 )
 
             launchUI {
-                if (myUserData.code != 0) {
+                if (myUserData.mid == 0L) {
                     loadCloudAccountLogin(view.context)
                     deleteCloudAccount(view.context, data)
                     asToast(view.context, "账户失效,为您跳转到添加账户页面")

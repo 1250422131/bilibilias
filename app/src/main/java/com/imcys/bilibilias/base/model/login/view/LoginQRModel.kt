@@ -117,7 +117,6 @@ class LoginQRModel {
 
 
     fun downloadLoginQR(view: View, loginQrcodeDataBean: AuthQrCodeBean.Data) {
-
         Glide.with(view.context).asBitmap()
             .load("https://pan.misakamoe.com/qrcode/?url=" + loginQrcodeDataBean.url)
             .into(object : SimpleTarget<Bitmap?>() {

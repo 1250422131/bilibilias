@@ -337,11 +337,6 @@ class HomeFragment : BaseFragment() {
         detectUserLogin()
 
         // loadRoamData()
-
-        initSmoothRefreshLayout()
-    }
-
-    private fun initSmoothRefreshLayout() {
     }
 
     /**
@@ -387,9 +382,9 @@ class HomeFragment : BaseFragment() {
                     .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             launchUI {
-                if (myUserData.code == 0) {
+                if (myUserData.mid == 0L) {
                     // 提交
-                    BaseApplication.myUserData = myUserData.data
+                    BaseApplication.myUserData = myUserData
                     loadUserData(myUserData)
                 } else {
                     asToast(requireContext(), "登录出现意外，请重新完成登录")
@@ -414,11 +409,11 @@ class HomeFragment : BaseFragment() {
                     )
 
             launchUI {
-                if (myUserData.code != 0) {
+                if (myUserData.mid == 0L) {
                     DialogUtils.loginDialog(requireContext())
                         .show()
                 } else {
-                    BaseApplication.myUserData = myUserData.data
+                    BaseApplication.myUserData = myUserData
                 }
             }
         }
@@ -429,7 +424,7 @@ class HomeFragment : BaseFragment() {
     private fun loadUserData(myUserData: MyUserData) {
         launchIO {
             val params = mutableMapOf<String?, String?>()
-            params["mid"] = myUserData.data.mid.toString()
+            params["mid"] = myUserData.mid.toString()
             val paramsStr = getParamStr(params)
 
             val userInfoBean =
@@ -444,7 +439,7 @@ class HomeFragment : BaseFragment() {
 
             launchUI {
                 // 这里需要储存下数据
-                BaseApplication.dataKv.encode("mid", myUserData.data.mid)
+                BaseApplication.dataKv.encode("mid", myUserData.mid)
 
                 // 关闭登陆登陆弹窗
                 loginQRDialog.cancel()

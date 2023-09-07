@@ -102,7 +102,7 @@ open class BaseApplication : Application() {
         }
 
         var mid: Long = 0
-        lateinit var myUserData: MyUserData.DataBean
+        lateinit var myUserData: MyUserData
         // —————————————————————————————————————————————————
     }
 }
