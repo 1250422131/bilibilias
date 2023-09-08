@@ -50,6 +50,7 @@ room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
 timber = "5.0.1"
+twitter-detekt = "0.0.26"
 uiTimateBarX = "0.8.0"
 work-runtime-ktx = "2.8.1"
 xutils = "3.9.0"
@@ -80,6 +81,7 @@ kure-potlin = { group = "pl.setblack", name = "kure-potlin", version.ref = "kure
 monitor = { group = "com.github.leavesCZY.Monitor", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "com.github.leavesCZY.Monitor", name = "monitor-no-op", version.ref = "monitor" }
 
+rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 

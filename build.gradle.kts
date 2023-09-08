@@ -2,11 +2,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.aliyun.com/repository/central")
-        maven("https://maven.aliyun.com/repository/central")
-        maven("https://maven.aliyun.com/repository/gradle-plugin")
-        maven("https://maven.aliyun.com/repository/apache-snapshots")
-        maven("https://jitpack.io")
+        gradlePluginPortal()
     }
 }
 
@@ -22,26 +18,26 @@ plugins {
 }
 
 detekt {
-    config.setFrom(file("$projectDir/config/detekt.yml"))
-    baseline = file("$projectDir/config/baseline.xml")
+    config.setFrom(file("$rootDir/config/detekt.yml"))
+    baseline = file("$rootDir/config/baseline.xml")
     parallel = true
 }
 
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     detekt {
-        config.setFrom(file("$projectDir/config/detekt.yml"))
+        config.setFrom(file("$rootDir/config/detekt.yml"))
         tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
             reports {
                 // Enable/Disable XML report (default: true)
                 xml.required.set(true)
-                xml.outputLocation.set(file("$projectDir/config/detekt.xml"))
+                xml.outputLocation.set(file("$rootDir/config/detekt.xml"))
                 // Enable/Disable HTML report (default: true)
                 html.required.set(true)
-                html.outputLocation.set(file("$projectDir/config/detekt.html"))
+                html.outputLocation.set(file("$rootDir/config/detekt.html"))
                 // Enable/Disable MD report (default: false)
                 md.required.set(true)
-                md.outputLocation.set(file("$projectDir/config/detekt.md"))
+                md.outputLocation.set(file("$rootDir/config/detekt.md"))
             }
         }
     }
