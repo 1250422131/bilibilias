@@ -42,6 +42,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -52,6 +53,7 @@ android {
         }
 
         release {
+            applicationIdSuffix = ".release"
             // 混淆
             isMinifyEnabled = true
             // 移除无用的resource文件
@@ -133,4 +135,5 @@ dependencies {
     detektPlugins(libs.detekt)
     detektPlugins(libs.kure.potlin)
     detektPlugins(libs.detekt.verify.implementation)
+    detektPlugins(libs.rules.detekt)
 }

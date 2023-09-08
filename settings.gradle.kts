@@ -14,14 +14,13 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        mavenCentral()
+        google()
         maven("https://jitpack.io")
         maven("https://maven.aliyun.com/repository/public")
-        mavenCentral()
 
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/jcenter")
-
-        google()
     }
 }
 rootProject.name = "BILIBILIAS"

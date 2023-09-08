@@ -237,6 +237,7 @@ dependencies {
     detektPlugins(libs.detekt)
     detektPlugins(libs.kure.potlin)
     detektPlugins(libs.detekt.verify.implementation)
+    detektPlugins(libs.rules.detekt)
 }
 
 tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
