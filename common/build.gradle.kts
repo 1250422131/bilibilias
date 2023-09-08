@@ -211,7 +211,7 @@ dependencies {
     api(libs.ui.tooling.preview)
     api(libs.material3)
     api(libs.accompanist.systemuicontroller)
-    api (libs.accompanist.permissions)
+    api(libs.accompanist.permissions)
     api(libs.material3.window.size)
     api(libs.material.icons.extended)
 
@@ -228,6 +228,15 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    detektPlugins(libs.gitlab.detekt.formatting)
+    detektPlugins(libs.hbmartin.detekt.rules)
+    detektPlugins(libs.detekt.rules.libraries)
+    detektPlugins(libs.detekt.rules.ruleauthors)
+    detektPlugins(libs.detekt.rules.compose)
+    detektPlugins(libs.detekt)
+    detektPlugins(libs.kure.potlin)
+    detektPlugins(libs.detekt.verify.implementation)
 }
 
 tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {

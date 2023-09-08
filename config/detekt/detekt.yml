@@ -131,7 +131,7 @@ complexity:
     threshold: 60
   LongParameterList:
     active: true
-    functionThreshold: 12
+    functionThreshold: 6
     constructorThreshold: 7
     ignoreDefaultParameters: false
     ignoreDataClasses: true
@@ -1073,6 +1073,9 @@ HbmartinRuleSet:
   NoCallbacksInFunctions:
     active: true
     ignoreAnnotated: ['Composable']
+    allowExtensions: true
+    allowReceivers: true
+
   WhenBranchSingleLineOrBraces:
     active: true
 
@@ -1094,4 +1097,72 @@ ruleauthors:
   UseEntityAtName:
     active: true
   ViolatesTypeResolutionRequirements:
+    active: true
+
+compose:
+  active: true
+  ModifierHeightWithText:
+    active: true
+  ReusedModifierInstance:
+    active: true
+  PublicComposablePreview:
+    active: true
+  ModifierParameterPosition:
+    active: true
+  ComposableEventParameterNaming:
+    active: false
+  UnnecessaryEventHandlerParameter:
+    active: true
+  ComposableParametersOrdering:
+    active: true
+  ModifierDefaultValue:
+    active: true
+  MissingModifierDefaultValue:
+    active: true
+  TopLevelComposableFunctions:
+    active: false
+  ComposableFunctionName:
+    active: true
+  ConditionCouldBeLifted:
+    active: false
+    ignoreCallsWithArgumentNames: [ 'modifier' ]
+
+Compose:
+  CompositionLocalAllowlist:
+    active: true
+  ContentEmitterReturningValues:
+    active: true
+  DefaultsVisibility:
+    active: true
+  ModifierComposable:
+    active: true
+  ModifierMissing:
+    active: true
+  ModifierNaming:
+    active: true
+  ModifierNotUsedAtRoot:
+    active: true
+  ModifierReused:
+    active: true
+  ModifierWithoutDefault:
+    active: true
+  MultipleEmitters:
+    active: true
+  MutableParams:
+    active: true
+  ComposableNaming:
+    active: true
+  ComposableParamOrder:
+    active: true
+  PreviewNaming:
+    active: true
+  PreviewPublic:
+    active: true
+  RememberMissing:
+    active: true
+  UnstableCollections:
+    active: true
+  ViewModelForwarding:
+    active: true
+  ViewModelInjection:
     active: true
