@@ -13,6 +13,8 @@ deeprecopy-compiler = "0.0.1-Beta-2"
 constraintlayout = "2.1.4"
 coreKtx = "1.10.1"
 detekt = "1.23.1"
+detektRulesCompose = "1.3.0"
+detektVerifyImplementation = "1.2.5"
 dfm = "0.6.0"
 espresso-core = "3.5.1"
 flexbox = "3.0.0"
@@ -20,7 +22,7 @@ github-GuidePro = "1.1.0"
 gitlab-detektFormatting = "1.23.1"
 glide = "4.13.2"
 gson = "2.10"
-hbmartinDetektRules = "0.1.0"
+hbmartinDetektRules = "0.1.1"
 hilt = "2.47"
 hiltNavigationCompose = "1.0.0"
 jiaozivideoplayer = "7.7.0"
@@ -32,6 +34,7 @@ kotlinx-coroutines-android = "1.7.1"
 kotlinxSerializationJson = "1.6.0"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.1"
+kurePotlin = "0.7.0"
 lifecycle = "2.6.1"
 lottie = "6.1.0"
 material = "1.9.0"
@@ -40,6 +43,7 @@ monitor = "1.3.2"
 mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 navigationCompose = "2.7.1"
+nlopez-detekt = "0.2.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
@@ -53,14 +57,17 @@ activity-compose = "1.7.2"
 compose-bom = "2023.08.00"
 
 [libraries]
-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 
+detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
+detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 detekt-rules-ruleauthors = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-ruleauthors", version.ref = "detekt" }
+detekt-verify-implementation = { group = "dk.cachet.detekt.extensions", name = "detekt-verify-implementation", version.ref = "detektVerifyImplementation" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 
@@ -69,10 +76,11 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
+kure-potlin = { group = "pl.setblack", name = "kure-potlin", version.ref = "kurePotlin" }
 monitor = { group = "com.github.leavesCZY.Monitor", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "com.github.leavesCZY.Monitor", name = "monitor-no-op", version.ref = "monitor" }
 
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }

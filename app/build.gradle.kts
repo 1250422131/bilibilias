@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.detekt)
 }
 
 ksp {
@@ -123,4 +124,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    detektPlugins(libs.gitlab.detekt.formatting)
+    detektPlugins(libs.hbmartin.detekt.rules)
+    detektPlugins(libs.detekt.rules.libraries)
+    detektPlugins(libs.detekt.rules.ruleauthors)
+    detektPlugins(libs.detekt.rules.compose)
+    detektPlugins(libs.detekt)
+    detektPlugins(libs.kure.potlin)
+    detektPlugins(libs.detekt.verify.implementation)
 }
