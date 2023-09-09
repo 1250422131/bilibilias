@@ -12,12 +12,9 @@ import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
-
 
 /**
  * @author imcys
@@ -25,9 +22,7 @@ import java.net.URL
  * 此类为okhttp3的封装类
  */
 
-
 open class HttpUtils {
-
 
     companion object {
 
@@ -40,7 +35,6 @@ open class HttpUtils {
             SystemUtil.getUserAgent()
         }
 
-
         /**
          * 使用 OkHttp 库发送 GET 请求的方法
          * @param url String 请求地址
@@ -48,7 +42,7 @@ open class HttpUtils {
          */
         @JvmStatic
         fun get(url: String, callBack: Callback) {
-            //检验url，添加对应的ua
+            // 检验url，添加对应的ua
             checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
@@ -65,7 +59,6 @@ open class HttpUtils {
             okHttpClient.newCall(request).enqueue(callBack)
         }
 
-
         /**
          * 使用 OkHttp 库发送 GET 请求的方法，并将响应数据自动映射为指定类型的对象
          * @param url String 请求地址
@@ -74,7 +67,7 @@ open class HttpUtils {
          */
         @JvmStatic
         fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
-            //检验url，添加对应的ua
+            // 检验url，添加对应的ua
             checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
@@ -88,18 +81,19 @@ open class HttpUtils {
                 get()
             }.build()
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            okHttpClient.newCall(request).enqueue(HttpCallback {
-                // 使用 Gson 将响应数据映射为指定类型的对象
-                val data = Gson().fromJson(it, clz)
-                // 调用回调函数返回结果
-                data?.let {
-                    BaseApplication.handler.post {
-                        method(it)
+            okHttpClient.newCall(request).enqueue(
+                HttpCallback {
+                    // 使用 Gson 将响应数据映射为指定类型的对象
+                    val data = Gson().fromJson(it, clz)
+                    // 调用回调函数返回结果
+                    data?.let {
+                        BaseApplication.handler.post {
+                            method(it)
+                        }
                     }
                 }
-            })
+            )
         }
-
 
         /**
          * 使用 OkHttp 库发送 GET 请求的方法
@@ -108,7 +102,7 @@ open class HttpUtils {
          */
         @JvmStatic
         suspend fun asyncGet(url: String): Deferred<Response> {
-            //检验url，添加对应的ua
+            // 检验url，添加对应的ua
             checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
@@ -135,7 +129,7 @@ open class HttpUtils {
          */
         @JvmStatic
         suspend fun <T : Any> asyncGet(url: String, clz: Class<T>): T {
-            //检验url，添加对应的ua
+            // 检验url，添加对应的ua
             checkUrl(url)
             // 创建请求对象
             val request: Request = Request.Builder().apply {
@@ -152,89 +146,12 @@ open class HttpUtils {
             val response = okHttpClient.newCall(request).awaitResponse()
 
             return getJsonObject(response, clz)
-
-        }
-
-        /**
-         * 携程post请求
-         * @param url String
-         * @param clz Class<T>
-         * @return T
-         */
-        @JvmStatic
-        suspend fun <T : Any> asyncPost(url: String, clz: Class<T>): T {
-            //检验url，添加对应的ua
-            checkUrl(url)
-            // 构建表单请求体
-            val formBody: FormBody.Builder = FormBody.Builder()
-            // 添加参数
-            params.forEach {
-                formBody.add(it.key, it.value)
-            }
-            // 构建请求并添加头信息
-            val request: Request = Request.Builder()
-                .apply {
-                    // 设置请求头
-                    headers.forEach {
-                        addHeader(it.key, it.value)
-                    }
-                    // 设置请求地址和请求体
-                    url(url)
-                    post(formBody.build())
-                }.build()
-            // 使用 OkHttp 的 enqueue 方法异步发送请求
-            val response = okHttpClient.newCall(request).awaitResponse()
-            return getJsonObject(response, clz)
-
         }
 
         private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
             return withContext(Dispatchers.IO) {
                 Gson().fromJson(response.body?.string() ?: "empty string", clz)
-
             }
-        }
-
-
-        /**
-         * 使用 OkHttp 库发送 POST 请求的方法，并将响应数据自动映射为指定类型的对象
-         * @param url String 请求地址
-         * @param clz Class<T> 响应数据需要映射成的类的类型
-         * @param responseResult (data: T) -> Unit 请求完成后的回调函数，用于接收请求响应的结果
-         */
-        @JvmStatic
-        fun <T> post(url: String, clz: Class<T>, responseResult: (data: T) -> Unit) {
-            //检验url，添加对应的ua
-            checkUrl(url)
-            // 构建表单请求体
-            val formBody: FormBody.Builder = FormBody.Builder()
-            // 添加参数
-            params.forEach {
-                formBody.add(it.key, it.value)
-            }
-            // 构建请求并添加头信息
-            val request: Request = Request.Builder()
-                .apply {
-                    // 设置请求头
-                    headers.forEach {
-                        addHeader(it.key, it.value)
-                    }
-                    // 设置请求地址和请求体
-                    url(url)
-                    post(formBody.build())
-                }.build()
-            // 使用 OkHttp 的 enqueue 方法异步发送请求
-            okHttpClient.newCall(request).enqueue(HttpCallback {
-                // 使用 Gson 将响应数据映射为指定类型的对象
-                val data = Gson().fromJson(it, clz)
-                // 调用回调函数返回结果
-                data.let {
-                    BaseApplication.handler.post {
-                        responseResult(it)
-                    }
-                }
-            })
-
         }
 
         /**
@@ -244,55 +161,27 @@ open class HttpUtils {
          */
         @JvmStatic
         fun post(url: String, callBack: Callback) {
-            //检验url，添加对应的ua
+            // 检验url，添加对应的ua
             checkUrl(url)
-            //构建FormBody
+            // 构建FormBody
             val formBody: FormBody.Builder = FormBody.Builder()
-            //添加params参数
+            // 添加params参数
             params.forEach {
                 formBody.add(it.key, it.value)
             }
-            //构建request并且添加headers
+            // 构建request并且添加headers
             val request: Request = Request.Builder()
                 .apply {
-                    //设置请求头
+                    // 设置请求头
                     headers.forEach {
                         addHeader(it.key, it.value)
                     }
-                    //设置请求地址和参数
+                    // 设置请求地址和参数
                     url(url)
                     post(formBody.build())
                 }.build()
             okHttpClient.newCall(request).enqueue(callBack)
-
         }
-
-
-        /**
-         * post提交Json
-         * @param url String 请求地址
-         * @param jsonString String 请求json
-         * @param callBack Callback
-         */
-        @JvmStatic
-        fun postJson(url: String, jsonString: String, callBack: Callback) {
-            //检验url，添加对应的ua
-            checkUrl(url)
-            val stringBody =
-                jsonString.toRequestBody("application/json;charset=utf-8".toMediaType())
-            val request: Request = Request.Builder().apply {
-                headers.forEach {
-                    addHeader(it.key, it.value)
-                }
-                //设置请求地址和参数
-                url(url)
-                post(stringBody)
-            }.build()
-
-            okHttpClient.newCall(request).enqueue(callBack)
-
-        }
-
 
         /**
          * 添加post的form参数
@@ -305,7 +194,6 @@ open class HttpUtils {
             params[key] = value
             return this
         }
-
 
         /**
          * 添加请求头
@@ -353,9 +241,6 @@ open class HttpUtils {
                 conn.doInput = true
                 conn.readTimeout = 5000
                 conn.connectTimeout = 5000
-                val sessionId = ""
-                val cookieVal = ""
-                val key: String? = null
                 if (param != null && param.trim { it <= ' ' } != "") {
                     // 获取URLConnection对象对应的输出流
                     out = PrintWriter(conn.outputStream)
@@ -394,6 +279,5 @@ open class HttpUtils {
                 BROWSER_USER_AGENT
             }
         }
-
     }
 }

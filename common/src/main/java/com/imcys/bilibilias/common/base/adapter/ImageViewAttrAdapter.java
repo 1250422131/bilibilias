@@ -12,16 +12,6 @@ import com.bumptech.glide.request.RequestOptions;
 public class ImageViewAttrAdapter {
 
 
-    @BindingAdapter("android:src")
-    public static void setSrc(ImageView view, Bitmap bitmap) {
-        view.setImageBitmap(bitmap);
-    }
-
-    @BindingAdapter("android:src")
-    public static void setSrc(ImageView view, int resId) {
-        view.setImageResource(resId);
-    }
-
     @BindingAdapter({"android:imageUrl", "android:imageRoundingRadius"})
     public static void loadImage(ImageView imageView, String url, int imageRoundingRadius) {
         //设置图片上去，就不在多写了
