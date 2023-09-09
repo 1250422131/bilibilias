@@ -3,6 +3,9 @@ package com.imcys.bilibilias.common.di
 import android.content.Context
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.config.CacheManager
+import com.imcys.bilibilias.common.base.config.CookieManager
+import com.imcys.bilibilias.common.base.config.LoggerManager
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import dagger.Module
@@ -14,10 +17,12 @@ import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
+import io.ktor.client.plugins.Charsets
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
@@ -42,7 +47,6 @@ import kotlinx.serialization.serializer
 import okhttp3.CookieJar
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
@@ -57,6 +61,9 @@ class NetworkModule {
             }
         }
     ) {
+        Charsets {
+            register(Charsets.UTF_8)
+        }
         defaultRequest {
             url(ROAM_API)
         }
@@ -90,6 +97,9 @@ class NetworkModule {
             logger = LoggerManager()
             level = LogLevel.ALL
         }
+        install(HttpCache) {
+            publicStorage(CacheManager())
+        }
     }.apply {
         plugin(HttpSend).intercept { request ->
             if (request.headers.contains("misakamoe")) {
@@ -105,6 +115,10 @@ class NetworkModule {
         }
     }
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
+
     @OptIn(InternalSerializationApi::class)
     private val convertPlugin =
         createClientPlugin("ConvertPlugin") {
@@ -113,15 +127,12 @@ class NetworkModule {
                     val res = Json.parseToJsonElement(response.bodyAsText()).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
-                        val message = res["message"]?.jsonPrimitive?.contentOrNull
-                        if (message?.isBlank() == true) {
-                            throw ApiIOException("发生未知服务器异常")
-                        }
+                        val message = res["message"]?.jsonPrimitive?.contentOrNull ?: throw ApiIOException("发生未知服务器异常")
                         throw ApiIOException(message)
                     }
                     val data = res["data"]?.jsonObject ?: throw NullResponseDataIOException()
                     val type = requestedType.type
-                    Json.decodeFromJsonElement(type.serializer(), data)
+                    json.decodeFromJsonElement(type.serializer(), data)
                 } catch (e: Exception) {
                     // todo {"code":-101,"message":"账号未登录","ttl":1}
                     throw IOException(e.localizedMessage)

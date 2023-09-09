@@ -10,15 +10,12 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginResponseBean
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.statement.request
 import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,7 +70,9 @@ class AuthViewModel @Inject constructor(private val http: HttpClient) : BaseView
             }
 
             MediaScannerConnection.scanFile(
-                context, arrayOf(photo.toString()), null
+                context,
+                arrayOf(photo.toString()),
+                null
             ) { path, uri ->
                 _authState.update {
                     it.copy(snackBarMessage = context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast))
@@ -100,9 +99,7 @@ class AuthViewModel @Inject constructor(private val http: HttpClient) : BaseView
     fun completeSigning() {
         launchIO {
             val bean1 = http.get(BilibiliApi.getLoginStatePath) {
-                url {
-                    parameters.append("qrcode_key", _authState.value.qrCodeKey)
-                }
+                parameter("qrcode_key", _authState.value.qrCodeKey)
             }
             Timber.tag(TAG).d(bean1.request.url.toString())
             val bean = bean1.body<LoginResponseBean>()

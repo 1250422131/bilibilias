@@ -23,7 +23,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.WbiUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -35,7 +35,6 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -398,7 +397,7 @@ class AsVideoActivity : BaseActivity() {
     private fun updateBangumiInformation(
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
     ) {
-        val userVipState = userBaseBean.data.vip.status
+        val userVipState = userBaseBean.vip.status
         if (data.badge == "会员" && userVipState != 1) {
             DialogUtils.dialog(
                 this,
@@ -434,7 +433,7 @@ class AsVideoActivity : BaseActivity() {
     private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
         var memberType = false
 
-        val userVipState = userBaseBean.data.vip.status
+        val userVipState = userBaseBean.vip.status
         bangumiSeasonBean.result.episodes.forEach {
             if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
         }
@@ -457,9 +456,9 @@ class AsVideoActivity : BaseActivity() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String?, String?>()
+        val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
+        val paramsStr = WbiUtils.getParamStr(listOf(),"","")
 
         return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
@@ -583,8 +582,8 @@ class AsVideoActivity : BaseActivity() {
             asVideoUserCardLy.visibility = View.VISIBLE
 
             // 判断是否会员，会员情况下展示会员主题色，反之黑色
-            val nameColor = if (userBaseBean.data?.vip?.nickname_color != "") {
-                Color.parseColor(userBaseBean.data?.vip?.nickname_color!!)
+            val nameColor = if (userBaseBean.vip?.nicknameColor != "") {
+                Color.parseColor(userBaseBean.vip?.nicknameColor!!)
             } else {
                 // 低版本兼容
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

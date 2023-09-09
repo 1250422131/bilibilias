@@ -26,12 +26,9 @@ class AsTopNavigationLayout(context: Context, attrs: AttributeSet?) :
         val asTopNavigationLayoutBack =
             view.findViewById<ImageView>(R.id.as_top_navigation_layout_back)
 
-
         asTopNavigationLayoutBack.setOnClickListener {
             val activity = context as Activity
             activity.finish()
         }
-
     }
-
 }

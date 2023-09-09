@@ -24,7 +24,6 @@ fun String.toHtml(): String {
 
 fun String.toColorInt(): Int = Color.parseColor(this)
 
-
 /**
  * 取中间字符串，需要提供开始截取的位置和结束截取的位置
  * @receiver String

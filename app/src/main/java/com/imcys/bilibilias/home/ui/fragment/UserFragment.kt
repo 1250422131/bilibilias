@@ -6,12 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.WbiUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -24,13 +22,8 @@ import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
-import com.imcys.bilibilias.home.ui.model.UpStatBeam
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
 import kotlin.math.ceil
 
@@ -38,8 +31,6 @@ class UserFragment : BaseFragment() {
 
     private lateinit var userWorksAd: UserWorksAdapter
     private lateinit var userDataRvAd: UserDataAdapter
-    private lateinit var userDataRv: RecyclerView
-    private var userDataMutableList = mutableListOf<UserViewItemBean>()
     private lateinit var userWorksBean: UserWorksBean
 
     lateinit var fragmentUserBinding: FragmentUserBinding
@@ -59,19 +50,12 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
-        checkDataRecovery(savedInstanceState)
         initView()
 
         return fragmentUserBinding.root
     }
 
-    private fun checkDataRecovery(savedInstanceState: Bundle?) {
-    }
-
     private fun initView() {
-        initUserDataRv()
-
-        initUserData()
         initUserWorks()
 
         initSmoothRefreshLayout()
@@ -85,11 +69,11 @@ class UserFragment : BaseFragment() {
                         val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-                            val params = mutableMapOf<String?, String?>()
+                            val params = mutableMapOf<String, String>()
                             params["mid"] = asUser.mid.toString()
                             params["pn"] = (userWorksBean.data.page.pn + 1).toString()
                             params["ps"] = "20"
-                            val paramsStr = TokenUtils.getParamStr(params)
+                            val paramsStr = WbiUtils.getParamStr(listOf(), "", "")
 
                             val userWorksBean =
                                 KtHttpUtils.addHeader(
@@ -116,11 +100,6 @@ class UserFragment : BaseFragment() {
         }
     }
 
-    private fun initUserTool() {
-        userDataMutableList.add(UserViewItemBean(3))
-        userDataRvAd.submitList(userDataMutableList + mutableListOf())
-    }
-
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         launchIO {
@@ -129,7 +108,9 @@ class UserFragment : BaseFragment() {
                     COOKIE,
                     BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 )
-                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+                    .asyncGet<UserWorksBean>(
+                        "${BilibiliApi.userWorksPath}?mid=${asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20"
+                    )
             this@UserFragment.userWorksBean = userWorksBean
 
             launchUI {
@@ -141,11 +122,11 @@ class UserFragment : BaseFragment() {
     private fun initUserWorks() {
         launchIO {
             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-            val params = mutableMapOf<String?, String?>()
+            val params = mutableMapOf<String, String>()
             params["mid"] = asUser.mid.toString()
             params["qn"] = "1"
             params["ps"] = "20"
-            val paramsStr = TokenUtils.getParamStr(params)
+            val paramsStr = "" /*TokenUtils.getParamStr(params,"","")*/
 
             val userWorksBean =
                 KtHttpUtils.addHeader(
@@ -173,97 +154,6 @@ class UserFragment : BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun initUserDataRv() {
-        userDataRv = fragmentUserBinding.fragmentUserDataRv
-        userDataRvAd = UserDataAdapter()
-        userDataRv.adapter = userDataRvAd
-        userDataRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-    }
-
-    private fun initUserData() {
-        // 切到后台线程去
-        launchIO {
-            userDataMutableList.clear()
-
-            // 获取基础内容
-            val userBaseBean = async { getUserData() }
-
-            // 用户卡片信息
-            val userCardBean = async { getUserCardBean() }
-
-            // 获取up状态
-            val userUpStat = async { getUpStat() }
-
-            if (userBaseBean.await().code == 0) {
-                userDataMutableList.add(
-                    UserViewItemBean(
-                        1,
-                        userBaseBean = userBaseBean.await(),
-                    ),
-                )
-            }
-
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            }
-
-            if (userCardBean.await().code == 0 && userUpStat.await().code == 0) {
-                userDataMutableList.add(
-                    UserViewItemBean(
-                        2,
-                        upStatBeam = userUpStat.await(),
-                        userCardBean = userCardBean.await(),
-                    ),
-                )
-            }
-
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-                initUserTool()
-            }
-        }
-    }
-
-    /**
-     * 获取用户卡片信息
-     * @return UserCardBean
-     */
-    private suspend fun getUserCardBean(): UserCardBean {
-        val params = mutableMapOf<String?, String?>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
-
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.getUserCardPath}?$paramsStr")
-    }
-
-    /**
-     * 获取用户状态信息
-     * @return UpStatBeam
-     */
-    private suspend fun getUpStat(): UpStatBeam {
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.userUpStat}?mid=${asUser.mid}")
-    }
-
-    /**
-     * 获取用户基础信息
-     * @return UserBaseBean
-     */
-    private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String?, String?>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
-
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
-    }
-
-    private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
-        if (recyclerView == null) return false
-        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
     }
 
     override fun onDestroy() {

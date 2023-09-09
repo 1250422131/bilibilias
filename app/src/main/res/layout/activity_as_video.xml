@@ -276,7 +276,7 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:imageUrl="@{UserCardBean.data.card.face}"
+                        android:imageUrl="@{UserCardBean.card.face}"
                         android:src="@mipmap/ic_launcher"
                         app:round="20dp">
 
@@ -300,7 +300,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{NumberUtils.digitalConversion(UserCardBean.data.card.fans)  +`粉丝  `+NumberUtils.digitalConversion(UserCardBean.data.archive_count)+`投稿`}"
+                            android:text="@{NumberUtils.digitalConversion(UserCardBean.card.fans)  +`粉丝  `+NumberUtils.digitalConversion(0)+`投稿`}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 

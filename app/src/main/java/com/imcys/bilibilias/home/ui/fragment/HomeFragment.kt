@@ -27,7 +27,7 @@ import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
+import com.imcys.bilibilias.base.utils.WbiUtils.getParamStr
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -39,7 +39,6 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
@@ -423,9 +422,9 @@ class HomeFragment : BaseFragment() {
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchIO {
-            val params = mutableMapOf<String?, String?>()
+            val params = mutableMapOf<String, String>()
             params["mid"] = myUserData.mid.toString()
-            val paramsStr = getParamStr(params)
+            val paramsStr = getParamStr(listOf(),"","")
 
             val userInfoBean =
                 KtHttpUtils.addHeader(
@@ -435,7 +434,7 @@ class HomeFragment : BaseFragment() {
                     USER_AGENT,
                     BROWSER_USER_AGENT,
                 )
-                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
+                    .asyncGet<UserInfoBean>("${BilibiliApi.userBaseDataPath}?$paramsStr")
 
             launchUI {
                 // 这里需要储存下数据
