@@ -2000,7 +2000,7 @@ object DialogUtils {
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
-            val userVipState = (context as AsVideoActivity).userBaseBean.data.vip.status
+            val userVipState = (context as AsVideoActivity).userBaseBean.vip.status
             // 会员判断
             val epData =
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {

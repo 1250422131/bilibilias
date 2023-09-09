@@ -3,8 +3,8 @@
 
 # Java class files
 *.class
-doc/.vitepress/cache
-doc/.vitepress/dist
+doc/.vitepress/cache/#
+doc/.vitepress/dist/#
 doc/node_modules
 
 # Gradle files
@@ -35,7 +35,7 @@ output-metadata.json
 
 # IntelliJ
 *.iml
-.idea
+.idea/*
 misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
@@ -72,3 +72,4 @@ hs_err_pid*
 replay_pid*
 
 # End of https://www.toptal.com/developers/gitignore/api/android,kotlin
+

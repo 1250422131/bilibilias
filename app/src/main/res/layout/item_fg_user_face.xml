@@ -24,7 +24,7 @@
             <androidx.constraintlayout.utils.widget.ImageFilterView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:imageUrl="@{UserBaseBean.data.face}"
+                android:imageUrl="@{UserBaseBean.face}"
                 app:round="45dp" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -46,7 +46,7 @@
                         android:ellipsize="end"
                         android:letterSpacing="0.05"
                         android:maxLines="1"
-                        android:text="@{UserBaseBean.data.name}"
+                        android:text="@{UserBaseBean.name}"
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                         android:ellipsize="end"
                         android:letterSpacing="0.05"
                         android:maxLines="2"
-                        android:text="@{UserBaseBean.data.sign}"
+                        android:text="@{UserBaseBean.sign}"
                         android:textColor="@color/black"
                         android:textSize="13sp"
                         android:textStyle="bold" />

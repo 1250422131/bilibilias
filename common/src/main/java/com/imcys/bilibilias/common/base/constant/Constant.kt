@@ -20,3 +20,9 @@ const val COOKIE = "cookie"
 const val COOKIES = "cookies"
 
 const val REFERER = "Referer"
+
+const val MID = "mid"
+
+const val WTS = "wts"
+
+const val W_RID = "w_rid"

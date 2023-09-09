@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.router.LocalNavController
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.ui.theme.color_text_hint
 import com.imcys.bilibilias.ui.theme.user_work_bg
@@ -49,14 +51,18 @@ fun User() {
             )
         }
     ) { innerPadding ->
-        Column(Modifier.padding(innerPadding).padding(horizontal = 20.dp)) {
-            // region item_fg_user_face
-            UserFaceItem()
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            // region 用户头像，名称，个性签名
+            UserFaceItem(state)
             // endregion
-            // region item_fg_user_card_data
-            UserCardDataItem()
+            // region 粉丝，关注，获赞，播放
+            UserCardDataItem(state)
             // endregion
-            // region item_fg_user_tool
+            // region 工具栏
             UserTool()
             // endregion
         }
@@ -70,31 +76,38 @@ fun UserTool() {
             .fillMaxWidth()
             .background(user_work_bg, RoundedCornerShape(10.dp))
     ) {
+        val navHostController = LocalNavController.current
         UserToolColumn(
             R.drawable.ic_item_user_collection,
             R.string.app_item_fg_user_tool_favorites,
             Modifier.weight(1f)
-        )
+        ) { // todo 收藏页面
+            navHostController.navigate("")
+        }
         UserToolColumn(
             R.drawable.ic_item_user_play_history,
             R.string.app_item_fg_user_tool_play_history,
             Modifier.weight(1f)
-        )
+        ) {}
         UserToolColumn(
             R.drawable.ic_item_bangumi_followr,
             R.string.app_item_fg_user_tool_follow_series,
             Modifier.weight(1f)
-        )
-        UserToolColumn(R.drawable.ic_as_video_throw, R.string.app_item_fg_user_tool_coin_history, Modifier.weight(1f))
+        ) {}
+        UserToolColumn(
+            R.drawable.ic_as_video_throw,
+            R.string.app_item_fg_user_tool_coin_history,
+            Modifier.weight(1f)
+        ) {}
     }
 }
 
 @Composable
-private fun UserToolColumn(@DrawableRes id: Int, strId: Int, modifier: Modifier) {
+private fun UserToolColumn(@DrawableRes id: Int, strId: Int, modifier: Modifier, onClick: () -> Unit) {
     Column(
         modifier
-            .padding(10.dp)
-            .clickable {},
+            .clickable(onClick = onClick)
+            .padding(10.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -112,12 +125,16 @@ private fun UserToolColumn(@DrawableRes id: Int, strId: Int, modifier: Modifier)
 }
 
 @Composable
-private fun UserCardDataItem() {
+private fun UserCardDataItem(state: UserState) {
     Row(Modifier.fillMaxWidth()) {
-        UserCardDataColumn(100, stringResource(R.string.app_item_fg_user_card_data_fans), Modifier.weight(1f))
-        UserCardDataColumn(100, stringResource(R.string.app_item_fg_user_card_data_friend), Modifier.weight(1f))
-        UserCardDataColumn(200, stringResource(R.string.app_item_fg_user_card_data_liks), Modifier.weight(1f))
-        UserCardDataColumn(100, stringResource(R.string.app_item_fg_user_card_data_view), Modifier.weight(1f))
+        UserCardDataColumn(state.fans, stringResource(R.string.app_item_fg_user_card_data_fans), Modifier.weight(1f))
+        UserCardDataColumn(
+            state.friend,
+            stringResource(R.string.app_item_fg_user_card_data_friend),
+            Modifier.weight(1f)
+        )
+        UserCardDataColumn(state.likes, stringResource(R.string.app_item_fg_user_card_data_liks), Modifier.weight(1f))
+        UserCardDataColumn(state.archive, stringResource(R.string.app_item_fg_user_card_data_view), Modifier.weight(1f))
     }
 }
 
@@ -146,44 +163,42 @@ private fun UserCardDataColumn(total: Int, title: String, modifier: Modifier) {
 }
 
 @Composable
-private fun UserFaceItem() {
+private fun UserFaceItem(state: UserState) {
     Row(Modifier.fillMaxWidth()) {
         Column {
             AsyncImage(
-                model = null,
+                model = state.face,
                 contentDescription = "avatar",
                 Modifier
                     .size(90.dp)
                     .clip(RoundedCornerShape(45.dp))
             )
         }
-        Column(
+        Row(
             Modifier
                 .padding(start = 10.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // todo android:letterSpacing="0.05"
             Row(
                 Modifier
-                    .weight(1f)
                     .fillMaxWidth()
             ) {
                 Text(
-                    "name",
+                    state.name,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    color = MaterialTheme.colorScheme.primary
+                    letterSpacing = TextUnit(0.05f, TextUnitType.Sp),
+                    color = state.nicknameColor
                 )
             }
             Row(
                 Modifier
-                    .weight(1f)
                     .fillMaxWidth()
             ) {
                 Text(
-                    "sign",
+                    state.sign,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,

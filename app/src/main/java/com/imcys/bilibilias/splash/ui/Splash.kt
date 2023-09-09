@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.splash.ui
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -34,7 +33,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.SplashRouter
-import com.imcys.bilibilias.common.base.config.CookieManagerRepository
+import com.imcys.bilibilias.common.base.config.CookieRepository
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
@@ -65,7 +64,7 @@ fun Splash(navController: NavHostController) {
         delay(200)
         show = true
         delay(1200)
-        if (CookieManagerRepository.isExpired) {
+        if (CookieRepository.isExpired) {
             navController.navigate(SplashRouter.AuthMethod.route) {
                 popUpTo(SplashRouter.App.route) {
                     inclusive = true
@@ -78,9 +77,9 @@ fun Splash(navController: NavHostController) {
                 }
             }
         }
-        Timber.d("Splash: ${CookieManagerRepository.timestamp}=" +
-                "${CookieManagerRepository.isExpired}=" +
-                CookieManagerRepository.SESSDATA
+        Timber.d("Splash: ${CookieRepository.timestamp}=" +
+                "${CookieRepository.isExpired}=" +
+                CookieRepository.sessionData
         )
     }
     Column(

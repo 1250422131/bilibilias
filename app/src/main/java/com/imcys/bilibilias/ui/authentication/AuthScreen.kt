@@ -42,7 +42,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.SplashRouter
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(navController: NavHostController, modifier: Modifier = Modifier) {

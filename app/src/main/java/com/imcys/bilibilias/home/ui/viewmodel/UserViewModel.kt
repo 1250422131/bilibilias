@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.home.ui.model.UpStatBeam
+import com.imcys.bilibilias.home.ui.model.UpStatBean
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
@@ -36,7 +36,7 @@ class UserViewModel : ViewModel() {
     data class UserViewState(
         var userBaseBean: UserBaseBean = UserBaseBean(),
         var userCardBean: UserCardBean? = UserCardBean(),
-        var upStatBeam: UpStatBeam? = UpStatBeam(),
+        var upStatBeam: UpStatBean? = UpStatBean(),
         var userWorksBean: UserWorksBean? = UserWorksBean(),
     )
 
@@ -146,12 +146,12 @@ class UserViewModel : ViewModel() {
         emit(userCardBean)
     }
 
-    private val latestUpStatBeamData: Flow<UpStatBeam> = flow {
+    private val latestUpStatBeamData: Flow<UpStatBean> = flow {
         val upStatBeam = withContext(Dispatchers.IO) {
             HttpUtils.addHeader(COOKIE, "等待填充")
                 .asyncGet(
                     "${BilibiliApi.userUpStat}?mid=1",
-                    UpStatBeam::class.java
+                    UpStatBean::class.java
                 )
         }
         //返回拉取结果

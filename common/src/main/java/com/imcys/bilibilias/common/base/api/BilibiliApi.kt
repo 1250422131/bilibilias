@@ -8,7 +8,7 @@ object BilibiliApi {
      * 常见注解
      * mid为UID
      */
-    const val loginApi = "https://passport.bilibili.com/"
+    private const val loginApi = "https://passport.bilibili.com/"
 
     private const val liveRoomApi = "https://api.live.bilibili.com/"
 
@@ -24,14 +24,11 @@ object BilibiliApi {
     // get，ps和pn
     const val homePopularVideoPath = ROAM_API + "x/web-interface/popular"
 
-    // 需要传入mid
-    const val getUserInfoPath = ROAM_API + "x/space/wbi/acc/info"
-
     // 获取个人基本信息
     const val getMyUserData = "x/member/web/account"
 
     // 获取用户卡片信息
-    const val getUserCardPath = ROAM_API + "x/web-interface/card"
+    const val getUserCardPath = "x/web-interface/card"
 
     // post aid bvid like:1,2 csrf:j_xx
     const val likeVideoPath = ROAM_API + "x/web-interface/archive/like"
@@ -73,13 +70,13 @@ object BilibiliApi {
     var bangumiVideoDataPath = ROAM_API + "pgc/view/web/season"
 
     // 获取用户基本信息
-    const val userBaseDataPath = ROAM_API + "x/space/wbi/acc/info"
+    const val userBaseDataPath = "x/space/wbi/acc/info"
 
     // 用户导航栏信息
     const val userNavDataPath = ROAM_API + "x/web-interface/nav"
 
     // 用户状态
-    const val userUpStat = ROAM_API + "x/space/upstat"
+    const val userUpStat = "x/space/upstat"
 
     // 用户投稿
     const val userWorksPath = ROAM_API + "x/space/wbi/arc/search"
@@ -112,4 +109,6 @@ object BilibiliApi {
     const val roomPlayInfo = liveRoomApi + "xlive/web-room/v2/index/getRoomPlayInfo"
 
     const val liveRoomPlayUrl = liveRoomApi + "room/v1/Room/playUrl"
+
+    const val token = "x/web-interface/nav"
 }
