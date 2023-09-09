@@ -1,123 +1,45 @@
-package com.imcys.bilibilias.home.ui.model;
+package com.imcys.bilibilias.home.ui.model
 
-import java.io.Serializable;
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
- * @author:imcys
- * @create: 2022-12-27 13:12
- * @Description:
+ * ![UP主状态数]( * https://github.com/SocialSisterYi/bilibili-API-collect/blob/ef919a61efd0a4813d95585fa0ebd24ce1d2988e/docs/user/status_number.md)
+ * ```json
+ * {
+ * 	"code": 0,
+ * 	"message": "0",
+ * 	"ttl": 1,
+ * 	"data": {
+ * 		"archive": {
+ * 			"view": 213567370
+ * 		},
+ * 		"article": {
+ * 			"view": 3230808
+ * 		},
+ * 		"likes": 20295095
+ * 	}
+ * }
+ * ```
  */
-public class UpStatBeam implements Serializable {
+@Serializable
+data class UpStatBean(
+    @SerialName("archive")
+    val archive: Archive = Archive(),
+    @SerialName("article")
+    val article: Article = Article(),
+    @SerialName("likes")
+    val likes: Int = 0 // 20295095
+) {
+    @Serializable
+    data class Archive(
+        @SerialName("view")
+        val view: Int = 0 // 213567370
+    )
 
-    /**
-     * code : 0
-     * message : 0
-     * ttl : 1
-     * data : {"archive":{"view":2538635},"article":{"view":27607},"likes":79865}
-     */
-
-    private int code;
-    private String message;
-    private int ttl;
-    private DataBean data;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getTtl() {
-        return ttl;
-    }
-
-    public void setTtl(int ttl) {
-        this.ttl = ttl;
-    }
-
-    public DataBean getData() {
-        return data;
-    }
-
-    public void setData(DataBean data) {
-        this.data = data;
-    }
-
-    public static class DataBean implements Serializable {
-        /**
-         * archive : {"view":2538635}
-         * article : {"view":27607}
-         * likes : 79865
-         */
-
-        private ArchiveBean archive;
-        private ArticleBean article;
-        private int likes;
-
-        public ArchiveBean getArchive() {
-            return archive;
-        }
-
-        public void setArchive(ArchiveBean archive) {
-            this.archive = archive;
-        }
-
-        public ArticleBean getArticle() {
-            return article;
-        }
-
-        public void setArticle(ArticleBean article) {
-            this.article = article;
-        }
-
-        public int getLikes() {
-            return likes;
-        }
-
-        public void setLikes(int likes) {
-            this.likes = likes;
-        }
-
-        public static class ArchiveBean implements Serializable {
-            /**
-             * view : 2538635
-             */
-
-            private int view;
-
-            public int getView() {
-                return view;
-            }
-
-            public void setView(int view) {
-                this.view = view;
-            }
-        }
-
-        public static class ArticleBean implements Serializable {
-            /**
-             * view : 27607
-             */
-
-            private int view;
-
-            public int getView() {
-                return view;
-            }
-
-            public void setView(int view) {
-                this.view = view;
-            }
-        }
-    }
+    @Serializable
+    data class Article(
+        @SerialName("view")
+        val view: Int = 0 // 3230808
+    )
 }

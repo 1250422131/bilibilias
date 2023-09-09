@@ -3,7 +3,6 @@ package com.imcys.bilibilias.common.base.model.user
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 /**
  * ![个人中心-获取我的信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/member_center.md)
  *
@@ -27,16 +26,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class MyUserData(
-    @SerialName("birthday")
-    val birthday: String = "", // 2002-03-05
     @SerialName("mid")
     val mid: Long = 0, // 293793435
     @SerialName("nick_free")
     val nickFree: Boolean = false, // false
     @SerialName("rank")
     val rank: String = "", // 正式会员
-    @SerialName("sex")
-    val sex: String = "", // 男
     @SerialName("sign")
     val sign: String = "", // 高中技术宅一枚，爱好MC&电子&8-bit音乐&数码&编程，资深猿厨，粉丝群：1136462265
     @SerialName("uname")
@@ -44,4 +39,3 @@ data class MyUserData(
     @SerialName("userid")
     val userid: String = "" // bili_84675323391
 )
-
