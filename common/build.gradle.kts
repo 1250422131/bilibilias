@@ -54,6 +54,11 @@ android {
         jvmTarget = "17"
     }
 }
+
+kapt {
+    correctErrorTypes = true
+}
+
 kotlin {
     jvmToolchain(17)
 }
@@ -186,9 +191,9 @@ dependencies {
      * ktor全局支持
      */
     api(libs.ktor.client.android)
-    api(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.okhttp)
     // 日志
-    api(libs.ktor.client.logging)
+    implementation(libs.ktor.client.logging)
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
 
@@ -203,6 +208,7 @@ dependencies {
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
     api(libs.androidx.lifecycle.viewmodel.compose)
+    api(libs.androidx.lifecycle.runtime.compose)
 
     api(libs.activity.compose)
     api(platform(libs.compose.bom))
