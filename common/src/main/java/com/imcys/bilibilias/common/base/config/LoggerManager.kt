@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.di
+package com.imcys.bilibilias.common.base.config
 
 import io.ktor.client.plugins.logging.Logger
 import timber.log.Timber
