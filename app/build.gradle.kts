@@ -107,6 +107,10 @@ kotlin {
     jvmToolchain(17)
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))

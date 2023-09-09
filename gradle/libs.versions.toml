@@ -36,6 +36,7 @@ ksp = "1.9.10-1.0.13"
 ktor = "2.3.1"
 kurePotlin = "0.7.0"
 lifecycle = "2.6.1"
+lifecycleRuntimeCompose = "2.7.0-alpha01"
 lottie = "6.1.0"
 material = "1.9.0"
 mmkv = "1.2.15"
@@ -64,6 +65,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
 detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
