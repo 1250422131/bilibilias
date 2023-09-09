@@ -16,16 +16,13 @@ ksp {
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
-    buildToolsVersion = "33.0.2"
+    buildToolsVersion = "34.0.0"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
-        targetSdk = 32
+        targetSdk = 34
         minSdk = 21
         versionCode = 203
         versionName = "2.0.31"
-        // multiDexEnabled true
-//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
-//        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
 
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
