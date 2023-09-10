@@ -15,7 +15,6 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -33,13 +32,13 @@ import kotlin.math.ceil
 class CollectionActivity : BaseActivity() {
 
     private var pn = 0
-    private var collectionDataMutableList = mutableListOf<CollectionDataBean.DataBean.MediasBean>()
+    private var collectionDataMutableList = mutableListOf<CollectionDataBean.Media>()
     private lateinit var binding: ActivityCollectionBinding
 
     @Inject
     lateinit var collectionDataAd: CollectionDataAdapter
     private lateinit var userCreateCollectionBean: UserCreateCollectionBean
-    private lateinit var createCollectionList: UserCreateCollectionBean.DataBean.ListBean
+    private lateinit var createCollectionList: UserCreateCollectionBean.Collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +66,7 @@ class CollectionActivity : BaseActivity() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     if (isSlideToBottom(recyclerView)) {
-                        if (ceil((createCollectionList.media_count / 20).toDouble()) >= pn + 1) {
+                        if (ceil((createCollectionList.mediaCount / 20).toDouble()) >= pn + 1) {
                             loadCollectionData(createCollectionList)
                         }
                     }
@@ -90,7 +89,7 @@ class CollectionActivity : BaseActivity() {
                 .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
 
             launchUI {
-                userCreateCollectionBean.data.list.forEach { it1 ->
+                userCreateCollectionBean.list.forEach { it1 ->
                     binding.apply {
                         val tab = collectionTabLayout.newTab()
                         tab.text = it1.title
@@ -99,9 +98,9 @@ class CollectionActivity : BaseActivity() {
                 }
 
                 // 让监听器可以知道有多少内容加载
-                createCollectionList = userCreateCollectionBean.data.list[0]
+                createCollectionList = userCreateCollectionBean.list[0]
                 // 加载第一个收藏夹
-                loadCollectionData(userCreateCollectionBean.data.list[0])
+                loadCollectionData(userCreateCollectionBean.list[0])
 
                 // 设置监听器
                 binding.apply {
@@ -109,7 +108,7 @@ class CollectionActivity : BaseActivity() {
                     collectionTabLayout.addOnTabSelectedListener(object :
                         TabLayout.OnTabSelectedListener {
                         override fun onTabSelected(tab: TabLayout.Tab?) {
-                            userCreateCollectionBean.data.list.forEach { it1 ->
+                            userCreateCollectionBean.list.forEach { it1 ->
                                 if (it1.title == tab?.text) {
                                     // 更新数据
                                     pn = 0
@@ -135,13 +134,13 @@ class CollectionActivity : BaseActivity() {
      * 加载收藏夹具体视频内容
      * @param listBean ListBean
      */
-    private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
+    private fun loadCollectionData(listBean: UserCreateCollectionBean.Collection) {
         HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
                 CollectionDataBean::class.java,
             ) {
-                collectionDataMutableList.addAll(it.data.medias)
+                collectionDataMutableList.addAll(it.medias)
                 collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
             }
     }

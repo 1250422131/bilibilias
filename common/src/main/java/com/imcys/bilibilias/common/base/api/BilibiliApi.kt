@@ -43,10 +43,10 @@ object BilibiliApi {
     const val videAddCoinPath = ROAM_API + "x/web-interface/coin/add"
 
     // 获取收藏列表
-    const val userCreatedScFolderPath = ROAM_API + "x/v3/fav/folder/created/list-all"
+    const val userCreatedScFolderPath = "x/v3/fav/folder/created/list-all"
 
     // 收藏夹详细内容
-    const val userCollectionDataPath = ROAM_API + "x/v3/fav/resource/list"
+    const val userCollectionDataPath = "x/v3/fav/resource/list"
 
     const val videoPlayPath = ROAM_API + "x/player/playurl"
     var bangumiPlayPath = ROAM_API + "pgc/player/web/playurl"

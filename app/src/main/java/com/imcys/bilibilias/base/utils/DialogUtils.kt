@@ -406,7 +406,7 @@ object DialogUtils {
             val collectionMutableList = mutableListOf<Long>()
             val collectionAdapter =
                 CreateCollectionAdapter(
-                    userCreateCollectionBean.data.list.toMutableList(),
+                    mutableListOf(),
                 ) { position, itemBinding ->
                     // 这个接口是为了处理弹窗背景问题
 
@@ -414,17 +414,17 @@ object DialogUtils {
                     // 标签，判断这一次是否有重复
                     var tage = true
                     for (a in 0 until total) {
-                        if (collectionMutableList[a] == userCreateCollectionBean.data.list[position].id.toLong()) {
+                        if (collectionMutableList[a] == userCreateCollectionBean.list[position].id.toLong()) {
                             tage = false
-                            itemBinding.listBean?.selected = 0
+//                            itemBinding.listBean?.selected = 0
                             collectionMutableList.removeAt(a)
                             break
                         }
                     }
 
                     if (tage) {
-                        itemBinding.listBean?.selected = 1
-                        collectionMutableList.add(userCreateCollectionBean.data.list[position].id.toLong())
+//                        itemBinding.listBean?.selected = 1
+                        collectionMutableList.add(userCreateCollectionBean.list[position].id.toLong())
                     }
 
                     binding.dialogCollectionRv.adapter?.notifyItemChanged(position)

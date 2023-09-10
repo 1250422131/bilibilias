@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,15 +34,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.LocalNavController
-import com.imcys.bilibilias.common.base.components.FullScreenScaffold
-import com.imcys.bilibilias.ui.theme.color_text_hint
-import com.imcys.bilibilias.ui.theme.user_work_bg
+import com.imcys.bilibilias.base.router.RouterConstants
 
 @Composable
-fun User() {
-    val userViewModel = hiltViewModel<UserViewModel>()
+fun User(userViewModel: UserViewModel) {
     val state by userViewModel.userDataState.collectAsState()
-    FullScreenScaffold(
+    Scaffold(
         Modifier.padding(horizontal = 20.dp),
         topBar = {
             Text(
@@ -57,6 +55,7 @@ fun User() {
                 .padding(innerPadding)
         ) {
             // region 用户头像，名称，个性签名
+            System.identityHashCode("user1=$userViewModel")
             UserFaceItem(state)
             // endregion
             // region 粉丝，关注，获赞，播放
@@ -70,20 +69,19 @@ fun User() {
 }
 
 @Composable
-fun UserTool() {
+fun UserTool(userViewModel: UserViewModel = hiltViewModel()) {
+    System.identityHashCode("user2=$userViewModel")
     Row(
         Modifier
             .fillMaxWidth()
-            .background(user_work_bg, RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(10.dp))
     ) {
         val navHostController = LocalNavController.current
         UserToolColumn(
             R.drawable.ic_item_user_collection,
             R.string.app_item_fg_user_tool_favorites,
             Modifier.weight(1f)
-        ) { // todo 收藏页面
-            navHostController.navigate("")
-        }
+        ) { navHostController.navigate(RouterConstants.Collection) }
         UserToolColumn(
             R.drawable.ic_item_user_play_history,
             R.string.app_item_fg_user_tool_play_history,
@@ -156,7 +154,7 @@ private fun UserCardDataColumn(total: Int, title: String, modifier: Modifier) {
             Modifier.padding(top = 6.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = color_text_hint,
+            color = MaterialTheme.colorScheme.tertiary,
             letterSpacing = TextUnit(0.05F, TextUnitType.Sp)
         )
     }
