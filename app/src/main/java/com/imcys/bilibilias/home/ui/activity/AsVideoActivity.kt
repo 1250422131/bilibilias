@@ -313,7 +313,7 @@ class AsVideoActivity : BaseActivity() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        val bean = http.get("${BilibiliApi.archiveFavoured}?aid=$bvid")
+        val bean = http.get("${BilibiliApi.videoHasFavoured}?aid=$bvid")
             .body<ResBean<ArchiveFavouredBean>>()
         binding.archiveFavouredBean = bean.data
     }
@@ -322,7 +322,7 @@ class AsVideoActivity : BaseActivity() {
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        val bean = http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
+        val bean = http.get("${BilibiliApi.videoHasLike}?bvid=$bvid")
             .body<ArchiveHasLikeBean>()
         binding.archiveHasLikeBean = bean
     }
@@ -332,7 +332,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private suspend fun archiveHasLike() {
         val bean =
-            http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
+            http.get("${BilibiliApi.videoHasCoins}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
         binding.archiveCoinsBean = bean.data
     }
 

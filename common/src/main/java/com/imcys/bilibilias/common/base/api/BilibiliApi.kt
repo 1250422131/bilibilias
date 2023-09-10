@@ -10,19 +10,10 @@ object BilibiliApi {
      */
     private const val loginApi = "https://passport.bilibili.com/"
 
-    private const val liveRoomApi = "https://api.live.bilibili.com/"
-
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
 
     // 需要登陆密钥
     const val getLoginStatePath = loginApi + "x/passport-login/web/qrcode/poll"
-
-    // 需要传入PS为展示项
-    const val homeRCMDVideoPath = ROAM_API + "x/web-interface/index/top/feed/rcmd"
-
-    // 热门视频
-    // get，ps和pn
-    const val homePopularVideoPath = ROAM_API + "x/web-interface/popular"
 
     // 获取个人基本信息
     const val getMyUserData = "x/member/web/account"
@@ -39,17 +30,10 @@ object BilibiliApi {
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
-    // 对视频进行投币
-    const val videAddCoinPath = ROAM_API + "x/web-interface/coin/add"
-
     // 获取收藏列表
     const val userCreatedScFolderPath = "x/v3/fav/folder/created/list-all"
 
-    // 收藏夹详细内容
-    const val userCollectionDataPath = "x/v3/fav/resource/list"
-
     const val videoPlayPath = ROAM_API + "x/player/playurl"
-    var bangumiPlayPath = ROAM_API + "pgc/player/web/playurl"
 
     // 弹幕下载
     const val videoDanMuPath = ROAM_API + "x/v1/dm/list.so"
@@ -87,28 +71,24 @@ object BilibiliApi {
     // 注销登录
     const val exitLogin = loginApi + "login/exit/v2"
 
-    // 点赞判断
-    const val archiveHasLikePath = ROAM_API + "x/web-interface/archive/has/like"
-
-    // 投币判断
-    const val archiveCoinsPath = ROAM_API + "x/web-interface/archive/coins"
-
-    // 收藏判断
-    const val archiveFavoured = ROAM_API + "x/v2/fav/video/favoured"
-
     // 追番剧列表
     const val bangumiFollowPath = ROAM_API + "x/space/bangumi/follow/list"
 
-    // 直播间信息
-    const val liveRoomDataPath = liveRoomApi + "room/v1/Room/get_info"
-
-    // 直播用户信息
-    const val liveUserMasterInfo = liveRoomApi + "live_user/v1/Master/info"
-
-    // 直播间播放数据信息
-    const val roomPlayInfo = liveRoomApi + "xlive/web-room/v2/index/getRoomPlayInfo"
-
-    const val liveRoomPlayUrl = liveRoomApi + "room/v1/Room/playUrl"
-
     const val token = "x/web-interface/nav"
+
+    /**
+     * 收藏夹
+     */
+    // 获取收藏夹内容明细列表
+    const val getFavoritesContentList = "x/v3/fav/resource/list"
+
+    // 获取收藏夹全部内容
+    const val allFavoritesContents = "x/v3/fav/resource/ids"
+
+    /**
+     * 视频点赞&投币&收藏&分享
+     */
+    const val videoHasLike = "x/web-interface/archive/has/like"
+    const val videoHasCoins = "x/web-interface/archive/coins"
+    const val videoHasFavoured = "x/v2/fav/video/favoured"
 }
