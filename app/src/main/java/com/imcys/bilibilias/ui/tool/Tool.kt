@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
-import com.imcys.bilibilias.ui.theme.color_text_hint
 
 @Composable
 fun Tool() {
@@ -91,7 +91,7 @@ fun VideoCard() {
                 Text(
                     "hhhhhhhhhhhhhhhhhhhhhhhhh",
                     fontSize = 12.sp,
-                    color = color_text_hint,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     maxLines = 2
                 )
                 Row {
@@ -99,13 +99,13 @@ fun VideoCard() {
                         painter = painterResource(R.drawable.ic_play_num),
                         contentDescription = "play number",
                         Modifier.size(18.dp),
-                        colorFilter = ColorFilter.tint(color_text_hint)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                     )
                     Text(
                         text = "1000w",
                         Modifier.padding(start = 3.dp),
                         fontSize = 12.sp,
-                        color = color_text_hint,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                     Image(
                         painter = painterResource(R.drawable.ic_danmaku_num),
@@ -114,13 +114,13 @@ fun VideoCard() {
                             .size(18.dp)
                             .padding(start = 10.dp),
                         contentScale = ContentScale.Inside,
-                        colorFilter = ColorFilter.tint(color_text_hint)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                     )
                     Text(
                         text = "1000w",
                         Modifier.padding(start = 3.dp),
                         fontSize = 12.sp,
-                        color = color_text_hint,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
