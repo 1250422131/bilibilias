@@ -31,7 +31,10 @@ jxl = "2.6.12"
 kcomponent-compiler = "1.0.0-rc4"
 kotlin = "1.9.10"
 kotlinx-coroutines-android = "1.7.3"
+kotlinxCollectionsImmutable = "0.3.5"
 kotlinxSerializationJson = "1.6.0"
+kotlinSerialization = "1.9.0"
+orgJetbrainsDokka = "1.9.0"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.4"
 kurePotlin = "0.7.0"
@@ -45,6 +48,7 @@ napier = "2.6.1"
 navigationCompose = "2.7.1"
 nlopez-detekt = "0.2.1"
 okdownload = "1.0.7"
+pagingCompose = "1.0.0-alpha18"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
@@ -63,6 +67,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
 detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
@@ -81,7 +86,6 @@ kure-potlin = { group = "pl.setblack", name = "kure-potlin", version.ref = "kure
 
 monitor = { group = "com.github.leavesCZY.Monitor", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "com.github.leavesCZY.Monitor", name = "monitor-no-op", version.ref = "monitor" }
-
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
@@ -138,6 +142,7 @@ kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcompone
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
@@ -190,8 +195,7 @@ kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "1.9.0" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version = "1.9.10" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
 
 [bundles]
 room-bundles = [

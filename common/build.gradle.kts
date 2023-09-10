@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlin.kapt)
+    kotlin("kapt")
 }
 
 apply {
@@ -120,8 +120,10 @@ dependencies {
      */
     api(libs.asBottomDialog)
 
-    // 协程
+    // kotlinx
     api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.collections.immutable)
+    api(libs.kotlinx.serialization.json)
 
     /**
      * RxFFmpeg
@@ -200,8 +202,8 @@ dependencies {
     // json解析支持
     implementation(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.gson)
-    api(libs.gson)
     api(libs.ktor.serialization.kotlinx.json)
+    api(libs.gson)
 
     api(libs.constraintlayout)
     api(libs.androidx.lifecycle.viewmodel.ktx)
@@ -224,9 +226,8 @@ dependencies {
     api(libs.timber)
 
     api(libs.androidx.navigation.compose)
+    api(libs.androidx.paging.compose)
     androidTestImplementation(platform(libs.compose.bom))
-
-    api(libs.kotlinx.serialization.json)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)

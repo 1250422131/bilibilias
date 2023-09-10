@@ -4,9 +4,9 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.serialization)
+    kotlin("kapt")
 }
 
 ksp {
