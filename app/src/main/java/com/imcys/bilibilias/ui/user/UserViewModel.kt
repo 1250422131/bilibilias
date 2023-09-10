@@ -69,7 +69,7 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
 
     fun loadCollectionData(id: Int, pn: Int, ps: Int = 20) {
         launchIO {
-            val bean = http.get(BilibiliApi.userCollectionDataPath) {
+            val bean = http.get(BilibiliApi.getFavoritesContentList) {
                 parameter("media_id", id)
                 parameter("pn", pn)
                 parameter("ps", ps.coerceAtMost(20))

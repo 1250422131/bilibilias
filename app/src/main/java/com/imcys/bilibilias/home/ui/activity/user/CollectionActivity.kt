@@ -137,7 +137,7 @@ class CollectionActivity : BaseActivity() {
     private fun loadCollectionData(listBean: UserCreateCollectionBean.Collection) {
         HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
-                "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
+                "${BilibiliApi.getFavoritesContentList}?media_id=${listBean.id}&pn=${++pn}&ps=20",
                 CollectionDataBean::class.java,
             ) {
                 collectionDataMutableList.addAll(it.medias)
