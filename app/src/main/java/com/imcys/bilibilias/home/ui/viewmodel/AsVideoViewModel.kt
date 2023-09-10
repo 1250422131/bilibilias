@@ -381,7 +381,7 @@ class AsVideoViewModel : ViewModel() {
                         .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + asUser.mid)
 
                 launchUI {
-                    if (userCreateCollectionBean.code == 0) {
+                    if (userCreateCollectionBean.count == 0) {
                         DialogUtils.loadUserCreateCollectionDialog(
                             context,
                             userCreateCollectionBean,

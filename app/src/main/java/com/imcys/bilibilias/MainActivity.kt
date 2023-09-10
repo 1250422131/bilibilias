@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
@@ -18,8 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -29,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.imcys.bilibilias.base.router.LocalNavController
 import com.imcys.bilibilias.base.router.Screen
 import com.imcys.bilibilias.base.router.SplashRouter
+import com.imcys.bilibilias.base.router.userNavHostGraph
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.splash.ui.Splash
 import com.imcys.bilibilias.ui.authentication.AuthScreen
@@ -36,10 +37,8 @@ import com.imcys.bilibilias.ui.authentication.AuthenticationMethodScreen
 import com.imcys.bilibilias.ui.download.Download
 import com.imcys.bilibilias.ui.home.Home
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
-import com.imcys.bilibilias.ui.theme.color_text_hint
-import com.imcys.bilibilias.ui.theme.white
 import com.imcys.bilibilias.ui.tool.Tool
-import com.imcys.bilibilias.ui.user.User
+import com.imcys.bilibilias.ui.user.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,18 +51,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BILIBILIASTheme {
-                FullScreenScaffold {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController,
-                        startDestination = SplashRouter.App.route,
-                        Modifier.statusBarsPadding()
-                    ) {
-                        composable(SplashRouter.App.route) { Splash(navController) }
-                        composable(SplashRouter.Screen.route) { Screen() }
-                        composable(SplashRouter.AuthMethod.route) { AuthenticationMethodScreen(navController) }
-                        composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
-                    }
+                val navController = rememberNavController()
+                NavHost(
+                    navController,
+                    startDestination = SplashRouter.App.route,
+                    Modifier.statusBarsPadding()
+                ) {
+                    composable(SplashRouter.App.route) { Splash(navController) }
+                    composable(SplashRouter.Screen.route) { Screen() }
+                    composable(SplashRouter.AuthMethod.route) { AuthenticationMethodScreen(navController) }
+                    composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
                 }
             }
         }
@@ -78,7 +75,7 @@ fun Screen() {
     FullScreenScaffold(
         Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar(containerColor = white) {
+            NavigationBar(tonalElevation = 0.dp, containerColor = MaterialTheme.colorScheme.onBackground) {
                 items.forEach { screen ->
                     val selected =
                         currentDestination?.hierarchy?.any { it.route == screen.route } == true
@@ -100,7 +97,7 @@ fun Screen() {
                                 tint = if (selected) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
-                                    color_text_hint
+                                    MaterialTheme.colorScheme.inversePrimary
                                 }
                             )
                         },
@@ -110,7 +107,7 @@ fun Screen() {
                                 color = if (selected) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
-                                    color_text_hint
+                                    MaterialTheme.colorScheme.inversePrimary
                                 }
                             )
                         },
@@ -120,19 +117,18 @@ fun Screen() {
             }
         }
     ) { innerPadding ->
+        // todo 添加网域层 https://developer.android.com/topic/architecture/domain-layer?hl=zh-cn
         CompositionLocalProvider(LocalNavController provides navController) {
+            val userViewModel: UserViewModel = hiltViewModel()
             NavHost(
                 navController,
-                startDestination = Screen.Home.route,
-                Modifier
-                    .padding(innerPadding)
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
+                Screen.Home.route,
+                Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Home.route) { Home() }
                 composable(Screen.Tool.route) { Tool() }
                 composable(Screen.Download.route) { Download() }
-                composable(Screen.User.route) { User() }
+                userNavHostGraph(userViewModel)
             }
         }
     }

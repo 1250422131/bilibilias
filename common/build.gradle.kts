@@ -246,17 +246,3 @@ dependencies {
     detektPlugins(libs.detekt.verify.implementation)
     detektPlugins(libs.rules.detekt)
 }
-
-tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
-    reports {
-        // Enable/Disable XML report (default: true)
-        xml.required.set(true)
-        xml.outputLocation.set(file("$projectDir/config/detekt.xml"))
-        // Enable/Disable HTML report (default: true)
-        html.required.set(true)
-        html.outputLocation.set(file("$projectDir/config/detekt.html"))
-        // Enable/Disable MD report (default: false)
-        md.required.set(true)
-        md.outputLocation.set(file("$projectDir/config/detekt.md"))
-    }
-}

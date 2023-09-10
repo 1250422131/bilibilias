@@ -85,14 +85,13 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center">
-
+                            <!--app:lottie_progress="@{ItemBean.likeState}"-->
                             <com.airbnb.lottie.LottieAnimationView
                                 android:id="@+id/item_rcmd_like_lottie"
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
                                 app:lottie_autoPlay="false"
-                                app:lottie_loop="false"
-                                app:lottie_progress="@{ItemBean.likeState}" />
+                                app:lottie_loop="false" />
                         </LinearLayout>
 
 

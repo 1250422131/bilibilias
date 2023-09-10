@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-
-        <variable
-            name="ListBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean.DataBean.ListBean" />
-
-    </data>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -22,16 +12,14 @@
         app:cardCornerRadius="15dp"
         app:cardElevation="0dp"
         tools:ignore="MissingConstraints">
-
+        <!--android:background="@{ListBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"-->
+        <!--android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"-->
+        <!--android:text="@{ListBean.title}"-->
         <Button
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{ListBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:text="@{ListBean.title}"
-            android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"
-
             android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

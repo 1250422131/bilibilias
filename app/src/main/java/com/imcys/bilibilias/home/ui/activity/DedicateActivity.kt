@@ -22,7 +22,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,6 +42,7 @@ import coil.compose.AsyncImage
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.home.ui.model.DedicateBean
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,7 +71,7 @@ class DedicateActivity : BaseActivity() {
                 heightPx.toDp()
             }
 
-            Scaffold(
+            FullScreenScaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 topBar = {
                     TopAppBar(
@@ -85,7 +85,8 @@ class DedicateActivity : BaseActivity() {
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                     )
-                }) { innerPadding ->
+                }
+            ) { innerPadding ->
                 Column(
                     Modifier
                         .fillMaxSize()
@@ -98,7 +99,6 @@ class DedicateActivity : BaseActivity() {
                     }
                 }
             }
-
         }
     }
 
@@ -123,7 +123,8 @@ class DedicateActivity : BaseActivity() {
             Row(Modifier.fillMaxSize()) {
                 Column(Modifier.padding(top = 20.dp)) {
                     AsyncImage(
-                        model = dedicate.face, contentDescription = "头像",
+                        model = dedicate.face,
+                        contentDescription = "头像",
                         Modifier
                             .padding(start = 20.dp)
                             .size(50.dp)

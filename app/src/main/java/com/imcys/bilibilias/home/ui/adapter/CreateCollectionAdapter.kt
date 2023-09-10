@@ -10,7 +10,7 @@ import com.imcys.bilibilias.databinding.ItemCollectionBinding
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 
 class CreateCollectionAdapter(
-    val datas: MutableList<UserCreateCollectionBean.DataBean.ListBean>,
+    val datas: MutableList<UserCreateCollectionBean.Collection>,
     val selectedResult: (position: Int, itemBinding: ItemCollectionBinding) -> Unit,
 ) :
     RecyclerView.Adapter<CreateCollectionAdapter.ViewHolder>() {
@@ -28,10 +28,6 @@ class CreateCollectionAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<ItemCollectionBinding>(holder.itemView)
-        binding?.apply {
-            listBean = datas[position]
-        }
-
         //回调点击项数
         binding?.itemCollectionButton?.setOnClickListener {
             selectedResult(position, binding)

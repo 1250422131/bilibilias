@@ -7,9 +7,11 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.constant.MID
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.UpStatBean
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
+import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.home.ui.model.UserNavDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,10 +19,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,14 +48,42 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
 
             launch { getUserData(params) }
             launch { getUserCardBean(params) }
-            launch { getUpStat() }
+            launch { getUpStat(mid) }
+        }
+    }
+
+    /**
+     * 收藏列表
+     */
+    fun loadCollectionList() {
+        launchIO {
+            val bean = http.get(BilibiliApi.userCreatedScFolderPath) {
+                parameter("up_mid", mid)
+            }.body<UserCreateCollectionBean>()
+            Timber.tag(TAG).d(bean.list.toString())
+            _userDataState.update {
+                it.copy(collectionList = bean.list.toImmutableList())
+            }
+        }
+    }
+
+    fun loadCollectionData(id: Int, pn: Int, ps: Int = 20) {
+        launchIO {
+            val bean = http.get(BilibiliApi.userCollectionDataPath) {
+                parameter("media_id", id)
+                parameter("pn", pn)
+                parameter("ps", ps.coerceAtMost(20))
+            }.body<CollectionDataBean>()
+            _userDataState.update {
+                it.copy(medias = (it.medias + bean.medias).toImmutableList())
+            }
         }
     }
 
     /**
      * 获取用户状态信息
      */
-    private suspend fun getUpStat() {
+    private suspend fun getUpStat(mid: Long) {
         val bean = http.get(BilibiliApi.userUpStat) {
             parameter(MID, mid)
         }.body<UpStatBean>()
@@ -62,8 +96,6 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
      * 获取用户卡片信息
      */
     private suspend fun getUserCardBean(params: List<Pair<String, String>>) {
-        // UpStatBean.data.likes
-        // UpStatBean.data.archive
         val bean = http.get(BilibiliApi.getUserCardPath) {
             params.forEach { (k, v) ->
                 parameter(k, v)
@@ -75,7 +107,7 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
     }
 
     private suspend fun getMyUserData(): Long {
-        if (UserInfoRepository.mid != 0L && UserInfoRepository.mid == mid) return UserInfoRepository.mid
+        if (UserInfoRepository.mid == mid) return UserInfoRepository.mid
 
         val data = http.get(BilibiliApi.getMyUserData).body<MyUserData>()
 
@@ -128,4 +160,8 @@ data class UserState(
     val friend: Int = 0,
     val likes: Int = 0,
     val archive: Int = 0,
-)
+
+    val collectionList: ImmutableList<UserCreateCollectionBean.Collection> = persistentListOf(),
+    val medias: ImmutableList<CollectionDataBean.Media> = persistentListOf(),
+
+    )
