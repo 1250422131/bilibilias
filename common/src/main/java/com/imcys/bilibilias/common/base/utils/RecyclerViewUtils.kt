@@ -6,6 +6,7 @@ object RecyclerViewUtils {
 
     fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
         if (recyclerView == null) return false
-        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
+        return recyclerView.computeVerticalScrollExtent() +
+            recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
     }
 }
