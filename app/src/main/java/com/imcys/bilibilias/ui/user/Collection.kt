@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,12 +61,14 @@ fun Collection(userViewModel: UserViewModel) {
                 userViewModel.loadCollectionData(id, page)
             }
             val gridState = rememberLazyStaggeredGridState()
-            LaunchedEffect(gridState.canScrollBackward){
+            LaunchedEffect(gridState.canScrollBackward) {
                 if (!gridState.canScrollBackward) {
                     page++
                 }
             }
-            LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2), Modifier.padding(innerPadding),
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(2),
+                Modifier.padding(innerPadding),
                 state = gridState
             ) {
                 items(userStateState.collectionList) {
@@ -80,29 +81,31 @@ fun Collection(userViewModel: UserViewModel) {
 
 @Composable
 private fun TabRow(collections: ImmutableList<UserCreateCollectionBean.Collection>, onClick: (Int, Int) -> Unit) {
-    if (collections.isNotEmpty()) {
-        var selectedTabIndex by remember { mutableIntStateOf(0) }
-        ScrollableTabRow(selectedTabIndex = selectedTabIndex) {
-            var currentPage by remember { mutableIntStateOf(0) }
-            collections.forEachIndexed { index, collection ->
-                Card(Modifier.padding(horizontal = 8.dp)) {
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = {
-                            selectedTabIndex = index
-                            onClick(collection.id, currentPage)
-                        },
-                        Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(horizontal = 8.dp, vertical = 10.dp)
-                    ) {
-                        Text(
-                            collection.title,
-                            Modifier.padding(),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 18.sp
-                        )
-                    }
+    if (collections.isEmpty()) return
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var currentPage by remember { mutableIntStateOf(0) }
+    ScrollableTabRow(selectedTabIndex = selectedTabIndex) {
+
+        collections.forEachIndexed { index, collection ->
+            Card(Modifier.padding(horizontal = 8.dp)) {
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = {
+                        selectedTabIndex = index
+                        currentPage = 0
+                        onClick(collection.id, currentPage)
+                    },
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 8.dp, vertical = 10.dp)
+                ) {
+                    Text(
+                        collection.title,
+                        Modifier.padding(),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 18.sp
+                    )
                 }
             }
         }

@@ -65,7 +65,7 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
         val binding = when (getItem(position).type) {
             1 -> {
                 DataBindingUtil.getBinding<ItemFgUserFaceBinding>(holder.itemView)?.apply {
-                    userBaseBean = getItem(position).userBaseBean
+                    userBaseBean = getItem(position).userSpaceInformation
                     if (userBaseBean?.vip?.status == 1) {
                         val nameColor: String = if (userBaseBean?.vip?.nicknameColor != "") {
                             userBaseBean?.vip?.nicknameColor!!

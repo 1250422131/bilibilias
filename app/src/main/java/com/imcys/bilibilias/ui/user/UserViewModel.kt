@@ -7,12 +7,13 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.constant.MID
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.home.ui.model.CollectionDataBean
+import com.imcys.bilibilias.common.base.repository.FavoritesRepository
+import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.home.ui.model.UpStatBean
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
+import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.home.ui.model.UserNavDataBean
+import com.imcys.bilibilias.common.base.model.UserNav
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -30,7 +31,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel @Inject constructor(private val http: HttpClient) : BaseViewModel() {
+class UserViewModel @Inject constructor(
+    private val http: HttpClient,
+    private val favoritesRepository: FavoritesRepository
+) : BaseViewModel() {
     private val _userDataState = MutableStateFlow(UserState())
     val userDataState = _userDataState.asStateFlow()
 
@@ -57,7 +61,7 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
      */
     fun loadCollectionList() {
         launchIO {
-            val bean = http.get(BilibiliApi.userCreatedScFolderPath) {
+            val bean = http.get(BilibiliApi.userAllFavorites) {
                 parameter("up_mid", mid)
             }.body<UserCreateCollectionBean>()
             Timber.tag(TAG).d(bean.list.toString())
@@ -73,7 +77,7 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
                 parameter("media_id", id)
                 parameter("pn", pn)
                 parameter("ps", ps.coerceAtMost(20))
-            }.body<CollectionDataBean>()
+            }.body<Collections>()
             _userDataState.update {
                 it.copy(medias = (it.medias + bean.medias).toImmutableList())
             }
@@ -120,11 +124,11 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
      * 获取用户基础信息
      */
     private suspend fun getUserData(params: List<Pair<String, String>>) {
-        val bean = http.get(BilibiliApi.userBaseDataPath) {
+        val bean = http.get(BilibiliApi.userSpaceDetails) {
             params.forEach { (k, v) ->
                 parameter(k, v)
             }
-        }.body<UserBaseBean>()
+        }.body<UserSpaceInformation>()
         _userDataState.update {
             it.copy(
                 face = bean.face,
@@ -136,7 +140,7 @@ class UserViewModel @Inject constructor(private val http: HttpClient) : BaseView
     }
 
     private suspend fun getWbiKey(mid: Long): List<Pair<String, String>> {
-        val bean = http.get(BilibiliApi.token).body<UserNavDataBean>()
+        val bean = http.get(BilibiliApi.Token).body<UserNav>()
         val params = listOf(MID to mid.toString())
         return WbiUtils.getParamStr(
             params,
@@ -162,6 +166,6 @@ data class UserState(
     val archive: Int = 0,
 
     val collectionList: ImmutableList<UserCreateCollectionBean.Collection> = persistentListOf(),
-    val medias: ImmutableList<CollectionDataBean.Media> = persistentListOf(),
+    val medias: ImmutableList<Collections.Media> = persistentListOf(),
 
     )

@@ -29,12 +29,8 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -50,7 +46,6 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -2000,7 +1995,7 @@ object DialogUtils {
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
-            val userVipState = (context as AsVideoActivity).userBaseBean.vip.status
+            val userVipState = (context as AsVideoActivity).userSpaceInformation.vip.status
             // 会员判断
             val epData =
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {

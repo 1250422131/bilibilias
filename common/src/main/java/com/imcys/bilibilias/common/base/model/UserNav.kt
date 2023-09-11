@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -117,7 +117,7 @@ import kotlinx.serialization.Transient
  * ```
  */
 @Serializable
-data class UserNavDataBean(
+data class UserNav(
     @SerialName("allowance_count")
     val allowanceCount: Int = 0, // 0
     @SerialName("answer_status")
@@ -339,5 +339,7 @@ data class UserNavDataBean(
 
     @Transient
     val imgKey = wbiImg.imgUrl.replace(".png", "").split('/').last()
+
+    @Transient
     val subKey = wbiImg.subUrl.replace(".png", "").split('/').last()
 }

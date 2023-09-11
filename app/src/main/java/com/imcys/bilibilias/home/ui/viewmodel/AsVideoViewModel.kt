@@ -59,7 +59,7 @@ class AsVideoViewModel : ViewModel() {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
         viewModelScope.launchIO {
-            if ((context as AsVideoActivity).userBaseBean.level >= 2) {
+            if ((context as AsVideoActivity).userSpaceInformation.level >= 2) {
                 val dashVideoPlayBean = KtHttpUtils.addHeader(
                     COOKIE,
                     BaseApplication.dataKv.decodeString(COOKIES, "")!!,
@@ -113,7 +113,7 @@ class AsVideoViewModel : ViewModel() {
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
         viewModelScope.launchIO {
-            if ((context as AsVideoActivity).userBaseBean.level >= 2) {
+            if ((context as AsVideoActivity).userSpaceInformation.level >= 2) {
                 val dashVideoPlayBean =
                     KtHttpUtils.addHeader(
                         COOKIE,

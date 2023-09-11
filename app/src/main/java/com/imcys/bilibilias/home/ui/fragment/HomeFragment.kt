@@ -384,7 +384,6 @@ class HomeFragment : BaseFragment() {
                 if (myUserData.mid == 0L) {
                     // 提交
                     BaseApplication.myUserData = myUserData
-                    loadUserData(myUserData)
                 } else {
                     asToast(requireContext(), "登录出现意外，请重新完成登录")
                     loadLogin()
@@ -419,34 +418,6 @@ class HomeFragment : BaseFragment() {
     }
 
     // 加载用户数据
-    @SuppressLint("CommitPrefEdits")
-    private fun loadUserData(myUserData: MyUserData) {
-        launchIO {
-            val params = mutableMapOf<String, String>()
-            params["mid"] = myUserData.mid.toString()
-            val paramsStr = getParamStr(listOf(),"","")
-
-            val userInfoBean =
-                KtHttpUtils.addHeader(
-                    COOKIE,
-                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                ).addHeader(
-                    USER_AGENT,
-                    BROWSER_USER_AGENT,
-                )
-                    .asyncGet<UserInfoBean>("${BilibiliApi.userBaseDataPath}?$paramsStr")
-
-            launchUI {
-                // 这里需要储存下数据
-                BaseApplication.dataKv.encode("mid", myUserData.mid)
-
-                // 关闭登陆登陆弹窗
-                loginQRDialog.cancel()
-                // 加载用户弹窗
-                DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
-            }
-        }
-    }
 
     companion object {
 

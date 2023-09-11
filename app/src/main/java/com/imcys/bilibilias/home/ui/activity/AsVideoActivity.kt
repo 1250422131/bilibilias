@@ -36,7 +36,8 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.model.UserSpaceInformation
+import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
@@ -92,7 +93,7 @@ class AsVideoActivity : BaseActivity() {
     private lateinit var danmakuParser: BaseDanmakuParser
     private val danmakuContext = DanmakuContext.create()
 
-    lateinit var userBaseBean: UserBaseBean
+    lateinit var userSpaceInformation: UserSpaceInformation
 
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
@@ -122,7 +123,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadUserData() {
         launchIO {
-            userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
+            userSpaceInformation = withContext(lifecycleScope.coroutineContext) { getUserData() }
             // 加载视频首要信息
             launchUI { initVideoData() }
         }
@@ -397,7 +398,7 @@ class AsVideoActivity : BaseActivity() {
     private fun updateBangumiInformation(
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
     ) {
-        val userVipState = userBaseBean.vip.status
+        val userVipState = userSpaceInformation.vip.status
         if (data.badge == "会员" && userVipState != 1) {
             DialogUtils.dialog(
                 this,
@@ -433,7 +434,7 @@ class AsVideoActivity : BaseActivity() {
     private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
         var memberType = false
 
-        val userVipState = userBaseBean.vip.status
+        val userVipState = userSpaceInformation.vip.status
         bangumiSeasonBean.result.episodes.forEach {
             if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
         }
@@ -455,13 +456,13 @@ class AsVideoActivity : BaseActivity() {
      * 获取用户基础信息
      * @return UserBaseBean
      */
-    private suspend fun getUserData(): UserBaseBean {
+    private suspend fun getUserData(): UserSpaceInformation {
         val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
         val paramsStr = WbiUtils.getParamStr(listOf(),"","")
 
         return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
+            .asyncGet("${BilibiliApi.userSpaceDetails}?$paramsStr")
     }
 
     /**
@@ -582,8 +583,8 @@ class AsVideoActivity : BaseActivity() {
             asVideoUserCardLy.visibility = View.VISIBLE
 
             // 判断是否会员，会员情况下展示会员主题色，反之黑色
-            val nameColor = if (userBaseBean.vip?.nicknameColor != "") {
-                Color.parseColor(userBaseBean.vip?.nicknameColor!!)
+            val nameColor = if (userSpaceInformation.vip?.nicknameColor != "") {
+                Color.parseColor(userSpaceInformation.vip?.nicknameColor!!)
             } else {
                 // 低版本兼容
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -641,7 +642,7 @@ class AsVideoActivity : BaseActivity() {
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Long) {
             val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
+            intent.putExtra("bvId", VideoUtils.toBvidOffline(aid))
             context.startActivity(intent)
         }
     }

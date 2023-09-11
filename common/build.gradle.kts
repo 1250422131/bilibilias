@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
@@ -226,7 +225,10 @@ dependencies {
     api(libs.timber)
 
     api(libs.androidx.navigation.compose)
+
     api(libs.androidx.paging.compose)
+    api(libs.androidx.paging.runtime.ktx)
+
     androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
