@@ -1,49 +1,52 @@
-package com.imcys.bilibilias.common.base.utils;
+package com.imcys.bilibilias.common.base.utils
 
+import kotlin.math.pow
 
 /**
- * av转bv类
- * thanks mcfx - https://www.zhihu.com/question/381784377/answer/1099438784
- * https://github.com/BakaJzon/bv2av-java/blob/master/src/bakajzon/bv2av/Offline.java
+ * [thanks mcfx](https://www.zhihu.com/question/381784377/answer/1099438784)
+ * [av转bv类](https://github.com/BakaJzon/bv2av-java/blob/master/src/bakajzon/bv2av/Offline.java)
  *
  * @author BakaJzon
  */
-public class VideoNumConversion {
+object VideoUtils {
 
-    private VideoNumConversion() {
+    @Deprecated(
+        "",
+        ReplaceWith("use av2bv", "com.imcys.bilibilias.common.base.utils.VideoUtils.av2bv")
+    )
+    fun toBvidOffline(avid: Long): String {
+        return av2Bv(avid)
     }
 
-    public static int toAvidOffline(String bvid) {
-//		if(!bvid.startsWith("BV")) throw new IllegalArgumentException("bvid must start with \"BV\"");
-        long r = 0L, m = 1L;
-        char[] bvchars = bvid.toCharArray();
-        for (int i = 0; i < 6; i++, m *= 58)
-            r += Data.TR[bvchars[Data.S[i]]] * m;
-        return (int) ((r - Data.ADD) ^ Data.XOR);
-    }
+    private const val TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF"
+    private val S = intArrayOf(11, 10, 3, 8, 4, 6)
+    private const val XOR = 177451812L
+    private const val ADD = 8728348608L
+    private val MAP: MutableMap<Char, Int> = mutableMapOf()
 
-    public static String toBvidOffline(Long avid) {
-//		if(aid < 0) throw new IllegalArgumentException("aid must greater than 0");
-        long x = (avid ^ Data.XOR) + Data.ADD, m = 1L;
-        char[] r = "BV1  4 1 7  ".toCharArray();
-        for (int i = 0; i < 6; i++, m *= 58)
-            r[Data.S[i]] = Data.TABLE[(int) (x / m % 58)];
-        return String.valueOf(r);
-    }
-
-    static class Data {
-        static final char[] TABLE, TR;
-
-        static final byte[] S = new byte[]{11, 10, 3, 8, 4, 6};
-
-        static final long XOR = 177451812, ADD = 8728348608L;
-
-        static {
-            TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF".toCharArray();
-            TR = new char[124];
-            for (char i = 0; i < 58; i++)
-                TR[TABLE[i]] = i;
+    init {
+        for (i in 0..57) {
+            MAP[TABLE[i]] = i
         }
     }
 
+    fun av2Bv(aid: Long): String {
+        val x = (aid xor XOR) + ADD
+        val chars = charArrayOf('B', 'V', '1', ' ', ' ', '4', ' ', '1', ' ', '7', ' ', ' ')
+        for (i in 0..5) {
+            val pow = 58.0.pow(i.toDouble()).toInt()
+            val i1 = x / pow
+            val index = (i1 % 58).toInt()
+            chars[S[i]] = TABLE[index]
+        }
+        return String(chars)
+    }
+
+    fun bv2Av(bvid: String): Int {
+        var r: Long = 0
+        for (i in 0..5) {
+            r += (MAP[bvid[S[i]]]!! * 58.0.pow(i.toDouble())).toLong()
+        }
+        return (r - ADD xor XOR).toInt()
+    }
 }
