@@ -30,9 +30,6 @@ object BilibiliApi {
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
-    // 获取收藏列表
-    const val userCreatedScFolderPath = "x/v3/fav/folder/created/list-all"
-
     const val videoPlayPath = ROAM_API + "x/player/playurl"
 
     // 弹幕下载
@@ -54,7 +51,7 @@ object BilibiliApi {
     var bangumiVideoDataPath = ROAM_API + "pgc/view/web/season"
 
     // 获取用户基本信息
-    const val userBaseDataPath = "x/space/wbi/acc/info"
+    const val userSpaceDetails = "x/space/wbi/acc/info"
 
     // 用户导航栏信息
     const val userNavDataPath = ROAM_API + "x/web-interface/nav"
@@ -74,7 +71,7 @@ object BilibiliApi {
     // 追番剧列表
     const val bangumiFollowPath = ROAM_API + "x/space/bangumi/follow/list"
 
-    const val token = "x/web-interface/nav"
+    const val Token = "x/web-interface/nav"
 
     /**
      * 收藏夹
@@ -84,6 +81,9 @@ object BilibiliApi {
 
     // 获取收藏夹全部内容
     const val allFavoritesContents = "x/v3/fav/resource/ids"
+
+    // 获取指定用户创建的所有收藏夹信息
+    const val userAllFavorites = "x/v3/fav/folder/created/list-all"
 
     /**
      * 视频点赞&投币&收藏&分享

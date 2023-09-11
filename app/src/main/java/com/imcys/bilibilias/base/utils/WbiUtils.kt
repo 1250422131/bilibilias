@@ -5,6 +5,7 @@ import com.imcys.bilibilias.common.base.constant.W_RID
 import com.liulishuo.okdownload.core.Util.md5
 import io.ktor.http.encodeURLParameter
 
+@Deprecated("请使用 WbiKeyRepository 来获取 Token")
 object WbiUtils {
     private var requestToken: String? = null
 

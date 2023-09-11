@@ -46,6 +46,14 @@ detekt {
     autoCorrect = true
 }
 
+configurations.detekt {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            useVersion("1.9.0")
+        }
+    }
+}
+
 allprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     detekt {

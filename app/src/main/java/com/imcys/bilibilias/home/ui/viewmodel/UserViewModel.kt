@@ -9,7 +9,7 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.model.UpStatBean
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
+import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class UserViewModel : ViewModel() {
 
 
     data class UserViewState(
-        var userBaseBean: UserBaseBean = UserBaseBean(),
+        var userSpaceInformation: UserSpaceInformation = UserSpaceInformation(),
         var userCardBean: UserCardBean? = UserCardBean(),
         var upStatBeam: UpStatBean? = UpStatBean(),
         var userWorksBean: UserWorksBean? = UserWorksBean(),
@@ -71,7 +71,7 @@ class UserViewModel : ViewModel() {
                 .catch {
                 }.collect {
                     viewStates = viewStates.copy(
-                        userBaseBean = it
+                        userSpaceInformation = it
                     )
                 }
 
@@ -122,16 +122,16 @@ class UserViewModel : ViewModel() {
     }
 
 
-    private val latestUserBaseData: Flow<UserBaseBean> = flow {
-        val userBaseBean = withContext(Dispatchers.IO) {
+    private val latestUserBaseData: Flow<UserSpaceInformation> = flow {
+        val userSpaceInformation = withContext(Dispatchers.IO) {
             HttpUtils.addHeader(COOKIE, "")
                 .asyncGet(
-                    "${BilibiliApi.userBaseDataPath}?mid=1",
-                    UserBaseBean::class.java
+                    "${BilibiliApi.userSpaceDetails}?mid=1",
+                    UserSpaceInformation::class.java
                 )
         }
         //返回拉取结果
-        emit(userBaseBean)
+        emit(userSpaceInformation)
     }
 
     private val latestUserCardData: Flow<UserCardBean> = flow {

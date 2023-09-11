@@ -35,7 +35,7 @@ import com.imcys.bilibilias.databinding.DialogAsAccountListBinding
 import com.imcys.bilibilias.databinding.DialogAsLoginBottomsheetBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
-import com.imcys.bilibilias.home.ui.model.UserNavDataBean
+import com.imcys.bilibilias.common.base.model.UserNav
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -281,13 +281,13 @@ class AsLoginBsViewModel(
             kv.encode(COOKIES, cookie)
 
             // 获取用户数据
-            val UserNavDataBean =
+            val UserNav =
                 KtHttpUtils.addHeader(HttpHeaders.Cookie, cookie)
-                    .asyncGet<UserNavDataBean>(BilibiliApi.userNavDataPath)
+                    .asyncGet<UserNav>(BilibiliApi.userNavDataPath)
 
             // 储存
             kv.apply {
-                encode("mid", UserNavDataBean.mid)
+                encode("mid", UserNav.mid)
             }
         }
     }
@@ -347,13 +347,13 @@ class AsLoginBsViewModel(
     private fun postCloudCookie(context: HomeActivity) {
         viewModelScope.launch {
             // 获取用户数据
-            val UserNavDataBean = KtHttpUtils.addHeader(HttpHeaders.Cookie, asUser.cookie)
-                .asyncGet<UserNavDataBean>(BilibiliApi.userNavDataPath)
+            val UserNav = KtHttpUtils.addHeader(HttpHeaders.Cookie, asUser.cookie)
+                .asyncGet<UserNav>(BilibiliApi.userNavDataPath)
 
             val biliBiliCookieInfo = BiliBiliCookieInfo(
-                UserNavDataBean.uname,
-                UserNavDataBean.levelInfo.currentLevel,
-                UserNavDataBean.face,
+                UserNav.uname,
+                UserNav.levelInfo.currentLevel,
+                UserNav.face,
                 AESUtils.encrypt(asUser.cookie),
             )
 

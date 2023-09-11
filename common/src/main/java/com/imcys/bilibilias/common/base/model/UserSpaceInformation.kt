@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -164,7 +164,7 @@ import kotlinx.serialization.Transient
  * ```
  */
 @Serializable
-data class UserBaseBean(
+data class UserSpaceInformation(
     @SerialName("birthday")
     val birthday: String = "", // 09-19
     @SerialName("coins")

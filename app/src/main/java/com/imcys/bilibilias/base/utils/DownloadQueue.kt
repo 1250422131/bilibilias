@@ -22,7 +22,7 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -292,7 +292,7 @@ class DownloadQueue @Inject constructor() :
                 videoPageTitle = part
                 avid = this.cid
                 cid = this.cid
-                videoBvid = VideoNumConversion.toBvidOffline(avid)
+                videoBvid = VideoUtils.toBvidOffline(avid)
             }
 
             val downloadFinishTaskInfo = DownloadFinishTaskInfo(
@@ -561,7 +561,7 @@ class DownloadQueue @Inject constructor() :
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
             }
         } ?: downloadTaskDataBean.videoPageDataData?.apply {
-            bvid = VideoNumConversion.toBvidOffline(this.cid)
+            bvid = VideoUtils.toBvidOffline(this.cid)
             type = VIDEO_TYPE
             downloadTaskDataBean.dashVideoPlayBean?.data?.support_formats?.forEach {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc

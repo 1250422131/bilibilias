@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -186,7 +186,7 @@ import kotlinx.serialization.Serializable
  * ```
  */
 @Serializable
-data class CollectionDataBean(
+data class Collections(
     @SerialName("has_more")
     val hasMore: Boolean = false, // true
     @SerialName("info")

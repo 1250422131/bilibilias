@@ -20,7 +20,7 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
-import com.imcys.bilibilias.home.ui.model.CollectionDataBean
+import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +32,7 @@ import kotlin.math.ceil
 class CollectionActivity : BaseActivity() {
 
     private var pn = 0
-    private var collectionDataMutableList = mutableListOf<CollectionDataBean.Media>()
+    private var collectionDataMutableList = mutableListOf<Collections.Media>()
     private lateinit var binding: ActivityCollectionBinding
 
     @Inject
@@ -138,10 +138,8 @@ class CollectionActivity : BaseActivity() {
         HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.getFavoritesContentList}?media_id=${listBean.id}&pn=${++pn}&ps=20",
-                CollectionDataBean::class.java,
+                Collections::class.java,
             ) {
-                collectionDataMutableList.addAll(it.medias)
-                collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
             }
     }
 
