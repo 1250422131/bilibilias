@@ -79,6 +79,7 @@ fun Collection(userViewModel: UserViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TabRow(collections: ImmutableList<UserCreateCollectionBean.Collection>, onClick: (Int, Int) -> Unit) {
     if (collections.isEmpty()) return
@@ -86,16 +87,18 @@ private fun TabRow(collections: ImmutableList<UserCreateCollectionBean.Collectio
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var currentPage by remember { mutableIntStateOf(0) }
     ScrollableTabRow(selectedTabIndex = selectedTabIndex) {
-
         collections.forEachIndexed { index, collection ->
-            Card(Modifier.padding(horizontal = 8.dp)) {
+            Card(
+                onClick = {
+                    selectedTabIndex = index
+                    currentPage = 0
+                    onClick(collection.id, currentPage)
+                },
+                Modifier.padding(horizontal = 8.dp)
+            ) {
                 Tab(
                     selected = selectedTabIndex == index,
-                    onClick = {
-                        selectedTabIndex = index
-                        currentPage = 0
-                        onClick(collection.id, currentPage)
-                    },
+                    {},
                     Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(horizontal = 8.dp, vertical = 10.dp)

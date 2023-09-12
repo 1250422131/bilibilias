@@ -39,8 +39,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun BottomSheetDialog(
-    modifier: Modifier = Modifier,
     visible: Boolean,
+    modifier: Modifier = Modifier,
     cancelable: Boolean = true,
     canceledOnTouchOutside: Boolean = true,
     onDismissRequest: () -> Unit,
@@ -84,7 +84,9 @@ private fun BoxScope.InnerDialog(
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    var offsetY by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember {
+        mutableFloatStateOf(value = 0f)
+    }
     val offsetYAnimate by animateFloatAsState(targetValue = offsetY, label = "")
     var bottomSheetHeight by remember { mutableFloatStateOf(value = 0f) }
     AnimatedVisibility(
@@ -127,7 +129,11 @@ private fun BoxScope.InnerDialog(
             }
         )
     ) {
-        DisposableEffect(Unit) { onDispose { offsetY = 0f } }
+        DisposableEffect(key1 = null) {
+            onDispose {
+                offsetY = 0f
+            }
+        }
         Box(
             modifier = Modifier.clip(
                 shape = RoundedCornerShape(

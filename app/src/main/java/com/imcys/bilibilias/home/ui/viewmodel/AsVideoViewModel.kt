@@ -378,7 +378,7 @@ class AsVideoViewModel : ViewModel() {
                         COOKIE,
                         BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                     )
-                        .asyncGet<UserCreateCollectionBean>(BilibiliApi.userCreatedScFolderPath + "?up_mid=" + asUser.mid)
+                        .asyncGet<UserCreateCollectionBean>("?up_mid=" + asUser.mid)
 
                 launchUI {
                     if (userCreateCollectionBean.count == 0) {
