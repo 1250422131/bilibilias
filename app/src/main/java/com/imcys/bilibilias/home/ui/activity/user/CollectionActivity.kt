@@ -86,7 +86,7 @@ class CollectionActivity : BaseActivity() {
                 COOKIE,
                 BaseApplication.dataKv.decodeString(COOKIES, "")!!,
             )
-                .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
+                .asyncGet<UserCreateCollectionBean>("")
 
             launchUI {
                 userCreateCollectionBean.list.forEach { it1 ->

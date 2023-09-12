@@ -25,6 +25,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.imcys.bilibilias.base.router.LocalNavController
 import com.imcys.bilibilias.base.router.Screen
@@ -61,6 +62,8 @@ class MainActivity : ComponentActivity() {
                     composable(SplashRouter.Screen.route) { Screen() }
                     composable(SplashRouter.AuthMethod.route) { AuthenticationMethodScreen(navController) }
                     composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
+                    // todo 也许可以用这个导航到权限检查
+                    dialog("checkPermission"){}
                 }
             }
         }

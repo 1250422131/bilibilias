@@ -26,7 +26,6 @@ class SplashActivity : BaseActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
     private val REQUEST_CODE_POST_NOTIFICATIONS = 1
 
-    private var isFirstLoaded = false
     private var delayedHandler: Handler? = null
 
     @SuppressLint("MissingInflatedId")
@@ -59,87 +58,85 @@ class SplashActivity : BaseActivity() {
                 this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
             )
-            != PackageManager.PERMISSION_GRANTED
+            == PackageManager.PERMISSION_GRANTED
         ) {
-            // 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                )
-            ) {
-                // 在这里可以弹出一个对话框来说明为什么需要此权限
-                DialogUtils.dialog(
-                    this,
-                    getString(R.string.app_permission_application_title),
-                    getString(R.string.app_permission_application_msg),
-                    getString(R.string.app_permission_application_confirm),
-                    getString(R.string.app_permission_application_cancel),
-                    false,
-                    positiveButtonClickListener = {
-                        ActivityCompat.requestPermissions(
-                            this,
-                            arrayOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            ),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
-                        )
-                    },
-                    negativeButtonClickListener = {
-                        finishAll()
-                    },
-                ).show()
-            } else {
-                // 申请储存权限
-                DialogUtils.dialog(
-                    this,
-                    getString(R.string.app_permission_application_title),
-                    getString(R.string.app_permission_application_text),
-                    getString(R.string.app_permission_application_confirm),
-                    getString(R.string.app_permission_application_cancel),
-                    false,
-                    positiveButtonClickListener = {
-                        ActivityCompat.requestPermissions(
-                            this,
-                            arrayOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            ),
-                            REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
-                        )
-                    },
-                    negativeButtonClickListener = {
-                        // 处理取消按钮点击事件
-                        finishAll()
-                    },
-                ).show()
-            }
-        } else {
             toHome()
+            return
+        }
+
+        // 如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+        ) {
+            // 在这里可以弹出一个对话框来说明为什么需要此权限
+            DialogUtils.dialog(
+                this,
+                getString(R.string.app_permission_application_title),
+                getString(R.string.app_permission_application_msg),
+                getString(R.string.app_permission_application_confirm),
+                getString(R.string.app_permission_application_cancel),
+                false,
+                positiveButtonClickListener = {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        ),
+                        REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
+                    )
+                },
+                negativeButtonClickListener = {
+                    finishAll()
+                },
+            ).show()
+        } else {
+            // 申请储存权限
+            DialogUtils.dialog(
+                this,
+                getString(R.string.app_permission_application_title),
+                getString(R.string.app_permission_application_text),
+                getString(R.string.app_permission_application_confirm),
+                getString(R.string.app_permission_application_cancel),
+                false,
+                positiveButtonClickListener = {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        ),
+                        REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
+                    )
+                },
+                negativeButtonClickListener = {
+                    // 处理取消按钮点击事件
+                    finishAll()
+                },
+            ).show()
         }
     }
 
     private fun toHome() {
         // 如果已经授予了储存权限，则可以进行相应的操作
-        if (!isFirstLoaded) {
-            isFirstLoaded = true
-            delayedHandler = Handler(Looper.getMainLooper())
-            delayedHandler?.let {
-                // 迁移旧的数据
-                initMMVKData()
+        delayedHandler = Handler(Looper.getMainLooper())
+        delayedHandler?.let {
+            // 迁移旧的数据
+            initMMVKData()
 
-                HandlerCompat.postDelayed(it, {
-                    // 创建一个意图，说明我要跳转到那个活动界面。
-                    val intent = Intent(this, HomeActivity::class.java)
-                    // 跳转到主要活动。
-                    startActivity(intent)
-                    // 再来个跳转过度动画。
-                    overridePendingTransition(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out,
-                    )
-                    // 销毁当前活动。
-                    finish()
-                }, null, 1000)
-            }
+            HandlerCompat.postDelayed(it, {
+                // 创建一个意图，说明我要跳转到那个活动界面。
+                val intent = Intent(this, HomeActivity::class.java)
+                // 跳转到主要活动。
+                startActivity(intent)
+                // 再来个跳转过度动画。
+                overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                )
+                // 销毁当前活动。
+                finish()
+            }, null, 1000)
         }
     }
 
