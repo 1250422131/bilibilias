@@ -10,17 +10,12 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.xiaojinzi.component.impl.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
-import kotlinx.coroutines.flow.flow
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -28,11 +23,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class FragmentHomeViewModel @Inject constructor(private val httpClient: HttpClient) :
+class FragmentHomeViewModel @Inject constructor() :
     BaseViewModel() {
-    init {
-        detectUserLogin()
-    }
 
     fun goToPrivacyPolicy(view: View) {
         val uri =
@@ -82,6 +74,9 @@ class FragmentHomeViewModel @Inject constructor(private val httpClient: HttpClie
         view.context.startActivity(intent)
     }
 
+    /**
+     * 社区
+     */
     fun goToCommunity(view: View) {
         val uri = Uri.parse("https://support.qq.com/product/337496")
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -130,27 +125,5 @@ class FragmentHomeViewModel @Inject constructor(private val httpClient: HttpClie
             },
             negativeButtonClickListener = {},
         ).show()
-    }
-
-    fun detectUserLogin() {
-        launchIO {
-            val body = httpClient.get(BilibiliApi.getMyUserData).bodyAsText()
-            com.imcys.bilibilias.base.utils.asLogD("detectUserLogin", body.toString())
-        }
-
-        launchIO {
-           /* val myUserData =
-                HttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-                    .asyncGet(BilibiliApi.getMyUserData, MyUserData::class.java)
-            com.imcys.bilibilias.base.utils.asLogD("detectUserLogin", myUserData.toString())*/
-            /* launchUI {
-                 if (myUserData.code != 0) {
-                     DialogUtils.loginDialog(requireContext())
-                         .show()
-                 } else {
-                     BaseApplication.myUserData = myUserData.data
-                 }
-             }*/
-        }
     }
 }
