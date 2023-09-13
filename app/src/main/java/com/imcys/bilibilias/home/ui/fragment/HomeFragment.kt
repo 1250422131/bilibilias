@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,9 +23,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.WbiUtils.getParamStr
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -35,12 +31,11 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.model.OldUpdateDataBean
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -50,32 +45,17 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
-import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
-import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
-import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.math.BigInteger
 import java.net.URLEncoder
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
-import kotlin.system.exitProcess
 
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeFragment,
 )
 class HomeFragment : BaseFragment() {
-
-    lateinit var viewModel: FragmentHomeViewModel
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
@@ -104,7 +84,7 @@ class HomeFragment : BaseFragment() {
                 ViewModelProvider(this@HomeFragment)[FragmentHomeViewModel::class.java]
         }
 
-        initView()
+        detectUserLogin()
         loadServiceData()
         return fragmentHomeBinding.root
     }
@@ -196,23 +176,7 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        launchIO {
-            val oldHomeBannerDataBean =
-                HttpUtils.asyncGet(
-                    "${BiliBiliAsApi.updateDataPath}?type=banner",
-                    OldHomeBannerDataBean::class.java,
-                )
-
-            launchUI {
-                // 新增BannerLifecycleObserver
-                fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                    OldHomeBeanAdapter(
-                        oldHomeBannerDataBean.textList,
-                        oldHomeBannerDataBean,
-                    ),
-                ).setIndicator(CircleIndicator(context))
-            }
-        }
+        OldHomeBeanAdapter(TODO(), TODO())
     }
 
     /**
@@ -220,32 +184,9 @@ class HomeFragment : BaseFragment() {
      */
     private fun loadAppData() {
         AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
-
-        launchIO {
-            val oldUpdateDataBean =
-                HttpUtils.asyncGet(
-                    "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}",
-                    OldUpdateDataBean::class.java,
-                )
-
-            launchUI { // 加载公告
-                if (oldUpdateDataBean.notice != "") {
-                    loadNotice(oldUpdateDataBean.notice.toString())
-                }
-                // 送出签名信息
-                val sha = apkVerifyWithSHA(requireContext(), "")
-                val md5 = apkVerifyWithMD5(requireContext(), "")
-                val crc = apkVerifyWithCRC(requireContext(), "")
-
-                when (oldUpdateDataBean.id) {
-                    "0" -> postAppData(sha, md5, crc)
-                    "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
-                }
-
-                // 检测更新
-                loadVersionData(oldUpdateDataBean)
-            }
-        }
+        loadNotice(TODO())
+        // 检测更新
+        loadVersionData(TODO())
     }
 
     /**
@@ -275,34 +216,6 @@ class HomeFragment : BaseFragment() {
     }
 
     /**
-     * 核对APP数据
-     * @param it OldUpdateDataBean
-     * @param sha String
-     * @param md5 String
-     * @param crc String
-     */
-    private fun checkAppData(it: OldUpdateDataBean, sha: String, md5: String, crc: String) {
-        if (it.apkmD5 != sha || it.apkToKenCR != crc || it.apkToKen != md5) {
-            (activity as HomeActivity).activityHomeBinding.homeViewPage.visibility = View.GONE
-            val uri: Uri = Uri.parse(it.url)
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-            exitProcess(0)
-        }
-    }
-
-    /**
-     * 送出此版本的数据信息
-     */
-    private fun postAppData(sha: String, md5: String, crc: String) {
-        HttpUtils.get(
-            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java,
-        ) {
-        }
-    }
-
-    /**
      * 加载公告
      * @param notice String
      */
@@ -324,18 +237,6 @@ class HomeFragment : BaseFragment() {
                 },
             ).show()
         }
-    }
-
-    // 初始化列表
-    private fun initView() {
-        // 登陆检测
-        // context?.let { DialogUtils.loginDialog(it).show() }
-        // 加载推荐视频
-        // loadRCMDVideoData()
-        // 检测用户是否登陆
-        detectUserLogin()
-
-        // loadRoamData()
     }
 
     /**
@@ -420,88 +321,8 @@ class HomeFragment : BaseFragment() {
     // 加载用户数据
 
     companion object {
-
-        private var LJ: Int = 0
-
         @JvmStatic
         fun newInstance() = HomeFragment()
-
-        // 底层程序加固 -> 防止程序被修改从多个角度检测安装包完整性
-        /**
-         * 通过检查签名文件classes.dex文件的哈希值来判断代码文件是否被篡改
-         *
-         * @param orginalSHA 原始Apk包的SHA-1值
-         */
-        fun apkVerifyWithSHA(context: Context, orginalSHA: String): String {
-            val apkPath = context.packageCodePath // 获取Apk包存储路径
-            try {
-                val dexDigest: MessageDigest = MessageDigest.getInstance("SHA-1")
-                val bytes = ByteArray(1024)
-                var byteCount: Int
-                val fis = FileInputStream(File(apkPath)) // 读取apk文件
-                while (fis.read(bytes).also { byteCount = it } != -1) {
-                    dexDigest.update(bytes, 0, byteCount)
-                }
-                val bigInteger = BigInteger(1, dexDigest.digest()) // 计算apk文件的哈希值
-                val sha: String = bigInteger.toString(16)
-                fis.close()
-                return sha
-            } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            return orginalSHA
-        }
-
-        /**
-         * 通过检查apk包的MD5摘要值来判断代码文件是否被篡改
-         *
-         * @param orginalMD5 原始Apk包的MD5值
-         */
-        fun apkVerifyWithMD5(context: Context, orginalMD5: String): String {
-            val apkPath = context.packageCodePath // 获取Apk包存储路径
-            LJ = apkPath.length
-            try {
-                val dexDigest: MessageDigest = MessageDigest.getInstance("MD5")
-                val bytes = ByteArray(1024)
-                var byteCount: Int
-                val fis = FileInputStream(File(apkPath)) // 读取apk文件
-                while (fis.read(bytes).also { byteCount = it } != -1) {
-                    dexDigest.update(bytes, 0, byteCount)
-                }
-                val bigInteger = BigInteger(1, dexDigest.digest()) // 计算apk文件的哈希值
-                val sha: String = bigInteger.toString(16)
-                fis.close()
-                return sha
-            } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            return orginalMD5
-        }
-
-        /**
-         * 通过检查classes.dex文件的CRC32摘要值来判断文件是否被篡改
-         *
-         * @param orginalCRC 原始classes.dex文件的CRC值
-         */
-        fun apkVerifyWithCRC(context: Context, orginalCRC: String): String {
-            val apkPath = context.packageCodePath // 获取Apk包存储路径
-            try {
-                val zipFile = ZipFile(apkPath)
-                val dexEntry: ZipEntry = zipFile.getEntry("classes.dex") // 读取ZIP包中的classes.dex文件
-                return dexEntry.crc.toString()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-            return orginalCRC
-        }
     }
 
     override fun onDestroy() {
