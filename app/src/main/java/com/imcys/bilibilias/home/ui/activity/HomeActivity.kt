@@ -36,28 +36,15 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
-        /*
-        备选方案
-        val paint = Paint()
-        val cm = ColorMatrix()
-        cm.setSaturation(0f)
-        mPaint.setColorFilter(ColorMatrixColorFilter(cm))
-        window.decorView.setLayerType(View.LAYER_TYPE_HARDWARE, paint)
-        */
 
-
-        //补全必须要的内容
+        // 补全必须要的内容
         activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-
 
         initFragment()
         loadFragment()
 
-
         parseShare()
-
     }
-
 
     /**
      * 初始化fragment
@@ -69,7 +56,7 @@ class HomeActivity : BaseActivity() {
         downloadFragment = DownloadFragment.newInstance()
     }
 
-    //启动时解析视频数据
+    // 启动时解析视频数据
     @SuppressLint("ResourceType")
     private fun parseShare() {
         val intent = intent
@@ -86,7 +73,7 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-    //复用/创建时检测
+    // 复用/创建时检测
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         val action = intent?.action
@@ -108,19 +95,16 @@ class HomeActivity : BaseActivity() {
                 toolFragment.parseShare(intent)
             }
         }
-
     }
 
-
-    //加载fragment
+    // 加载fragment
     private fun loadFragment() {
         val fragmentArrayList = ArrayList<Fragment>()
-        //添加fragment
+        // 添加fragment
         fragmentArrayList.add(homeFragment)
         fragmentArrayList.add(toolFragment)
         fragmentArrayList.add(downloadFragment)
         fragmentArrayList.add(userFragment)
-
 
         val myFragmentPageAdapter =
             MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
@@ -129,19 +113,16 @@ class HomeActivity : BaseActivity() {
             it.homeViewPage.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
 
-                //滚动监听选择
+                // 滚动监听选择
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     it.homeBottomNavigationView.menu.getItem(position).isChecked = true
                 }
-
-
             })
 
             it.homeViewPage.isUserInputEnabled = false
 
-
-            //点击监听
+            // 点击监听
             it.homeBottomNavigationView.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.home_bottom_menu_black_room -> {
@@ -166,26 +147,21 @@ class HomeActivity : BaseActivity() {
                 }
                 false
             }
-
         }
     }
 
     companion object {
-
         fun actionStart(context: Context, asUrl: String) {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("asUrl", asUrl)
             context.startActivity(intent)
         }
-
-
     }
 
     override fun onResume() {
         super.onResume()
         StatService.onResume(this)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -203,12 +179,12 @@ class HomeActivity : BaseActivity() {
     private fun exit() {
         if (System.currentTimeMillis() - exitTime > 2000) {
             Toast.makeText(
-                applicationContext, getString(R.string.app_HomeActivity_exit),
+                applicationContext,
+                getString(R.string.app_HomeActivity_exit),
                 Toast.LENGTH_SHORT
             ).show()
             exitTime = System.currentTimeMillis()
         } else {
-
             finishAll()
         }
     }

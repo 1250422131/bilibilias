@@ -14,10 +14,10 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback
@@ -25,7 +25,6 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-
 
 class OldHomeBeanAdapter(
     private val datas: MutableList<String>,
@@ -37,7 +36,9 @@ class OldHomeBeanAdapter(
         val binding =
             DataBindingUtil.inflate<ItemHomeBannerBinding>(
                 LayoutInflater.from(parent?.context),
-                R.layout.item_home_banner, parent, false
+                R.layout.item_home_banner,
+                parent,
+                false
             )
         return ViewHolder(binding.root)
     }
@@ -52,7 +53,6 @@ class OldHomeBeanAdapter(
             holder.itemView.setOnClickListener {
                 loadEvent(sumData.typeList[position], position, holder.itemView.context)
             }
-
         }
     }
 
@@ -60,7 +60,6 @@ class OldHomeBeanAdapter(
     private fun loadEvent(s: String?, position: Int, context: Context) {
         var intent = Intent()
         when (s) {
-
             "goBilibili" -> {
                 intent.type = "text/plain"
                 intent.data = Uri.parse(sumData.dataList[position])
@@ -76,7 +75,6 @@ class OldHomeBeanAdapter(
                 val uri = Uri.parse(sumData.dataList[position])
                 intent = Intent(Intent.ACTION_VIEW, uri)
                 context.startActivity(intent)
-
             }
 
             "getBiliBili" -> {
@@ -99,9 +97,7 @@ class OldHomeBeanAdapter(
                     token,
                     context
                 )
-
             }
-
         }
     }
 
@@ -147,30 +143,28 @@ class OldHomeBeanAdapter(
         failToast: String,
         context: Context,
     ) {
-
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
 
-        HttpUtils.addHeader(COOKIE, cookie).get(url, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
-            }
+        HttpUtils.addHeader(COOKIE, cookie).get(
+            url,
+            object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onResponse(call: Call, response: Response) {
-                val requestStr = response.body!!.string()
-                val requestJson = JSONObject(requestStr)
-                val code = requestJson.optInt("code")
-                val message = requestJson.optString("message")
+                override fun onResponse(call: Call, response: Response) {
+                    val requestStr = response.body!!.string()
+                    val requestJson = JSONObject(requestStr)
+                    val code = requestJson.optInt("code")
+                    val message = requestJson.optString("message")
 
-                if (code == 0) {
-                    Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
+                    if (code == 0) {
+                        Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-
-        })
-
+        )
     }
-
-
 }
