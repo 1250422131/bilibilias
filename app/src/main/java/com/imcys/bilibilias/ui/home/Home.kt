@@ -1,20 +1,18 @@
 package com.imcys.bilibilias.ui.home
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,15 +22,23 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.common.base.components.NavigationCard
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
+import com.zj.banner.BannerPager
+import com.zj.banner.model.BaseBannerBean
+import timber.log.Timber
 
 @Composable
 fun Home() {
-    val fragmentHomeViewModel = hiltViewModel<FragmentHomeViewModel>()
     ScreenContent(Modifier.padding(horizontal = 20.dp))
 }
 
+data class BannerBean(
+    override val data: String
+) : BaseBannerBean()
+
 @Composable
 private fun ScreenContent(modifier: Modifier = Modifier) {
+    val homeViewModel = hiltViewModel<FragmentHomeViewModel>()
+    Timber.tag("viewmodel").d(System.identityHashCode(homeViewModel).toString())
     FullScreenScaffold(
         modifier
             .fillMaxSize(),
@@ -50,12 +56,14 @@ private fun ScreenContent(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            movableContentOf {
+            }
             Banner()
-            TipInfo()
-            HomeTrophy()
+            UpdateContent()
+            Salute()
             // todo 捐款有特殊处理
-            RedEnvelopes()
-            Rabbit()
+            Donate()
+            Feedback()
             Logout()
         }
     }
@@ -72,17 +80,20 @@ private fun Logout() {
 }
 
 @Composable
-private fun Rabbit() {
+private fun Feedback(homeViewModel: FragmentHomeViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    Timber.tag("viewmodel").d(System.identityHashCode(homeViewModel).toString())
     NavigationCard(
         R.drawable.ic_home_rabbit,
         stringResource(R.string.app_fragment_home_feedback),
         stringResource(R.string.app_fragment_home_feedback_text),
-        stringResource(R.string.app_fragment_home_feedback_doc)
+        stringResource(R.string.app_fragment_home_feedback_doc),
+        Modifier.clickable { homeViewModel.goToCommunity(context) }
     )
 }
 
 @Composable
-private fun RedEnvelopes() {
+private fun Donate() {
     NavigationCard(
         R.drawable.ic_home_red_envelopes,
         stringResource(R.string.app_fragment_home_donate),
@@ -92,36 +103,42 @@ private fun RedEnvelopes() {
 }
 
 @Composable
-private fun HomeTrophy() {
+private fun Salute(homeViewModel: FragmentHomeViewModel = hiltViewModel()) {
+    Timber.tag("viewmodel").d(System.identityHashCode(homeViewModel).toString())
     NavigationCard(
         R.drawable.ic_home_trophy,
         stringResource(R.string.app_fragment_home_salute),
         stringResource(R.string.app_fragment_home_salute_text),
-        stringResource(R.string.app_fragment_home_salute_doc)
+        stringResource(R.string.app_fragment_home_salute_doc),
     )
 }
 
 @Composable
-private fun TipInfo() {
+private fun UpdateContent(homeViewModel: FragmentHomeViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    Timber.tag("viewmodel").d(System.identityHashCode(homeViewModel).toString())
     NavigationCard(
         R.drawable.ic_tip_info,
         stringResource(R.string.app_fragment_home_update_content),
         stringResource(R.string.app_fragment_home_version),
-        stringResource(R.string.new_version_doc)
+        stringResource(R.string.new_version_doc),
+        Modifier.clickable { homeViewModel.goToNewVersionDoc(context) }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Banner(modifier: Modifier = Modifier) {
-    Card(
-        onClick = { /*TODO*/ },
+    val items = arrayListOf(
+        BannerBean("https://www.wanandroid.com/blogimgs/8a0131ac-05b7-4b6c-a8d0-f438678834ba.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/62c1bd68-b5f3-4a3c-a649-7ca8c7dfabe6.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/90c6cc12-742e-4c9f-b318-b912f163b8d0.png"),
+    )
+    BannerPager(
         modifier
             .height(180.dp)
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.Red),
-        shape = RoundedCornerShape(10.dp)
-    ) {
+            .fillMaxWidth(),
+        items = items
+    ) { item ->
     }
 }
