@@ -63,6 +63,12 @@ kotlin {
 }
 
 dependencies {
+
+    /**
+     * banner
+     */
+    api(libs.zhujiang.banner)
+
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
@@ -89,6 +95,7 @@ dependencies {
      * MMKV 储存框架
      */
     api(libs.mmkv)
+    api(libs.fastkv)
 
     /**
      * 伸缩布局
