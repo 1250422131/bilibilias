@@ -63,12 +63,6 @@ kotlin {
 }
 
 dependencies {
-
-    /**
-     * banner
-     */
-    api(libs.zhujiang.banner)
-
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
@@ -222,7 +216,7 @@ dependencies {
     api(platform(libs.compose.bom))
     api(libs.ui)
     api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
+
     api(libs.material3)
     api(libs.accompanist.systemuicontroller)
     api(libs.accompanist.permissions)

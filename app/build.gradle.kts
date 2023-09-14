@@ -136,4 +136,11 @@ dependencies {
     detektPlugins(libs.kure.potlin)
     detektPlugins(libs.detekt.verify.implementation)
     detektPlugins(libs.rules.detekt)
+
+    /**
+     * banner
+     */
+    implementation(libs.zhujiang.banner)
+    debugImplementation(libs.ui.tooling)
+    implementation(libs.ui.tooling.preview)
 }

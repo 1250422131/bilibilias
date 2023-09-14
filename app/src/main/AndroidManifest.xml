@@ -23,6 +23,8 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
+    <uses-sdk tools:overrideLibrary="com.zj.banner" />
+
     <application
         android:name=".base.app.App"
         android:allowBackup="true"
@@ -138,8 +140,7 @@
         <activity
             android:name=".splash.ui.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.SplashOverlay">
-        </activity>
+            android:theme="@style/Theme.SplashOverlay"></activity>
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|smallestScreenSize"
