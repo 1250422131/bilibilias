@@ -77,7 +77,7 @@ detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", versi
 detekt-rules-libraries = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-libraries", version.ref = "detekt" }
 detekt-rules-ruleauthors = { group = "io.gitlab.arturbosch.detekt", name = "detekt-rules-ruleauthors", version.ref = "detekt" }
 detekt-verify-implementation = { group = "dk.cachet.detekt.extensions", name = "detekt-verify-implementation", version.ref = "detektVerifyImplementation" }
-fastkv = { module = "io.github.billywei01:fastkv", version.ref = "fastkv" }
+fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
