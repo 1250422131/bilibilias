@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+    </style>
+    <meta charset="utf-8">
+    <title>detekt report</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+        }
+
+        h1 {
+            font-family: Arial, sans-serif;
+            font-weight: 600;
+            width: fit-content;
+            background: -webkit-linear-gradient(left, rgba(105, 33, 224, 1), rgba(247, 44, 67, 1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-family: Arial, sans-serif;
+            font-weight: 400;
+            background: rgb(105, 33, 224);
+            background: linear-gradient(90deg, rgba(105, 33, 224, 0.8) 0%, rgba(158, 41, 156, 0.8) 50%, rgba(247, 44, 67, 0.8) 100%);
+            padding: 0.2em;
+            color: #ffffff;
+            border-radius: 4px;
+        }
+
+        h3 {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(90deg, rgba(105, 33, 224, 0.4) 0%, rgba(158, 41, 156, 0.4) 50%, rgba(247, 44, 67, 0.4) 100%);
+            padding: 0.5em;
+            border-radius: 4px;
+        }
+
+        .rule-container {
+            background: linear-gradient(90deg, rgba(105, 33, 224, 0.2) 0%, rgba(158, 41, 156, 0.2) 100%);
+            border-radius: 4px;
+            padding-left: 1em;
+            padding-bottom: 0.3em;
+            padding-top: 0.3em;
+            padding-right: 1em;
+            line-height: 1.5em;
+            margin-bottom: 8px;
+            margin-top: 8px;
+        }
+
+        .rule {
+            font-family: Arial, sans-serif;
+            padding: 0.3em;
+            font-weight: 600;
+            border-radius: 3px;
+        }
+
+        .description {
+            font-family: Arial, sans-serif;
+            color: #000000;
+            padding: 0.3em;
+        }
+
+        .location {
+            font-family: Jetbrains Mono, monospace;
+            font-weight: 500;
+            color: #000000;
+            display: block;
+        }
+
+        .message {
+            font-family: Arial, sans-serif;
+            font-size: 0.8em;
+            color: #444444;
+            display: block;
+            margin-top: 1pt;
+        }
+
+        code {
+            font-family: JetBrains Mono, monospace;
+            font-weight: 400;
+        }
+
+        pre {
+            font-family: JetBrains Mono, monospace;
+            font-weight: 500;
+            border: 1px solid #e0e0e0;
+            overflow: auto;
+        }
+
+        .lineno {
+            margin-right: 24px;
+            color: #9771c3;
+            background-color: rgba(230, 211, 243, 0.51);
+        }
+
+        .error {
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AwCFR4T/3uLMgAAADxJREFUCNdNyLERQEAABMCjL4lQwIzcjErpguAL+C9AvgKJDbeD/PRpLdm35Hm+MU+cB+tCKaJW4L4YBy+CAiLJrFs9mgAAAABJRU5ErkJggg==) bottom repeat-x;
+        }
+
+        .exception {
+            color: #b60808;
+            display: inline-block;
+            background-color: #ecdada;
+            border-color: #b60808;
+            border-radius: 10px;
+            border: solid 2px;
+            padding-left: 16px;
+            padding-right: 16px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="225" height="53" viewBox="0 0 225 53" fill="none"
+     style="padding-top: 8px">
+    <path d="M88.8883 42.2665V7.99487H81.6954V20.389C79.9918 18.3703 77.6257 16.6332 73.7926 16.6332C67.7828 16.6332 62.2461 21.2341 62.2461 29.6377V29.7316C62.2461 38.1352 67.8774 42.736 73.7926 42.736C77.5311 42.736 79.9445 40.9989 81.6954 38.6516V42.2665H88.8883ZM81.79 29.7316C81.79 33.9099 78.998 36.6798 75.6382 36.6798C72.2783 36.6798 69.439 33.9099 69.439 29.7316V29.6377C69.439 25.4124 72.2783 22.6894 75.6382 22.6894C78.998 22.6894 81.79 25.4593 81.79 29.6377V29.7316Z"
+          fill="#222222"/>
+    <path d="M120.325 30.3888V30.2949C120.325 23.1589 116.444 16.6332 107.974 16.6332C100.591 16.6332 95.4334 22.5486 95.4334 29.7316V29.8254C95.4334 37.5248 101.065 42.8299 108.683 42.8299C113.274 42.8299 116.681 41.0459 119.047 38.1352L114.93 34.5202C112.942 36.3511 111.192 37.1023 108.778 37.1023C105.56 37.1023 103.289 35.4122 102.579 32.1728H120.23C120.277 31.5156 120.325 31.093 120.325 30.3888ZM113.321 27.7128H102.484C103.052 24.4734 104.992 22.3608 107.974 22.3608C111.002 22.3608 112.895 24.5204 113.321 27.7128Z"
+          fill="#222222"/>
+    <path d="M141.278 41.2337V35.5061C140.237 36.0695 139.054 36.3981 137.729 36.3981C136.12 36.3981 135.41 35.6 135.41 33.9568V23.2059H141.373V17.1027H135.41V10.6709H128.217V17.1027H125.189V23.2059H128.217V35.1305C128.217 40.952 131.199 42.6891 135.599 42.6891C138.013 42.6891 139.764 42.1257 141.278 41.2337Z"
+          fill="#222222"/>
+    <path d="M172.008 30.3888V30.2949C172.008 23.1589 168.128 16.6332 159.657 16.6332C152.275 16.6332 147.117 22.5486 147.117 29.7316V29.8254C147.117 37.5248 152.748 42.8299 160.367 42.8299C164.958 42.8299 168.365 41.0459 170.731 38.1352L166.614 34.5202C164.626 36.3511 162.875 37.1023 160.462 37.1023C157.244 37.1023 154.973 35.4122 154.263 32.1728H171.914C171.961 31.5156 172.008 31.093 172.008 30.3888ZM165.005 27.7128H154.168C154.736 24.4734 156.676 22.3608 159.657 22.3608C162.686 22.3608 164.579 24.5204 165.005 27.7128Z"
+          fill="#222222"/>
+    <path d="M203.278 42.2665L193.293 27.0086L202.947 17.1027H194.334L185.911 26.2574V7.99487H178.718V42.2665H185.911V34.6141L188.419 31.985L195.044 42.2665H203.278Z"
+          fill="#222222"/>
+    <path d="M224.905 41.2337V35.5061C223.864 36.0695 222.681 36.3981 221.356 36.3981C219.747 36.3981 219.037 35.6 219.037 33.9568V23.2059H225V17.1027H219.037V10.6709H211.844V17.1027H208.816V23.2059H211.844V35.1305C211.844 40.952 214.826 42.6891 219.227 42.6891C221.64 42.6891 223.391 42.1257 224.905 41.2337Z"
+          fill="#222222"/>
+    <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M2.18611 0C0.978755 0 0 0.978755 0 2.18611V40.771C0 41.9783 0.978755 42.9571 2.18611 42.9571H24.2534C25.6525 42.9571 26.6258 41.5473 26.3774 40.1705C26.2109 39.2481 26.124 38.2981 26.124 37.3279C26.124 28.5443 33.2445 21.4239 42.028 21.4239C42.8689 21.4239 43.6945 21.4892 44.5001 21.6149C45.8578 21.8268 47.22 20.8585 47.22 19.4844V2.18611C47.22 0.978755 46.2412 0 45.0339 0H2.18611Z"
+          fill="url(#paint0_linear)"/>
+    <path d="M55.3358 48.6166L54.7673 48.0481L53.2421 46.5229L52.9516 46.2324C52.2427 45.5234 52.1855 44.4067 52.673 43.5306C53.6299 41.8109 54.1762 39.833 54.1762 37.7293C54.1762 32.9104 51.3147 28.7499 47.2029 26.8501C46.5196 26.5344 45.8024 26.2808 45.0573 26.0974C44.3636 25.9268 43.6467 25.8164 42.9118 25.7727C42.6749 25.7587 42.4369 25.7495 42.1966 25.7495C38.5166 25.7495 35.2203 27.4188 33.0211 30.0381C31.9784 31.2802 31.1838 32.7357 30.7114 34.3293C30.3916 35.4079 30.217 36.5481 30.217 37.7291C30.217 38.0293 30.2319 38.3259 30.2537 38.6205C30.3082 39.3559 30.4265 40.0733 30.6082 40.766C30.8038 41.5117 31.0689 42.2296 31.3974 42.9116C33.3332 46.9295 37.4465 49.7089 42.1967 49.7089C43.957 49.7089 45.6291 49.3259 47.1357 48.6403C47.9841 48.2543 49.0046 48.3536 49.6636 49.0127L50.0894 49.4385L51.6301 50.9794L52.3016 51.6509C52.7205 52.0699 53.2697 52.2794 53.8186 52.2794C54.3677 52.2794 54.9169 52.0699 55.3357 51.6509C56.1738 50.8129 56.1738 49.4544 55.3358 48.6166ZM42.1967 45.418C39.9525 45.418 37.93 44.451 36.5232 42.9122C35.9485 42.2836 35.4772 41.5594 35.135 40.7667C34.845 40.0954 34.6493 39.3746 34.5617 38.6211C34.5277 38.3283 34.5084 38.0314 34.5084 37.7297C34.5084 33.4903 37.9574 30.0413 42.1968 30.0413C42.4379 30.0413 42.6762 30.0539 42.912 30.0756C43.6638 30.1455 44.3837 30.3242 45.0576 30.5956C45.8458 30.9127 46.5689 31.3564 47.2031 31.902C48.8434 33.3131 49.8852 35.4015 49.8852 37.7297C49.885 41.9688 46.4361 45.418 42.1967 45.418Z"
+          fill="url(#paint1_linear)"/>
+    <path d="M9.9936 25.6979C9.34217 25.6979 8.84618 25.4958 8.50566 25.0914C8.16514 24.6709 7.99487 24.1695 7.99487 23.5873V23.4903C7.99487 22.908 8.16514 22.4147 8.50566 22.0104C8.84618 21.5899 9.34217 21.3796 9.9936 21.3796C10.645 21.3796 11.141 21.5899 11.4815 22.0104C11.8221 22.4147 11.9923 22.908 11.9923 23.4903V23.5873C11.9923 24.1695 11.8221 24.6709 11.4815 25.0914C11.141 25.4958 10.645 25.6979 9.9936 25.6979ZM8.17254 10.8158V7.99487H11.8147V10.8158L10.6598 19.1612H9.32736L8.17254 10.8158Z"
+          fill="white"/>
+    <path d="M20.2729 25.6979C19.6215 25.6979 19.1255 25.4958 18.785 25.0914C18.4444 24.6709 18.2742 24.1695 18.2742 23.5873V23.4903C18.2742 22.908 18.4444 22.4147 18.785 22.0104C19.1255 21.5899 19.6215 21.3796 20.2729 21.3796C20.9243 21.3796 21.4203 21.5899 21.7608 22.0104C22.1014 22.4147 22.2716 22.908 22.2716 23.4903V23.5873C22.2716 24.1695 22.1014 24.6709 21.7608 25.0914C21.4203 25.4958 20.9243 25.6979 20.2729 25.6979ZM18.4518 10.8158V7.99487H22.094V10.8158L20.9391 19.1612H19.6067L18.4518 10.8158Z"
+          fill="white"/>
+    <defs>
+        <linearGradient id="paint0_linear" x1="5.222e-07" y1="41.3361" x2="51.982" y2="33.29"
+                        gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7942EE"/>
+            <stop offset="1" stop-color="#FF4651"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear" x1="53.0121" y1="51.5465" x2="60.9801" y2="30.2423"
+                        gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7942EE"/>
+            <stop offset="1" stop-color="#FF4651"/>
+        </linearGradient>
+    </defs>
+</svg>
+
+<h2>Metrics</h2>
+
+<div>
+  <ul>
+    <li>36 number of properties</li>
+    <li>21 number of functions</li>
+    <li>22 number of classes</li>
+    <li>6 number of packages</li>
+    <li>10 number of kt files</li>
+  </ul>
+</div>
+
+
+<h2>Complexity Report</h2>
+
+<div>
+  <ul>
+    <li>647 lines of code (loc)</li>
+    <li>497 source lines of code (sloc)</li>
+    <li>317 logical lines of code (lloc)</li>
+    <li>64 comment lines of code (cloc)</li>
+    <li>76 cyclomatic complexity (mcc)</li>
+    <li>65 cognitive complexity</li>
+    <li>165 number of total code smells</li>
+    <li>12% comment source ratio</li>
+    <li>239 mcc per 1,000 lloc</li>
+    <li>520 code smells per 1,000 lloc</li>
+  </ul>
+</div>
+
+
+<h2>Findings</h2>
+<div>Total: 165
+  <h3>HbmartinRuleSet: 21</h3>
+  <details id="AvoidVarsExceptWithDelegate" open="open">
+    <summary class="rule-container"><span class="rule">AvoidVarsExceptWithDelegate: 15 </span><span class="description">Variables shouldn't be used except with delegates</span></summary>
+<a href="https://detekt.dev/docs/rules/hbmartinruleset#avoidvarsexceptwithdelegate">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:53:5</span><span class="message">Property bangumiFollowList is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno">  50 </span>
+<span class="lineno">  51 </span>class BangumiFollowLogActivity : LogExportBaseActivity() {
+<span class="lineno">  52 </span>
+<span class="lineno">  53 </span>    <span class="error">private lateinit var bangumiFollowList: BangumiFollowList</span>
+<span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    lateinit var binding: ActivityBangumiFollowLogBinding
+<span class="lineno">  56 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:55:5</span><span class="message">Property binding is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno">  52 </span>
+<span class="lineno">  53 </span>    private lateinit var bangumiFollowList: BangumiFollowList
+<span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    <span class="error">lateinit var binding: ActivityBangumiFollowLogBinding</span>
+<span class="lineno">  56 </span>
+<span class="lineno">  57 </span>    var selectedLogHeaders = mutableListOf&lt;BangumiFollowLogHeaderBean&gt;()
+<span class="lineno">  58 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:57:5</span><span class="message">Property selectedLogHeaders is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    lateinit var binding: ActivityBangumiFollowLogBinding
+<span class="lineno">  56 </span>
+<span class="lineno">  57 </span>    <span class="error">var selectedLogHeaders = mutableListOf&lt;BangumiFollowLogHeaderBean&gt;()</span>
+<span class="lineno">  58 </span>
+<span class="lineno">  59 </span>    private val defaultLogHeaders by lazy {
+<span class="lineno">  60 </span>        mutableListOf(
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:220:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 217 </span>            selectedLogHeaders.forEachIndexed { selectIndex, bangumiFollowLogHeaderBean -&gt;
+<span class="lineno"> 218 </span>                when (bangumiFollowLogHeaderBean.harder) {
+<span class="lineno"> 219 </span>                    Title -&gt; {
+<span class="lineno"> 220 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 221 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 222 </span>                            addCell(selectIndex, row++, it?.title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 223 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:227:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 224 </span>                    }
+<span class="lineno"> 225 </span>
+<span class="lineno"> 226 </span>                    SeasonID -&gt; {
+<span class="lineno"> 227 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 228 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 229 </span>                            addCell(
+<span class="lineno"> 230 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:239:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 236 </span>                    }
+<span class="lineno"> 237 </span>
+<span class="lineno"> 238 </span>                    Evaluate -&gt; {
+<span class="lineno"> 239 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 240 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 241 </span>                            addCell(selectIndex, row++, it?.evaluate ?: &quot;&quot;, arial10format)
+<span class="lineno"> 242 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:246:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 243 </span>                    }
+<span class="lineno"> 244 </span>
+<span class="lineno"> 245 </span>                    Summary -&gt; {
+<span class="lineno"> 246 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 247 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 248 </span>                            addCell(selectIndex, row++, it?.summary ?: &quot;&quot;, arial10format)
+<span class="lineno"> 249 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:253:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 250 </span>                    }
+<span class="lineno"> 251 </span>
+<span class="lineno"> 252 </span>                    TotalCount -&gt; {
+<span class="lineno"> 253 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 254 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 255 </span>                            addCell(
+<span class="lineno"> 256 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:265:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 262 </span>                    }
+<span class="lineno"> 263 </span>
+<span class="lineno"> 264 </span>                    Progress -&gt; {
+<span class="lineno"> 265 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 266 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 267 </span>                            addCell(selectIndex, row++, it?.progress ?: &quot;&quot;, arial10format)
+<span class="lineno"> 268 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:272:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 269 </span>                    }
+<span class="lineno"> 270 </span>
+<span class="lineno"> 271 </span>                    Cover -&gt; {
+<span class="lineno"> 272 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 273 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 274 </span>                            addCell(selectIndex, row++, it?.cover ?: &quot;&quot;, arial10format)
+<span class="lineno"> 275 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:279:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 276 </span>                    }
+<span class="lineno"> 277 </span>
+<span class="lineno"> 278 </span>                    SeasonTitle -&gt; {
+<span class="lineno"> 279 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 280 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 281 </span>                            addCell(selectIndex, row++, it?.season_title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 282 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:286:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 283 </span>                    }
+<span class="lineno"> 284 </span>
+<span class="lineno"> 285 </span>                    Subtitle -&gt; {
+<span class="lineno"> 286 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 287 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 288 </span>                            addCell(selectIndex, row++, it?.subtitle ?: &quot;&quot;, arial10format)
+<span class="lineno"> 289 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:293:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 290 </span>                    }
+<span class="lineno"> 291 </span>
+<span class="lineno"> 292 </span>                    Subtitle14 -&gt; {
+<span class="lineno"> 293 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 294 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 295 </span>                            addCell(selectIndex, row++, it?.subtitle_14 ?: &quot;&quot;, arial10format)
+<span class="lineno"> 296 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:300:25</span><span class="message">Property row is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno"> 297 </span>                    }
+<span class="lineno"> 298 </span>
+<span class="lineno"> 299 </span>                    SeasonTypeName -&gt; {
+<span class="lineno"> 300 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 301 </span>                        bangumiFollowList.data.list.forEachIndexed { index, listBean -&gt;
+<span class="lineno"> 302 </span>                            addCell(
+<span class="lineno"> 303 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:25:5</span><span class="message">Property binding is a `var`iable, please make it a val.</span>
+        <pre><code><span class="lineno">  22 </span>)
+<span class="lineno">  23 </span>class LogExportActivity : LogExportBaseActivity() {
+<span class="lineno">  24 </span>
+<span class="lineno">  25 </span>    <span class="error">lateinit var binding: ActivityLogExportBinding</span>
+<span class="lineno">  26 </span>
+<span class="lineno">  27 </span>    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="lineno">  28 </span>        super.onCreate(savedInstanceState)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="DontForceCast" open="open">
+    <summary class="rule-container"><span class="rule">DontForceCast: 1 </span><span class="description">Do not use unsafe casts, safely cast with as? instead.</span></summary>
+<a href="https://detekt.dev/docs/rules/hbmartinruleset#dontforcecast">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:176:19</span><span class="message">`Label(
+                    index,
+                    0,
+                    bangumiFollowLogHeaderBean.title,
+                    arial14format,
+                ) as WritableCell?` uses an unsafe cast, safely cast with as? instead.</span>
+        <pre><code><span class="lineno"> 173 </span>                    0,
+<span class="lineno"> 174 </span>                    bangumiFollowLogHeaderBean.title,
+<span class="lineno"> 175 </span>                    arial14format,
+<span class="lineno"> 176 </span>                ) <span class="error">as</span> WritableCell?,
+<span class="lineno"> 177 </span>            )
+<span class="lineno"> 178 </span>            // 列宽
+<span class="lineno"> 179 </span>            sheet.setColumnView(index, 300)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NoVarsInConstructor" open="open">
+    <summary class="rule-container"><span class="rule">NoVarsInConstructor: 5 </span><span class="description">Do not use `var`s in a class constructor.</span></summary>
+<a href="https://detekt.dev/docs/rules/hbmartinruleset#novarsinconstructor">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:26</span><span class="message">Disallowed `var` parameter var itemType: ExportItemEnum in constructor for ExportItemBean, please make it a val.</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class ExportItemBean<span class="error">(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:26</span><span class="message">Disallowed `var` parameter var title: String in constructor for ExportItemBean, please make it a val.</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class ExportItemBean<span class="error">(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:26</span><span class="message">Disallowed `var` parameter var longTitle: String in constructor for ExportItemBean, please make it a val.</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class ExportItemBean<span class="error">(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:26</span><span class="message">Disallowed `var` parameter var content: String in constructor for ExportItemBean, please make it a val.</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class ExportItemBean<span class="error">(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:26</span><span class="message">Disallowed `var` parameter var icoUrl: String in constructor for ExportItemBean, please make it a val.</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class ExportItemBean<span class="error">(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>complexity: 2</h3>
+  <details id="CyclomaticComplexMethod" open="open">
+    <summary class="rule-container"><span class="rule">CyclomaticComplexMethod: 1 </span><span class="description">Prefer splitting up complex methods into smaller, easier to test methods.</span></summary>
+<a href="https://detekt.dev/docs/rules/complexity#cyclomaticcomplexmethod">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:211:17</span><span class="message">The function editExcel appears to be too complex based on Cyclomatic Complexity (complexity: 45). Defined complexity threshold for methods is set to '15'</span>
+        <pre><code><span class="lineno"> 208 </span>    /**
+<span class="lineno"> 209 </span>     * 编辑excel
+<span class="lineno"> 210 </span>     */
+<span class="lineno"> 211 </span>    private fun <span class="error">editExcel</span>(bangumiFollowList: BangumiFollowList, sheet: WritableSheet, i: Int) {
+<span class="lineno"> 212 </span>        sheet.apply {
+<span class="lineno"> 213 </span>            val arial14font = WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD)
+<span class="lineno"> 214 </span>            val arial10format = WritableCellFormat(arial14font)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="LongMethod" open="open">
+    <summary class="rule-container"><span class="rule">LongMethod: 1 </span><span class="description">One method should have one responsibility. Long methods tend to handle many things at once. Prefer smaller methods to make them easier to understand.</span></summary>
+<a href="https://detekt.dev/docs/rules/complexity#longmethod">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:211:17</span><span class="message">The function editExcel is too long (92). The maximum length is 60.</span>
+        <pre><code><span class="lineno"> 208 </span>    /**
+<span class="lineno"> 209 </span>     * 编辑excel
+<span class="lineno"> 210 </span>     */
+<span class="lineno"> 211 </span>    private fun <span class="error">editExcel</span>(bangumiFollowList: BangumiFollowList, sheet: WritableSheet, i: Int) {
+<span class="lineno"> 212 </span>        sheet.apply {
+<span class="lineno"> 213 </span>            val arial14font = WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD)
+<span class="lineno"> 214 </span>            val arial10format = WritableCellFormat(arial14font)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>formatting: 75</h3>
+  <details id="CommentSpacing" open="open">
+    <summary class="rule-container"><span class="rule">CommentSpacing: 28 </span><span class="description">Checks if comments have the right spacing</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#commentspacing">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:4:11</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   1 </span>package com.imcys.bilibilias.tool_log_export.data.mEnum
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,<span class="error">//标题</span>
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:4:11</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   1 </span>package com.imcys.bilibilias.tool_log_export.data.mEnum
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,<span class="error">//标题</span>
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:5:14</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,<span class="error">//评价</span>
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:5:14</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,<span class="error">//评价</span>
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:6:14</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,<span class="error">//SSID</span>
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:6:14</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,<span class="error">//SSID</span>
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:7:13</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,<span class="error">//简介</span>
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:7:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,<span class="error">//简介</span>
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:8:14</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,<span class="error">//短简介</span>
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:8:14</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,<span class="error">//短简介</span>
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:9:16</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,<span class="error">//14字短简介</span>
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:9:16</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,<span class="error">//14字短简介</span>
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:10:16</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,<span class="error">//总集数</span>
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:10:16</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,<span class="error">//总集数</span>
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:11:14</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,<span class="error">//观看进度</span>
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:11:14</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,<span class="error">//观看进度</span>
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:12:11</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,<span class="error">//封面海报</span>
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:12:11</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,<span class="error">//封面海报</span>
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:13:17</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,<span class="error">//季度信息</span>
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:13:17</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,<span class="error">//季度信息</span>
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:14:20</span><span class="message">Missing space before //</span>
+        <pre><code><span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,<span class="error">//创作类型,</span>
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:14:20</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,<span class="error">//创作类型,</span>
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:60:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  57 </span>
+<span class="lineno">  58 </span>
+<span class="lineno">  59 </span>        binding.logExportHomeRv.linear().setup {
+<span class="lineno">  60 </span>            <span class="error">//防抖动</span>
+<span class="lineno">  61 </span>            clickThrottle = 1000 // 单位毫秒
+<span class="lineno">  62 </span>            setAnimation(AnimationType.SCALE)
+<span class="lineno">  63 </span>            addType&lt;ExportItemBean&gt;(R.layout.log_export_item_export_tool)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:25:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  22 </span>         */
+<span class="lineno">  23 </span>        @SuppressLint(&quot;InflateParams&quot;, &quot;MissingInflatedId&quot;)
+<span class="lineno">  24 </span>        fun loadDialog(context: Context, mutableState: String): BottomSheetDialog {
+<span class="lineno">  25 </span>            <span class="error">//先获取View实例</span>
+<span class="lineno">  26 </span>            val view: View = LayoutInflater.from(context)
+<span class="lineno">  27 </span>                .inflate(R.layout.log_export_dialog_load_bottomsheet, null, false)
+<span class="lineno">  28 </span>            val loadText = view.findViewById&lt;TextView&gt;(R.id.log_export_dl_load_title)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:30:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  27 </span>                .inflate(R.layout.log_export_dialog_load_bottomsheet, null, false)
+<span class="lineno">  28 </span>            val loadText = view.findViewById&lt;TextView&gt;(R.id.log_export_dl_load_title)
+<span class="lineno">  29 </span>            loadText.text = mutableState
+<span class="lineno">  30 </span>            <span class="error">//设置布局背景</span>
+<span class="lineno">  31 </span>            //自定义方案
+<span class="lineno">  32 </span>            //mDialogBehavior.peekHeight = 600
+<span class="lineno">  33 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:31:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  28 </span>            val loadText = view.findViewById&lt;TextView&gt;(R.id.log_export_dl_load_title)
+<span class="lineno">  29 </span>            loadText.text = mutableState
+<span class="lineno">  30 </span>            //设置布局背景
+<span class="lineno">  31 </span>            <span class="error">//自定义方案</span>
+<span class="lineno">  32 </span>            //mDialogBehavior.peekHeight = 600
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>            return initBottomSheetDialog(context, view)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:32:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  29 </span>            loadText.text = mutableState
+<span class="lineno">  30 </span>            //设置布局背景
+<span class="lineno">  31 </span>            //自定义方案
+<span class="lineno">  32 </span>            <span class="error">//mDialogBehavior.peekHeight = 600</span>
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>            return initBottomSheetDialog(context, view)
+<span class="lineno">  35 </span>        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:44:13</span><span class="message">Missing space after //</span>
+        <pre><code><span class="lineno">  41 </span>                context,
+<span class="lineno">  42 </span>                com.imcys.asbottomdialog.bottomdialog.R.style.asdialog_BottomSheetDialog
+<span class="lineno">  43 </span>            )
+<span class="lineno">  44 </span>            <span class="error">//设置布局</span>
+<span class="lineno">  45 </span>            bottomSheetDialog.setContentView(view)
+<span class="lineno">  46 </span>
+<span class="lineno">  47 </span>            return bottomSheetDialog
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="FinalNewline" open="open">
+    <summary class="rule-container"><span class="rule">FinalNewline: 7 </span><span class="description">Detects missing final newlines</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#finalnewline">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">enum class BangumiFollowLogHeader {</span>
+<span class="lineno">   4 </span><span class="error">    Title,//标题</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/ExportItemEnum.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">enum class ExportItemEnum {</span>
+<span class="lineno">   4 </span><span class="error">    BangumiFollowLog,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.model</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum</span>
+<span class="lineno">   4 </span><span class="error"></span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.ui.activity</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">import android.content.Context</span>
+<span class="lineno">   4 </span><span class="error">import android.os.Bundle</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">import jxl.Workbook</span>
+<span class="lineno">   4 </span><span class="error">import jxl.format.CellFormat</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">import android.annotation.SuppressLint</span>
+<span class="lineno">   4 </span><span class="error">import android.content.Context</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/test/java/com/imcys/bilibilias/tool_log_export/ExampleUnitTest.kt:1:1</span><span class="message">File must end with a newline (\n)</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export</span>
+<span class="lineno">   2 </span><span class="error"></span>
+<span class="lineno">   3 </span><span class="error">import org.junit.Assert.assertEquals</span>
+<span class="lineno">   4 </span><span class="error">import org.junit.Test</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NoBlankLineBeforeRbrace" open="open">
+    <summary class="rule-container"><span class="rule">NoBlankLineBeforeRbrace: 8 </span><span class="description">Detects blank lines before rbraces</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#noblanklinebeforerbrace">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:14:27</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,<span class="error"></span>
+<span class="lineno">  15 </span><span class="error"></span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:38:19</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  35 </span>            logExportHomeTopLy.addStatusBarTopPadding()
+<span class="lineno">  36 </span>        }
+<span class="lineno">  37 </span>
+<span class="lineno">  38 </span>        initView()<span class="error"></span>
+<span class="lineno">  39 </span><span class="error"></span>
+<span class="lineno">  40 </span><span class="error">    </span>}
+<span class="lineno">  41 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:67:14</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  64 </span>
+<span class="lineno">  65 </span>            onClick(R.id.log_export_tool_item_ly) {
+<span class="lineno">  66 </span>                activateClickEvent(getModel())
+<span class="lineno">  67 </span>            }<span class="error"></span>
+<span class="lineno">  68 </span><span class="error"></span>
+<span class="lineno">  69 </span><span class="error">        </span>}.models = exportItemBeans
+<span class="lineno">  70 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:69:35</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  66 </span>                activateClickEvent(getModel())
+<span class="lineno">  67 </span>            }
+<span class="lineno">  68 </span>
+<span class="lineno">  69 </span>        }.models = exportItemBeans<span class="error"></span>
+<span class="lineno">  70 </span><span class="error"></span>
+<span class="lineno">  71 </span><span class="error"></span>
+<span class="lineno">  72 </span><span class="error">    </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:80:41</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  77 </span>                BangumiFollowLogActivity.actionStart(this)
+<span class="lineno">  78 </span>            }
+<span class="lineno">  79 </span>
+<span class="lineno">  80 </span>            ExportItemEnum.VideoLog -&gt; {<span class="error"></span>
+<span class="lineno">  81 </span><span class="error"></span>
+<span class="lineno">  82 </span><span class="error">            </span>}
+<span class="lineno">  83 </span>        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:92:10</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  89 </span>                .with(context)
+<span class="lineno">  90 </span>                .hostAndPath(ARouterAddress.LogExportActivity)
+<span class="lineno">  91 </span>                .forward { }
+<span class="lineno">  92 </span>        }<span class="error"></span>
+<span class="lineno">  93 </span><span class="error"></span>
+<span class="lineno">  94 </span><span class="error">    </span>}
+<span class="lineno">  95 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:32:6</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  29 </span>    ): WritableSheet {
+<span class="lineno">  30 </span>        this.addCell(Label(column, row, content, st))
+<span class="lineno">  31 </span>        return this
+<span class="lineno">  32 </span>    }<span class="error"></span>
+<span class="lineno">  33 </span><span class="error"></span>
+<span class="lineno">  34 </span><span class="error"></span>
+<span class="lineno">  35 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:49:6</span><span class="message">Unexpected blank line(s) before &quot;}&quot;</span>
+        <pre><code><span class="lineno">  46 </span>
+<span class="lineno">  47 </span>            return bottomSheetDialog
+<span class="lineno">  48 </span>        }
+<span class="lineno">  49 </span>    }<span class="error"></span>
+<span class="lineno">  50 </span><span class="error"></span>
+<span class="lineno">  51 </span>}
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NoConsecutiveBlankLines" open="open">
+    <summary class="rule-container"><span class="rule">NoConsecutiveBlankLines: 7 </span><span class="description">Reports consecutive blank lines</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#noconsecutiveblanklines">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:56:10</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">  53 </span>                &quot;&quot;,
+<span class="lineno">  54 </span>                &quot;https://s1.ax1x.com/2023/02/06/pS6OIfg.png&quot;
+<span class="lineno">  55 </span>            )
+<span class="lineno">  56 </span>        )<span class="error"></span>
+<span class="lineno">  57 </span><span class="error"></span>
+<span class="lineno">  58 </span><span class="error"></span>
+<span class="lineno">  59 </span><span class="error">        </span>binding.logExportHomeRv.linear().setup {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:69:35</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">  66 </span>                activateClickEvent(getModel())
+<span class="lineno">  67 </span>            }
+<span class="lineno">  68 </span>
+<span class="lineno">  69 </span>        }.models = exportItemBeans<span class="error"></span>
+<span class="lineno">  70 </span><span class="error"></span>
+<span class="lineno">  71 </span><span class="error"></span>
+<span class="lineno">  72 </span><span class="error">    </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:8:20</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">   5 </span>import jxl.write.Label
+<span class="lineno">   6 </span>import jxl.write.WritableSheet
+<span class="lineno">   7 </span>import jxl.write.WritableWorkbook
+<span class="lineno">   8 </span>import java.io.File<span class="error"></span>
+<span class="lineno">   9 </span><span class="error"></span>
+<span class="lineno">  10 </span><span class="error"></span>
+<span class="lineno">  11 </span>object ExcelUtils {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:21:6</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">  18 </span>        }
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span>        return Workbook.createWorkbook(file)
+<span class="lineno">  21 </span>    }<span class="error"></span>
+<span class="lineno">  22 </span><span class="error"></span>
+<span class="lineno">  23 </span><span class="error"></span>
+<span class="lineno">  24 </span><span class="error">    </span>fun WritableSheet.addCell(
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:32:6</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">  29 </span>    ): WritableSheet {
+<span class="lineno">  30 </span>        this.addCell(Label(column, row, content, st))
+<span class="lineno">  31 </span>        return this
+<span class="lineno">  32 </span>    }<span class="error"></span>
+<span class="lineno">  33 </span><span class="error"></span>
+<span class="lineno">  34 </span><span class="error"></span>
+<span class="lineno">  35 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:9:46</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">   6 </span>import android.view.View
+<span class="lineno">   7 </span>import android.widget.TextView
+<span class="lineno">   8 </span>import com.google.android.material.bottomsheet.BottomSheetDialog
+<span class="lineno">   9 </span>import com.imcys.bilibilias.tool_log_export.R<span class="error"></span>
+<span class="lineno">  10 </span><span class="error"></span>
+<span class="lineno">  11 </span><span class="error"></span>
+<span class="lineno">  12 </span>/**
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:35:10</span><span class="message">Needless blank line(s)</span>
+        <pre><code><span class="lineno">  32 </span>            //mDialogBehavior.peekHeight = 600
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>            return initBottomSheetDialog(context, view)
+<span class="lineno">  35 </span>        }<span class="error"></span>
+<span class="lineno">  36 </span><span class="error"></span>
+<span class="lineno">  37 </span><span class="error"></span>
+<span class="lineno">  38 </span><span class="error">        </span>private fun initBottomSheetDialog(context: Context, view: View): BottomSheetDialog {
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NoEmptyFirstLineInMethodBlock" open="open">
+    <summary class="rule-container"><span class="rule">NoEmptyFirstLineInMethodBlock: 4 </span><span class="description">Reports methods that have an empty first line.</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#noemptyfirstlineinmethodblock">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:42:29</span><span class="message">First line in a method block should not be empty</span>
+        <pre><code><span class="lineno">  39 </span>
+<span class="lineno">  40 </span>    }
+<span class="lineno">  41 </span>
+<span class="lineno">  42 </span>    private fun initView() {<span class="error"></span>
+<span class="lineno">  43 </span><span class="error"></span>
+<span class="lineno">  44 </span><span class="error">        </span>loadRvData()
+<span class="lineno">  45 </span>    }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:80:41</span><span class="message">First line in a method block should not be empty</span>
+        <pre><code><span class="lineno">  77 </span>                BangumiFollowLogActivity.actionStart(this)
+<span class="lineno">  78 </span>            }
+<span class="lineno">  79 </span>
+<span class="lineno">  80 </span>            ExportItemEnum.VideoLog -&gt; {<span class="error"></span>
+<span class="lineno">  81 </span><span class="error"></span>
+<span class="lineno">  82 </span><span class="error">            </span>}
+<span class="lineno">  83 </span>        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:13:52</span><span class="message">First line in a method block should not be empty</span>
+        <pre><code><span class="lineno">  10 </span>
+<span class="lineno">  11 </span>object ExcelUtils {
+<span class="lineno">  12 </span>
+<span class="lineno">  13 </span>    fun initExcel(path: String): WritableWorkbook {<span class="error"></span>
+<span class="lineno">  14 </span><span class="error"></span>
+<span class="lineno">  15 </span><span class="error">        </span>val file = File(path)
+<span class="lineno">  16 </span>        if (!file.exists()) {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:38:93</span><span class="message">First line in a method block should not be empty</span>
+        <pre><code><span class="lineno">  35 </span>        }
+<span class="lineno">  36 </span>
+<span class="lineno">  37 </span>
+<span class="lineno">  38 </span>        private fun initBottomSheetDialog(context: Context, view: View): BottomSheetDialog {<span class="error"></span>
+<span class="lineno">  39 </span><span class="error"></span>
+<span class="lineno">  40 </span><span class="error">            </span>val bottomSheetDialog = BottomSheetDialog(
+<span class="lineno">  41 </span>                context,
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="PackageName" open="open">
+    <summary class="rule-container"><span class="rule">PackageName: 10 </span><span class="description">Checks package name is formatted correctly</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#packagename">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/base/activity/LogExportBaseActivity.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.base.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.os.Bundle
+<span class="lineno">   4 </span>import com.imcys.bilibilias.common.base.AbsActivity
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/ExportItemEnum.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class ExportItemEnum {
+<span class="lineno">   4 </span>    BangumiFollowLog,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/BangumiFollowLogHeaderBean.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.model</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader
+<span class="lineno">   4 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.model</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.ui.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.content.Context
+<span class="lineno">   4 </span>import android.content.Intent
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.ui.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.content.Context
+<span class="lineno">   4 </span>import android.os.Bundle
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import jxl.Workbook
+<span class="lineno">   4 </span>import jxl.format.CellFormat
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.annotation.SuppressLint
+<span class="lineno">   4 </span>import android.content.Context
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/test/java/com/imcys/bilibilias/tool_log_export/ExampleUnitTest.kt:1:1</span><span class="message">Package name must not contain underscore</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import org.junit.Assert.assertEquals
+<span class="lineno">   4 </span>import org.junit.Test
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="SpacingAroundComma" open="open">
+    <summary class="rule-container"><span class="rule">SpacingAroundComma: 11 </span><span class="description">Reports spaces around commas</span></summary>
+<a href="https://detekt.dev/docs/rules/formatting#spacingaroundcomma">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:4:10</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   1 </span>package com.imcys.bilibilias.tool_log_export.data.mEnum
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title<span class="error">,</span>//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:5:13</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate<span class="error">,</span>//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:6:13</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID<span class="error">,</span>//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:7:12</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   4 </span>    Title,//标题
+<span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary<span class="error">,</span>//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:8:13</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   5 </span>    Evaluate,//评价
+<span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle<span class="error">,</span>//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:9:15</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   6 </span>    SeasonID,//SSID
+<span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14<span class="error">,</span>//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:10:15</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   7 </span>    Summary,//简介
+<span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount<span class="error">,</span>//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:11:13</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   8 </span>    Subtitle,//短简介
+<span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress<span class="error">,</span>//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:12:10</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">   9 </span>    Subtitle14,//14字短简介
+<span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover<span class="error">,</span>//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:13:16</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">  10 </span>    TotalCount,//总集数
+<span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle<span class="error">,</span>//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:14:19</span><span class="message">Missing spacing after &quot;,&quot;</span>
+        <pre><code><span class="lineno">  11 </span>    Progress,//观看进度
+<span class="lineno">  12 </span>    Cover,//封面海报
+<span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName<span class="error">,</span>//创作类型,
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>impure: 21</h3>
+  <details id="LoopDefinition" open="open">
+    <summary class="rule-container"><span class="rule">LoopDefinition: 1 </span><span class="description">Shouldn't use loops in functional code</span></summary>
+<a href="https://detekt.dev/docs/rules/impure#loopdefinition">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:187:13</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains loop.</span>
+        <pre><code><span class="lineno"> 184 </span>            val loadDialog =
+<span class="lineno"> 185 </span>                ExportDialogUtils.loadDialog(this@BangumiFollowLogActivity, loadTitle.value)
+<span class="lineno"> 186 </span>                    .apply { show() }
+<span class="lineno"> 187 </span>            <span class="error">for (i in 1..totalPage) {</span>
+<span class="lineno"> 188 </span><span class="error">                loadTitle.value = &quot;正在获取第${i}页&quot;</span>
+<span class="lineno"> 189 </span><span class="error">                launchIO { val bangumiFollowList = getBangumiFollowList(i) }</span>
+<span class="lineno"> 190 </span><span class="error">                loadTitle.value = &quot;正在存储第${i}页&quot;</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="ReturnStatement" open="open">
+    <summary class="rule-container"><span class="rule">ReturnStatement: 5 </span><span class="description">Pure function shouldn't have return statement</span></summary>
+<a href="https://detekt.dev/docs/rules/impure#returnstatement">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:316:9</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `return` statement.</span>
+        <pre><code><span class="lineno"> 313 </span>    }
+<span class="lineno"> 314 </span>
+<span class="lineno"> 315 </span>    private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
+<span class="lineno"> 316 </span>        <span class="error">return KtHttpUtils.addHeader(COOKIE, asUser.cookie)</span>
+<span class="lineno"> 317 </span><span class="error">            .asyncGet(&quot;${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&amp;type=1&amp;pn=$pn&amp;ps=30&quot;)</span>
+<span class="lineno"> 318 </span>    }
+<span class="lineno"> 319 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:20:9</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExcelUtils.kt contains `return` statement.</span>
+        <pre><code><span class="lineno">  17 </span>            file.createNewFile()
+<span class="lineno">  18 </span>        }
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span>        <span class="error">return Workbook.createWorkbook(file)</span>
+<span class="lineno">  21 </span>    }
+<span class="lineno">  22 </span>
+<span class="lineno">  23 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:31:9</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExcelUtils.kt contains `return` statement.</span>
+        <pre><code><span class="lineno">  28 </span>        st: CellFormat
+<span class="lineno">  29 </span>    ): WritableSheet {
+<span class="lineno">  30 </span>        this.addCell(Label(column, row, content, st))
+<span class="lineno">  31 </span>        <span class="error">return this</span>
+<span class="lineno">  32 </span>    }
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:34:13</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExportDialogUtils.kt contains `return` statement.</span>
+        <pre><code><span class="lineno">  31 </span>            //自定义方案
+<span class="lineno">  32 </span>            //mDialogBehavior.peekHeight = 600
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>            <span class="error">return initBottomSheetDialog(context, view)</span>
+<span class="lineno">  35 </span>        }
+<span class="lineno">  36 </span>
+<span class="lineno">  37 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:47:13</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExportDialogUtils.kt contains `return` statement.</span>
+        <pre><code><span class="lineno">  44 </span>            //设置布局
+<span class="lineno">  45 </span>            bottomSheetDialog.setContentView(view)
+<span class="lineno">  46 </span>
+<span class="lineno">  47 </span>            <span class="error">return bottomSheetDialog</span>
+<span class="lineno">  48 </span>        }
+<span class="lineno">  49 </span>    }
+<span class="lineno">  50 </span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="VariableDefinition" open="open">
+    <summary class="rule-container"><span class="rule">VariableDefinition: 15 </span><span class="description">Variables shouldn't be used in pure code</span></summary>
+<a href="https://detekt.dev/docs/rules/impure#variabledefinition">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:53:5</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno">  50 </span>
+<span class="lineno">  51 </span>class BangumiFollowLogActivity : LogExportBaseActivity() {
+<span class="lineno">  52 </span>
+<span class="lineno">  53 </span>    <span class="error">private lateinit var bangumiFollowList: BangumiFollowList</span>
+<span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    lateinit var binding: ActivityBangumiFollowLogBinding
+<span class="lineno">  56 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:55:5</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno">  52 </span>
+<span class="lineno">  53 </span>    private lateinit var bangumiFollowList: BangumiFollowList
+<span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    <span class="error">lateinit var binding: ActivityBangumiFollowLogBinding</span>
+<span class="lineno">  56 </span>
+<span class="lineno">  57 </span>    var selectedLogHeaders = mutableListOf&lt;BangumiFollowLogHeaderBean&gt;()
+<span class="lineno">  58 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:57:5</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno">  54 </span>
+<span class="lineno">  55 </span>    lateinit var binding: ActivityBangumiFollowLogBinding
+<span class="lineno">  56 </span>
+<span class="lineno">  57 </span>    <span class="error">var selectedLogHeaders = mutableListOf&lt;BangumiFollowLogHeaderBean&gt;()</span>
+<span class="lineno">  58 </span>
+<span class="lineno">  59 </span>    private val defaultLogHeaders by lazy {
+<span class="lineno">  60 </span>        mutableListOf(
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:220:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 217 </span>            selectedLogHeaders.forEachIndexed { selectIndex, bangumiFollowLogHeaderBean -&gt;
+<span class="lineno"> 218 </span>                when (bangumiFollowLogHeaderBean.harder) {
+<span class="lineno"> 219 </span>                    Title -&gt; {
+<span class="lineno"> 220 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 221 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 222 </span>                            addCell(selectIndex, row++, it?.title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 223 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:227:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 224 </span>                    }
+<span class="lineno"> 225 </span>
+<span class="lineno"> 226 </span>                    SeasonID -&gt; {
+<span class="lineno"> 227 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 228 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 229 </span>                            addCell(
+<span class="lineno"> 230 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:239:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 236 </span>                    }
+<span class="lineno"> 237 </span>
+<span class="lineno"> 238 </span>                    Evaluate -&gt; {
+<span class="lineno"> 239 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 240 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 241 </span>                            addCell(selectIndex, row++, it?.evaluate ?: &quot;&quot;, arial10format)
+<span class="lineno"> 242 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:246:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 243 </span>                    }
+<span class="lineno"> 244 </span>
+<span class="lineno"> 245 </span>                    Summary -&gt; {
+<span class="lineno"> 246 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 247 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 248 </span>                            addCell(selectIndex, row++, it?.summary ?: &quot;&quot;, arial10format)
+<span class="lineno"> 249 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:253:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 250 </span>                    }
+<span class="lineno"> 251 </span>
+<span class="lineno"> 252 </span>                    TotalCount -&gt; {
+<span class="lineno"> 253 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 254 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 255 </span>                            addCell(
+<span class="lineno"> 256 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:265:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 262 </span>                    }
+<span class="lineno"> 263 </span>
+<span class="lineno"> 264 </span>                    Progress -&gt; {
+<span class="lineno"> 265 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 266 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 267 </span>                            addCell(selectIndex, row++, it?.progress ?: &quot;&quot;, arial10format)
+<span class="lineno"> 268 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:272:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 269 </span>                    }
+<span class="lineno"> 270 </span>
+<span class="lineno"> 271 </span>                    Cover -&gt; {
+<span class="lineno"> 272 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 273 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 274 </span>                            addCell(selectIndex, row++, it?.cover ?: &quot;&quot;, arial10format)
+<span class="lineno"> 275 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:279:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 276 </span>                    }
+<span class="lineno"> 277 </span>
+<span class="lineno"> 278 </span>                    SeasonTitle -&gt; {
+<span class="lineno"> 279 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 280 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 281 </span>                            addCell(selectIndex, row++, it?.season_title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 282 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:286:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 283 </span>                    }
+<span class="lineno"> 284 </span>
+<span class="lineno"> 285 </span>                    Subtitle -&gt; {
+<span class="lineno"> 286 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 287 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 288 </span>                            addCell(selectIndex, row++, it?.subtitle ?: &quot;&quot;, arial10format)
+<span class="lineno"> 289 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:293:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 290 </span>                    }
+<span class="lineno"> 291 </span>
+<span class="lineno"> 292 </span>                    Subtitle14 -&gt; {
+<span class="lineno"> 293 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 294 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 295 </span>                            addCell(selectIndex, row++, it?.subtitle_14 ?: &quot;&quot;, arial10format)
+<span class="lineno"> 296 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:300:25</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\BangumiFollowLogActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno"> 297 </span>                    }
+<span class="lineno"> 298 </span>
+<span class="lineno"> 299 </span>                    SeasonTypeName -&gt; {
+<span class="lineno"> 300 </span>                        <span class="error">var row = if (i == 0) i + 1 else 30 * i</span>
+<span class="lineno"> 301 </span>                        bangumiFollowList.data.list.forEachIndexed { index, listBean -&gt;
+<span class="lineno"> 302 </span>                            addCell(
+<span class="lineno"> 303 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:25:5</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\LogExportActivity.kt contains `var`iable.</span>
+        <pre><code><span class="lineno">  22 </span>)
+<span class="lineno">  23 </span>class LogExportActivity : LogExportBaseActivity() {
+<span class="lineno">  24 </span>
+<span class="lineno">  25 </span>    <span class="error">lateinit var binding: ActivityLogExportBinding</span>
+<span class="lineno">  26 </span>
+<span class="lineno">  27 </span>    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="lineno">  28 </span>        super.onCreate(savedInstanceState)
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>libraries: 11</h3>
+  <details id="ForbiddenPublicDataClass" open="open">
+    <summary class="rule-container"><span class="rule">ForbiddenPublicDataClass: 2 </span><span class="description">The data classes are bad for the binary compatibility in public APIs. Avoid to use it.</span></summary>
+<a href="https://detekt.dev/docs/rules/libraries#forbiddenpublicdataclass">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/BangumiFollowLogHeaderBean.kt:5:12</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class <span class="error">BangumiFollowLogHeaderBean</span>(
+<span class="lineno">   6 </span>    val title: String,
+<span class="lineno">   7 </span>    val harder: BangumiFollowLogHeader,
+<span class="lineno">   8 </span>)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:12</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span>data class <span class="error">ExportItemBean</span>(
+<span class="lineno">   6 </span>    var itemType: ExportItemEnum,
+<span class="lineno">   7 </span>    var title: String,
+<span class="lineno">   8 </span>    var longTitle: String,
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="LibraryEntitiesShouldNotBePublic" open="open">
+    <summary class="rule-container"><span class="rule">LibraryEntitiesShouldNotBePublic: 9 </span><span class="description">Library classes should not be public.</span></summary>
+<a href="https://detekt.dev/docs/rules/libraries#libraryentitiesshouldnotbepublic">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/base/activity/LogExportBaseActivity.kt:6:1</span><span class="message">Class LogExportBaseActivity should not be public</span>
+        <pre><code><span class="lineno">   3 </span>import android.os.Bundle
+<span class="lineno">   4 </span>import com.imcys.bilibilias.common.base.AbsActivity
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span><span class="error">open class LogExportBaseActivity : AbsActivity() {</span>
+<span class="lineno">   7 </span><span class="error">    override fun onCreate(savedInstanceState: Bundle?) {</span>
+<span class="lineno">   8 </span><span class="error">        super.onCreate(savedInstanceState)</span>
+<span class="lineno">   9 </span><span class="error">        // 沉浸式</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:3:1</span><span class="message">Class BangumiFollowLogHeader should not be public</span>
+        <pre><code><span class="lineno">   1 </span>package com.imcys.bilibilias.tool_log_export.data.mEnum
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span><span class="error">enum class BangumiFollowLogHeader {</span>
+<span class="lineno">   4 </span><span class="error">    Title,//标题</span>
+<span class="lineno">   5 </span><span class="error">    Evaluate,//评价</span>
+<span class="lineno">   6 </span><span class="error">    SeasonID,//SSID</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/ExportItemEnum.kt:3:1</span><span class="message">Class ExportItemEnum should not be public</span>
+        <pre><code><span class="lineno">   1 </span>package com.imcys.bilibilias.tool_log_export.data.mEnum
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span><span class="error">enum class ExportItemEnum {</span>
+<span class="lineno">   4 </span><span class="error">    BangumiFollowLog,</span>
+<span class="lineno">   5 </span><span class="error">    VideoLog,</span>
+<span class="lineno">   6 </span><span class="error">}</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/BangumiFollowLogHeaderBean.kt:5:1</span><span class="message">Class BangumiFollowLogHeaderBean should not be public</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span><span class="error">data class BangumiFollowLogHeaderBean(</span>
+<span class="lineno">   6 </span><span class="error">    val title: String,</span>
+<span class="lineno">   7 </span><span class="error">    val harder: BangumiFollowLogHeader,</span>
+<span class="lineno">   8 </span><span class="error">)</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:5:1</span><span class="message">Class ExportItemBean should not be public</span>
+        <pre><code><span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+<span class="lineno">   5 </span><span class="error">data class ExportItemBean(</span>
+<span class="lineno">   6 </span><span class="error">    var itemType: ExportItemEnum,</span>
+<span class="lineno">   7 </span><span class="error">    var title: String,</span>
+<span class="lineno">   8 </span><span class="error">    var longTitle: String,</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:51:1</span><span class="message">Class BangumiFollowLogActivity should not be public</span>
+        <pre><code><span class="lineno">  48 </span>import jxl.write.WritableSheet
+<span class="lineno">  49 </span>import kotlin.math.ceil
+<span class="lineno">  50 </span>
+<span class="lineno">  51 </span><span class="error">class BangumiFollowLogActivity : LogExportBaseActivity() {</span>
+<span class="lineno">  52 </span><span class="error"></span>
+<span class="lineno">  53 </span><span class="error">    private lateinit var bangumiFollowList: BangumiFollowList</span>
+<span class="lineno">  54 </span><span class="error"></span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:20:1</span><span class="message">Class LogExportActivity should not be public</span>
+        <pre><code><span class="lineno">  17 </span>import com.xiaojinzi.component.impl.Router
+<span class="lineno">  18 </span>import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+<span class="lineno">  19 </span>
+<span class="lineno">  20 </span><span class="error">@RouterAnno(</span>
+<span class="lineno">  21 </span><span class="error">    hostAndPath = ARouterAddress.LogExportActivity,</span>
+<span class="lineno">  22 </span><span class="error">)</span>
+<span class="lineno">  23 </span><span class="error">class LogExportActivity : LogExportBaseActivity() {</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:12:1</span><span class="message">Class ExportDialogUtils should not be public</span>
+        <pre><code><span class="lineno">   9 </span>import com.imcys.bilibilias.tool_log_export.R
+<span class="lineno">  10 </span>
+<span class="lineno">  11 </span>
+<span class="lineno">  12 </span><span class="error">/**</span>
+<span class="lineno">  13 </span><span class="error"> * 导出</span>
+<span class="lineno">  14 </span><span class="error"> */</span>
+<span class="lineno">  15 </span><span class="error">class ExportDialogUtils {</span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/test/java/com/imcys/bilibilias/tool_log_export/ExampleUnitTest.kt:6:1</span><span class="message">Class ExampleUnitTest should not be public</span>
+        <pre><code><span class="lineno">   3 </span>import org.junit.Assert.assertEquals
+<span class="lineno">   4 </span>import org.junit.Test
+<span class="lineno">   5 </span>
+<span class="lineno">   6 </span><span class="error">/**</span>
+<span class="lineno">   7 </span><span class="error"> * Example local unit test, which will execute on the development machine (host).</span>
+<span class="lineno">   8 </span><span class="error"> *</span>
+<span class="lineno">   9 </span><span class="error"> * See [testing documentation](http://d.android.com/tools/testing).</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>naming: 10</h3>
+  <details id="PackageNaming" open="open">
+    <summary class="rule-container"><span class="rule">PackageNaming: 10 </span><span class="description">Package names should match the naming convention set in the configuration.</span></summary>
+<a href="https://detekt.dev/docs/rules/naming#packagenaming">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/base/activity/LogExportBaseActivity.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.base.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.os.Bundle
+<span class="lineno">   4 </span>import com.imcys.bilibilias.common.base.AbsActivity
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class BangumiFollowLogHeader {
+<span class="lineno">   4 </span>    Title,//标题
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/ExportItemEnum.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.mEnum</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>enum class ExportItemEnum {
+<span class="lineno">   4 </span>    BangumiFollowLog,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/BangumiFollowLogHeaderBean.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.model</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader
+<span class="lineno">   4 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.data.model</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
+<span class="lineno">   4 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.ui.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.content.Context
+<span class="lineno">   4 </span>import android.content.Intent
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.ui.activity</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.content.Context
+<span class="lineno">   4 </span>import android.os.Bundle
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import jxl.Workbook
+<span class="lineno">   4 </span>import jxl.format.CellFormat
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export.utils</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import android.annotation.SuppressLint
+<span class="lineno">   4 </span>import android.content.Context
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/test/java/com/imcys/bilibilias/tool_log_export/ExampleUnitTest.kt:1:1</span><span class="message">Package name should match the pattern: [a-z]+(\.[a-z][A-Za-z0-9]*)*</span>
+        <pre><code><span class="lineno">   1 </span><span class="error">package com.imcys.bilibilias.tool_log_export</span>
+<span class="lineno">   2 </span>
+<span class="lineno">   3 </span>import org.junit.Assert.assertEquals
+<span class="lineno">   4 </span>import org.junit.Test
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <h3>style: 25</h3>
+  <details id="MagicNumber" open="open">
+    <summary class="rule-container"><span class="rule">MagicNumber: 17 </span><span class="description">Report magic numbers. Magic number is a numeric literal that is not defined as a constant and hence it's unclear what the purpose of this number is. It's better to declare such numbers as constants and give them a proper name. By default, -1, 0, 1, and 2 are not considered to be magic numbers.</span></summary>
+<a href="https://detekt.dev/docs/rules/style#magicnumber">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:147:38</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 144 </span>    private fun createExcel() {
+<span class="lineno"> 145 </span>        // 获取追番总数和分页数（目前每页30条记录）
+<span class="lineno"> 146 </span>        val total = bangumiFollowList.data.total
+<span class="lineno"> 147 </span>        val totalPage = ceil(total / <span class="error">30.0</span>).toInt()
+<span class="lineno"> 148 </span>
+<span class="lineno"> 149 </span>        val path = &quot;/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls&quot;
+<span class="lineno"> 150 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:152:60</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 149 </span>        val path = &quot;/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls&quot;
+<span class="lineno"> 150 </span>
+<span class="lineno"> 151 </span>        // 设置表头的字体大小和背景颜色
+<span class="lineno"> 152 </span>        val arial14font = WritableFont(WritableFont.ARIAL, <span class="error">14</span>, WritableFont.BOLD)
+<span class="lineno"> 153 </span>        arial14font.colour = jxl.format.Colour.LIGHT_BLUE
+<span class="lineno"> 154 </span>        val arial14format = WritableCellFormat(arial14font)
+<span class="lineno"> 155 </span>        // 居中方式
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:166:29</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 163 </span>        // 设置工作簿
+<span class="lineno"> 164 </span>        val sheet = workbook.createSheet(&quot;追番&quot;, 0)
+<span class="lineno"> 165 </span>        // 行高
+<span class="lineno"> 166 </span>        sheet.setRowView(0, <span class="error">340</span>)
+<span class="lineno"> 167 </span>
+<span class="lineno"> 168 </span>        // 创建标题栏
+<span class="lineno"> 169 </span>        selectedLogHeaders.forEachIndexed { index, bangumiFollowLogHeaderBean -&gt;
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:179:40</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 176 </span>                ) as WritableCell?,
+<span class="lineno"> 177 </span>            )
+<span class="lineno"> 178 </span>            // 列宽
+<span class="lineno"> 179 </span>            sheet.setColumnView(index, <span class="error">300</span>)
+<span class="lineno"> 180 </span>        }
+<span class="lineno"> 181 </span>
+<span class="lineno"> 182 </span>        launchUI {
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:213:64</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 210 </span>     */
+<span class="lineno"> 211 </span>    private fun editExcel(bangumiFollowList: BangumiFollowList, sheet: WritableSheet, i: Int) {
+<span class="lineno"> 212 </span>        sheet.apply {
+<span class="lineno"> 213 </span>            val arial14font = WritableFont(WritableFont.ARIAL, <span class="error">10</span>, WritableFont.NO_BOLD)
+<span class="lineno"> 214 </span>            val arial10format = WritableCellFormat(arial14font)
+<span class="lineno"> 215 </span>            arial10format.alignment = Alignment.CENTRE
+<span class="lineno"> 216 </span>
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:220:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 217 </span>            selectedLogHeaders.forEachIndexed { selectIndex, bangumiFollowLogHeaderBean -&gt;
+<span class="lineno"> 218 </span>                when (bangumiFollowLogHeaderBean.harder) {
+<span class="lineno"> 219 </span>                    Title -&gt; {
+<span class="lineno"> 220 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 221 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 222 </span>                            addCell(selectIndex, row++, it?.title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 223 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:227:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 224 </span>                    }
+<span class="lineno"> 225 </span>
+<span class="lineno"> 226 </span>                    SeasonID -&gt; {
+<span class="lineno"> 227 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 228 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 229 </span>                            addCell(
+<span class="lineno"> 230 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:239:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 236 </span>                    }
+<span class="lineno"> 237 </span>
+<span class="lineno"> 238 </span>                    Evaluate -&gt; {
+<span class="lineno"> 239 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 240 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 241 </span>                            addCell(selectIndex, row++, it?.evaluate ?: &quot;&quot;, arial10format)
+<span class="lineno"> 242 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:246:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 243 </span>                    }
+<span class="lineno"> 244 </span>
+<span class="lineno"> 245 </span>                    Summary -&gt; {
+<span class="lineno"> 246 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 247 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 248 </span>                            addCell(selectIndex, row++, it?.summary ?: &quot;&quot;, arial10format)
+<span class="lineno"> 249 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:253:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 250 </span>                    }
+<span class="lineno"> 251 </span>
+<span class="lineno"> 252 </span>                    TotalCount -&gt; {
+<span class="lineno"> 253 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 254 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 255 </span>                            addCell(
+<span class="lineno"> 256 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:265:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 262 </span>                    }
+<span class="lineno"> 263 </span>
+<span class="lineno"> 264 </span>                    Progress -&gt; {
+<span class="lineno"> 265 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 266 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 267 </span>                            addCell(selectIndex, row++, it?.progress ?: &quot;&quot;, arial10format)
+<span class="lineno"> 268 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:272:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 269 </span>                    }
+<span class="lineno"> 270 </span>
+<span class="lineno"> 271 </span>                    Cover -&gt; {
+<span class="lineno"> 272 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 273 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 274 </span>                            addCell(selectIndex, row++, it?.cover ?: &quot;&quot;, arial10format)
+<span class="lineno"> 275 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:279:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 276 </span>                    }
+<span class="lineno"> 277 </span>
+<span class="lineno"> 278 </span>                    SeasonTitle -&gt; {
+<span class="lineno"> 279 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 280 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 281 </span>                            addCell(selectIndex, row++, it?.season_title ?: &quot;&quot;, arial10format)
+<span class="lineno"> 282 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:286:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 283 </span>                    }
+<span class="lineno"> 284 </span>
+<span class="lineno"> 285 </span>                    Subtitle -&gt; {
+<span class="lineno"> 286 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 287 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 288 </span>                            addCell(selectIndex, row++, it?.subtitle ?: &quot;&quot;, arial10format)
+<span class="lineno"> 289 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:293:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 290 </span>                    }
+<span class="lineno"> 291 </span>
+<span class="lineno"> 292 </span>                    Subtitle14 -&gt; {
+<span class="lineno"> 293 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 294 </span>                        bangumiFollowList.data.list.forEach {
+<span class="lineno"> 295 </span>                            addCell(selectIndex, row++, it?.subtitle_14 ?: &quot;&quot;, arial10format)
+<span class="lineno"> 296 </span>                        }
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/BangumiFollowLogActivity.kt:300:58</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno"> 297 </span>                    }
+<span class="lineno"> 298 </span>
+<span class="lineno"> 299 </span>                    SeasonTypeName -&gt; {
+<span class="lineno"> 300 </span>                        var row = if (i == 0) i + 1 else <span class="error">30</span> * i
+<span class="lineno"> 301 </span>                        bangumiFollowList.data.list.forEachIndexed { index, listBean -&gt;
+<span class="lineno"> 302 </span>                            addCell(
+<span class="lineno"> 303 </span>                                selectIndex,
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:61:29</span><span class="message">This expression contains a magic number. Consider defining it to a well named constant.</span>
+        <pre><code><span class="lineno">  58 </span>
+<span class="lineno">  59 </span>        binding.logExportHomeRv.linear().setup {
+<span class="lineno">  60 </span>            //防抖动
+<span class="lineno">  61 </span>            clickThrottle = <span class="error">1000</span> // 单位毫秒
+<span class="lineno">  62 </span>            setAnimation(AnimationType.SCALE)
+<span class="lineno">  63 </span>            addType&lt;ExportItemBean&gt;(R.layout.log_export_item_export_tool)
+<span class="lineno">  64 </span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="NewLineAtEndOfFile" open="open">
+    <summary class="rule-container"><span class="rule">NewLineAtEndOfFile: 7 </span><span class="description">Checks whether files end with a line separator.</span></summary>
+<a href="https://detekt.dev/docs/rules/style#newlineatendoffile">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/BangumiFollowLogHeader.kt:16:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\data\mEnum\BangumiFollowLogHeader.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">  13 </span>    SeasonTitle,//季度信息
+<span class="lineno">  14 </span>    SeasonTypeName,//创作类型,
+<span class="lineno">  15 </span>
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/mEnum/ExportItemEnum.kt:6:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\data\mEnum\ExportItemEnum.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">   3 </span>enum class ExportItemEnum {
+<span class="lineno">   4 </span>    BangumiFollowLog,
+<span class="lineno">   5 </span>    VideoLog,
+<span class="lineno">   6 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/data/model/ExportItemBean.kt:11:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\data\model\ExportItemBean.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">   8 </span>    var longTitle: String,
+<span class="lineno">   9 </span>    var content: String,
+<span class="lineno">  10 </span>    var icoUrl: String,
+<span class="lineno">  11 </span>)
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/ui/activity/LogExportActivity.kt:95:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\ui\activity\LogExportActivity.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">  92 </span>        }
+<span class="lineno">  93 </span>
+<span class="lineno">  94 </span>    }
+<span class="lineno">  95 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExcelUtils.kt:35:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExcelUtils.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">  32 </span>    }
+<span class="lineno">  33 </span>
+<span class="lineno">  34 </span>
+<span class="lineno">  35 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:51:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\main\java\com\imcys\bilibilias\tool_log_export\utils\ExportDialogUtils.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">  48 </span>        }
+<span class="lineno">  49 </span>    }
+<span class="lineno">  50 </span>
+<span class="lineno">  51 </span>}
+</code></pre>
+      </li>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/test/java/com/imcys/bilibilias/tool_log_export/ExampleUnitTest.kt:16:2</span><span class="message">The file E:\Github-learning\bilibilias\tool_log_export\src\test\java\com\imcys\bilibilias\tool_log_export\ExampleUnitTest.kt is not ending with a new line.</span>
+        <pre><code><span class="lineno">  13 </span>    fun addition_isCorrect() {
+<span class="lineno">  14 </span>        assertEquals(4, 2 + 2)
+<span class="lineno">  15 </span>    }
+<span class="lineno">  16 </span>}
+</code></pre>
+      </li>
+    </ul>
+  </details>
+  <details id="UtilityClassWithPublicConstructor" open="open">
+    <summary class="rule-container"><span class="rule">UtilityClassWithPublicConstructor: 1 </span><span class="description">The class declaration is unnecessary because it only contains utility functions. An object declaration should be used instead.</span></summary>
+<a href="https://detekt.dev/docs/rules/style#utilityclasswithpublicconstructor">Documentation</a>
+    <ul>
+      <li><span class="location">E:/Github-learning/bilibilias/tool_log_export/src/main/java/com/imcys/bilibilias/tool_log_export/utils/ExportDialogUtils.kt:12:1</span><span class="message">The class ExportDialogUtils only contains utility functions. Consider defining it as an object.</span>
+        <pre><code><span class="lineno">   9 </span>import com.imcys.bilibilias.tool_log_export.R
+<span class="lineno">  10 </span>
+<span class="lineno">  11 </span>
+<span class="lineno">  12 </span><span class="error">/**</span>
+<span class="lineno">  13 </span><span class="error"> * 导出</span>
+<span class="lineno">  14 </span><span class="error"> */</span>
+<span class="lineno">  15 </span><span class="error">class ExportDialogUtils {</span>
+</code></pre>
+      </li>
+    </ul>
+  </details>
+</div>
+
+
+generated with <a href="https://detekt.dev/">detekt version 1.23.1</a> on 2023-09-13 15:30:07 UTC.
+
+</body>
+</html>
