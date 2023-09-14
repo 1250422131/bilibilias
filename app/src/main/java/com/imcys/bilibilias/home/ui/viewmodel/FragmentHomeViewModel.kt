@@ -1,10 +1,12 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.base.utils.openUri
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
@@ -15,7 +17,6 @@ import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.xiaojinzi.component.impl.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.request.get
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -43,10 +44,19 @@ class FragmentHomeViewModel @Inject constructor() :
     /**
      * 更新信息
      */
+    @Deprecated("use context")
     fun goToNewVersionDoc(view: View) {
         val uri = Uri.parse("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
+    }
+
+    /**
+     * 更新信息
+     */
+    fun goToNewVersionDoc(context: Context) {
+        val uri = Uri.parse("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va")
+        context.openUri(uri)
     }
 
     /**
@@ -68,6 +78,7 @@ class FragmentHomeViewModel @Inject constructor() :
     /**
      * 捐款列表
      */
+    @Deprecated("use context")
     fun toDonateList(view: View) {
         val uri = Uri.parse("https://api.misakamoe.com/as-donate.html")
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -75,12 +86,29 @@ class FragmentHomeViewModel @Inject constructor() :
     }
 
     /**
+     * 捐款列表
+     */
+    fun toDonateList(context: Context) {
+        val uri = Uri.parse("https://api.misakamoe.com/as-donate.html")
+        context.openUri(uri)
+    }
+
+    /**
      * 社区
      */
+    @Deprecated("use context")
     fun goToCommunity(view: View) {
         val uri = Uri.parse("https://support.qq.com/product/337496")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
+    }
+
+    /**
+     * 社区
+     */
+    fun goToCommunity(context: Context) {
+        val uri = Uri.parse("https://support.qq.com/product/337496")
+        context.openUri(uri)
     }
 
     fun logoutLogin(view: View) {
