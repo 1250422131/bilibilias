@@ -39,12 +39,16 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import okhttp3.CookieJar
+import timber.log.Timber
 import javax.inject.Singleton
 
 @Module
@@ -130,12 +134,26 @@ class NetworkModule {
                         val message = res["message"]?.jsonPrimitive?.contentOrNull ?: throw ApiIOException("发生未知服务器异常")
                         throw ApiIOException(message)
                     }
-                    val data = res["data"]?.jsonObject ?: throw NullResponseDataIOException()
-                    val type = requestedType.type
-                    json.decodeFromJsonElement(type.serializer(), data)
+                    var realData = res["data"] ?: throw NullResponseDataIOException()
+                    when (realData) {
+                        is JsonObject -> {
+                            realData = realData.jsonObject
+                            val type = requestedType.type.serializer()
+                            json.decodeFromJsonElement(type, realData)
+                        }
+
+                        is JsonArray -> {
+                            realData = realData.jsonArray
+                            Timber.tag("ConvertPlugin").d("data=$realData")
+                            val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
+                            json.decodeFromJsonElement(serializer(type), realData)
+                        }
+
+                        else -> null
+                    }
                 } catch (e: Exception) {
-                    // todo {"code":-101,"message":"账号未登录","ttl":1}
-                    throw IOException(e.localizedMessage)
+                    Timber.tag("ConvertPlugin").e(e)
+                    null
                 }
             }
         }
@@ -146,4 +164,5 @@ class NetworkModule {
 
     internal class ApiIOException(errorMessage: String?) : IOException(errorMessage)
     internal class NullResponseDataIOException : Exception()
+    internal class NoTypeException(msg: String) : Exception(msg)
 }

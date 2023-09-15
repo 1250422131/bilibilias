@@ -1,83 +1,50 @@
-package com.imcys.bilibilias.home.ui.model;
+package com.imcys.bilibilias.common.base.model
 
-import java.io.Serializable;
-import java.util.List;
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
- * @author:imcys
- * @create: 2023-01-20 14:45
- * @Description: 工具页类
+ * ![工具](https://api.misakamoe.com/app/AppFunction.php?type=oldToolItem)
+ * ```
+ * {
+ *   "code": 0,
+ *   "data": [
+ *     {
+ *       "tool_code": 1,
+ *       "color": "#efb336",
+ *       "title": "缓存视频",
+ *       "img_url": "https://s1.ax1x.com/2023/08/24/pPY4Q6H.png"
+ *     },
+ *     {
+ *       "tool_code": 3,
+ *       "color": "#fb7299",
+ *       "title": "网页解析",
+ *       "img_url": "https://s1.ax1x.com/2023/02/04/pSyHEy6.png"
+ *     },
+ *     {
+ *       "tool_code": 4,
+ *       "color": "#fb7299",
+ *       "title": "日志导出",
+ *       "img_url": "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png"
+ *     },
+ *     {
+ *       "tool_code": 2,
+ *       "color": "#fb7299",
+ *       "title": "关于设置",
+ *       "img_url": "https://s1.ax1x.com/2023/01/20/pSGSJGF.png"
+ *     }
+ *   ]
+ * }
+ * ```
  */
-public class OldToolItemBean implements Serializable {
-
-    /**
-     * code : 0
-     * data : [{"tool_code":1,"color":"","title":"缓存视频","img_url":"https://s1.ax1x.com/2022/12/18/zbTmpF.png"},{"tool_code":2,"color":"","title":"缓存视频","img_url":"https://s1.ax1x.com/2022/12/18/zbTmpF.png"}]
-     */
-
-    private int code;
-    private List<DataBean> data;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public List<DataBean> getData() {
-        return data;
-    }
-
-    public void setData(List<DataBean> data) {
-        this.data = data;
-    }
-
-    public static class DataBean implements Serializable {
-        /**
-         * tool_code : 1
-         * color :
-         * title : 缓存视频
-         * img_url : https://s1.ax1x.com/2022/12/18/zbTmpF.png
-         */
-
-        private int tool_code;
-        private String color;
-        private String title;
-        private String img_url;
-
-        public int getTool_code() {
-            return tool_code;
-        }
-
-        public void setTool_code(int tool_code) {
-            this.tool_code = tool_code;
-        }
-
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color) {
-            this.color = color;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getImg_url() {
-            return img_url;
-        }
-
-        public void setImg_url(String img_url) {
-            this.img_url = img_url;
-        }
-    }
-}
-
+@Serializable
+data class OldToolItemBean(
+    @SerialName("color")
+    val color: String = "", // #efb336
+    @SerialName("img_url")
+    val imgUrl: String = "", // https://s1.ax1x.com/2023/08/24/pPY4Q6H.png
+    @SerialName("title")
+    val title: String = "", // 缓存视频
+    @SerialName("tool_code")
+    val toolCode: Int = 0 // 1
+)
