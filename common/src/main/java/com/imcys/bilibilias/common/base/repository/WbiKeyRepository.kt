@@ -10,7 +10,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.encodeURLParameter
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
 
     private val mixinKeyEncTab = intArrayOf(
