@@ -58,7 +58,7 @@ fun shouldUseDarkIcons(bgColor: Color = Color.Transparent): Boolean {
     return if (bgColor == Color.Transparent) {
         !isSystemInDarkTheme()
     } else {
-        //颜色亮度
+        // 颜色亮度
         return bgColor.luminance() >= 0.5
     }
 }

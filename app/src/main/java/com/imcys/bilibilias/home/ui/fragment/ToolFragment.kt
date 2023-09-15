@@ -24,13 +24,13 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.model.OldToolItemBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -50,7 +50,6 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -295,71 +294,31 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchIO {
             // 通过远程数据获取item
-            val oldToolItemBean = getOldToolItemBean()
+            val oldToolItemBean = listOf<OldToolItemBean>()
             launchUI {
-                oldToolItemBean.data.forEach {
-                    when (it.tool_code) {
+                oldToolItemBean.forEach {
+                    when (it.toolCode) {
                         // 视频解析
                         1 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-                                },
-                            )
+                            asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
                         }
                         // 设置
                         2 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    val intent = Intent(context, SettingActivity::class.java)
-                                    requireActivity().startActivity(intent)
-                                },
-                            )
+                            val intent = Intent(context, SettingActivity::class.java)
+                            requireActivity().startActivity(intent)
                         }
                         // web解析
                         3 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    val intent = Intent(context, WebAsActivity::class.java)
-                                    requireActivity().startActivity(intent)
-                                },
-                            )
+                            val intent = Intent(context, WebAsActivity::class.java)
+                            requireActivity().startActivity(intent)
                         }
                         // 导出日志
                         4 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    LogExportActivity.actionStart(requireContext())
-                                },
-                            )
+                            LogExportActivity.actionStart(requireContext())
                         }
                         // 独立合并
                         5 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    MergeVideoActivity.actionStart(requireContext())
-                                },
-                            )
+                            MergeVideoActivity.actionStart(requireContext())
                         }
                     }
                 }
@@ -385,15 +344,6 @@ class ToolFragment : BaseFragment() {
                         }
                 }
             }
-        }
-    }
-
-    private suspend fun getOldToolItemBean(): OldToolItemBean {
-        return withContext(lifecycleScope.coroutineContext) {
-            HttpUtils.asyncGet(
-                "${BiliBiliAsApi.appFunction}?type=oldToolItem",
-                OldToolItemBean::class.java,
-            )
         }
     }
 

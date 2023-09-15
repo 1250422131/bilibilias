@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat.startActivity
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.extend.safeGet
 import com.imcys.bilibilias.common.base.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.common.base.model.OldToolItemBean
 import com.imcys.bilibilias.common.base.model.OldUpdateDataBean
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -22,9 +24,16 @@ import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.system.exitProcess
 
+@Singleton
 class AsRepository @Inject constructor(private val httpClient: HttpClient) {
+    suspend fun getOldToolItem(action: (List<OldToolItemBean>) -> Unit) =
+        httpClient.safeGet<List<OldToolItemBean>>(BiliBiliAsApi.appFunction) {
+            parameter("type", "oldToolItem")
+        }.onSuccess { action(it) }
+
     suspend fun getBannerData() {
         httpClient.get(BiliBiliAsApi.updateDataPath) {
             parameter("type", "banner")

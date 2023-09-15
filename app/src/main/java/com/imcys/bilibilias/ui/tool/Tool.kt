@@ -1,8 +1,10 @@
 package com.imcys.bilibilias.ui.tool
 
-import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -19,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -33,6 +39,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,20 +51,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.components.FullScreenScaffold
+import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Tool() {
     val toolViewModel: ToolViewModel = hiltViewModel()
-    FullScreenScaffold(
+    LaunchedEffect(Unit) {
+        toolViewModel.getOldItemList()
+    }
+    Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(title = {
                 Text(
                     stringResource(R.string.app_fragment_tool_title),
-                    Modifier.padding(horizontal = 20.dp),
+                    Modifier.padding(20.dp),
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -70,6 +80,14 @@ fun Tool() {
                 .fillMaxSize()
         ) {
             val state by toolViewModel.toolState.collectAsStateWithLifecycle()
+            val clipboardManager = LocalClipboardManager.current
+            LaunchedEffect(Unit) {
+                val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
+                if (AsVideoNumUtils.isAV(text) || AsVideoNumUtils.isBV(text)) {
+                    toolViewModel.clearText()
+                    toolViewModel.parsesBvOrAvOrEp(text)
+                }
+            }
             SearchTextField(
                 state.query,
                 onValueChange = {
@@ -78,14 +96,28 @@ fun Tool() {
                 clearText = { toolViewModel.clearText() },
                 isError = state.isInputError
             )
-            VideoCard(
-                state.videoMate.pic,
-                state.videoMate.title,
-                state.videoMate.desc,
-                state.videoMate.playVolume,
-                state.videoMate.danmaku,
-                state.isInputError
-            )
+            AnimatedVisibility(visible = state.isShowVideoCard) {
+                VideoCard(
+                    state.videoMate.pic,
+                    state.videoMate.title,
+                    state.videoMate.desc,
+                    state.videoMate.playVolume,
+                    state.videoMate.danmaku,
+                    Modifier
+                        .animateContentSize()
+                        .padding(8.dp)
+                )
+            }
+
+            LazyVerticalGrid(columns = GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
+                items(state.tools, key = { it.toolCode }) {
+                    ToolItem(
+                        imgUrl = it.imgUrl,
+                        title = it.title,
+                        containerColor = Color(it.color),
+                    )
+                }
+            }
         }
     }
 }
@@ -99,13 +131,17 @@ fun VideoCard(
     desc: String,
     playVolume: String,
     danmaku: String,
-    isShow: Boolean
+    modifier: Modifier = Modifier
 ) {
-    if (isShow) return
-    Card(onClick = { /*TODO*/ }, Modifier.fillMaxWidth()) {
+    Card(
+        onClick = { /*TODO*/ },
+        modifier.fillMaxWidth(),
+    ) {
         Row(Modifier.fillMaxWidth()) {
             Column(
-                Modifier.weight(1f)
+                Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 AsyncImage(
                     model = pic,
@@ -170,10 +206,10 @@ fun VideoCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ToolItem(
-    @DrawableRes imageRes: Int,
+    imgUrl: String,
     title: String,
-    modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    containerColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = { /*todo*/ },
@@ -181,11 +217,15 @@ private fun ToolItem(
         shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .size(96.dp)
-            .padding()
+            .padding(8.dp)
     ) {
-        Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(imageRes),
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            AsyncImage(
+                model = imgUrl,
                 contentDescription = null,
                 Modifier
                     .size(35.dp)
@@ -209,7 +249,7 @@ private fun SearchTextField(query: String, onValueChange: (String) -> Unit, clea
     val focusRequester = remember { FocusRequester() } // 焦点
     val softKeyboard = LocalSoftwareKeyboardController.current // 软键盘
     LaunchedEffect(Unit) {
-        delay(100) // 延迟操作(关键点)
+        delay(100)
         focusRequester.requestFocus()
         softKeyboard?.show()
     }
@@ -246,8 +286,14 @@ private fun SearchTextField(query: String, onValueChange: (String) -> Unit, clea
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "搜索框")
 @Composable
 fun PreviewSearchBar() {
     SearchTextField("", {}, {}, false)
+}
+
+@Preview(showBackground = true, name = "搜索结果")
+@Composable
+fun PreviewVideoCard() {
+    VideoCard(pic = "", title = "", desc = "", playVolume = "", danmaku = "")
 }
