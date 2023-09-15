@@ -159,7 +159,7 @@ fun VideoCard(
                 contentDescription = "视频封面",
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth()
             )
             Text(
