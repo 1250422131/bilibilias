@@ -3,12 +3,9 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
@@ -16,36 +13,27 @@ import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class BangumiFollowActivity : BaseActivity() {
-
-    lateinit var binding: ActivityBangumiFollowBinding
+class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
     @Inject
     lateinit var bangumiFollowAdapter: BangumiFollowAdapter
     private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
     private lateinit var bangumiFollowList: BangumiFollowList
+    override fun getLayoutRes(): Int = R.layout.activity_bangumi_follow
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_bangumi_follow)
-        binding.apply {
-            bangumiFollowTopLy.addStatusBarTopPadding()
-        }
-
-        initView()
+        binding.bangumiFollowTopLy.addStatusBarTopPadding()
     }
 
-    private fun initView() {
-        initRv()
-    }
-
-    private fun initRv() {
+    override fun initView() {
         binding.apply {
             bangumiFollowRv.adapter = bangumiFollowAdapter
             bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
@@ -85,16 +73,6 @@ class BangumiFollowActivity : BaseActivity() {
                 bangumiFollowAdapter.submitList(bangumiFollowMutableList + mutableListOf())
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 
     companion object {

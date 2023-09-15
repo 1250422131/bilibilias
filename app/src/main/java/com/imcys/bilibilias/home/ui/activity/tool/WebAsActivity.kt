@@ -7,20 +7,19 @@ import android.view.MenuItem
 import android.webkit.*
 import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
-class WebAsActivity : BaseActivity() {
-    private lateinit var webAsBinding: ActivityWebAsBinding
+class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
+    override fun getLayoutRes(): Int = R.layout.activity_web_as
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 视图加载
-        webAsBinding =
-            DataBindingUtil.setContentView<ActivityWebAsBinding?>(this, R.layout.activity_web_as)
-                .apply {
+        binding.apply {
                     // 设置返回按钮可用
                     setSupportActionBar(webAsMaterialToolbar)
                     supportActionBar?.apply {
@@ -36,7 +35,7 @@ class WebAsActivity : BaseActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadWebView() {
-        webAsBinding.apply {
+        binding.apply {
             // 不缓存
             webAsWebView.settings.javaScriptEnabled = true
             webAsWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
@@ -73,7 +72,7 @@ class WebAsActivity : BaseActivity() {
         when (item.itemId) {
             android.R.id.home -> finish()
             R.id.tool_web_toolbar_menu_finish -> {
-                val thisUrl = webAsBinding.webAsWebView.url
+                val thisUrl = binding.webAsWebView.url
                 thisUrl?.let { HomeActivity.actionStart(this, it) }
             }
         }

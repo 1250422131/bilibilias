@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -39,16 +40,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.home.ui.model.DedicateBean
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DedicateActivity : BaseActivity() {
-
+class DedicateActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,15 +225,5 @@ class DedicateActivity : BaseActivity() {
                 ""
             ),
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 }

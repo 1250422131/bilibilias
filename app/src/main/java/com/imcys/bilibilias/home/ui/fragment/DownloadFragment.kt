@@ -11,7 +11,7 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
@@ -44,18 +44,14 @@ class DownloadFragment : BaseFragment() {
     ): View {
         fragmentDownloadBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
-        // 添加边距
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
-
-        initView()
-
         return fragmentDownloadBinding.root
     }
 
     /**
      * 初始化布局
      */
-    private fun initView() {
+    override fun initView() {
         initDownloadListAd()
         initEditLayout()
         initDownloadList()

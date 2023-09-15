@@ -24,8 +24,8 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -120,8 +120,8 @@ class HomeFragment : BaseFragment() {
             .setBackgroundColor("#80000000".toColorInt())
             .setOnDismissCallback {
                 // 让ViewPage来切换页面
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
+                (activity as HomeActivity).binding.homeViewPage.currentItem = 1
+                (activity as HomeActivity).binding.homeBottomNavigationView.menu.getItem(
                     1,
                 ).isCheckable = true
             }

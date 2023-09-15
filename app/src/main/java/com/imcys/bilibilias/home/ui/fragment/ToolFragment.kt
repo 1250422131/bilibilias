@@ -22,8 +22,8 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
@@ -93,8 +93,8 @@ class ToolFragment : BaseFragment() {
                     .build()
             }
             .setOnDismissCallback {
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
+                (activity as HomeActivity).binding.homeViewPage.currentItem = 0
+                (activity as HomeActivity).binding.homeBottomNavigationView.menu.getItem(
                     0,
                 ).isCheckable = true
             }
@@ -109,13 +109,10 @@ class ToolFragment : BaseFragment() {
     ): View {
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
-
-        initView()
-
         return fragmentToolBinding.root
     }
 
-    private fun initView() {
+     override fun initView() {
         // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 

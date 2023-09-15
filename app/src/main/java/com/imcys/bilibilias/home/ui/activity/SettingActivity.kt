@@ -3,31 +3,27 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import com.baidu.mobstat.StatService
+import androidx.core.content.edit
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
-class SettingActivity : BaseActivity() {
-    lateinit var binding: ActivitySttingBinding
+class SettingActivity : BaseActivity<ActivitySttingBinding>() {
+
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
+    override fun getLayoutRes(): Int = R.layout.activity_stting
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_stting)
         binding.settingTopLy.addStatusBarTopPadding()
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.setting_FrameLayout, SettingsFragment())
             .commit()
-
-
     }
-
 
     @Deprecated("Deprecated in Java")
     @SuppressLint("WrongConstant")
@@ -43,24 +39,11 @@ class SettingActivity : BaseActivity() {
                         takeFlags
                     )
                 }
-
-                asSharedPreferences.edit().apply {
+                asSharedPreferences.edit {
                     putString("AppDataUri", resultData?.data!!.toString())
                     putBoolean("user_dl_finish_automatic_import_switch", true)
-                    apply()
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 }

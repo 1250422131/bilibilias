@@ -6,12 +6,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
@@ -19,28 +16,25 @@ import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.anno.RouterAnno
 
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeActivity,
 )
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private var exitTime: Long = 0
-    lateinit var activityHomeBinding: ActivityHomeBinding
 
     lateinit var toolFragment: ToolFragment
     lateinit var homeFragment: HomeFragment
     lateinit var downloadFragment: DownloadFragment
     lateinit var userFragment: UserFragment
+    override fun getLayoutRes(): Int = R.layout.activity_home
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
-
-        // 补全必须要的内容
-        activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-
-        initFragment()
         loadFragment()
 
         parseShare()
@@ -49,7 +43,9 @@ class HomeActivity : BaseActivity() {
     /**
      * 初始化fragment
      */
-    private fun initFragment() {
+
+
+    override fun initView() {
         homeFragment = HomeFragment.newInstance()
         toolFragment = ToolFragment.newInstance()
         userFragment = UserFragment.newInstance()
@@ -64,7 +60,7 @@ class HomeActivity : BaseActivity() {
         val type = intent.type
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
-                activityHomeBinding.apply {
+                binding.apply {
                     homeViewPage.currentItem = 1
                     homeBottomNavigationView.menu.getItem(1).isChecked = true
                     toolFragment.parseShare(intent)
@@ -80,7 +76,7 @@ class HomeActivity : BaseActivity() {
         val type = intent?.type
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
-                activityHomeBinding.apply {
+                binding.apply {
                     homeViewPage.currentItem = 1
                     homeBottomNavigationView.menu.getItem(1).isChecked = true
                     toolFragment.parseShare(intent)
@@ -89,7 +85,7 @@ class HomeActivity : BaseActivity() {
         }
         val asUrl = intent?.extras?.getString("asUrl")
         if (asUrl != null) {
-            activityHomeBinding.apply {
+            binding.apply {
                 homeViewPage.currentItem = 1
                 homeBottomNavigationView.menu.getItem(1).isChecked = true
                 toolFragment.parseShare(intent)
@@ -108,7 +104,7 @@ class HomeActivity : BaseActivity() {
 
         val myFragmentPageAdapter =
             MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
-        activityHomeBinding.let {
+        binding.let {
             it.homeViewPage.adapter = myFragmentPageAdapter
             it.homeViewPage.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
@@ -156,16 +152,6 @@ class HomeActivity : BaseActivity() {
             intent.putExtra("asUrl", asUrl)
             context.startActivity(intent)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

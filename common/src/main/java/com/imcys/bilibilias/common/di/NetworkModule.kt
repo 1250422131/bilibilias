@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.common.di
 
 import android.content.Context
-import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.config.CacheManager
 import com.imcys.bilibilias.common.base.config.CookieManager

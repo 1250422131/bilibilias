@@ -1,5 +1,7 @@
-package com.imcys.bilibilias.common.base
+package com.imcys.bilibilias.view.base
 
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
@@ -7,8 +9,17 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+abstract class BaseFragment : Fragment(), BaseInit {
 
-open class BaseFragment : Fragment(){
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+        initData()
+    }
+
+    override fun initView() {}
+    override fun initData() {}
+
     fun launchIO(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
@@ -22,5 +33,4 @@ open class BaseFragment : Fragment(){
     ) {
         lifecycleScope.launch(Dispatchers.Main, start, block)
     }
-
 }

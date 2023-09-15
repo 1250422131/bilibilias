@@ -3,12 +3,9 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -17,15 +14,13 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PlayHistoryActivity : BaseActivity() {
-    private lateinit var binding: ActivityPlayHistoryBinding
-
-    // 自动装配
+class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
     @Inject
     lateinit var playHistoryAdapter: PlayHistoryAdapter
 
@@ -35,22 +30,14 @@ class PlayHistoryActivity : BaseActivity() {
     private val playHistoryDataMutableList: MutableList<PlayHistoryBean.DataBean.ListBean> =
         mutableListOf()
 
+    override fun getLayoutRes(): Int = R.layout.activity_play_history
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityPlayHistoryBinding?>(
-            this,
-            R.layout.activity_play_history
-        ).apply {
-            playHistoryTopLy.addStatusBarTopPadding()
-        }
-        initView()
+        binding.playHistoryTopLy.addStatusBarTopPadding()
     }
 
-    private fun initView() {
-        initPlayHistory()
-    }
-
-    private fun initPlayHistory() {
+    override fun initView() {
         binding.apply {
             playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
@@ -88,16 +75,6 @@ class PlayHistoryActivity : BaseActivity() {
                 playHistoryDataMutableList.addAll(it.data.list)
                 playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
             }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 
     companion object {

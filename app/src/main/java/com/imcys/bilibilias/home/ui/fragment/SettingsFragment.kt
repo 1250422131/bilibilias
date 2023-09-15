@@ -20,7 +20,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
@@ -46,10 +46,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val saveImport = registerForActivityResult(
         ActivityResultContracts.OpenDocumentTree(),
     ) {
-        (context as SettingActivity).asSharedPreferences.edit().apply {
+        (context as SettingActivity).asSharedPreferences.edit {
             putString("AppDataUri", it.toString())
             putBoolean("user_dl_finish_automatic_import_switch", true)
-            apply()
         }
     }
 

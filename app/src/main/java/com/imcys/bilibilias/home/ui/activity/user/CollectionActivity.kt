@@ -3,25 +3,23 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.baidu.mobstat.StatService
 import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
-import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -29,30 +27,23 @@ import kotlin.math.ceil
 
 // 收藏夹
 @AndroidEntryPoint
-class CollectionActivity : BaseActivity() {
+class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
 
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<Collections.Media>()
-    private lateinit var binding: ActivityCollectionBinding
 
     @Inject
     lateinit var collectionDataAd: CollectionDataAdapter
-    private lateinit var userCreateCollectionBean: UserCreateCollectionBean
+
     private lateinit var createCollectionList: UserCreateCollectionBean.Collection
+    override fun getLayoutRes(): Int = R.layout.activity_collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityCollectionBinding?>(
-            this,
-            R.layout.activity_collection,
-        ).apply {
-            collectionTopLy.addStatusBarTopPadding()
-        }
-
-        initView()
+        binding.collectionTopLy.addStatusBarTopPadding()
     }
 
-    private fun initView() {
+    override fun initView() {
         initCollectionRv()
         loadCollectionList()
     }
@@ -141,16 +132,6 @@ class CollectionActivity : BaseActivity() {
                 Collections::class.java,
             ) {
             }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 
     companion object {
