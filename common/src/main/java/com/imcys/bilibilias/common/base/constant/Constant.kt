@@ -26,3 +26,7 @@ const val MID = "mid"
 const val WTS = "wts"
 
 const val W_RID = "w_rid"
+
+const val BVID = "bvid"
+
+const val AID = "aid"

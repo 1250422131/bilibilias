@@ -80,7 +80,8 @@ class BangumiFollowAdapter @Inject constructor() :
                             } else {
                                 AsVideoActivity.actionStart(
                                     holder.itemView.context,
-                                    bangumiSeasonBean.result.section[0].episodes[0].bvid
+                                    0
+                                    // bangumiSeasonBean.result.section[0].episodes[0].bvid
                                 )
                             }
 

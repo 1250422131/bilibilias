@@ -33,7 +33,7 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
@@ -341,13 +341,13 @@ class DownloadQueue @Inject constructor() :
 
             val videoBaseBean = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
-            val mid = videoBaseBean.data.owner.mid
-            val name = videoBaseBean.data.owner.name
-            val copyright = videoBaseBean.data.copyright
-            val tName = videoBaseBean.data.tname
+            val mid = videoBaseBean.owner.mid
+            val name = videoBaseBean.owner.name
+            val copyright = videoBaseBean.copyright
+            val tName = videoBaseBean.tname
 
             if (aid == null) {
-                aid = videoBaseBean.data.aid
+                aid = videoBaseBean.aid
             }
 
             addAsVideoData(
@@ -574,24 +574,24 @@ class DownloadQueue @Inject constructor() :
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
         HttpUtils.addHeader(COOKIE, cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
-                if (it.code == 0) {
-                    videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
-                    videoEntry = videoEntry.replace("UP名称", it.data.owner.name)
-                    videoEntry = videoEntry.replace("UP头像", it.data.owner.face)
-                    videoEntry = videoEntry.replace("AID编号", it.data.aid.toString())
+                if (it.cid  != 0L) {
+                    videoEntry = videoEntry.replace("UP主UID", it.owner.mid.toString())
+                    videoEntry = videoEntry.replace("UP名称", it.owner.name)
+                    videoEntry = videoEntry.replace("UP头像", it.owner.face)
+                    videoEntry = videoEntry.replace("AID编号", it.aid.toString())
                     videoEntry = videoEntry.replace("BVID编号", bvid)
-                    videoEntry = videoEntry.replace("CID编号", it.data.cid.toString())
-                    videoEntry = videoEntry.replace("下载标题", it.data.title + ".mp4")
+                    videoEntry = videoEntry.replace("CID编号", it.cid.toString())
+                    videoEntry = videoEntry.replace("下载标题", it.title + ".mp4")
 
-                    videoEntry = videoEntry.replace("文件名称", it.data.title + ".mp4")
-                    videoEntry = videoEntry.replace("标题", it.data.title)
+                    videoEntry = videoEntry.replace("文件名称", it.title + ".mp4")
+                    videoEntry = videoEntry.replace("标题", it.title)
                     videoEntry = videoEntry.replace("子集号", pageThisNum.toString())
                     videoEntry = videoEntry.replace("子集索引", (pageThisNum!! - 1).toString())
                     videoEntry = videoEntry.replace("排序号", (2000000 + pageThisNum!!).toString())
                     videoEntry = videoEntry.replace("下载子TITLE", downloadTaskDataBean.pageTitle)
 
-                    videoEntry =
-                        videoEntry.replace("LINK地址", it.data.redirect_url.replace("/", "\\/"))
+                    // videoEntry =
+                        // videoEntry.replace("LINK地址", it.redirect_url.replace("/", "\\/"))
 
                     val width: Int?
                     val timeLength: Int?
@@ -627,13 +627,13 @@ class DownloadQueue @Inject constructor() :
 
                     videoEntry = videoEntry.replace("总时间", timeLength.toString())
 
-                    videoEntry = videoEntry.replace("弹幕数量", it.data.stat.danmaku.toString())
+                    videoEntry = videoEntry.replace("弹幕数量", it.stat.danmaku.toString())
                     videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
 
                     val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
                     val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
 
-                    videoEntry = videoEntry.replace("封面地址", it.data.pic.replace("/", "\\/"))
+                    videoEntry = videoEntry.replace("封面地址", it.pic.replace("/", "\\/"))
                     videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
                     videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
                     videoIndex = videoIndex.replace("高度", height.toString())
@@ -681,7 +681,7 @@ class DownloadQueue @Inject constructor() :
         videoBaseBean: VideoBaseBean,
     ) {
         var videoEntry = videoEntry
-        val epidUrl = videoBaseBean.data.redirect_url
+        val epidUrl = "videoBaseBean.redirect_url"
         // av过滤
         val epRegex = Regex("""(?<=(ep))([0-9]+)""")
         val epid = if (epRegex.containsMatchIn(epidUrl)) {
@@ -790,7 +790,7 @@ class DownloadQueue @Inject constructor() :
                 saf?.createDirectory("download")
             }
 
-            val epidUrl = videoBaseBean.data.redirect_url
+            val epidUrl = "videoBaseBean.redirect_url"
             // av过滤
             val epRegex = Regex("""(?<=(ep))([0-9]+)""")
             val epid = if (epRegex.containsMatchIn(epidUrl)) {

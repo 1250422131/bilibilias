@@ -14,7 +14,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoBaseBean" />
+            type="com.imcys.bilibilias.common.base.model.VideoBaseBean" />
 
         <variable
             name="UserCardBean"
@@ -83,7 +83,7 @@
                         android:id="@+id/as_video_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:imageUrl="@{VideoBaseBean.data.pic}"
+                        android:imageUrl="@{VideoBaseBean.pic}"
                         android:transitionName="videoPic"
                         app:layout_collapseMode="parallax"
                         app:showPlayButton="false" />
@@ -128,8 +128,8 @@
                         android:layout_marginEnd="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:onLongClick="@{(view)->AsVideoViewModel.addClipboardMessage(view,VideoBaseBean.data.title)}"
-                        android:text="@{VideoBaseBean.data.title}"
+                        android:onLongClick="@{(view)->AsVideoViewModel.addClipboardMessage(view,VideoBaseBean.title)}"
+                        android:text="@{VideoBaseBean.title}"
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold" />
@@ -140,7 +140,7 @@
                         android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="4"
-                        android:text="@{VideoBaseBean.data.desc}"
+                        android:text="@{VideoBaseBean.desc}"
                         android:textColor="@color/home_bottom_nav_seletor"
                         android:textSize="19sp"
                         android:textStyle="bold" />
@@ -157,7 +157,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{(view) -> AsVideoViewModel.likeVideo(view,VideoBaseBean.data.bvid)}"
+                            android:onClick="@{(view) -> AsVideoViewModel.likeVideo(view,VideoBaseBean.bvid)}"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -175,7 +175,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.like)}"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.like)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -186,7 +186,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{(view)->AsVideoViewModel.videoCoinAdd(view,VideoBaseBean.data.bvid)}">
+                            android:onClick="@{(view)->AsVideoViewModel.videoCoinAdd(view,VideoBaseBean.bvid)}">
 
 
                             <ImageView
@@ -202,7 +202,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.coin)}"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.coin)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -214,7 +214,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{(view)->AsVideoViewModel.loadCollectionView(view,VideoBaseBean.data.aid)}">
+                            android:onClick="@{(view)->AsVideoViewModel.loadCollectionView(view,VideoBaseBean.aid)}">
 
 
                             <ImageView
@@ -230,7 +230,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.favorite)}"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.favorite)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -254,7 +254,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.share)}"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.share)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -293,7 +293,7 @@
                             android:id="@+id/as_video_user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{VideoBaseBean.data.owner.name}"
+                            android:text="@{VideoBaseBean.owner.name}"
                             android:textSize="16sp"
                             android:transitionName="videoTitle" />
 

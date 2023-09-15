@@ -24,6 +24,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -211,7 +212,7 @@ class AsVideoViewModel : ViewModel() {
         assFile.writeText(
             DmXmlToAss.xmlToAss(
                 assFile.readText(),
-                videoBaseBean.data.title + context.cid,
+                videoBaseBean.title + context.cid,
                 "1920",
                 "1080",
                 context,

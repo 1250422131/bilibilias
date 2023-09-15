@@ -9,7 +9,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoBaseBean" />
+            type="com.imcys.bilibilias.common.base.model.VideoBaseBean" />
 
     </data>
 
@@ -41,7 +41,7 @@
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="6"
-                    android:imageUrl="@{VideoBaseBean.data.pic}"
+                    android:imageUrl="@{VideoBaseBean.pic}"
                     android:transitionName="videoPic"
                     app:round="10dp" />
 
@@ -64,7 +64,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="@{VideoBaseBean.data.title}"
+                            android:text="@{VideoBaseBean.title}"
                             android:textSize="16dp"
                             android:textStyle="bold"
                             android:transitionName="videoTitle" />
@@ -75,7 +75,7 @@
                             android:layout_marginTop="5dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="@{VideoBaseBean.data.desc}"
+                            android:text="@{VideoBaseBean.desc}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 
@@ -98,7 +98,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.view)}"
+                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.view)}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 
@@ -113,7 +113,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.danmaku)}"
+                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.danmaku)}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
