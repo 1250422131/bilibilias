@@ -12,7 +12,7 @@ object VideoUtils {
 
     @Deprecated(
         "",
-        ReplaceWith("use av2bv", "com.imcys.bilibilias.common.base.utils.VideoUtils.av2bv")
+        ReplaceWith("VideoUtils.av2Bv(aid)", "com.imcys.bilibilias.common.base.utils.VideoUtils.av2bv")
     )
     fun toBvidOffline(avid: Long): String {
         return av2Bv(avid)
