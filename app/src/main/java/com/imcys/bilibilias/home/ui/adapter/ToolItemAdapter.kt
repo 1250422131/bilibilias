@@ -95,7 +95,7 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
 
 
 
-                    i.putExtra("bvId", getItem(position).videoBaseBean?.data?.bvid)
+                    i.putExtra("bvId", getItem(position).videoBaseBean?.bvid)
 
                     holder.itemView.context.startActivity(i, optionsCompat.toBundle())
 

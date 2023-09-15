@@ -1,27 +1,20 @@
 package com.imcys.bilibilias.common.base.utils
 
-
 object AsVideoNumUtils {
 
-    fun getBvid(string: String): String {
-
-        //bv过滤
-        var epRegex =
-            Regex("""(BV|bv|Bv|bV)1([A-z]|[0-9]){2}4([A-z]|[0-9])1([A-z]|[0-9])7([A-z]|[0-9]){2}""")
-        if (epRegex.containsMatchIn(string)) {
-            return epRegex.find(string)?.value.toString()
+    fun getBvid(text: String): String? {
+        if (isBV(text)) {
+            return Regex.bvRegex.find(text)?.value
         }
-
-        //av过滤
-        epRegex = Regex("""(?<=(av|aV|AV|Av))([0-9]+)""")
-        if (epRegex.containsMatchIn(string)) return VideoUtils.toBvidOffline(
-            epRegex.find(
-                string
-            )?.value!!.toInt().toLong()
-        )
-
-
-        return ""
+        return null
+    }
+    fun isBV(text: String) = Regex.bvRegex.containsMatchIn(text)
+    fun isAV(text: String) = Regex.avRegex.containsMatchIn(text)
+    fun getAvid(text: String): String? {
+        if (isAV(text)) {
+            return Regex.avRegex.find(text)?.value
+        }
+        return null
     }
 
     fun getQualityName(code: Int): String {
@@ -35,8 +28,5 @@ object AsVideoNumUtils {
                 "192K"
             }
         }
-
     }
-
-
 }

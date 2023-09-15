@@ -38,6 +38,7 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -87,7 +88,8 @@ object DialogUtils {
             }
 
             dialogLoginAs.setOnClickListener {
-                asToast(context, "云端账户即将出炉")
+
+                context.toast( "云端账户即将出炉")
                 bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
@@ -537,12 +539,12 @@ object DialogUtils {
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
-            videoBaseBean.data.bvid,
-            videoBaseBean.data.aid,
-            videoBaseBean.data.owner.mid,
-            videoBaseBean.data.owner.name,
-            videoBaseBean.data.copyright,
-            videoBaseBean.data.tname,
+            videoBaseBean.bvid,
+            videoBaseBean.aid,
+            videoBaseBean.owner.mid,
+            videoBaseBean.owner.name,
+            videoBaseBean.copyright,
+            videoBaseBean.tname,
             downloadTool,
             downloadType,
             downloadCondition,
@@ -601,12 +603,12 @@ object DialogUtils {
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
-            videoBaseBean.data.bvid,
-            videoBaseBean.data.aid,
-            videoBaseBean.data.owner.mid,
-            videoBaseBean.data.owner.name,
-            videoBaseBean.data.copyright,
-            videoBaseBean.data.tname,
+            videoBaseBean.bvid,
+            videoBaseBean.aid,
+            videoBaseBean.owner.mid,
+            videoBaseBean.owner.name,
+            videoBaseBean.copyright,
+            videoBaseBean.tname,
             downloadTool,
             downloadType,
             downloadCondition,
@@ -1119,8 +1121,7 @@ object DialogUtils {
             val dashBangumiPlayBean: DashBangumiPlayBean,
             val dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
         )
-
-        Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+        context.toast("已添加到下载队列")
 
         CoroutineScope(Dispatchers.IO).launch {
             flow {
@@ -1210,7 +1211,7 @@ object DialogUtils {
             val dataBean: VideoPageListData.DataBean,
         )
 
-        Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+       context.toast( "已添加到下载队列")
 
         CoroutineScope(Dispatchers.IO).launch {
             flow {
@@ -1219,7 +1220,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
                             )
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
@@ -1316,7 +1317,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
                             )
                     emit(VideoData(videoPlayBean, it))
                 }
@@ -1432,13 +1433,13 @@ object DialogUtils {
                 .toString()
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.data.aid.toString(),
-            videoBaseBean.data.bvid,
+            videoBaseBean.aid.toString(),
+            videoBaseBean.bvid,
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.data.title,
+            videoBaseBean.title,
             qn.toString(),
         )
 
@@ -1451,7 +1452,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.part,
-                        videoBaseBean.data.bvid,
+                        videoBaseBean.bvid,
                         qn.toString(),
                         videoPlayBean = videoPlayBean,
                         videoPageDataData = dataBean,
@@ -1461,13 +1462,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载成功",
+                            "${videoBaseBean.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载失败",
+                            "${videoBaseBean.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1536,13 +1537,13 @@ object DialogUtils {
 
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.data.aid.toString(),
-            videoBaseBean.data.bvid,
+            videoBaseBean.aid.toString(),
+            videoBaseBean.bvid,
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.data.title,
+            videoBaseBean.title,
             qn.toString(),
         )
 
@@ -1555,7 +1556,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.title,
-                        videoBaseBean.data.bvid,
+                        videoBaseBean.bvid,
                         qn.toString(),
                         bangumiPlayBean = bangumiPlayBean,
                         bangumiSeasonBean = dataBean,
@@ -1565,13 +1566,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载成功",
+                            "${videoBaseBean.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载失败",
+                            "${videoBaseBean.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1655,13 +1656,13 @@ object DialogUtils {
         // 扩展函数 -> 把下载地址换出来
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.data.aid.toString(),
-            videoBaseBean.data.bvid,
+            videoBaseBean.aid.toString(),
+            videoBaseBean.bvid,
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.data.title,
+            videoBaseBean.title,
             qn.toString(),
         )
 
@@ -1674,7 +1675,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.long_title,
-                        videoBaseBean.data.bvid,
+                        videoBaseBean.bvid,
                         qn.toString(),
                         dashBangumiPlayBean = dashBangumiPlayBean,
                         bangumiSeasonBean = dataBean,
@@ -1684,13 +1685,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载成功",
+                            "${videoBaseBean.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载失败",
+                            "${videoBaseBean.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1773,13 +1774,13 @@ object DialogUtils {
         // 获取下载地址
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.data.aid.toString(),
-            videoBaseBean.data.bvid,
+            videoBaseBean.aid.toString(),
+            videoBaseBean.bvid,
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.data.title,
+            videoBaseBean.title,
             qn.toString(),
         )
 
@@ -1792,7 +1793,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.part,
-                        videoBaseBean.data.bvid,
+                        videoBaseBean.bvid,
                         qn.toString(),
                         dashVideoPlayBean = dashVideoPlayBean,
                         videoPageDataData = dataBean,
@@ -1802,13 +1803,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载成功",
+                            "${videoBaseBean.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.data.bvid}下载失败",
+                            "${videoBaseBean.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -2205,3 +2206,5 @@ object DialogUtils {
         return bottomSheetDialog
     }
 }
+fun Context.toast(message: CharSequence) =
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

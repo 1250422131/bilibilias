@@ -37,6 +37,7 @@ import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
+import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -273,11 +274,11 @@ class AsVideoActivity : BaseActivity() {
                 // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
                 setBaseData(videoBaseBean)
                 // 加载用户卡片
-                loadUserCardData(videoBaseBean.data.owner.mid)
+                loadUserCardData(videoBaseBean.owner.mid)
                 // 加载弹幕信息
                 loadDanmakuFlameMaster()
                 // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-                videoBaseBean.data.redirect_url?.apply {
+                videoBaseBean.redirectUrl?.apply {
                     // 通过正则表达式检查该视频是不是番剧
                     val epRegex = Regex("""(?<=ep)(\d*)""")
                     if (epRegex.containsMatchIn(this)) {
@@ -510,9 +511,9 @@ class AsVideoActivity : BaseActivity() {
      * @param videoBaseBean VideoBaseBean
      */
     private fun setBaseData(videoBaseBean: VideoBaseBean) {
-        bvid = videoBaseBean.data.bvid
-        avid = videoBaseBean.data.aid
-        cid = videoBaseBean.data.cid
+        bvid = videoBaseBean.bvid
+        avid = videoBaseBean.aid
+        cid = videoBaseBean.cid
         binding.videoBaseBean = videoBaseBean
     }
 

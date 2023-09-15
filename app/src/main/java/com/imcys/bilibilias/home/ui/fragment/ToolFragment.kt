@@ -29,9 +29,9 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
+import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -195,7 +195,7 @@ class ToolFragment : BaseFragment() {
             )
             return
         } else if (AsVideoNumUtils.getBvid(inputString) != "") {
-            getVideoCardData(AsVideoNumUtils.getBvid(inputString))
+            getVideoCardData(AsVideoNumUtils.getBvid(inputString)!!)
             return
         }
 

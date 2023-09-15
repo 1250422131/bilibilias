@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.tool
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,33 +20,48 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
+import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Tool() {
+    val toolViewModel: ToolViewModel = hiltViewModel()
     FullScreenScaffold(
-        Modifier
-            .padding(horizontal = 20.dp)
-            .fillMaxSize(),
+        Modifier.fillMaxSize(),
         topBar = {
-            SearchBar()
+            TopAppBar(title = {
+                Text(
+                    stringResource(R.string.app_fragment_tool_title),
+                    Modifier.padding(horizontal = 20.dp),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            })
         }
     ) { innerPadding ->
         Column(
@@ -55,25 +69,51 @@ fun Tool() {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            VideoCard()
+            val state by toolViewModel.toolState.collectAsStateWithLifecycle()
+            SearchTextField(
+                state.query,
+                onValueChange = {
+                    toolViewModel.parsesBvOrAvOrEp(it)
+                },
+                clearText = { toolViewModel.clearText() },
+                isError = state.isInputError
+            )
+            VideoCard(
+                state.videoMate.pic,
+                state.videoMate.title,
+                state.videoMate.desc,
+                state.videoMate.playVolume,
+                state.videoMate.danmaku,
+                state.isInputError
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VideoCard() {
+fun VideoCard(
+    pic: String,
+    title:
+    String,
+    desc: String,
+    playVolume: String,
+    danmaku: String,
+    isShow: Boolean
+) {
+    if (isShow) return
     Card(onClick = { /*TODO*/ }, Modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth()) {
             Column(
                 Modifier.weight(1f)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_home_trophy),
+                AsyncImage(
+                    model = pic,
                     contentDescription = null,
                     Modifier
                         .height(100.dp)
                         .padding(5.dp)
+                        .fillMaxWidth()
                 )
             }
             Column(
@@ -82,13 +122,13 @@ fun VideoCard() {
                     .weight(1f)
             ) {
                 Text(
-                    "hhhhhhhhhhhhhhhhhhhhh",
+                    title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2
                 )
                 Text(
-                    "hhhhhhhhhhhhhhhhhhhhhhhhh",
+                    desc,
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onPrimary,
                     maxLines = 2
@@ -101,7 +141,7 @@ fun VideoCard() {
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                     )
                     Text(
-                        text = "1000w",
+                        text = playVolume,
                         Modifier.padding(start = 3.dp),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -116,7 +156,7 @@ fun VideoCard() {
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                     )
                     Text(
-                        text = "1000w",
+                        text = danmaku,
                         Modifier.padding(start = 3.dp),
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -163,43 +203,51 @@ private fun ToolItem(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun SearchBar(modifier: Modifier = Modifier) {
-    Column(
-        modifier
-            .fillMaxWidth()
-            .background(Color(0XFFEDEFF2))
-            .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp)),
-    ) {
-        Text(
-            stringResource(R.string.app_fragment_tool_title),
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-        var query by remember { mutableStateOf("") }
-        OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            leadingIcon = {
-                Image(
-                    painter = painterResource(R.drawable.ic_tool_search),
-                    contentDescription = "search"
-                )
-            },
-            trailingIcon = {
-                if (query.isNotBlank()) {
-                    Icon(
-                        Icons.Default.Clear,
-                        contentDescription = "clear text",
-                        modifier = Modifier.clickable { query = "" }
-                    )
-                }
-            },
-            placeholder = { Text(text = stringResource(R.string.app_fragment_tool_input_tip)) },
-            singleLine = true,
-        )
+private fun SearchTextField(query: String, onValueChange: (String) -> Unit, clearText: () -> Unit, isError: Boolean) {
+    val focusRequester = remember { FocusRequester() } // 焦点
+    val softKeyboard = LocalSoftwareKeyboardController.current // 软键盘
+    LaunchedEffect(Unit) {
+        delay(100) // 延迟操作(关键点)
+        focusRequester.requestFocus()
+        softKeyboard?.show()
     }
+    OutlinedTextField(
+        value = query,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .fillMaxWidth()
+            .padding(8.dp),
+        leadingIcon = {
+            Image(
+                painter = painterResource(R.drawable.ic_tool_search),
+                contentDescription = "search"
+            )
+        },
+        trailingIcon = {
+            if (query.isNotBlank()) {
+                Icon(
+                    Icons.Default.Clear,
+                    contentDescription = "clear text",
+                    modifier = Modifier.clickable(onClick = clearText)
+                )
+            }
+        },
+        supportingText = {
+            if (isError) {
+                Text(stringResource(R.string.app_ToolFragment_asVideoId2))
+            }
+        },
+        isError = isError,
+        placeholder = { Text(text = stringResource(R.string.app_fragment_tool_input_tip)) },
+        singleLine = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchBar() {
+    SearchTextField("", {}, {}, false)
 }
