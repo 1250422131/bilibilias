@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +20,6 @@ import cn.jzvd.JzvdStd
 import com.baidu.mobstat.StatService
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.WbiUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
@@ -48,6 +46,7 @@ import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import com.imcys.bilibilias.view.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -77,12 +76,10 @@ import java.util.zip.Inflater
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity() {
+class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
-
-    lateinit var binding: ActivityAsVideoBinding
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -101,16 +98,14 @@ class AsVideoActivity : BaseActivity() {
     var avid: Long = 0L
     var cid: Long = 0L
     var epid: Long = 0L
+    override fun getLayoutRes(): Int = R.layout.activity_as_video
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
 
         // 加载用户信息&视频信息
         loadUserData()
-        // 加载控件
-        initView()
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
@@ -130,7 +125,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    private fun initView() {
+    override fun initView() {
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd
@@ -171,7 +166,9 @@ class AsVideoActivity : BaseActivity() {
                     // 获取播放信息
                     val videoPlayBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
+                        .asyncGet<VideoPlayBean>(
+                            "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
+                        )
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     launchUI {
@@ -194,7 +191,9 @@ class AsVideoActivity : BaseActivity() {
                                 BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                             )
                                 .addHeader(REFERER, BILIBILI_URL)
-                                .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
+                                .asyncGet<DashVideoPlayBean>(
+                                    "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1"
+                                )
 
                             if (dashVideoPlayBean.code != 0) {
                                 setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
@@ -236,7 +235,9 @@ class AsVideoActivity : BaseActivity() {
                     val bangumiPlayBean = KtHttpUtils
                         .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
+                        .asyncGet<BangumiPlayBean>(
+                            "${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1"
+                        )
 
                     launchUI {
                         // 设置布局视频播放数据
@@ -460,7 +461,7 @@ class AsVideoActivity : BaseActivity() {
     private suspend fun getUserData(): UserSpaceInformation {
         val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = WbiUtils.getParamStr(listOf(),"","")
+        val paramsStr = WbiUtils.getParamStr(listOf(), "", "")
 
         return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet("${BilibiliApi.userSpaceDetails}?$paramsStr")

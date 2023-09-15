@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base
 
 import android.app.Activity
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,9 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -26,12 +25,8 @@ import java.util.Locale
 
 open class AbsActivity : AppCompatActivity() {
 
-    private val mThemeChangedBroadcast by lazy {
+    private val mThemeChangedBroadcast by lazy(LazyThreadSafetyMode.NONE) {
         ThemeChangedBroadcast()
-    }
-
-    open val asSharedPreferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     // 存储所有活动的列表
@@ -51,14 +46,14 @@ open class AbsActivity : AppCompatActivity() {
         setLanguage()
     }
 
-    fun launchIO(
+    protected fun launchIO(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
         lifecycleScope.launch(Dispatchers.IO, start, block)
     }
 
-    fun launchUI(
+    protected fun launchUI(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {

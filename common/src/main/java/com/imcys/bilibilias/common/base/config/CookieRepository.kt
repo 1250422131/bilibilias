@@ -10,5 +10,5 @@ object CookieRepository : MMKVOwner(mmapID = "CookieRepository") {
     var DedeUserID by mmkvString()
     var sid by mmkvString()
     var timestamp by mmkvLong()
-    val isExpired get() = (timestamp < System.currentTimeMillis()) && sessionData == null
+    val isExpired: Boolean get() = (timestamp < System.currentTimeMillis())
 }

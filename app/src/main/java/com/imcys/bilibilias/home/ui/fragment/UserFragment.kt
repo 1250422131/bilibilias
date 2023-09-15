@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.WbiUtils
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -49,13 +49,9 @@ class UserFragment : BaseFragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false)
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
-
-        initView()
-
         return fragmentUserBinding.root
     }
-
-    private fun initView() {
+     override fun initView() {
         initUserWorks()
 
         initSmoothRefreshLayout()

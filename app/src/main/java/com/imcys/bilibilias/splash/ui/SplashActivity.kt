@@ -6,19 +6,22 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.databinding.ActivitySplashBinding
+import com.imcys.bilibilias.view.base.BaseActivity
 import com.tencent.mmkv.MMKV
+import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : BaseActivity() {
+@AndroidEntryPoint
+class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
+    override fun getLayoutRes(): Int = R.layout.activity_splash
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
     }
 
     private fun getSavePermissions() {
