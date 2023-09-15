@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,12 +34,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -51,7 +53,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.startActivity
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +65,7 @@ fun Tool() {
     LaunchedEffect(Unit) {
         toolViewModel.getOldItemList()
     }
+    val context = LocalContext.current
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
@@ -68,8 +73,16 @@ fun Tool() {
                 Text(
                     stringResource(R.string.app_fragment_tool_title),
                     Modifier.padding(20.dp),
-                    fontSize = 30.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
+                )
+            }, actions = {
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = "设置",
+                    Modifier.padding(16.dp).clickable {
+                        context.startActivity(SettingActivity::class.java)
+                    }
                 )
             })
         }
@@ -80,14 +93,7 @@ fun Tool() {
                 .fillMaxSize()
         ) {
             val state by toolViewModel.toolState.collectAsStateWithLifecycle()
-            val clipboardManager = LocalClipboardManager.current
-            LaunchedEffect(Unit) {
-                val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-                if (AsVideoNumUtils.isAV(text) || AsVideoNumUtils.isBV(text)) {
-                    toolViewModel.clearText()
-                    toolViewModel.parsesBvOrAvOrEp(text)
-                }
-            }
+            ReadFromClipboard()
             SearchTextField(
                 state.query,
                 onValueChange = {
@@ -103,9 +109,7 @@ fun Tool() {
                     state.videoMate.desc,
                     state.videoMate.playVolume,
                     state.videoMate.danmaku,
-                    Modifier
-                        .animateContentSize()
-                        .padding(8.dp)
+                    Modifier.animateContentSize()
                 )
             }
 
@@ -118,6 +122,18 @@ fun Tool() {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
+    val clipboardManager = LocalClipboardManager.current
+    LaunchedEffect(Unit) {
+        val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
+        if (AsVideoNumUtils.isAV(text) || AsVideoNumUtils.isBV(text)) {
+            toolViewModel.clearText()
+            toolViewModel.parsesBvOrAvOrEp(text)
         }
     }
 }
@@ -137,67 +153,55 @@ fun VideoCard(
         onClick = { /*TODO*/ },
         modifier.fillMaxWidth(),
     ) {
-        Row(Modifier.fillMaxWidth()) {
-            Column(
-                Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                AsyncImage(
-                    model = pic,
-                    contentDescription = null,
-                    Modifier
-                        .height(100.dp)
-                        .padding(5.dp)
-                        .fillMaxWidth()
-                )
-            }
-            Column(
-                Modifier
+        Column(Modifier.padding(8.dp)) {
+            AsyncImage(
+                model = pic,
+                contentDescription = "视频封面",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
                     .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Text(
-                    title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2
+            )
+            Text(
+                title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2
+            )
+            Text(
+                desc,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 2
+            )
+            Row {
+                Image(
+                    painter = painterResource(R.drawable.ic_play_num),
+                    contentDescription = "播放量",
+                    Modifier.size(18.dp),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                 )
                 Text(
-                    desc,
+                    text = playVolume,
+                    Modifier.padding(start = 3.dp),
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    maxLines = 2
                 )
-                Row {
-                    Image(
-                        painter = painterResource(R.drawable.ic_play_num),
-                        contentDescription = "play number",
-                        Modifier.size(18.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
-                    )
-                    Text(
-                        text = playVolume,
-                        Modifier.padding(start = 3.dp),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.ic_danmaku_num),
-                        contentDescription = "danmaku number",
-                        Modifier
-                            .size(18.dp)
-                            .padding(start = 10.dp),
-                        contentScale = ContentScale.Inside,
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
-                    )
-                    Text(
-                        text = danmaku,
-                        Modifier.padding(start = 3.dp),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                }
+                Image(
+                    painter = painterResource(R.drawable.ic_danmaku_num),
+                    contentDescription = "弹幕量",
+                    Modifier
+                        .size(18.dp)
+                        .padding(start = 10.dp),
+                    contentScale = ContentScale.Inside,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
+                )
+                Text(
+                    text = danmaku,
+                    Modifier.padding(start = 3.dp),
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
             }
         }
     }
