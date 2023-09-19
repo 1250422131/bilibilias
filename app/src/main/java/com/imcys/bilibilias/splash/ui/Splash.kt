@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -42,6 +43,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.router.SplashRouter
 import com.imcys.bilibilias.common.base.components.BottomSheetDialog
+import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.common.base.config.CookieRepository
 import com.imcys.bilibilias.permission.findActivity
 import com.imcys.bilibilias.permission.gotoApplicationSettings
@@ -59,30 +61,36 @@ fun Splash(navController: NavHostController) {
         show = true
         delay(1200)
     }
-    Column(
+    FullScreenScaffold(
         Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "app icon",
+    ) { innerPadding ->
+        Column(
             Modifier
-                .padding(top = screenHeight * .3f)
-                .height(height = 120.dp),
-            contentScale = ContentScale.FillWidth,
-            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
-        )
-        Text(
-            text = stringResource(id = R.string.app_name),
-            maxLines = 1,
-            fontSize = 56.sp,
-            softWrap = false,
-            color = MaterialTheme.colorScheme.primary
-        )
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val configuration = LocalConfiguration.current
+            val screenHeight = configuration.screenHeightDp.dp
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "app icon",
+                Modifier
+                    .padding(top = screenHeight * .3f)
+                    .height(height = 120.dp),
+                contentScale = ContentScale.FillWidth,
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
+            )
+            Text(
+                text = stringResource(id = R.string.app_name),
+                maxLines = 1,
+                fontSize = 56.sp,
+                softWrap = false,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
-    Box(Modifier.fillMaxSize()) { CheckPermission(navController) }
+    Box(Modifier.height(600.dp)) { CheckPermission(navController) }
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -131,24 +139,30 @@ fun CheckPermission(navController: NavHostController) {
 
     BottomSheetDialog(
         visible = showDialog,
-        Modifier.fillMaxSize(),
         onDismissRequest = {},
         cancelable = false,
         canceledOnTouchOutside = false
     ) {
         Column(
             Modifier
-                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                stringResource(R.string.app_permission_application_title),
-                Modifier.height(40.dp),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    stringResource(R.string.app_permission_application_title),
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
             Row(
                 Modifier.padding(horizontal = 25.dp),
                 horizontalArrangement = Arrangement.Center
