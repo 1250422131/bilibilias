@@ -48,9 +48,9 @@ monitor = "1.3.2"
 mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 navigationCompose = "2.7.2"
-nlopez-detekt = "0.2.1"
+nlopez-detekt = "0.2.3"
 okdownload = "1.0.7"
-pagingCompose = "1.0.0-alpha18"
+pagingCompose = "3.2.1"
 pagingRuntimeKtx = "3.2.1"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
@@ -80,6 +80,7 @@ detekt-verify-implementation = { group = "dk.cachet.detekt.extensions", name = "
 fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-android" }
 rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }

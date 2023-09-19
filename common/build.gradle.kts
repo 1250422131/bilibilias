@@ -122,6 +122,7 @@ dependencies {
 
     // kotlinx
     api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
 
