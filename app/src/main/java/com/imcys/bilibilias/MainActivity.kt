@@ -1,8 +1,10 @@
 package com.imcys.bilibilias
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -33,8 +35,8 @@ import com.imcys.bilibilias.base.router.SplashRouter
 import com.imcys.bilibilias.base.router.userNavHostGraph
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.splash.ui.Splash
+import com.imcys.bilibilias.ui.authentication.AuthMethodScreen
 import com.imcys.bilibilias.ui.authentication.AuthScreen
-import com.imcys.bilibilias.ui.authentication.AuthenticationMethodScreen
 import com.imcys.bilibilias.ui.download.Download
 import com.imcys.bilibilias.ui.home.Home
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
@@ -45,6 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,11 +62,11 @@ class MainActivity : ComponentActivity() {
                     Modifier.statusBarsPadding()
                 ) {
                     composable(SplashRouter.App.route) { Splash(navController) }
-                    composable(SplashRouter.Screen.route) { Screen() }
-                    composable(SplashRouter.AuthMethod.route) { AuthenticationMethodScreen(navController) }
+                    composable(SplashRouter.AuthMethod.route) { AuthMethodScreen(navController) }
                     composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
+                    composable(SplashRouter.Screen.route) { Screen() }
                     // todo 也许可以用这个导航到权限检查
-                    dialog("checkPermission"){}
+                    dialog("checkPermission") {}
                 }
             }
         }
