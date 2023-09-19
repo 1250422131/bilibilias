@@ -123,8 +123,8 @@ fun Screen() {
             }
         }
     ) { innerPadding ->
-        // todo 添加网域层 https://developer.android.com/topic/architecture/domain-layer?hl=zh-cn
         CompositionLocalProvider(LocalNavController provides navController) {
+            // todo 分成两个 viewmodel
             val userViewModel: UserViewModel = hiltViewModel()
             NavHost(
                 navController,
