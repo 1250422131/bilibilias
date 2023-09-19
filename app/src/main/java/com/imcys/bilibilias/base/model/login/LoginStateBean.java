@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @create: 2022-10-26 17:30
  * @Description: 登陆状态数据
  */
+@Deprecated
 public class LoginStateBean implements Serializable {
 
     /**
