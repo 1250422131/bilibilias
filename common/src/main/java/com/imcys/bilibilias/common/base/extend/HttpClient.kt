@@ -31,22 +31,22 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
 
 suspend inline fun <reified T> HttpClient.safeGet(
     url: String,
-    block: HttpRequestBuilder.() -> Unit,
+    block: HttpRequestBuilder.() -> Unit = {},
 ): Result<T> =
     try {
         val response = get(url, block)
         Result.success(response.body())
     } catch (e: ClientRequestException) {
-        Timber.tag("SafeGetCatching").d(e,"客户端异常")
+        Timber.tag("SafeGetCatching").d(e, "客户端异常")
         Result.failure(e)
     } catch (e: ServerResponseException) {
-        Timber.tag("SafeGetCatching").d(e,"服务器异常")
+        Timber.tag("SafeGetCatching").d(e, "服务器异常")
         Result.failure(e)
     } catch (e: IOException) {
         Timber.tag("SafeGetCatching").d(e)
         Result.failure(e)
     } catch (e: SerializationException) {
-        Timber.tag("SafeGetCatching").d(e,"序列化失败")
+        Timber.tag("SafeGetCatching").d(e, "序列化失败")
         Result.failure(e)
     }
 

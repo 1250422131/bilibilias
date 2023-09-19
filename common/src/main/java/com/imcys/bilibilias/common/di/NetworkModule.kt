@@ -1,12 +1,12 @@
 package com.imcys.bilibilias.common.di
 
 import android.content.Context
-import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.config.CacheManager
 import com.imcys.bilibilias.common.base.config.CookieManager
 import com.imcys.bilibilias.common.base.config.LoggerManager
 import com.imcys.bilibilias.common.base.constant.ROAM_API
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import dagger.Module
 import dagger.Provides
@@ -99,7 +99,7 @@ class NetworkModule {
         }
         install(Logging) {
             logger = LoggerManager()
-            level = LogLevel.ALL
+            level = LogLevel.BODY
         }
         install(HttpCache) {
             publicStorage(CacheManager())
@@ -131,7 +131,7 @@ class NetworkModule {
                     val res = Json.parseToJsonElement(response.bodyAsText()).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
-                        val message = res["message"]?.jsonPrimitive?.contentOrNull ?: throw ApiIOException("发生未知服务器异常")
+                        val message = res["message"]?.jsonPrimitive?.contentOrNull
                         throw ApiIOException(message)
                     }
                     var realData = res["data"] ?: throw NullResponseDataIOException()
