@@ -7,28 +7,26 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
-import com.imcys.bilibilias.base.model.login.LoginResponseBean
-import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.repository.LoginRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.client.statement.request
 import io.ktor.http.encodeURLParameter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withTimeout
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val http: HttpClient) : BaseViewModel() {
+class AuthViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
     val authState = _authState.asStateFlow()
@@ -39,15 +37,14 @@ class AuthViewModel @Inject constructor(private val http: HttpClient) : BaseView
 
     private fun applyQRCode() {
         launchIO {
-            val bean = http.get(BilibiliApi.getLoginQRPath)
-                .body<AuthQrCodeBean.Data>()
-            _authState.update {
-                it.copy(
-                    qrCodeUrl = "https://pan.misakamoe.com/qrcode/?url=${bean.url.encodeURLParameter()}",
-                    qrCodeKey = bean.qrcodeKey
-                )
+            loginRepository.applyForQrCode { data ->
+                val state = _authState.update {
+                    it.copy(
+                        qrCodeUrl = "https://pan.misakamoe.com/qrcode/?url=${data.url.encodeURLParameter()}",
+                    )
+                }
+                tryLogin(data.qrcodeKey)
             }
-            Timber.tag("qrCode").d("%s", _authState.value.qrCodeUrl)
         }
     }
 
@@ -96,22 +93,48 @@ class AuthViewModel @Inject constructor(private val http: HttpClient) : BaseView
         }
     }
 
-    fun completeSigning() {
+    /**
+     * 0：扫码登录成功
+     * 86038：二维码已失效
+     * 86090：二维码已扫码未确认
+     * 86101：未扫码
+     */
+    private fun tryLogin(key: String) {
         launchIO {
-            val bean1 = http.get(BilibiliApi.getLoginStatePath) {
-                parameter("qrcode_key", _authState.value.qrCodeKey)
+            withTimeout(3.minutes) {
+                while (isActive) {
+                    delay(1.seconds)
+                    var canLogin = false
+                    loginRepository.pollingLogin(key)
+                        .onSuccess { state ->
+                            Timber.tag("tryLogin").d(state.toString())
+                            canLogin = canLogin(state.code)
+                            _authState.update {
+                                it.copy(
+                                    loginStateMessage = state.message,
+                                    loginState = canLogin
+                                )
+                            }
+                        }
+                        .onFailure {
+                            Timber.tag("tryLogin").d(it)
+                        }
+                    if (canLogin) break
+                }
             }
-            Timber.tag(TAG).d(bean1.request.url.toString())
-            val bean = bean1.body<LoginResponseBean>()
-            Timber.tag(TAG).d(bean.toString())
         }
     }
+
+    private fun canLogin(code: Int) = code == 0
 }
 
 private const val TAG = "AuthViewModel"
 
 data class AuthState(
     val qrCodeUrl: String = "",
-    val qrCodeKey: String = "",
-    val snackBarMessage: String = "",
+
+    val loginStateMessage: String = "",
+    val loginState: Boolean = false,
+
+    val snackBarMessage: String? = null,
 )
