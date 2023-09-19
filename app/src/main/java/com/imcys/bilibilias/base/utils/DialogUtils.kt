@@ -23,7 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.AuthQrCodeBean
+import com.imcys.bilibilias.common.base.model.AuthQrCodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
@@ -130,7 +130,7 @@ object DialogUtils {
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
-        binding.dataBean = loginQrcodeBean.data
+        // binding.dataBean = loginQrcodeBean.data
         binding.loginQRModel = LoginQRModel()
         binding.loginQRModel?.responseResult = responseResult
         // 传导binding过去

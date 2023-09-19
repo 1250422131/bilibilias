@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.model.login
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

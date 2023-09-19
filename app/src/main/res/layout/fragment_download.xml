@@ -133,6 +133,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/fragment_download_RecyclerView"
                         android:layout_width="match_parent"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:layout_height="match_parent"
                         android:padding="10dp" />
                 </LinearLayout>

@@ -43,8 +43,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     /**
      * 初始化fragment
      */
-
-
     override fun initView() {
         homeFragment = HomeFragment.newInstance()
         toolFragment = ToolFragment.newInstance()
