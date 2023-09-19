@@ -19,6 +19,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -90,10 +91,13 @@ fun AuthScreen(navController: NavHostController, modifier: Modifier = Modifier) 
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-            LaunchedEffect(authStateState.loginState) {
-                navController.navigate(SplashRouter.Screen.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        inclusive = true
+            // todo 应该使用 事件来进行判断
+            SideEffect {
+                if (authStateState.loginState) {
+                    navController.navigate(SplashRouter.Screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
                     }
                 }
             }
