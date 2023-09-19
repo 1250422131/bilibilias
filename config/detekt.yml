@@ -333,6 +333,7 @@ naming:
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**' ]
     functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
     excludeClassPattern: '$^'
+    ignoreAnnotated: ['Composable']
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
@@ -1075,7 +1076,6 @@ HbmartinRuleSet:
     ignoreAnnotated: [ 'Composable', 'Preview' ]
     allowExtensions: true
     allowReceivers: true
-
   WhenBranchSingleLineOrBraces:
     active: true
 

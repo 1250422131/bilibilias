@@ -105,6 +105,7 @@ kotlin {
 
 kapt {
     correctErrorTypes = true
+    useBuildCache = true
 }
 
 dependencies {
@@ -127,20 +128,30 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    detektPlugins(libs.gitlab.detekt.formatting)
-    detektPlugins(libs.hbmartin.detekt.rules)
-    detektPlugins(libs.detekt.rules.libraries)
-    detektPlugins(libs.detekt.rules.ruleauthors)
-    detektPlugins(libs.detekt.rules.compose)
-    detektPlugins(libs.detekt)
-    detektPlugins(libs.kure.potlin)
-    detektPlugins(libs.detekt.verify.implementation)
-    detektPlugins(libs.rules.detekt)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation(libs.activity.compose)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+
+    implementation(libs.material3)
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.material3.window.size)
+    implementation(libs.material.icons.extended)
+    implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime.ktx)
+
+    debugImplementation(libs.ui.tooling)
+    implementation(libs.ui.tooling.preview)
+    androidTestImplementation(platform(libs.compose.bom))
 
     /**
      * banner
      */
     implementation(libs.zhujiang.banner)
-    debugImplementation(libs.ui.tooling)
-    implementation(libs.ui.tooling.preview)
 }

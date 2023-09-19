@@ -210,28 +210,8 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
-    api(libs.androidx.lifecycle.viewmodel.compose)
-    api(libs.androidx.lifecycle.runtime.compose)
-
-    api(libs.activity.compose)
-    api(platform(libs.compose.bom))
-    api(libs.ui)
-    api(libs.ui.graphics)
-
-    api(libs.material3)
-    api(libs.accompanist.systemuicontroller)
-    api(libs.accompanist.permissions)
-    api(libs.material3.window.size)
-    api(libs.material.icons.extended)
 
     api(libs.timber)
-
-    api(libs.androidx.navigation.compose)
-
-    api(libs.androidx.paging.compose)
-    api(libs.androidx.paging.runtime.ktx)
-
-    androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
@@ -239,14 +219,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    detektPlugins(libs.gitlab.detekt.formatting)
-    detektPlugins(libs.hbmartin.detekt.rules)
-    detektPlugins(libs.detekt.rules.libraries)
-    detektPlugins(libs.detekt.rules.ruleauthors)
-    detektPlugins(libs.detekt.rules.compose)
-    detektPlugins(libs.detekt)
-    detektPlugins(libs.kure.potlin)
-    detektPlugins(libs.detekt.verify.implementation)
-    detektPlugins(libs.rules.detekt)
 }
