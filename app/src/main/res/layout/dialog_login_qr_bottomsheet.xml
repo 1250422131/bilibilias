@@ -13,7 +13,7 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.base.model.login.AuthQrCodeBean.Data" />
+            type="com.imcys.bilibilias.common.base.model.AuthQrCodeBean" />
 
     </data>
 
@@ -69,8 +69,6 @@
                 android:layout_height="130dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:imageUrl="@{`https://pan.misakamoe.com/qrcode/?url=`+DataBean.url}"
-                android:onClick="@{() -> LoginQRModel.reloadLoginQR(DataBean)}"
                 android:scaleType="fitXY" />
 
             <TextView
@@ -98,7 +96,6 @@
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcodeKey)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_finish"
                     android:textColor="@color/white"
                     android:textSize="15sp"
@@ -119,7 +116,6 @@
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> LoginQRModel.downloadLoginQR(view,DataBean)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_download"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -141,7 +137,6 @@
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_go"
                     android:textColor="@color/black"
                     android:textSize="15sp"

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.model.login
+package com.imcys.bilibilias.common.base.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -33,8 +33,8 @@ data class AuthQrCodeBean(
     @Serializable
     data class Data(
         @SerialName("qrcode_key")
-        var qrcodeKey: String = "", // 8587cf8106a0b863c46d6bab913537f6
+        var qrcodeKey: String = "",
         @SerialName("url")
-        var url: String = "" // https://passport.bilibili.com/h5-app/passport/login/scan?navhide=1&qrcode_key=8587cf8106a0b863c46d6bab913537f6&from=
+        var url: String = ""
     )
 }

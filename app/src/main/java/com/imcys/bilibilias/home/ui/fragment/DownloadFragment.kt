@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
@@ -238,11 +237,7 @@ class DownloadFragment : BaseFragment() {
     private fun initDownloadList() {
         fragmentDownloadBinding.apply {
             App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
-
             fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
-//            fragmentDownloadRecyclerView.itemAnimator = null
-            fragmentDownloadRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
     }
 
