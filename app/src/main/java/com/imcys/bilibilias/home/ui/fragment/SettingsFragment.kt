@@ -28,6 +28,12 @@ import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
 import me.rosuh.filepicker.config.FilePickerManager
 
+private const val user_download_save_sd_path_switch = "user_download_save_sd_path_switch"
+
+private const val user_download_save_path = "user_download_save_path"
+
+private const val download_path = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var userDownloadSaveSDPathSwitch: SwitchPreferenceCompat
@@ -65,25 +71,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         sharedPreferences = getDefaultSharedPreferences(requireContext())
 
+        initUserDownloadSaveSDPathSwitch()
+        initRenameUserDownloadFileNameEditText()
+        initUserDownloadSavePathEditText()
+        initUserDownloadFileNamePreferences()
+        initUserDlFinishAutomaticMergeSwitch()
+        initUserDlFinishAutomaticImportSwitch()
+        initAppThemeListPreference()
+        initAppLanguageListPreference()
+        initRenameUserDownloadSavePath()
+        
         initPreference()
-
-        bindingEvent()
     }
 
-    private fun bindingEvent() {
-        userDownloadFileNameEditText.setOnPreferenceChangeListener { preference, newValue ->
-
-            val regex = Regex(""".*([<>:*?"]).*""")
-            if (newValue.toString() in "{FILE_TYPE}") {
-                Toast.makeText(context, "缺少文件后缀", Toast.LENGTH_SHORT).show()
-                false
-            } else {
-                (!regex.containsMatchIn(newValue.toString())).apply {
-                    if (!this) Toast.makeText(context, "存在特殊符号", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
+    private fun initRenameUserDownloadSavePath() {
+        renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
         renameUserDownloadSavePath.setOnPreferenceClickListener {
             DialogUtils.dialog(
                 requireContext(),
@@ -94,54 +96,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 positiveButtonClickListener = {
                     getDefaultSharedPreferences(requireContext()).edit().putString(
-                        "user_download_save_path",
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                        user_download_save_path,
+                        download_path,
                     )
                         .apply()
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                     userDownloadSavePathEditText.summary =
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+                        download_path
                 },
                 negativeButtonClickListener = {
                 },
             ).show()
             true
         }
-
-        renameUserDownloadFileNameEditText.setOnPreferenceClickListener {
-            DialogUtils.dialog(
-                requireContext(),
-                "警告",
-                "是否还原默认命名规则",
-                "是",
-                "否",
-                true,
-                positiveButtonClickListener = {
-                    getDefaultSharedPreferences(requireContext()).edit {
-                        putString(
-                            "user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
-                        )
-                        apply()
-                    }
-                    asToast(requireContext(), "恢复成功，返回页面重新进入可见")
-                },
-                negativeButtonClickListener = {
-                },
-            ).show()
-            true
-        }
-
-        bindingGetSavePathEvent()
-
-        bindingImportFileEvent()
-
-        bindingSaveSDPathSwitchEvent()
-        bindingAppThemeListPreferenceEvent()
-        bindingAppLanguageListPreferenceEvent()
     }
 
-    private fun bindingAppLanguageListPreferenceEvent() {
+    private fun initAppLanguageListPreference() {
+        appLanguageListPreference = findPreference("app_language")!!
         appLanguageListPreference.onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
                 val intent = Intent("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
@@ -151,7 +122,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
-    private fun bindingAppThemeListPreferenceEvent() {
+    private fun initAppThemeListPreference() {
+        appThemeListPreference = findPreference("app_theme")!!
         appThemeListPreference.onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
                 val intent = Intent("com.imcys.bilibilias.app.THEME_CHANGED")
@@ -161,36 +133,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
-    private fun bindingSaveSDPathSwitchEvent() {
-        userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
-            val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
-                "user_download_save_sd_path_switch",
-                false,
-            )
-            // 禁止或者释放下载地址修改
-            userDownloadSavePathEditText.isEnabled = !sdPathState
-
-            val tip = "这里的路径无法修改，储存位置为:\n${
-                AppFilePathUtils(
-                    App.context,
-                    "com.imcys.bilibilias",
-                ).sdCardDirectory
-            }/Android/data/com.imcys.bilibilias/files/download"
-
-            userDownloadSaveSDPathSwitch.summaryOn = tip
-
-            true
-        }
-    }
-
-    @SuppressLint("UseRequireInsteadOfGet")
-    private fun bindingImportFileEvent() {
+    private fun initUserDlFinishAutomaticImportSwitch() {
+        userDlFinishAutomaticImportSwitch =
+            findPreference("user_dl_finish_automatic_import_switch")!!
         userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
             // 判断是否有权限
             if (!fileUriUtils.isGrant(context)) {
                 // 申请权限
                 DialogUtils.dialog(
-                    context!!,
+                    requireContext(),
                     "授权须知",
                     "简答来讲，这项功能需要你授权下文件的读写权限，BILIBILIAS仅仅会利用此权限实现导入番剧。",
                     "同意授权",
@@ -214,8 +165,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    @SuppressLint("UseRequireInsteadOfGet")
-    private fun bindingGetSavePathEvent() {
+    private fun initUserDlFinishAutomaticMergeSwitch() {
+        userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
+    }
+
+    private fun initUserDownloadSavePathEditText() {
+        userDownloadSavePathEditText = findPreference(user_download_save_path)!!
         userDownloadSavePathEditText.setOnPreferenceClickListener {
             // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -234,6 +189,72 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun initRenameUserDownloadFileNameEditText() {
+        renameUserDownloadFileNameEditText =
+            findPreference("rename_user_download_file_name_editText")!!
+
+        renameUserDownloadFileNameEditText.setOnPreferenceClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "是否还原默认命名规则",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                    getDefaultSharedPreferences(requireContext()).edit {
+                        putString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                        )
+                    }
+                    asToast(requireContext(), "恢复成功，返回页面重新进入可见")
+                },
+                negativeButtonClickListener = {
+                },
+            ).show()
+            true
+        }
+    }
+
+    private fun initUserDownloadSaveSDPathSwitch() {
+        userDownloadSaveSDPathSwitch = findPreference(user_download_save_sd_path_switch)!!
+        userDownloadSaveSDPathSwitch.setOnPreferenceClickListener {
+            val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
+                user_download_save_sd_path_switch,
+                false,
+            )
+            // 禁止或者释放下载地址修改
+            userDownloadSavePathEditText.isEnabled = !sdPathState
+
+            val tip = "这里的路径无法修改，储存位置为:\n${
+                AppFilePathUtils(
+                    App.context,
+                    "com.imcys.bilibilias",
+                ).sdCardDirectory
+            }/Android/data/com.imcys.bilibilias/files/download"
+
+            userDownloadSaveSDPathSwitch.summaryOn = tip
+
+            true
+        }
+    }
+
+    private fun initUserDownloadFileNamePreferences() {
+        userDownloadFileNameEditText = findPreference("user_download_file_name_editText")!!
+        userDownloadFileNameEditText.setOnPreferenceChangeListener { preference, newValue ->
+
+            val regex = Regex(""".*([<>:*?"]).*""")
+            if (newValue.toString() in "{FILE_TYPE}") {
+                Toast.makeText(context, "缺少文件后缀", Toast.LENGTH_SHORT).show()
+                false
+            } else {
+                (!regex.containsMatchIn(newValue.toString())).apply {
+                    if (!this) Toast.makeText(context, "存在特殊符号", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
     private fun setSavePath() {
         FilePickerManager
             .from(this)
@@ -258,8 +279,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if (resultCode == Activity.RESULT_OK) {
                     FilePickerManager.obtainData().forEach {
                         sharedPreferences.edit {
-                            putString("user_download_save_path", it)
-                            apply()
+                            putString(user_download_save_path, it)
                             userDownloadSavePathEditText.summary = it
                         }
                     }
@@ -272,29 +292,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
      * 初始化控件
      */
     private fun initPreference() {
-        userDownloadFileNameEditText = findPreference("user_download_file_name_editText")!!
-        userDlFinishAutomaticMergeSwitch = findPreference("user_dl_finish_automatic_merge_switch")!!
-        userDlFinishAutomaticImportSwitch =
-            findPreference("user_dl_finish_automatic_import_switch")!!
-        appThemeListPreference = findPreference("app_theme")!!
-        appLanguageListPreference = findPreference("app_language")!!
-
-        userDownloadSavePathEditText = findPreference("user_download_save_path")!!
         sharedPreferences.apply {
             val value = getString(
-                "user_download_save_path",
-                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                user_download_save_path,
+                download_path,
             )
             userDownloadSavePathEditText.summary = value
         }
 
-        renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
-        renameUserDownloadFileNameEditText =
-            findPreference("rename_user_download_file_name_editText")!!
-        userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
-
         val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
-            "user_download_save_sd_path_switch",
+            user_download_save_sd_path_switch,
             false,
         )
         // 禁止或者释放下载地址修改

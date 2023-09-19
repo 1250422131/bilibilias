@@ -139,14 +139,14 @@
             app:defaultValue="false"
             app:key="microsoft_app_center_type"
             app:summary="@string/microsoft_app_center_type_summary"
-            app:title="@string/microsoft_app_center_type_title"></SwitchPreferenceCompat>
+            app:title="@string/microsoft_app_center_type_title" />
 
         <SwitchPreferenceCompat
             android:icon="@drawable/baidu_logo"
             app:defaultValue="false"
             app:key="baidu_statistics_type"
             app:summary="@string/baidu_statistics_type_summary"
-            app:title="@string/baidu_statistics_type_title"></SwitchPreferenceCompat>
+            app:title="@string/baidu_statistics_type_title" />
 
     </PreferenceCategory>
 
