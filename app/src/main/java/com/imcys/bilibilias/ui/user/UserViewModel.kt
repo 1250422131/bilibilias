@@ -11,7 +11,7 @@ import com.imcys.bilibilias.common.base.repository.FavoritesRepository
 import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.home.ui.model.UpStatBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.home.ui.model.UserCardBean
+import com.imcys.bilibilias.common.base.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.common.base.model.UserNav
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel

@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.databinding.ItemToneQualityBinding
-import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 
 class VideoToneQualityAdapter(
-    private val videoAudioBeans: MutableList<DashVideoPlayBean.DataBean.DashBean.AudioBean>,
-    val selectedResult: (audio: DashVideoPlayBean.DataBean.DashBean.AudioBean) -> Unit,
+    private val videoAudioBeans: MutableList<DashVideoPlayBean>,
+    val selectedResult: (audio: DashVideoPlayBean.Dash.Audio) -> Unit,
 ) :
     RecyclerView.Adapter<ViewHolder>() {
     private var selectedItem = 0
@@ -35,27 +35,27 @@ class VideoToneQualityAdapter(
 
             if (position == 0 && selectedItem == 0) {
                 selectedBinding = this
-                this.audioBean?.selected = 1
+                // this.audioBean?.selected = 1
             }
 
-            itemToneQualityButton.text =
-                AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
+            // itemToneQualityButton.text =
+            //     AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
 
 
             itemToneQualityButton.setOnClickListener {
                 if (position != selectedItem) {
 
-                    selectedBinding.audioBean?.selected = 0
+                    // selectedBinding.audioBean?.selected = 0
                     this@VideoToneQualityAdapter.notifyItemChanged(selectedItem)
 
 
                     selectedBinding = this
                     selectedItem = position
 
-                    selectedBinding.audioBean?.selected = 1
+                    // selectedBinding.audioBean?.selected = 1
                     this@VideoToneQualityAdapter.notifyItemChanged(position)
 
-                    selectedResult(videoAudioBeans[position])
+                    // selectedResult(videoAudioBeans[position])
                 }
             }
 
