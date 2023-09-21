@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.Serializable
 

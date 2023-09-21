@@ -1,6 +1,6 @@
 @file:JvmName("ArchiveHasLikeBean")
 
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
 import kotlinx.serialization.Serializable
 
@@ -17,8 +17,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ArchiveHasLikeBean(
-    val code: Int,
-    val message: String,
-    val ttl: Int,
     var data: Int
 )
