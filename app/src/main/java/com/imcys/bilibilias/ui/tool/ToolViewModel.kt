@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.ui.tool
 
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.repository.AsRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
@@ -16,7 +15,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
@@ -32,23 +30,10 @@ class ToolViewModel @Inject constructor(
     private val _toolState = MutableStateFlow(ToolState())
     val toolState = _toolState.asStateFlow()
 
-    fun getOldItemList() {
-        launchIO {
-            asRepository.getOldToolItem { tools ->
-                val toolMates = tools.map {
-                    ToolMate(it.color.toColorInt(), it.imgUrl, it.title, it.toolCode)
-                }
-                    .sortedBy { it.toolCode }
-                    .toImmutableList()
-                _toolState.update {
-                    it.copy(tools = toolMates)
-                }
-            }
-        }
-    }
+    fun getOldItemList() {}
 
     fun parsesBvOrAvOrEp(text: String) {
-       if (text.trim().isBlank()) return
+        if (text.trim().isBlank()) return
         _toolState.update {
             it.copy(query = text)
         }
@@ -90,7 +75,7 @@ class ToolViewModel @Inject constructor(
             return
         }
         launchIO {
-            setIsInputError(!videoRepository.getVideoDetailsBvid(bvid, ::setVideoMate))
+            setIsInputError(!videoRepository.getVideoDetailsByBvid(bvid, ::setVideoMate))
         }
         _toolState.update {
             it.copy(query = bvid, isShowVideoCard = true)
@@ -107,6 +92,7 @@ class ToolViewModel @Inject constructor(
         _toolState.update {
             it.copy(
                 videoMate = VideoMate(
+                    videoDetails.bvid,
                     videoDetails.pic,
                     videoDetails.title,
                     videoDetails.desc,
@@ -154,6 +140,7 @@ data class ToolState(
 )
 
 data class VideoMate(
+    val videoId: String = "",
     val pic: String = "",
     val title: String = "",
     val desc: String = "",

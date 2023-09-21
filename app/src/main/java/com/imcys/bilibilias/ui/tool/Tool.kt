@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -49,13 +48,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.startActivity
+import com.imcys.bilibilias.common.base.constant.BVID
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
+import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,12 +80,25 @@ fun Tool() {
                     fontWeight = FontWeight.Bold
                 )
             }, actions = {
+                AsyncImage(
+                    model = "https://s1.ax1x.com/2023/02/04/pSyHEy6.png",
+                    contentDescription = null,
+                    Modifier
+                        .size(24.dp)
+                        .clickable {
+                            context.startActivity(WebAsActivity::class.java)
+                        },
+                    colorFilter = ColorFilter.tint(Color(android.graphics.Color.parseColor("#fb7299")))
+                )
                 Icon(
                     Icons.Default.Settings,
                     contentDescription = "设置",
-                    Modifier.padding(16.dp).clickable {
-                        context.startActivity(SettingActivity::class.java)
-                    }
+                    Modifier
+                        .padding(16.dp)
+                        .clickable {
+                            context.startActivity(SettingActivity::class.java)
+                        },
+                    tint = Color(android.graphics.Color.parseColor("#fb7299"))
                 )
             })
         }
@@ -104,6 +120,7 @@ fun Tool() {
             )
             AnimatedVisibility(visible = state.isShowVideoCard) {
                 VideoCard(
+                    state.videoMate.videoId,
                     state.videoMate.pic,
                     state.videoMate.title,
                     state.videoMate.desc,
@@ -113,12 +130,14 @@ fun Tool() {
                 )
             }
 
-            LazyVerticalGrid(columns = GridCells.Fixed(4), modifier = Modifier.fillMaxWidth()) {
-                items(state.tools, key = { it.toolCode }) {
+            LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
+                item("日志导出") {
                     ToolItem(
-                        imgUrl = it.imgUrl,
-                        title = it.title,
-                        containerColor = Color(it.color),
+                        imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
+                        title = "日志导出",
+                        containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
+                        modifier = Modifier.clickable {
+                        }
                     )
                 }
             }
@@ -129,7 +148,7 @@ fun Tool() {
 @Composable
 private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
     val clipboardManager = LocalClipboardManager.current
-    LaunchedEffect(Unit) {
+    LaunchedEffect(clipboardManager.getText()?.text) {
         val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
         if (AsVideoNumUtils.isAV(text) || AsVideoNumUtils.isBV(text)) {
             toolViewModel.clearText()
@@ -141,16 +160,17 @@ private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoCard(
+    videoId:String,
     pic: String,
-    title:
-    String,
+    title: String,
     desc: String,
     playVolume: String,
     danmaku: String,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Card(
-        onClick = { /*TODO*/ },
+        onClick = { context.startActivity(AsVideoActivity::class.java, bundleOf(BVID to videoId)) },
         modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(8.dp)) {
@@ -299,5 +319,5 @@ fun PreviewSearchBar() {
 @Preview(showBackground = true, name = "搜索结果")
 @Composable
 fun PreviewVideoCard() {
-    VideoCard(pic = "", title = "", desc = "", playVolume = "", danmaku = "")
+    VideoCard(pic = "", title = "", desc = "", playVolume = "", danmaku = "", videoId = "")
 }

@@ -15,7 +15,6 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 
-
 class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
     object : DiffUtil.ItemCallback<ToolItemBean>() {
         override fun areItemsTheSame(oldItem: ToolItemBean, newItem: ToolItemBean): Boolean {
@@ -25,7 +24,6 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
         override fun areContentsTheSame(oldItem: ToolItemBean, newItem: ToolItemBean): Boolean {
             return oldItem == newItem
         }
-
     }
 ) {
 
@@ -34,23 +32,24 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         val binding = when (viewType) {
             0 -> {
                 DataBindingUtil.inflate<ItemToolBinding>(
                     LayoutInflater.from(parent.context),
-                    R.layout.item_tool, parent, false
+                    R.layout.item_tool,
+                    parent,
+                    false
                 )
-
             }
 
             1 -> {
                 DataBindingUtil.inflate<ItemToolVideoCardBinding>(
                     LayoutInflater.from(parent.context),
-                    R.layout.item_tool_video_card, parent, false
+                    R.layout.item_tool_video_card,
+                    parent,
+                    false
                 )
             }
-
 
             else -> {
                 TODO("无效内容")
@@ -61,10 +60,9 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         when (getItem(position).type) {
             0 -> {
-                //普通item
+                // 普通item
                 val binding = DataBindingUtil.getBinding<ItemToolBinding>(holder.itemView)
                 binding?.toolItemBean = getItem(position)
                 val clickEvent: () -> Unit = getItem(position).clickEvent
@@ -74,12 +72,11 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
             }
 
             1 -> {
-                //视频/番剧Item
+                // 视频/番剧Item
                 val binding = DataBindingUtil.getBinding<ItemToolVideoCardBinding>(holder.itemView)
                 binding?.videoBaseBean = getItem(position).videoBaseBean
                 val clickEvent: () -> Unit = getItem(position).clickEvent
                 binding?.root?.setOnClickListener {
-
                     val videoPic = androidx.core.util.Pair<View, String>(
                         binding.itemToolVideoCardPic,
                         "videoPic"
@@ -93,8 +90,6 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                             videoPic
                         )
 
-
-
                     i.putExtra("bvId", getItem(position).videoBaseBean?.bvid)
 
                     holder.itemView.context.startActivity(i, optionsCompat.toBundle())
@@ -102,11 +97,6 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                     clickEvent()
                 }
             }
-
         }
-
-
     }
-
-
 }
