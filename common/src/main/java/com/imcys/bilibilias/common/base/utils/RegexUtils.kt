@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.common.base.utils
 
-object Regex {
+object RegexUtils {
     val epRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=ep)([0-9]+)""") }
 
     // bv过滤
