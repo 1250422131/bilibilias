@@ -222,7 +222,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoBaseBean(
     @SerialName("redirect_url")
-    val redirectUrl: String = "",
+    val redirectUrl: String? = null,
     @SerialName("aid")
     val aid: Long = 0, // 85440373
     @SerialName("bvid")
@@ -529,8 +529,58 @@ data class VideoBaseBean(
         @SerialName("allow_submit")
         val allowSubmit: Boolean = false, // false
         @SerialName("list")
-        val list: List<String> = listOf()
+        val list: List<SubTitles> = listOf()
     )
+
+    @Serializable
+    data class SubTitles(
+        @SerialName("ai_status")
+        val aiStatus: Int = 0, // 2
+        @SerialName("ai_type")
+        val aiType: Int = 0, // 0
+        @SerialName("author")
+        val author: Author = Author(),
+        @SerialName("id")
+        val id: Long = 0, // 1315737998968715264
+        @SerialName("id_str")
+        val idStr: String = "", // 1315737998968715264
+        @SerialName("is_lock")
+        val isLock: Boolean = false, // false
+        @SerialName("lan")
+        val lan: String = "", // ai-zh
+        @SerialName("lan_doc")
+        val lanDoc: String = "", // 中文（自动生成）
+        @SerialName("subtitle_url")
+        val subtitleUrl: String = "",
+        @SerialName("type")
+        val type: Int = 0 // 1
+    ) {
+        @Serializable
+        data class Author(
+            @SerialName("birthday")
+            val birthday: Int = 0, // 0
+            @SerialName("face")
+            val face: String = "",
+            @SerialName("in_reg_audit")
+            val inRegAudit: Int = 0, // 0
+            @SerialName("is_deleted")
+            val isDeleted: Int = 0, // 0
+            @SerialName("is_fake_account")
+            val isFakeAccount: Int = 0, // 0
+            @SerialName("is_senior_member")
+            val isSeniorMember: Int = 0, // 0
+            @SerialName("mid")
+            val mid: Int = 0, // 0
+            @SerialName("name")
+            val name: String = "",
+            @SerialName("rank")
+            val rank: Int = 0, // 0
+            @SerialName("sex")
+            val sex: String = "",
+            @SerialName("sign")
+            val sign: String = ""
+        )
+    }
 
     @Serializable
     data class UserGarb(

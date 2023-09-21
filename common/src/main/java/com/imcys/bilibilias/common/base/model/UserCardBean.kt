@@ -1,6 +1,5 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.base.model
 
-import android.widget.Space
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
