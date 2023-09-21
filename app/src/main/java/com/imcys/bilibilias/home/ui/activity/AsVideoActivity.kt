@@ -5,39 +5,35 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
-import com.baidu.mobstat.StatService
-import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.WbiUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.BVID
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.VideoUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -48,10 +44,7 @@ import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
 import com.imcys.bilibilias.view.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import kotlinx.coroutines.withContext
+import master.flame.danmaku.controller.DrawHandler.Callback
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
@@ -61,25 +54,17 @@ import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.model.android.Danmakus
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
+import okio.use
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.zip.Inflater
-import javax.inject.Inject
+import kotlin.collections.set
 
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
-
-    // 视频基本数据类，方便全局调用
-    private lateinit var videoDataBean: VideoBaseBean
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -89,40 +74,36 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     // 烈焰弹幕使，方便全局调用
     private lateinit var danmakuParser: BaseDanmakuParser
+
     private val danmakuContext = DanmakuContext.create()
 
     lateinit var userSpaceInformation: UserSpaceInformation
 
+    private val viewModel by viewModels<AsVideoViewModel>()
+
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
-    var avid: Long = 0L
     var cid: Long = 0L
-    var epid: Long = 0L
+    private var epid: Long = 0L
     override fun getLayoutRes(): Int = R.layout.activity_as_video
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 加载用户信息&视频信息
-        loadUserData()
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-//    override fun attachBaseContext(newBase: Context?) {
-//        super.attachBaseContext(newBase)
-//
-//    }
     /**
      * 加载用户信息，为了确保会员视频及时通知用户
      */
-    private fun loadUserData() {
-        launchIO {
-            userSpaceInformation = withContext(lifecycleScope.coroutineContext) { getUserData() }
-            // 加载视频首要信息
-            launchUI { initVideoData() }
+    override fun initData() {
+        lifecycleScope.launchIO {
+            userSpaceInformation = getUserData()
+            // 显示用户卡片
+            showUserCard()
         }
+        initVideoData()
     }
 
     override fun initView() {
@@ -148,9 +129,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
             }
 
             // 设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = ViewModelProvider(
-                this@AsVideoActivity,
-            )[AsVideoViewModel::class.java]
+            asVideoViewModel = viewModel
         }
     }
 
@@ -159,53 +138,26 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun loadVideoPlay(type: String) {
         // 这里默认用目前flv最高免费画质1080P，注意：flv已经被B站弃用，目前只能使用360P和1080P，后面得考虑想办法做音频分离。
-
         when (type) {
             "video" -> {
                 launchIO {
-                    // 获取播放信息
-                    val videoPlayBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<VideoPlayBean>(
-                            "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
+                    val videoPlayBean = viewModel.getMp4(bvid, cid, 64, 1, 1)
+                    val dashVideoPlayBean =
+                        viewModel.getDash(
+                            bvid,
+                            cid,
+                            64,
+                            16 or 64 or 128 or 256 or 512 or 1024 or 2048,
+                            1
                         )
-                    // 设置布局视频播放数据
-                    binding.videoPlayBean = videoPlayBean
-                    launchUI {
-                        // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
-                        if (videoPlayBean.code != 0) {
-                            // 弹出通知弹窗
-                            AsDialog.init(this@AsVideoActivity).build {
-                                title = "视频文件特殊"
-                                config = {
-                                    content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
-                                    positiveButtonText = "知道啦"
-                                    positiveButton = {
-                                        it.cancel()
-                                    }
-                                }
-                            }.show()
-                        } else {
-                            val dashVideoPlayBean = KtHttpUtils.addHeader(
-                                COOKIE,
-                                BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                            )
-                                .addHeader(REFERER, BILIBILI_URL)
-                                .asyncGet<DashVideoPlayBean>(
-                                    "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1"
-                                )
-
-                            if (dashVideoPlayBean.code != 0) {
-                                setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
+                    setAsJzvdConfig(videoPlayBean.durl[0].url, "")
+                    dashVideoPlayBean.dash.video[0].also {
+                        if (it.width < it.height) {
+                            // 竖屏
+                            binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                height = windowManager.defaultDisplay.height / 4 * 3
                             }
-
-                            dashVideoPlayBean.data.dash.video[0].also {
-                                if (it.width < it.height) {
-                                    // 竖屏
-                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                        height = windowManager.defaultDisplay.height / 4 * 3
-                                    }
-                                }
+                        }
 
 //                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
 //                                // 计算折叠程度（0为完全展开，1为完全折叠）
@@ -219,15 +171,11 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 //                                }
 //
 //                            }
-                            }
-                            // 真正调用饺子播放器设置视频数据
-                            setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
-                        }
-
-                        binding.asVideoCd.visibility = View.VISIBLE
-                        binding.asVideoBangumiCd.visibility = View.GONE
                     }
                 }
+
+                binding.asVideoCd.visibility = View.VISIBLE
+                binding.asVideoBangumiCd.visibility = View.GONE
             }
 
             "bangumi" -> {
@@ -239,12 +187,10 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                             "${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1"
                         )
 
-                    launchUI {
-                        // 设置布局视频播放数据
-                        binding.bangumiPlayBean = bangumiPlayBean
-                        // 真正调用饺子播放器设置视频数据
-                        setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
-                    }
+                    // 设置布局视频播放数据
+                    binding.bangumiPlayBean = bangumiPlayBean
+                    // 真正调用饺子播放器设置视频数据
+                    setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
                 }
             }
 
@@ -257,49 +203,36 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun initVideoData() {
         // 这里必须通过外界获取数据
-        val intent = intent
+        val bvId = intent.getStringExtra(BVID)
 
-        val bvId = intent.getStringExtra("bvId")
-
-        launchIO {
-            val videoBaseBean = KtHttpUtils.run {
-                addHeader(COOKIE, asUser.cookie)
-                asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
-            }
-
-            launchUI {
-                // 设置数据
-                videoDataBean = videoBaseBean
-                // 这里需要显示视频数据
-                showVideoData()
-                // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
-                setBaseData(videoBaseBean)
-                // 加载用户卡片
-                loadUserCardData(videoBaseBean.owner.mid)
-                // 加载弹幕信息
-                loadDanmakuFlameMaster()
-                // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-                videoBaseBean.redirectUrl?.apply {
-                    // 通过正则表达式检查该视频是不是番剧
-                    val epRegex = Regex("""(?<=ep)(\d*)""")
-                    if (epRegex.containsMatchIn(this)) {
-                        // 加载番剧视频列表
-                        epid = epRegex.find(this)?.value?.toLong()!!
-                        loadBangumiVideoList()
-                    }
-                } ?: apply {
-                    // 加载视频播放信息
-                    loadVideoPlay("video")
-                    loadVideoList() // 加载正常列表
+        viewModel.getVideoData(bvId!!) {
+            // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
+            setBaseData(it)
+            // 加载用户卡片
+            loadUserCardData()
+            // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
+            if (it.redirectUrl != null) {
+                val url = it.redirectUrl
+                if (AsVideoNumUtils.isEp(url!!)) {
+                    // todo 类型 string
+                    // epid = AsVideoNumUtils.getEpid(url)!!.toLong()
+                    // loadBangumiVideoList()
                 }
-                // 检查三连情况
-                archiveHasLikeTriple()
+            } else {
+                // 加载视频播放信息
+                loadVideoPlay("video")
+                // loadVideoList() // 加载正常列表
             }
+            // 加载弹幕信息
+            loadDanmakuFlameMaster(it.cid.toString())
         }
-    }
 
-    @Inject
-    lateinit var http: HttpClient
+        // 这里需要显示视频数据
+        showVideoData()
+
+        // 检查三连情况
+        archiveHasLikeTriple()
+    }
 
     /**
      * 检查三连情况
@@ -316,27 +249,21 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        val bean = http.get("${BilibiliApi.videoHasFavoured}?aid=$bvid")
-            .body<ResBean<ArchiveFavouredBean>>()
-        binding.archiveFavouredBean = bean.data
+        binding.archiveFavouredBean = viewModel.archiveFavoured(bvid)
     }
 
     /**
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        val bean = http.get("${BilibiliApi.videoHasLike}?bvid=$bvid")
-            .body<ArchiveHasLikeBean>()
-        binding.archiveHasLikeBean = bean
+        binding.archiveCoinsBean = viewModel.archiveCoins(bvid)
     }
 
     /**
      * 检验是否点赞
      */
     private suspend fun archiveHasLike() {
-        val bean =
-            http.get("${BilibiliApi.videoHasCoins}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
-        binding.archiveCoinsBean = bean.data
+        binding.archiveHasLikeBean = viewModel.archiveHasLike(bvid)
     }
 
     /**
@@ -459,12 +386,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserSpaceInformation {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = WbiUtils.getParamStr(listOf(), "", "")
-
-        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet("${BilibiliApi.userSpaceDetails}?$paramsStr")
+        return viewModel.getUserData()
     }
 
     /**
@@ -513,32 +435,20 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun setBaseData(videoBaseBean: VideoBaseBean) {
         bvid = videoBaseBean.bvid
-        avid = videoBaseBean.aid
         cid = videoBaseBean.cid
         binding.videoBaseBean = videoBaseBean
     }
 
     /**
-     * 加载弹幕信息(目前只能这样写)
+     * 加载弹幕信息
      */
-    private fun loadDanmakuFlameMaster() {
-        HttpUtils.addHeader(COOKIE, asUser.cookie)
-            .get(
-                "${BilibiliApi.videoDanMuPath}?oid=$cid",
-                object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        BaseApplication.handler.post {
-                            // 储存弹幕
-                            saveDanmaku(response.body!!.bytes())
-                            // 初始化弹幕配置
-                            initDanmaku()
-                        }
-                    }
-                },
-            )
+    private fun loadDanmakuFlameMaster(cid: String = "") {
+        launchIO {
+            val bytes = viewModel.loadDanmakuFlameMaster(cid)
+            saveDanmaku(bytes)
+        }
+        // 初始化弹幕配置
+        initDanmaku()
     }
 
     /**
@@ -546,11 +456,10 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun initDanmaku() {
         // 我们得先从临时文件拉取弹幕xml
-        val input: InputStream =
-            FileInputStream(getExternalFilesDir("temp").toString() + "/tempDm.xml")
+        val streamReader = File(getExternalFilesDir("temp"), "tempDm.xml").inputStream()
 
-        // 解析弹幕
-        danmakuParser = createParser(input)
+        // 弹幕解析器
+        danmakuParser = createParser(streamReader)
 
         // 设置弹幕配置
         setDanmakuContextCongif()
@@ -563,17 +472,9 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 加载用户卡片
      * @param mid Long
      */
-    private fun loadUserCardData(mid: Long) {
+    private fun loadUserCardData() {
         launchIO {
-            val userCardBean = KtHttpUtils
-                .addHeader(COOKIE, asUser.cookie)
-                .asyncGet<UserCardBean>(BilibiliApi.getUserCardPath + "?mid=$mid")
-            launchUI {
-                // 显示用户卡片
-                showUserCard()
-                // 将数据交给viewModel
-                binding.userCardBean = userCardBean
-            }
+            binding.userCardBean = viewModel.loadUserCardData()
         }
     }
 
@@ -581,33 +482,23 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 显示用户卡片
      */
     private fun showUserCard() {
-        binding.apply {
-            asVideoUserCardLy.visibility = View.VISIBLE
+        binding.asVideoUserCardLy.visibility = View.VISIBLE
 
-            // 判断是否会员，会员情况下展示会员主题色，反之黑色
-            val nameColor = if (userSpaceInformation.vip?.nicknameColor != "") {
-                Color.parseColor(userSpaceInformation.vip?.nicknameColor!!)
-            } else {
-                // 低版本兼容
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    getColor(R.color.black)
-                } else {
-                    Color.BLACK
-                }
-            }
-
-            // 设置最终获取颜色
-            asVideoUserName.setTextColor(nameColor)
+        // 判断是否会员，会员情况下展示会员主题色，反之黑色
+        val nameColor = if (userSpaceInformation.vip.nicknameColor.isNotBlank()) {
+            Color.parseColor(userSpaceInformation.vip.nicknameColor)
+        } else {
+            // 低版本兼容
+            Color.parseColor("#FB7299")
         }
+        binding.asVideoUserName.setTextColor(nameColor)
     }
 
     /**
      * 显示视频数据页面
      */
     private fun showVideoData() {
-        binding.apply {
-            asVideoDataLy.visibility = View.VISIBLE
-        }
+        binding.asVideoDataLy.visibility = View.VISIBLE
     }
 
     @Deprecated("Deprecated in Java")
@@ -621,16 +512,11 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     override fun onPause() {
         super.onPause()
-        asDanmaku.apply {
-            pause()
-            // hide()
-        }
+        asDanmaku.pause()
         if (asJzvdStd.state == Jzvd.STATE_PLAYING) { // 暂停视频
             asJzvdStd.startButton.performClick()
             changeFaButtonToPlay()
         }
-        // 百度统计
-        StatService.onPause(this)
     }
 
     companion object {
@@ -707,7 +593,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     }
 
     // ——————————————————————————————————————————————————————————————————————————
-    // 悬浮按钮状态更新
+// 悬浮按钮状态更新
     private fun changeFaButtonToPlay() {
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_play)
     }
@@ -721,23 +607,20 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
 
-    // ——————————————————————————————————————————————————————————————————————————
+// ——————————————————————————————————————————————————————————————————————————
 
-    // ——————————————————————————————————————————————————————————————————————————
-    // 弹幕抽离
+// ——————————————————————————————————————————————————————————————————————————
+// 弹幕抽离
     /**
      * 储存弹幕内容
      */
     private fun saveDanmaku(bytes: ByteArray) {
-        val bufferedSink: BufferedSink?
-        val dest = File(getExternalFilesDir("temp").toString(), "tempDm.xml")
-        if (!dest.exists()) dest.createNewFile()
-        val sink = dest.sink() // 打开目标文件路径的sink
-        val decompressBytes =
-            decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-        bufferedSink = sink.buffer()
-        decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-        bufferedSink.close()
+        File(getExternalFilesDir("temp"), "tempDm.xml").run {
+            if (!exists()) createNewFile()
+            bufferedWriter().use {
+                writeBytes(bytes)
+            }
+        }
     }
 
     /**
@@ -746,12 +629,13 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     private fun setDanmakuContextCongif() {
         // 设置弹幕的最大显示行数
-        val maxLinesPair = HashMap<Int, Int>()
+        val maxLinesPair = mapOf<Int, Int>()
         // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
         // 设置是否禁止重叠
-        val overlappingEnablePair = HashMap<Int, Boolean>()
-        overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
-        overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
+        val overlappingEnablePair = mapOf(
+            BaseDanmaku.TYPE_SCROLL_LR to true,
+            BaseDanmaku.TYPE_FIX_BOTTOM to true
+        )
 
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
             .setDuplicateMergingEnabled(false)
@@ -765,7 +649,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 配置弹幕监听器
      */
     private fun setAsDanmakuCallback() {
-        asDanmaku.setCallback(object : master.flame.danmaku.controller.DrawHandler.Callback {
+        asDanmaku.setCallback(object : Callback {
             override fun prepared() {
                 // 弹幕准备好的时候回调，这里启动弹幕
                 asDanmaku.start()
@@ -802,24 +686,12 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         try {
             loader.load(stream)
         } catch (e: IllegalDataException) {
-            e.printStackTrace()
+            Timber.tag("解析弹幕文件异常").d(e)
         }
         val parser: BaseDanmakuParser = BiliDanmukuParser()
         val dataSource = loader.dataSource
         parser.load(dataSource)
         return parser
-    }
-
-    // ——————————————————————————————————————————————————————————————————————————
-
-    override fun onResume() {
-        super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
-            // asDanmaku.show()
-            // asJzvdStd.startButton.performClick()
-        }
-        // 百度统计
-        StatService.onResume(this)
     }
 
     override fun onDestroy() {

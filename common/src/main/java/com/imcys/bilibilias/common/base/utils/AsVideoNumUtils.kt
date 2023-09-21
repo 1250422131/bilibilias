@@ -2,17 +2,27 @@ package com.imcys.bilibilias.common.base.utils
 
 object AsVideoNumUtils {
 
-    fun getBvid(text: String): String? {
-        if (isBV(text)) {
-            return Regex.bvRegex.find(text)?.value
+    /**
+     * 是否是番剧
+     */
+    fun isEp(text: String) = RegexUtils.epRegex.containsMatchIn(text)
+    fun isBV(text: String) = RegexUtils.bvRegex.containsMatchIn(text)
+    fun isAV(text: String) = RegexUtils.avRegex.containsMatchIn(text)
+    fun getEpid(text: String): String? {
+        if (isEp(text)) {
+            return RegexUtils.bvRegex.find(text)?.value
         }
         return null
     }
-    fun isBV(text: String) = Regex.bvRegex.containsMatchIn(text)
-    fun isAV(text: String) = Regex.avRegex.containsMatchIn(text)
+    fun getBvid(text: String): String? {
+        if (isBV(text)) {
+            return RegexUtils.bvRegex.find(text)?.value
+        }
+        return null
+    }
     fun getAvid(text: String): String? {
         if (isAV(text)) {
-            return Regex.avRegex.find(text)?.value
+            return RegexUtils.avRegex.find(text)?.value
         }
         return null
     }

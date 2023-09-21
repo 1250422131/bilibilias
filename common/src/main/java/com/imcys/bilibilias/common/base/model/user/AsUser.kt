@@ -1,12 +1,9 @@
 package com.imcys.bilibilias.common.base.model.user
 
-object AsUser {
+import com.imcys.bilibilias.common.base.config.CookieRepository
 
-    var cookie: String = ""
-    var sessdata: String = ""
-    var biliJct: String = ""
+object AsUser {
+    var cookie: String = CookieRepository.sessionData!!
     var mid: Long = 0
     var asCookie: String = ""
-
-
 }

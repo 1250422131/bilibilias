@@ -38,7 +38,9 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoPlayBean
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -650,7 +652,7 @@ object DialogUtils {
     private fun loadVideoToneQualityList(
         context: Context,
         dashVideoPlayBean: DashVideoPlayBean,
-        selectedResult: (audio: DashVideoPlayBean.DataBean.DashBean.AudioBean) -> Unit,
+        selectedResult: (audio: DashVideoPlayBean.Dash.Audio) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogToneQualityBinding.inflate(LayoutInflater.from(context))
 
@@ -661,8 +663,8 @@ object DialogUtils {
         initDialogBehaviorBinding(binding.dialogToneQualityBar, context, binding.root.parent)
 
         binding.apply {
-            dialogToneQualityRv.adapter =
-                VideoToneQualityAdapter(dashVideoPlayBean.data.dash.audio, selectedResult)
+            // dialogToneQualityRv.adapter =
+            //     VideoToneQualityAdapter(dashVideoPlayBean, selectedResult)
             dialogToneQualityRv.layoutManager = LinearLayoutManager(context)
 
             dialogToneQualityFinishBt.setOnClickListener {
@@ -774,10 +776,10 @@ object DialogUtils {
                     selectDefinition = it
 
                     // 处理下
-                    dashVideoPlayBean.data.support_formats.forEach { it1 ->
+                    dashVideoPlayBean.supportFormats.forEach { it1 ->
                         if (it1.quality == it) {
                             dialogDlVideoDefinitionTx.text =
-                                it1.new_description
+                                it1.newDescription
                         }
                     }
                 }.show()
@@ -970,10 +972,10 @@ object DialogUtils {
                     selectDefinition = it
 
                     // 处理下
-                    dashVideoPlayBean.data.support_formats.forEach { it1 ->
+                    dashVideoPlayBean.supportFormats.forEach { it1 ->
                         if (it1.quality == it) {
                             dialogDlVideoDefinitionTx.text =
-                                it1.new_description
+                                it1.newDescription
                         }
                     }
                 }.show()
@@ -1409,7 +1411,7 @@ object DialogUtils {
         type: String,
         isGroupTask: Boolean = false,
     ) {
-        val videoPlayData = videoPlayBean.data
+        val videoPlayData = videoPlayBean
         val urlIndex = 0
 
         val intFileType: Int
@@ -1729,10 +1731,10 @@ object DialogUtils {
         type: String,
         isGroupTask: Boolean = true,
     ) {
-        val videoPlayData = dashVideoPlayBean.data
+        val videoPlayData = dashVideoPlayBean
         var urlIndex = 0
         // 获取视频/音频的索引
-        dashVideoPlayBean.data.dash.video.run {
+        dashVideoPlayBean.dash.video.run {
             forEachIndexed fe@{ index, i ->
                 if (i.id == qn) {
                     urlIndex = index
@@ -2089,8 +2091,8 @@ object DialogUtils {
             dialogCollectionTitle.text = "请选择缓存清晰度"
 
             dialogCollectionRv.adapter =
-                VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
-                    selectDefinition = dashVideoPlayBean.data.accept_quality[position]
+                VideoDefinitionAdapter(dashVideoPlayBean.acceptDescription) { position, _ ->
+                    selectDefinition = dashVideoPlayBean.acceptQuality[position]
                 }
 
             // 设置布局加载器

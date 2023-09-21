@@ -7,24 +7,28 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Build
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
+import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.repository.UserRepository
+import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -32,19 +36,27 @@ import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 /**
  * 解析视频的ViewModel
  */
+@HiltViewModel
+class AsVideoViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val videoRepository: VideoRepository
+) : BaseViewModel() {
 
-class AsVideoViewModel : ViewModel() {
+    private val mid = UserInfoRepository.mid
 
     /**
      * 缓存视频
@@ -66,11 +78,13 @@ class AsVideoViewModel : ViewModel() {
                     BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                 )
                     .addHeader(REFERER, BILIBILI_URL)
-                    .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
+                    .asyncGet<DashVideoPlayBean>(
+                        "${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1"
+                    )
                 // 这里再检验一次，是否为404内容
                 loadDialog.cancel()
                 launchUI {
-                    if (dashVideoPlayBean.code == 0) {
+                    if (dashVideoPlayBean.videoCodecid == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
                             videoBaseBean,
@@ -86,8 +100,8 @@ class AsVideoViewModel : ViewModel() {
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -121,10 +135,12 @@ class AsVideoViewModel : ViewModel() {
                         BaseApplication.dataKv.decodeString(COOKIES, "")!!,
                     )
                         .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1")
+                        .asyncGet<DashVideoPlayBean>(
+                            "${BilibiliApi.videoPlayPath}?bvid=${context.bvid}&cid=${context.cid}&qn=64&fnval=4048&fourk=1"
+                        )
                 loadDialog.cancel()
                 launchUI {
-                    if (dashVideoPlayBean.code == 0) {
+                    if (dashVideoPlayBean.videoCodecid == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
                             videoBaseBean,
@@ -140,8 +156,8 @@ class AsVideoViewModel : ViewModel() {
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -359,7 +375,7 @@ class AsVideoViewModel : ViewModel() {
                 .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
                 .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
 
-            launchUI() {
+            launchUI {
                 (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
                 context.binding.asVideoThrowBt.isSelected = true
             }
@@ -454,4 +470,39 @@ class AsVideoViewModel : ViewModel() {
             }
         }
     }
+
+    suspend fun getUserData(): UserSpaceInformation = withContext(Dispatchers.IO) {
+        userRepository.getUserSpaceDetails(mid)
+    }
+
+    fun getVideoData(bvid: String, videoBaseData: (VideoBaseBean) -> Unit) {
+        launchIO {
+            videoRepository.getVideoDetailsByBvid(bvid, videoBaseData)
+        }
+    }
+
+    suspend fun loadDanmakuFlameMaster(cid: String): ByteArray {
+        return videoRepository.get实时弹幕(cid)
+    }
+
+    suspend fun loadUserCardData() = userRepository.get用户名片信息(mid)
+    suspend fun archiveHasLike(bvid: String) = videoRepository.hasLikeBvid(bvid)
+    suspend fun archiveFavoured(bvid: String) = videoRepository.hasFavouredBvid(bvid)
+    suspend fun archiveCoins(bvid: String) = videoRepository.hasCoinsBvid(bvid)
+
+    suspend fun getMp4(
+        bvid: String,
+        cid: Long,
+        quality: Int,
+        format: Int,
+        allow4KVideo: Int
+    ) = videoRepository.getMp4视频流地址(bvid, cid, quality, format, allow4KVideo)
+
+    suspend fun getDash(
+        bvid: String,
+        cid: Long,
+        quality: Int,
+        format: Int,
+        allow4KVideo: Int
+    ) = videoRepository.getDash视频流地址(bvid, cid, quality, format, allow4KVideo)
 }

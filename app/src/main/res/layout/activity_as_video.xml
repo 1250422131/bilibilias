@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <data>
 
         <import type="android.view.View" />
@@ -18,7 +17,7 @@
 
         <variable
             name="UserCardBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCardBean" />
+            type="com.imcys.bilibilias.common.base.model.UserCardBean" />
 
         <variable
             name="AsVideoViewModel"
@@ -31,7 +30,7 @@
 
         <variable
             name="VideoPlayBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPlayBean" />
+            type="com.imcys.bilibilias.common.base.model.VideoPlayBean" />
 
         <variable
             name="VideoPageListData"
@@ -43,22 +42,21 @@
 
         <variable
             name="ArchiveHasLikeBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveHasLikeBean" />
+            type="com.imcys.bilibilias.common.base.model.ArchiveHasLikeBean" />
 
 
         <variable
             name="ArchiveCoinsBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean" />
+            type="com.imcys.bilibilias.common.base.model.ArchiveCoinsBean" />
 
         <variable
             name="ArchiveFavouredBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean" />
+            type="com.imcys.bilibilias.common.base.model.ArchiveFavouredBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/as_video_appbar"
@@ -73,12 +71,6 @@
                 android:theme="@style/asVideoToolStyle"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
                     <com.imcys.bilibilias.base.view.AppAsJzvdStd
                         android:id="@+id/as_video_asJzvdStd"
                         android:layout_width="match_parent"
@@ -87,11 +79,6 @@
                         android:transitionName="videoPic"
                         app:layout_collapseMode="parallax"
                         app:showPlayButton="false" />
-
-
-                </FrameLayout>
-
-
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -101,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
+            tools:visibility="visible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -110,17 +98,11 @@
                 android:padding="20sp">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/as_video_data_ly"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -177,7 +159,8 @@
                                 android:layout_marginStart="10dp"
                                 android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.like)}"
                                 android:textColor="@color/black"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="100万" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -404,7 +387,8 @@
                                 android:text="@string/app_activity_as_bangumi_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="@string/app_activity_as_bangumi_dl_bt_text" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
