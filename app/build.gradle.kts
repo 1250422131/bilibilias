@@ -143,9 +143,6 @@ dependencies {
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.paging.runtime.ktx)
-
     debugImplementation(libs.ui.tooling)
     implementation(libs.ui.tooling.preview)
     androidTestImplementation(platform(libs.compose.bom))
