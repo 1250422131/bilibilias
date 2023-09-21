@@ -150,7 +150,7 @@ private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
     val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(clipboardManager.getText()?.text) {
         val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-        if (AsVideoNumUtils.isAV(text) || AsVideoNumUtils.isBV(text)) {
+        if (AsVideoNumUtils.isBV(text) || AsVideoNumUtils.isAV(text)) {
             toolViewModel.clearText()
             toolViewModel.parsesBvOrAvOrEp(text)
         }
@@ -160,7 +160,7 @@ private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoCard(
-    videoId:String,
+    videoId: String,
     pic: String,
     title: String,
     desc: String,
