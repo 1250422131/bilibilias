@@ -23,6 +23,7 @@ import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
@@ -30,10 +31,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
-import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
@@ -41,13 +39,13 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
-import okhttp3.CookieJar
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -60,9 +58,6 @@ class NetworkModule {
     fun provideHttpClient(@ApplicationContext appContext: Context): HttpClient = HttpClient(
         OkHttp.create {
             addInterceptor(MonitorInterceptor(appContext))
-            config {
-                cookieJar(CookieJar.NO_COOKIES)
-            }
         }
     ) {
         Charsets {
@@ -72,12 +67,17 @@ class NetworkModule {
             url(ROAM_API)
         }
         BrowserUserAgent()
+        install(ContentEncoding) {
+            deflate(1f)
+            gzip(0.9f)
+            identity(0.8f)
+        }
         install(HttpCookies) {
             storage = CookieManager()
         }
         install(convertPlugin)
         install(DefaultRequest) {
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
+            // header(HttpHeaders.ContentType, ContentType.Application.Json)
         }
         install(ResponseObserver) {
             onResponse { response ->
@@ -125,9 +125,10 @@ class NetworkModule {
 
     @OptIn(InternalSerializationApi::class)
     private val convertPlugin =
-        createClientPlugin("ConvertPlugin") {
+        createClientPlugin("TransformData") {
             transformResponseBody { response, content, requestedType ->
                 try {
+                    Timber.tag("TransformData").d("type=$requestedType")
                     val res = Json.parseToJsonElement(response.bodyAsText()).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
@@ -144,7 +145,14 @@ class NetworkModule {
 
                         is JsonArray -> {
                             realData = realData.jsonArray
-                            Timber.tag("ConvertPlugin").d("data=$realData")
+                            Timber.tag("TransformData").d("array=$realData")
+                            val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
+                            json.decodeFromJsonElement(serializer(type), realData)
+                        }
+
+                        is JsonPrimitive -> {
+                            realData = realData.jsonPrimitive
+                            Timber.tag("TransformData").d("primitive=$realData")
                             val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
                             json.decodeFromJsonElement(serializer(type), realData)
                         }
@@ -152,7 +160,7 @@ class NetworkModule {
                         else -> null
                     }
                 } catch (e: Exception) {
-                    Timber.tag("ConvertPlugin").e(e)
+                    Timber.tag("TransformData").e(e)
                     null
                 }
             }
