@@ -6,13 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.hyy.highlightpro.HighlightPro
 import com.hyy.highlightpro.parameter.Constraints
@@ -22,8 +17,6 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
@@ -31,9 +24,6 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.OldToolItemBean
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
@@ -41,19 +31,12 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
-import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
-import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.xiaojinzi.component.anno.RouterAnno
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
 
 @RouterAnno(
     hostAndPath = ARouterAddress.ToolFragment,
@@ -61,8 +44,6 @@ import java.io.IOException
 class ToolFragment : BaseFragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding
-    lateinit var mRecyclerView: RecyclerView
-    lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
 
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
@@ -111,21 +92,7 @@ class ToolFragment : BaseFragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
         return fragmentToolBinding.root
     }
-
-     override fun initView() {
-        // 设置布局不浸入
-        fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
-
-        // 设置点击事件
-        fragmentToolBinding.toolViewHolder =
-            context?.let { ToolViewHolder(it, fragmentToolBinding) }
-
-        // 绑定列表
-        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
-
-        // 设置监听
-        setEditListener()
-
+    override fun initView() {
         // 加载工具item
         loadToolItem()
     }
@@ -154,87 +121,16 @@ class ToolFragment : BaseFragment() {
     }
 
     /**
-     * 设置输入框的搜索监听器
-     * 当搜索除发时执行
-     */
-    private fun setEditListener() {
-        fragmentToolBinding.apply {
-            fragmentToolEditText.setOnEditorActionListener { textView, i, keyEvent ->
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    asVideoId(textView.text.toString())
-                }
-                false
-            }
-        }
-    }
-
-    /**
      * 对输入的视频ID进行解析
      * @param inputString String
      */
     fun asVideoId(inputString: String) {
-        if (inputString == "") {
-            asToast(requireContext(), getString(R.string.app_ToolFragment_asVideoId))
-            return
-        }
-
         // ep过滤
         val epRegex = Regex("""(?<=ep)([0-9]+)""")
         // 判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
-            return
-        } else if ("""https://b23.tv/([A-z]|\d)*""".toRegex().containsMatchIn(inputString)) {
-            loadShareData(
-                """https://b23.tv/([A-z]|\d)*""".toRegex()
-                    .find(inputString)?.value!!.toString(),
-            )
-            return
-        } else if (AsVideoNumUtils.getBvid(inputString) != "") {
-            getVideoCardData(AsVideoNumUtils.getBvid(inputString)!!)
-            return
         }
-
-//        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
-//        //判断是否有搜到
-//        if (liveRegex.containsMatchIn(inputString)) {
-//            loadLiveRoomCard(liveRegex.find(inputString)?.value!!.toString())
-//            return
-//        }
-        // 至此，视频的检索没有超过，开始判断是不是直播内容
-
-        mAdapter.apply {
-            currentList.filter { it.type == 0 }.run {
-                submitList(this)
-            }
-        }
-        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    /**
-     * 加载APP端分享视频
-     * @param toString String
-     */
-    private fun loadShareData(toString: String) {
-        HttpUtils.addHeader(COOKIE, asUser.cookie)
-            .get(
-                toString,
-                object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Toast.makeText(
-                            context,
-                            getString(R.string.app_ToolFragment_loadShareData),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        val str = response.request.url.toString()
-                        asVideoId(str)
-                    }
-                },
-            )
     }
 
     /**
@@ -243,44 +139,8 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-            val bangumiSeasonBean =
-                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                    .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
-
-            if (bangumiSeasonBean.code == 0) {
-                bangumiSeasonBean.result.episodes.forEach { it1 ->
-                    if (it1.id == epId) getVideoCardData(it1.bvid)
-                }
-            }
-        }
-    }
-
-    private fun getVideoCardData(bvid: String) {
-        fragmentToolBinding.apply {
-            launchIO {
-                val videoBaseBean =
-                    KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                        .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
-                launchUI {
-                    (mAdapter).apply {
-                        // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
-                        // run函数将新准备的视频item合并进去，并返回。
-                        // 最终apply利用该段返回执行最外层apply的submitList方法
-                        currentList.filter { it.type == 0 }.run {
-                            mutableListOf(
-                                ToolItemBean(
-                                    type = 1,
-                                    videoBaseBean = videoBaseBean,
-                                    clickEvent = {
-                                    },
-                                ),
-                            ) + this
-                        }.apply {
-                            submitList(this)
-                        }
-                    }
-                }
-            }
+            KtHttpUtils.addHeader(COOKIE, asUser.cookie)
+                .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
         }
     }
 
@@ -295,10 +155,6 @@ class ToolFragment : BaseFragment() {
             launchUI {
                 oldToolItemBean.forEach {
                     when (it.toolCode) {
-                        // 视频解析
-                        1 -> {
-                            asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-                        }
                         // 设置
                         2 -> {
                             val intent = Intent(context, SettingActivity::class.java)
@@ -319,27 +175,6 @@ class ToolFragment : BaseFragment() {
                         }
                     }
                 }
-
-                // 展示item
-                fragmentToolBinding.apply {
-                    fragmentToolRecyclerView.adapter = ToolItemAdapter()
-
-                    mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-                    mAdapter.submitList(toolItemMutableList)
-
-                    fragmentToolRecyclerView.layoutManager =
-                        GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                                override fun getSpanSize(position: Int): Int {
-                                    return when ((mAdapter.currentList)[position].type) {
-                                        1 -> 3
-                                        2 -> 3
-                                        else -> 1
-                                    }
-                                }
-                            }
-                        }
-                }
             }
         }
     }
@@ -350,7 +185,6 @@ class ToolFragment : BaseFragment() {
     }
 
     companion object {
-
         @JvmStatic
         fun newInstance() = ToolFragment()
     }
