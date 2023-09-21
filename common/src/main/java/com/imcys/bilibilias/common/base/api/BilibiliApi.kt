@@ -30,7 +30,7 @@ object BilibiliApi {
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
-    const val videoPlayPath = ROAM_API + "x/player/playurl"
+    const val videoPlayPath = "x/player/playurl"
 
     // 弹幕下载
     const val videoDanMuPath = ROAM_API + "x/v1/dm/list.so"

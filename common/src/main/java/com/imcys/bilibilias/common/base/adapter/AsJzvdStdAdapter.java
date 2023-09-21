@@ -5,6 +5,8 @@ import androidx.databinding.BindingAdapter;
 import com.bumptech.glide.Glide;
 import com.imcys.bilibilias.common.base.view.AsJzvdStd;
 
+import coil.Coil;
+
 /**
  * @author:imcys
  * @create: 2022-11-18 17:39
@@ -19,6 +21,4 @@ public class AsJzvdStdAdapter {
                 .load(url)
                 .into(asJzvdStd.posterImageView);
     }
-
-
 }

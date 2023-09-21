@@ -564,8 +564,8 @@ class DownloadQueue @Inject constructor() :
         } ?: downloadTaskDataBean.videoPageDataData?.apply {
             bvid = VideoUtils.toBvidOffline(this.cid)
             type = VIDEO_TYPE
-            downloadTaskDataBean.dashVideoPlayBean?.data?.support_formats?.forEach {
-                if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
+            downloadTaskDataBean.dashVideoPlayBean?.supportFormats?.forEach {
+                if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.displayDesc
             }
         }
 
@@ -598,7 +598,7 @@ class DownloadQueue @Inject constructor() :
                     val timeLength: Int?
                     val height = when (type) {
                         VIDEO_TYPE -> {
-                            timeLength = downloadTaskDataBean.dashVideoPlayBean?.data?.timelength
+                            timeLength = downloadTaskDataBean.dashVideoPlayBean?.timelength
                             width = downloadTaskDataBean.videoPageDataData?.dimension?.width
                             downloadTaskDataBean.videoPageDataData?.dimension?.height
                         }
