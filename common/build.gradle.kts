@@ -202,14 +202,23 @@ dependencies {
 
     // json解析支持
     implementation(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization.gson)
-    api(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.serialization.gson)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.encoding)
     api(libs.gson)
 
     api(libs.constraintlayout)
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
+
+    implementation(libs.activity.compose)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.material3)
+    implementation(libs.accompanist.systemuicontroller)
+
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime.ktx)
 
     api(libs.timber)
 
