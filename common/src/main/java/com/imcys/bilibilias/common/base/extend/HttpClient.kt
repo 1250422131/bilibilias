@@ -13,7 +13,7 @@ import kotlinx.serialization.SerializationException
 import timber.log.Timber
 import kotlin.Result
 
-suspend inline fun <reified T, reified E> HttpClient.safeRequest(
+internal suspend inline fun <reified T, reified E> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
 ): ApiResponse<T, E> =
     try {
@@ -29,7 +29,7 @@ suspend inline fun <reified T, reified E> HttpClient.safeRequest(
         ApiResponse.Error.SerializationError
     }
 
-suspend inline fun <reified T> HttpClient.safeGet(
+internal suspend inline fun <reified T> HttpClient.safeGet(
     url: String,
     block: HttpRequestBuilder.() -> Unit = {},
 ): Result<T> =
@@ -50,7 +50,7 @@ suspend inline fun <reified T> HttpClient.safeGet(
         Result.failure(e)
     }
 
-suspend inline fun <reified E> ResponseException.errorBody(): E? =
+internal suspend inline fun <reified E> ResponseException.errorBody(): E? =
     try {
         response.body()
     } catch (e: SerializationException) {
