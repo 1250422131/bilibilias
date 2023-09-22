@@ -219,6 +219,8 @@ dependencies {
 
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.runtime.ktx)
+    debugImplementation(libs.ui.tooling)
+    implementation(libs.ui.tooling.preview)
 
     api(libs.timber)
 
