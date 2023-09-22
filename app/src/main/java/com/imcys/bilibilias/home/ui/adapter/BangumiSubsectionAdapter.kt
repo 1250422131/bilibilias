@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemBangumiSubsectionBinding
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 
 class BangumiSubsectionAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
@@ -41,28 +41,28 @@ class BangumiSubsectionAdapter(
         if (clickItem == -1) {
             datas.forEachIndexed { index, episodesBean ->
                 if (defaultCid == episodesBean.cid) {
-                    datas[index].checkState = 1
+                    // datas[index].checkState = 1
                     clickItem = index
                 }
             }
         }
 
-        binding?.episodesBean = datas[position]
+        // binding?.episodesBean = datas[position]
 
 
         holder.itemView.setOnClickListener {
 
             if (clickItem == -1) {
-                datas[0].checkState = 0
+                // datas[0].checkState = 0
                 clickItem = 0
             }
 
-            datas[clickItem].checkState = 0
+            // datas[clickItem].checkState = 0
             notifyItemChanged(clickItem)
 
             clickItem = position
 
-            datas[position].checkState = 1
+            // datas[position].checkState = 1
 
             notifyItemChanged(position)
             onClickMethod(datas[position], position)

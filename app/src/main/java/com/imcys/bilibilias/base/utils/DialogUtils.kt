@@ -38,10 +38,11 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.model.VideoPlayBean
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.*
@@ -403,47 +404,17 @@ object DialogUtils {
 
         binding.apply {
             val collectionMutableList = mutableListOf<Long>()
-            val collectionAdapter =
-                CreateCollectionAdapter(
-                    mutableListOf(),
-                ) { position, itemBinding ->
                     // 这个接口是为了处理弹窗背景问题
 
                     val total = collectionMutableList.size
                     // 标签，判断这一次是否有重复
-                    var tage = true
-                    for (a in 0 until total) {
-                        if (collectionMutableList[a] == userCreateCollectionBean.list[position].id.toLong()) {
-                            tage = false
-//                            itemBinding.listBean?.selected = 0
-                            collectionMutableList.removeAt(a)
-                            break
-                        }
-                    }
-
-                    if (tage) {
-//                        itemBinding.listBean?.selected = 1
-                        collectionMutableList.add(userCreateCollectionBean.list[position].id.toLong())
-                    }
-
-                    binding.dialogCollectionRv.adapter?.notifyItemChanged(position)
-                    selectedResult(position, collectionMutableList)
                 }
 
-            // 设置数据适配器
-            dialogCollectionRv.adapter = collectionAdapter
-
-            // 设置布局加载器
-            dialogCollectionRv.layoutManager =
-                LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-
             // 设置完成选中收藏夹
-            dialogCollectionFinishBt.setOnClickListener {
-                bottomSheetDialog.cancel()
-                finished(collectionMutableList)
-            }
-        }
-
+            // dialogCollectionFinishBt.setOnClickListener {
+            //     bottomSheetDialog.cancel()
+            //     finished(collectionMutableList)
+            // }
         return bottomSheetDialog
     }
 
@@ -796,7 +767,7 @@ object DialogUtils {
             dialogDlAudioTypeTx.setOnClickListener {
                 loadVideoToneQualityList(context, dashVideoPlayBean) {
                     toneQuality = it.id
-                    dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    dialogDlAudioTypeTx.text = AsVideoUtils.getQualityName(toneQuality)
                 }.show()
             }
 
@@ -950,7 +921,7 @@ object DialogUtils {
         // mDialogBehavior.peekHeight = 600
         binding.apply {
             // 子集选择 默认选中1集
-            bangumiSeasonBean.result.episodes[0].selected = 1
+            // bangumiSeasonBean.result.episodes[0].selected = 1
             dialogDlVideoDiversityLy.setOnClickListener {
                 loadVideoPageDialog(context, bangumiSeasonBean, videoPageMutableList) { it1 ->
                     videoPageMutableList = it1
@@ -993,7 +964,7 @@ object DialogUtils {
             dialogDlAudioTypeLy.setOnClickListener {
                 loadVideoToneQualityList(context, dashVideoPlayBean) {
                     toneQuality = it.id
-                    dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    dialogDlAudioTypeTx.text = AsVideoUtils.getQualityName(toneQuality)
                 }.show()
             }
 
@@ -1916,57 +1887,8 @@ object DialogUtils {
             dialogCollectionTitle.text = "请选择视频子集"
 
             val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
-
-            dialogCollectionRv.adapter =
-                VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
-                    // 这个接口是为了处理弹窗背景问题
-                    // 标签，判断这一次是否有重复
-                    var tage = true
-                    // 这里加also标签为的是可以return掉forEachIndexed
-                    videoPageMutableList.also { range ->
-                        range.forEachIndexed { index, dataBean ->
-                            if (dataBean.cid == videoPageListData.data[position].cid) {
-                                tage = false
-                                itemBinding.dataBean?.selected = 0
-                                videoPageMutableList.removeAt(index)
-                                dialogCollectionRv.adapter?.notifyItemChanged(index)
-                                return@also
-                            }
-                        }
-                    }
-
-                    if (tage) {
-                        itemBinding.dataBean?.selected = 1
-                        videoPageMutableList.add(videoPageListData.data[position])
-                    }
-
-                    dialogCollectionRv.adapter?.notifyItemChanged(position)
-                }
-
-            // 设置布局加载器
-            dialogCollectionRv.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
-            // 设置完成选中的子集
-            dialogCollectionFinishBt.setOnClickListener {
-                bottomSheetDialog.cancel()
-                finished(videoPageMutableList)
-            }
-
-            dialogCollectionAllSelectBt.apply {
-                visibility = View.VISIBLE
-
-                setOnClickListener {
-                    pageData.forEachIndexed { index, episodesBean ->
-                        episodesBean.selected = 1
-                        videoPageMutableList.add(episodesBean)
-                        dialogCollectionRv.adapter?.notifyItemChanged(index)
-                    }
-                }
-            }
-        }
-
         return bottomSheetDialog
+    }
     }
 
     /**
@@ -1987,14 +1909,6 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
-
-        // val mDialogBehavior =
-        initDialogBehaviorBinding(
-            binding.dialogCollectionBar,
-            context,
-            binding.root.parent,
-        )
-
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
@@ -2004,61 +1918,7 @@ object DialogUtils {
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
                     !(userVipState != 1 && it.badge == "会员")
                 }
-
-            dialogCollectionRv.adapter =
-                BangumiPageAdapter(
-                    bangumiSeasonBean.result.episodes.filter {
-                        // 没会员直接不展示
-                        !(userVipState != 1 && it.badge == "会员")
-                    }.toMutableList(),
-                ) { position, itemBinding ->
-
-                    // 标签，判断这一次是否有重复 有重复就是false否则true
-                    var tage = true
-                    // 这里加also标签为的是可以return掉forEachIndexed
-                    videoPageMutableList.also { range ->
-                        range.forEachIndexed { index, episodesBean ->
-                            if (episodesBean.cid == bangumiSeasonBean.result.episodes[position].cid) {
-                                tage = false
-                                itemBinding.episodesBean?.selected = 0
-                                dialogCollectionRv.adapter?.notifyItemChanged(index)
-                                videoPageMutableList.removeAt(index)
-                                return@also
-                            }
-                        }
-                    }
-
-                    if (tage) {
-                        itemBinding.episodesBean?.selected = 1
-                        videoPageMutableList.add(bangumiSeasonBean.result.episodes[position])
-                    }
-
-                    dialogCollectionRv.adapter?.notifyItemChanged(position)
-                }
-
-            // 设置布局加载器
-            dialogCollectionRv.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
-            // 设置完成选中的子集
-            dialogCollectionFinishBt.setOnClickListener {
-                bottomSheetDialog.cancel()
-                finished(videoPageMutableList)
-            }
-
-            dialogCollectionAllSelectBt.apply {
-                visibility = View.VISIBLE
-
-                setOnClickListener {
-                    epData.forEachIndexed { index, episodesBean ->
-                        episodesBean.selected = 1
-                        videoPageMutableList.add(episodesBean)
-                        dialogCollectionRv.adapter?.notifyItemChanged(index)
-                    }
-                }
-            }
-        }
-
+    }
         return bottomSheetDialog
     }
 

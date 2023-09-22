@@ -35,7 +35,6 @@ import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.DialogAsAccountListBinding
 import com.imcys.bilibilias.databinding.DialogAsLoginBottomsheetBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
 import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -160,7 +159,7 @@ class AsLoginBsViewModel(
         }
 
         // 设置item点击事件
-        val biliBiliCookieAdapter = BiliBiliCookieAdapter { _, data ->
+
 
             AsDialog.init(view.context).build {
                 config = {
@@ -168,17 +167,11 @@ class AsLoginBsViewModel(
                     content = "确定要选择这个账户？"
                     positiveButtonText = "是的"
                     positiveButton = {
-                        checkUserData(data, bottomSheetDialog, view)
+                        // checkUserData(data, bottomSheetDialog, view)
                         it.cancel()
                     }
                 }
             }.show()
-        }
-
-        binding.dialogAsAccountRv.apply {
-            adapter = biliBiliCookieAdapter
-            layoutManager = LinearLayoutManager(context)
-        }
 
         DialogUtils.initDialogBehaviorBinding(
             binding.dialogAsAccountBar,
@@ -192,10 +185,6 @@ class AsLoginBsViewModel(
             val userBiliBiliCookieModel =
                 KtHttpUtils.addHeader(COOKIE, asCookie!!)
                     .asyncGet<UserBiliBiliCookieModel>("${BiliBiliAsApi.serviceTestApi}BiliBiliCookie")
-
-            launchUI {
-                biliBiliCookieAdapter.submitList(userBiliBiliCookieModel.data)
-            }
         }
 
         return bottomSheetDialog

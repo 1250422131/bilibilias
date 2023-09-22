@@ -32,7 +32,7 @@ import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.liulishuo.okdownload.DownloadListener

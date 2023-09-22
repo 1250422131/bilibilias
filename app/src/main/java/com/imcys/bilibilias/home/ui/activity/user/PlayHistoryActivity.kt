@@ -12,7 +12,6 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
-import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -21,8 +20,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
-    @Inject
-    lateinit var playHistoryAdapter: PlayHistoryAdapter
 
     private var max = 0L
     private var viewAt = 0L
@@ -39,7 +36,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
 
     override fun initView() {
         binding.apply {
-            playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
@@ -51,7 +47,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
                     max = it.data.cursor.max
                     viewAt = it.data.cursor.view_at
                     playHistoryDataMutableList.addAll(it.data.list)
-                    playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
                 }
 
             playHistoryTopRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -73,7 +68,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
                 max = it.data.cursor.max
                 viewAt = it.data.cursor.view_at
                 playHistoryDataMutableList.addAll(it.data.list)
-                playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
             }
     }
 
