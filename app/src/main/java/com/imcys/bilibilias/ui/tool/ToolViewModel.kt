@@ -1,12 +1,12 @@
 package com.imcys.bilibilias.ui.tool
 
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.repository.AsRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils.httpClient
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.call.body
@@ -43,6 +43,10 @@ class ToolViewModel @Inject constructor(
             it.copy(query = text)
         }
         Timber.tag(TAG).i("解析的链接=$text")
+        if (AsVideoUtils.isEp(text)) {
+            handelEP(text)
+            return
+        }
         if (AsVideoUtils.isBVStart(text)) {
             handelBV(text)
             return
@@ -54,6 +58,35 @@ class ToolViewModel @Inject constructor(
         // 短链接
         if (AsVideoUtils.isBVHttp(text)) {
             handelHttp(text)
+            return
+        }
+    }
+
+    private fun handelEP(text: String) {
+        val epId = AsVideoUtils.getEpid(text)
+        if (epId == null) {
+            setIsInputError(true)
+            _toolState.update {
+                it.copy(isShowVideoCard = false)
+            }
+            return
+        }
+        launchIO {
+            val bangumi = videoRepository.get剧集基本信息(epId)
+            _toolState.update {
+                it.copy(
+                    videoMate = VideoMate(
+                        bangumi.episodes.first().bvid,
+                        bangumi.cover,
+                        bangumi.evaluate,
+                        bangumi.stat.views.toString(),
+                        bangumi.stat.danmakus.toString(),
+                    )
+                )
+            }
+        }
+        _toolState.update {
+            it.copy(query = epId, isShowVideoCard = true)
         }
     }
 

@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
-import com.imcys.bilibilias.databinding.ItemToneQualityBinding
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
+import com.imcys.bilibilias.databinding.ItemToneQualityBinding
 
 class VideoToneQualityAdapter(
     private val videoAudioBeans: MutableList<DashVideoPlayBean>,
@@ -22,7 +21,9 @@ class VideoToneQualityAdapter(
         val binding =
             DataBindingUtil.inflate<ItemToneQualityBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_tone_quality, parent, false
+                R.layout.item_tone_quality,
+                parent,
+                false
             )
 
         return ViewHolder(binding.root)
@@ -30,7 +31,6 @@ class VideoToneQualityAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         DataBindingUtil.getBinding<ItemToneQualityBinding>(holder.itemView)?.apply {
-
             audioBean = videoAudioBeans[position]
 
             if (position == 0 && selectedItem == 0) {
@@ -41,13 +41,10 @@ class VideoToneQualityAdapter(
             // itemToneQualityButton.text =
             //     AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
 
-
             itemToneQualityButton.setOnClickListener {
                 if (position != selectedItem) {
-
                     // selectedBinding.audioBean?.selected = 0
                     this@VideoToneQualityAdapter.notifyItemChanged(selectedItem)
-
 
                     selectedBinding = this
                     selectedItem = position
@@ -58,11 +55,8 @@ class VideoToneQualityAdapter(
                     // selectedResult(videoAudioBeans[position])
                 }
             }
-
         }
-
     }
-
 
     override fun getItemCount(): Int {
         return videoAudioBeans.size
