@@ -23,33 +23,30 @@ class AppAsJzvdStd : AsJzvdStd {
     @SuppressLint("Recycle")
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         if (!isInEditMode) {
-            //弹幕按钮事件绑定
+            // 弹幕按钮事件绑定
             bingAppAsJzStdDanmakuButtonEvent()
-            //绑定播放按钮事件
+            // 绑定播放按钮事件
             bindingAppAsJzStdPlayButtonEvent()
         }
     }
 
     constructor(context: Context) : super(context)
 
-
     private fun bindingAppAsJzStdPlayButtonEvent() {
         appAsJzStdPlayButton.setOnClickListener {
             when (state) {
                 Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
-                    //播放视频
+                    // 播放视频
                     startVideo()
                 }
 
                 Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
-                    //恢复播放/暂停播放
+                    // 恢复播放/暂停播放
                     startButton.performClick()
                 }
             }
         }
-
     }
-
 
     private fun bingAppAsJzStdDanmakuButtonEvent() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -58,7 +55,7 @@ class AppAsJzvdStd : AsJzvdStd {
             sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
         if (!danmakuSwitch) {
-            //隐藏弹幕
+            // 隐藏弹幕
             asDanmaku.hide()
             appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
         }
@@ -72,7 +69,7 @@ class AppAsJzvdStd : AsJzvdStd {
             sharedPreferences.edit {
                 putBoolean("user_video_danmaku_switch", !danmakuSwitch)
             }
-            //注意，这里是变动前的标志
+            // 注意，这里是变动前的标志
             if (danmakuSwitch) {
                 appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
                 asDanmaku.hide()
@@ -83,7 +80,7 @@ class AppAsJzvdStd : AsJzvdStd {
         }
     }
 
-    //预加载
+    // 预加载
     @SuppressLint("CheckResult")
     override fun onStatePreparing() {
         super.onStatePreparing()
@@ -98,9 +95,7 @@ class AppAsJzvdStd : AsJzvdStd {
                 }
             }
             .into(appAsJzStdLoadImage)
-
     }
-
 
     override fun getLayoutId(): Int {
         return R.layout.app_as_jz_layout_std
@@ -122,5 +117,4 @@ class AppAsJzvdStd : AsJzvdStd {
         super.onStateAutoComplete()
         appAsJzStdPlayButton.setImageResource(R.drawable.ic_as_video_redo)
     }
-
 }
