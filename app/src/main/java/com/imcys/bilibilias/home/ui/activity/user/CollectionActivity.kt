@@ -17,12 +17,10 @@ import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
-import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlin.math.ceil
 
 // 收藏夹
@@ -32,8 +30,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<Collections.Media>()
 
-    @Inject
-    lateinit var collectionDataAd: CollectionDataAdapter
 
     private lateinit var createCollectionList: UserCreateCollectionBean.Collection
     override fun getLayoutRes(): Int = R.layout.activity_collection
@@ -50,7 +46,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
 
     private fun initCollectionRv() {
         binding.apply {
-            collectionRecyclerView.adapter = collectionDataAd
             collectionRecyclerView.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             collectionRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

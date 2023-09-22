@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.base.model.user
 
 import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.VideoPageListData

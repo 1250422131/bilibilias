@@ -12,18 +12,14 @@ import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
-import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
 class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
-    @Inject
-    lateinit var bangumiFollowAdapter: BangumiFollowAdapter
     private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
     private lateinit var bangumiFollowList: BangumiFollowList
     override fun getLayoutRes(): Int = R.layout.activity_bangumi_follow
@@ -35,7 +31,6 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
     override fun initView() {
         binding.apply {
-            bangumiFollowRv.adapter = bangumiFollowAdapter
             bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
 
             HttpUtils.addHeader("coolie", asUser.cookie).get(
@@ -45,7 +40,6 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
                 if (it.code == 0) {
                     bangumiFollowList = it
                     bangumiFollowMutableList.addAll(it.data.list)
-                    bangumiFollowAdapter.submitList(bangumiFollowMutableList + mutableListOf())
                 }
             }
 
@@ -70,7 +64,6 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
             if (it.code == 0) {
                 bangumiFollowList = it
                 bangumiFollowMutableList.addAll(it.data.list)
-                bangumiFollowAdapter.submitList(bangumiFollowMutableList + mutableListOf())
             }
         }
     }

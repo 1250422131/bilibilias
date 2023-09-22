@@ -23,6 +23,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
@@ -38,6 +39,9 @@ import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okio.BufferedSink
@@ -57,6 +61,8 @@ class AsVideoViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val mid = UserInfoRepository.mid
+    private val _videoUiState = MutableStateFlow(VideoUiSate())
+    val videoUiState = _videoUiState.asStateFlow()
 
     /**
      * 缓存视频
@@ -100,8 +106,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -156,8 +162,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -303,7 +309,7 @@ class AsVideoViewModel @Inject constructor(
                     when (likeVideoBean.code) {
                         0 -> {
                             context.binding.archiveHasLikeBean?.data = 1
-                            context.binding.asVideoLikeBt.isSelected = true
+                            // context.binding.asVideoLikeBt.isSelected = true
                         }
 
                         65006 -> {
@@ -344,7 +350,7 @@ class AsVideoViewModel @Inject constructor(
                     0 -> {
                         (context as AsVideoActivity).binding.apply {
                             archiveHasLikeBean?.data = 0
-                            asVideoLikeBt.isSelected = false
+                            // asVideoLikeBt.isSelected = false
                         }
                     }
 
@@ -377,7 +383,7 @@ class AsVideoViewModel @Inject constructor(
 
             launchUI {
                 (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
-                context.binding.asVideoThrowBt.isSelected = true
+                // context.binding.asVideoThrowBt.isSelected = true
             }
         }
     }
@@ -464,7 +470,7 @@ class AsVideoViewModel @Inject constructor(
 
             if (collectionResultBean.code == 0) {
                 context.binding.archiveFavouredBean?.isFavoured = true
-                context.binding.asVideoCollectionBt.isSelected = true
+                // context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
             }
@@ -475,9 +481,21 @@ class AsVideoViewModel @Inject constructor(
         userRepository.getUserSpaceDetails(mid)
     }
 
-    fun getVideoData(bvid: String, videoBaseData: (VideoBaseBean) -> Unit) {
+    fun getVideoData(bvid: String) {
         launchIO {
-            videoRepository.getVideoDetailsByBvid(bvid, videoBaseData)
+            videoRepository.getVideoDetailsByBvid(bvid) { video ->
+                _videoUiState.update {
+                    it.copy(
+                        title = video.title,
+                        video.pic,
+                        video.desc,
+                        video.descV2.firstOrNull()?.rawText,
+                        video.redirectUrl,
+                        video.owner.face,
+                        video.owner.name,
+                    )
+                }
+            }
         }
     }
 
@@ -506,3 +524,16 @@ class AsVideoViewModel @Inject constructor(
         allow4KVideo: Int
     ) = videoRepository.getDash视频流地址(bvid, cid, quality, format, allow4KVideo)
 }
+
+data class VideoUiSate(
+    // 视频的基本信息
+    val title: String = "",
+    val pic: String = "",
+    val desc: String = "",
+    val descV2: String? = null,
+    // 仅番剧或影视视频存在此字段用于番剧&影视的av/bv->ep
+    val redirectUrl: String? = null,
+    // 视频作者信息
+    val ownerFace: String = "",
+    val ownerName: String = "",
+)

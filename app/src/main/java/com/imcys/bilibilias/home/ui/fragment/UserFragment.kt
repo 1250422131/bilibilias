@@ -20,17 +20,12 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
-import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
-import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
 import kotlin.math.ceil
 
 class UserFragment : BaseFragment() {
-
-    private lateinit var userWorksAd: UserWorksAdapter
-    private lateinit var userDataRvAd: UserDataAdapter
     private lateinit var userWorksBean: UserWorksBean
 
     lateinit var fragmentUserBinding: FragmentUserBinding
@@ -80,7 +75,6 @@ class UserFragment : BaseFragment() {
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launchUI {
-                                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
 
                                 // 更新数据 -> fragmentUserWorksCsr 支持
                                 refreshComplete()
@@ -110,7 +104,6 @@ class UserFragment : BaseFragment() {
             this@UserFragment.userWorksBean = userWorksBean
 
             launchUI {
-                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
             }
         }
     }
@@ -131,18 +124,15 @@ class UserFragment : BaseFragment() {
                 )
                     .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
 
-            userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
 
             if (userWorksBean.code == 0) {
                 launchUI {
                     // 设置用户主页的作品的adapter
-                    fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
                     // 设置布局管理器，让作品呈瀑布流的形式展示。
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     // 刷新刚刚请求的代码
-                    userWorksAd.submitList(userWorksBean.data.list.vlist)
                 }
             } else {
                 launchUI {
