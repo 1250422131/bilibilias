@@ -12,7 +12,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,19 +34,32 @@ class ToolViewModel @Inject constructor(
 
     fun getOldItemList() {}
 
+    /**
+     * todo 短链接处理有问题, ep 未处理
+     */
     fun parsesBvOrAvOrEp(text: String) {
         if (text.trim().isBlank()) return
         _toolState.update {
             it.copy(query = text)
         }
         Timber.tag(TAG).i("解析的链接=$text")
-        if (AsVideoNumUtils.isBV(text)) {
+        if (AsVideoNumUtils.isBVStart(text)) {
             handelBV(text)
             return
         }
         if (AsVideoNumUtils.isAV(text)) {
             handelAV(text)
             return
+        }
+        // 短链接
+        if (AsVideoNumUtils.isBVHttp(text)) {
+            val url = AsVideoNumUtils.getBvHttp(text)!!
+            launchIO {
+                httpClient.prepareGet(url).execute { response ->
+                    val bvid = AsVideoNumUtils.getBvid(response.request.url.toString())!!
+                    parsesBvOrAvOrEp(bvid)
+                }
+            }
         }
     }
 
