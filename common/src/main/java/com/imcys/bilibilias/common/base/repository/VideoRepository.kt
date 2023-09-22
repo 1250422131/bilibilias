@@ -13,8 +13,11 @@ import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.model.VideoPlayBean
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.bodyAsText
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -105,10 +108,16 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
             parameter(AID, avid)
         }.onSuccess { videoMate(it) }.isSuccess
 
-    suspend fun hasLikeBvid(bvid: String) =
-        httpClient.safeGet<ArchiveHasLikeBean>(BilibiliApi.videoHasLike) {
+    suspend fun hasLikeBvid(bvid: String): ArchiveHasLikeBean {
+        val like = httpClient.get(BilibiliApi.videoHasLike) {
+            parameter(BVID, bvid)
+        }.bodyAsText()
+        val like2 = httpClient.safeGet<ArchiveHasLikeBean>(BilibiliApi.videoHasLike) {
             parameter(BVID, bvid)
         }.getOrThrow()
+        Timber.d(like2.toString())
+        return ArchiveHasLikeBean(0)
+    }
 
     suspend fun hasCoinsBvid(bvid: String) =
         httpClient.safeGet<ArchiveCoinsBean>(BilibiliApi.videoHasCoins) {
@@ -117,6 +126,6 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
 
     suspend fun hasFavouredBvid(bvid: String) =
         httpClient.safeGet<ArchiveFavouredBean>(BilibiliApi.videoHasFavoured) {
-            parameter(BVID, bvid)
+            parameter(AID, bvid)
         }.getOrThrow()
 }
