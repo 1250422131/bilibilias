@@ -128,8 +128,9 @@ class NetworkModule {
         createClientPlugin("TransformData") {
             transformResponseBody { response, content, requestedType ->
                 try {
-                    Timber.tag("TransformData").d("type=$requestedType")
-                    val res = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+                    val rep = response.bodyAsText()
+                    Timber.tag("TransformData").d("type=$requestedType\ndata=$rep")
+                    val res = Json.parseToJsonElement(rep).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
                         val message = res["message"]?.jsonPrimitive?.contentOrNull
@@ -152,6 +153,9 @@ class NetworkModule {
 
                         is JsonPrimitive -> {
                             realData = realData.jsonPrimitive
+                            if (realData.isString) {
+                                return@transformResponseBody realData.content
+                            }
                             Timber.tag("TransformData").d("primitive=$realData")
                             val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
                             json.decodeFromJsonElement(serializer(type), realData)
