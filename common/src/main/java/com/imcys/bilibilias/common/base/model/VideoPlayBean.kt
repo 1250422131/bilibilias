@@ -156,7 +156,7 @@ class VideoPlayBean(
     @Serializable
     data class SupportFormat(
         @SerialName("codecs")
-        val codecs: List<String> = emptyList(), // null
+        val codecs: List<String>? = null, // null
         @SerialName("display_desc")
         val displayDesc: String = "", // 1080P
         @SerialName("format")
