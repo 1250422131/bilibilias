@@ -55,7 +55,7 @@ import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.startActivity
 import com.imcys.bilibilias.common.base.constant.BVID
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
@@ -150,7 +150,7 @@ private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
     val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(clipboardManager.getText()?.text) {
         val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-        if (AsVideoNumUtils.isBVStart(text) || AsVideoNumUtils.isBVHttp(text) || AsVideoNumUtils.isAV(text)) {
+        if (AsVideoUtils.isBVStart(text) || AsVideoUtils.isBVHttp(text) || AsVideoUtils.isAV(text)) {
             toolViewModel.clearText()
             toolViewModel.parsesBvOrAvOrEp(text)
         }
