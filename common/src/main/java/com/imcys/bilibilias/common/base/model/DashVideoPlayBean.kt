@@ -14,13 +14,13 @@ data class DashVideoPlayBean(
     @SerialName("accept_description")
     val acceptDescription: List<String> = listOf(),
     @SerialName("accept_format")
-    val acceptFormat: String = "", // hdflv2,hdflv2,flv_p60,flv,flv720_p60,flv480,mp4
+    val acceptFormat: String = "", // flv480,mp4
     @SerialName("accept_quality")
     val acceptQuality: List<Int> = listOf(),
     @SerialName("dash")
     val dash: Dash = Dash(),
     @SerialName("format")
-    val format: String = "", // flv720_p60
+    val format: String = "", // flv480
     @SerialName("from")
     val from: String = "", // local
     @SerialName("last_play_cid")
@@ -30,7 +30,7 @@ data class DashVideoPlayBean(
     @SerialName("message")
     val message: String = "",
     @SerialName("quality")
-    val quality: Int = 0, // 64
+    val quality: Int = 0, // 32
     @SerialName("result")
     val result: String = "", // suee
     @SerialName("seek_param")
@@ -40,7 +40,7 @@ data class DashVideoPlayBean(
     @SerialName("support_formats")
     val supportFormats: List<SupportFormat> = listOf(),
     @SerialName("timelength")
-    val timelength: Int = 0, // 346410
+    val timelength: Int = 0, // 53962
     @SerialName("video_codecid")
     val videoCodecid: Int = 0 // 7
 ) {
@@ -51,9 +51,7 @@ data class DashVideoPlayBean(
         @SerialName("dolby")
         val dolby: Dolby = Dolby(),
         @SerialName("duration")
-        val duration: Int = 0, // 347
-        @SerialName("flac")
-        val flac: Dolby.DolbyAudio = Dolby.DolbyAudio(), // null
+        val duration: Int = 0, // 54
         @SerialName("min_buffer_time")
         val minBufferTime: Double = 0.0, // 1.5
         @SerialName("video")
@@ -64,19 +62,19 @@ data class DashVideoPlayBean(
             @SerialName("backup_url")
             val backupUrl: List<String> = listOf(),
             @SerialName("bandwidth")
-            val bandwidth: Int = 0, // 329376
+            val bandwidth: Int = 0, // 40882
             @SerialName("base_url")
-            val baseUrl: String = "", // https://xy125x75x230x185xy.mcdn.bilivideo.cn:4483/upgcxcode/65/46/244954665/244954665_f9-1-30280.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1674133321&gen=playurlv2&os=mcdn&oi=606633952&trid=000077eca41ddc4a4dc6926e971dfacc597cu&mid=293793435&platform=pc&upsig=e983f8b4dc35aa8469dc0742d0371e19&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=1002708&bvc=vod&nettype=0&orderid=0,3&buvid=EC1BD8EA-88F6-4951-BF27-2CFE3450C78F167646infoc&build=0&agrr=0&bw=41220&logo=A0000001
+            val baseUrl: String = "", // https://xy182x125x174x46xy.mcdn.bilivideo.cn:8082/v1/resource/1260927673-1-30216.m4s?agrr=0&build=0&buvid=&bvc=vod&bw=5203&cdnid=11153&deadline=1695274017&e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M%3D&f=u_0_0&gen=playurlv2&logo=80000000&mid=10993030&nbs=1&nettype=0&oi=1974978899&orderid=0%2C3&os=bcache&platform=pc&sign=bc00e9&traceid=trBGlREsNdjFPi_0_e_N&uipk=5&uparams=e%2Cuipk%2Cnbs%2Cdeadline%2Cgen%2Cos%2Coi%2Ctrid%2Cmid%2Cplatform&upsig=21e011b0b7becf4d99c918da87af07da
             @SerialName("codecid")
             val codecid: Int = 0, // 0
             @SerialName("codecs")
-            val codecs: String = "", // mp4a.40.2
+            val codecs: String = "", // mp4a.40.5
             @SerialName("frame_rate")
             val frameRate: String = "",
             @SerialName("height")
             val height: Int = 0, // 0
             @SerialName("id")
-            val id: Int = 0, // 30280
+            val id: Int = 0, // 30216
             @SerialName("mime_type")
             val mimeType: String = "", // audio/mp4
             @SerialName("sar")
@@ -91,44 +89,36 @@ data class DashVideoPlayBean(
             @Serializable
             data class SegmentBase(
                 @SerialName("index_range")
-                val indexRange: String = "", // 908-1779
+                val indexRange: String = "", // 944-1107
                 @SerialName("initialization")
-                val initialization: String = "" // 0-907
+                val initialization: String = "" // 0-943
             )
         }
 
         @Serializable
         data class Dolby(
-            @SerialName("audio")
-            val audio: List<DolbyAudio> = listOf(), // null
             @SerialName("type")
             val type: Int = 0 // 0
-        ) {
-            @Serializable
-            data class DolbyAudio(
-                val display: Boolean = false,
-                val audio: List<Audio> = listOf()
-            )
-        }
+        )
 
         @Serializable
         data class Video(
             @SerialName("backup_url")
             val backupUrl: List<String> = listOf(),
             @SerialName("bandwidth")
-            val bandwidth: Int = 0, // 13799375
+            val bandwidth: Int = 0, // 126915
             @SerialName("base_url")
-            val baseUrl: String = "", // https://cn-jxjj-ct-01-01.bilivideo.com/upgcxcode/65/46/244954665/244954665_f9-1-30125.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1674133321&gen=playurlv2&os=bcache&oi=606633952&trid=000077eca41ddc4a4dc6926e971dfacc597cu&mid=293793435&platform=pc&upsig=f144133cabdfca56ae3cb14e208aebe1&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&cdnid=4261&bvc=vod&nettype=0&orderid=0,3&buvid=EC1BD8EA-88F6-4951-BF27-2CFE3450C78F167646infoc&build=0&agrr=0&bw=1726751&logo=80000000
+            val baseUrl: String = "", // https://cn-hbsjz-cm-02-10.bilivideo.com/upgcxcode/73/76/1260927673/1260927673-1-30032.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1695274017&gen=playurlv2&os=bcache&oi=1974978899&trid=00006be45ed97ed6495eb8eed39ae3a9d16eu&mid=10993030&platform=pc&upsig=a01f354aa9a9cc73f8c07e8a8b534dbd&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&cdnid=11153&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&f=u_0_0&agrr=0&bw=16101&logo=80000000
             @SerialName("codecid")
-            val codecid: Int = 0, // 12
+            val codecid: Int = 0, // 7
             @SerialName("codecs")
-            val codecs: String = "", // hev1.2.4.L156.90
+            val codecs: String = "", // avc1.64001F
             @SerialName("frame_rate")
-            val frameRate: String = "", // 125
+            val frameRate: String = "", // 23.810
             @SerialName("height")
-            val height: Int = 0, // 1920
+            val height: Int = 0, // 480
             @SerialName("id")
-            val id: Int = 0, // 125
+            val id: Int = 0, // 32
             @SerialName("mime_type")
             val mimeType: String = "", // video/mp4
             @SerialName("sar")
@@ -138,14 +128,14 @@ data class DashVideoPlayBean(
             @SerialName("start_with_sap")
             val startWithSap: Int = 0, // 1
             @SerialName("width")
-            val width: Int = 0 // 3840
+            val width: Int = 0 // 688
         ) {
             @Serializable
             data class SegmentBase(
                 @SerialName("index_range")
-                val indexRange: String = "", // 1067-1926
+                val indexRange: String = "", // 1007-1170
                 @SerialName("initialization")
-                val initialization: String = "" // 0-1066
+                val initialization: String = "" // 0-1006
             )
         }
     }
@@ -155,13 +145,13 @@ data class DashVideoPlayBean(
         @SerialName("codecs")
         val codecs: List<String> = listOf(),
         @SerialName("display_desc")
-        val displayDesc: String = "", // HDR
+        val displayDesc: String = "", // 480P
         @SerialName("format")
-        val format: String = "", // hdflv2
+        val format: String = "", // flv480
         @SerialName("new_description")
-        val newDescription: String = "", // HDR 真彩
+        val newDescription: String = "", // 480P 清晰
         @SerialName("quality")
-        val quality: Int = 0, // 125
+        val quality: Int = 0, // 32
         @SerialName("superscript")
         val superscript: String = ""
     )
