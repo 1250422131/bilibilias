@@ -4,7 +4,7 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.repository.AsRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils.httpClient
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
@@ -43,28 +43,32 @@ class ToolViewModel @Inject constructor(
             it.copy(query = text)
         }
         Timber.tag(TAG).i("解析的链接=$text")
-        if (AsVideoNumUtils.isBVStart(text)) {
+        if (AsVideoUtils.isBVStart(text)) {
             handelBV(text)
             return
         }
-        if (AsVideoNumUtils.isAV(text)) {
+        if (AsVideoUtils.isAV(text)) {
             handelAV(text)
             return
         }
         // 短链接
-        if (AsVideoNumUtils.isBVHttp(text)) {
-            val url = AsVideoNumUtils.getBvHttp(text)!!
-            launchIO {
-                httpClient.prepareGet(url).execute { response ->
-                    val bvid = AsVideoNumUtils.getBvid(response.request.url.toString())!!
-                    parsesBvOrAvOrEp(bvid)
-                }
+        if (AsVideoUtils.isBVHttp(text)) {
+            handelHttp(text)
+        }
+    }
+
+    private fun handelHttp(text: String) {
+        val url = AsVideoUtils.getBvHttp(text)!!
+        launchIO {
+            httpClient.prepareGet(url).execute { response ->
+                val bvid = AsVideoUtils.getBvid(response.request.url.toString())!!
+                parsesBvOrAvOrEp(bvid)
             }
         }
     }
 
     private fun handelAV(text: String) {
-        val aid = AsVideoNumUtils.getAvid(text)
+        val aid = AsVideoUtils.getAvid(text)
         if (aid == null) {
             setIsInputError(true)
             _toolState.update {
@@ -81,7 +85,7 @@ class ToolViewModel @Inject constructor(
     }
 
     private fun handelBV(text: String) {
-        val bvid = AsVideoNumUtils.getBvid(text)
+        val bvid = AsVideoUtils.getBvid(text)
         if (bvid == null) {
             setIsInputError(true)
             _toolState.update {
