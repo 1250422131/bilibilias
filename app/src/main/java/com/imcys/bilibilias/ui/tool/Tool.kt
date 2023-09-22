@@ -150,7 +150,7 @@ private fun ReadFromClipboard(toolViewModel: ToolViewModel = hiltViewModel()) {
     val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(clipboardManager.getText()?.text) {
         val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-        if (AsVideoNumUtils.isBV(text) || AsVideoNumUtils.isAV(text)) {
+        if (AsVideoNumUtils.isBVStart(text) || AsVideoNumUtils.isBVHttp(text) || AsVideoNumUtils.isAV(text)) {
             toolViewModel.clearText()
             toolViewModel.parsesBvOrAvOrEp(text)
         }
