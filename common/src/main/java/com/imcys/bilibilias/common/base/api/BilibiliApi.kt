@@ -26,7 +26,7 @@ object BilibiliApi {
 
     // 获取视频详细信息 get bvid avid
     const val getVideoDataPath = "x/web-interface/view"
-
+    const val bangumiPlayPath = "pgc/player/web/playurl"
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
@@ -48,7 +48,7 @@ object BilibiliApi {
     const val videoCoinAddPath = ROAM_API + "x/web-interface/coin/add"
 
     // 获取剧集明细 get season_id / ep_id
-    var bangumiVideoDataPath = ROAM_API + "pgc/view/web/season"
+    const val bangumiVideoDataPath = "pgc/view/web/season"
 
     // 获取用户基本信息
     const val userSpaceDetails = "x/space/wbi/acc/info"

@@ -1,47 +1,88 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.components.CenterRow
+import com.imcys.bilibilias.common.base.components.VerticalTwoTerms
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.BVID
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
-import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import com.imcys.bilibilias.view.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import master.flame.danmaku.controller.DrawHandler.Callback
@@ -80,6 +121,8 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     lateinit var userSpaceInformation: UserSpaceInformation
 
     private val viewModel by viewModels<AsVideoViewModel>()
+    private var videoID by mutableStateOf("")
+    private var epID by mutableStateOf("")
 
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
@@ -87,11 +130,9 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     private var epid: Long = 0L
     override fun getLayoutRes(): Int = R.layout.activity_as_video
 
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        videoID = intent.getStringExtra(BVID)!!
     }
 
     /**
@@ -99,37 +140,194 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     override fun initData() {
         lifecycleScope.launchIO {
-            userSpaceInformation = getUserData()
+            // userSpaceInformation = getUserData()
             // 显示用户卡片
-            showUserCard()
+            // showUserCard()
         }
-        initVideoData()
+        // initVideoData()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun initView() {
-        binding.apply {
-            // 绑定播放器，弹幕控制器
-            asJzvdStd = asVideoAsJzvdStd
-            asDanmaku = asVideoAsJzvdStd.asDanmaku
+        binding.videoComposeView.setContent {
+            BILIBILIASTheme {
+                val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+                val uiState by viewModel.videoUiState.collectAsStateWithLifecycle()
+                LaunchedEffect(Unit) {
+                    viewModel.getVideoData(videoID)
+                }
+                Scaffold(
+                    Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    topBar = {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        ) {
+                            AndroidView(
+                                factory = { context ->
+                                    val appAsJzvdStd = AppAsJzvdStd(context)
+                                    asJzvdStd = appAsJzvdStd
+                                    asDanmaku = appAsJzvdStd.asDanmaku
+                                    // 设置播放按钮功能
+                                    when (asJzvdStd.state) {
+                                        Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
+                                            // 播放视频
+                                            asJzvdStd.startVideo()
+                                        }
 
-            // 设置播放按钮功能
-            asVideoFaButton.setOnClickListener {
-                when (asJzvdStd.state) {
-                    Jzvd.STATE_NORMAL, Jzvd.STATE_AUTO_COMPLETE -> {
-                        // 播放视频
-                        asVideoFaButton.visibility = View.GONE
-                        asJzvdStd.startVideo()
-                    }
-
-                    Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
-                        // 恢复播放/暂停播放
-                        asJzvdStd.startButton.performClick()
+                                        Jzvd.STATE_PAUSE, Jzvd.STATE_PLAYING -> {
+                                            // 恢复播放/暂停播放
+                                            asJzvdStd.startButton.performClick()
+                                        }
+                                    }
+                                    appAsJzvdStd.setUp("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
+                                        , "饺子闭眼睛")
+                                    appAsJzvdStd.posterImageUrl = "http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640"
+                                    setAsJzvdConfig(uiState.播放地址, uiState.title)
+                                    appAsJzvdStd
+                                },
+                                Modifier.fillMaxSize()
+                            ) { jzvd ->
+                            }
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
+                        }) {
+                        }
+                    },
+                    floatingActionButtonPosition = FabPosition.End,
+                ) { contentPadding ->
+                    Column(
+                        Modifier
+                            .padding(contentPadding)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        // 当前是展开还是收起
+                        var expanded by rememberSaveable { mutableStateOf(false) }
+                        Row(
+                            Modifier
+                                .noRippleClickable { expanded = !expanded }
+                        ) {
+                            Text(
+                                text = uiState.title,
+                                modifier = Modifier
+                                    .weight(10f)
+                                    .animateContentSize(animationSpec = tween(100)),
+                                overflow = TextOverflow.Ellipsis,
+                                softWrap = expanded,
+                                onTextLayout = {
+                                    it.size.height
+                                }
+                            )
+                            Icon(
+                                if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                contentDescription = null,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                        AnimatedVisibility(visible = expanded) {
+                            Text(uiState.descV2 ?: uiState.desc, fontSize = 12.sp, fontWeight = FontWeight.Thin)
+                        }
+                        VideoActions()
+                        Row(Modifier.fillMaxSize()) {
+                            Text("选集")
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text("已完结，全13话")
+                        }
+                        LazyRow(Modifier.fillMaxWidth()) {
+                            itemsIndexed(uiState.episodes, key = { _, item ->
+                                item.bvid
+                            }) { index, _ ->
+                                Card(
+                                    onClick = { /*TODO*/ },
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(
+                                        index.toString(),
+                                        Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
+        }
+    }
 
-            // 设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = viewModel
+    @Preview(showBackground = true)
+    @Composable
+    private fun VideoActions() {
+        CenterRow(
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            VerticalTwoTerms(
+                top = {
+                    Image(
+                        painterResource(R.drawable.ic_as_video_like),
+                        contentDescription = "点赞按钮",
+                        Modifier.size(12.dp)
+                    )
+                },
+                bottom = { Text("1百万", fontWeight = FontWeight.Thin) },
+                Modifier
+                    .clickable { }
+                    .padding(16.dp)
+                    .weight(1f)
+
+            )
+            VerticalTwoTerms(
+                top = {
+                    Image(
+                        painterResource(R.drawable.ic_as_video_throw),
+                        contentDescription = "投币按钮",
+                        Modifier.size(12.dp)
+                    )
+                },
+                bottom = { Text("1百万", fontWeight = FontWeight.Thin) },
+                Modifier
+                    .clickable { }
+                    .padding(16.dp)
+                    .weight(1f)
+
+            )
+            VerticalTwoTerms(
+                top = {
+                    Image(
+                        painterResource(R.drawable.ic_as_video_collec),
+                        contentDescription = "收藏按钮",
+                        Modifier.size(12.dp)
+                    )
+                },
+                bottom = { Text("1百万", fontWeight = FontWeight.Thin) },
+                Modifier
+                    .clickable { }
+                    .padding(16.dp)
+                    .weight(1f)
+
+            )
+            VerticalTwoTerms(
+                top = {
+                    Image(
+                        painterResource(R.drawable.ic_as_video_fasong),
+                        contentDescription = "分享按钮",
+                        Modifier.size(12.dp)
+                    )
+                },
+                bottom = { Text("1百万", fontWeight = FontWeight.Thin) },
+                Modifier
+                    .clickable { }
+                    .padding(16.dp)
+                    .weight(1f)
+
+            )
         }
     }
 
@@ -154,9 +352,9 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                     dashVideoPlayBean.dash.video[0].also {
                         if (it.width < it.height) {
                             // 竖屏
-                            binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                height = windowManager.defaultDisplay.height / 4 * 3
-                            }
+                            // binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                            //     height = windowManager.defaultDisplay.height / 4 * 3
+                            // }
                         }
 
 //                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -173,25 +371,10 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 //                            }
                     }
                 }
-
-                binding.asVideoCd.visibility = View.VISIBLE
-                binding.asVideoBangumiCd.visibility = View.GONE
             }
 
             "bangumi" -> {
-                launchIO {
-                    val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1"
-                        )
-
-                    // 设置布局视频播放数据
-                    binding.bangumiPlayBean = bangumiPlayBean
-                    // 真正调用饺子播放器设置视频数据
-                    setAsJzvdConfig(bangumiPlayBean.result.durl[0].url, "")
-                }
+                setAsJzvdConfig(TODO("dddddddd"), "")
             }
 
             else -> "${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1"
@@ -202,36 +385,15 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 加载视频数据
      */
     private fun initVideoData() {
-        // 这里必须通过外界获取数据
-        val bvId = intent.getStringExtra(BVID)
-
-        viewModel.getVideoData(bvId!!) {
-            // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
-            setBaseData(it)
-            // 加载用户卡片
-            loadUserCardData()
-            // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-            if (it.redirectUrl != null) {
-                val url = it.redirectUrl
-                if (AsVideoNumUtils.isEp(url!!)) {
-                    // todo 类型 string
-                    // epid = AsVideoNumUtils.getEpid(url)!!.toLong()
-                    // loadBangumiVideoList()
-                }
-            } else {
-                // 加载视频播放信息
-                loadVideoPlay("video")
-                // loadVideoList() // 加载正常列表
-            }
-            // 加载弹幕信息
-            loadDanmakuFlameMaster(it.cid.toString())
-        }
-
-        // 这里需要显示视频数据
-        showVideoData()
+        // 加载视频播放信息
+        loadVideoPlay("video")
+        // loadVideoList() // 加载正常列表
+        // }
+        // 加载弹幕信息
+        // loadDanmakuFlameMaster(it.cid.toString())
 
         // 检查三连情况
-        archiveHasLikeTriple()
+        // archiveHasLikeTriple()
     }
 
     /**
@@ -249,74 +411,36 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 收藏检验
      */
     private suspend fun archiveFavoured() {
-        binding.archiveFavouredBean = viewModel.archiveFavoured(bvid)
+        viewModel.archiveFavoured(bvid)
     }
 
     /**
      * 检验投币情况
      */
     private suspend fun archiveCoins() {
-        binding.archiveCoinsBean = viewModel.archiveCoins(bvid)
+        viewModel.archiveCoins(bvid)
     }
 
     /**
      * 检验是否点赞
      */
     private suspend fun archiveHasLike() {
-        binding.archiveHasLikeBean = viewModel.archiveHasLike(bvid)
+        viewModel.archiveHasLike(bvid)
     }
 
     /**
      * 加载番剧视频列表信息
      *
      */
-    private fun loadBangumiVideoList() {
-        launchIO {
-            val bangumiSeasonBean = KtHttpUtils.run {
-                // 弃用漫游服务
-                addHeader(COOKIE, asUser.cookie)
-                asyncGet<BangumiSeasonBean>(ROAM_API + "pgc/view/web/season?ep_id=" + epid)
-            }
-            launchUI { isMember(bangumiSeasonBean) }
+    private fun loadBangumiVideoList(epID: String) {
+        // isMember(bangumiSeasonBean)
 
-            // 获取真实的cid
-            bangumiSeasonBean.result.episodes.forEach { episode ->
-                if (episode.bvid == bvid) {
-                    cid = episode.cid
-                }
-            }
-
-            launchUI {
-                binding.apply {
-                    // 如果就只有一个子集，就不要显示子集列表了
-                    if (bangumiSeasonBean.result.episodes.size == 1) {
-                        asVideoSubsectionRv.visibility =
-                            View.GONE
-                    }
-
-                    // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
-                    asVideoBangumiCd.visibility = View.VISIBLE
-                    asVideoCd.visibility = View.GONE
-                    this.bangumiSeasonBean = bangumiSeasonBean
-
-                    asVideoSubsectionRv.adapter =
-                        BangumiSubsectionAdapter(
-                            bangumiSeasonBean.result.episodes.toMutableList(),
-                            cid,
-                        ) { data, _ ->
-                            // 这里需要判断子集选择，我们得确定这并不是一个会员视频。或者说用户有会员可以去播放
-                            updateBangumiInformation(data)
-                        }
-
-                    asVideoSubsectionRv.layoutManager =
-                        LinearLayoutManager(
-                            this@AsVideoActivity,
-                            LinearLayoutManager.HORIZONTAL,
-                            false,
-                        )
-                }
-            }
-        }
+        // 获取真实的cid
+        // bangumiSeasonBean.result.episodes.forEach { episode ->
+        //     if (episode.bvid == bvid) {
+        //         cid = episode.cid
+        //     }
+        // }
     }
 
     /**
@@ -400,43 +524,26 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
             launchUI {
                 binding.apply {
-                    if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
-
                     binding.videoPageListData = videoPlayListData
-                    asVideoSubsectionRv.adapter =
-                        // 将子集切换后的逻辑交给activity完成
-                        SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
-                            // 更新CID刷新播放页面
-                            cid = data.cid
-                            // 暂停播放
-                            changeFaButtonToPlay()
-                            // 刷新播放器
-                            loadVideoPlay("video")
-                            // 清空弹幕
-                            asDanmaku.release()
-                            // 更新弹幕
-                            loadDanmakuFlameMaster()
-                        }
+                    // asVideoSubsectionRv.adapter =
+                    // 将子集切换后的逻辑交给activity完成
+                    SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
+                        // 更新CID刷新播放页面
+                        cid = data.cid
+                        // 暂停播放
+                        changeFaButtonToPlay()
+                        // 刷新播放器
+                        loadVideoPlay("video")
+                        // 清空弹幕
+                        asDanmaku.release()
+                        // 更新弹幕
+                        loadDanmakuFlameMaster()
+                    }
 
-                    asVideoSubsectionRv.layoutManager =
-                        LinearLayoutManager(
-                            this@AsVideoActivity,
-                            LinearLayoutManager.HORIZONTAL,
-                            false,
-                        )
+                    // asVideoSubsectionRv.layoutManager =
                 }
             }
         }
-    }
-
-    /**
-     * 写入基本变量数据
-     * @param videoBaseBean VideoBaseBean
-     */
-    private fun setBaseData(videoBaseBean: VideoBaseBean) {
-        bvid = videoBaseBean.bvid
-        cid = videoBaseBean.cid
-        binding.videoBaseBean = videoBaseBean
     }
 
     /**
@@ -446,9 +553,9 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         launchIO {
             val bytes = viewModel.loadDanmakuFlameMaster(cid)
             saveDanmaku(bytes)
+            // 初始化弹幕配置
+            initDanmaku()
         }
-        // 初始化弹幕配置
-        initDanmaku()
     }
 
     /**
@@ -482,8 +589,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 显示用户卡片
      */
     private fun showUserCard() {
-        binding.asVideoUserCardLy.visibility = View.VISIBLE
-
         // 判断是否会员，会员情况下展示会员主题色，反之黑色
         val nameColor = if (userSpaceInformation.vip.nicknameColor.isNotBlank()) {
             Color.parseColor(userSpaceInformation.vip.nicknameColor)
@@ -491,14 +596,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
             // 低版本兼容
             Color.parseColor("#FB7299")
         }
-        binding.asVideoUserName.setTextColor(nameColor)
-    }
-
-    /**
-     * 显示视频数据页面
-     */
-    private fun showVideoData() {
-        binding.asVideoDataLy.visibility = View.VISIBLE
     }
 
     @Deprecated("Deprecated in Java")
@@ -595,16 +692,16 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     // ——————————————————————————————————————————————————————————————————————————
 // 悬浮按钮状态更新
     private fun changeFaButtonToPlay() {
-        binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_play)
+        // binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_play)
     }
 
     private fun changeFaButtonToPause() {
-        binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_pause)
+        // binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_pause)
     }
 
     private fun changeFaButtonToRedo() {
-        binding.asVideoFaButton.isVisible = true
-        binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
+        // binding.asVideoFaButton.isVisible = true
+        // binding.asVideoFaButton.setImageResource(R.drawable.ic_as_video_redo)
     }
 
 // ——————————————————————————————————————————————————————————————————————————

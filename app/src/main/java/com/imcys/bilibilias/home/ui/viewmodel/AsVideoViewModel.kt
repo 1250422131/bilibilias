@@ -29,6 +29,7 @@ import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.repository.UserRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -47,6 +48,7 @@ import kotlinx.coroutines.withContext
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -106,8 +108,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -162,8 +164,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -484,17 +486,40 @@ class AsVideoViewModel @Inject constructor(
     fun getVideoData(bvid: String) {
         launchIO {
             videoRepository.getVideoDetailsByBvid(bvid) { video ->
+                video.redirectUrl?.let { url ->
+                    if (AsVideoUtils.isEp(url)) {
+                        Timber.tag("getVideoData").d(url)
+                        val epID = AsVideoUtils.getEpid(url)!!
+                        loadBangumiVideoList(epID)
+                        get番剧视频流(epID, video.cid)
+                    }
+                }
                 _videoUiState.update {
                     it.copy(
                         title = video.title,
-                        video.pic,
-                        video.desc,
-                        video.descV2.firstOrNull()?.rawText,
-                        video.redirectUrl,
-                        video.owner.face,
-                        video.owner.name,
+                        cid = video.cid,
+                        pic = video.pic,
+                        desc = video.desc,
+                        descV2 = video.descV2.firstOrNull()?.rawText,
+                        ownerFace = video.owner.face,
+                        ownerName = video.owner.name,
+                        redirectUrl = video.redirectUrl
                     )
                 }
+            }
+        }
+    }
+
+    fun loadBangumiVideoList(epID: String) {
+        launchIO {
+            val 剧集基本信息 = videoRepository.get剧集基本信息(epID)
+            Timber.d(剧集基本信息.toString())
+            _videoUiState.update {
+                it.copy(
+                    cid = 剧集基本信息.episodes[0].cid,
+                    totalEpisodes = 剧集基本信息.total,
+                    episodes = 剧集基本信息.episodes
+                )
             }
         }
     }
@@ -523,11 +548,23 @@ class AsVideoViewModel @Inject constructor(
         format: Int,
         allow4KVideo: Int
     ) = videoRepository.getDash视频流地址(bvid, cid, quality, format, allow4KVideo)
+
+    fun get番剧视频流(epID: String, cid: Long) {
+        launchIO {
+            val 番剧 = videoRepository.get番剧视频流(epID, cid)
+            Timber.d(番剧.durl[0].url)
+            _videoUiState.update {
+                it.copy(播放地址 = 番剧.durl[0].url)
+            }
+        }
+    }
 }
 
 data class VideoUiSate(
     // 视频的基本信息
+    val 播放地址: String = "",
     val title: String = "",
+    val cid: Long = 0,
     val pic: String = "",
     val desc: String = "",
     val descV2: String? = null,
@@ -536,4 +573,7 @@ data class VideoUiSate(
     // 视频作者信息
     val ownerFace: String = "",
     val ownerName: String = "",
+
+    val totalEpisodes: Int = 0,
+    val episodes: List<BangumiSeasonBean.ResultBean.EpisodesBean> = emptyList(),
 )

@@ -9,6 +9,8 @@ import com.imcys.bilibilias.common.base.extend.safeGet
 import com.imcys.bilibilias.common.base.model.ArchiveCoinsBean
 import com.imcys.bilibilias.common.base.model.ArchiveFavouredBean
 import com.imcys.bilibilias.common.base.model.ArchiveHasLikeBean
+import com.imcys.bilibilias.common.base.model.BangumiPlayBean
+import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
 import com.imcys.bilibilias.common.base.model.VideoPlayBean
@@ -17,12 +19,34 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
+    private val json = Json { ignoreUnknownKeys = true }
+    suspend fun get番剧视频流(epID: String, cid: Long): BangumiPlayBean.Result {
+        val text = httpClient.get(BilibiliApi.bangumiPlayPath) {
+            header(REFERER, BILIBILI_URL)
+            parameter("ep_id", epID)
+            parameter("cid", cid)
+            parameter("qn", 64)
+            parameter("fnval", 0)
+            parameter("fourk", 1)
+        }.bodyAsText()
+        Timber.tag(TAG).d(text)
+        return json.decodeFromString<BangumiPlayBean>(text).result
+    }
+
+    suspend fun get剧集基本信息(epID: String): BangumiSeasonBean.ResultBean {
+        val text = httpClient.get(BilibiliApi.bangumiVideoDataPath) {
+            parameter("ep_id", epID)
+        }.bodyAsText()
+        return json.decodeFromString<BangumiSeasonBean>(text).result
+    }
+
     /**
      * curl -G 'https://api.bilibili.com/x/player/playurl' \
      *     --data-urlencode 'bvid=BV1y7411Q7Eq' \
@@ -33,9 +57,9 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
      *     --data-urlencode 'fourk=1' \
      *     -b 'SESSDATA=xxx'
      *
-     * [quality] 视频清晰度选择
-     * [format] 视频流格式标识 mp4:1 dash:16
-     * [allow4KVideo] 是否允许 4K 视频 1080p:0 4k:1
+     * @param quality 视频清晰度选择
+     * @param format 视频流格式标识 mp4:1 dash:16
+     * @param allow4KVideo 是否允许 4K 视频 1080p:0 4k:1
      */
     suspend fun getMp4视频流地址(
         bvid: String,
@@ -129,3 +153,4 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
             parameter(AID, bvid)
         }.getOrThrow()
 }
+private const val TAG = "VideoRepository"

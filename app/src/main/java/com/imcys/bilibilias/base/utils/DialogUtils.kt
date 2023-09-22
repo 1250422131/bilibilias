@@ -38,6 +38,7 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
+import com.imcys.bilibilias.common.base.model.BangumiPlayBean
 import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.VideoBaseBean
@@ -1481,7 +1482,7 @@ object DialogUtils {
         val videoPlayData = bangumiPlayBean.result
         var urlIndex = 0
         // 获取视频
-        videoPlayData.accept_quality.forEachIndexed { index, i ->
+        videoPlayData.acceptQuality.forEachIndexed { index, i ->
             if (i == qn) {
                 urlIndex = index
                 return@forEachIndexed
