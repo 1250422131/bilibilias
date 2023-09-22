@@ -6,7 +6,6 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.preference.PreferenceManager
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.AbsActivity
 
 abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseInit {
@@ -31,14 +30,4 @@ abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseInit {
 
     override fun initView() {}
     override fun initData() {}
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
-    }
 }

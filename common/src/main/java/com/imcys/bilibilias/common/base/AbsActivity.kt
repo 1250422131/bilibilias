@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.asLogD
@@ -82,9 +83,6 @@ open class AbsActivity : AppCompatActivity() {
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
-    private fun initAsUser() {
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         // 取消注册（防止泄露）
@@ -122,6 +120,7 @@ open class AbsActivity : AppCompatActivity() {
                 addAction("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
             },
         )
+        StatService.onResume(this)
     }
 
     // 添加活动
@@ -180,5 +179,10 @@ open class AbsActivity : AppCompatActivity() {
                 this.setTheme(R.style.BILIBILIAS_BLUE)
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        StatService.onPause(this)
     }
 }
