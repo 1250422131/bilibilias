@@ -16,8 +16,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ArchiveFavouredBean(
-    @SerialName("count")
-    val count: Int,
     @SerialName("favoured")
-    var isFavoured: Boolean
+    var isFavoured: Boolean = false
 )

@@ -17,5 +17,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ArchiveHasLikeBean(
-    var data: Int
+    var data: Int = 0
 )
