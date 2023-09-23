@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.model.GlideUrl
@@ -25,7 +24,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.model.AuthQrCodeBean
+import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
 import com.imcys.bilibilias.common.base.model.UserNav
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
@@ -292,12 +291,12 @@ class AsLoginBsViewModel(
     /**
      * 加载登陆对话框
      */
+    @Deprecated("登录对话框")
     private fun loadCloudAccountLogin(context: Context) {
         viewModelScope.launch {
-            val loginQrcodeBean = KtHttpUtils.asyncGet<AuthQrCodeBean>(BilibiliApi.getLoginQRPath)
-            loginQrcodeBean.data.url =
+            val loginQrcodeBean = KtHttpUtils.asyncGet<AuthQrCode>(BilibiliApi.getLoginQRPath)
                 withContext(Dispatchers.IO) {
-                    URLEncoder.encode(loginQrcodeBean.data.url, "UTF-8")
+                    URLEncoder.encode(loginQrcodeBean.url, "UTF-8")
                 }
             val loginQRDialog = DialogUtils.loginQRDialog(
                 context,
