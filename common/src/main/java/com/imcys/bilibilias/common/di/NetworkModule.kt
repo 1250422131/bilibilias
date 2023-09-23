@@ -68,9 +68,9 @@ class NetworkModule {
         }
         BrowserUserAgent()
         install(ContentEncoding) {
-            deflate(1f)
-            gzip(0.9f)
-            identity(0.8f)
+            deflate()
+            gzip()
+            identity()
         }
         install(HttpCookies) {
             storage = CookieManager()

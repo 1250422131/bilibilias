@@ -14,7 +14,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.imcys.bilibilias.ui.download.downloadRoute
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
@@ -22,7 +21,7 @@ import com.imcys.bilibilias.ui.tool.toolRoute
 import com.imcys.bilibilias.ui.user.userRoute
 
 @Composable
-fun MainScreen(navController: NavHostController = rememberNavController(), modifier: Modifier = Modifier) {
+fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     BILIBILIASAnimatedNavHost(
         modifier = modifier,
         navController = navController,

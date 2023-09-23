@@ -7,7 +7,7 @@
 
         <variable
             name="FragmentHomeViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.HomeViewModel" />
 
     </data>
 
@@ -88,7 +88,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToNewVersionDoc(view)}"
                             android:orientation="vertical"
                             android:padding="20dp"
                             tools:ignore="UnusedAttribute">
@@ -296,7 +295,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:letterSpacing="0.1"
-                                    android:onClick="@{(view)->FragmentHomeViewModel.toDonateList(view)}"
                                     android:text="@string/app_fragment_home_donate_list"
                                     android:textColor="?attr/colorPrimary"
                                     tools:ignore="HardcodedText" />
@@ -311,7 +309,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToCommunity(view)}"
                             android:orientation="vertical"
                             android:padding="20dp"
                             tools:ignore="UnusedAttribute">
@@ -384,7 +381,6 @@
                                 android:layout_height="wrap_content"
                                 android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->FragmentHomeViewModel.logoutLogin(view)}"
                                 android:orientation="vertical"
                                 android:padding="20dp">
 

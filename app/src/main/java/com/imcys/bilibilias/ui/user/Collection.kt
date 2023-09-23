@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.router.LocalNavController
 import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.common.base.components.IconArrowBackButton
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
@@ -35,7 +35,7 @@ import kotlinx.collections.immutable.ImmutableList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Collection(userViewModel: UserViewModel) {
-    val navHostController = LocalNavController.current
+    val navHostController = rememberNavController()
     LaunchedEffect(Unit) {
         userViewModel.loadCollectionList()
     }
