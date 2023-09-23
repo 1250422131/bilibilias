@@ -31,10 +31,9 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.router.LocalNavController
-import com.imcys.bilibilias.base.router.RouterConstants
 
 @Composable
 fun User(userViewModel: UserViewModel) {
@@ -76,12 +75,12 @@ fun UserTool(userViewModel: UserViewModel = hiltViewModel()) {
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background, RoundedCornerShape(10.dp))
     ) {
-        val navHostController = LocalNavController.current
+        val navHostController = rememberNavController()
         UserToolColumn(
             R.drawable.ic_item_user_collection,
             R.string.app_item_fg_user_tool_favorites,
             Modifier.weight(1f)
-        ) { navHostController.navigate(RouterConstants.Collection) }
+        ) { navHostController.navigate("") }
         UserToolColumn(
             R.drawable.ic_item_user_play_history,
             R.string.app_item_fg_user_tool_play_history,

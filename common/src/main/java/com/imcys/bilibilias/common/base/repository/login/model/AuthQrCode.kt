@@ -1,4 +1,5 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.repository.login.model
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,21 +21,9 @@ import kotlinx.serialization.Serializable
  * }
  */
 @Serializable
-data class AuthQrCodeBean(
-    @SerialName("code")
-    val code: Int = 0, // 0
-    @SerialName("data")
-    val `data`: Data = Data(),
-    @SerialName("message")
-    val message: String = "", // 0
-    @SerialName("ttl")
-    val ttl: Int = 0 // 1
-) {
-    @Serializable
-    data class Data(
-        @SerialName("qrcode_key")
-        var qrcodeKey: String = "",
-        @SerialName("url")
-        var url: String = ""
-    )
-}
+data class AuthQrCode(
+    @SerialName("qrcode_key")
+    val qrcodeKey: String,
+    @SerialName("url")
+    val url: String
+)
