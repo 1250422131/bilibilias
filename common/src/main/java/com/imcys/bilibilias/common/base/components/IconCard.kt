@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationCard(
+fun IconCard(
     @DrawableRes iconId: Int,
     title: String,
     longTitle: String,
-    doc: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    doc: String? = null
 ) {
     Card(
         onClick = { /*TODO*/ },
@@ -57,7 +57,7 @@ fun NavigationCard(
             Column(Modifier.padding(start = 20.dp), verticalArrangement = Arrangement.Center) {
                 Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(text = longTitle, modifier = Modifier.padding(top = 5.dp), color = Color.Black)
-                if (doc.isNotBlank()) {
+                if (!doc.isNullOrEmpty()) {
                     Text(
                         text = doc,
                         modifier = Modifier.padding(top = 5.dp)

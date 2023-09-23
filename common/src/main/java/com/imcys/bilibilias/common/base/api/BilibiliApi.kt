@@ -1,19 +1,23 @@
 package com.imcys.bilibilias.common.base.api
 
 import com.imcys.bilibilias.common.base.constant.ROAM_API
-
+/**
+ * mid为UID
+ */
 object BilibiliApi {
 
-    /**
-     * 常见注解
-     * mid为UID
-     */
+    // <editor-fold desc="登录">
     private const val loginApi = "https://passport.bilibili.com/"
 
+    // 申请二维码
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
 
     // 需要登陆密钥
     const val getLoginStatePath = loginApi + "x/passport-login/web/qrcode/poll"
+
+    // 注销登录
+    const val exitLogin = loginApi + "login/exit/v2"
+    // </editor-fold>
 
     // 获取个人基本信息
     const val getMyUserData = "x/member/web/account"
@@ -27,6 +31,7 @@ object BilibiliApi {
     // 获取视频详细信息 get bvid avid
     const val getVideoDataPath = "x/web-interface/view"
     const val bangumiPlayPath = "pgc/player/web/playurl"
+
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
@@ -64,9 +69,6 @@ object BilibiliApi {
 
     // 播放历史
     const val userPlayHistoryPath = ROAM_API + "x/web-interface/history/cursor"
-
-    // 注销登录
-    const val exitLogin = loginApi + "login/exit/v2"
 
     // 追番剧列表
     const val bangumiFollowPath = ROAM_API + "x/space/bangumi/follow/list"

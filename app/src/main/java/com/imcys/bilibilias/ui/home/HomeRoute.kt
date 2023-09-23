@@ -1,15 +1,12 @@
 package com.imcys.bilibilias.ui.home
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.imcys.bilibilias.AsBottomBar
-import com.imcys.bilibilias.MainScreen
+import com.imcys.bilibilias.home.ui.viewmodel.HomeViewModel
 
 const val ROUTE_HOME = "home"
 fun NavController.navigateToHome() {
@@ -19,25 +16,17 @@ fun NavController.navigateToHome() {
     }
 }
 
-fun NavGraphBuilder.homeRoute() {
-    composable(route = ROUTE_HOME) {
-        Scaffold(bottomBar = {
-            AsBottomBar()
-        }) {
-            MainScreen(modifier = Modifier.padding(it))
-        }
-    }
+fun NavGraphBuilder.homeRoute() = composable(ROUTE_HOME) {
+    HomeRoute()
 }
 
 @Composable
-fun HomeRoute(
-    onNavigateToTool: () -> Unit,
-    onNavigateToDownload: () -> Unit,
-    onNavigateToUser: () -> Unit
-) {
+fun HomeRoute() {
+    val viewModel: HomeViewModel = hiltViewModel()
     HomeScreen(
-        onNavigateToTool,
-        onNavigateToDownload,
-        onNavigateToUser
+        goToNewVersionDoc = viewModel::goToNewVersionDoc,
+        goToCommunity = viewModel::goToCommunity,
+        goToDonateList = viewModel::goToDonateList,
+        logoutLogin = viewModel::logoutLogin
     )
 }

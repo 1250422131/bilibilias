@@ -5,7 +5,6 @@ import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
-import timber.log.Timber
 
 internal class CookieManager : CookiesStorage {
     /**
@@ -30,7 +29,6 @@ internal class CookieManager : CookiesStorage {
         if (cookie.name == "DedeUserID") CookieRepository.DedeUserID = cookie.value
         if (cookie.name == "sid") CookieRepository.sid = cookie.value
         CookieRepository.timestamp = cookie.expires?.timestamp ?: 0
-        Timber.tag("AuthViewModel1").d("url=${requestUrl.host}, cookie=${cookie.name},${cookie.value}")
     }
 
     override fun close() {}

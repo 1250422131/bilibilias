@@ -19,6 +19,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.parameters
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject

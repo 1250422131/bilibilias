@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -12,36 +13,36 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import com.imcys.bilibilias.base.router.LocalNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imcys.bilibilias.base.router.Screen
-import com.imcys.bilibilias.base.router.SplashRouter
-import com.imcys.bilibilias.base.router.userNavHostGraph
-import com.imcys.bilibilias.common.base.components.FullScreenScaffold
-import com.imcys.bilibilias.splash.ui.Splash
-import com.imcys.bilibilias.ui.authentication.AuthMethodScreen
-import com.imcys.bilibilias.ui.authentication.AuthScreen
-import com.imcys.bilibilias.ui.download.Download
-import com.imcys.bilibilias.ui.home.Home
+import com.imcys.bilibilias.ui.authentication.login.loginAuthRoute
+import com.imcys.bilibilias.ui.authentication.login.navigateToLoginAuth
+import com.imcys.bilibilias.ui.authentication.method.authMethodRoute
+import com.imcys.bilibilias.ui.authentication.method.navigateToAuthMethod
+import com.imcys.bilibilias.ui.home.ROUTE_HOME
+import com.imcys.bilibilias.ui.home.navigateToHome
+import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
+import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
-import com.imcys.bilibilias.ui.tool.Tool
-import com.imcys.bilibilias.ui.user.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,21 +53,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         setContent {
             BILIBILIASTheme {
+                TransparentSystemBars()
                 val navController = rememberNavController()
                 NavHost(
                     navController,
-                    startDestination = SplashRouter.App.route,
+                    startDestination = ROUTE_SPLASH,
                     Modifier.statusBarsPadding()
                 ) {
-                    composable(SplashRouter.App.route) { Splash(navController) }
-                    composable(SplashRouter.AuthMethod.route) { AuthMethodScreen(navController) }
-                    composable(SplashRouter.AuthScreen.route) { AuthScreen(navController) }
-                    composable(SplashRouter.Screen.route) { Screen() }
-                    // todo 也许可以用这个导航到权限检查
-                    dialog("checkPermission") {}
+                    splashRoute(
+                        onNavigateToAuthMethod = navController::navigateToAuthMethod,
+                        onNavigateToHome = navController::navigateToHome
+                    )
+                    // region 登录认证
+                    authMethodRoute(onNavigateToLoginAuth = navController::navigateToLoginAuth)
+                    loginAuthRoute(onNavigateToHome = navController::navigateToHome)
+                    // endregion
+                    // todo 放置到另一个文件中
+                    composable(ROUTE_HOME) { Screen() }
                 }
             }
         }
@@ -76,67 +81,70 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Screen() {
     val navController = rememberNavController()
+    Scaffold(Modifier.fillMaxSize(), bottomBar = {
+        AsBottomBar(navController)
+    }) {
+        MainScreen(navController, modifier = Modifier.padding(it))
+    }
+}
+
+@Composable
+fun AsBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    FullScreenScaffold(
-        Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar(tonalElevation = 0.dp, containerColor = MaterialTheme.colorScheme.onBackground) {
-                items.forEach { screen ->
-                    val selected =
-                        currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                painterResource(screen.icon),
-                                contentDescription = null,
-                                tint = if (selected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.inversePrimary
-                                }
-                            )
-                        },
-                        label = {
-                            Text(
-                                stringResource(screen.resourceId),
-                                color = if (selected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.inversePrimary
-                                }
-                            )
-                        },
-                        alwaysShowLabel = selected
+    NavigationBar(tonalElevation = 0.dp, containerColor = MaterialTheme.colorScheme.onBackground) {
+        items.forEach { screen ->
+            val selected = navBackStackEntry?.destination?.isTopLevelDestinationInHierarchy(screen.route) ?: false
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                icon = {
+                    Icon(
+                        painterResource(screen.icon),
+                        contentDescription = null,
+                        tint = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.inversePrimary
+                        }
                     )
-                }
-            }
+                },
+                label = {
+                    Text(
+                        stringResource(screen.resourceId),
+                        color = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.inversePrimary
+                        }
+                    )
+                },
+                alwaysShowLabel = selected
+            )
         }
-    ) { innerPadding ->
-        CompositionLocalProvider(LocalNavController provides navController) {
-            // todo 分成两个 viewmodel
-            val userViewModel: UserViewModel = hiltViewModel()
-            NavHost(
-                navController,
-                Screen.Home.route,
-                Modifier.padding(innerPadding)
-            ) {
-                composable(Screen.Home.route) { Home() }
-                composable(Screen.Tool.route) { Tool() }
-                composable(Screen.Download.route) { Download() }
-                userNavHostGraph(userViewModel)
-            }
-        }
+    }
+}
+
+private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: String) =
+    this?.hierarchy?.any { it.route == destination } == true
+
+@Composable
+fun TransparentSystemBars() {
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = useDarkIcons,
+            isNavigationBarContrastEnforced = false,
+        )
     }
 }
 
