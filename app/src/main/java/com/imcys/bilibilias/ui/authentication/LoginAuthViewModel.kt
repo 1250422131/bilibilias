@@ -7,7 +7,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.repository.LoginRepository
+import com.imcys.bilibilias.common.base.repository.login.LoginRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.encodeURLParameter
@@ -26,29 +26,27 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
+class LoginAuthViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
 
-    private val _authState = MutableStateFlow(AuthState())
-    val authState = _authState.asStateFlow()
+    private val _loginAuthState = MutableStateFlow(LoginAuthState())
+    val loginAuthUiState = _loginAuthState.asStateFlow()
 
     init {
-        applyQRCode()
+        getQRCode()
     }
 
-    private fun applyQRCode() {
+    fun getQRCode() {
         launchIO {
-            loginRepository.applyForQrCode { data ->
-                val state = _authState.update {
-                    it.copy(
-                        qrCodeUrl = "https://pan.misakamoe.com/qrcode/?url=${data.url.encodeURLParameter()}",
-                    )
+            loginRepository.getQrCode { data ->
+                _loginAuthState.update {
+                    it.copy(qrCodeUrl = data.url)
                 }
                 tryLogin(data.qrcodeKey)
             }
         }
     }
 
-    fun downloadQrCode(bitmap: Bitmap, photoName: String, context: Context) {
+    fun downloadQRCode(bitmap: Bitmap, photoName: String, context: Context) {
         launchIO {
             val photoDir = File(Environment.getExternalStorageDirectory(), "BILIBILIAS")
             if (!photoDir.exists()) {
@@ -71,23 +69,23 @@ class AuthViewModel @Inject constructor(private val loginRepository: LoginReposi
                 arrayOf(photo.toString()),
                 null
             ) { path, uri ->
-                _authState.update {
+                _loginAuthState.update {
                     it.copy(snackBarMessage = context.getString(R.string.app_LoginQRModel_downloadLoginQR_asToast))
                 }
                 Timber.tag(TAG).d("path=$path, uri=$uri")
             }
         }
-        goToBilibiliQrScan(context)
+        goToBilibiliQRScan(context)
     }
 
-    fun goToBilibiliQrScan(context: Context) {
+    fun goToBilibiliQRScan(context: Context) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan"))
         val packageManager = context.packageManager
         val componentName = intent.resolveActivity(packageManager)
         if (componentName != null) {
             context.startActivity(intent)
         } else {
-            _authState.update {
+            _loginAuthState.update {
                 it.copy(snackBarMessage = context.getString(R.string.app_LoginQRModel_goToQR))
             }
         }
@@ -101,40 +99,35 @@ class AuthViewModel @Inject constructor(private val loginRepository: LoginReposi
      */
     private fun tryLogin(key: String) {
         launchIO {
+            val seconds = 1.seconds
             withTimeout(3.minutes) {
                 while (isActive) {
-                    delay(1.seconds)
-                    var canLogin = false
-                    loginRepository.pollingLogin(key)
-                        .onSuccess { state ->
-                            Timber.tag("tryLogin").d(state.toString())
-                            canLogin = canLogin(state.code)
-                            _authState.update {
-                                it.copy(
-                                    loginStateMessage = state.message,
-                                    loginState = canLogin
-                                )
-                            }
+                    delay(seconds)
+                    var success = false
+                    loginRepository.onPollingLogin(key) { data ->
+                        success = data.isSuccess
+                        _loginAuthState.update {
+                            it.copy(
+                                qrCodeMessage = data.message,
+                                isSuccess = success,
+                                snackBarMessage = if (success) "登录成功" else null
+                            )
                         }
-                        .onFailure {
-                            Timber.tag("tryLogin").d(it)
-                        }
-                    if (canLogin) break
+                    }
+                    if (success) break
                 }
             }
         }
     }
-
-    private fun canLogin(code: Int) = code == 0
 }
 
 private const val TAG = "AuthViewModel"
 
-data class AuthState(
+data class LoginAuthState(
     val qrCodeUrl: String = "",
 
-    val loginStateMessage: String = "",
-    val loginState: Boolean = false,
+    val qrCodeMessage: String = "",
+    val isSuccess: Boolean = false,
 
     val snackBarMessage: String? = null,
 )
