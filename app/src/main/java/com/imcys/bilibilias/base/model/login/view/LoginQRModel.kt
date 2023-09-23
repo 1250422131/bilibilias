@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.common.base.model.AuthQrCodeBean
+import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import okhttp3.Response
 import java.io.File
@@ -29,9 +29,9 @@ class LoginQRModel {
      * @param view View
      * @param loginQrcodeDataBean DataBean
      */
-    fun reloadLoginQR(loginQrcodeDataBean: AuthQrCodeBean.Data) {}
+    fun reloadLoginQR(loginQrcodeDataBean: AuthQrCode) {}
 
-    fun downloadLoginQR(view: View, loginQrcodeDataBean: AuthQrCodeBean.Data) {}
+    fun downloadLoginQR(view: View, loginQrcodeDataBean: AuthQrCode) {}
 
     // 更新图库
     private fun updatePhotoMedia(file: File, context: Context) {}

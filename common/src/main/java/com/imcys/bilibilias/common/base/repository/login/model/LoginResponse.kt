@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.repository.login.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
  * ```
  */
 @Serializable
-data class LoginResponseBean(
+data class LoginResponse(
     @SerialName("code")
     val code: Int = 0, // 86038
     @SerialName("message")
@@ -33,4 +33,10 @@ data class LoginResponseBean(
     val timestamp: Long = 0, // 0
     @SerialName("url")
     val url: String = ""
-)
+) {
+    /**
+     * 密钥超时为180秒
+     */
+    val isSuccess: Boolean
+        get() = code == 0
+}
