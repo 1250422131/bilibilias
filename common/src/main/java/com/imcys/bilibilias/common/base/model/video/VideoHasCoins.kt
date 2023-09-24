@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.Serializable
 
@@ -12,4 +12,4 @@ import kotlinx.serialization.Serializable
  * multiply : 2
  */
 @Serializable
-data class ArchiveCoinsBean(var multiply: Int = 0)
+data class VideoHasCoins(var multiply: Int = 0)

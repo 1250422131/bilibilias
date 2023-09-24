@@ -1,6 +1,6 @@
 @file:JvmName("ArchiveHasLikeBean")
 
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.Serializable
 
@@ -16,6 +16,6 @@ import kotlinx.serialization.Serializable
  * data : 1
  */
 @Serializable
-data class ArchiveHasLikeBean(
+data class VideoHasLike(
     var data: Int = 0
 )

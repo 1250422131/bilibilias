@@ -1,6 +1,9 @@
 package com.imcys.bilibilias.ui.tool
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
@@ -15,13 +18,23 @@ fun NavController.navigateToTool() {
 }
 
 fun NavGraphBuilder.toolRoute(
-    onNavigateTo: () -> Unit,
+    onNavigateToPlayer: () -> Unit,
     onBack: () -> Unit
 ) = composable(ROUTE_TOOL) {
-    ToolRoute()
+    ToolRoute(onNavigateToPlayer, onBack)
 }
 
 @Composable
-fun ToolRoute() {
-    Tool()
+fun ToolRoute(onNavigateToPlayer: () -> Unit, onBack: () -> Unit) {
+    val viewModel: ToolViewModel = hiltViewModel()
+    val state by viewModel.toolState.collectAsStateWithLifecycle()
+    // 清空搜索框文本 clearSearchText
+    // viewModel::clearSearchText
+    ToolScreen(
+        state,
+        viewModel::parsesBvOrAvOrEp,
+        viewModel::clearSearchText,
+        onNavigateToPlayer,
+        onBack,
+    )
 }

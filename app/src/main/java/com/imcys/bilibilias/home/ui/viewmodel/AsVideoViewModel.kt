@@ -26,10 +26,9 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoDetails
 import com.imcys.bilibilias.common.base.repository.UserRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
-import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -68,12 +67,12 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 缓存视频
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param videoPageListData VideoPageListData
      */
     fun downloadVideo(
         view: View,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         videoPageListData: VideoPageListData,
     ) {
         val context = view.context
@@ -95,7 +94,7 @@ class AsVideoViewModel @Inject constructor(
                     if (dashVideoPlayBean.videoCodecid == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
-                            videoBaseBean,
+                            videoDetails,
                             videoPageListData,
                             dashVideoPlayBean,
                         ).show()
@@ -123,12 +122,12 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 缓存番剧
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param bangumiSeasonBean BangumiSeasonBean
      */
     fun downloadBangumiVideo(
         view: View,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         bangumiSeasonBean: BangumiSeasonBean,
     ) {
         val context = view.context
@@ -151,7 +150,7 @@ class AsVideoViewModel @Inject constructor(
                     if (dashVideoPlayBean.videoCodecid == 0) {
                         DialogUtils.downloadVideoDialog(
                             context,
-                            videoBaseBean,
+                            videoDetails,
                             bangumiSeasonBean,
                             dashVideoPlayBean,
                         ).show()
@@ -177,10 +176,10 @@ class AsVideoViewModel @Inject constructor(
         }
     }
 
-    fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
+    fun downloadDanMu(view: View, videoDetails: VideoDetails) {
         val context = view.context
 
-        DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
+        DialogUtils.downloadDMDialog(view.context, videoDetails) { binding ->
             viewModelScope.launchIO {
                 val response =
                     HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
@@ -190,12 +189,12 @@ class AsVideoViewModel @Inject constructor(
                         saveAssDanmaku(
                             context,
                             response.await().body!!.bytes(),
-                            videoBaseBean,
+                            videoDetails,
                         )
                     }
 
                     R.id.dialog_dl_dm_xml -> {
-                        saveDanmaku(context, response.await().body!!.bytes(), videoBaseBean)
+                        saveDanmaku(context, response.await().body!!.bytes(), videoDetails)
                     }
 
                     else -> throw Exception("意外的选项")
@@ -207,7 +206,7 @@ class AsVideoViewModel @Inject constructor(
     private fun saveAssDanmaku(
         context: AsVideoActivity,
         bytes: ByteArray,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
     ) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -236,7 +235,7 @@ class AsVideoViewModel @Inject constructor(
         assFile.writeText(
             DmXmlToAss.xmlToAss(
                 assFile.readText(),
-                videoBaseBean.title + context.cid,
+                videoDetails.title + context.cid,
                 "1920",
                 "1080",
                 context,
@@ -253,7 +252,7 @@ class AsVideoViewModel @Inject constructor(
         }
     }
 
-    fun saveDanmaku(context: AsVideoActivity, bytes: ByteArray, videoBaseBean: VideoBaseBean) {
+    fun saveDanmaku(context: AsVideoActivity, bytes: ByteArray, videoDetails: VideoDetails) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val savePath = sharedPreferences.getString(
@@ -485,28 +484,7 @@ class AsVideoViewModel @Inject constructor(
 
     fun getVideoData(bvid: String) {
         launchIO {
-            videoRepository.getVideoDetailsByBvid(bvid) { video ->
-                video.redirectUrl?.let { url ->
-                    if (AsVideoUtils.isEp(url)) {
-                        Timber.tag("getVideoData").d(url)
-                        val epID = AsVideoUtils.getEpid(url)!!
-                        loadBangumiVideoList(epID)
-                        get番剧视频流(epID, video.cid)
-                    }
-                }
-                _videoUiState.update {
-                    it.copy(
-                        title = video.title,
-                        cid = video.cid,
-                        pic = video.pic,
-                        desc = video.desc,
-                        descV2 = video.descV2.firstOrNull()?.rawText,
-                        ownerFace = video.owner.face,
-                        ownerName = video.owner.name,
-                        redirectUrl = video.redirectUrl
-                    )
-                }
-            }
+            videoRepository.getVideoDetailsByBvid(bvid)
         }
     }
 
@@ -529,9 +507,9 @@ class AsVideoViewModel @Inject constructor(
     }
 
     suspend fun loadUserCardData() = userRepository.get用户名片信息(mid)
-    suspend fun archiveHasLike(bvid: String) = videoRepository.hasLikeBvid(bvid)
-    suspend fun archiveFavoured(bvid: String) = videoRepository.hasFavouredBvid(bvid)
-    suspend fun archiveCoins(bvid: String) = videoRepository.hasCoinsBvid(bvid)
+    suspend fun archiveHasLike(bvid: String) = videoRepository.hasLike(bvid)
+    suspend fun archiveFavoured(bvid: String) = videoRepository.hasCollection(bvid)
+    suspend fun archiveCoins(bvid: String) = videoRepository.hasCoins(bvid)
 
     suspend fun getMp4(
         bvid: String,

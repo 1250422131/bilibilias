@@ -9,7 +9,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.common.base.model.VideoBaseBean" />
+            type="com.imcys.bilibilias.common.base.model.VideoDetails" />
 
     </data>
 

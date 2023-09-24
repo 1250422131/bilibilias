@@ -92,5 +92,5 @@ object BilibiliApi {
      */
     const val videoHasLike = "x/web-interface/archive/has/like"
     const val videoHasCoins = "x/web-interface/archive/coins"
-    const val videoHasFavoured = "x/v2/fav/video/favoured"
+    const val videoHasCollection = "x/v2/fav/video/favoured"
 }

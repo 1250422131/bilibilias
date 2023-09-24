@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class ArchiveFavouredBean(
+data class VideoCollection(
     @SerialName("favoured")
     var isFavoured: Boolean = false
 )

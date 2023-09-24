@@ -34,6 +34,7 @@ kcomponent-compiler = "1.0.0-rc4"
 kotlin = "1.9.10"
 kotlinx-coroutines-android = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.5"
+kotlinxDatetime = "0.4.1"
 kotlinxSerializationJson = "1.6.0"
 kotlinSerialization = "1.9.0"
 orgJetbrainsDokka = "1.9.0"
@@ -148,6 +149,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-android" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }

@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.home.ui.model
 
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoDetails
 
 
 data class ToolItemBean(
@@ -10,7 +10,7 @@ data class ToolItemBean(
     val bg_color: String = "",
     //0为普通工具，1为视频，番剧，2为直播
     val type: Int = 0,
-    val videoBaseBean: VideoBaseBean? = null,
+    val videoDetails: VideoDetails? = null,
     val clickEvent: () -> Unit = {},
 
     )

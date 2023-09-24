@@ -11,7 +11,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.common.base.model.VideoBaseBean" />
+            type="com.imcys.bilibilias.common.base.model.VideoDetails" />
 
         <variable
             name="UserCardBean"
@@ -40,16 +40,16 @@
 
         <variable
             name="ArchiveHasLikeBean"
-            type="com.imcys.bilibilias.common.base.model.ArchiveHasLikeBean" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoHasLike" />
 
 
         <variable
             name="ArchiveCoinsBean"
-            type="com.imcys.bilibilias.common.base.model.ArchiveCoinsBean" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoHasCoins" />
 
         <variable
             name="ArchiveFavouredBean"
-            type="com.imcys.bilibilias.common.base.model.ArchiveFavouredBean" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoCollection" />
     </data>
 
     <androidx.compose.ui.platform.ComposeView

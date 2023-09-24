@@ -28,7 +28,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         startDestination = ROUTE_HOME,
     ) {
         homeRoute()
-        toolRoute(onNavigateTo = {}, onBack = navController::navigateUp)
+        toolRoute(onNavigateToPlayer = {}, onBack = navController::navigateUp)
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
     }

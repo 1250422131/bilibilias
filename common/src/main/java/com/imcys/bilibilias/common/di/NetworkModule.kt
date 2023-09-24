@@ -129,7 +129,7 @@ class NetworkModule {
             transformResponseBody { response, content, requestedType ->
                 try {
                     val rep = response.bodyAsText()
-                    Timber.tag("TransformData").d("type=$requestedType\ndata=$rep")
+                    Timber.tag("TransformData").d("type=$requestedType")
                     val res = Json.parseToJsonElement(rep).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
@@ -141,25 +141,28 @@ class NetworkModule {
                         is JsonObject -> {
                             realData = realData.jsonObject
                             val type = requestedType.type.serializer()
-                            json.decodeFromJsonElement(type, realData)
+                            val element = json.decodeFromJsonElement(type, realData)
+                            Timber.tag("TransformData").d("obj=$element")
+                            element
                         }
 
                         is JsonArray -> {
                             realData = realData.jsonArray
-                            Timber.tag("TransformData").d("array=$realData")
                             val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
-                            json.decodeFromJsonElement(serializer(type), realData)
+                            val element = json.decodeFromJsonElement(serializer(type), realData)
+                            Timber.tag("TransformData").d("array=$element")
+                            element
                         }
 
-                        is JsonPrimitive -> {
-                            realData = realData.jsonPrimitive
-                            if (realData.isString) {
-                                return@transformResponseBody realData.content
-                            }
-                            Timber.tag("TransformData").d("primitive=$realData")
-                            val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
-                            json.decodeFromJsonElement(serializer(type), realData)
-                        }
+                        // is JsonPrimitive -> {
+                        //     realData = realData.jsonPrimitive
+                        //     if (realData.isString) {
+                        //         return@transformResponseBody realData.content
+                        //     }
+                        //     Timber.tag("TransformData").d("primitive=$realData")
+                        //     val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
+                        //     json.decodeFromJsonElement(serializer(type), realData)
+                        // }
 
                         else -> null
                     }
