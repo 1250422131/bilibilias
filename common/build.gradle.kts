@@ -103,12 +103,6 @@ dependencies {
     api(libs.jxl)
 
     /**
-     * 网络图片加载库
-     * 专为compose打造
-     */
-    api(libs.coil.compose)
-
-    /**
      * rv框架
      * 实现RV的动画效果
      */

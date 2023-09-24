@@ -152,5 +152,14 @@ dependencies {
      */
     implementation(libs.zhujiang.banner)
 
+    /**
+     * 网络图片加载库
+     */
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
+    /**
+     * kotlin 日期时间库
+     */
     implementation(libs.kotlinx.datetime)
 }
