@@ -6,20 +6,21 @@ import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BVID
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.safeGet
-import com.imcys.bilibilias.common.base.model.ArchiveCoinsBean
-import com.imcys.bilibilias.common.base.model.ArchiveFavouredBean
-import com.imcys.bilibilias.common.base.model.ArchiveHasLikeBean
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
 import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoDetails
 import com.imcys.bilibilias.common.base.model.VideoPlayBean
+import com.imcys.bilibilias.common.base.model.video.VideoHasCoins
+import com.imcys.bilibilias.common.base.model.video.VideoHasLike
+import com.imcys.bilibilias.common.base.model.video.VideoCollection
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.parameters
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
@@ -68,13 +69,7 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
         quality: Int,
         format: Int,
         allow4KVideo: Int
-    ): VideoPlayBean = get视频流地址(
-        bvid,
-        cid,
-        quality,
-        format,
-        allow4KVideo,
-    )
+    ): VideoPlayBean = get视频流地址(bvid, cid, quality, format, allow4KVideo)
 
     suspend fun getDash视频流地址(
         bvid: String,
@@ -82,13 +77,7 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
         quality: Int,
         format: Int,
         allow4KVideo: Int
-    ): DashVideoPlayBean = get视频流地址(
-        bvid,
-        cid,
-        quality,
-        format,
-        allow4KVideo,
-    )
+    ): DashVideoPlayBean = get视频流地址(bvid, cid, quality, format, allow4KVideo)
 
     private suspend inline fun <reified T> get视频流地址(
         bvid: String,
@@ -114,44 +103,61 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
             parameter("oid", cid)
         }.getOrThrow()
 
+    private val _testSharedFlow = MutableSharedFlow<VideoDetails>(1, 2)
+    val testSharedFlow = _testSharedFlow.asSharedFlow()
+
     /**
-     * curl -G 'https://api.bilibili.com/x/web-interface/archive/has/like' \
-     * --data-urlencode 'aid=39330059' \
-     * -b 'SESSDATA=xxx'
+     * aid=39330059
      *
-     * curl -G 'https://api.bilibili.com/x/web-interface/archive/has/like' \
-     * --data-urlencode 'bvid=BV1Bt411z799' \
-     * -b 'SESSDATA=xxx'
+     * bvid=BV1Bt411z799
      */
-    suspend fun getVideoDetailsByBvid(bvid: String, videoMate: (VideoBaseBean) -> Unit): Boolean =
-        httpClient.safeGet<VideoBaseBean>(BilibiliApi.getVideoDataPath) {
-            parameter(BVID, bvid)
-        }.onSuccess { videoMate(it) }.isSuccess
+    suspend fun getVideoDetailsByBvid(bvid: String) {
+        getVideoDetails<VideoDetails>(BVID to bvid)
+            .onSuccess {
+                _testSharedFlow.emit(it)
+            }
+    }
+    suspend fun getVideoDetailsAvid(avid: String) {
+        getVideoDetails<VideoDetails>(AID to avid)
+            .onSuccess {
+                _testSharedFlow.emit(it)
+            }
+    }
+    private suspend inline fun <reified T> getVideoDetails(pair: Pair<String, String>) =
+        httpClient.safeGet<T>(BilibiliApi.getVideoDataPath) {
+            parameter(pair.first, pair.second)
+        }
 
-    suspend fun getVideoDetailsAvid(avid: String, videoMate: (VideoBaseBean) -> Unit) =
-        httpClient.safeGet<VideoBaseBean>(BilibiliApi.getVideoDataPath) {
-            parameter(AID, avid)
-        }.onSuccess { videoMate(it) }.isSuccess
-
-    suspend fun hasLikeBvid(bvid: String): ArchiveHasLikeBean {
-        val like = httpClient.get(BilibiliApi.videoHasLike) {
-            parameter(BVID, bvid)
-        }.bodyAsText()
-        val like2 = httpClient.safeGet<ArchiveHasLikeBean>(BilibiliApi.videoHasLike) {
+    /**
+     * 点赞
+     */
+    suspend fun hasLike(bvid: String): VideoHasLike {
+        val like2 = httpClient.safeGet<VideoHasLike>(BilibiliApi.videoHasLike) {
             parameter(BVID, bvid)
         }.getOrThrow()
         Timber.d(like2.toString())
-        return ArchiveHasLikeBean(0)
+        return VideoHasLike(0)
     }
 
-    suspend fun hasCoinsBvid(bvid: String) =
-        httpClient.safeGet<ArchiveCoinsBean>(BilibiliApi.videoHasCoins) {
+    /**
+     * 投币
+     */
+    suspend fun hasCoins(bvid: String) =
+        httpClient.safeGet<VideoHasCoins>(BilibiliApi.videoHasCoins) {
             parameter(BVID, bvid)
         }.getOrThrow()
 
-    suspend fun hasFavouredBvid(bvid: String) =
-        httpClient.safeGet<ArchiveFavouredBean>(BilibiliApi.videoHasFavoured) {
-            parameter(AID, bvid)
+    /**
+     * 收藏
+     *
+     * aid=46281123
+     *
+     * aid=BV1Bb411H7Dv
+     */
+    suspend fun hasCollection(id: String) =
+        httpClient.safeGet<VideoCollection>(BilibiliApi.videoHasCollection) {
+            parameter(AID, id)
         }.getOrThrow()
 }
+
 private const val TAG = "VideoRepository"

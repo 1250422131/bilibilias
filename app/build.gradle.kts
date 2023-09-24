@@ -151,4 +151,6 @@ dependencies {
      * banner
      */
     implementation(libs.zhujiang.banner)
+
+    implementation(libs.kotlinx.datetime)
 }

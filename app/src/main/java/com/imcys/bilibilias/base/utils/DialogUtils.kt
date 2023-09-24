@@ -41,7 +41,7 @@ import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
 import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoDetails
 import com.imcys.bilibilias.common.base.model.VideoPlayBean
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -495,7 +495,7 @@ object DialogUtils {
      * @param context Context
      * @param downloadType Int
      * @param downloadTool Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param qn Int
      * @param fnval Int
      * @param videoPageMutableList MutableList<DataBean>
@@ -506,19 +506,19 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
-            videoBaseBean.bvid,
-            videoBaseBean.aid,
-            videoBaseBean.owner.mid,
-            videoBaseBean.owner.name,
-            videoBaseBean.copyright,
-            videoBaseBean.tname,
+            videoDetails.bvid,
+            videoDetails.aid,
+            videoDetails.owner.mid,
+            videoDetails.owner.name,
+            videoDetails.copyright,
+            videoDetails.tname,
             downloadTool,
             downloadType,
             downloadCondition,
@@ -530,7 +530,7 @@ object DialogUtils {
             DASH_TYPE -> {
                 addDownloadTask(
                     context,
-                    videoBaseBean,
+                    videoDetails,
                     qn,
                     80,
                     downloadTool,
@@ -543,7 +543,7 @@ object DialogUtils {
             MP4_TYPE -> {
                 addFlvDownloadTask(
                     context,
-                    videoBaseBean,
+                    videoDetails,
                     qn,
                     80,
                     downloadTool,
@@ -558,7 +558,7 @@ object DialogUtils {
      * @param context Context
      * @param downloadType Int
      * @param downloadTool Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param qn Int
      * @param fnval Int
      * @param videoPageMutableList MutableList<DataBean>
@@ -570,19 +570,19 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
-            videoBaseBean.bvid,
-            videoBaseBean.aid,
-            videoBaseBean.owner.mid,
-            videoBaseBean.owner.name,
-            videoBaseBean.copyright,
-            videoBaseBean.tname,
+            videoDetails.bvid,
+            videoDetails.aid,
+            videoDetails.owner.mid,
+            videoDetails.owner.name,
+            videoDetails.copyright,
+            videoDetails.tname,
             downloadTool,
             downloadType,
             downloadCondition,
@@ -594,7 +594,7 @@ object DialogUtils {
             DASH_TYPE -> {
                 addBangumiDownloadTask(
                     context,
-                    videoBaseBean,
+                    videoDetails,
                     qn,
                     80,
                     downloadTool,
@@ -607,7 +607,7 @@ object DialogUtils {
             MP4_TYPE -> {
                 addFlvBangumiDownloadTask(
                     context,
-                    videoBaseBean,
+                    videoDetails,
                     qn,
                     80,
                     downloadTool,
@@ -652,7 +652,7 @@ object DialogUtils {
      */
     fun downloadDMDialog(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         clickEvent: (binding: DialogDownloadDmBinding) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
@@ -683,7 +683,7 @@ object DialogUtils {
     /**
      * 缓存视频弹窗
      * @param context Context
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param videoPageListData VideoPageListData
      * @param dashVideoPlayBean DashVideoPlayBean
      * @return BottomSheetDialog
@@ -692,7 +692,7 @@ object DialogUtils {
     @JvmStatic
     fun downloadVideoDialog(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
     ): BottomSheetDialog {
@@ -872,7 +872,7 @@ object DialogUtils {
                     downloadTool,
                     downloadCondition,
                     toneQuality,
-                    videoBaseBean,
+                    videoDetails,
                     selectDefinition,
                     80,
                     videoPageMutableList,
@@ -887,7 +887,7 @@ object DialogUtils {
     /**
      * 缓存番剧弹窗
      * @param context Context
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param bangumiSeasonBean BangumiSeasonBean
      * @param dashVideoPlayBean DashVideoPlayBean
      * @return BottomSheetDialog
@@ -895,7 +895,7 @@ object DialogUtils {
     @JvmStatic
     fun downloadVideoDialog(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
     ): BottomSheetDialog {
@@ -1068,7 +1068,7 @@ object DialogUtils {
                     downloadTool,
                     downloadCondition,
                     toneQuality,
-                    videoBaseBean,
+                    videoDetails,
                     selectDefinition,
                     80,
                     videoPageMutableList,
@@ -1083,7 +1083,7 @@ object DialogUtils {
 
     private fun addBangumiDownloadTask(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         downloadTool: Int,
@@ -1118,7 +1118,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "video",
@@ -1129,7 +1129,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "audio",
@@ -1143,7 +1143,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "audio",
@@ -1158,7 +1158,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "video",
@@ -1172,7 +1172,7 @@ object DialogUtils {
 
     private fun addDownloadTask(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         downloadTool: Int,
@@ -1194,7 +1194,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
                             )
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
@@ -1209,7 +1209,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "video",
@@ -1220,7 +1220,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "audio",
@@ -1234,7 +1234,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "audio",
@@ -1249,7 +1249,7 @@ object DialogUtils {
                             it.dashBangumiPlayBean,
                             qn,
                             fnval,
-                            videoBaseBean,
+                            videoDetails,
                             downloadTool,
                             toneQuality,
                             "video",
@@ -1264,14 +1264,14 @@ object DialogUtils {
     /**
      * 添加视频FLV下载任务
      * @param context Context
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param qn Int
      * @param fnval Int
      * @param videoPageMutableList MutableList<DataBean>
      */
     private fun addFlvDownloadTask(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         downloadTool: Int,
@@ -1291,7 +1291,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
                             )
                     emit(VideoData(videoPlayBean, it))
                 }
@@ -1303,7 +1303,7 @@ object DialogUtils {
                     it.videoPlayBean,
                     qn,
                     fnval,
-                    videoBaseBean,
+                    videoDetails,
                     downloadTool,
                     "video",
                     false,
@@ -1315,14 +1315,14 @@ object DialogUtils {
     /**
      * 添加番剧FLV下载任务
      * @param context Context
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param qn Int
      * @param fnval Int
      * @param bangumiPageMutableList MutableList<EpisodesBean>
      */
     private fun addFlvBangumiDownloadTask(
         context: Context,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
         downloadTool: Int,
@@ -1354,7 +1354,7 @@ object DialogUtils {
                     it.bangumiPlayBean,
                     qn,
                     fnval,
-                    videoBaseBean,
+                    videoDetails,
                     downloadTool,
                     "video",
                     false,
@@ -1369,7 +1369,7 @@ object DialogUtils {
      * @param dataBean DataBean
      * @param qn Int
      * @param fnval Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param type String
      */
     private fun addFlvTask(
@@ -1378,7 +1378,7 @@ object DialogUtils {
         videoPlayBean: VideoPlayBean,
         qn: Int,
         fnval: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         downloadTool: Int,
         type: String,
         isGroupTask: Boolean = false,
@@ -1407,13 +1407,13 @@ object DialogUtils {
                 .toString()
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.aid.toString(),
-            videoBaseBean.bvid,
+            videoDetails.aid.toString(),
+            videoDetails.bvid,
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.title,
+            videoDetails.title,
             qn.toString(),
         )
 
@@ -1426,7 +1426,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.part,
-                        videoBaseBean.bvid,
+                        videoDetails.bvid,
                         qn.toString(),
                         videoPlayBean = videoPlayBean,
                         videoPageDataData = dataBean,
@@ -1436,13 +1436,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载成功",
+                            "${videoDetails.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载失败",
+                            "${videoDetails.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1465,7 +1465,7 @@ object DialogUtils {
      * @param dataBean DataBean
      * @param qn Int
      * @param fnval Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param type String
      */
     private fun addFlvTask(
@@ -1474,7 +1474,7 @@ object DialogUtils {
         bangumiPlayBean: BangumiPlayBean,
         qn: Int,
         fnval: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         downloadTool: Int,
         type: String,
         isGroupTask: Boolean = false,
@@ -1511,13 +1511,13 @@ object DialogUtils {
 
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.aid.toString(),
-            videoBaseBean.bvid,
+            videoDetails.aid.toString(),
+            videoDetails.bvid,
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.title,
+            videoDetails.title,
             qn.toString(),
         )
 
@@ -1530,7 +1530,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.title,
-                        videoBaseBean.bvid,
+                        videoDetails.bvid,
                         qn.toString(),
                         bangumiPlayBean = bangumiPlayBean,
                         bangumiSeasonBean = dataBean,
@@ -1540,13 +1540,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载成功",
+                            "${videoDetails.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载失败",
+                            "${videoDetails.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1569,7 +1569,7 @@ object DialogUtils {
      * @param dataBean EpisodesBean
      * @param qn Int
      * @param fnval Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param type String
      */
     private fun addTask(
@@ -1578,7 +1578,7 @@ object DialogUtils {
         dashBangumiPlayBean: DashBangumiPlayBean,
         qn: Int,
         fnval: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         downloadTool: Int,
         toneQuality: Int,
         type: String,
@@ -1630,13 +1630,13 @@ object DialogUtils {
         // 扩展函数 -> 把下载地址换出来
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.aid.toString(),
-            videoBaseBean.bvid,
+            videoDetails.aid.toString(),
+            videoDetails.bvid,
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.title,
+            videoDetails.title,
             qn.toString(),
         )
 
@@ -1649,7 +1649,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.long_title,
-                        videoBaseBean.bvid,
+                        videoDetails.bvid,
                         qn.toString(),
                         dashBangumiPlayBean = dashBangumiPlayBean,
                         bangumiSeasonBean = dataBean,
@@ -1659,13 +1659,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载成功",
+                            "${videoDetails.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载失败",
+                            "${videoDetails.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -1688,7 +1688,7 @@ object DialogUtils {
      * @param dataBean DataBean
      * @param qn Int
      * @param fnval Int
-     * @param videoBaseBean VideoBaseBean
+     * @param videoDetails VideoBaseBean
      * @param type String
      */
     private fun addTask(
@@ -1697,7 +1697,7 @@ object DialogUtils {
         dashVideoPlayBean: DashVideoPlayBean,
         qn: Int,
         fnval: Int,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
         downloadTool: Int,
         toneQuality: Int,
         type: String,
@@ -1748,13 +1748,13 @@ object DialogUtils {
         // 获取下载地址
         val savePath = inputString.toAsDownloadSavePath(
             context,
-            videoBaseBean.aid.toString(),
-            videoBaseBean.bvid,
+            videoDetails.aid.toString(),
+            videoDetails.bvid,
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
-            videoBaseBean.title,
+            videoDetails.title,
             qn.toString(),
         )
 
@@ -1767,7 +1767,7 @@ object DialogUtils {
                     DownloadTaskDataBean(
                         dataBean.cid,
                         dataBean.part,
-                        videoBaseBean.bvid,
+                        videoDetails.bvid,
                         qn.toString(),
                         dashVideoPlayBean = dashVideoPlayBean,
                         videoPageDataData = dataBean,
@@ -1777,13 +1777,13 @@ object DialogUtils {
                     if (it2) {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载成功",
+                            "${videoDetails.bvid}下载成功",
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
                         Toast.makeText(
                             context,
-                            "${videoBaseBean.bvid}下载失败",
+                            "${videoDetails.bvid}下载失败",
                             Toast.LENGTH_SHORT,
                         ).show()
                     }

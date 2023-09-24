@@ -33,7 +33,7 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
+import com.imcys.bilibilias.common.base.model.VideoDetails
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
@@ -340,15 +340,15 @@ class DownloadQueue @Inject constructor() :
         launch {
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val videoBaseBean = KtHttpUtils.addHeader(COOKIE, cookie!!)
-                .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
-            val mid = videoBaseBean.owner.mid
-            val name = videoBaseBean.owner.name
-            val copyright = videoBaseBean.copyright
-            val tName = videoBaseBean.tname
+            val videoDetails = KtHttpUtils.addHeader(COOKIE, cookie!!)
+                .asyncGet<VideoDetails>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
+            val mid = videoDetails.owner.mid
+            val name = videoDetails.owner.name
+            val copyright = videoDetails.copyright
+            val tName = videoDetails.tname
 
             if (aid == null) {
-                aid = videoBaseBean.aid
+                aid = videoDetails.aid
             }
 
             addAsVideoData(
@@ -574,7 +574,7 @@ class DownloadQueue @Inject constructor() :
         var videoIndex = App.videoIndex
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
         HttpUtils.addHeader(COOKIE, cookie!!)
-            .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
+            .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoDetails::class.java) {
                 if (it.cid  != 0L) {
                     videoEntry = videoEntry.replace("UP主UID", it.owner.mid.toString())
                     videoEntry = videoEntry.replace("UP名称", it.owner.name)
@@ -679,7 +679,7 @@ class DownloadQueue @Inject constructor() :
         videoEntry: String,
         videoIndex: String,
         downloadTaskDataBean: DownloadTaskDataBean,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
     ) {
         var videoEntry = videoEntry
         val epidUrl = "videoBaseBean.redirect_url"
@@ -778,7 +778,7 @@ class DownloadQueue @Inject constructor() :
         videoEntry: String,
         videoIndex: String,
         downloadTaskDataBean: DownloadTaskDataBean,
-        videoBaseBean: VideoBaseBean,
+        videoDetails: VideoDetails,
     ) {
         launch(Dispatchers.Default) {
             var videoEntry = videoEntry

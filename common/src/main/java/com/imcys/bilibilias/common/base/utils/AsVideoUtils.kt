@@ -6,9 +6,12 @@ object AsVideoUtils {
      * 是否是番剧
      */
     fun isEp(text: String) = RegexUtils.epRegex.containsMatchIn(text)
-    fun isBVStart(text: String) = RegexUtils.bvRegex.containsMatchIn(text)
-    fun isBVHttp(text: String) = RegexUtils.bvHttpRegex.containsMatchIn(text)
+    fun isBV(text: String) = RegexUtils.bvRegex.containsMatchIn(text)
+    fun isShortLink(text: String) = RegexUtils.shortLink.containsMatchIn(text)
     fun isAV(text: String) = RegexUtils.avRegex.containsMatchIn(text)
+
+    // 是可以解析的
+    fun isResolvable(text: String): Boolean = isEp(text) || isBV(text) || isAV(text) || isShortLink(text)
     fun getEpid(text: String): String? {
         if (isEp(text)) {
             return RegexUtils.epRegex.find(text)?.value
@@ -16,15 +19,15 @@ object AsVideoUtils {
         return null
     }
 
-    fun getBvHttp(text: String): String? {
-        if (isBVHttp(text)) {
-            return RegexUtils.bvHttpRegex.find(text)?.value
+    fun getShortLink(text: String): String? {
+        if (isShortLink(text)) {
+            return RegexUtils.shortLink.find(text)?.value
         }
         return null
     }
 
     fun getBvid(text: String): String? {
-        if (isBVStart(text)) {
+        if (isBV(text)) {
             return RegexUtils.bvRegex.find(text)?.value
         }
         return null

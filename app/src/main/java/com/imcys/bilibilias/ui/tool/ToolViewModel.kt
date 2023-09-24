@@ -1,97 +1,100 @@
 package com.imcys.bilibilias.ui.tool
 
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
-import com.imcys.bilibilias.common.base.model.VideoBaseBean
-import com.imcys.bilibilias.common.base.repository.AsRepository
+import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.common.base.model.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils.httpClient
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import io.ktor.client.request.prepareGet
-import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ToolViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
-    private val asRepository: AsRepository
+    private val videoRepository: VideoRepository
 ) : BaseViewModel() {
+
     private val _toolState = MutableStateFlow(ToolState())
     val toolState = _toolState.asStateFlow()
+    init {
+        videoRepository.testSharedFlow.onEach { v ->
+            _toolState.update {
+                it.copy(videoDetails = v, isShowVideoCard = true)
+            }
+        }.launchIn(viewModelScope)
+    }
+    private sealed class VideoType {
+        data object None : VideoType()
+        data class BV(val id: String) : VideoType()
+        data class AV(val id: String) : VideoType()
+        data class EP(val id: String) : VideoType()
+        data class ShortLink(val url: String) : VideoType()
+    }
 
-    fun getOldItemList() {}
-
-    /**
-     * todo 短链接处理有问题, ep 未处理
-     */
-    fun parsesBvOrAvOrEp(text: String) {
-        if (text.trim().isBlank()) return
-        _toolState.update {
-            it.copy(query = text)
-        }
-        Timber.tag(TAG).i("解析的链接=$text")
-        if (AsVideoUtils.isEp(text)) {
-            handelEP(text)
-            return
-        }
-        if (AsVideoUtils.isBVStart(text)) {
-            handelBV(text)
-            return
-        }
-        if (AsVideoUtils.isAV(text)) {
-            handelAV(text)
-            return
-        }
-        // 短链接
-        if (AsVideoUtils.isBVHttp(text)) {
-            handelHttp(text)
-            return
+    private fun parseTextTypes(text: String): VideoType {
+        return if (AsVideoUtils.isAV(text)) {
+            val id = AsVideoUtils.getAvid(text)
+            if (id != null) VideoType.AV(id) else VideoType.None
+        } else if (AsVideoUtils.isBV(text)) {
+            val id = AsVideoUtils.getBvid(text)
+            if (id != null) VideoType.BV(id) else VideoType.None
+        } else if (AsVideoUtils.isShortLink(text)) {
+            val id = AsVideoUtils.getShortLink(text)
+            if (id != null) VideoType.ShortLink(id) else VideoType.None
+        } else if (AsVideoUtils.isEp(text)) {
+            val id = AsVideoUtils.getEpid(text)
+            if (id != null) VideoType.EP(id) else VideoType.None
+        } else {
+            VideoType.None
         }
     }
 
-    private fun handelEP(text: String) {
-        val epId = AsVideoUtils.getEpid(text)
-        if (epId == null) {
-            setIsInputError(true)
-            _toolState.update {
-                it.copy(isShowVideoCard = false)
+    fun parsesBvOrAvOrEp(text: String) {
+        if (text.trim().isBlank()) return
+        _toolState.update { it.copy(text = text) }
+        Timber.tag(TAG).i("解析的链接=$text")
+        when (val video = parseTextTypes(text)) {
+            is VideoType.AV -> handelAV(video.id)
+            is VideoType.BV -> handelBV(video.id)
+            is VideoType.EP -> handelEP(video.id)
+            is VideoType.ShortLink -> handelHttp(video.url)
+            VideoType.None -> {
+                _toolState.update {
+                    it.copy(isShowVideoCard = false, inputError = true)
+                }
             }
-            return
         }
+    }
+
+    private fun handelEP(id: String) {
         launchIO {
-            val bangumi = videoRepository.get剧集基本信息(epId)
+            val bangumi = videoRepository.get剧集基本信息(id)
             _toolState.update {
                 it.copy(
-                    videoMate = VideoMate(
-                        bangumi.episodes.first().bvid,
-                        bangumi.cover,
-                        bangumi.evaluate,
-                        bangumi.stat.views.toString(),
-                        bangumi.stat.danmakus.toString(),
-                    )
+                    // videoMate = VideoMate(
+                    //     bangumi.episodes.first().bvid,
+                    //     bangumi.cover,
+                    //     bangumi.evaluate,
+                    //     bangumi.stat.views.toString(),
+                    //     bangumi.stat.danmakus.toString(),
+                    // )
                 )
             }
         }
         _toolState.update {
-            it.copy(query = epId, isShowVideoCard = true)
+            it.copy(isShowVideoCard = true)
         }
     }
 
-    private fun handelHttp(text: String) {
-        val url = AsVideoUtils.getBvHttp(text)!!
+    private fun handelHttp(url: String) {
         launchIO {
             httpClient.prepareGet(url).execute { response ->
                 val bvid = AsVideoUtils.getBvid(response.request.url.toString())!!
@@ -100,83 +103,36 @@ class ToolViewModel @Inject constructor(
         }
     }
 
-    private fun handelAV(text: String) {
-        val aid = AsVideoUtils.getAvid(text)
-        if (aid == null) {
-            setIsInputError(true)
-            _toolState.update {
-                it.copy(isShowVideoCard = false)
-            }
-            return
-        }
+    private fun handelAV(id: String) {
         launchIO {
-            setIsInputError(!videoRepository.getVideoDetailsAvid(aid, ::setVideoMate))
-        }
-        _toolState.update {
-            it.copy(query = "AV$aid", isShowVideoCard = true)
+            videoRepository.getVideoDetailsAvid(id)
         }
     }
 
-    private fun handelBV(text: String) {
-        val bvid = AsVideoUtils.getBvid(text)
-        if (bvid == null) {
-            setIsInputError(true)
-            _toolState.update {
-                it.copy(isShowVideoCard = false)
-            }
-            return
-        }
+    private fun handelBV(id: String) {
         launchIO {
-            setIsInputError(!videoRepository.getVideoDetailsByBvid(bvid, ::setVideoMate))
-        }
-        _toolState.update {
-            it.copy(query = bvid, isShowVideoCard = true)
+            videoRepository.getVideoDetailsByBvid(id)
         }
     }
 
-    private fun setIsInputError(isError: Boolean) {
-        _toolState.update {
-            it.copy(isInputError = isError)
-        }
-    }
-
-    private fun setVideoMate(videoDetails: VideoBaseBean) {
+    private fun setVideoMate(videoDetails: VideoDetails) {
         _toolState.update {
             it.copy(
-                videoMate = VideoMate(
-                    videoDetails.bvid,
-                    videoDetails.pic,
-                    videoDetails.title,
-                    videoDetails.desc,
-                    videoDetails.stat.view.toString(),
-                    videoDetails.stat.danmaku.toString()
-                )
+                // videoMate = VideoMate(
+                //     videoDetails.bvid,
+                //     videoDetails.pic,
+                //     videoDetails.title,
+                //     videoDetails.desc,
+                //     videoDetails.stat.view.toString(),
+                //     videoDetails.stat.danmaku.toString()
+                // )
             )
         }
     }
 
-    /**
-     * 加载APP端分享视频
-     * @param toString String
-     */
-    private fun loadShareData(url: String) = flow {
-        val text = httpClient.get(url).bodyAsText()
-        Timber.tag("tool").d(url)
-        emit(text)
-    }
-
-    private fun getEpVideo(epId: String) {
-        TODO("后端数据响应没有字段 data")
-        launchIO {
-            val body = httpClient.get(BilibiliApi.bangumiVideoDataPath) {
-                parameter("ep_id", epId)
-            }.body<BangumiSeasonBean>()
-        }
-    }
-
-    fun clearText() {
+    fun clearSearchText() {
         _toolState.update {
-            it.copy(query = "", isInputError = false, isShowVideoCard = false)
+            it.copy(text = "", inputError = false, isShowVideoCard = false)
         }
     }
 }
@@ -184,25 +140,8 @@ class ToolViewModel @Inject constructor(
 private const val TAG = "ToolViewModel"
 
 data class ToolState(
-    val query: String = "",
-    val isInputError: Boolean = false,
+    val text: String = "",
+    val inputError: Boolean = false,
     val isShowVideoCard: Boolean = false,
-    val videoMate: VideoMate = VideoMate(),
-    val tools: ImmutableList<ToolMate> = persistentListOf()
-)
-
-data class VideoMate(
-    val videoId: String = "",
-    val pic: String = "",
-    val title: String = "",
-    val desc: String = "",
-    val playVolume: String = "",
-    val danmaku: String = "",
-)
-
-data class ToolMate(
-    val color: Int = 0,
-    val imgUrl: String = "",
-    val title: String = "",
-    val toolCode: Int = 0,
+    val videoDetails: VideoDetails = VideoDetails()
 )
