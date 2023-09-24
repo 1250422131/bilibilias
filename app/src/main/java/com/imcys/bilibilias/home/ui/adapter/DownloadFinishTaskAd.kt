@@ -71,10 +71,10 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
             holder.itemView.setOnLongClickListener {
                 if (mLongClickEvent()) {
-                    val newList = currentList.map { it.deepCopy { showEdit = true } }
+                    val newList = currentList.map { it.copy(showEdit = true) }
                     submitList(newList)
                 } else {
-                    val newList = currentList.map { it.deepCopy { showEdit = false } }
+                    val newList = currentList.map { it.copy( showEdit = false)}
                     submitList(newList)
                 }
                 true
@@ -92,6 +92,11 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
             // 点击
             holder.itemView.setOnClickListener {
+                if (task.showEdit){
+                    task.selectState = !task.selectState
+                    itemDlFinishTaskEditCheckBox.isChecked = task.selectState
+                    return@setOnClickListener
+                }
                 if (FileUtils.isFileExists(File(task.savePath))) {
                     AsDialog.init(holder.itemView.context)
                         .setTitle("文件操作")
