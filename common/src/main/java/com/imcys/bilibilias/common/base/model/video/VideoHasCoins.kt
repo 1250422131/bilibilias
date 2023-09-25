@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * @author:imcys
@@ -12,4 +13,7 @@ import kotlinx.serialization.Serializable
  * multiply : 2
  */
 @Serializable
-data class VideoHasCoins(var multiply: Int = 0)
+data class VideoHasCoins(private val multiply: Int = 0) {
+    @Transient
+    val coins: Boolean = multiply > 0
+}
