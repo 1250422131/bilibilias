@@ -28,8 +28,6 @@ fun NavGraphBuilder.toolRoute(
 fun ToolRoute(onNavigateToPlayer: () -> Unit, onBack: () -> Unit) {
     val viewModel: ToolViewModel = hiltViewModel()
     val state by viewModel.toolState.collectAsStateWithLifecycle()
-    // 清空搜索框文本 clearSearchText
-    // viewModel::clearSearchText
     ToolScreen(
         state,
         viewModel::parsesBvOrAvOrEp,

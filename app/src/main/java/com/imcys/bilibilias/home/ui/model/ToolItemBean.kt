@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.home.ui.model
 
-import com.imcys.bilibilias.common.base.model.VideoDetails
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
 
 
 data class ToolItemBean(
