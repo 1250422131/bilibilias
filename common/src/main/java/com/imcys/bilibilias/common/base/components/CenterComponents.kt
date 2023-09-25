@@ -11,12 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-inline fun CenterRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
+fun CenterRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
     Row(modifier.fillMaxWidth(), Arrangement.Center, Alignment.CenterVertically, content)
 }
 
 @Composable
-inline fun CenterColumn(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+fun CenterColumn(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier, Arrangement.Center, Alignment.CenterHorizontally, content)
 }
 
