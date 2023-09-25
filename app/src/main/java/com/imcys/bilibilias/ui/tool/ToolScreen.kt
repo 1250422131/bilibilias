@@ -131,17 +131,31 @@ fun ToolScreen(
                 isError = state.inputError
             )
             AnimatedVisibility(visible = state.isShowVideoCard) {
-                VideoCard(
-                    bvid = state.videoDetails.bvid,
-                    pic = state.videoDetails.pic,
-                    title = state.videoDetails.title,
-                    desc = state.videoDetails.desc,
-                    view = state.videoDetails.stat.view.digitalConversion(),
-                    danmaku = state.videoDetails.stat.danmaku.digitalConversion(),
-                    duration = state.videoDetails.duration,
-                    onNavigateToPlayer = onNavigateToPlayer,
-                    modifier = Modifier.animateContentSize()
-                )
+                if (state.videoType is VideoType.EP){
+                    VideoCard(
+                        bvid =state.bangumi.episodes[0].bvid,
+                        pic = state.videoDetails.pic,
+                        title = state.bangumi.title,
+                        desc = state.videoDetails.desc,
+                        view = state.bangumi.stat.views.digitalConversion(),
+                        danmaku = state.bangumi.stat.danmakus.digitalConversion(),
+                        duration = 0,
+                        onNavigateToPlayer = onNavigateToPlayer,
+                        modifier = Modifier.animateContentSize()
+                    )
+                }else{
+                    VideoCard(
+                        bvid = state.videoDetails.bvid,
+                        pic = state.videoDetails.pic,
+                        title = state.videoDetails.title,
+                        desc = state.videoDetails.desc,
+                        view = state.videoDetails.stat.view.digitalConversion(),
+                        danmaku = state.videoDetails.stat.danmaku.digitalConversion(),
+                        duration = state.videoDetails.duration,
+                        onNavigateToPlayer = onNavigateToPlayer,
+                        modifier = Modifier.animateContentSize()
+                    )
+                }
             }
 
             LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
@@ -172,9 +186,9 @@ fun VideoCard(
     desc: String,
     view: String,
     danmaku: String,
-    duration: Int,
     onNavigateToPlayer: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    duration: Int = 0
 ) {
     Card(
         onClick = onNavigateToPlayer,
@@ -198,6 +212,7 @@ fun VideoCard(
                     .fillMaxWidth()
                     .drawWithContent {
                         drawContent()
+                        if (duration == 0) return@drawWithContent
                         val topLeft = Offset(
                             10.dp
                                 .roundToPx()
@@ -383,6 +398,7 @@ fun PreviewVideoCard() {
         view = "播放量",
         danmaku = "弹幕数",
         duration = 123456,
-        {}
+        onNavigateToPlayer = {},
+        modifier = Modifier
     )
 }
