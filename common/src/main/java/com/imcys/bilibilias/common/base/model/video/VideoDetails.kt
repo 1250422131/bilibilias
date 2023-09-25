@@ -1,8 +1,7 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.security.acl.Owner
 
 /**
  * ![获取视频详细信息(web端)](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md#%E8%8E%B7%E5%8F%96%E8%A7%86%E9%A2%91%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AFweb%E7%AB%AF)
@@ -235,7 +234,7 @@ data class VideoDetails(
     @SerialName("desc")
     val desc: String = "",
     @SerialName("desc_v2")
-    val descV2: List<DescV2> = listOf(),
+    val descV2: List<DescV2>? = null,
     @SerialName("dimension")
     val dimension: Dimension = Dimension(),
     @SerialName("duration")

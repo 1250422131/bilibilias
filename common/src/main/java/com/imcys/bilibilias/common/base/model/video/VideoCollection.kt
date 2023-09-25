@@ -17,5 +17,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoCollection(
     @SerialName("favoured")
-    var isFavoured: Boolean = false
+    val isFavoured: Boolean = false
 )

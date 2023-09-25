@@ -3,19 +3,17 @@
 package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * @author:imcys
  * @create: 2023-01-03 16:03
  * @Description: 检验是否被点赞
- */
-/**
- * code : 0
- * message : 0
- * ttl : 1
- * data : 1
+ * 0：未点赞
+ * 1：已点赞
  */
 @Serializable
-data class VideoHasLike(
-    var data: Int = 0
-)
+data class VideoHasLike(val data: Int = 0) {
+    @Transient
+    val like: Boolean = data == 1
+}

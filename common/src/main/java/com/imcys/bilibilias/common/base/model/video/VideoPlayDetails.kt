@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -101,7 +101,7 @@ import kotlinx.serialization.Serializable
  * ```
  */
 @Serializable
-class VideoPlayBean(
+data class VideoPlayDetails(
     @SerialName("accept_description")
     val acceptDescription: List<String> = listOf(),
     @SerialName("accept_format")
