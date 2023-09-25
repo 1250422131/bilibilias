@@ -24,7 +24,6 @@
             <androidx.constraintlayout.utils.widget.ImageFilterView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:imageUrl="@{UserBaseBean.face}"
                 app:round="45dp" />
 
             <androidx.appcompat.widget.LinearLayoutCompat

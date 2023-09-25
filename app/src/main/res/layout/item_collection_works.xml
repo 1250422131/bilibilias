@@ -39,7 +39,6 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:imageUrl="@{MediasBean.cover}"
                         android:scaleType="fitXY" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat

@@ -11,7 +11,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.common.base.model.VideoDetails" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoDetails" />
 
         <variable
             name="UserCardBean"
@@ -24,11 +24,11 @@
 
         <variable
             name="BangumiSeasonBean"
-            type="com.imcys.bilibilias.common.base.model.BangumiSeasonBean" />
+            type="com.imcys.bilibilias.common.base.model.bangumi.Bangumi" />
 
         <variable
             name="VideoPlayBean"
-            type="com.imcys.bilibilias.common.base.model.VideoPlayBean" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoPlayDetails" />
 
         <variable
             name="VideoPageListData"

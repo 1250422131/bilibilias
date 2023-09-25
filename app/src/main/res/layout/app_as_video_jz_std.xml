@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
+
+        <master.flame.danmaku.ui.widget.DanmakuView
+            android:id="@+id/as_jzvdstd_DanmakuView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/video_control"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_play_pause"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_as_video_play"
+                android:tint="#ffffff"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_open_close_danmu"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_asplay_barrage_on"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_play_pause"
+                app:layout_constraintStart_toEndOf="@+id/iv_play_pause"
+                app:layout_constraintTop_toTopOf="@+id/iv_play_pause" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_open_close_danmu"
+                app:layout_constraintEnd_toStartOf="@+id/tv_time_current_and_total"
+                app:layout_constraintStart_toEndOf="@+id/iv_open_close_danmu"
+                app:layout_constraintTop_toTopOf="@+id/iv_open_close_danmu" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_time_current_and_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                app:layout_constraintBottom_toBottomOf="@+id/slider"
+                app:layout_constraintEnd_toStartOf="@+id/tv_clarity"
+                app:layout_constraintTop_toTopOf="@+id/slider"
+                tools:text="00:00/1:00:00" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_clarity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_time_current_and_total"
+                app:layout_constraintEnd_toStartOf="@+id/iv_fullscreen"
+                app:layout_constraintTop_toTopOf="@+id/tv_time_current_and_total"
+                tools:text="clarity" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_fullscreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/jz_enlarge"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_clarity"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_clarity" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

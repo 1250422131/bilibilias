@@ -9,7 +9,7 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.common.base.model.VideoDetails" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoDetails" />
 
     </data>
 
@@ -41,7 +41,6 @@
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="6"
-                    android:imageUrl="@{VideoBaseBean.pic}"
                     android:transitionName="videoPic"
                     app:round="10dp" />
 
