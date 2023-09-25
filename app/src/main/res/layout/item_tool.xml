@@ -37,7 +37,6 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
                     android:src="@drawable/ic_as_video_download"
                     app:tint="@color/white" />
 
@@ -64,7 +63,6 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
                     android:src="@drawable/ic_as_video_download"
                     app:tint="@color/white" />
 
