@@ -6,6 +6,8 @@ import com.imcys.bilibilias.common.base.config.CacheManager
 import com.imcys.bilibilias.common.base.config.CookieManager
 import com.imcys.bilibilias.common.base.config.LoggerManager
 import com.imcys.bilibilias.common.base.constant.ROAM_API
+import com.imcys.bilibilias.common.base.extend.ofMap
+import com.imcys.bilibilias.common.base.extend.print
 import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import dagger.Module
@@ -35,11 +37,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.errors.IOException
-import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
@@ -52,6 +53,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private val json = Json {
+        prettyPrint = true
+        isLenient = true
+        ignoreUnknownKeys = true
+        explicitNulls = true
+    }
 
     @Provides
     @Singleton
@@ -85,13 +94,7 @@ class NetworkModule {
             }
         }
         install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                }
-            )
+            json(json)
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)
@@ -119,18 +122,13 @@ class NetworkModule {
         }
     }
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
-
-    @OptIn(InternalSerializationApi::class)
     private val convertPlugin =
         createClientPlugin("TransformData") {
             transformResponseBody { response, content, requestedType ->
                 try {
                     val rep = response.bodyAsText()
-                    Timber.tag("TransformData").d("type=$requestedType")
-                    val res = Json.parseToJsonElement(rep).jsonObject
+                    Timber.tag("TransformData").d("type=${requestedType.reifiedType}")
+                    val res = json.parseToJsonElement(rep).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
                         val message = res["message"]?.jsonPrimitive?.contentOrNull
@@ -140,9 +138,10 @@ class NetworkModule {
                     when (realData) {
                         is JsonObject -> {
                             realData = realData.jsonObject
-                            val type = requestedType.type.serializer()
-                            val element = json.decodeFromJsonElement(type, realData)
-                            Timber.tag("TransformData").d("obj=$element")
+                            json.parseToJsonElement(realData.toString())
+                            val element = json.decodeFromJsonElement(serializer(requestedType.reifiedType), realData)
+                            val print = element.ofMap()?.print()
+                            Timber.tag("TransformData").d("data=${print ?: "@null"}")
                             element
                         }
 
@@ -150,7 +149,6 @@ class NetworkModule {
                             realData = realData.jsonArray
                             val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
                             val element = json.decodeFromJsonElement(serializer(type), realData)
-                            Timber.tag("TransformData").d("array=$element")
                             element
                         }
 
