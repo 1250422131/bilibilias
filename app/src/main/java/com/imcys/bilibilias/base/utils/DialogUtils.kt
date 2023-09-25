@@ -23,7 +23,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
@@ -39,10 +38,11 @@ import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
-import com.imcys.bilibilias.common.base.model.VideoDetails
-import com.imcys.bilibilias.common.base.model.VideoPlayBean
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
+import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -92,8 +92,7 @@ object DialogUtils {
             }
 
             dialogLoginAs.setOnClickListener {
-
-                context.toast( "云端账户即将出炉")
+                context.toast("云端账户即将出炉")
                 bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
@@ -405,17 +404,17 @@ object DialogUtils {
 
         binding.apply {
             val collectionMutableList = mutableListOf<Long>()
-                    // 这个接口是为了处理弹窗背景问题
+            // 这个接口是为了处理弹窗背景问题
 
-                    val total = collectionMutableList.size
-                    // 标签，判断这一次是否有重复
-                }
+            val total = collectionMutableList.size
+            // 标签，判断这一次是否有重复
+        }
 
-            // 设置完成选中收藏夹
-            // dialogCollectionFinishBt.setOnClickListener {
-            //     bottomSheetDialog.cancel()
-            //     finished(collectionMutableList)
-            // }
+        // 设置完成选中收藏夹
+        // dialogCollectionFinishBt.setOnClickListener {
+        //     bottomSheetDialog.cancel()
+        //     finished(collectionMutableList)
+        // }
         return bottomSheetDialog
     }
 
@@ -573,7 +572,7 @@ object DialogUtils {
         videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
-        bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        bangumiPageMutableList: MutableList<Bangumi.Result.Episode>,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -896,10 +895,10 @@ object DialogUtils {
     fun downloadVideoDialog(
         context: Context,
         videoDetails: VideoDetails,
-        bangumiSeasonBean: BangumiSeasonBean,
+        bangumiSeasonBean: Bangumi,
         dashVideoPlayBean: DashVideoPlayBean,
     ): BottomSheetDialog {
-        var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+        var videoPageMutableList = mutableListOf<Bangumi.Result.Episode>()
         var selectDefinition = 80
 
         var toneQuality = 30280
@@ -930,7 +929,7 @@ object DialogUtils {
 
                     if (videoPageMutableList.size != 1) {
                         videoPageMutableList.forEach {
-                            videoPageMsg = "$videoPageMsg${it.long_title} "
+                            videoPageMsg = "$videoPageMsg${it.longTitle} "
                         }
                         dialogDlVideoDiversityTx.text = videoPageMsg
                     }
@@ -1089,11 +1088,11 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        bangumiPageMutableList: MutableList<Bangumi.Result.Episode>,
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
-            val dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+            val dataBean: Bangumi.Result.Episode,
         )
         context.toast("已添加到下载队列")
 
@@ -1185,7 +1184,7 @@ object DialogUtils {
             val dataBean: VideoPageListData.DataBean,
         )
 
-       context.toast( "已添加到下载队列")
+        context.toast("已添加到下载队列")
 
         CoroutineScope(Dispatchers.IO).launch {
             flow {
@@ -1278,7 +1277,7 @@ object DialogUtils {
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
     ) {
         data class VideoData(
-            val videoPlayBean: VideoPlayBean,
+            val videoPlayDetails: VideoPlayDetails,
             val dataBean: VideoPageListData.DataBean,
         )
 
@@ -1287,20 +1286,20 @@ object DialogUtils {
         CoroutineScope(Dispatchers.IO).launch {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean =
+                    val videoPlayDetails =
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<VideoPlayBean>(
+                            .asyncGet<VideoPlayDetails>(
                                 "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
                             )
-                    emit(VideoData(videoPlayBean, it))
+                    emit(VideoData(videoPlayDetails, it))
                 }
             }.collect {
                 delay(300)
                 addFlvTask(
                     context,
                     it.dataBean,
-                    it.videoPlayBean,
+                    it.videoPlayDetails,
                     qn,
                     fnval,
                     videoDetails,
@@ -1326,11 +1325,11 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         downloadTool: Int,
-        bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        bangumiPageMutableList: MutableList<Bangumi.Result.Episode>,
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
-            val dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+            val dataBean: Bangumi.Result.Episode,
         )
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
@@ -1375,7 +1374,7 @@ object DialogUtils {
     private fun addFlvTask(
         context: Context,
         dataBean: VideoPageListData.DataBean,
-        videoPlayBean: VideoPlayBean,
+        videoPlayDetails: VideoPlayDetails,
         qn: Int,
         fnval: Int,
         videoDetails: VideoDetails,
@@ -1383,7 +1382,7 @@ object DialogUtils {
         type: String,
         isGroupTask: Boolean = false,
     ) {
-        val videoPlayData = videoPlayBean
+        val videoPlayData = videoPlayDetails
         val urlIndex = 0
 
         val intFileType: Int
@@ -1428,7 +1427,7 @@ object DialogUtils {
                         dataBean.part,
                         videoDetails.bvid,
                         qn.toString(),
-                        videoPlayBean = videoPlayBean,
+                        videoPlayDetails = videoPlayDetails,
                         videoPageDataData = dataBean,
                     ),
                     isGroupTask = isGroupTask,
@@ -1470,7 +1469,7 @@ object DialogUtils {
      */
     private fun addFlvTask(
         context: Context,
-        dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+        dataBean: Bangumi.Result.Episode,
         bangumiPlayBean: BangumiPlayBean,
         qn: Int,
         fnval: Int,
@@ -1513,7 +1512,7 @@ object DialogUtils {
             context,
             videoDetails.aid.toString(),
             videoDetails.bvid,
-            dataBean.long_title,
+            dataBean.longTitle,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
@@ -1574,7 +1573,7 @@ object DialogUtils {
      */
     private fun addTask(
         context: Context,
-        dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
+        dataBean: Bangumi.Result.Episode,
         dashBangumiPlayBean: DashBangumiPlayBean,
         qn: Int,
         fnval: Int,
@@ -1632,7 +1631,7 @@ object DialogUtils {
             context,
             videoDetails.aid.toString(),
             videoDetails.bvid,
-            dataBean.long_title,
+            dataBean.longTitle,
             dataBean.cid.toString(),
             fileType,
             urlIndex.toString(),
@@ -1648,7 +1647,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        dataBean.long_title,
+                        dataBean.longTitle,
                         videoDetails.bvid,
                         qn.toString(),
                         dashBangumiPlayBean = dashBangumiPlayBean,
@@ -1888,8 +1887,8 @@ object DialogUtils {
             dialogCollectionTitle.text = "请选择视频子集"
 
             val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
-        return bottomSheetDialog
-    }
+            return bottomSheetDialog
+        }
     }
 
     /**
@@ -1901,9 +1900,9 @@ object DialogUtils {
      */
     private fun loadVideoPageDialog(
         context: Context,
-        bangumiSeasonBean: BangumiSeasonBean,
-        videoPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        finished: (selects: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
+        bangumiSeasonBean: Bangumi,
+        videoPageMutableList: MutableList<Bangumi.Result.Episode>,
+        finished: (selects: MutableList<Bangumi.Result.Episode>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
@@ -1916,10 +1915,10 @@ object DialogUtils {
             val userVipState = (context as AsVideoActivity).userSpaceInformation.vip.status
             // 会员判断
             val epData =
-                mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
+                mutableListOf<Bangumi.Result.Episode>() + bangumiSeasonBean.result.episodes.filter {
                     !(userVipState != 1 && it.badge == "会员")
                 }
-    }
+        }
         return bottomSheetDialog
     }
 

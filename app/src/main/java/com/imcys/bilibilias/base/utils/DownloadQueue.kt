@@ -21,6 +21,7 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -32,8 +33,7 @@ import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
-import com.imcys.bilibilias.common.base.model.VideoDetails
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
@@ -281,8 +281,8 @@ class DownloadQueue @Inject constructor() :
             var cid = 0L
             var videoBvid = ""
             task.downloadTaskDataBean.bangumiSeasonBean?.apply {
-                videoTitle = share_copy
-                videoPageTitle = long_title
+                videoTitle = shareCopy
+                videoPageTitle = longTitle
                 avid = aid
                 cid = this.cid
                 videoBvid = bvid
@@ -548,15 +548,15 @@ class DownloadQueue @Inject constructor() :
             type = BANGUMI_TYPE
             // av过滤
             val pageRegex = Regex("""(?<=(第))([0-9]+)""")
-            pageThisNum = if (pageRegex.containsMatchIn(share_copy)) {
+            pageThisNum = if (pageRegex.containsMatchIn(shareCopy)) {
                 pageRegex.find(
-                    share_copy,
+                    shareCopy,
                 )?.value!!.toInt()
             } else {
                 TODO()
             }
 
-            shareUrl = share_url
+            shareUrl = shareUrl
 
             downloadTaskDataBean.dashBangumiPlayBean?.result?.support_formats?.forEach {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
@@ -694,10 +694,10 @@ class DownloadQueue @Inject constructor() :
         }
         HttpUtils.get(
             "${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid",
-            BangumiSeasonBean::class.java,
+            Bangumi::class.java,
         ) {
-            val ssid = it.result.season_id
-            videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
+            val ssid = it.result.seasonId
+            videoEntry = videoEntry.replace("SSID编号", (it.result.seasonId).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
@@ -803,11 +803,11 @@ class DownloadQueue @Inject constructor() :
             }
 
             val bangumiSeasonBean =
-                KtHttpUtils.asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid")
+                KtHttpUtils.asyncGet<Bangumi>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid")
 
-            val ssid = bangumiSeasonBean.result.season_id
+            val ssid = bangumiSeasonBean.result.seasonId
             videoEntry =
-                videoEntry.replace("SSID编号", (bangumiSeasonBean.result.season_id).toString())
+                videoEntry.replace("SSID编号", (bangumiSeasonBean.result.seasonId).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
 
             val ssidDocument = biliBiliDocument?.findFile("s_$ssid") ?: run {
