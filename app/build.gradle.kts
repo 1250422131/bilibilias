@@ -157,6 +157,7 @@ dependencies {
      */
     implementation(libs.coil)
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     /**
      * kotlin 日期时间库
