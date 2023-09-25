@@ -63,7 +63,7 @@ uiTimateBarX = "0.8.0"
 work-runtime-ktx = "2.8.1"
 xutils = "3.9.0"
 activity-compose = "1.7.2"
-compose-bom = "2023.09.00"
+compose-bom = "2023.09.01"
 
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -178,9 +178,9 @@ uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.r
 
 xutils = { group = "org.xutils", name = "xutils", version.ref = "xutils" }
 
-coil-compose = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
-coil-gif = { group = "io.coil-kt",name = "coil-gif", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
