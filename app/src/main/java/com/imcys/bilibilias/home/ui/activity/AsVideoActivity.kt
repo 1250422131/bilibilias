@@ -5,9 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,14 +21,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,17 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -58,7 +48,6 @@ import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -72,8 +61,8 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
@@ -183,8 +172,10 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                                             asJzvdStd.startButton.performClick()
                                         }
                                     }
-                                    appAsJzvdStd.setUp("http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4"
-                                        , "饺子闭眼睛")
+                                    appAsJzvdStd.setUp(
+                                        "http://jzvd.nathen.cn/c6e3dc12a1154626b3476d9bf3bd7266/6b56c5f0dc31428083757a45764763b0-5287d2089db37e62345123a1be272f8b.mp4",
+                                        "饺子闭眼睛"
+                                    )
                                     appAsJzvdStd.posterImageUrl = "http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640"
                                     setAsJzvdConfig(uiState.播放地址, uiState.title)
                                     appAsJzvdStd
@@ -207,31 +198,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                             .verticalScroll(rememberScrollState())
                     ) {
                         // 当前是展开还是收起
-                        var expanded by rememberSaveable { mutableStateOf(false) }
-                        Row(
-                            Modifier
-                                .noRippleClickable { expanded = !expanded }
-                        ) {
-                            Text(
-                                text = uiState.title,
-                                modifier = Modifier
-                                    .weight(10f)
-                                    .animateContentSize(animationSpec = tween(100)),
-                                overflow = TextOverflow.Ellipsis,
-                                softWrap = expanded,
-                                onTextLayout = {
-                                    it.size.height
-                                }
-                            )
-                            Icon(
-                                if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                contentDescription = null,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
-                        AnimatedVisibility(visible = expanded) {
-                            Text(uiState.descV2 ?: uiState.desc, fontSize = 12.sp, fontWeight = FontWeight.Thin)
-                        }
+
                         VideoActions()
                         Row(Modifier.fillMaxSize()) {
                             Text("选集")
@@ -449,7 +416,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * @param position Int
      */
     private fun updateBangumiInformation(
-        data: BangumiSeasonBean.ResultBean.EpisodesBean,
+        data: Bangumi.Result.Episode,
     ) {
         val userVipState = userSpaceInformation.vip.status
         if (data.badge == "会员" && userVipState != 1) {
@@ -484,7 +451,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 会员检测，确保用户有会员，或者无会员的提示
      * @param bangumiSeasonBean BangumiSeasonBean
      */
-    private fun isMember(bangumiSeasonBean: BangumiSeasonBean) {
+    private fun isMember(bangumiSeasonBean: Bangumi) {
         var memberType = false
 
         val userVipState = userSpaceInformation.vip.status
@@ -647,7 +614,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         jzDataSource.headerMap[USER_AGENT] = BROWSER_USER_AGENT
 
         asJzvdStd.setUp(jzDataSource, JzvdStd.SCREEN_NORMAL)
-
         asJzvdStd.setPlayStateListener(object : JzbdStdInfo {
 
             override fun statePlaying(state: Int) {

@@ -23,10 +23,10 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.common.base.model.VideoDetails
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.UserRepository
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.asToast
@@ -128,7 +128,7 @@ class AsVideoViewModel @Inject constructor(
     fun downloadBangumiVideo(
         view: View,
         videoDetails: VideoDetails,
-        bangumiSeasonBean: BangumiSeasonBean,
+        bangumiSeasonBean: Bangumi,
     ) {
         val context = view.context
 
@@ -304,12 +304,12 @@ class AsVideoViewModel @Inject constructor(
                     .addParam("like", "1")
                     .addParam("bvid", bvid)
                     .asyncPost<LikeVideoBean>(BilibiliApi.videLikePath)
-
-            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
+            // (context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0
+            if (true) {
                 launchUI {
                     when (likeVideoBean.code) {
                         0 -> {
-                            context.binding.archiveHasLikeBean?.data = 1
+                            // context.binding.archiveHasLikeBean?.data = 1
                             // context.binding.asVideoLikeBt.isSelected = true
                         }
 
@@ -350,7 +350,7 @@ class AsVideoViewModel @Inject constructor(
                 when (likeVideoBean.code) {
                     0 -> {
                         (context as AsVideoActivity).binding.apply {
-                            archiveHasLikeBean?.data = 0
+                            // archiveHasLikeBean?.data = 0
                             // asVideoLikeBt.isSelected = false
                         }
                     }
@@ -383,7 +383,7 @@ class AsVideoViewModel @Inject constructor(
                 .asyncPost<VideoCoinAddBean>(BilibiliApi.videoCoinAddPath)
 
             launchUI {
-                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
+                // (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
                 // context.binding.asVideoThrowBt.isSelected = true
             }
         }
@@ -470,7 +470,7 @@ class AsVideoViewModel @Inject constructor(
                     .asyncPost<CollectionResultBean>(BilibiliApi.videoCollectionSetPath)
 
             if (collectionResultBean.code == 0) {
-                context.binding.archiveFavouredBean?.isFavoured = true
+                // context.binding.archiveFavouredBean?.isFavoured = true
                 // context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
@@ -494,9 +494,9 @@ class AsVideoViewModel @Inject constructor(
             Timber.d(剧集基本信息.toString())
             _videoUiState.update {
                 it.copy(
-                    cid = 剧集基本信息.episodes[0].cid,
-                    totalEpisodes = 剧集基本信息.total,
-                    episodes = 剧集基本信息.episodes
+                    // cid = 剧集基本信息.episode[0].cid,
+                    // totalEpisodes = 剧集基本信息.total,
+                    // episodes = 剧集基本信息.episodes
                 )
             }
         }
@@ -517,7 +517,7 @@ class AsVideoViewModel @Inject constructor(
         quality: Int,
         format: Int,
         allow4KVideo: Int
-    ) = videoRepository.getMp4视频流地址(bvid, cid, quality, format, allow4KVideo)
+    ) = videoRepository.getMP4VideoStream(bvid, cid, quality, format, allow4KVideo)
 
     suspend fun getDash(
         bvid: String,
@@ -525,7 +525,7 @@ class AsVideoViewModel @Inject constructor(
         quality: Int,
         format: Int,
         allow4KVideo: Int
-    ) = videoRepository.getDash视频流地址(bvid, cid, quality, format, allow4KVideo)
+    ) = videoRepository.getDashVideoStream(bvid, cid, quality, format, allow4KVideo)
 
     fun get番剧视频流(epID: String, cid: Long) {
         launchIO {
@@ -553,5 +553,5 @@ data class VideoUiSate(
     val ownerName: String = "",
 
     val totalEpisodes: Int = 0,
-    val episodes: List<BangumiSeasonBean.ResultBean.EpisodesBean> = emptyList(),
+    val episodes: List<Bangumi.Result.Episode> = emptyList(),
 )
