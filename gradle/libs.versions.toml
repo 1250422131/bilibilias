@@ -25,15 +25,16 @@ jiaozivideoplayer = "7.7.0"
 junit = "4.13.2"
 jxl = "2.6.12"
 kcomponent-compiler = "1.0.0-rc4"
-kotlin = "1.8.10"
+kotlin = "1.9.10"
 kotlinx-coroutines-android = "1.7.1"
-ksp = "1.8.10-1.0.9"
+ksp = "1.9.10-1.0.13"
 ktor = "2.3.1"
 lifecycle = "2.6.1"
 lottie = "6.1.0"
 material = "1.9.0"
 mmkv = "1.2.15"
 mtjSdkCircle = "4.0.7.5"
+napier = "2.6.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
 room = "2.5.2"
@@ -56,6 +57,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 hbmartin-detekt-rules = { module = "com.github.hbmartin:hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
