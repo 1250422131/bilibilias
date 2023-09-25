@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -32,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import cn.jzvd.Jzvd
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imcys.bilibilias.base.router.Screen
 import com.imcys.bilibilias.ui.authentication.login.loginAuthRoute
@@ -44,6 +44,7 @@ import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController,
                     startDestination = ROUTE_SPLASH,
-                    Modifier.statusBarsPadding()
+                    Modifier
                 ) {
                     splashRoute(
                         onNavigateToAuthMethod = navController::navigateToAuthMethod,

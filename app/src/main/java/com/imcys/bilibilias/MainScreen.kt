@@ -17,6 +17,8 @@ import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.ui.download.downloadRoute
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
+import com.imcys.bilibilias.ui.player.navigateToPlayer
+import com.imcys.bilibilias.ui.player.playerRoute
 import com.imcys.bilibilias.ui.tool.toolRoute
 import com.imcys.bilibilias.ui.user.userRoute
 
@@ -28,9 +30,11 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         startDestination = ROUTE_HOME,
     ) {
         homeRoute()
-        toolRoute(onNavigateToPlayer = {}, onBack = navController::navigateUp)
+        toolRoute(onNavigateToPlayer = navController::navigateToPlayer, onBack = navController::navigateUp)
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
+
+        playerRoute(onBack = navController::navigateUp)
     }
 }
 
