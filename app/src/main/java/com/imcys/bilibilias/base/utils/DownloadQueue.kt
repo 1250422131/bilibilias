@@ -10,7 +10,6 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
-import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -460,7 +459,7 @@ class DownloadQueue @Inject constructor() :
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -937,11 +936,11 @@ class DownloadQueue @Inject constructor() :
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
                     //实验性的，请选择copy，我只是在测试自己的库
-                    add(it.deepCopy())
+                    add(it.copy())
                 }
 
                 queue.forEach {
-                    add(it.deepCopy())
+                    add(it.copy())
                 }
             }
 

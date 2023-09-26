@@ -42,6 +42,9 @@ object BilibiliApi {
     // 对视频进行点赞
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
+    //视频V2接口信息->名称暂定 要求AID CID同时存在
+    const val videoInfoV2 = "x/player/wbi/v2"
+
     // 对视频进行投币
     const val videAddCoinPath = ROAM_API + "x/web-interface/coin/add"
 
@@ -59,6 +62,7 @@ object BilibiliApi {
 
     // 当前弹幕缓存
     const val thisVideoDanmakuPath = ROAM_API + "x/v2/dm/web/seg.so"
+
 
     // 视频列表
     const val videoPageListPath = ROAM_API + "x/player/pagelist"
