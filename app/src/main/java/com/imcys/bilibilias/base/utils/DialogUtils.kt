@@ -38,9 +38,11 @@ import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
-import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
 import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
@@ -508,7 +510,7 @@ object DialogUtils {
         videoDetails: VideoDetails,
         qn: Int,
         fnval: Int,
-        videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        videoPageMutableList: MutableList<VideoPageListData>,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -623,7 +625,7 @@ object DialogUtils {
     private fun loadVideoToneQualityList(
         context: Context,
         dashVideoPlayBean: DashVideoPlayBean,
-        selectedResult: (audio: DashVideoPlayBean.Dash.Audio) -> Unit,
+        selectedResult: (audio: Dash.Audio) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogToneQualityBinding.inflate(LayoutInflater.from(context))
 
@@ -695,7 +697,7 @@ object DialogUtils {
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
     ): BottomSheetDialog {
-        var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
+        var videoPageMutableList = mutableListOf<VideoPageListData>()
         var selectDefinition = 80
         var toneQuality = 30280
 
@@ -703,7 +705,7 @@ object DialogUtils {
         var downloadTool = APP_DOWNLOAD
         var downloadCondition = VIDEOANDAUDIO
 
-        videoPageMutableList.add(videoPageListData.data[0])
+        // videoPageMutableList.add(videoPageListData.data[0])
 
         val binding = DialogDownloadVideoBinding.inflate(LayoutInflater.from(context))
 
@@ -727,18 +729,18 @@ object DialogUtils {
         // mDialogBehavior.peekHeight = 600
         binding.apply {
             // 子集选择 默认选中1集
-            videoPageListData.data[0].selected = 1
+            // videoPageListData.data[0].selected = 1
             dialogDlVideoDiversityLy.setOnClickListener {
-                loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
-                    videoPageMutableList = it1
-                    var videoPageMsg = ""
-                    if (videoPageMutableList.size != 1) {
-                        videoPageMutableList.forEach {
-                            videoPageMsg = "$videoPageMsg${it.part} "
-                        }
-                        dialogDlVideoDiversityTx.text = videoPageMsg
-                    }
-                }.show()
+                // loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
+                //     videoPageMutableList = it1
+                //     var videoPageMsg = ""
+                //     if (videoPageMutableList.size != 1) {
+                //         videoPageMutableList.forEach {
+                //             videoPageMsg = "$videoPageMsg${it.part} "
+                //         }
+                //         dialogDlVideoDiversityTx.text = videoPageMsg
+                //     }
+                // }.show()
             }
 
             dialogDlVideoDefinitionLy.setOnClickListener {
@@ -1177,11 +1179,11 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        videoPageMutableList: MutableList<VideoPageListData>,
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
-            val dataBean: VideoPageListData.DataBean,
+            val dataBean: VideoPageListData,
         )
 
         context.toast("已添加到下载队列")
@@ -1274,11 +1276,11 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         downloadTool: Int,
-        videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        videoPageMutableList: MutableList<VideoPageListData>,
     ) {
         data class VideoData(
             val videoPlayDetails: VideoPlayDetails,
-            val dataBean: VideoPageListData.DataBean,
+            val dataBean: VideoPageListData,
         )
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
@@ -1373,7 +1375,7 @@ object DialogUtils {
      */
     private fun addFlvTask(
         context: Context,
-        dataBean: VideoPageListData.DataBean,
+        dataBean: VideoPageListData,
         videoPlayDetails: VideoPlayDetails,
         qn: Int,
         fnval: Int,
@@ -1692,7 +1694,7 @@ object DialogUtils {
      */
     private fun addTask(
         context: Context,
-        dataBean: VideoPageListData.DataBean,
+        dataBean: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
         qn: Int,
         fnval: Int,
@@ -1867,8 +1869,8 @@ object DialogUtils {
     private fun loadVideoPageDialog(
         context: Context,
         videoPageListData: VideoPageListData,
-        videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        finished: (selects: MutableList<VideoPageListData.DataBean>) -> Unit,
+        videoPageMutableList: MutableList<VideoPageListData>,
+        finished: (selects: MutableList<VideoPageListData>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
@@ -1886,7 +1888,7 @@ object DialogUtils {
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
-            val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
+            val pageData = mutableListOf<VideoPageListData>() + videoPageListData
             return bottomSheetDialog
         }
     }

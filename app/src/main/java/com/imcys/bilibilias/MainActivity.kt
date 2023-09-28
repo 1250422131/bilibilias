@@ -31,7 +31,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import cn.jzvd.Jzvd
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imcys.bilibilias.base.router.Screen
 import com.imcys.bilibilias.ui.authentication.login.loginAuthRoute
@@ -44,7 +46,6 @@ import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -79,13 +80,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterialNavigationApi::class)
 @Composable
 fun Screen() {
-    val navController = rememberNavController()
-    Scaffold(Modifier.fillMaxSize(), bottomBar = {
-        AsBottomBar(navController)
-    }) {
-        MainScreen(navController, modifier = Modifier.padding(it))
+    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val navController = rememberNavController(bottomSheetNavigator)
+    ModalBottomSheetLayout(bottomSheetNavigator) {
+        Scaffold(Modifier.fillMaxSize(), bottomBar = {
+            AsBottomBar(navController)
+        }) {
+            MainScreen(navController, modifier = Modifier.padding(it))
+        }
     }
 }
 

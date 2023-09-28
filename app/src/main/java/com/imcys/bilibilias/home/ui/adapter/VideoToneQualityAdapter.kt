@@ -6,12 +6,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
+import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.databinding.ItemToneQualityBinding
 
 class VideoToneQualityAdapter(
     private val videoAudioBeans: MutableList<DashVideoPlayBean>,
-    val selectedResult: (audio: DashVideoPlayBean.Dash.Audio) -> Unit,
+    val selectedResult: (audio: Dash.Audio) -> Unit,
 ) :
     RecyclerView.Adapter<ViewHolder>() {
     private var selectedItem = 0

@@ -29,7 +29,6 @@ class AsJzVideo : JzvdStd {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
     override fun init(context: Context?) {
         super.init(context)
         initView()

@@ -134,38 +134,22 @@ data class VideoPlayDetails(
     val timelength: Int = 0, // 233643
     @SerialName("video_codecid")
     val videoCodecid: Int = 0 // 7
-) {
-    @Serializable
-    data class Durl(
-        @SerialName("ahead")
-        val ahead: String = "",
-        @SerialName("backup_url")
-        val backupUrl: List<String> = listOf(),
-        @SerialName("length")
-        val length: Int = 0, // 233643
-        @SerialName("order")
-        val order: Int = 0, // 1
-        @SerialName("size")
-        val size: Int = 0, // 12448260
-        @SerialName("url")
-        val url: String = "", // https://xy123x246x198x205xy.mcdn.bilivideo.cn:4483/upgcxcode/72/03/429140372/429140372-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1668752789&gen=playurlv2&os=mcdn&oi=1781509104&trid=0000097663fae882444ea5fdb03b1425fb30u&mid=351201307&platform=pc&upsig=98cd9cd8ed75a08f6219513dfbcbef37&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=1002547&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=53426&logo=A0000001
-        @SerialName("vhead")
-        val vhead: String = ""
-    )
+)
 
-    @Serializable
-    data class SupportFormat(
-        @SerialName("codecs")
-        val codecs: List<String>? = null, // null
-        @SerialName("display_desc")
-        val displayDesc: String = "", // 1080P
-        @SerialName("format")
-        val format: String = "", // mp4
-        @SerialName("new_description")
-        val newDescription: String = "", // 1080P 高清
-        @SerialName("quality")
-        val quality: Int = 0, // 80
-        @SerialName("superscript")
-        val superscript: String = ""
-    )
-}
+@Serializable
+data class Durl(
+    @SerialName("ahead")
+    val ahead: String = "",
+    @SerialName("backup_url")
+    val backupUrl: List<String> = listOf(),
+    @SerialName("length")
+    val length: Int = 0, // 233643
+    @SerialName("order")
+    val order: Int = 0, // 1
+    @SerialName("size")
+    val size: Int = 0, // 12448260
+    @SerialName("url")
+    val url: String = "", // https://xy123x246x198x205xy.mcdn.bilivideo.cn:4483/upgcxcode/72/03/429140372/429140372-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1668752789&gen=playurlv2&os=mcdn&oi=1781509104&trid=0000097663fae882444ea5fdb03b1425fb30u&mid=351201307&platform=pc&upsig=98cd9cd8ed75a08f6219513dfbcbef37&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=1002547&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=53426&logo=A0000001
+    @SerialName("vhead")
+    val vhead: String = ""
+)

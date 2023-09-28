@@ -7,11 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemSubsectionBinding
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 
 class SubsectionAdapter(
-    val datas: MutableList<VideoPageListData.DataBean>,
-    val onClickMethod: (datas: VideoPageListData.DataBean, position: Int) -> Unit,
+    val datas: MutableList<VideoPageListData>,
+    val onClickMethod: (datas: VideoPageListData, position: Int) -> Unit,
 ) :
     RecyclerView.Adapter<SubsectionAdapter.ViewHolder>() {
 
@@ -33,25 +33,25 @@ class SubsectionAdapter(
         val binding = DataBindingUtil.getBinding<ItemSubsectionBinding>(holder.itemView)
 
         if (clickItem == -1) {
-            datas[0].checkState = 1
+            // datas[0].checkState = 1
         }
 
-        binding?.dataBean = datas[position]
+        // binding?.dataBean = datas[position]
 
 
         holder.itemView.setOnClickListener {
 
             if (clickItem == -1) {
-                datas[0].checkState = 0
+                // datas[0].checkState = 0
                 clickItem = 0
             }
 
-            datas[clickItem].checkState = 0
+            // datas[clickItem].checkState = 0
             notifyItemChanged(clickItem)
 
             clickItem = position
 
-            datas[position].checkState = 1
+            // datas[position].checkState = 1
 
             notifyItemChanged(position)
             onClickMethod(datas[position], position)

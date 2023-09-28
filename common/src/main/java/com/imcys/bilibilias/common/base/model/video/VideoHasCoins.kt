@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
  * multiply : 2
  */
 @Serializable
-data class VideoHasCoins(private val multiply: Int = 0) {
+data class VideoHasCoins(val multiply: Int = 0) {
     @Transient
     val coins: Boolean = multiply > 0
 }

@@ -36,6 +36,7 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -122,12 +123,18 @@ class NetworkModule {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val convertPlugin =
         createClientPlugin("TransformData") {
             transformResponseBody { response, content, requestedType ->
                 try {
+                    Timber.tag("TransformData").d("type=$requestedType")
+                    if (requestedType.type == ByteReadChannel::class) return@transformResponseBody null
+                    /**
+                     * 实验性使用
+                     */
+                    // json.decodeFromStream(serializer(requestedType.reifiedType), response.readBytes().inputStream())
                     val rep = response.bodyAsText()
-                    Timber.tag("TransformData").d("type=${requestedType.reifiedType}")
                     val res = json.parseToJsonElement(rep).jsonObject
                     val code = res["code"]?.jsonPrimitive?.intOrNull
                     if (code != SUCCESS) {
@@ -165,7 +172,7 @@ class NetworkModule {
                         else -> null
                     }
                 } catch (e: Exception) {
-                    Timber.tag("TransformData").e(e)
+                    Timber.tag("TransformDataException").e(e)
                     null
                 }
             }

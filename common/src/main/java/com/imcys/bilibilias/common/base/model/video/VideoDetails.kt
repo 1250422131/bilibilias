@@ -299,16 +299,6 @@ data class VideoDetails(
     )
 
     @Serializable
-    data class Dimension(
-        @SerialName("height")
-        val height: Int = 0,
-        @SerialName("rotate")
-        val rotate: Int = 0,
-        @SerialName("width")
-        val width: Int = 0
-    )
-
-    @Serializable
     data class HonorReply(
         @SerialName("honor")
         val honor: List<Honor> = listOf()
@@ -354,17 +344,7 @@ data class VideoDetails(
         val vid: String = "",
         @SerialName("weblink")
         val weblink: String = ""
-    ) {
-        @Serializable
-        data class Dimension(
-            @SerialName("height")
-            val height: Int = 0,
-            @SerialName("rotate")
-            val rotate: Int = 0,
-            @SerialName("width")
-            val width: Int = 0
-        )
-    }
+    )
 
     @Serializable
     data class Rights(

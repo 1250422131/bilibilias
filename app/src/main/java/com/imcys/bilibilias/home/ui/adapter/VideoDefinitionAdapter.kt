@@ -24,12 +24,12 @@ class VideoDefinitionAdapter(
         val binding =
             DataBindingUtil.inflate<ItemVideoDefinitionBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_video_definition, parent, false
+                R.layout.item_video_definition,
+                parent,
+                false
             )
 
-
         return ViewHolder(binding.root)
-
     }
 
     @SuppressLint("ResourceAsColor")
@@ -39,26 +39,21 @@ class VideoDefinitionAdapter(
             itemCollectionButton.text = datas[position]
 
             binding.itemCollectionButton.setOnClickListener {
-
                 if (selectItem != -1) {
                     selectBinding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
                 }
                 binding.itemCollectionButton.setBackgroundResource(R.color.color_primary)
 
-                //先向外传递
+                // 先向外传递
                 selectedResult(position, selectItem)
-                //再改变记录
+                // 再改变记录
                 selectBinding = binding
                 selectItem = position
-
             }
         }
-
     }
 
     override fun getItemCount(): Int {
         return datas.size
     }
-
-
 }

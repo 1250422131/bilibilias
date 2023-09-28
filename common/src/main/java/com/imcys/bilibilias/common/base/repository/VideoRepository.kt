@@ -4,27 +4,25 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.AID
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BVID
-import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.ofMap
 import com.imcys.bilibilias.common.base.extend.print
 import com.imcys.bilibilias.common.base.extend.safeGet
+import com.imcys.bilibilias.common.base.extend.safeGetText
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
-import com.imcys.bilibilias.common.base.model.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoCollection
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.model.video.VideoHasCoins
 import com.imcys.bilibilias.common.base.model.video.VideoHasLike
+import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
 import io.ktor.client.HttpClient
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,15 +36,23 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
         isLenient = true
         ignoreUnknownKeys = true
     }
+
+    suspend fun getVideoPageList(bvid: String): List<VideoPageListData> {
+        val data = httpClient.safeGet<List<VideoPageListData>>(BilibiliApi.videoPageListPath) {
+            parameter(BVID, bvid)
+        }.getOrThrow()
+        return data
+    }
+
     suspend fun get番剧视频流(epID: String, cid: Long): BangumiPlayBean.Result {
-        val text = httpClient.get(BilibiliApi.bangumiPlayPath) {
-            header(REFERER, BILIBILI_URL)
+        val text = httpClient.safeGetText(BilibiliApi.bangumiPlayPath) {
+            header(HttpHeaders.Referrer, BILIBILI_URL)
             parameter("ep_id", epID)
             parameter("cid", cid)
             parameter("qn", 64)
             parameter("fnval", 0)
             parameter("fourk", 1)
-        }.bodyAsText()
+        }.getOrThrow()
         Timber.tag(TAG).d(text)
         return json.decodeFromString<BangumiPlayBean>(text).result
     }
@@ -54,9 +60,9 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
     private val _bangumi = MutableSharedFlow<Bangumi.Result>(1, 1)
     val bangumi = _bangumi.asSharedFlow()
     suspend fun get剧集基本信息(id: String) {
-        val text = httpClient.get(BilibiliApi.bangumiVideoDataPath) {
+        val text = httpClient.safeGetText(BilibiliApi.bangumiVideoDataPath) {
             parameter("ep_id", id)
-        }.bodyAsText()
+        }.getOrThrow()
         val result = json.decodeFromString<Bangumi>(text).result
         Timber.tag(TAG).d(result.ofMap()?.print())
         _bangumi.emit(result)
@@ -103,7 +109,7 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
         allow4KVideo: Int
     ) =
         httpClient.safeGet<T>(BilibiliApi.videoPlayPath) {
-            header(REFERER, BILIBILI_URL)
+            header(HttpHeaders.Referrer, BILIBILI_URL)
             parameter("bvid", bvid)
             parameter("cid", cid)
             parameter("qn", quality)
@@ -146,36 +152,23 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
             parameter(pair.first, pair.second)
         }
 
-    private val _isLikeFlow = MutableSharedFlow<Boolean>(1, 1)
-    val isLikeFlow = _isLikeFlow.asSharedFlow()
-
     /**
      * 点赞
      */
-    suspend fun hasLike(bvid: String) {
+    suspend fun hasLike(bvid: String): VideoHasLike =
         httpClient.safeGet<VideoHasLike>(BilibiliApi.videoHasLike) {
             parameter(BVID, bvid)
-        }.onSuccess {
-            _isLikeFlow.emit(it.like)
-        }
-    }
-
-    private val _isCoinsFlow = MutableStateFlow(false)
-    val isCoinsFlow = _isCoinsFlow.asStateFlow()
+        }.getOrElse { VideoHasLike() }
 
     /**
      * 投币
      */
-    suspend fun hasCoins(bvid: String) {
+    suspend fun hasCoins(bvid: String): VideoHasCoins =
         httpClient.safeGet<VideoHasCoins>(BilibiliApi.videoHasCoins) {
             parameter(BVID, bvid)
-        }.onSuccess {
-            _isCoinsFlow.emit(it.coins)
+        }.getOrElse {
+            VideoHasCoins()
         }
-    }
-
-    private val _isCollectionFlow = MutableStateFlow(false)
-    val isCollectionFlow = _isCollectionFlow.asStateFlow()
 
     /**
      * 收藏
@@ -184,13 +177,10 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
      *
      * aid=BV1Bb411H7Dv
      */
-    suspend fun hasCollection(id: String) {
+    suspend fun hasCollection(id: String): VideoCollection =
         httpClient.safeGet<VideoCollection>(BilibiliApi.videoHasCollection) {
             parameter(AID, id)
-        }.onSuccess {
-            _isCollectionFlow.emit(it.isFavoured)
-        }
-    }
+        }.getOrElse { VideoCollection() }
 }
 
 private const val TAG = "VideoRepository"

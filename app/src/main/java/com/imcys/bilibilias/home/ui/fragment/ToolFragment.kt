@@ -23,7 +23,7 @@ import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.OldToolItemBean
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
@@ -141,7 +141,7 @@ class ToolFragment : BaseFragment() {
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
             KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
+                .asyncGet<Bangumi>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
         }
     }
 

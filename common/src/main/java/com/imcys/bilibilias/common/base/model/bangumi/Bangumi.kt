@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.common.base.model.bangumi
 
+import com.imcys.bilibilias.common.base.model.video.Dimension
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1435,16 +1436,6 @@ data class Bangumi(
                 val bgColorNight: String = "",
                 @SerialName("text")
                 val text: String = ""
-            )
-
-            @Serializable
-            data class Dimension(
-                @SerialName("height")
-                val height: Int = 0,
-                @SerialName("rotate")
-                val rotate: Int = 0,
-                @SerialName("width")
-                val width: Int = 0
             )
 
             @Serializable
