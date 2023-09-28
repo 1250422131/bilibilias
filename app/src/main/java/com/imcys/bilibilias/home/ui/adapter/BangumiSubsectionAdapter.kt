@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.databinding.ItemBangumiSubsectionBinding
-import com.imcys.bilibilias.common.base.model.BangumiSeasonBean
 
 class BangumiSubsectionAdapter(
-    val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+    val datas: MutableList<Bangumi.Result.Episode>,
     val defaultCid: Long,
-    val onClickMethod: (datas: BangumiSeasonBean.ResultBean.EpisodesBean, position: Int) -> Unit,
+    val onClickMethod: (datas: Bangumi.Result.Episode, position: Int) -> Unit,
 ) : RecyclerView.Adapter<BangumiSubsectionAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

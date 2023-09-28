@@ -63,11 +63,11 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
-import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
@@ -94,7 +94,7 @@ import java.util.zip.Inflater
 import kotlin.collections.set
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
+class AsVideoActivity : BaseActivity<com.imcys.bilibilias.databinding.ActivityAsVideoBinding>() {
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -486,15 +486,15 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun loadVideoList() {
         launchIO {
-            val videoPlayListData = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
+            val videoPlayListData = listOf<VideoPageListData>()
+            KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                 .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
 
             launchUI {
                 binding.apply {
-                    binding.videoPageListData = videoPlayListData
                     // asVideoSubsectionRv.adapter =
                     // 将子集切换后的逻辑交给activity完成
-                    SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
+                    SubsectionAdapter(videoPlayListData.toMutableList()) { data, _ ->
                         // 更新CID刷新播放页面
                         cid = data.cid
                         // 暂停播放
@@ -548,7 +548,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      */
     private fun loadUserCardData() {
         launchIO {
-            binding.userCardBean = viewModel.loadUserCardData()
+            viewModel.loadUserCardData()
         }
     }
 

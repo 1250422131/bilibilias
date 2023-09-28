@@ -32,7 +32,7 @@
 
         <variable
             name="VideoPageListData"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoPageListData" />
 
         <variable
             name="BangumiPlayBean"

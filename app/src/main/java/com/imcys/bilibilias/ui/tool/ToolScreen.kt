@@ -86,9 +86,7 @@ fun ToolScreen(
             TopAppBar(title = {
                 Text(
                     stringResource(R.string.app_fragment_tool_title),
-                    Modifier
-                        .size(24.dp)
-                        .padding(20.dp),
+                    Modifier,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -131,19 +129,19 @@ fun ToolScreen(
                 isError = state.inputError
             )
             AnimatedVisibility(visible = state.isShowVideoCard) {
-                if (state.videoType is VideoType.EP){
+                if (state.videoType is VideoType.EP) {
                     VideoCard(
-                        bvid =state.bangumi.episodes[0].bvid,
-                        pic = state.videoDetails.pic,
+                        bvid = state.bangumi.episodes[0].bvid,
+                        pic = state.bangumi.cover,
                         title = state.bangumi.title,
-                        desc = state.videoDetails.desc,
+                        desc = state.bangumi.evaluate,
                         view = state.bangumi.stat.views.digitalConversion(),
                         danmaku = state.bangumi.stat.danmakus.digitalConversion(),
                         duration = 0,
                         onNavigateToPlayer = onNavigateToPlayer,
                         modifier = Modifier.animateContentSize()
                     )
-                }else{
+                } else {
                     VideoCard(
                         bvid = state.videoDetails.bvid,
                         pic = state.videoDetails.pic,
@@ -235,12 +233,16 @@ fun VideoCard(
                                     .toFloat()
                             ),
                             size = Size(
-                                (textWidth + 3.dp
-                                    .roundToPx()
-                                    .toFloat()),
-                                (textHeight + 2.dp
-                                    .roundToPx()
-                                    .toFloat())
+                                (
+                                    textWidth + 3.dp
+                                        .roundToPx()
+                                        .toFloat()
+                                    ),
+                                (
+                                    textHeight + 2.dp
+                                        .roundToPx()
+                                        .toFloat()
+                                    )
                             )
                         )
                         drawText(measure, topLeft = topLeft)

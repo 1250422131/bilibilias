@@ -19,7 +19,7 @@ fun NavController.navigateToTool() {
 
 fun NavGraphBuilder.toolRoute(
     onNavigateToPlayer: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) = composable(ROUTE_TOOL) {
     ToolRoute(onNavigateToPlayer, onBack)
 }

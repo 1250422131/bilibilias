@@ -44,7 +44,7 @@ object BilibiliApi {
     const val thisVideoDanmakuPath = ROAM_API + "x/v2/dm/web/seg.so"
 
     // 视频列表
-    const val videoPageListPath = ROAM_API + "x/player/pagelist"
+    const val videoPageListPath = "x/player/pagelist"
 
     // 修改视频收藏
     const val videoCollectionSetPath = ROAM_API + "x/v3/fav/resource/deal"

@@ -70,7 +70,7 @@ dependencies {
 
     // hilt库，实现控制反转
     api(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     api(libs.androidx.hilt.navigation.compose)
 
     // 核心代码库

@@ -19,8 +19,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DonateActivity : BaseActivity<ActivityDonateBinding>() {
     private val donateMutableList = mutableListOf<DonateViewBean>()
-
-    @Inject
+    
     lateinit var donateAdapter: DonateItemAdapter
     override fun getLayoutRes(): Int = R.layout.activity_donate
 

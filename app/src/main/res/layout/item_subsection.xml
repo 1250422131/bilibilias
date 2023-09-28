@@ -5,15 +5,14 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData.DataBean" />
+            type="com.imcys.bilibilias.common.base.model.video.VideoPageListData" />
     </data>
-
+    <!--android:background="@{DataBean.checkState == 1 ? @drawable/subsection_bg : @drawable/subsection_false_bg}"-->
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/item_subsection_ly"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@{DataBean.checkState == 1 ? @drawable/subsection_bg : @drawable/subsection_false_bg}"
         android:gravity="center"
         android:padding="10dp">
 

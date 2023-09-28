@@ -120,7 +120,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     ksp(libs.kcomponent.compiler)
     implementation(libs.material)
@@ -139,6 +139,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.navigation.material)
     implementation(libs.material3.window.size)
     implementation(libs.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
@@ -163,4 +164,6 @@ dependencies {
      * kotlin 日期时间库
      */
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.serialization.cbor)
 }
