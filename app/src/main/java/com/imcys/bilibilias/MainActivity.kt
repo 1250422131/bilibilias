@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,7 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -46,6 +51,7 @@ import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -85,9 +91,20 @@ class MainActivity : ComponentActivity() {
 fun Screen() {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val navController = rememberNavController(bottomSheetNavigator)
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val bottomBarState by remember {
+        derivedStateOf { navBackStackEntry?.destination?.route in itemsRoutes }
+    }
+    Timber.d(navBackStackEntry?.destination?.route)
     ModalBottomSheetLayout(bottomSheetNavigator) {
         Scaffold(Modifier.fillMaxSize(), bottomBar = {
-            AsBottomBar(navController)
+            AnimatedVisibility(
+                visible = bottomBarState,
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it }),
+            ) {
+                AsBottomBar(navController)
+            }
         }) {
             MainScreen(navController, modifier = Modifier.padding(it))
         }
@@ -159,4 +176,10 @@ private val items = listOf(
     Screen.Tool,
     Screen.Download,
     Screen.User,
+)
+private val itemsRoutes = listOf(
+    Screen.Home.route,
+    Screen.Tool.route,
+    Screen.Download.route,
+    Screen.User.route,
 )
