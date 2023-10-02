@@ -14,7 +14,6 @@ ksp {
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
-    buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21

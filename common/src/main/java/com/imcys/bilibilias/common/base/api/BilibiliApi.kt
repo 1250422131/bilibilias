@@ -43,7 +43,7 @@ object BilibiliApi {
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
     //视频V2接口信息->名称暂定 要求AID CID同时存在
-    const val videoInfoV2 = "x/player/wbi/v2"
+    const val videoInfoV2 =  ROAM_API + "x/player/wbi/v2"
 
     // 对视频进行投币
     const val videAddCoinPath = ROAM_API + "x/web-interface/coin/add"

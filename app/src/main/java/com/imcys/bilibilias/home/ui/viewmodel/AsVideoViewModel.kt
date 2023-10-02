@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.viewmodel
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Build
 import android.view.View
@@ -24,13 +25,19 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.danmaku.change.CCJsonToAss
 import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.BufferedSink
@@ -38,12 +45,17 @@ import okio.buffer
 import okio.sink
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 /**
  * 解析视频的ViewModel
  */
 
-class AsVideoViewModel : ViewModel() {
+@HiltViewModel
+class AsVideoViewModel @Inject constructor() : ViewModel() {
+
+    @Inject
+    lateinit var http: HttpClient
 
     /**
      * 缓存视频
@@ -177,6 +189,75 @@ class AsVideoViewModel : ViewModel() {
                 }
             }
         }.show()
+    }
+
+    fun downloadCCAss(view: View, avid: Long, cid: Long) {
+        val context = view.context
+        val dialogLoad = DialogUtils.loadDialog(context)
+        dialogLoad.show()
+        viewModelScope.launchIO {
+            val bvId = VideoNumConversion.toBvidOffline(avid)
+            val videoInfoV2 =
+                http
+                    .get("${BilibiliApi.videoInfoV2}?aid=$avid&cid=$cid")
+                    .body<ResBean<VideoInfoV2>>()
+
+            launchUI {
+                dialogLoad.cancel()
+                DialogUtils.downloadCCAssDialog(context, videoInfoV2.data) {
+                    saveCCAss(bvId, cid, videoInfoV2.data.name, it.lan, it.subtitleUrl, context)
+                }.show()
+            }
+        }
+    }
+
+    /**
+     * 保存CC字幕文件
+     */
+    private fun saveCCAss(
+        bvId: String,
+        cid: Long,
+        title: String,
+        lang: String,
+        subtitleUrl: String,
+        context: Context,
+    ) {
+        val dialogLoad = DialogUtils.loadDialog(context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+        val savePath = sharedPreferences.getString(
+            "user_download_save_path",
+            context.getExternalFilesDir("download").toString(),
+        )
+        val fileName = "$savePath/$bvId/${cid}_cc_$lang.ass"
+        val assFile = File(fileName)
+
+        val folderFile = File("$savePath/$bvId")
+        // 检查是否存在文件夹
+        if (!folderFile.exists()) folderFile.mkdirs()
+
+        if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
+
+        viewModelScope.launchIO {
+            val videoCCInfo = http.get(subtitleUrl).body<VideoCCInfo>()
+
+            assFile.writeText(
+                CCJsonToAss.jsonToAss(
+                    videoCCInfo,
+                    title,
+                    "1920",
+                    "1080",
+                    context,
+                ),
+            )
+
+            launchUI {
+                dialogLoad.cancel()
+                asToast(context, "下载字幕储存于\n$fileName")
+                // 通知下载成功
+                Analytics.trackEvent(context.getString(R.string.download_barrage))
+            }
+        }
     }
 
     private fun saveAssDanmaku(

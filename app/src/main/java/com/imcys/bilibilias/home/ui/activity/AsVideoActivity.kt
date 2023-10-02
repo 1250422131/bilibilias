@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -95,6 +96,9 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
+
+    private val asVideoViewModel: AsVideoViewModel by viewModels()
+
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
     var avid: Long = 0L
@@ -152,9 +156,7 @@ class AsVideoActivity : BaseActivity() {
             }
 
             // 设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = ViewModelProvider(
-                this@AsVideoActivity,
-            )[AsVideoViewModel::class.java]
+            asVideoViewModel = this@AsVideoActivity.asVideoViewModel
         }
     }
 
@@ -480,7 +482,7 @@ class AsVideoActivity : BaseActivity() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                        // 将子集切换后的逻辑交给activity完成
+                            // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
