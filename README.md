@@ -7,7 +7,7 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.8.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 </div>
 
@@ -94,7 +94,7 @@ UP主可以下载一些剪辑素材，来做视频
 
 ## 问题反馈
 
-企鹅群：703180724
+企鹅群：812128563
 
 哔哩哔哩：[萌新杰少](https://space.bilibili.com/351201307)
 

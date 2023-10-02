@@ -7,7 +7,7 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.7.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 </div>
 
@@ -93,8 +93,10 @@ Here are the users who recently starred the **BILIBILIAS** project.
 
 ## Feedback
 
-QQ Group: 703180724
+QQ Group: 812128563
+
 Bilibili: [萌新杰少](https://space.bilibili.com/351201307)
+
 Feedback Community: [兔小巢](https://support.qq.com/product/337496)
 
 ## Special Thanks

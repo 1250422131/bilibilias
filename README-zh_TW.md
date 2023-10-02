@@ -7,13 +7,14 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.7.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 </div>
 
 ---
 
 **語言選擇:**
+
 - [English (United States)](./README-en_US.md) (英文版)
 - [简体中文](./READMEmd) (简体中文版)
 - [繁體中文(台灣)](./README-zh_TW.md) (繁體中文版-台灣)
@@ -77,8 +78,8 @@ UP主可以下載一些剪輯素材，來做視頻。
 
 ## 下載
 
-|   系統    |                            GitHub                            |                  官網                   |
-|:-------:|:------------------------------------------------------------:|:-------------------------------------:|
+|   系統    |                            GitHub                            |                  官網                  |
+|:-------:|:------------------------------------------------------------:|:------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官網](https://api.misakamoe.com/app/) |
 
 ## 🔭最近關注
@@ -93,10 +94,12 @@ UP主可以下載一些剪輯素材，來做視頻。
 
 ## 問題反饋
 
-企鵝群：703180724
+企鵝群：812128563
 
 哔哩哔哩：[萌新杰少](https://space.bilibili.com/351201307)
 
 反饋社區：[兔小巢](https://support.qq.com/product/337496)
 
 ## 特別感謝
+
+
