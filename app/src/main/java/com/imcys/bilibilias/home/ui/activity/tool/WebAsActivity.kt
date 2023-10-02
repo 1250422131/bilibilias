@@ -8,6 +8,7 @@ import android.webkit.*
 import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -16,11 +17,11 @@ class WebAsActivity : BaseActivity() {
     private lateinit var webAsBinding: ActivityWebAsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //视图加载
+        // 视图加载
         webAsBinding =
             DataBindingUtil.setContentView<ActivityWebAsBinding?>(this, R.layout.activity_web_as)
                 .apply {
-                    //设置返回按钮可用
+                    // 设置返回按钮可用
                     setSupportActionBar(webAsMaterialToolbar)
                     supportActionBar?.apply {
                         setDisplayHomeAsUpEnabled(true)
@@ -30,15 +31,13 @@ class WebAsActivity : BaseActivity() {
                     webAsTopLy.addStatusBarTopPadding()
                 }
 
-
         loadWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadWebView() {
         webAsBinding.apply {
-
-            //不缓存
+            // 不缓存
             webAsWebView.settings.javaScriptEnabled = true
             webAsWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webAsWebView.settings.allowFileAccess = false
@@ -47,7 +46,7 @@ class WebAsActivity : BaseActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
-            //注入cookie
+            // 注入cookie
             cookieManager.setCookie("https://bilibili.com", asUser.cookie)
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
@@ -61,7 +60,6 @@ class WebAsActivity : BaseActivity() {
                     return super.shouldOverrideUrlLoading(view, request)
                 }
             }
-
         }
     }
 
@@ -71,7 +69,7 @@ class WebAsActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //配置完成事件
+        // 配置完成事件
         when (item.itemId) {
             android.R.id.home -> finish()
             R.id.tool_web_toolbar_menu_finish -> {

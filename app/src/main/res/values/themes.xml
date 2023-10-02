@@ -16,6 +16,11 @@
         <!-- Customize your theme here. -->
 
     </style>
+    <style name="CheckBoxTheme">
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorControlNormal">?attr/colorPrimary</item>
+    </style>
+
 
 
     <style name="Home_TabLayoutTextStyle">

@@ -9,10 +9,17 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
@@ -20,6 +27,7 @@ import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
@@ -34,7 +42,10 @@ import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Response
 import okio.BufferedSink
@@ -45,6 +56,7 @@ import java.io.File
 import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
+import javax.inject.Inject
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -58,49 +70,21 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
-
-class DownloadQueue :
+class DownloadQueue @Inject constructor() :
     CoroutineScope by MainScope() {
 
-    private val groupTasksMap: MutableMap<Int, MutableList<Task>> = mutableMapOf()
+    private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
 
     var downloadTaskAdapter: DownloadTaskAdapter? = null
     var downloadFinishTaskAd: DownloadFinishTaskAd? = null
 
     // 存储待下载的任务
-    private val queue = mutableListOf<Task>()
+    private val queue = mutableListOf<DownloadTaskInfo>()
 
     // 当前正在下载的任务
-    private val currentTasks = mutableListOf<Task>()
+    private val currentTasks = mutableListOf<DownloadTaskInfo>()
 
-    var allTask = mutableListOf<Task>()
-
-    // 下载任务类
-    data class Task(
-        // 下载地址
-        val url: String,
-        // 下载文件保存路径
-        var savePath: String,
-        // 文件类型，0为视频，1为音频
-        var fileType: Int,
-        // 下载任务的其他参撒
-        val downloadTaskDataBean: DownloadTaskDataBean,
-        // 标识这个任务是否是一组任务的一部分
-        var isGroupTask: Boolean = true,
-        // 定义下载完成回调
-        val onComplete: (Boolean) -> Unit,
-        var payloadsType: Int = 0,
-        // 下载状态
-        var state: Int = STATE_DOWNLOAD_WAIT,
-        // 定义当前任务的下载进度
-        var progress: Double = 0.0,
-        // 定义当前文件大小
-        var fileSize: Double = 0.0,
-        // 定义当前已经下载的大小
-        var fileDlSize: Double = 0.0,
-        // 定义当前任务的下载请求
-        var call: DownloadTask? = null,
-    )
+    var allTask = mutableListOf<DownloadTaskInfo>()
 
     // 添加下载任务到队列中
     fun addTask(
@@ -113,7 +97,7 @@ class DownloadQueue :
     ) {
         // 创建一个下载任务
         val task =
-            Task(
+            DownloadTaskInfo(
                 url,
                 savePath,
                 fileType,
@@ -127,7 +111,7 @@ class DownloadQueue :
             val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
             if (groupTasks == null) {
                 // 创建一个新的任务列表
-                val newGroupTasks = mutableListOf<Task>()
+                val newGroupTasks = mutableListOf<DownloadTaskInfo>()
                 // 将这个任务加入到这个任务列表中
                 newGroupTasks.add(task)
                 // 将这个任务列表加入到map中
@@ -288,12 +272,12 @@ class DownloadQueue :
      * 储存完成的下载任务
      * @param task Task
      */
-    private fun saveFinishTask(task: Task) {
-        CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
+    private fun saveFinishTask(task: DownloadTaskInfo) {
+        CoroutineScope(Dispatchers.Default).launchIO {
             var videoTitle = ""
             var videoPageTitle = ""
-            var avid = 0
-            var cid = 0
+            var avid = 0L
+            var cid = 0L
             var videoBvid = ""
             task.downloadTaskDataBean.bangumiSeasonBean?.apply {
                 videoTitle = share_copy
@@ -321,15 +305,14 @@ class DownloadQueue :
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao =
-                BaseApplication.appDatabase.downloadFinishTaskDao()
+            val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
 
             // 协程提交
             DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
                 insert(downloadFinishTaskInfo)
 
                 downloadFinishTaskAd?.apply {
-                    val finishTasks = allDownloadFinishTask
+                    val finishTasks = allDownloadFinishTask()
                     submitList(finishTasks)
                 }
             }
@@ -340,7 +323,7 @@ class DownloadQueue :
      * 储存完成的下载任务集合
      * @param tasks Array<out Task>
      */
-    private fun saveFinishTask(vararg tasks: Task) {
+    private fun saveFinishTask(vararg tasks: DownloadTaskInfo) {
         tasks.forEach {
             saveFinishTask(it)
         }
@@ -350,13 +333,13 @@ class DownloadQueue :
      * 数据解析
      * @param task Task
      */
-    private fun videoDataSubmit(task: Task) {
-        var aid: Int? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
+    private fun videoDataSubmit(task: DownloadTaskInfo) {
+        var aid: Long? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val videoBaseBean = KtHttpUtils.addHeader("cookie", cookie!!)
+            val videoBaseBean = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
             val mid = videoBaseBean.data.owner.mid
             val name = videoBaseBean.data.owner.name
@@ -388,7 +371,7 @@ class DownloadQueue :
      */
     private fun addAsVideoData(
         bvid: String?,
-        aid: Int,
+        aid: Long,
         mid: Long,
         name: String?,
         copyright: Int,
@@ -398,16 +381,16 @@ class DownloadQueue :
         Analytics.trackEvent("缓存成功")
         StatService.onEvent(App.context, "CacheSuccessful", "缓存成功")
 
-        launch(Dispatchers.IO) {
+        launchIO {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(App.context)
             val microsoftAppCenterType =
                 sharedPreferences.getBoolean("microsoft_app_center_type", true)
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val myUserData = KtHttpUtils.addHeader("cookie", cookie!!)
+            val myUserData = KtHttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
@@ -424,7 +407,7 @@ class DownloadQueue :
      * 参数合并
      * @param cid Int
      */
-    private fun videoMerge(cid: Int) {
+    private fun videoMerge(cid: Long) {
         val mergeState =
             PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                 "user_dl_finish_automatic_merge_switch",
@@ -472,11 +455,11 @@ class DownloadQueue :
     }
 
     private fun runFFmpegRxJavaVideoMerge(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -540,7 +523,7 @@ class DownloadQueue :
      * 缓存导回B站观看
      * @param cid Int
      */
-    private fun importVideo(cid: Int) {
+    private fun importVideo(cid: Long) {
         val VIDEO_TYPE = 1
         val BANGUMI_TYPE = 2
         val taskMutableList = groupTasksMap[cid]
@@ -588,8 +571,8 @@ class DownloadQueue :
         // 临时bangumiEntry -> 只对番剧使用
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
-        HttpUtils.addHeader("cookie", cookie!!)
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        HttpUtils.addHeader(COOKIE, cookie!!)
             .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
                 if (it.code == 0) {
                     videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
@@ -689,7 +672,7 @@ class DownloadQueue :
     }
 
     private fun fileImpVideo(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -715,9 +698,9 @@ class DownloadQueue :
             val ssid = it.result.season_id
             videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            HttpUtils.addHeader("cookie", cookie!!)
+            HttpUtils.addHeader(COOKIE, cookie!!)
                 .get(
                     "${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
                     object : okhttp3.Callback {
@@ -788,7 +771,7 @@ class DownloadQueue :
     }
 
     private fun safImpVideo(
-        task: Task,
+        task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -850,9 +833,9 @@ class DownloadQueue :
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex,
             )
-            val cookie = BaseApplication.dataKv.decodeString("cookies", "")
+            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val asyncResponse = HttpUtils.addHeader("cookie", cookie!!)
+            val asyncResponse = HttpUtils.addHeader(COOKIE, cookie!!)
                 .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
 
             val response = asyncResponse.await()
@@ -949,9 +932,10 @@ class DownloadQueue :
         // 通知 RecyclerView 适配器数据发生了改变
 
         downloadTaskAdapter?.apply {
-            val newMutableList = mutableListOf<Task>().apply {
+            val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
                 // 任务拷贝，防止传入RecyclerView后被动更改
                 currentTasks.forEach {
+                    //实验性的，请选择copy，我只是在测试自己的库
                     add(it.copy())
                 }
 
@@ -965,7 +949,7 @@ class DownloadQueue :
     }
 
     // 在 DownloadQueue 类中
-    fun updateProgress(task: Task, progress: Double) {
+    fun updateProgress(task: DownloadTaskInfo, progress: Double) {
         // 更新当前任务的下载进度
         task.progress = progress
         updateAdapter()
@@ -1020,7 +1004,7 @@ class DownloadQueue :
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-            .setPassIfAlreadyCompleted(true) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
             .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
@@ -1034,12 +1018,12 @@ class DownloadQueue :
             .setSyncBufferSize(65536) // 写入到文件的缓冲区大小，默认65536
             .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
         task.addHeader(
-            "User-Agent",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0",
+            USER_AGENT,
+            BROWSER_USER_AGENT,
         )
-        task.addHeader("referer", "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString("cookies", "")
-        task.addHeader("cookie", cookie!!)
+        task.addHeader(REFERER, "https://www.bilibili.com/")
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        task.addHeader(COOKIE, cookie!!)
 
         return task.build()
     }

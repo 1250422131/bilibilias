@@ -10,6 +10,8 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -26,20 +28,18 @@ class RCMDVideoAdapter(
     BannerAdapter<HomeRCMDVideoBean.DataBean.ItemBean, RCMDVideoAdapter.ViewHolder>(datas) {
 
     inner class ViewHolder(rootView: View) : RecyclerView.ViewHolder(
-        rootView
+        rootView,
     )
 
-
     override fun onCreateHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-
-
         val itemRcmdVideoBinding: ItemRcmdVideoBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
-            R.layout.item_rcmd_video, parent, false
+            R.layout.item_rcmd_video,
+            parent,
+            false,
         )
 
         return ViewHolder(itemRcmdVideoBinding.root)
-
     }
 
     override fun onBindView(
@@ -48,14 +48,10 @@ class RCMDVideoAdapter(
         position: Int,
         size: Int,
     ) {
-
-
         val itemRcmdVideoBinding: ItemRcmdVideoBinding? =
             DataBindingUtil.getBinding(holder.itemView)
 
-
         itemRcmdVideoBinding?.apply {
-
             holder.itemView.setOnClickListener {
                 AsVideoActivity.actionStart(context, data.bvid)
             }
@@ -70,20 +66,18 @@ class RCMDVideoAdapter(
                 likeVideo(data.bvid, itemRcmdVideoBinding)
                 notifyItemChanged(position)
             }
-
         }
     }
 
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
-
         CoroutineScope(Dispatchers.IO).launch {
-            val likeVideoBean = KtHttpUtils.addHeader("cookie", "")
+            val likeVideoBean = KtHttpUtils.addHeader(COOKIE, "")
                 .addParam("bvid", bvid)
                 .addParam("like", "1")
                 .addParam("csrf", "")
                 .asyncPost<LikeVideoBean>(BilibiliApi.likeVideoPath)
 
-            launch(Dispatchers.Main) {
+            launchUI {
                 if (likeVideoBean.code == 0) {
                     asToast(context, "点赞成功")
                 } else {
@@ -91,10 +85,6 @@ class RCMDVideoAdapter(
                     asToast(context, "点赞失败，${likeVideoBean.message}")
                 }
             }
-
-
         }
-
-
     }
 }
