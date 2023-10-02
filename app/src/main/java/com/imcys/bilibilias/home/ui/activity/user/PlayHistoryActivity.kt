@@ -10,6 +10,8 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
@@ -23,7 +25,7 @@ import javax.inject.Inject
 class PlayHistoryActivity : BaseActivity() {
     private lateinit var binding: ActivityPlayHistoryBinding
 
-    //自动装配
+    // 自动装配
     @Inject
     lateinit var playHistoryAdapter: PlayHistoryAdapter
 
@@ -42,7 +44,6 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopLy.addStatusBarTopPadding()
         }
         initView()
-
     }
 
     private fun initView() {
@@ -55,7 +56,7 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-            HttpUtils.addHeader("cookie", asUser.cookie)
+            HttpUtils.addHeader(COOKIE, asUser.cookie)
                 .get(
                     "${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
                     PlayHistoryBean::class.java
@@ -77,7 +78,7 @@ class PlayHistoryActivity : BaseActivity() {
     }
 
     private fun loadPlayHistory() {
-        HttpUtils.addHeader("cookie", asUser.cookie)
+        HttpUtils.addHeader(COOKIE, asUser.cookie)
             .get(
                 "${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
                 PlayHistoryBean::class.java
@@ -89,12 +90,10 @@ class PlayHistoryActivity : BaseActivity() {
             }
     }
 
-
     override fun onResume() {
         super.onResume()
         StatService.onResume(this)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -106,7 +105,5 @@ class PlayHistoryActivity : BaseActivity() {
             val intent = Intent(context, PlayHistoryActivity::class.java)
             context.startActivity(intent)
         }
-
     }
-
 }

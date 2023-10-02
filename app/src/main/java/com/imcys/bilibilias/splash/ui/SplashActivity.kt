@@ -16,6 +16,7 @@ import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.tencent.mmkv.MMKV
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -40,8 +41,8 @@ class SplashActivity : BaseActivity() {
         } else {
             getSavePermissions()
         }
-        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
-        constraintLayout.addStatusBarTopPadding()
+//        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
+//        constraintLayout.addStatusBarTopPadding()
     }
 
     override fun onBackPressed() {
@@ -147,7 +148,7 @@ class SplashActivity : BaseActivity() {
      */
     private fun initMMVKData() {
         getSharedPreferences("data", MODE_PRIVATE).apply {
-            if (!getString("cookies", "").equals("")) {
+            if (!getString(COOKIES, "").equals("")) {
                 MMKV.mmkvWithID("data")!!.importFromSharedPreferences(this)
                 this.edit { clear() }
             }

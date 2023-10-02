@@ -18,16 +18,15 @@ class App : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        //xUtils初始化
+        // xUtils初始化
         x.Ext.init(this)
         x.Ext.setDebug(false) // 是否输出debug日志, 开启debug会影响性能.
         RxFFmpegInvoke.getInstance().setDebug(false)
 
-        //BRV初始化
+        // BRV初始化
         initBRV()
 
-        context = BaseApplication.context
-
+        context = applicationContext()
     }
 
     private fun initBRV() {
@@ -41,17 +40,15 @@ class App : BaseApplication() {
         }
     }
 
-
     companion object {
-
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
         val downloadQueue: DownloadQueue by lazy { DownloadQueue() }
 
-        //—————————————————————————————————————————————————
+        // —————————————————————————————————————————————————
 
-        //——————————————————B站视频模板——————————————————
+        // ——————————————————B站视频模板——————————————————
         val videoEntry: String by lazy {
             context.getString(R.string.VideoEntry)
         }
@@ -62,11 +59,9 @@ class App : BaseApplication() {
             context.getString(R.string.BangumiEntry)
         }
 
-        //——————————————————部分内置需要的上下文——————————————————
+        // ——————————————————部分内置需要的上下文——————————————————
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        //—————————————————————————————————————————————————
-
+        // —————————————————————————————————————————————————
     }
-
 }

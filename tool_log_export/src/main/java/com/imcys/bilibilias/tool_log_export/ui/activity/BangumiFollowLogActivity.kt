@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.compose.runtime.mutableStateOf
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.drake.brv.utils.setDifferModels
 import com.drake.brv.utils.setup
 import com.google.android.flexbox.AlignItems
@@ -14,6 +13,10 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.tool_log_export.R
@@ -43,14 +46,11 @@ import jxl.write.WritableCell
 import jxl.write.WritableCellFormat
 import jxl.write.WritableFont
 import jxl.write.WritableSheet
-import kotlinx.coroutines.launch
 import kotlin.math.ceil
-
 
 class BangumiFollowLogActivity : LogExportBaseActivity() {
 
     private lateinit var bangumiFollowList: BangumiFollowList
-
 
     lateinit var binding: ActivityBangumiFollowLogBinding
 
@@ -61,52 +61,51 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
 
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_title),
-                Title
+                Title,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_ssid),
-                SeasonID
+                SeasonID,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_evaluate),
-                Evaluate
+                Evaluate,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_summart),
-                Summary
+                Summary,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_subtitle),
-                Subtitle
+                Subtitle,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_subtitle14),
-                Subtitle14
+                Subtitle14,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_totalcount),
-                TotalCount
+                TotalCount,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_progress),
-                Progress
+                Progress,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_cover),
-                Cover
+                Cover,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_seasontitle),
-                SeasonTitle
+                SeasonTitle,
             ),
             BangumiFollowLogHeaderBean(
                 getString(R.string.tool_log_export_bangumi_export_seasontypename),
-                SeasonTypeName
+                SeasonTypeName,
             ),
 
-            )
+        )
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,31 +113,28 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
         setContentView(R.layout.activity_bangumi_follow_log)
         binding = DataBindingUtil.setContentView<ActivityBangumiFollowLogBinding?>(
             this,
-            R.layout.activity_bangumi_follow_log
+            R.layout.activity_bangumi_follow_log,
         ).apply {
             bangumiFollowLogTop.addStatusBarTopPadding()
         }
 
         initView()
-
-
     }
 
     private fun initView() {
-        //加载追番基本信息（追番总数等）
+        // 加载追番基本信息（追番总数等）
         loadBanguiFollowData()
-        //加载支持的表头的rv
+        // 加载支持的表头的rv
         loadDefaultLogHeaders()
-        //加载选中表头的rv
+        // 加载选中表头的rv
         initSelectedLogHeaders()
-        //绑定完成按钮事件
+        // 绑定完成按钮事件
         bindingFinishEvent()
     }
 
-
     private fun bindingFinishEvent() {
         binding.apply {
-            //绑定完成
+            // 绑定完成
             bangumiFollowLogFinishBt.setOnClickListener {
                 createExcel()
             }
@@ -146,70 +142,67 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private fun createExcel() {
-
-        //获取追番总数和分页数（目前每页30条记录）
+        // 获取追番总数和分页数（目前每页30条记录）
         val total = bangumiFollowList.data.total
         val totalPage = ceil(total / 30.0).toInt()
 
         val path = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls"
 
-        //设置表头的字体大小和背景颜色
+        // 设置表头的字体大小和背景颜色
         val arial14font = WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD)
         arial14font.colour = jxl.format.Colour.LIGHT_BLUE
         val arial14format = WritableCellFormat(arial14font)
-        //居中方式
+        // 居中方式
         arial14format.alignment = Alignment.CENTRE
-        //背景
+        // 背景
         arial14format.setBorder(Border.ALL, BorderLineStyle.THIN)
         arial14format.setBackground(jxl.format.Colour.VERY_LIGHT_YELLOW)
 
-        //初始化一个excel表
+        // 初始化一个excel表
         val workbook = ExcelUtils.initExcel(path)
-        //设置工作簿
+        // 设置工作簿
         val sheet = workbook.createSheet("追番", 0)
-        //行高
+        // 行高
         sheet.setRowView(0, 340)
 
-        //创建标题栏
+        // 创建标题栏
         selectedLogHeaders.forEachIndexed { index, bangumiFollowLogHeaderBean ->
             sheet.addCell(
                 Label(
                     index,
                     0,
                     bangumiFollowLogHeaderBean.title,
-                    arial14format
-                ) as WritableCell?
+                    arial14format,
+                ) as WritableCell?,
             )
-            //列宽
+            // 列宽
             sheet.setColumnView(index, 300)
         }
 
-
-        lifecycleScope.launch {
+        launchUI {
             val loadTitle by lazy { mutableStateOf("开始获取数据") }
             val loadDialog =
                 ExportDialogUtils.loadDialog(this@BangumiFollowLogActivity, loadTitle.value)
                     .apply { show() }
             for (i in 1..totalPage) {
                 loadTitle.value = "正在获取第${i}页"
-                val bangumiFollowList = getBangumiFollowList(i)
+                launchIO { val bangumiFollowList = getBangumiFollowList(i) }
                 loadTitle.value = "正在存储第${i}页"
                 editExcel(bangumiFollowList, sheet, i - 1)
             }
-            //完成保存和写入
+            // 完成保存和写入
             workbook.write()
             workbook.close()
-            //关闭弹窗
+
+            // 关闭弹窗
             loadDialog.cancel()
-            //弹出储存位置
+            // 弹出储存位置
             asToast(
                 this@BangumiFollowLogActivity,
                 "获取成功\n储存位置" +
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls"
+                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
             )
         }
-
-
     }
 
     /**
@@ -217,8 +210,6 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      */
     private fun editExcel(bangumiFollowList: BangumiFollowList, sheet: WritableSheet, i: Int) {
         sheet.apply {
-
-
             val arial14font = WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD)
             val arial10format = WritableCellFormat(arial14font)
             arial10format.alignment = Alignment.CENTRE
@@ -230,7 +221,6 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.title ?: "", arial10format)
                         }
-
                     }
 
                     SeasonID -> {
@@ -240,7 +230,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                                 selectIndex,
                                 row++,
                                 it?.season_id?.toString() ?: "",
-                                arial10format
+                                arial10format,
                             )
                         }
                     }
@@ -250,7 +240,6 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                         bangumiFollowList.data.list.forEach {
                             addCell(selectIndex, row++, it?.evaluate ?: "", arial10format)
                         }
-
                     }
 
                     Summary -> {
@@ -267,7 +256,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                                 selectIndex,
                                 row++,
                                 it?.total_count?.toString() ?: "",
-                                arial10format
+                                arial10format,
                             )
                         }
                     }
@@ -314,31 +303,26 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                                 selectIndex,
                                 row++,
                                 listBean?.season_type_name ?: "",
-                                arial10format
+                                arial10format,
                             )
                         }
                     }
                 }
             }
-
-
         }
-
-
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return KtHttpUtils.addHeader("cookie", asUser.cookie)
-            .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=30")
+        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
+            .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=30")
     }
-
 
     /**
      * 初始化选定内容对话框
      */
     private fun initSelectedLogHeaders() {
         binding.bangumiFollowLogSelectedLogHeadersRv.apply {
-            //设置伸缩布局
+            // 设置伸缩布局
             val layoutManager = FlexboxLayoutManager(context)
             layoutManager.flexDirection = FlexDirection.ROW
             layoutManager.justifyContent = JustifyContent.FLEX_START
@@ -346,21 +330,17 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             this.layoutManager = layoutManager
 
             this.setup {
-                //防抖动
+                // 防抖动
                 addType<BangumiFollowLogHeaderBean>(R.layout.log_export_item_bangumi_header)
                 onClick(R.id.log_export_item_bangumi_log_header_ly) {
-
                     selectedLogHeaders.remove(getModel())
                     defaultLogHeaders.add(getModel())
 
                     binding.bangumiFollowLogDefaultLogHeadersRv.setDifferModels(defaultLogHeaders + mutableListOf())
                     binding.bangumiFollowLogSelectedLogHeadersRv.setDifferModels(selectedLogHeaders + mutableListOf())
-
                 }
             }
-
         }
-
     }
 
     /**
@@ -368,7 +348,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      */
     private fun loadDefaultLogHeaders() {
         binding.bangumiFollowLogDefaultLogHeadersRv.apply {
-            //设置伸缩布局
+            // 设置伸缩布局
             val layoutManager = FlexboxLayoutManager(context)
             layoutManager.flexDirection = FlexDirection.ROW
             layoutManager.justifyContent = JustifyContent.FLEX_START
@@ -376,20 +356,16 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             this.layoutManager = layoutManager
 
             this.setup {
-
                 addType<BangumiFollowLogHeaderBean>(R.layout.log_export_item_bangumi_header)
 
                 onClick(R.id.log_export_item_bangumi_log_header_ly) {
-
                     defaultLogHeaders.remove(getModel())
                     selectedLogHeaders.add(getModel())
 
                     binding.bangumiFollowLogDefaultLogHeadersRv.setDifferModels(defaultLogHeaders + mutableListOf())
                     binding.bangumiFollowLogSelectedLogHeadersRv.setDifferModels(selectedLogHeaders + mutableListOf())
-
                 }
             }.models = defaultLogHeaders + mutableListOf()
-
         }
     }
 
@@ -397,14 +373,16 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      * 加载番剧情况
      */
     private fun loadBanguiFollowData() {
-        lifecycleScope.launch {
+        launchIO {
             bangumiFollowList = KtHttpUtils.addHeader("coolie", asUser.cookie)
                 .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15")
-            if (bangumiFollowList.code == 0) {
-                binding.bangumiFollowList = bangumiFollowList
+
+            launchUI {
+                if (bangumiFollowList.code == 0) {
+                    binding.bangumiFollowList = bangumiFollowList
+                }
             }
         }
-
     }
 
     companion object {
@@ -412,7 +390,5 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             val intent = Intent(context, BangumiFollowLogActivity::class.java)
             context.startActivity(intent)
         }
-
     }
-
 }

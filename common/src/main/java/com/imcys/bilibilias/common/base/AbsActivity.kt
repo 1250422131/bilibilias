@@ -8,16 +8,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 open class AbsActivity : AppCompatActivity() {
@@ -29,18 +33,6 @@ open class AbsActivity : AppCompatActivity() {
     open val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
-
-    val asUser: AsUser
-        get() = run {
-            val kv = BaseApplication.dataKv
-            AsUser.apply {
-                cookie = kv.decodeString("cookies", "")!!
-                sessdata = kv.decodeString("SESSDATA", "")!!
-                biliJct = kv.decodeString("bili_jct", "")!!
-                mid = kv.decodeLong("mid", 0)
-                asCookie = kv.decodeString("as_cookie", "")!!
-            }
-        }
 
     // 存储所有活动的列表
     private val activities = mutableListOf<Activity>()
@@ -57,6 +49,20 @@ open class AbsActivity : AppCompatActivity() {
         setTheme()
         // 判断语言
         setLanguage()
+    }
+
+    fun launchIO(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit,
+    ) {
+        lifecycleScope.launch(Dispatchers.IO, start, block)
+    }
+
+    fun launchUI(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit,
+    ) {
+        lifecycleScope.launch(Dispatchers.Main, start, block)
     }
 
     private fun setLanguage() {

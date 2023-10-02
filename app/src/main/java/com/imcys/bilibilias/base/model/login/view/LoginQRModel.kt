@@ -19,6 +19,8 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.SET_COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
@@ -61,28 +63,28 @@ class LoginQRModel {
                     bottomSheetDialog?.cancel()
                 }
 
-                //————————————————————————————————————————————————
+                // ————————————————————————————————————————————————
                 @SuppressLint("CommitPrefEdits")
                 override fun onResponse(call: Call, response: Response) {
-                    //数据解析
+                    // 数据解析
                     val loginStateBean: LoginStateBean =
                         Gson().fromJson(response.body?.string(), LoginStateBean::class.java)
-                    //————————————————————————————————————————————————
-                    //关闭加载弹窗
+                    // ————————————————————————————————————————————————
+                    // 关闭加载弹窗
                     bottomSheetDialog?.cancel()
-                    //更新UI线程
+                    // 更新UI线程
                     BaseApplication.handler.post {
-                        //登录成功则去储存cookie
+                        // 登录成功则去储存cookie
                         if (loginStateBean.data.code == 0) {
                             loginSuccessOp(loginStateBean, response)
                         } else {
-                            //展示登录结果
+                            // 展示登录结果
                             val loginQRModel = binding?.loginQRModel
                             loginQRModel?.loginTip = loginStateBean.data.message
                             binding?.loginQRModel = loginQRModel
 
                         }
-                        //将登录完成事件返回给Fragment
+                        // 将登录完成事件返回给Fragment
                         responseResult(loginStateBean.data.code, loginStateBean)
                     }
 
@@ -202,7 +204,7 @@ class LoginQRModel {
         val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
 
 
-        response.headers.values("Set-Cookie").forEach {
+        response.headers.values(SET_COOKIE).forEach {
             cookies += it
             var m = rSESSDATA.matcher(it)
 
@@ -219,7 +221,7 @@ class LoginQRModel {
             }
         }
         kv.apply {
-            encode("cookies", cookies)
+            encode(COOKIES, cookies)
             encode("refreshToken", loginStateBean.data.refresh_token)
         }
 
