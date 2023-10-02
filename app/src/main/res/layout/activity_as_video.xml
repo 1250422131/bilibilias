@@ -353,7 +353,26 @@
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
-                            android:layout_width="80dp"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp">
+
+                            <androidx.constraintlayout.utils.widget.ImageFilterButton
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:background="@drawable/as_cc_ass_dl_bg"
+                                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                                android:onClick="@{(view)->AsVideoViewModel.downloadCCAss(view,VideoBaseBean.data.aid,VideoBaseBean.data.cid)}"
+                                android:src="@drawable/ic_as_cc"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:tint="@color/white" />
+
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp">
 
@@ -369,13 +388,11 @@
                                 android:tint="@color/white" />
 
 
-
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/as_video_bangumi_cd"

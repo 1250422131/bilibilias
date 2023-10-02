@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.danmaku.change
 
 import android.content.Context
-import android.util.Log
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.danmaku.enmu.DanmakuType
 import org.w3c.dom.Element
@@ -58,7 +57,6 @@ object DmXmlToAss {
      */
     private fun buildDanmakuInfo(xmlString: String, context: Context): String {
         // 使用原生的XML解析
-        Log.e("测试", xmlString)
         var danmakus = context.getString(R.string.ass_events_info_model) + "\n"
         // 拿到xml文档对象
         val dbf = DocumentBuilderFactory.newInstance()

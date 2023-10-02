@@ -29,12 +29,8 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -50,7 +46,6 @@ import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -220,7 +215,7 @@ object DialogUtils {
     class AsLoginBsViewModelFactory(
         binding: DialogAsLoginBottomsheetBinding,
         bottomSheetDialog: BottomSheetDialog,
-        function: () -> Unit
+        function: () -> Unit,
     ) : ViewModelProvider.Factory
 
     /**
@@ -677,7 +672,7 @@ object DialogUtils {
     }
 
     /**
-     * 下载弹幕/字幕文件
+     * 下载弹幕文件
      */
     fun downloadDMDialog(
         context: Context,
@@ -703,6 +698,59 @@ object DialogUtils {
         binding.apply {
             dialogDlDmButton.setOnClickListener {
                 clickEvent.invoke(this)
+            }
+        }
+
+        return bottomSheetDialog
+    }
+
+    /**
+     * 下载字幕文件
+     */
+    fun downloadCCAssDialog(
+        context: Context,
+        videoInfoV2: VideoInfoV2,
+        block: (selectCC: VideoInfoV2.Subtitle.MSubtitle) -> Unit,
+    ): BottomSheetDialog {
+        val binding = DialogDownloadCcAssBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                window?.apply {
+                    // 设置动态高斯模糊效果
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        setBackgroundBlurRadius(40)
+                    } // 设置背景模糊程度
+                }
+            }
+        }
+
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
+        binding.apply {
+            var selectIndex = 0
+            val ccAssAdapter = CCAssAdapter {
+                // 获取选中的值
+                selectIndex = it
+            }
+
+            dialogDownloadCcAssRv.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            dialogDownloadCcAssRv.adapter = ccAssAdapter
+
+            ccAssAdapter.submitList(videoInfoV2.subtitle.subtitles)
+
+            dialogDlCcButton.setOnClickListener {
+                block.invoke(videoInfoV2.subtitle.subtitles[selectIndex])
+                bottomSheetDialog.cancel()
+            }
+
+            dialogDlCcCloseButton.setOnClickListener { bottomSheetDialog.cancel() }
+
+            if (videoInfoV2.subtitle.subtitles.isEmpty()) {
+                dialogDlCcButton.visibility = View.GONE
             }
         }
 
@@ -1134,7 +1182,7 @@ object DialogUtils {
                         .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<DashBangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
                         )
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
@@ -1224,7 +1272,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
                             )
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
@@ -1321,7 +1369,7 @@ object DialogUtils {
                         KtHttpUtils.addHeader(COOKIE, asUser.cookie)
                             .addHeader(REFERER, BILIBILI_URL)
                             .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
                             )
                     emit(VideoData(videoPlayBean, it))
                 }
@@ -1372,7 +1420,7 @@ object DialogUtils {
                         .addHeader(COOKIE, asUser.cookie)
                         .addHeader(REFERER, BILIBILI_URL)
                         .asyncGet<BangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
+                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
                         )
                     emit(VideoData(bangumiPlayBean, it))
                 }
