@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name_debug" translatable="false">BILIBILIAS_DEBUG</string>
-    <string name="app_name_release" translatable="false">BILIBILIAS</string>
-    <string name="app_channel_release" translatable="false">Official Channel</string>
+    <string name="app_name_release" translatable="false">BILIBILIAS_DEBUG</string>
+    <string name="app_channel_release" translatable="false">Official Channel Debug</string>
     <string name="app_channel_debug" translatable="false">Official Channel Debug</string>
 
     <string name="action_settings">设置</string>
