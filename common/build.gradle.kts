@@ -8,9 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
-apply {
-    from("/../config.gradle")
-}
 
 ksp {
     arg("ModuleName", project.name)
