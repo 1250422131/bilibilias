@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
@@ -18,6 +15,7 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -53,8 +51,6 @@ class DownloadFragment : BaseFragment() {
     override fun initView() {
         initDownloadListAd()
         initEditLayout()
-        initDownloadList()
-
         initTabLayout()
     }
 
@@ -136,8 +132,6 @@ class DownloadFragment : BaseFragment() {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         when (tab.position) {
                             0 -> {
-                                fragmentDownloadRecyclerView.adapter =
-                                    App.downloadQueue.downloadTaskAdapter
                             }
 
                             1 -> {
@@ -213,31 +207,8 @@ class DownloadFragment : BaseFragment() {
      * 加载下载完成列表
      */
     private fun loadDownloadTask() {
-        fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
-            fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
-
-            launchIO {
-                // 协程提交
-                downloadFinishTaskRepository.apply {
-                    App.downloadQueue.downloadFinishTaskAd?.apply {
-                        val finishTasks = allDownloadFinishTask()
-                        lifecycleScope.launchUI {
-                            submitList(finishTasks)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 下载列表
-     */
-    private fun initDownloadList() {
-        fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
-            fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
+        launchIO {
+            downloadFinishTaskRepository.allDownloadFinishTask()
         }
     }
 

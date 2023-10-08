@@ -15,7 +15,6 @@ data class DownloadTaskDataBean(
     val qn: String,
     // 视频获取方式选择
     val fnval: String = "80",
-    //
     val platform: String = "pc",
     val dashVideoPlayBean: DashVideoPlayBean? = null,
     val dashBangumiPlayBean: DashBangumiPlayBean? = null,
@@ -23,5 +22,4 @@ data class DownloadTaskDataBean(
     val videoPlayDetails: VideoPlayDetails? = null,
     val videoPageDataData: VideoPageListData? = null,
     val bangumiSeasonBean: Bangumi.Result.Episode? = null,
-
     )

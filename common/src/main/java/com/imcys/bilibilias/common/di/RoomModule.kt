@@ -22,9 +22,6 @@ class RoomModule {
         AppDatabase::class.java,
         "BILIBILIAS_DATABASE",
     )
-        // 是否允许在主线程进行查询
-        .allowMainThreadQueries()
-        // 数据库升级异常之后的回滚
         .fallbackToDestructiveMigration()
         .addMigrations(AppDatabase.MIGRATION_1_2)
         .build()

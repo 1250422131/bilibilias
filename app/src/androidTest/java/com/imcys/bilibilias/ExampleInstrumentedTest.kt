@@ -42,6 +42,5 @@ class ExampleInstrumentedTest {
         Log.d(TAG, videoIndex)
         Log.d(TAG, bangumiEntry)
     }
-
 }
 

@@ -2,14 +2,13 @@ package com.imcys.bilibilias.ui.player
 
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
-import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import com.imcys.bilibilias.ui.download.DownloadOptionsStateHolders
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -27,28 +26,24 @@ class PlayerViewModel @Inject constructor(
 
     val downloadOptions by lazy(LazyThreadSafetyMode.NONE) {
         DownloadOptionsStateHolders().apply {
-            videoClarity = _event.value.videoPlayDetails.acceptDescription.first()
-            cachedSubset.add(_event.value.videoDetails.pages.first())
-            cacheType = "Dash"
-            cachedAudioQuality = _event.value.videoPlayDetails.acceptQuality.first()
+            videoFormatDescription = _event.value.dashVideo.acceptDescription.first()
+            videoQuality = _event.value.dashVideo.supportFormats.first().quality
+            subset.add(_event.value.videoDetails.pages.first())
+            audioFormatDescription = _event.value.dashVideo.acceptQuality.first()
+            _event.value.dashVideo.dash.audio.first().id
         }
     }
 
     init {
-        videoRepository.videoPlayDetailsFlow.onEach { p ->
-            _event.update {
-                it.copy(videoPlayDetails = p)
-            }
-        }.launchIn(viewModelScope)
         videoRepository.videoDetailsFlow.onEach { v ->
-            val m = videoRepository.getMP4VideoStream(v.bvid, v.cid)
+            val dash = videoRepository.getDashVideoStream(v.bvid, v.cid)
             val hasLike = videoRepository.hasLike(v.bvid).like
             val hasCoins = videoRepository.hasCoins(v.bvid).coins
             val hasCollection = videoRepository.hasCollection(v.bvid).isFavoured
             _event.update {
                 it.copy(
                     videoDetails = v,
-                    videoPlayDetails = m,
+                    dashVideo = dash,
                     hasLike = hasLike,
                     hasCoins = hasCoins,
                     hasCollection = hasCollection
@@ -68,12 +63,12 @@ class PlayerViewModel @Inject constructor(
 
     fun changeUrl(cid: Long) {
         launchIO {
-            val play = videoRepository.getMP4VideoStream(_event.value.videoDetails.bvid, cid)
-            _event.update {
-                it.copy(
-                    videoPlayDetails = play,
-                )
-            }
+            // val play = videoRepository.getMP4VideoStream(_event.value.videoDetails.bvid, cid)
+            // _event.update {
+            //     it.copy(
+            //         videoPlayDetails = play,
+            //     )
+            // }
         }
     }
 
@@ -83,11 +78,8 @@ class PlayerViewModel @Inject constructor(
     fun downloadVideo() {
         launchIO {
             videoRepository.getDashVideoStream(
-                _event.value.videoDetails.bvid,
-                _event.value.videoDetails.cid,
-                64,
-                4048,
-                1
+                bvid = _event.value.videoDetails.bvid,
+                cid = _event.value.videoDetails.cid,
             )
         }
         // if ((context as AsVideoActivity).userSpaceInformation.level >= 2) {
@@ -124,10 +116,10 @@ class PlayerViewModel @Inject constructor(
 
 data class PlayerState(
     val videoDetails: VideoDetails = VideoDetails(),
-    val videoPlayDetails: VideoPlayDetails = VideoPlayDetails(),
     val bangumi: Bangumi = Bangumi(),
     val hasLike: Boolean = false,
     val hasCoins: Boolean = false,
     val hasCollection: Boolean = false,
     val pageList: List<VideoPageListData> = emptyList(),
+    val dashVideo: DashVideoPlayBean = DashVideoPlayBean()
 )

@@ -119,7 +119,8 @@ dependencies {
     implementation(libs.constraintlayout)
 
     implementation(libs.hilt.android)
-    implementation(libs.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.compiler)
 
     ksp(libs.kcomponent.compiler)
@@ -166,4 +167,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.kotlinx.serialization.cbor)
+
+    implementation( "androidx.tonyodev.fetch2:xfetch2:3.1.6")
 }

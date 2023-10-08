@@ -224,15 +224,6 @@ class AsVideoViewModel @Inject constructor(
 
         if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
 
-        val decompressBytes =
-            context.decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-
-        val outputStream = FileOutputStream(assFile)
-        decompressBytes.also {
-            outputStream.write(it)
-            it.clone()
-        }
-
         assFile.writeText(
             DmXmlToAss.xmlToAss(
                 assFile.readText(),
@@ -272,10 +263,8 @@ class AsVideoViewModel @Inject constructor(
         }
 
         val sink = dest.sink() // 打开目标文件路径的sink
-        val decompressBytes =
-            context.decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
+
         bufferedSink = sink.buffer()
-        decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
         bufferedSink.close()
 
         viewModelScope.launchUI {
@@ -512,21 +501,13 @@ class AsVideoViewModel @Inject constructor(
     suspend fun archiveFavoured(bvid: String) = videoRepository.hasCollection(bvid)
     suspend fun archiveCoins(bvid: String) = videoRepository.hasCoins(bvid)
 
-    suspend fun getMp4(
-        bvid: String,
-        cid: Long,
-        quality: Int,
-        format: Int,
-        allow4KVideo: Int
-    ) = videoRepository.getMP4VideoStream(bvid, cid, quality, format, allow4KVideo)
-
     suspend fun getDash(
         bvid: String,
         cid: Long,
         quality: Int,
         format: Int,
         allow4KVideo: Int
-    ) = videoRepository.getDashVideoStream(bvid, cid, quality, format, allow4KVideo)
+    ) = videoRepository.getDashVideoStream(bvid, cid, quality, format)
 
     fun get番剧视频流(epID: String, cid: Long) {
         launchIO {

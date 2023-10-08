@@ -3,19 +3,20 @@ package com.imcys.bilibilias.common.base.app
 import android.app.Application
 import android.content.Context
 import android.os.Handler
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.preference.PreferenceManager
+import androidx.work.Configuration
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.BuildConfig
-import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
+import javax.inject.Inject
 
-open class BaseApplication : Application() {
-
+open class BaseApplication : Application(), Configuration.Provider {
     init {
         instance = this
     }
@@ -33,6 +34,14 @@ open class BaseApplication : Application() {
         // 初始化MMKV
         initMMKV()
     }
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override fun getWorkManagerConfiguration() =
+        Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     private fun initMMKV() {
         MMKV.initialize(this)

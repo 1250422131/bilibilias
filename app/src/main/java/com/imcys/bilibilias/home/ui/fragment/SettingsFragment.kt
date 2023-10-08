@@ -30,7 +30,7 @@ import me.rosuh.filepicker.config.FilePickerManager
 
 private const val user_download_save_sd_path_switch = "user_download_save_sd_path_switch"
 
-private const val user_download_save_path = "user_download_save_path"
+private const val KEY_USER_DOWNLOAD_SAVE_PATH = "user_download_save_path"
 
 private const val download_path = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
 
@@ -96,7 +96,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 positiveButtonClickListener = {
                     getDefaultSharedPreferences(requireContext()).edit().putString(
-                        user_download_save_path,
+                        KEY_USER_DOWNLOAD_SAVE_PATH,
                         download_path,
                     )
                         .apply()
@@ -170,7 +170,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun initUserDownloadSavePathEditText() {
-        userDownloadSavePathEditText = findPreference(user_download_save_path)!!
+        userDownloadSavePathEditText = findPreference(KEY_USER_DOWNLOAD_SAVE_PATH)!!
         userDownloadSavePathEditText.setOnPreferenceClickListener {
             // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -279,7 +279,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 if (resultCode == Activity.RESULT_OK) {
                     FilePickerManager.obtainData().forEach {
                         sharedPreferences.edit {
-                            putString(user_download_save_path, it)
+                            putString(KEY_USER_DOWNLOAD_SAVE_PATH, it)
                             userDownloadSavePathEditText.summary = it
                         }
                     }
@@ -294,7 +294,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun initPreference() {
         sharedPreferences.apply {
             val value = getString(
-                user_download_save_path,
+                KEY_USER_DOWNLOAD_SAVE_PATH,
                 download_path,
             )
             userDownloadSavePathEditText.summary = value

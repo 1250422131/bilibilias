@@ -26,7 +26,6 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
-import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -38,9 +37,9 @@ import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
-import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
@@ -218,12 +217,6 @@ object DialogUtils {
 //
 //        return bottomSheetDialog
 //    }
-
-    class AsLoginBsViewModelFactory(
-        binding: DialogAsLoginBottomsheetBinding,
-        bottomSheetDialog: BottomSheetDialog,
-        function: () -> Unit
-    ) : ViewModelProvider.Factory
 
     /**
      * 构建底部对话框
@@ -422,8 +415,6 @@ object DialogUtils {
 
     private fun addThirdPartyData(
         bvid: String,
-        aid: Long,
-        mid: Long,
         name: String,
         copyright: Int,
         tName: String,
@@ -433,39 +424,20 @@ object DialogUtils {
         toneQuality: Int,
     ) {
         val mDownloadTool = when (downloadTool) {
-            IDM_DOWNLOAD -> {
-                "IDM"
-            }
-
-            APP_DOWNLOAD -> {
-                "APP"
-            }
-
-            ADM_DOWNLOAD -> {
-                "ADM"
-            }
-
-            else -> {
-                TODO("意外出现")
-            }
+            APP_DOWNLOAD -> "APP"
+            IDM_DOWNLOAD -> "IDM"
+            ADM_DOWNLOAD -> "ADM"
+            else -> "未知"
         }
 
         val mDownloadType = when (downloadType) {
-            DASH_TYPE -> {
-                "DASH"
-            }
-
-            MP4_TYPE -> {
-                "MP4"
-            }
-
-            else -> {
-                TODO("意外出现")
-            }
+            DASH_TYPE -> "DASH"
+            MP4_TYPE -> "MP4"
+            else -> "未知"
         }
 
         // 构建微软事件提交
-        var properties = mutableMapOf<String, String>()
+        val properties = mutableMapOf<String, String>()
         properties["bvid"] = bvid
         properties["upName"] = name
         properties["copyright"] = copyright.toString()
@@ -475,20 +447,14 @@ object DialogUtils {
         properties["downloadCondition"] = downloadCondition.toString()
         properties["toneQuality"] = toneQuality.toString()
         Analytics.trackEvent("AnalysisVideo", properties)
-        // 构建百度事件提交
 
-        properties = mutableMapOf()
+        // 构建百度事件提交
+        properties.clear()
         properties["tName"] = tName
         properties["copyright"] = copyright.toString()
         properties["downloadTool"] = mDownloadTool
         properties["downloadType"] = mDownloadType
-        StatService.onEvent(
-            App.context,
-            "AnalysisVideo",
-            "解析视频",
-            1,
-            properties,
-        )
+        StatService.onEvent(App.context, "AnalysisVideo", "解析视频", 1, properties)
     }
 
     /**
@@ -501,7 +467,7 @@ object DialogUtils {
      * @param fnval Int
      * @param videoPageMutableList MutableList<DataBean>
      */
-    private fun downloadTaskStream(
+    fun downloadTaskStream(
         context: Context,
         downloadType: Int,
         downloadTool: Int,
@@ -515,8 +481,6 @@ object DialogUtils {
         // 向第三方统计提交数据
         addThirdPartyData(
             videoDetails.bvid,
-            videoDetails.aid,
-            videoDetails.owner.mid,
             videoDetails.owner.name,
             videoDetails.copyright,
             videoDetails.tname,
@@ -579,8 +543,6 @@ object DialogUtils {
         // 向第三方统计提交数据
         addThirdPartyData(
             videoDetails.bvid,
-            videoDetails.aid,
-            videoDetails.owner.mid,
             videoDetails.owner.name,
             videoDetails.copyright,
             videoDetails.tname,
@@ -1270,7 +1232,7 @@ object DialogUtils {
      * @param fnval Int
      * @param videoPageMutableList MutableList<DataBean>
      */
-    private fun addFlvDownloadTask(
+    fun addFlvDownloadTask(
         context: Context,
         videoDetails: VideoDetails,
         qn: Int,
@@ -1419,36 +1381,7 @@ object DialogUtils {
         )
 
         when (downloadTool) {
-            APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
-                    url,
-                    savePath,
-                    intFileType,
-                    DownloadTaskDataBean(
-                        dataBean.cid,
-                        dataBean.part,
-                        videoDetails.bvid,
-                        qn.toString(),
-                        videoPlayDetails = videoPlayDetails,
-                        videoPageDataData = dataBean,
-                    ),
-                    isGroupTask = isGroupTask,
-                ) { it2 ->
-                    if (it2) {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载成功",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载失败",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }
-            }
+            APP_DOWNLOAD -> {}
 
             IDM_DOWNLOAD -> {
                 toIdmDownload(url, context)
@@ -1523,36 +1456,7 @@ object DialogUtils {
         )
 
         when (downloadTool) {
-            APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
-                    url,
-                    savePath,
-                    intFileType,
-                    DownloadTaskDataBean(
-                        dataBean.cid,
-                        dataBean.title,
-                        videoDetails.bvid,
-                        qn.toString(),
-                        bangumiPlayBean = bangumiPlayBean,
-                        bangumiSeasonBean = dataBean,
-                    ),
-                    isGroupTask = isGroupTask,
-                ) { it2 ->
-                    if (it2) {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载成功",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载失败",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }
-            }
+            APP_DOWNLOAD -> {}
 
             IDM_DOWNLOAD -> {
                 toIdmDownload(url, context)
@@ -1642,36 +1546,7 @@ object DialogUtils {
         )
 
         when (downloadTool) {
-            APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
-                    url,
-                    savePath,
-                    intFileType,
-                    DownloadTaskDataBean(
-                        dataBean.cid,
-                        dataBean.longTitle,
-                        videoDetails.bvid,
-                        qn.toString(),
-                        dashBangumiPlayBean = dashBangumiPlayBean,
-                        bangumiSeasonBean = dataBean,
-                    ),
-                    isGroupTask = isGroupTask,
-                ) { it2 ->
-                    if (it2) {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载成功",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载失败",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }
-            }
+            APP_DOWNLOAD -> {}
 
             IDM_DOWNLOAD -> {
                 toIdmDownload(url, context)
@@ -1760,36 +1635,7 @@ object DialogUtils {
         )
 
         when (downloadTool) {
-            APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
-                    url,
-                    savePath,
-                    intFileType,
-                    DownloadTaskDataBean(
-                        dataBean.cid,
-                        dataBean.part,
-                        videoDetails.bvid,
-                        qn.toString(),
-                        dashVideoPlayBean = dashVideoPlayBean,
-                        videoPageDataData = dataBean,
-                    ),
-                    isGroupTask = isGroupTask,
-                ) { it2 ->
-                    if (it2) {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载成功",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "${videoDetails.bvid}下载失败",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    }
-                }
-            }
+            APP_DOWNLOAD -> {}
 
             IDM_DOWNLOAD -> {
                 toIdmDownload(url, context)
@@ -1807,10 +1653,7 @@ object DialogUtils {
         intent.data = Uri.parse(url)
         intent.putExtra(COOKIE, asUser.cookie)
         intent.putExtra(REFERER, "$BILIBILI_URL/")
-        intent.putExtra(
-            USER_AGENT,
-            BROWSER_USER_AGENT,
-        )
+        intent.putExtra(USER_AGENT, BROWSER_USER_AGENT,)
         if (AppFilePathUtils.isInstallApp(context, "idm.internet.download.manager.plus")
         ) {
             Toast.makeText(context, "正在拉起IDM", Toast.LENGTH_SHORT).show()
@@ -1856,40 +1699,6 @@ object DialogUtils {
             context.startActivity(intent)
         } else {
             Toast.makeText(context, "看起来你还没有安装下载器", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    /**
-     * 加载视频子集
-     * @param context Context
-     * @param videoPageListData VideoPageListData
-     * @param finished Function1<[@kotlin.ParameterName] MutableList<Long>, Unit>
-     * @return BottomSheetDialog
-     */
-    private fun loadVideoPageDialog(
-        context: Context,
-        videoPageListData: VideoPageListData,
-        videoPageMutableList: MutableList<VideoPageListData>,
-        finished: (selects: MutableList<VideoPageListData>) -> Unit,
-    ): BottomSheetDialog {
-        val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
-
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 创建设置布局
-        bottomSheetDialog.setContentView(binding.root)
-
-        // val mDialogBehavior =
-        initDialogBehaviorBinding(
-            binding.dialogCollectionBar,
-            context,
-            binding.root.parent,
-        )
-
-        binding.apply {
-            dialogCollectionTitle.text = "请选择视频子集"
-
-            val pageData = mutableListOf<VideoPageListData>() + videoPageListData
-            return bottomSheetDialog
         }
     }
 

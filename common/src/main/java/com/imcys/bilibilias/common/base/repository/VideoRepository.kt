@@ -29,7 +29,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
+class VideoRepository @Inject constructor(
+    private val httpClient: HttpClient,
+    private val wbiKeyRepository: WbiKeyRepository
+) {
 
     private val json = Json {
         prettyPrint = true
@@ -68,54 +71,41 @@ class VideoRepository @Inject constructor(private val httpClient: HttpClient) {
         _bangumi.emit(result)
     }
 
-    private val _videoPlayDetailsFlow = MutableSharedFlow<VideoPlayDetails>(1, 1)
+    private val _videoPlayDetailsFlow = MutableSharedFlow<VideoPlayDetails>(1)
     val videoPlayDetailsFlow = _videoPlayDetailsFlow.asSharedFlow()
 
     /**
-     * ```
-     * bvid=BV1y7411Q7Eq
-     * cid=171776208
-     * qn=112
-     * fnval=0
-     * fnver=0
-     * fourk=1
-     * ```
-     * @param quality 视频清晰度选择
-     * @param format 视频流格式标识 mp4:1 dash:16
-     * @param allow4KVideo 是否允许 4K 视频 1080p:0 4k:1
-     * getMP4VideoStream
+     * fnval 默认值已经取到所有值
      */
-    suspend fun getMP4VideoStream(
-        bvid: String,
-        cid: Long,
-        quality: Int = 64,
-        format: Int = 1,
-        allow4KVideo: Int = 1
-    ): VideoPlayDetails = getVideoStreamAddress(bvid, cid, quality, format, allow4KVideo)
-
     suspend fun getDashVideoStream(
         bvid: String,
         cid: Long,
-        quality: Int,
-        format: Int,
-        allow4KVideo: Int
-    ): DashVideoPlayBean = getVideoStreamAddress(bvid, cid, quality, format, allow4KVideo)
+        fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
+        fourk: Int = 1
+    ): DashVideoPlayBean {
+        return getVideoStreamAddress(bvid, cid, 0, fnval, fourk)
+    }
 
+    /**
+     * @param fnval 视频流格式标识 mp4值恒为1
+     * @param fourk 是否允许 4K 视频 1080p为0 4k为1
+     * @param fnver 恒为0
+     */
     private suspend inline fun <reified T> getVideoStreamAddress(
         bvid: String,
         cid: Long,
-        quality: Int,
-        format: Int,
-        allow4KVideo: Int
-    ) =
-        httpClient.safeGet<T>(BilibiliApi.videoPlayPath) {
-            header(HttpHeaders.Referrer, BILIBILI_URL)
-            parameter("bvid", bvid)
-            parameter("cid", cid)
-            parameter("qn", quality)
-            parameter("fnval", format)
-            parameter("fourk", allow4KVideo)
-        }.getOrThrow()
+        qn: Int,
+        fnval: Int,
+        fourk: Int
+    ): T = httpClient.safeGet<T>(BilibiliApi.videoPlayPath) {
+        header(HttpHeaders.Referrer, BILIBILI_URL)
+        parameter("bvid", bvid)
+        parameter("cid", cid)
+        parameter("qn", qn)
+        parameter("fnval", fnval)
+        parameter("fourk", fourk)
+        parameter("fnver", 0)
+    }.getOrThrow()
 
     /**
      * 视频cid

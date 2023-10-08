@@ -306,23 +306,23 @@ class AsVideoActivity : BaseActivity<com.imcys.bilibilias.databinding.ActivityAs
         when (type) {
             "video" -> {
                 launchIO {
-                    val videoPlayBean = viewModel.getMp4(bvid, cid, 64, 1, 1)
-                    val dashVideoPlayBean =
-                        viewModel.getDash(
-                            bvid,
-                            cid,
-                            64,
-                            16 or 64 or 128 or 256 or 512 or 1024 or 2048,
-                            1
-                        )
-                    setAsJzvdConfig(videoPlayBean.durl[0].url, "")
-                    dashVideoPlayBean.dash.video[0].also {
-                        if (it.width < it.height) {
-                            // 竖屏
-                            // binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                            //     height = windowManager.defaultDisplay.height / 4 * 3
-                            // }
-                        }
+                    // val videoPlayBean = viewModel.getMp4(bvid, cid, 64, 1)
+                    // val dashVideoPlayBean =
+                    //     viewModel.getDash(
+                    //         bvid,
+                    //         cid,
+                    //         64,
+                    //         16 or 64 or 128 or 256 or 512 or 1024 or 2048,
+                    //         1
+                    //     )
+                    // setAsJzvdConfig(videoPlayBean.durl[0].url, "")
+                    // dashVideoPlayBean.dash.video[0].also {
+                    //     if (it.width < it.height) {
+                    //         // 竖屏
+                    //         // binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                    //         //     height = windowManager.defaultDisplay.height / 4 * 3
+                    //         // }
+                    //     }
 
 //                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
 //                                // 计算折叠程度（0为完全展开，1为完全折叠）
@@ -338,7 +338,6 @@ class AsVideoActivity : BaseActivity<com.imcys.bilibilias.databinding.ActivityAs
 //                            }
                     }
                 }
-            }
 
             "bangumi" -> {
                 setAsJzvdConfig(TODO("dddddddd"), "")

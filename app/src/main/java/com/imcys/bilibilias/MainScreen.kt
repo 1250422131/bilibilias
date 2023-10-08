@@ -14,17 +14,9 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.imcys.bilibilias.ui.download.downloadCacheTypeRoute
-import com.imcys.bilibilias.ui.download.downloadCachedAudioQualityRoute
-import com.imcys.bilibilias.ui.download.downloadCachedSubsetRoute
 import com.imcys.bilibilias.ui.download.downloadOptionsRoute
 import com.imcys.bilibilias.ui.download.downloadRoute
-import com.imcys.bilibilias.ui.download.downloadVideoClarityRoute
-import com.imcys.bilibilias.ui.download.navigateToCacheType
-import com.imcys.bilibilias.ui.download.navigateToCachedAudioQuality
-import com.imcys.bilibilias.ui.download.navigateToCachedSubset
 import com.imcys.bilibilias.ui.download.navigateToDownloadOptions
-import com.imcys.bilibilias.ui.download.navigateToVideoClarity
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
 import com.imcys.bilibilias.ui.player.navigateToPlayer
@@ -51,17 +43,9 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         // <editor-fold desc="下载选项">
         downloadOptionsRoute(
-            navController = navController,
             onBack = navController::navigateUp,
-            onNavigateToVideoClarity = navController::navigateToVideoClarity,
-            onNavigateToCachedSubset = navController::navigateToCachedSubset,
-            onNavigateToCacheType = navController::navigateToCacheType,
-            onNavigateToCachedAudioQuality = navController::navigateToCachedAudioQuality,
+            navController = navController,
         )
-        downloadVideoClarityRoute(onBack = navController::navigateUp, navController)
-        downloadCachedSubsetRoute(onBack = navController::navigateUp)
-        downloadCacheTypeRoute(onBack = navController::navigateUp)
-        downloadCachedAudioQualityRoute(onBack = navController::navigateUp)
         // </editor-fold>
 
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)

@@ -4,10 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * @author:imcys
- * @create: 2022-12-06 16:59
- * @Description: dash类型视频返回数据
+ * dash类型视频返回数据
+ *
  * ![DASH格式](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md#dash%E6%A0%BC%E5%BC%8F)
+ * todo dash部分类的字段或许是缺失的
  */
 @Serializable
 data class DashVideoPlayBean(
