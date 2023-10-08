@@ -1,3 +1,5 @@
+import com.google.protobuf.gradle.id
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
@@ -6,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
+    alias(libs.plugins.protobuf)
 }
 
 apply {
@@ -62,22 +65,44 @@ kapt {
 kotlin {
     jvmToolchain(17)
 }
-
+// https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
+// https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
+// todo
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.4"
+    }
+    plugins {
+        id("kotlin")
+        // artifact = "com.google.protobuf:protoc-gen-kotlin:3.24.4"
+        // generateProtoTasks {
+        //     all().forEach {
+        //         it.builtins {
+        //             create("kotlin") {
+        //                 option("lite")
+        //             }
+        //         }
+        //     }
+        // }
+        generateProtoTasks {
+            all().forEach {
+                it.builtins {
+                    it.builtins {
+                        kotlin {}
+                    }
+                }
+                it.plugins {
+                    id("kotlin")
+                }
+            }
+        }
+    }
+}
 dependencies {
-    // 深拷贝
-    api(libs.deeprecopy.core)
-    ksp(libs.deeprecopy.compiler)
-
     // hilt库，实现控制反转
     api(libs.hilt.android)
     ksp(libs.hilt.compiler)
     api(libs.androidx.hilt.navigation.compose)
-
-    // 核心代码库
-    api(libs.okdownload)
-
-    // 提供kotlin extension，可以不引入
-    api(libs.ktx)
 
     /**
      * SmoothRefreshLayout支持
@@ -234,4 +259,8 @@ dependencies {
 
     implementation(libs.okio)
     api(libs.okhttp)
+
+    implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
+    implementation("com.google.protobuf:protobuf-kotlin-lite:3.24.4")
+
 }

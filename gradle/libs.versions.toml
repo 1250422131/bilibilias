@@ -66,7 +66,7 @@ work-runtime-ktx = "2.8.1"
 xutils = "3.9.0"
 activity-compose = "1.8.0"
 compose-bom = "2023.10.00"
-
+protobuf = "0.9.4"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -216,6 +216,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
 
 [bundles]
 room-bundles = [
