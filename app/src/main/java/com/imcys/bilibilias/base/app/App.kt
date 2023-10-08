@@ -8,6 +8,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
+import com.tonyodev.fetch2.FetchConfiguration
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import org.xutils.x
@@ -28,6 +29,9 @@ class App : BaseApplication() {
         initBRV()
 
         context = applicationContext()
+        initTimber()
+    }
+    private fun initTimber() {
         Timber.plant(Timber.DebugTree())
     }
 

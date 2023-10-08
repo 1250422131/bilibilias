@@ -2,29 +2,35 @@ package com.imcys.bilibilias.ui.download
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,170 +46,145 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.components.CenterRow
 import com.imcys.bilibilias.common.base.components.LeadingTrailingIconRow
+import com.imcys.bilibilias.common.base.components.SingleLineText
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.ui.player.PlayerState
 
 @Composable
 fun DownloadOptionsScreen(
     state: PlayerState,
-    onNavigateToVideoClarity: () -> Unit,
-    onNavigateToCachedSubset: () -> Unit,
-    onNavigateToCacheType: () -> Unit,
-    onNavigateToCachedAudioQuality: () -> Unit,
     onBack: () -> Unit,
     downloadOptions: DownloadOptionsStateHolders,
-    getVideoPlayList: (String) -> Unit,
-    downloadVideo: () -> Unit,
+    downloadVideo: (String, DownloadOptionsStateHolders, String) -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        getVideoPlayList(state.videoDetails.bvid)
-    }
-    Column(Modifier.padding(horizontal = 20.dp)) {
-        CenterRow(
-            Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        ) {
+    Box(Modifier.statusBarsPadding()) {
+        Column(Modifier.padding(horizontal = 8.dp)) {
+            // todo 此处标题用词不太对
             Text(
                 stringResource(R.string.app_dialog_dl_video_bar_title),
+                Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
-        }
-        var showVideoClarity by rememberSaveable { mutableStateOf(false) }
-        DownloadBottomSheetLeadingTrailingIcon(
-            R.drawable.ic_as_video_definition,
-            R.string.app_dialog_dl_video_definition,
-            downloadOptions.videoClarity,
-            Modifier.clickable {
-                showVideoClarity = !showVideoClarity
-            }
-        )
-        if (showVideoClarity) {
-            LazyRow(contentPadding = PaddingValues(8.dp)) {
-                items(state.videoPlayDetails.acceptDescription) { item ->
-                    TextButton(onClick = { downloadOptions.videoClarity = item }) {
-                        Text(
-                            item,
-                            color = if (item == downloadOptions.videoClarity) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                Color.Unspecified
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        DownloadBottomSheetLeadingTrailingIcon(
-            R.drawable.ic_as_video_diversity,
-            R.string.app_dialog_dl_video_episode,
-            "P1",
-            Modifier.clickable { onNavigateToCachedSubset() }
-        )
-        var showVideoType by rememberSaveable { mutableStateOf(false) }
-        DownloadBottomSheetLeadingTrailingIcon(
-            R.drawable.ic_as_video_download,
-            R.string.app_dialog_dl_video_video_type,
-            downloadOptions.cacheType,
-            Modifier.clickable { showVideoType = !showVideoType }
-        )
-        val dash = remember { "Dash" }
-        val mp4 = remember { "Mp4" }
-        if (showVideoType) {
-            CenterRow {
-                TextButton(onClick = { downloadOptions.cacheType = dash }) {
-                    Text(
-                        dash,
-                        color = if (downloadOptions.cacheType == dash) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Unspecified
-                        }
-                    )
-                }
-                TextButton(onClick = { downloadOptions.cacheType = mp4 }) {
-                    Text(
-                        mp4,
-                        color = if (downloadOptions.cacheType == mp4) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            Color.Unspecified
-                        }
-                    )
-                }
-            }
-        }
-        var showAudioQuality by remember { mutableStateOf(false) }
-        DownloadBottomSheetLeadingTrailingIcon(
-            R.drawable.ic_as_audio_download_monitor,
-            R.string.app_dialog_dl_video_audio_quality,
-            "192K",
-            Modifier.clickable {
-                showAudioQuality = !showAudioQuality
-            }
-        )
-        if (showAudioQuality) {
-            LazyRow(contentPadding = PaddingValues(8.dp)) {
-                items(state.videoPlayDetails.acceptQuality) { item ->
-                    TextButton(onClick = { downloadOptions.cachedAudioQuality = item }) {
-                        Text(
-                            AsVideoUtils.getQualityName(item),
-                            color = if (item == downloadOptions.cachedAudioQuality) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                Color.Unspecified
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        DownloadToolTypeRadioGroup()
-        DownloadVideoOrAudioRadioGroup()
-        val viewModel : DownloadViewModel = hiltViewModel()
-        Button(
-            onClick = {
+            Divider()
 
-                viewModel.downloadVideo(state.videoDetails.bvid, state.videoDetails.cid,
-                    state.videoPlayDetails.durl.first().url)
-                state.videoDetails.pages.forEach {
-                    downloadOptions.cachedSubset.add(it)
+            // <editor-fold desc="视频清晰度">
+            var showVideoClarity by rememberSaveable { mutableStateOf(false) }
+            DownloadBottomSheetLeadingTrailingIcon(
+                R.drawable.ic_as_video_definition,
+                R.string.app_dialog_dl_video_definition,
+                downloadOptions.videoFormatDescription,
+                Modifier.clickable {
+                    showVideoClarity = !showVideoClarity
                 }
-                downloadVideo()
-            },
-            Modifier
-                .fillMaxWidth()
-                .height(60.dp)
-        ) {
-            Text(stringResource(R.string.app_dialog_dl_video_button))
+            )
+            if (showVideoClarity) {
+                LazyRow(contentPadding = PaddingValues(4.dp)) {
+                    itemsIndexed(state.dashVideo.acceptDescription) { index, item ->
+                        TextButton(onClick = {
+                            downloadOptions.videoFormatDescription = item
+                            downloadOptions.videoQuality = state.dashVideo.acceptQuality[index]
+                        }) {
+                            Text(item)
+                        }
+                    }
+                }
+            }
+            // </editor-fold>
+
+            // <editor-fold desc="音质选择">
+            var showAudioQuality by remember { mutableStateOf(false) }
+            DownloadBottomSheetLeadingTrailingIcon(
+                R.drawable.ic_as_audio_download_monitor,
+                R.string.app_dialog_dl_video_audio_quality,
+                AsVideoUtils.getQualityName(downloadOptions.audioFormatDescription),
+                Modifier.clickable {
+                    showAudioQuality = !showAudioQuality
+                }
+            )
+            if (showAudioQuality) {
+                LazyRow(contentPadding = PaddingValues(8.dp)) {
+                    items(state.dashVideo.dash.audio) { item ->
+                        TextButton(onClick = {
+                            downloadOptions.audioFormatDescription = item.id; downloadOptions.audioQuality = item.id
+                        }) {
+                            Text(AsVideoUtils.getQualityName(item.id))
+                        }
+                    }
+                }
+            }
+            // </editor-fold>
+
+            DownloadToolTypeRadioGroup()
+            DownloadVideoOrAudioRadioGroup(downloadOptions)
+            // <editor-fold desc="选择文件下载">
+            val subSets = remember { mutableStateListOf(state.videoDetails.pages.first()) }
+            LazyColumn(Modifier.padding(bottom = 70.dp)) {
+                items(state.videoDetails.pages, key = { it.cid }) {
+                    TextButton(
+                        onClick = {
+                            if (it in subSets) {
+                                subSets.remove(it)
+                            } else {
+                                subSets.add(it)
+                            }
+                        },
+                        border = BorderStroke(
+                            2.dp,
+                            if (it in subSets) MaterialTheme.colorScheme.primary else Color.Unspecified
+                        )
+                    ) {
+                        SingleLineText(it.part, Modifier.fillMaxWidth())
+                    }
+                }
+            }
+            // </editor-fold>
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Surface(
+            Modifier
+                .align(Alignment.BottomCenter),
+            color = Color.Unspecified
+        ) {
+            Button(
+                onClick = {
+                    downloadVideo(
+                        state.videoDetails.bvid,
+                        downloadOptions,
+                        state.videoDetails.title
+                    )
+                },
+                Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(stringResource(R.string.app_dialog_dl_video_button))
+            }
+        }
     }
 }
 
 @Composable
-fun DownloadVideoOrAudioRadioGroup() {
-    val (type, setType) = remember { mutableStateOf(DownloadToolType.BUILTIN) }
+fun DownloadVideoOrAudioRadioGroup(downloadOptions: DownloadOptionsStateHolders) {
     Row {
         RadioGroup(
-            DownloadToolType.values(),
-            type,
-            setType,
+            DownloadFileType.values(),
+            downloadOptions.fileType,
+            {
+                downloadOptions.fileType = it
+            },
             listOf(
                 stringResource(R.string.app_dialog_dl_radio_video_and_audio),
                 stringResource(R.string.app_dialog_dl_radio_only_audio),
-                stringResource(R.string.app_dialog_dl_radio_only_video)
             )
         )
     }
 }
 
+/**
+ * 下载工具
+ */
 @Composable
 fun DownloadToolTypeRadioGroup() {
     val (type, setType) = remember { mutableStateOf(DownloadToolType.BUILTIN) }
@@ -243,16 +224,12 @@ private fun DownloadBottomSheetLeadingTrailingIcon(
             Text(
                 stringResource(leadingText),
                 Modifier.padding(horizontal = 10.dp),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
             )
         },
         trailingText = {
             Text(
                 trailingText,
                 Modifier.padding(horizontal = 10.dp),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
             )
         },
         trailingIcon = { Image(imageVector = imageVector, contentDescription = null) },

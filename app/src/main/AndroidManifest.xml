@@ -138,10 +138,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".splash.ui.SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SplashOverlay"></activity>
-        <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|smallestScreenSize"
             android:exported="true"

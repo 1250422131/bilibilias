@@ -1,8 +1,5 @@
 package com.imcys.bilibilias.base.utils
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.documentfile.provider.DocumentFile
@@ -14,6 +11,7 @@ import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
@@ -23,24 +21,26 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.utils.VideoUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.liulishuo.okdownload.DownloadListener
-import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
-import com.liulishuo.okdownload.core.cause.EndCause
-import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import com.imcys.bilibilias.ui.download.DownloadToolType
 import com.microsoft.appcenter.analytics.Analytics
+import com.tonyodev.fetch2.AbstractFetchGroupListener
+import com.tonyodev.fetch2.Download
+import com.tonyodev.fetch2.Fetch
+import com.tonyodev.fetch2.FetchConfiguration
+import com.tonyodev.fetch2.FetchGroup
+import com.tonyodev.fetch2.NetworkType
+import com.tonyodev.fetch2.Request
+import io.microshow.rxffmpeg.RxFFmpegCommandList
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.CoroutineScope
@@ -52,12 +52,13 @@ import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.util.regex.Pattern
 import java.util.zip.Inflater
 import javax.inject.Inject
+
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -69,204 +70,111 @@ const val STATE_DOWNLOAD_PAUSE = 3
 
 // 非正常结束
 const val STATE_DOWNLOAD_ERROR = -1
+private const val BILIBILI_DOWNLOAD_PATH = "/storage/emulated/0/Android/data/tv.danmaku.bili/download"
+private const val INDEX_JSON = "index.json"
+private const val ENTRY_JSON = "entry.json"
+private const val VIDEO_M4S = "video.m4s"
+private const val AUDIO_M4S = "audio.m4s"
+private const val TAG_VIDEO = "video"
+private const val TAG_AUDIO = "audio"
 
 // 定义一个下载队列类
-class DownloadQueue @Inject constructor() :
-    CoroutineScope by MainScope() {
-
-    private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
+class DownloadQueue @Inject constructor() : CoroutineScope by MainScope() {
 
     var downloadTaskAdapter: DownloadTaskAdapter? = null
     var downloadFinishTaskAd: DownloadFinishTaskAd? = null
 
-    // 存储待下载的任务
-    private val queue = mutableListOf<DownloadTaskInfo>()
+    private lateinit var fetch: Fetch
 
-    // 当前正在下载的任务
-    private val currentTasks = mutableListOf<DownloadTaskInfo>()
+    init {
+        initFetch()
+    }
 
-    var allTask = mutableListOf<DownloadTaskInfo>()
+    private fun initFetch() {
+        val fetchConfiguration: FetchConfiguration = FetchConfiguration.Builder(App.context)
+            .setDownloadConcurrentLimit(4)
+            .setGlobalNetworkType(NetworkType.ALL)
+            .build()
+        fetch = Fetch.Impl.getInstance(fetchConfiguration)
+        fetch.addListener(DefaultAbstractFetchGroupListener())
+    }
 
-    // 添加下载任务到队列中
-    fun addTask(
-        url: String,
-        savePath: String,
-        fileType: Int,
-        downloadTaskDataBean: DownloadTaskDataBean,
-        isGroupTask: Boolean = true,
-        onComplete: (Boolean) -> Unit,
-    ) {
-        // 创建一个下载任务
-        val task =
-            DownloadTaskInfo(
-                url,
-                savePath,
-                fileType,
-                downloadTaskDataBean,
-                isGroupTask = isGroupTask,
-                onComplete,
-            )
+    private inner class DefaultAbstractFetchGroupListener : AbstractFetchGroupListener() {
+        override fun onCompleted(groupId: Int, download: Download, fetchGroup: FetchGroup) {
+            val v = fetchGroup.completedDownloads.find { it.group == groupId && it.tag == TAG_VIDEO }
+            val a = fetchGroup.completedDownloads.find { it.group == groupId && it.tag == TAG_AUDIO }
+            if (v != null && a != null) {
+                val 音视频文件名 = v.file.replace(".m4s", ".mp4")
+                Timber.tag("onCompleted").d(v.file)
+                Timber.tag("onCompleted").d(a.file)
+                Timber.tag("onCompleted").d(音视频文件名)
+                val command = "ffmpeg -i ${v.file} -i ${a.file} -c copy $音视频文件名".split(' ')
 
-        if (task.isGroupTask) {
-            // 在map中找到这个任务所属的一组任务
-            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
-            if (groupTasks == null) {
-                // 创建一个新的任务列表
-                val newGroupTasks = mutableListOf<DownloadTaskInfo>()
-                // 将这个任务加入到这个任务列表中
-                newGroupTasks.add(task)
-                // 将这个任务列表加入到map中
-                groupTasksMap[task.downloadTaskDataBean.cid] = newGroupTasks
-            } else {
-                groupTasks.add(task)
+                RxFFmpegInvoke.getInstance()
+                    .runCommandRxJava(
+                        buildFFmpegCommand(v.file, a.file, 音视频文件名)
+                    ).subscribe(DefaultRxFFmpegSubscriber(v, a, 音视频文件名))
             }
-        }
-        // 添加下载任务到队列中
-        queue.add(task)
-        // 如果队列不为空，就执行队列中的所有任务
-        if (queue.isNotEmpty()) {
-            executeTask()
         }
     }
 
-    // 执行下载任务
-    private fun executeTask() {
-        while (currentTasks.size < 2 && queue.isNotEmpty()) {
-            // 删除并且返回当前的task
-            val mTask = queue.removeAt(0)
+    private fun buildFFmpegCommand(videoPath: String, audioPath: String, filename: String): Array<out String> {
+        return RxFFmpegCommandList()
+            .append("-i")
+            .append(videoPath)
+            .append("-i")
+            .append(audioPath)
+            .append("-c")
+            .append("copy")
+            .append(filename)
+            .build()
+    }
 
-            val fileRegex = ".+/(.+)\$"
-            val rFile: Pattern = Pattern.compile(fileRegex)
-            val m = rFile.matcher(mTask.savePath)
-            var fileName = ""
-            if (m.find()) {
-                fileName = m.group(1) ?: ""
-            }
-
-            val filePath = mTask.savePath.replace("/$fileName", "")
-
-            val okDownloadTask = createTasK(mTask.url, filePath, fileName)
-
-            // 更新任务状态
-            mTask.state = STATE_DOWNLOADING
-            // 添加任务到当前任务列表中
-            currentTasks.add(mTask)
-
-            mTask.call = okDownloadTask
-
-            okDownloadTask.enqueue(object : DownloadListener {
-                override fun taskStart(task: DownloadTask) {
-                }
-
-                override fun connectTrialStart(
-                    task: DownloadTask,
-                    requestHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun connectTrialEnd(
-                    task: DownloadTask,
-                    responseCode: Int,
-                    responseHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun downloadFromBeginning(
-                    task: DownloadTask,
-                    info: BreakpointInfo,
-                    cause: ResumeFailedCause,
-                ) {
-                }
-
-                override fun downloadFromBreakpoint(task: DownloadTask, info: BreakpointInfo) {
-                }
-
-                override fun connectStart(
-                    task: DownloadTask,
-                    blockIndex: Int,
-                    requestHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun connectEnd(
-                    task: DownloadTask,
-                    blockIndex: Int,
-                    responseCode: Int,
-                    responseHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
-                }
-
-                override fun fetchProgress(
-                    task: DownloadTask,
-                    blockIndex: Int,
-                    increaseBytes: Long,
-                ) {
-                    val totalOffset = task.info?.totalOffset ?: 0L
-                    val totalLength = task.info?.totalLength ?: 0L
-                    val progress = ((totalOffset.toFloat() / totalLength) * 100)
-                    updateProgress(mTask, progress.toDouble())
-
-                    mTask.fileSize = (totalOffset / 1048576).toDouble()
-                    mTask.fileDlSize = (totalLength / 1048576).toDouble()
-                    // 下载进度更新时的回调，可以在这里处理下载百分比
-                }
-
-                override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
-                }
-
-                override fun taskEnd(
-                    task: DownloadTask,
-                    cause: EndCause,
-                    realCause: Exception?,
-                ) {
-                    // 异常
-                    if (realCause != null) {
-                        currentTasks.remove(mTask)
-                        // 更新任务状态
-                        mTask.state = STATE_DOWNLOAD_ERROR
-                        // 下载失败，调用任务的完成回调
-                        mTask.onComplete(false)
-                        // 更新
-                        updateAdapter()
-                        // 执行下一个任务
-                        executeTask()
-
-                        return
-                    }
-
-                    currentTasks.remove(mTask)
-                    // 更新任务状态
-                    mTask.state = STATE_DOWNLOAD_END
-                    // 下载成功，调用任务的完成回调
-                    mTask.onComplete(true)
-                    // 更新
-                    updateAdapter()
-
-                    if (mTask.isGroupTask) {
-                        // 在map中找到这个任务所属的一组任务
-                        val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
-                        // 判断这一组任务是否都已经下载完成
-                        val isGroupTasksCompleted =
-                            groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
-                        if (isGroupTasksCompleted) {
-                            videoDataSubmit(mTask)
-                            videoMerge(mTask.downloadTaskDataBean.cid)
-                        }
-                    } else {
-                        // FLV或者单独任务不需要合并操作，直接视为下载了。
-                        saveFinishTask(mTask)
-                        videoDataSubmit(mTask)
-                        updatePhotoMedias(App.context, File(mTask.savePath))
-                    }
-
-                    // 执行下一个任务
-                    executeTask()
-                }
-            })
+    private class DefaultRxFFmpegSubscriber(
+        private val video: Download,
+        private val audio: Download,
+        private val filename: String
+    ) : RxFFmpegSubscriber() {
+        override fun onFinish() {
+            FileUtils.deleteFiles(video.file, audio.file)
+            updatePhotoMedias(File(filename))
         }
+
+        override fun onError(message: String?) {}
+        override fun onProgress(progress: Int, progressTime: Long) {}
+        override fun onCancel() {}
+    }
+
+    fun addTask(
+        bvid: String,
+        cid: Long,
+        filename: String,
+        foldername: String,
+        videoUrl: String,
+        audioUrl: String,
+        downloadMethod: DownloadToolType,
+    ) {
+        when(downloadMethod){
+            DownloadToolType.BUILTIN -> TODO()
+            DownloadToolType.IDM -> TODO()
+            DownloadToolType.ADM -> TODO()
+        }
+        val requestVideo = createRequest(
+            videoUrl,
+            File(DIRECTORY_BILIBILI_AS, foldername).path + "/video_$filename.m4s", cid.toInt(), TAG_VIDEO
+        )
+        val requestAudio = createRequest(
+            audioUrl,
+            File(DIRECTORY_BILIBILI_AS, foldername).path + "/audio_$filename.m4s", cid.toInt(), TAG_AUDIO
+        )
+        fetch.enqueue(listOf(requestVideo, requestAudio))
+    }
+
+    private fun createRequest(url: String, file: String, groupId: Int, tag: String) = Request(url, file).apply {
+        addHeader(USER_AGENT, BROWSER_USER_AGENT)
+        addHeader(REFERER, BILIBILI_URL)
+        this.groupId = groupId
+        this.tag = TAG_VIDEO
     }
 
     /**
@@ -306,17 +214,17 @@ class DownloadQueue @Inject constructor() :
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
+            // val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
 
             // 协程提交
-            DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
-                insert(downloadFinishTaskInfo)
-
-                downloadFinishTaskAd?.apply {
-                    val finishTasks = allDownloadFinishTask()
-                    submitList(finishTasks)
-                }
-            }
+            // DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
+            //     insert(downloadFinishTaskInfo)
+            //
+            //     downloadFinishTaskAd?.apply {
+            //         val finishTasks = allDownloadFinishTask()
+            //         submitList(finishTasks)
+            //     }
+            // }
         }
     }
 
@@ -420,47 +328,27 @@ class DownloadQueue @Inject constructor() :
                 false,
             )
 
-        val taskMutableList = groupTasksMap[cid]
-        val videoTask =
-            taskMutableList?.filter { it.fileType == 0 }
-        val audioTask =
-            taskMutableList?.filter { it.fileType == 1 }
+
 
         if (mergeState) {
             // 耗时操作，这里直接开个新线程
-            val videoPath =
-                videoTask!![0].savePath
-            val audioPath =
-                audioTask!![0].savePath
-            // 这里的延迟是为了有足够时间让下载检查下载完整
 
-            runFFmpegRxJavaVideoMerge(
-                videoTask[0],
-                videoPath,
-                audioPath,
-            )
 
-            // 旧的合并方案： MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
         } else if (importState) {
-            videoTask!![0].downloadTaskDataBean.bangumiSeasonBean?.apply {
-                // 分别添加下载完成了
-                saveFinishTask(videoTask[0], audioTask!![0])
                 importVideo(cid)
-            }
+
         } else {
-            // 这类代表虽然是dash下载，但是并不需要其他操作
-            saveFinishTask(videoTask!![0], audioTask!![0])
-            // 这类通知相册更新下文件
-            updatePhotoMedias(App.context, File(videoTask[0].savePath), File(audioTask[0].savePath))
+
         }
     }
+
 
     private fun runFFmpegRxJavaVideoMerge(
         task: DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -498,17 +386,15 @@ class DownloadQueue @Inject constructor() :
                         task.fileType = 0
                         saveFinishTask(task)
                         // 通知相册更新
-                        updatePhotoMedias(App.context, File(videoPath + "_merge.mp4"))
+                        updatePhotoMedias(File(videoPath + "_merge.mp4"))
                     } else {
                         // 分别储存两次下载结果
-                        val videoTask = task
-                        val audioTask = task
-                        videoTask.fileType = 0
-                        audioTask.savePath = audioPath
-                        audioTask.fileType = 1
-                        saveFinishTask(videoTask, audioTask)
+                        task.fileType = 0
+                        task.savePath = audioPath
+                        task.fileType = 1
+                        saveFinishTask(task, task)
                         // 通知相册更新
-                        updatePhotoMedias(App.context, File(videoPath), File(audioPath))
+                        updatePhotoMedias(File(videoPath), File(audioPath))
                     }
                 }
 
@@ -527,150 +413,108 @@ class DownloadQueue @Inject constructor() :
     private fun importVideo(cid: Long) {
         val VIDEO_TYPE = 1
         val BANGUMI_TYPE = 2
-        val taskMutableList = groupTasksMap[cid]
 
-        val videoTask =
-            taskMutableList?.filter { it.fileType == 0 }
-        val audioTask =
-            taskMutableList?.filter { it.fileType == 1 }
+
 
         var bvid = ""
         var type = VIDEO_TYPE
-        val downloadTaskDataBean = videoTask!![0].downloadTaskDataBean
+
         var displayDesc: String? = "1080P"
 
         var pageThisNum: Int? = 0
 
         var shareUrl: String? = ""
 
-        downloadTaskDataBean.bangumiSeasonBean?.apply {
-            bvid = this.bvid
-            type = BANGUMI_TYPE
-            // av过滤
-            val pageRegex = Regex("""(?<=(第))([0-9]+)""")
-            pageThisNum = if (pageRegex.containsMatchIn(shareCopy)) {
-                pageRegex.find(
-                    shareCopy,
-                )?.value!!.toInt()
-            } else {
-                TODO()
-            }
+        // downloadTaskDataBean.bangumiSeasonBean?.apply {
+        //     bvid =""
+        //     type = BANGUMI_TYPE
+        //     // av过滤
+        //     val pageRegex = Regex("""(?<=(第))([0-9]+)""")
+        //     pageThisNum = if (pageRegex.containsMatchIn(shareCopy)) {
+        //         pageRegex.find(
+        //             shareCopy,
+        //         )?.value!!.toInt()
+        //     } else {
+        //
+        //     }
 
-            shareUrl = shareUrl
-
-            downloadTaskDataBean.dashBangumiPlayBean?.result?.support_formats?.forEach {
-                if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
-            }
-        } ?: downloadTaskDataBean.videoPageDataData?.apply {
-            bvid = VideoUtils.toBvidOffline(this.cid)
-            type = VIDEO_TYPE
-            downloadTaskDataBean.dashVideoPlayBean?.supportFormats?.forEach {
-                if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.displayDesc
-            }
-        }
+        //     shareUrl = shareUrl
+        //
+        //     downloadTaskDataBean.dashBangumiPlayBean?.result?.support_formats?.forEach {
+        //         if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
+        //     }
+        // } ?: downloadTaskDataBean.videoPageDataData?.apply {
+        //     bvid = VideoUtils.toBvidOffline(this.cid)
+        //     type = VIDEO_TYPE
+        //     downloadTaskDataBean.dashVideoPlayBean?.supportFormats?.forEach {
+        //         if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.displayDesc
+        //     }
+        // }
 
         // 临时bangumiEntry -> 只对番剧使用
-        var videoEntry = App.bangumiEntry
-        var videoIndex = App.videoIndex
-        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
-        HttpUtils.addHeader(COOKIE, cookie!!)
-            .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoDetails::class.java) {
-                if (it.cid  != 0L) {
-                    videoEntry = videoEntry.replace("UP主UID", it.owner.mid.toString())
-                    videoEntry = videoEntry.replace("UP名称", it.owner.name)
-                    videoEntry = videoEntry.replace("UP头像", it.owner.face)
-                    videoEntry = videoEntry.replace("AID编号", it.aid.toString())
-                    videoEntry = videoEntry.replace("BVID编号", bvid)
-                    videoEntry = videoEntry.replace("CID编号", it.cid.toString())
-                    videoEntry = videoEntry.replace("下载标题", it.title + ".mp4")
+        // var bangumiEntry = App.bangumiEntry
+        // var videoIndex = App.videoIndex
+        // val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        // HttpUtils.addHeader(COOKIE, cookie!!)
+        //     .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoDetails::class.java) {
+        //         if (it.cid != 0L) {
+        //             bangumiEntry = bangumiEntry.replace("UP主UID", it.owner.mid.toString())
+        //                 .replace("UP名称", it.owner.name)
+        //                 .replace("UP头像", it.owner.face)
+        //                 .replace("AID编号", it.aid.toString())
+        //                 .replace("BVID编号", bvid)
+        //                 .replace("CID编号", it.cid.toString())
+        //                 .replace("下载标题", it.title + ".mp4")
+        //                 .replace("文件名称", it.title + ".mp4")
+        //                 .replace("标题", it.title)
+        //                 .replace("子集号", pageThisNum.toString())
+        //                 .replace("子集索引", (pageThisNum!! - 1).toString())
+        //                 .replace("排序号", (2000000 + pageThisNum!!).toString())
+        //                 .replace("下载子TITLE", downloadTaskDataBean.pageTitle)
+        //                 .replace("LINK地址", it.redirectUrl!!.replace("/", "\\/"))
+        //                 .replace("高度", downloadTaskDataBean.bangumiSeasonBean!!.dimension.height.toString())
+        //                 .replace("宽度", downloadTaskDataBean.bangumiSeasonBean.dimension.width.toString())
+        //                 .replace("QN编码", downloadTaskDataBean.qn)
+        //                 .replace("总时间", downloadTaskDataBean.dashBangumiPlayBean!!.result?.timelength.toString())
+        //                 .replace("弹幕数量", it.stat.danmaku.toString())
+        //                 .replace("下载子标题", downloadTaskDataBean.pageTitle)
+        //                 .replace("封面地址", it.pic.replace("/", "\\/"))
+        //                 .replace("下载大小", AppFilePathUtils.getFileSize(videoTask[0].savePath).toString())
+        //                 .replace("清晰度", displayDesc!!)
+        //                 .replace("码率", if (downloadTaskDataBean.qn == "112") "高码率" else "")
+        //
+        //             videoIndex = videoIndex.replace("视频大小", AppFilePathUtils.getFileSize(videoTask[0].savePath).toString())
+        //                 .replace("高度", downloadTaskDataBean.videoPageDataData?.dimension?.height.toString())
+        //                 .replace("宽度", downloadTaskDataBean.videoPageDataData?.dimension?.width.toString())
+        //                 .replace("QN编码", downloadTaskDataBean.qn)
+        //                 .replace("音频大小", AppFilePathUtils.getFileSize(audioTask!![0].savePath).toString())
 
-                    videoEntry = videoEntry.replace("文件名称", it.title + ".mp4")
-                    videoEntry = videoEntry.replace("标题", it.title)
-                    videoEntry = videoEntry.replace("子集号", pageThisNum.toString())
-                    videoEntry = videoEntry.replace("子集索引", (pageThisNum!! - 1).toString())
-                    videoEntry = videoEntry.replace("排序号", (2000000 + pageThisNum!!).toString())
-                    videoEntry = videoEntry.replace("下载子TITLE", downloadTaskDataBean.pageTitle)
-
-                    // videoEntry =
-                        // videoEntry.replace("LINK地址", it.redirect_url.replace("/", "\\/"))
-
-                    val width: Int?
-                    val timeLength: Int?
-                    val height = when (type) {
-                        VIDEO_TYPE -> {
-                            timeLength = downloadTaskDataBean.dashVideoPlayBean?.timelength
-                            width = downloadTaskDataBean.videoPageDataData?.dimension?.width
-                            downloadTaskDataBean.videoPageDataData?.dimension?.height
-                        }
-
-                        BANGUMI_TYPE -> {
-                            timeLength =
-                                downloadTaskDataBean.dashBangumiPlayBean?.result?.timelength
-                            width = downloadTaskDataBean.bangumiSeasonBean?.dimension?.width
-                            downloadTaskDataBean.bangumiSeasonBean?.dimension?.height
-                        }
-
-                        else -> {
-                            TODO("判断错误")
-                        }
-                    }
-                    videoEntry = videoEntry.replace("高度", height.toString())
-                    videoEntry = videoEntry.replace("宽度", width.toString())
-                    videoEntry = videoEntry.replace("QN编码", downloadTaskDataBean.qn)
-                    videoEntry = if (downloadTaskDataBean.qn == "112") {
-                        videoEntry.replace(
-                            "码率",
-                            "高码率",
-                        )
-                    } else {
-                        videoEntry.replace("码率", "")
-                    }
-
-                    videoEntry = videoEntry.replace("总时间", timeLength.toString())
-
-                    videoEntry = videoEntry.replace("弹幕数量", it.stat.danmaku.toString())
-                    videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
-
-                    val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
-                    val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
-
-                    videoEntry = videoEntry.replace("封面地址", it.pic.replace("/", "\\/"))
-                    videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
-                    videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
-                    videoIndex = videoIndex.replace("高度", height.toString())
-                    videoIndex = videoIndex.replace("宽度", width.toString())
-                    videoEntry = videoEntry.replace("清晰度", displayDesc!!)
-                    videoIndex = videoIndex.replace("QN编码", downloadTaskDataBean.qn)
-                    videoIndex = videoIndex.replace("音频大小", dashAudioSize.toString())
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        if (type == BANGUMI_TYPE) {
-                            safImpVideo(
-                                videoTask[0],
-                                videoTask[0].savePath,
-                                audioTask[0].savePath,
-                                videoEntry,
-                                videoIndex,
-                                downloadTaskDataBean,
-                                it,
-                            )
-                        }
-                    } else {
-                        if (type == BANGUMI_TYPE) {
-                            fileImpVideo(
-                                videoTask[0],
-                                videoTask[0].savePath,
-                                audioTask[0].savePath,
-                                videoEntry,
-                                videoIndex,
-                                downloadTaskDataBean,
-                                it,
-                            )
-                        }
-                    }
+                    // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    //     if (type == BANGUMI_TYPE) {
+                    //         safImpVideo(
+                    //             videoTask[0],
+                    //             videoTask[0].savePath,
+                    //             audioTask[0].savePath,
+                    //             bangumiEntry,
+                    //             videoIndex,
+                    //             downloadTaskDataBean,
+                    //             it,
+                    //         )
+                    //     }
+                    // } else {
+                    //     if (type == BANGUMI_TYPE) {
+                    //         fileImpVideo(
+                    //             videoTask[0],
+                    //             videoTask[0].savePath,
+                    //             audioTask[0].savePath,
+                    //             bangumiEntry,
+                    //             videoIndex,
+                    //             downloadTaskDataBean,
+                    //             it,
+                    //         )
+                    //     }
+                    // }
                 }
-            }
-    }
 
     private fun fileImpVideo(
         task: DownloadTaskInfo,
@@ -682,10 +526,10 @@ class DownloadQueue @Inject constructor() :
         videoDetails: VideoDetails,
     ) {
         var videoEntry = videoEntry
-        val epidUrl = "videoBaseBean.redirect_url"
+        val epidUrl = videoDetails.redirectUrl
         // av过滤
         val epRegex = Regex("""(?<=(ep))([0-9]+)""")
-        val epid = if (epRegex.containsMatchIn(epidUrl)) {
+        val epid = if (epRegex.containsMatchIn(epidUrl!!)) {
             epRegex.find(
                 epidUrl,
             )?.value!!.toInt()
@@ -698,7 +542,7 @@ class DownloadQueue @Inject constructor() :
         ) {
             val ssid = it.result.seasonId
             videoEntry = videoEntry.replace("SSID编号", (it.result.seasonId).toString())
-            videoEntry = videoEntry.replace("EPID编号", epid.toString())
+                .replace("EPID编号", epid.toString())
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
             HttpUtils.addHeader(COOKIE, cookie!!)
@@ -712,31 +556,33 @@ class DownloadQueue @Inject constructor() :
                             BaseApplication.handler.post {
                                 val bufferedSink: BufferedSink?
                                 val dest =
-                                    File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/danmaku.json")
+                                    File(
+                                        "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/danmaku.json"
+                                    )
                                 if (!dest.exists()) dest.createNewFile()
                                 val sink = dest.sink() // 打开目标文件路径的sink
                                 val decompressBytes =
                                     decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
                                 bufferedSink = sink.buffer()
-                                decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
+                                decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
                                 bufferedSink.close()
 
                                 FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/entry.json",
+                                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/$ENTRY_JSON",
                                     videoEntry,
                                 )
                                 FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/index.json",
+                                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$INDEX_JSON",
                                     videoIndex,
                                 )
 
                                 AppFilePathUtils.copyFile(
                                     videoPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
+                                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$VIDEO_M4S",
                                 )
                                 AppFilePathUtils.copyFile(
                                     audioPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
+                                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$AUDIO_M4S",
                                 )
 
                                 val impFileDeleteState =
@@ -750,19 +596,19 @@ class DownloadQueue @Inject constructor() :
                                     FileUtils.deleteFile(videoPath)
                                     FileUtils.deleteFile(audioPath)
                                     task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
+                                        "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$VIDEO_M4S"
                                     // 分别储存两次下载结果
-                                    saveFinishTask(task)
+                                    // saveFinishTask(task)
                                     task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
+                                        "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$AUDIO_M4S"
                                     task.fileType = 1
-                                    saveFinishTask(task)
+                                    // saveFinishTask(task)
                                 } else {
                                     // 分别储存两次下载结果
-                                    saveFinishTask(task)
+                                    // saveFinishTask(task)
                                     task.savePath = audioPath
                                     task.fileType = 1
-                                    saveFinishTask(task)
+                                    // saveFinishTask(task)
                                 }
                             }
                         }
@@ -825,13 +671,16 @@ class DownloadQueue @Inject constructor() :
             val entryDocument = epidDocument?.createFile("application/json", "entry")
             FileUtils.fileWrite(
                 App.context.getExternalFilesDir("temp")
-                    .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/entry.json",
+                    .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/$ENTRY_JSON",
                 videoEntry,
             )
 
+            val tempPath = App.context.getExternalFilesDir("temp")
+                .toString() + "/导入模板/" +
+                    downloadTaskDataBean.bangumiSeasonBean?.aid +
+                    "/c_" + downloadTaskDataBean.cid + "/"
             FileUtils.fileWrite(
-                App.context.getExternalFilesDir("temp")
-                    .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
+                tempPath + downloadTaskDataBean.qn + "/$INDEX_JSON",
                 videoIndex,
             )
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
@@ -843,38 +692,36 @@ class DownloadQueue @Inject constructor() :
 
             val bufferedSink: BufferedSink?
             val dest = File(
-                App.context.getExternalFilesDir("temp")
-                    .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                tempPath + downloadTaskDataBean.qn + "/danmaku.json",
             )
             if (!dest.exists()) dest.createNewFile()
             val sink = dest.sink() // 打开目标文件路径的sink
             val decompressBytes =
                 decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
-            decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
+            decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
             bufferedSink.close()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
-                    App.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                    tempPath + downloadTaskDataBean.qn + "/danmaku.json",
                     danmakuDocument?.uri,
                     App.context,
                 )
                 AppFilePathUtils.copySafFile(
                     App.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/entry.json",
+                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/$ENTRY_JSON",
                     entryDocument?.uri,
                     App.context,
                 )
             }
 
             val indexDocument =
-                qnDocument?.createFile("application/json", "index.json")
+                qnDocument?.createFile("application/json", "$INDEX_JSON")
             val videoDocument =
-                qnDocument?.createFile("application/m4s", "video.m4s")
+                qnDocument?.createFile("application/m4s", "$VIDEO_M4S")
             val audioDocument =
-                qnDocument?.createFile("application/m4s", "audio.m4s")
+                qnDocument?.createFile("application/m4s", "$AUDIO_M4S")
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
@@ -888,8 +735,7 @@ class DownloadQueue @Inject constructor() :
                     App.context,
                 )
                 AppFilePathUtils.copySafFile(
-                    App.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
+                    tempPath + downloadTaskDataBean.qn + "/$INDEX_JSON",
                     indexDocument?.uri,
                     App.context,
                 )
@@ -905,12 +751,12 @@ class DownloadQueue @Inject constructor() :
                 FileUtils.deleteFile(videoPath)
                 FileUtils.deleteFile(audioPath)
                 task.savePath =
-                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
+                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$VIDEO_M4S"
                 // 分别储存两次下载结果
                 task.fileType = 0
                 saveFinishTask(task)
                 task.savePath =
-                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
+                    "$BILIBILI_DOWNLOAD_PATH/s_$ssid/$epid/${downloadTaskDataBean.qn}/$AUDIO_M4S"
                 task.fileType = 1
                 saveFinishTask(task)
             } else {
@@ -928,45 +774,17 @@ class DownloadQueue @Inject constructor() :
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateAdapter() {
-        // 通知 RecyclerView 适配器数据发生了改变
-
-        downloadTaskAdapter?.apply {
-            val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
-                // 任务拷贝，防止传入RecyclerView后被动更改
-                currentTasks.forEach {
-                    //实验性的，请选择copy，我只是在测试自己的库
-//                    add(it.deepCopy())
-                }
-
-                queue.forEach {
-//                    add(it.deepCopy())
-                }
-            }
-
-            submitList(newMutableList.toList())
-        }
-    }
-
-    // 在 DownloadQueue 类中
-    fun updateProgress(task: DownloadTaskInfo, progress: Double) {
-        // 更新当前任务的下载进度
-        task.progress = progress
-        updateAdapter()
-    }
-
     // 解压deflate数据的函数
     fun decompress(data: ByteArray): ByteArray {
         var output: ByteArray
-        val decompresser = Inflater(true) // 这个true是关键
-        decompresser.reset()
-        decompresser.setInput(data)
+        val decompress = Inflater(true)
+        decompress.reset()
+        decompress.setInput(data)
         val o = ByteArrayOutputStream(data.size)
         try {
-            val buf = ByteArray(1024)
-            while (!decompresser.finished()) {
-                val i: Int = decompresser.inflate(buf)
+            val buf = ByteArray(4092)
+            while (!decompress.finished()) {
+                val i = decompress.inflate(buf)
                 o.write(buf, 0, i)
             }
             output = o.toByteArray()
@@ -980,52 +798,135 @@ class DownloadQueue @Inject constructor() :
                 e.printStackTrace()
             }
         }
-        decompresser.end()
+        decompress.end()
         return output
     }
-
-    // 更新图库
-    private fun updatePhotoMedias(context: Context, vararg files: File) {
-        files.forEach {
-            val intent = Intent()
-            intent.action = Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
-            intent.data = Uri.fromFile(it)
-            context.sendBroadcast(intent)
-        }
-    }
-
-    /**
-     * 创建下载任务实例
-     *
-     * @param url
-     * @param parentPath
-     * @param fileName
-     * @return
-     */
-    private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
-        val task = DownloadTask.Builder(url, parentPath, fileName)
-            .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
-            .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
-            .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
-            .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
-            .setWifiRequired(false) // 是否只允许wifi下载，默认为false
-            .setAutoCallbackToUIThread(true) // 是否在主线程通知调用者，默认为true
-            // .setHeaderMapFields(new HashMap<String, List<String>>())//设置请求头
-            // .addHeader(String key, String value)//追加请求头
-            // .setPriority(0) //设置优先级，默认值是0，值越大下载优先级越高
-            .setReadBufferSize(4096) // 设置读取缓存区大小，默认4096
-            .setFlushBufferSize(16384) // 设置写入缓存区大小，默认16384
-            .setSyncBufferSize(65536) // 写入到文件的缓冲区大小，默认65536
-            .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
-        task.addHeader(
-            USER_AGENT,
-            BROWSER_USER_AGENT,
-        )
-        task.addHeader(REFERER, "https://www.bilibili.com/")
-        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
-        task.addHeader(COOKIE, cookie!!)
-
-        return task.build()
-    }
 }
+val e1 = """
+      {
+            "media_type": 2,
+            "has_dash_audio": true,
+            "is_completed": true,
+            "total_bytes": 下载大小,
+            "downloaded_bytes": 下载大小,
+            "title": "标题",
+            "type_tag": "QN编码",
+            "cover": "封面地址",
+            "video_quality": QN编码,
+            "prefered_video_quality": QN编码,
+            "guessed_total_bytes": 0,
+            "total_time_milli": 总时间,
+            "danmaku_count": 弹幕数量,
+            "time_update_stamp": 1627134435654,
+            "time_create_stamp": 1627134431287,
+            "can_play_in_advance": true,
+            "interrupt_transform_temp_file": false,
+            "quality_pithy_description": "清晰度",
+            "quality_superscript": "码率",
+            "cache_version_code": 6340400,
+            "preferred_audio_quality": 0,
+            "audio_quality": 0,
+            
+            "avid": AID编号,
+            "spid": 0,
+            "seasion_id": 0,
+            "bvid": "BVID编号",
+            "owner_id": UP主UID,
+            "owner_name": "UP名称",
+            "owner_avatar": "UP头像",
+            "page_data": {
+                "cid": CID编号,
+                "page": 1,
+                "from": "vupload",
+                "part": "标题",
+                "link": "",
+                "vid": "",
+                "has_alias": false,
+                "tid": 17,
+                "width": 宽度,
+                "height": 高度,
+                "rotate": 0,
+                "download_title": "视频已缓存完成",
+                "download_subtitle": "下载子标题"
+            }
+        }
+""".trimIndent()
+
+val e2 = """
+     {
+            "video": [{
+                "id": QN编码,
+                "base_url": "https://upos-sz-mirrorcoso1.bilivideo.com",
+                "backup_url": ["https://upos-sz-mirrorcos.bilivideo.com"],
+                "bandwidth": 348483,
+                "codecid": 7,
+                "size": 视频大小,
+                "md5": "01c0e7ba2efc8a36f16e993a194d2d5d",
+                "no_rexcode": false,
+                "frame_rate": "",
+                "width": 宽度,
+                "height": 高度,
+                "dash_drm_type": 0
+            }],
+            "audio": [{
+                "id": 30216,
+                "base_url": "https://upos-sz-mirrorkodoo1.bilivideo.com",
+                "backup_url": ["https://upos-sz-mirrorkodo.bilivideo.com"],
+                "bandwidth": 67463,
+                "codecid": 0,
+                "size": 音频大小,
+                "md5": "2f785a38a9e46c4834347ec73b6802c0",
+                "no_rexcode": false,
+                "frame_rate": "",
+                "width": 0,
+                "height": 0,
+                "dash_drm_type": 0
+            }]
+        }
+""".trimIndent()
+val e3 = """
+    {
+              "media_type": 2,
+              "has_dash_audio": true,
+              "is_completed": true,
+              "total_bytes": 下载大小,
+              "downloaded_bytes": 下载大小,
+              "title": "标题",
+              "type_tag": "QN编码",
+              "cover": "封面地址",
+              "video_quality": QN编码,
+              "prefered_video_quality": QN编码,
+              "guessed_total_bytes": 0,
+              "total_time_milli": 总时间,
+              "danmaku_count": 弹幕数量,
+              "time_update_stamp": 1672473810242,
+              "time_create_stamp": 1672473771023,
+              "can_play_in_advance": true,
+              "interrupt_transform_temp_file": false,
+              "quality_pithy_description": "清晰度",
+              "quality_superscript": "码率",
+              "cache_version_code": 7010500,
+              "preferred_audio_quality": 0,
+              "audio_quality": 0,
+              "source": { "av_id": AID编号, "cid": CID编号, "website": "bangumi" },
+              "ep": {
+                "av_id": AID编号,
+                "page": 子集索引,
+                "danmaku": CID编号,
+                "cover": "封面地址",
+                "episode_id": EPID编号,
+                "index": "子集号",
+                "index_title": "下载子TITLE",
+                "from": "bangumi",
+                "season_type": 4,
+                "width": 宽度,
+                "height": 高度,
+                "rotate": 0,
+                "link": "LINK地址",
+                "bvid": "BVID编号",
+                "sort_index": 排序号
+              },
+              "season_id": "SSID编号"
+            }
+
+""".trimIndent()

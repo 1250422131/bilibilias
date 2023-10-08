@@ -120,6 +120,7 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
     /**
      * RxFFmpeg
@@ -206,6 +207,8 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
@@ -227,4 +230,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation(libs.coil)
+
+    implementation(libs.okio)
+    api(libs.okhttp)
 }

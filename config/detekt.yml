@@ -1048,7 +1048,7 @@ formatting:
     active: true
     autoCorrect: true
   Wrapping:
-    active: true
+    active: false
     autoCorrect: true
     indentSize: 4
     maxLineLength: 120
