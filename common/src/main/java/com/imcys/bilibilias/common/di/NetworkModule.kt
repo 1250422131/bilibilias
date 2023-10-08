@@ -36,6 +36,7 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.kotlinx.protobuf.*
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -50,7 +51,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import timber.log.Timber
 import javax.inject.Singleton
-
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
@@ -63,6 +63,7 @@ class NetworkModule {
         explicitNulls = true
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideHttpClient(@ApplicationContext appContext: Context): HttpClient = HttpClient(
@@ -96,6 +97,7 @@ class NetworkModule {
         }
         install(ContentNegotiation) {
             json(json)
+            protobuf()
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)
@@ -123,7 +125,6 @@ class NetworkModule {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     private val convertPlugin =
         createClientPlugin("TransformData") {
             transformResponseBody { response, content, requestedType ->

@@ -198,9 +198,10 @@ dependencies {
 
     // json解析支持
     implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.encoding)
     implementation(libs.ktor.serialization.gson)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.encoding)
+    implementation(libs.ktor.serialization.kotlinx.protobuf)
     api(libs.gson)
 
     api(libs.constraintlayout)
