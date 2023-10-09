@@ -19,3 +19,15 @@ fun CoroutineScope.launchUI(
 ): Job {
     return this.launch(Dispatchers.Main, start, block)
 }
+
+fun launchUI(
+    block: suspend CoroutineScope.() -> Unit,
+): Job {
+    return CoroutineScope(Dispatchers.Main).launchUI { block.invoke(this) }
+}
+
+fun launchIO(
+    block: suspend CoroutineScope.() -> Unit,
+): Job {
+    return CoroutineScope(Dispatchers.IO).launchIO { block.invoke(this) }
+}
