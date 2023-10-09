@@ -37,6 +37,8 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -88,7 +90,7 @@ object DialogUtils {
 
             dialogLoginAs.setOnClickListener {
                 asToast(context, "云端账户即将出炉")
-                bottomSheetDialog.cancel()
+//                bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
 //                    }.show()
@@ -1175,7 +1177,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = KtHttpUtils
@@ -1187,7 +1189,6 @@ object DialogUtils {
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1265,7 +1266,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
@@ -1278,7 +1279,6 @@ object DialogUtils {
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1362,7 +1362,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             flow {
                 videoPageMutableList.forEach {
                     val videoPlayBean =
@@ -1413,7 +1413,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             flow {
                 bangumiPageMutableList.forEach {
                     val bangumiPlayBean = KtHttpUtils
@@ -1528,11 +1528,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1632,11 +1636,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1751,11 +1759,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1869,11 +1881,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }

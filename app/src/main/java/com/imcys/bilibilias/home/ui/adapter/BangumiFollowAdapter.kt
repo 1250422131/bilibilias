@@ -10,15 +10,13 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BangumiFollowAdapter @Inject constructor() :
@@ -37,14 +35,14 @@ class BangumiFollowAdapter @Inject constructor() :
         ): Boolean {
             return oldItem.first_ep == oldItem.first_ep
         }
-
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         val binding =
             DataBindingUtil.inflate<ItemBangumiFollowBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_bangumi_follow, parent, false
+                R.layout.item_bangumi_follow,
+                parent,
+                false,
             )
 
         return ViewHolder(binding.root)
@@ -54,42 +52,35 @@ class BangumiFollowAdapter @Inject constructor() :
         val binding = DataBindingUtil.getBinding<ItemBangumiFollowBinding>(holder.itemView)?.apply {
             listBean = getItem(position)
             holder.itemView.setOnClickListener {
-
                 val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
 
-
-                CoroutineScope(Dispatchers.IO).launch {
+                launchIO {
                     val bangumiSeasonBean = KtHttpUtils.addHeader(COOKIE, cookie)
                         .asyncGet<BangumiSeasonBean>(
                             "${BilibiliApi.bangumiVideoDataPath}?ep_id=${
                                 getItem(
-                                    position
+                                    position,
                                 ).first_ep
-                            }"
+                            }",
                         )
-
 
                     launchUI {
                         if (bangumiSeasonBean.code == 0) {
-
                             if (bangumiSeasonBean.result.episodes.size > 0) {
                                 AsVideoActivity.actionStart(
                                     holder.itemView.context,
-                                    bangumiSeasonBean.result.episodes[0].bvid
+                                    bangumiSeasonBean.result.episodes[0].bvid,
                                 )
                             } else {
                                 AsVideoActivity.actionStart(
                                     holder.itemView.context,
-                                    bangumiSeasonBean.result.section[0].episodes[0].bvid
+                                    bangumiSeasonBean.result.section[0].episodes[0].bvid,
                                 )
                             }
-
-
                         }
                     }
                 }
             }
         }
-
     }
 }

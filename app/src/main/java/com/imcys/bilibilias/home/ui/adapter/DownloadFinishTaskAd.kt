@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.entity.deepCopy
@@ -180,7 +181,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
     }
 
     private fun deleteTaskRecords(taskId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             val newTasks = withContext(Dispatchers.Default) {
                 downloadFinishTaskRepository.deleteAndReturnList(
                     downloadFinishTaskRepository.findById(taskId),

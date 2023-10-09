@@ -79,10 +79,10 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:maxLines="1"
+                                android:ellipsize="middle"
                                 android:text="@{TaskBean.downloadTaskDataBean.pageTitle}"
-                                android:textSize="18sp" />
+                                android:textSize="18sp"
+                                android:singleLine="true" />
 
                         </LinearLayout>
 

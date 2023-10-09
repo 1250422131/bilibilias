@@ -97,17 +97,7 @@ public class AppFilePathUtils {
      * @return true：安装，false：未安装
      */
     public static boolean isInstallApp(Context context, String appPackageName) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++) {
-                String pn = pinfo.get(i).packageName.toLowerCase(Locale.ENGLISH);
-                if (pn.equals(appPackageName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return context.getPackageManager().getLaunchIntentForPackage(appPackageName) != null;
     }
 
     /**
