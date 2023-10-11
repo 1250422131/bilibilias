@@ -2,7 +2,6 @@ package com.imcys.bilibilias.base.utils
 
 import com.imcys.bilibilias.common.base.constant.WTS
 import com.imcys.bilibilias.common.base.constant.W_RID
-import com.liulishuo.okdownload.core.Util.md5
 import io.ktor.http.encodeURLParameter
 
 @Deprecated("请使用 WbiKeyRepository 来获取 Token")
@@ -43,7 +42,7 @@ object WbiUtils {
             k + "=" + v.encodeURLParameter()
         }
         val s = param + mixinKey
-        val wbiSign: String = md5(s)!!
+        val wbiSign: String = com.imcys.bilibilias.common.base.repository.md5(s)!!
         map.add(W_RID to wbiSign)
         return map
     }

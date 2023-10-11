@@ -58,7 +58,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.startActivity
 import com.imcys.bilibilias.common.base.extend.digitalConversion
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
-import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -70,7 +69,7 @@ fun ToolScreen(
     parsesBvOrAvOrEp: (String) -> Unit,
     clearSearchText: () -> Unit,
     onNavigateToPlayer: () -> Unit,
-    onBack: () -> Unit
+    onNavigateToSettings: () -> Unit
 ) {
     val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(clipboardManager.getText()?.text) {
@@ -107,9 +106,7 @@ fun ToolScreen(
                     contentDescription = "设置",
                     Modifier
                         .padding(16.dp)
-                        .clickable {
-                            context.startActivity(SettingActivity::class.java)
-                        },
+                        .clickable { onNavigateToSettings() },
                     tint = Color(android.graphics.Color.parseColor("#fb7299"))
                 )
             })

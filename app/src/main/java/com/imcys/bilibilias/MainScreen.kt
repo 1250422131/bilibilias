@@ -21,6 +21,8 @@ import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
 import com.imcys.bilibilias.ui.player.navigateToPlayer
 import com.imcys.bilibilias.ui.player.playerRoute
+import com.imcys.bilibilias.ui.settings.navigateToSettings
+import com.imcys.bilibilias.ui.settings.settingsRoute
 import com.imcys.bilibilias.ui.tool.toolRoute
 import com.imcys.bilibilias.ui.user.userRoute
 
@@ -37,9 +39,10 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         homeRoute()
         toolRoute(
             onNavigateToPlayer = navController::navigateToPlayer,
+            onNavigateToSettings = navController::navigateToSettings,
             onBack = navController::navigateUp
         )
-
+        settingsRoute()
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         // <editor-fold desc="下载选项">
         downloadOptionsRoute(

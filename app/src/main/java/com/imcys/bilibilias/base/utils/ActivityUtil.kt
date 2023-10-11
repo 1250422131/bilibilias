@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.base.utils
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -10,7 +11,8 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.imcys.bilibilias.base.app.App
 import timber.log.Timber
 import java.io.File
@@ -28,10 +30,31 @@ fun Context.openUri(uri: Uri) {
     startActivity(intent)
 }
 
-fun Context.getActivity(): AppCompatActivity? = when (this) {
-    is AppCompatActivity -> this
+tailrec fun Context.getActivity(): Activity = when (this) {
+    is Activity -> this
     is ContextWrapper -> baseContext.getActivity()
-    else -> null
+    else -> error("Permissions should be called in the context of an Activity")
+}
+
+@RequiresApi(Build.VERSION_CODES.M)
+fun Activity.shouldShowRationale(name: String): Boolean {
+    return shouldShowRequestPermissionRationale(name)
+}
+
+fun Context.hasPickMediaPermission(permission: String = Manifest.permission.WRITE_EXTERNAL_STORAGE): Boolean {
+    return when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> true
+        else -> isPermissionGranted(name = permission)
+    }
+}
+
+fun Context.gotoApplicationSettings() {
+    startActivity(
+        Intent().apply {
+            action = android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.parse("package:$packageName")
+        }
+    )
 }
 
 // 更新图库
@@ -51,4 +74,10 @@ fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): Pa
     }
 } catch (e: PackageManager.NameNotFoundException) {
     null
+}
+
+fun Context.isPermissionGranted(name: String): Boolean {
+    return ContextCompat.checkSelfPermission(
+        this, name
+    ) == PackageManager.PERMISSION_GRANTED
 }

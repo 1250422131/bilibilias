@@ -33,9 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,12 +54,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.noRippleClickable
+import com.imcys.bilibilias.base.utils.observeAsState
 import com.imcys.bilibilias.common.base.components.CenterRow
 import com.imcys.bilibilias.common.base.components.VerticalTwoTerms
 import com.imcys.bilibilias.common.base.config.CookieRepository
@@ -355,21 +353,6 @@ fun VideoController(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically
     ) {
     }
-}
-
-@Composable
-fun Lifecycle.observeAsState(): State<Lifecycle.Event> {
-    val state = remember { mutableStateOf(Lifecycle.Event.ON_ANY) }
-    DisposableEffect(this) {
-        val observer = LifecycleEventObserver { _, event ->
-            state.value = event
-        }
-        this@observeAsState.addObserver(observer)
-        onDispose {
-            this@observeAsState.removeObserver(observer)
-        }
-    }
-    return state
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)

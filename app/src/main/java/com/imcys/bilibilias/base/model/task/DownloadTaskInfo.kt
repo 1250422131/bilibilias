@@ -2,7 +2,7 @@ package com.imcys.bilibilias.base.model.task
 
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_WAIT
-import com.liulishuo.okdownload.DownloadTask
+import com.imcys.bilibilias.common.data.download.entity.DownloadTask
 
 // 下载任务类
 data class DownloadTaskInfo(

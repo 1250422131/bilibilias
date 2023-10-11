@@ -55,6 +55,20 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    packaging {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/license.txt"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/notice.txt"
+            excludes += "META-INF/ASL2.0"
+            excludes += "META-INF/*.kotlin_module"
+            excludes += "META-INF/versions/9/previous-compilation-data.bin"
+        }
+    }
 }
 
 kapt {
@@ -67,32 +81,37 @@ kotlin {
 }
 // https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
 // https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
-// todo
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.24.4"
     }
     plugins {
-        id("kotlin")
-        // artifact = "com.google.protobuf:protoc-gen-kotlin:3.24.4"
-        // generateProtoTasks {
-        //     all().forEach {
-        //         it.builtins {
-        //             create("kotlin") {
-        //                 option("lite")
-        //             }
-        //         }
-        //     }
-        // }
-        generateProtoTasks {
-            all().forEach {
-                it.builtins {
-                    it.builtins {
-                        kotlin {}
-                    }
+        id("java") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("java") {
+                    option("lite")
                 }
-                it.plugins {
-                    id("kotlin")
+                id("grpc") {
+                    option("lite")
+                }
+                id("grpckt") {
+                    option("lite")
+                }
+            }
+            it.builtins {
+                id("kotlin") {
+                    option("lite")
                 }
             }
         }
@@ -145,7 +164,7 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.datetime)
+    api(libs.kotlinx.datetime)
 
     /**
      * RxFFmpeg
@@ -260,7 +279,9 @@ dependencies {
     implementation(libs.okio)
     api(libs.okhttp)
 
-    implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
-    implementation("com.google.protobuf:protobuf-kotlin-lite:3.24.4")
+    implementation("io.grpc:grpc-kotlin-stub:1.4.0")
+    implementation("io.grpc:grpc-protobuf:1.58.0")
 
+    implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
+    implementation("com.google.protobuf:protobuf-java-util:3.24.4")
 }

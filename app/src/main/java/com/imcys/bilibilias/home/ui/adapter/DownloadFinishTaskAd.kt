@@ -16,7 +16,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import kotlinx.coroutines.CoroutineScope
@@ -71,11 +70,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
             holder.itemView.setOnLongClickListener {
                 if (mLongClickEvent()) {
-                    val newList = currentList.map { it.deepCopy { showEdit = true } }
-                    submitList(newList)
                 } else {
-                    val newList = currentList.map { it.deepCopy { showEdit = false } }
-                    submitList(newList)
                 }
                 true
             }

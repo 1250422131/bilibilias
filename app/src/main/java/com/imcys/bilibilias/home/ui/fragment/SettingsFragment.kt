@@ -20,6 +20,8 @@ import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.config.SettingsRepository
+import com.imcys.bilibilias.common.base.config.SettingsRepository.baiduStatistics
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
@@ -82,6 +84,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
         initRenameUserDownloadSavePath()
         
         initPreference()
+
+        initBaiDu()
+        initMicrosoft()
+    }
+
+    private fun initMicrosoft() {
+        findPreference<SwitchPreferenceCompat>( "microsoft_app_center_type")?.setOnPreferenceChangeListener { preference, newValue ->
+            true
+        }
+    }
+
+    private fun initBaiDu() {
+
     }
 
     private fun initRenameUserDownloadSavePath() {

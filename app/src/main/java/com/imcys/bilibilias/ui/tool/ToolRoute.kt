@@ -20,12 +20,13 @@ fun NavController.navigateToTool() {
 fun NavGraphBuilder.toolRoute(
     onNavigateToPlayer: () -> Unit,
     onBack: () -> Unit,
+    onNavigateToSettings: () -> Unit,
 ) = composable(ROUTE_TOOL) {
-    ToolRoute(onNavigateToPlayer, onBack)
+    ToolRoute(onNavigateToPlayer, onNavigateToSettings, onBack)
 }
 
 @Composable
-fun ToolRoute(onNavigateToPlayer: () -> Unit, onBack: () -> Unit) {
+fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit, onBack: () -> Unit) {
     val viewModel: ToolViewModel = hiltViewModel()
     val state by viewModel.toolState.collectAsStateWithLifecycle()
     ToolScreen(
@@ -33,6 +34,6 @@ fun ToolRoute(onNavigateToPlayer: () -> Unit, onBack: () -> Unit) {
         viewModel::parsesBvOrAvOrEp,
         viewModel::clearSearchText,
         onNavigateToPlayer,
-        onBack,
+        onNavigateToSettings,
     )
 }

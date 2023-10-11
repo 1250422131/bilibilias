@@ -51,6 +51,7 @@ import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
 import dagger.hilt.android.AndroidEntryPoint
+import me.rosuh.filepicker.config.FilePickerManager
 import timber.log.Timber
 
 @AndroidEntryPoint

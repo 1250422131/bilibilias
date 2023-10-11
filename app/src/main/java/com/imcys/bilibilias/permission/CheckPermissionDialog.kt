@@ -33,6 +33,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.bilibilias.base.utils.gotoApplicationSettings
+import com.imcys.bilibilias.base.utils.hasPickMediaPermission
+import com.imcys.bilibilias.base.utils.shouldShowRationale
 import com.imcys.bilibilias.common.base.components.BottomSheetDialog
 import com.imcys.bilibilias.common.base.config.CookieRepository
 import kotlinx.coroutines.launch
@@ -48,7 +52,7 @@ fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: 
 
     val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE) { granted ->
         if (!granted) {
-            context.findActivity()?.apply {
+            context.getActivity().apply {
                 when {
                     shouldShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
                         showDialog = true
@@ -124,7 +128,7 @@ fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: 
             Button(
                 onClick = {
                     context.gotoApplicationSettings()
-                    context.findActivity()?.finish()
+                    context.getActivity().finish()
                 },
                 Modifier
                     .height(60.dp)

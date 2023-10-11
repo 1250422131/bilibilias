@@ -5,7 +5,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-
+@Deprecated("请使用 ktor")
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun Call.awaitResponse(): Response {
     return suspendCancellableCoroutine {
