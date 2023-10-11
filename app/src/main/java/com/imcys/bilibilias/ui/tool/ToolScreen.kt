@@ -29,7 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -60,6 +64,10 @@ import com.imcys.bilibilias.common.base.extend.digitalConversion
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapMerge
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,45 +79,40 @@ fun ToolScreen(
     onNavigateToPlayer: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
-    val clipboardManager = LocalClipboardManager.current
-    LaunchedEffect(clipboardManager.getText()?.text) {
-        val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-        if (AsVideoUtils.isResolvable(text)) {
-            clearSearchText()
-            parsesBvOrAvOrEp(text)
-        }
-    }
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(title = {
-                Text(
-                    stringResource(R.string.app_fragment_tool_title),
-                    Modifier,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }, actions = {
-                val context = LocalContext.current
-                AsyncImage(
-                    model = "https://s1.ax1x.com/2023/02/04/pSyHEy6.png",
-                    contentDescription = null,
-                    Modifier
-                        .size(24.dp)
-                        .clickable {
-                            context.startActivity(WebAsActivity::class.java)
-                        },
-                    colorFilter = ColorFilter.tint(Color(android.graphics.Color.parseColor("#fb7299")))
-                )
-                Icon(
-                    Icons.Default.Settings,
-                    contentDescription = "设置",
-                    Modifier
-                        .padding(16.dp)
-                        .clickable { onNavigateToSettings() },
-                    tint = Color(android.graphics.Color.parseColor("#fb7299"))
-                )
-            })
+            TopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.app_fragment_tool_title),
+                        Modifier,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    val context = LocalContext.current
+                    AsyncImage(
+                        model = "https://s1.ax1x.com/2023/02/04/pSyHEy6.png",
+                        contentDescription = null,
+                        Modifier
+                            .size(24.dp)
+                            .clickable {
+                                context.startActivity(WebAsActivity::class.java)
+                            },
+                        colorFilter = ColorFilter.tint(Color(android.graphics.Color.parseColor("#fb7299")))
+                    )
+                    Icon(
+                        Icons.Default.Settings,
+                        contentDescription = "设置",
+                        Modifier
+                            .padding(16.dp)
+                            .clickable { onNavigateToSettings() },
+                        tint = Color(android.graphics.Color.parseColor("#fb7299"))
+                    )
+                }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -117,11 +120,17 @@ fun ToolScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
+            val clipboardManager = LocalClipboardManager.current
+            LaunchedEffect(clipboardManager.getText()?.text) {
+                val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
+                if (AsVideoUtils.isResolvable(text)) {
+                    clearSearchText()
+                    parsesBvOrAvOrEp(text)
+                }
+            }
             ToolScreenSearchTextField(
                 state.text,
-                onValueChange = {
-                    parsesBvOrAvOrEp(it)
-                },
+                onValueChange = { parsesBvOrAvOrEp(it) },
                 clearText = clearSearchText,
                 isError = state.inputError
             )
@@ -231,15 +240,15 @@ fun VideoCard(
                             ),
                             size = Size(
                                 (
-                                    textWidth + 3.dp
-                                        .roundToPx()
-                                        .toFloat()
-                                    ),
+                                        textWidth + 3.dp
+                                            .roundToPx()
+                                            .toFloat()
+                                        ),
                                 (
-                                    textHeight + 2.dp
-                                        .roundToPx()
-                                        .toFloat()
-                                    )
+                                        textHeight + 2.dp
+                                            .roundToPx()
+                                            .toFloat()
+                                        )
                             )
                         )
                         drawText(measure, topLeft = topLeft)
