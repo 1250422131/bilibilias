@@ -27,15 +27,12 @@ interface RoamDao {
     @Delete
     suspend fun delete(vararg roamInfo: RoamInfo)
 
-
     @Query("SELECT * from as_roam_data ORDER BY id DESC")
     suspend fun getByIdOrderList(): MutableList<RoamInfo>
 
     @Query("SELECT * from as_roam_data WHERE  id =:id  LIMIT 1")
     suspend fun getByIdQuery(id: Int): RoamInfo
 
-
     @Query("SELECT * from as_roam_data WHERE name = :roamName LIMIT 1")
     suspend fun isNameExist(roamName: String): RoamInfo?
-
 }

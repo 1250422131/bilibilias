@@ -8,7 +8,6 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
 import okhttp3.*
@@ -21,7 +20,7 @@ import java.net.URL
  *
  * 此类为okhttp3的封装类
  */
-
+@Deprecated("请使用 ktor")
 open class HttpUtils {
 
     companion object {
@@ -81,18 +80,7 @@ open class HttpUtils {
                 get()
             }.build()
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            okHttpClient.newCall(request).enqueue(
-                HttpCallback {
-                    // 使用 Gson 将响应数据映射为指定类型的对象
-                    val data = Gson().fromJson(it, clz)
-                    // 调用回调函数返回结果
-                    data?.let {
-                        BaseApplication.handler.post {
-                            method(it)
-                        }
-                    }
-                }
-            )
+            okHttpClient.newCall(request).execute()
         }
 
         /**
@@ -117,7 +105,7 @@ open class HttpUtils {
             }.build()
             // 使用 OkHttp 的 enqueue 方法异步发送请求
             return CoroutineScope(Dispatchers.Default).async {
-                okHttpClient.newCall(request).awaitResponse()
+                okHttpClient.newCall(request).execute()
             }
         }
 
@@ -143,7 +131,7 @@ open class HttpUtils {
                 get()
             }.build()
             // 使用 OkHttp 的 enqueue 方法异步发送请求
-            val response = okHttpClient.newCall(request).awaitResponse()
+            val response = okHttpClient.newCall(request).execute()
 
             return getJsonObject(response, clz)
         }

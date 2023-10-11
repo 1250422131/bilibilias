@@ -89,7 +89,16 @@ android {
 
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/versions/9/previous-compilation-data.bin"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/license.txt"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/notice.txt"
+            excludes += "META-INF/ASL2.0"
+            excludes += "META-INF/*.kotlin_module"
         }
     }
 
@@ -112,8 +121,6 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
-
-    ksp(libs.deeprecopy.compiler)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
@@ -161,12 +168,15 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
 
-    /**
-     * kotlin 日期时间库
-     */
-    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.kotlinx.serialization.cbor)
-
-    implementation( "androidx.tonyodev.fetch2:xfetch2:3.1.6")
+    /**
+     * 下载
+     */
+    implementation(libs.androidx.xfetch2)
+    implementation(libs.compose.settings.ui.m3)
+    /**
+     * 文件选择
+     */
+    implementation("com.darkrockstudios:mpfilepicker:2.1.0")
 }

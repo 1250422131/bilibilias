@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 
 class DownloadOptionsStateHolders {
     /**

@@ -69,7 +69,6 @@ class DownloadTaskAdapter @Inject constructor() :
                     .setTitle("删除任务")
                     .setContent("注意B站视频下载链接有效时长为1小时左右，这里就只提供取消这个任务的功能了。")
                     .setPositiveButton("删除任务") {
-                        dataBean.call?.cancel()
                         it.cancel()
                     }.setNegativeButton("手滑了") {
                         it.cancel()

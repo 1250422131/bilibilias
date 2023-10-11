@@ -23,14 +23,14 @@ import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.serialization.gson.gson
 import kotlin.collections.set
-
+@Deprecated("请使用 ktor")
 object KtHttpUtils {
 
     val params = mutableMapOf<String, String>()
     val headers = mutableMapOf<String, String>()
 
     var setCookies = ""
-
+    @Deprecated("使用依赖注入")
     val httpClient = HttpClient(OkHttp) {
 
         expectSuccess = true

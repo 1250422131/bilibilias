@@ -10,7 +10,6 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
@@ -74,14 +73,6 @@ class DownloadFragment : BaseFragment() {
             fgDownloadBottomEdit.visibility = View.GONE
             fragmentDownloadTabLayout.visibility = View.VISIBLE
 
-            val newTaskList =
-                downloadFinishTaskAd.currentList.map {
-                    it.deepCopy {
-                        selectState = false
-                        showEdit = false
-                    }
-                }
-            downloadFinishTaskAd.submitList(newTaskList)
         }
     }
 
@@ -97,21 +88,11 @@ class DownloadFragment : BaseFragment() {
         fragmentDownloadBinding.apply {
             // 全选
             fgDownloadEditSelectAll.setOnClickListener {
-                val newTaskList =
-                    downloadFinishTaskAd.currentList.map { it.deepCopy { selectState = true } }
-                downloadFinishTaskAd.submitList(newTaskList)
+
             }
             // 反选
             fgDownloadEditInvert.setOnClickListener {
-                val newTaskList =
-                    downloadFinishTaskAd.currentList.map {
-                        if (it.selectState) {
-                            it.deepCopy { selectState = false }
-                        } else {
-                            it.deepCopy { selectState = true }
-                        }
-                    }
-                downloadFinishTaskAd.submitList(newTaskList)
+
             }
 
             // 取消

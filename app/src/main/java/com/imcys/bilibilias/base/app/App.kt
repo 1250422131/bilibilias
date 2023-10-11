@@ -5,13 +5,10 @@ import android.content.Context
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
-import com.tonyodev.fetch2.FetchConfiguration
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
-import org.xutils.x
 import timber.log.Timber
 
 @HiltAndroidApp
@@ -21,8 +18,8 @@ class App : BaseApplication() {
         super.onCreate()
 
         // xUtils初始化
-        x.Ext.init(this)
-        x.Ext.setDebug(false) // 是否输出debug日志, 开启debug会影响性能.
+        org.xutils.x.Ext.init(this)
+        org.xutils.x.Ext.setDebug(false) // 是否输出debug日志, 开启debug会影响性能.
         RxFFmpegInvoke.getInstance().setDebug(false)
 
         // BRV初始化
@@ -50,8 +47,6 @@ class App : BaseApplication() {
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
-        val downloadQueue: DownloadQueue by lazy { DownloadQueue() }
-
         // —————————————————————————————————————————————————
 
         // ——————————————————B站视频模板——————————————————

@@ -4,7 +4,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-
+@Deprecated("请使用 ktor")
 class HttpCallback(val method: (data: String) -> Unit) : Callback {
     override fun onFailure(call: Call, e: IOException) {
 

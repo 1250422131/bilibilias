@@ -8,8 +8,6 @@
         <variable
             name="ToolViewHolder"
             type="com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder" />
-
-
     </data>
 
 

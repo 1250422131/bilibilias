@@ -4,11 +4,12 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.WTS
 import com.imcys.bilibilias.common.base.constant.W_RID
 import com.imcys.bilibilias.common.base.model.UserNav
-import com.liulishuo.okdownload.core.Util
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.encodeURLParameter
+import java.math.BigInteger
+import java.security.MessageDigest
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,8 +61,12 @@ class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
             k + "=" + v.encodeURLParameter()
         }
         val s = param + mixinKey
-        val wbiSign: String = Util.md5(s)!!
+        val wbiSign = md5(s)
         map.add(W_RID to wbiSign)
         return map
     }
+}
+fun md5(input: String): String {
+    val md = MessageDigest.getInstance("MD5")
+    return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
 }

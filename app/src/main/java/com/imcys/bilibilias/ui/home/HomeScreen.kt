@@ -27,8 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.getActivity
 import com.imcys.bilibilias.common.base.components.IconCard
-import com.imcys.bilibilias.permission.findActivity
 import com.zj.banner.BannerPager
 import com.zj.banner.model.BaseBannerBean
 
@@ -109,7 +109,7 @@ fun HomeScreen(
             )
             LogoutDialog(show = show, onDismiss = { show = false }, positiveButtonText = {
                 logoutLogin()
-                context.findActivity()?.finish()
+                context.getActivity().finish()
             })
         }
     }
