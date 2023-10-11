@@ -175,8 +175,7 @@ dependencies {
      */
     implementation(libs.androidx.xfetch2)
     implementation(libs.compose.settings.ui.m3)
-    /**
-     * 文件选择
-     */
-    implementation("com.darkrockstudios:mpfilepicker:2.1.0")
+
+    // implementation ("com.arthenica:ffmpeg-kit-full:4.5.1-1")
+    implementation("com.arthenica:ffmpeg-kit-full:6.0-2.LTS")
 }
