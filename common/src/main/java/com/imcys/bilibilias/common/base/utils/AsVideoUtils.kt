@@ -28,7 +28,7 @@ object AsVideoUtils {
 
     fun getBvid(text: String): String? {
         if (isBV(text)) {
-            return RegexUtils.bvRegex.find(text)?.value
+            return "BV" + RegexUtils.bvRegex.find(text)?.value
         }
         return null
     }
@@ -46,10 +46,7 @@ object AsVideoUtils {
             30232 -> "132K"
             30250 -> "杜比全景声"
             30251 -> "Hi-Res无损"
-            30280 -> "192K"
-            else -> {
-                "192K"
-            }
+            else -> "192K"
         }
     }
 }
