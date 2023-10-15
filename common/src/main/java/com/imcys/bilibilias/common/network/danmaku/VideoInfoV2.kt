@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.network.danmaku
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -79,18 +79,18 @@ data class VideoInfoV2(
     val toastBlock: Boolean = false,
     @SerialName("vip")
     val vip: Vip = Vip(),
-) : java.io.Serializable {
+) {
     @Serializable
     data class ElecHighLevel(
         @SerialName("Longro")
-        val Longro: String = "",
+        val longro: String = "",
         @SerialName("level_str")
         val levelStr: String = "",
         @SerialName("privilege_type")
         val privilegeType: Long = 0,
         @SerialName("title")
         val title: String = "",
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class Fawkes(
@@ -98,7 +98,7 @@ data class VideoInfoV2(
         val configVersion: Long = 0,
         @SerialName("ff_version")
         val ffVersion: Long = 0,
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class GuideAttention(
@@ -112,7 +112,7 @@ data class VideoInfoV2(
         val to: Long = 0,
         @SerialName("type")
         val type: Long = 0,
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class IpInfo(
@@ -128,7 +128,7 @@ data class VideoInfoV2(
         val zoneId: Long = 0,
         @SerialName("zone_ip")
         val zoneIp: String = "",
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class LevelInfo(
@@ -142,7 +142,7 @@ data class VideoInfoV2(
         val levelUp: Long = 0,
         @SerialName("next_exp")
         val nextExp: Long = 0,
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class OnlineSwitch(
@@ -154,7 +154,7 @@ data class VideoInfoV2(
         val realtimeDm: String = "",
         @SerialName("subtitle_submit_switch")
         val subtitleSubmitSwitch: String = "",
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class Options(
@@ -162,13 +162,13 @@ data class VideoInfoV2(
         val is360: Boolean = false,
         @SerialName("without_vip")
         val withoutVip: Boolean = false,
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class ShowSwitch(
         @SerialName("long_progress")
         val longProgress: Boolean = false,
-    ) : java.io.Serializable
+    )
 
     @Serializable
     data class Subtitle(
@@ -180,7 +180,7 @@ data class VideoInfoV2(
         val lanDoc: String = "",
         @SerialName("subtitles")
         val subtitles: List<MSubtitle> = listOf(),
-    ) : java.io.Serializable {
+    ) {
         @Serializable
         data class MSubtitle(
             @SerialName("ai_status")
@@ -202,7 +202,7 @@ data class VideoInfoV2(
             @SerialName("type")
             val type: Long = 0,
             var check: Boolean = false,
-        ) : java.io.Serializable
+        )
     }
 
     @Serializable
@@ -233,7 +233,7 @@ data class VideoInfoV2(
         val type: Long = 0,
         @SerialName("vip_pay_type")
         val vipPayType: Long = 0,
-    ) : java.io.Serializable {
+    ) {
         @Serializable
         data class Label(
             @SerialName("bg_color")
@@ -260,6 +260,6 @@ data class VideoInfoV2(
             val textColor: String = "",
             @SerialName("use_img_label")
             val useImgLabel: Boolean = false,
-        ) : java.io.Serializable
+        )
     }
 }
