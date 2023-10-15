@@ -1,12 +1,15 @@
 package com.imcys.bilibilias.ui.download
 
 import com.imcys.bilibilias.base.utils.DownloadQueue
+import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -30,27 +33,32 @@ class DownloadViewModel @Inject constructor(
      */
     fun downloadVideo(
         bvid: String,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders,
-        foldername: String
+        downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
+        Timber.tag("downloadInfo").d(downloadOptionsStateHolders.toString())
         launchIO {
             downloadOptionsStateHolders.subset.asFlow().map {
                 delay(1.seconds)
-                videoRepository.getDashVideoStream(bvid, it.cid, downloadOptionsStateHolders.videoQuality) to it
+                videoRepository.getDashVideoStream(bvid, it.cid) to it
+            }.catch {
+                Timber.tag("下载视频异常").d(it)
             }.collect { (dash, page) ->
+                val videos = dash.dash.video
+                val videoUrl = getCurrentQualityEfficientEncode(videos, downloadOptionsStateHolders)
+                Timber.tag("audio").d("audio=${dash.dash.audio},quality=${downloadOptionsStateHolders.audioQuality}")
                 downloadQueue.addTask(
                     bvid = bvid,
                     cid = page.cid,
-                    filename = page.part,
-                    foldername = foldername,
-                    videoUrl = dash.dash.video.first().baseUrl,
-                    audioUrl = dash.dash.audio.find { it.id == downloadOptionsStateHolders.audioQuality }!!.baseUrl,
+                    videoUrl = videoUrl,
+                    audioUrl = dash.dash.audio.maxBy { it.id }.baseUrl,
                     toolType = downloadOptionsStateHolders.toolType,
-                    fileType = downloadOptionsStateHolders.fileType
+                    qn = downloadOptionsStateHolders.videoQuality,
+                    dash = dash,
+                    page = page,
+                    downloadOptionsStateHolders = downloadOptionsStateHolders
                 )
             }
         }
-
         // val file = File(photoDir, "test.flv")
         // launchIO {
         //     httpClient.prepareGet("") {
@@ -60,4 +68,19 @@ class DownloadViewModel @Inject constructor(
         //     }
         // }
     }
+
+    /**
+     * key
+     * 7	AVC 编码	8K 视频不支持该格式
+     * 12	HEVC 编码
+     * 13	AV1 编码
+     * 选择当前清晰度的高效编码 13-》12-》7
+     */
+    private fun getCurrentQualityEfficientEncode(
+        videos: List<Dash.Video>,
+        downloadOptionsStateHolders: DownloadOptionsStateHolders
+    ): String = videos
+        .groupBy { it.id }[downloadOptionsStateHolders.videoQuality]
+        ?.maxBy { it.codecid }!!
+        .baseUrl
 }

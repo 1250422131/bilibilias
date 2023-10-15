@@ -170,12 +170,20 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.kotlinx.serialization.cbor)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
     /**
      * 下载
      */
     implementation(libs.androidx.xfetch2)
     implementation(libs.compose.settings.ui.m3)
 
-    // implementation ("com.arthenica:ffmpeg-kit-full:4.5.1-1")
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2.LTS")
+    /**
+     * ffmpeg
+     */
+    implementation(libs.ffmpeg.kit.full)
+    /**
+     * protobuf
+     */
+    implementation(libs.protobuf.kotlin)
 }

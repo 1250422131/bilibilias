@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 data class DownloadTask(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val foldername: String,
     val path: String,
     val title: String,
     val bvid: String,

@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.base.utils
 
-import android.net.Uri
-import android.os.Build
-import androidx.documentfile.provider.DocumentFile
+import android.content.Context
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
@@ -11,47 +9,40 @@ import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
-import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
-import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.VideoUtils
 import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils.asyncGet
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
+import com.imcys.bilibilias.ui.download.DownloadOptionsStateHolders
 import com.imcys.bilibilias.ui.download.DownloadToolType
+import com.imcys.bilibilias.ui.download.FetchManage
+import com.imcys.bilibilias.ui.download.TAG_AUDIO
+import com.imcys.bilibilias.ui.download.TAG_VIDEO
 import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.http.HttpUtils
-import com.tonyodev.fetch2.AbstractFetchGroupListener
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Fetch
-import com.tonyodev.fetch2.FetchConfiguration
-import com.tonyodev.fetch2.FetchGroup
-import com.tonyodev.fetch2.NetworkType
-import com.tonyodev.fetch2.Request
-import io.microshow.rxffmpeg.RxFFmpegCommandList
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Response
-import okio.BufferedSink
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import okio.FileSystem
+import okio.Path.Companion.toOkioPath
 import okio.buffer
-import okio.sink
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -69,135 +60,170 @@ private const val INDEX_JSON = "index.json"
 private const val ENTRY_JSON = "entry.json"
 private const val VIDEO_M4S = "video.m4s"
 private const val AUDIO_M4S = "audio.m4s"
-private const val TAG_VIDEO = "video"
-private const val TAG_AUDIO = "audio"
 
 @Singleton
-class DownloadQueue @Inject constructor() : CoroutineScope by MainScope() {
-
-    private lateinit var fetch: Fetch
-
-    init {
-        initFetch()
-    }
-
-    private fun initFetch() {
-        val fetchConfiguration: FetchConfiguration = FetchConfiguration.Builder(App.context)
-            .setDownloadConcurrentLimit(4)
-            .setGlobalNetworkType(NetworkType.ALL)
-            .build()
-        fetch = Fetch.Impl.getInstance(fetchConfiguration)
-        fetch.addListener(DefaultAbstractFetchGroupListener())
-    }
-
-    private inner class DefaultAbstractFetchGroupListener : AbstractFetchGroupListener() {
-        override fun onCompleted(groupId: Int, download: Download, fetchGroup: FetchGroup) {
-            val v = fetchGroup.completedDownloads.find { it.group == groupId && it.tag == TAG_VIDEO }
-            val a = fetchGroup.completedDownloads.find { it.group == groupId && it.tag == TAG_AUDIO }
-            if (v != null && a != null) {
-                val 音视频文件名 = v.file.replace(".m4s", ".mp4")
-                Timber.tag("onCompleted").d(v.file)
-                Timber.tag("onCompleted").d(a.file)
-                Timber.tag("onCompleted").d(音视频文件名)
-                val command = "ffmpeg -i ${v.file} -i ${a.file} -c copy $音视频文件名".split(' ')
-
-                RxFFmpegInvoke.getInstance()
-                    .runCommandRxJava(
-                        buildFFmpegCommand(v.file, a.file, 音视频文件名)
-                    ).subscribe(DefaultRxFFmpegSubscriber(v, a, 音视频文件名))
-            }
-        }
-    }
-
-    private fun buildFFmpegCommand(videoPath: String, audioPath: String, filename: String): Array<out String> {
-        return RxFFmpegCommandList()
-            .append("-i")
-            .append(videoPath)
-            .append("-i")
-            .append(audioPath)
-            .append("-c")
-            .append("copy")
-            .append(filename)
-            .build()
-    }
-
-    private class DefaultRxFFmpegSubscriber(
-        private val video: Download,
-        private val audio: Download,
-        private val filename: String
-    ) : RxFFmpegSubscriber() {
-        override fun onFinish() {
-            FileUtils.deleteFiles(video.file, audio.file)
-            updatePhotoMedias(File(filename))
-        }
-
-        override fun onError(message: String?) {}
-        override fun onProgress(progress: Int, progressTime: Long) {}
-        override fun onCancel() {}
-    }
+class DownloadQueue @Inject constructor(
+    private val fetchManage: FetchManage,
+    private val videoRepository: VideoRepository,
+    @ApplicationContext private val context: Context
+) : CoroutineScope by MainScope() {
 
     fun addTask(
         bvid: String,
         cid: Long,
-        filename: String,
-        foldername: String,
         videoUrl: String,
         audioUrl: String,
         toolType: DownloadToolType,
-        fileType: DownloadFileType,
+        qn: Int,
+        dash: DashVideoPlayBean,
+        page: VideoDetails.Page,
+        downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
-        when (fileType) {
-            DownloadFileType.VideoAndAudio -> videoAndAudio(toolType, videoUrl, audioUrl, foldername, filename, cid)
+        when (downloadOptionsStateHolders.requireDownloadFileType) {
+            DownloadFileType.VideoAndAudio -> videoAndAudio(
+                videoUrl,
+                audioUrl,
+                dash,
+                bvid,
+                qn,
+                page,
+                downloadOptionsStateHolders
+            )
+
             DownloadFileType.OnlyAudio -> TODO()
         }
     }
+
     private fun videoAndAudio(
-        toolType: DownloadToolType,
         videoUrl: String,
         audioUrl: String,
-        foldername: String,
-        filename: String,
-        cid: Long
+        dash: DashVideoPlayBean,
+        bvid: String,
+        qn: Int,
+        page: VideoDetails.Page,
+        downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
-        when (toolType) {
-            DownloadToolType.BUILTIN -> builtin(videoUrl, audioUrl, foldername, filename, cid)
+        when (downloadOptionsStateHolders.toolType) {
+            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadOptionsStateHolders)
             DownloadToolType.IDM -> startIDMDownload()
             DownloadToolType.ADM -> startADMDownload()
+        }
+    }
+
+    /**
+     * download/bv123/c_111/danmaku.xml
+     */
+    private fun downloadDanmaku(cid: Long, danmakuPath: String) {
+        launchIO {
+            videoRepository.getDanmakuXml(cid).collect {
+                when (it) {
+                    is Result.Error -> Timber.tag("下载弹幕异常").d(it.exception)
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        val file = File(
+                            (context.getExternalFilesDir("download/$danmakuPath")),
+                            "danmaku.xml"
+                        )
+                        FileSystem.SYSTEM.sink(file.toOkioPath()).use { fileSink ->
+                            fileSink.buffer().use { bufferedSink ->
+                                bufferedSink.write(it.data)
+                                // android.os.FileUtils.copy()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun startADMDownload() {}
 
     private fun startIDMDownload() {}
+    private fun builtin(
+        bvid: String,
+        dash: DashVideoPlayBean,
+        page: VideoDetails.Page,
+        downloadOptionsStateHolders: DownloadOptionsStateHolders
+    ) {
+        val qn = downloadOptionsStateHolders.videoQuality
+        val d = dash.dash
+        buildIndexJson(d)
+        buildEntryJson(qn, bvid, page)
+        val cid = page.cid
 
-    private fun builtin(videoUrl: String, audioUrl: String, foldername: String, filename: String, cid: Long) {
-        val requestVideo = createVideoRequest(videoUrl, foldername, filename, cid)
-        val requestAudio = createAudioRequest(audioUrl, foldername, filename, cid)
-        fetch.enqueue(listOf(requestVideo, requestAudio))
+        val videoUrl: String =
+            d.video.groupBy { it.id }[downloadOptionsStateHolders.videoQuality]?.last()?.baseUrl
+                ?: d.video.groupBy { it.id }.firstNotNullOf { (_, v) -> v.last().backupUrl.last() }
+
+        val audioUrl = d.audio.maxBy { it.id }.baseUrl
+        val video = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), VIDEO_M4S)
+        val audio = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), AUDIO_M4S)
+        val requestVideo = createVideoRequest(videoUrl, video.absolutePath, cid)
+        val requestAudio = createAudioRequest(audioUrl, audio.path, cid)
+        fetchManage.add(listOf(requestVideo, requestAudio))
+        downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
-    private fun createVideoRequest(url: String, foldername: String, filename: String, cid: Long) =
-        createRequest(
-            url,
-            File(DIRECTORY_BILIBILI_AS, foldername).path + "/video_$filename.m4s",
-            cid.toInt(),
-            TAG_VIDEO
-        )
-
-    private fun createAudioRequest(url: String, foldername: String, filename: String, cid: Long) =
-        createRequest(
-            url,
-            File(DIRECTORY_BILIBILI_AS, foldername).path + "/audio_$filename.m4s",
-            cid.toInt(),
-            TAG_AUDIO
-        )
-
-    private fun createRequest(url: String, file: String, groupId: Int, tag: String) = Request(url, file).apply {
-        addHeader(USER_AGENT, BROWSER_USER_AGENT)
-        addHeader(REFERER, BILIBILI_URL)
-        this.groupId = groupId
-        this.tag = TAG_VIDEO
+    private fun buildEntryJson(qn: Int, bvid: String, page: VideoDetails.Page) {
+        val entryJson = """
+                      {
+                            "media_type": 2,
+                            "has_dash_audio": true,
+                            "is_completed": true,
+                            "total_bytes": 下载大小,
+                            "downloaded_bytes": 下载大小,
+                            "title": "标题",
+                            "type_tag": "$qn",
+                            "cover": "封面地址",
+                            "video_quality": $qn,
+                            "prefered_video_quality": $qn,
+                            "guessed_total_bytes": 0,
+                            "total_time_milli": 总时间,
+                            "danmaku_count": 弹幕数量,
+                            "time_update_stamp": 1627134435654,
+                            "time_create_stamp": 1627134431287,
+                            "can_play_in_advance": true,
+                            "interrupt_transform_temp_file": false,
+                            "quality_pithy_description": "清晰度",
+                            "quality_superscript": "码率",
+                            "cache_version_code": 6340400,
+                            "preferred_audio_quality": 0,
+                            "audio_quality": 0,
+                            
+                            "avid": AID编号,
+                            "spid": 0,
+                            "seasion_id": 0,
+                            "bvid": "$bvid",
+                            "owner_id": UP主UID,
+                            "owner_name": "UP名称",
+                            "owner_avatar": "UP头像",
+                            "page_data": ${Json.encodeToString(page)}
+                        }
+            """.trimIndent()
     }
+
+    private fun buildIndexJson(d: Dash) {
+        val indexJson = """
+                {
+                "video":[${Json.encodeToString(d.video.maxBy { it.codecid })}],
+                "audio":[${Json.encodeToString(d.audio.maxBy { it.id })}]
+                }
+            """.trimIndent()
+    }
+
+    /**
+     * {BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}
+     * download/bvid/cid/画质/video.m4s
+     * download/bv123/c_111/120/video.m4s
+     */
+    private fun buildSavePath(bvid: String, cid: Long, qn: Int, name: String): String =
+        "$savePath/$bvid/c_$cid/$qn/$name"
+
+    private fun createVideoRequest(url: String, file: String, cid: Long) =
+        fetchManage.createRequest(url, file, cid.toInt(), TAG_VIDEO)
+
+    private fun createAudioRequest(url: String, file: String, cid: Long) =
+        fetchManage.createRequest(url, file, cid.toInt(), TAG_AUDIO)
 
     /**
      * 储存完成的下载任务
@@ -551,7 +577,8 @@ class DownloadQueue @Inject constructor() : CoroutineScope by MainScope() {
         // HttpUtils.get(
         //     "${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid",
         //     Bangumi::class.java,
-        /*) *//*{
+        /*) */
+        /*{
             val ssid = it.result.seasonId
             videoEntry = videoEntry.replace("SSID编号", (it.result.seasonId).toString())
                 .replace("EPID编号", epid.toString())
@@ -815,88 +842,6 @@ class DownloadQueue @Inject constructor() : CoroutineScope by MainScope() {
     }
 }
 
-val e1 = """
-      {
-            "media_type": 2,
-            "has_dash_audio": true,
-            "is_completed": true,
-            "total_bytes": 下载大小,
-            "downloaded_bytes": 下载大小,
-            "title": "标题",
-            "type_tag": "QN编码",
-            "cover": "封面地址",
-            "video_quality": QN编码,
-            "prefered_video_quality": QN编码,
-            "guessed_total_bytes": 0,
-            "total_time_milli": 总时间,
-            "danmaku_count": 弹幕数量,
-            "time_update_stamp": 1627134435654,
-            "time_create_stamp": 1627134431287,
-            "can_play_in_advance": true,
-            "interrupt_transform_temp_file": false,
-            "quality_pithy_description": "清晰度",
-            "quality_superscript": "码率",
-            "cache_version_code": 6340400,
-            "preferred_audio_quality": 0,
-            "audio_quality": 0,
-            
-            "avid": AID编号,
-            "spid": 0,
-            "seasion_id": 0,
-            "bvid": "BVID编号",
-            "owner_id": UP主UID,
-            "owner_name": "UP名称",
-            "owner_avatar": "UP头像",
-            "page_data": {
-                "cid": CID编号,
-                "page": 1,
-                "from": "vupload",
-                "part": "标题",
-                "link": "",
-                "vid": "",
-                "has_alias": false,
-                "tid": 17,
-                "width": 宽度,
-                "height": 高度,
-                "rotate": 0,
-                "download_title": "视频已缓存完成",
-                "download_subtitle": "下载子标题"
-            }
-        }
-""".trimIndent()
-
-val e2 = """
-     {
-            "video": [{
-                "id": QN编码,
-                "base_url": "https://upos-sz-mirrorcoso1.bilivideo.com",
-                "backup_url": ["https://upos-sz-mirrorcos.bilivideo.com"],
-                "bandwidth": 348483,
-                "codecid": 7,
-                "size": 视频大小,
-                "md5": "01c0e7ba2efc8a36f16e993a194d2d5d",
-                "no_rexcode": false,
-                "frame_rate": "",
-                "width": 宽度,
-                "height": 高度,
-                "dash_drm_type": 0
-            }],
-            "audio": [{
-                "id": 30216,
-                "base_url": "https://upos-sz-mirrorkodoo1.bilivideo.com",
-                "backup_url": ["https://upos-sz-mirrorkodo.bilivideo.com"],
-                "bandwidth": 67463,
-                "codecid": 0,
-                "size": 音频大小,
-                "md5": "2f785a38a9e46c4834347ec73b6802c0",
-                "no_rexcode": false,
-                "frame_rate": "",
-                "width": 0,
-                "height": 0,
-                "dash_drm_type": 0
-            }]
-        }
-""".trimIndent()
 val e3 = """
     {
               "media_type": 2,

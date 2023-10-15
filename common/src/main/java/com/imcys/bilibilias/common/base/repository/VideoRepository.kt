@@ -4,6 +4,8 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.AID
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BVID
+import com.imcys.bilibilias.common.base.extend.Result
+import com.imcys.bilibilias.common.base.extend.asResult
 import com.imcys.bilibilias.common.base.extend.ofMap
 import com.imcys.bilibilias.common.base.extend.print
 import com.imcys.bilibilias.common.base.extend.safeGet
@@ -17,12 +19,19 @@ import com.imcys.bilibilias.common.base.model.video.VideoHasCoins
 import com.imcys.bilibilias.common.base.model.video.VideoHasLike
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
+import com.imcys.bilibilias.dm.Dm
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpHeaders
+import io.ktor.utils.io.core.readBytes
+import io.ktor.utils.io.streams.inputStream
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
@@ -83,6 +92,7 @@ class VideoRepository @Inject constructor(
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
     ): DashVideoPlayBean {
+        Timber.d("bv=$bvid,cid=$cid,fnval=$fnval,fourk=$fourk")
         return getVideoStreamAddress(bvid, cid, 0, fnval, fourk)
     }
 
@@ -108,12 +118,49 @@ class VideoRepository @Inject constructor(
     }.getOrThrow()
 
     /**
-     * 视频cid
+     * oid = 视频cid
      */
-    suspend fun get实时弹幕(cid: String): ByteArray =
-        httpClient.safeGet<ByteArray>(BilibiliApi.videoDanMuPath) {
+    suspend fun getDanmakuXml(cid: Long): Flow<Result<ByteArray>> = flow {
+        val bytes = httpClient.get(BilibiliApi.videoDanMuPath) {
             parameter("oid", cid)
-        }.getOrThrow()
+        }
+            .bodyAsChannel()
+            .readRemaining()
+            .readBytes()
+        emit(bytes)
+    }.asResult()
+
+    /**
+     * https://api.bilibili.com/x/v2/dm/wbi/web/seg.so?
+     * type=1&
+     * oid=1283745701&
+     * pid=619092919&
+     * segment_index=1&
+     * pull_mode=1&
+     * ps=0&
+     * pe=120000&
+     * web_location=1315873&
+     * w_rid=03838b4362dc45b1ab4784e6cd1a6f18&
+     * wts=1697211774
+     */
+    fun getRealTimeDanmaku(cid: Long, segmentIndex: Int, type: Int = 1): Flow<Result<Dm.DmSegMobileReply>> {
+        // av810872(cid=1176840)
+        val result = flow {
+            val tag = Timber.tag("Danmaku")
+            tag.d("cid=$cid,index=$segmentIndex")
+
+            val text = httpClient.get(BilibiliApi.thisVideoDanmakuPath) {
+                parameter("oid", 1282435536)
+                parameter("segment_index", segmentIndex)
+                parameter("type", type)
+            }.bodyAsChannel()
+
+            val parseFrom = Dm.DmSegMobileReply.parseFrom(text.readRemaining().inputStream())
+            tag.d("danmu=$parseFrom")
+            emit(parseFrom)
+        }.asResult()
+        return result
+    }
 
     private val _videoDetailsFlow = MutableSharedFlow<VideoDetails>(1, 1)
     val videoDetailsFlow = _videoDetailsFlow.asSharedFlow()

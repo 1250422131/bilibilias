@@ -41,7 +41,7 @@ object BilibiliApi {
     const val videoDanMuPath = ROAM_API + "x/v1/dm/list.so"
 
     // 当前弹幕缓存
-    const val thisVideoDanmakuPath = ROAM_API + "x/v2/dm/web/seg.so"
+    const val thisVideoDanmakuPath = "x/v2/dm/web/seg.so"
 
     // 视频列表
     const val videoPageListPath = "x/player/pagelist"

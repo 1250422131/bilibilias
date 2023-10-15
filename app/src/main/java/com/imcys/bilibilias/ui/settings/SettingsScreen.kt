@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -119,7 +118,7 @@ private fun Theme() {
 
 @Composable
 fun AutomaticMerge() {
-    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportBilibili)
+    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportToBilibili)
     SettingsSwitch(
         title = { Text(stringResource(R.string.user_dl_finish_automatic_merge_switch_title)) },
         subtitle = {
@@ -133,7 +132,7 @@ fun AutomaticMerge() {
             Image(painter = painterResource(R.drawable.ic_setting_bilibili), contentDescription = "bilibili_icon")
         }
     ) {
-        SettingsRepository.autoImportBilibili = it
+        SettingsRepository.autoImportToBilibili = it
     }
 }
 
@@ -188,7 +187,7 @@ private fun Statistics() {
 
 @Composable
 private fun AutomaticImportBilibili() {
-    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportBilibili)
+    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportToBilibili)
     SettingsSwitch(
         title = { Text(stringResource(R.string.user_dl_finish_automatic_import_switch_title)) },
         subtitle = {
@@ -202,7 +201,7 @@ private fun AutomaticImportBilibili() {
             Image(painter = painterResource(R.drawable.ic_setting_bilibili), contentDescription = "bilibili_icon")
         }
     ) {
-        SettingsRepository.autoImportBilibili = it
+        SettingsRepository.autoImportToBilibili = it
     }
 }
 
@@ -212,10 +211,10 @@ private fun EditVideoNamingConvention() {
     // 编辑视频命名规则，还原命名规则
     rememberBooleanSettingState()
     var show by rememberBooleanSettingState(false)
-    var rules by rememberStringSettingState(SettingsRepository.videoNamingRule)
+    var rules by rememberStringSettingState(SettingsRepository.videoNameRule)
     SettingsMenuLink(
         title = { Text(stringResource(R.string.user_download_file_name)) },
-        subtitle = { Text(rules ?: SettingsRepository.DefaultVideoNamingRule) },
+        subtitle = { Text(rules ?: SettingsRepository.DefaultVideoNameRule) },
         onClick = { show = true },
     )
     if (show) {
@@ -236,7 +235,7 @@ private fun EditVideoNamingConvention() {
                     ) {
                         Text(stringResource(R.string.dl_file_rename_rules))
                         OutlinedTextField(
-                            value = rules ?: SettingsRepository.DefaultVideoNamingRule,
+                            value = rules ?: SettingsRepository.DefaultVideoNameRule,
                             onValueChange = { rules = it }
                         )
                         Row {

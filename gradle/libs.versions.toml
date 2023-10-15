@@ -19,11 +19,14 @@ detektVerifyImplementation = "1.2.5"
 dfm = "0.9.25"
 espresso-core = "3.5.1"
 fastkv = "2.3.0"
+ffmpegKitFull = "6.0-2.LTS"
 flexbox = "3.0.0"
 github-Banner = "2.6.5"
 github-GuidePro = "1.1.0"
 gitlab-detektFormatting = "1.23.1"
 glide = "4.13.2"
+grpcProtobuf = "1.58.0"
+grpcKotlinStub = "1.4.0"
 gson = "2.10"
 hbmartinDetektRules = "0.1.1"
 hilt = "2.48.1"
@@ -57,6 +60,8 @@ okdownload = "1.0.7"
 pagingCompose = "3.2.1"
 pagingRuntimeKtx = "3.2.1"
 preferenceKtx = "1.2.1"
+protobufJavaUtil = "3.24.4"
+protobufKotlin = "3.24.4"
 room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
@@ -84,11 +89,16 @@ androidx-xfetch2 = { module = "androidx.tonyodev.fetch2:xfetch2", version.ref = 
 compose-settings-ui-m3 = { module = "com.github.alorma:compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
 detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
+ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
+grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlinStub" }
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+protobuf-java-util = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobufJavaUtil" }
+protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobufKotlin" }
 rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
