@@ -26,7 +26,7 @@ import kotlin.collections.set
 
 object KtHttpUtils {
 
-    val params = mutableMapOf<String, String>()
+    val params = mutableMapOf<String, Any>()
     val headers = mutableMapOf<String, String>()
 
     var setCookies = ""
@@ -68,7 +68,7 @@ object KtHttpUtils {
             url = url,
             formParameters = Parameters.build {
                 this@KtHttpUtils.params.forEach {
-                    this.append(it.key, it.value)
+                    this.append(it.key, it.value.toString())
                 }
             },
         ) {
@@ -141,7 +141,7 @@ object KtHttpUtils {
      * @param value String
      * @return HttpUtils
      */
-    fun addParam(key: String, value: String): KtHttpUtils {
+    fun addParam(key: String, value: Any): KtHttpUtils {
         params[key] = value
         return this
     }
