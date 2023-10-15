@@ -23,12 +23,14 @@ import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.network.danmaku.DanmakuRepository
 import com.imcys.bilibilias.danmaku.change.CCJsonToAss
 import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -39,6 +41,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.BufferedSink
 import okio.buffer
@@ -52,7 +57,7 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class AsVideoViewModel @Inject constructor() : ViewModel() {
+class AsVideoViewModel @Inject constructor(private val danmakuRepository: DanmakuRepository) : ViewModel() {
 
     @Inject
     lateinit var http: HttpClient
@@ -97,8 +102,8 @@ class AsVideoViewModel @Inject constructor() : ViewModel() {
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -151,8 +156,8 @@ class AsVideoViewModel @Inject constructor() : ViewModel() {
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -191,22 +196,30 @@ class AsVideoViewModel @Inject constructor() : ViewModel() {
         }.show()
     }
 
+    private val _danmakuState = MutableStateFlow(AsVideoState())
+    val danmakuState = _danmakuState.asStateFlow()
     fun downloadCCAss(view: View, avid: Long, cid: Long) {
         val context = view.context
         val dialogLoad = DialogUtils.loadDialog(context)
         dialogLoad.show()
         viewModelScope.launchIO {
             val bvId = VideoNumConversion.toBvidOffline(avid)
-            val videoInfoV2 =
-                http
-                    .get("${BilibiliApi.videoInfoV2}?aid=$avid&cid=$cid")
-                    .body<ResBean<VideoInfoV2>>()
-
-            launchUI {
-                dialogLoad.cancel()
-                DialogUtils.downloadCCAssDialog(context, videoInfoV2.data) {
-                    saveCCAss(bvId, cid, videoInfoV2.data.name, it.lan, it.subtitleUrl, context)
-                }.show()
+            danmakuRepository.getCideoInfoV2(avid, cid).collect { result ->
+                when (result) {
+                    is Result.Error -> TODO()
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        _danmakuState.update {
+                            it.copy(videoInfoV2 = result.data.data)
+                        }
+                        launchUI {
+                            dialogLoad.cancel()
+                            DialogUtils.downloadCCAssDialog(context, result.data.data) {
+                                saveCCAss(bvId, cid, result.data.data.name, it.lan, it.subtitleUrl, context)
+                            }.show()
+                        }
+                    }
+                }
             }
         }
     }

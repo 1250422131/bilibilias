@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.model
+package com.imcys.bilibilias.common.network.base
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -13,4 +13,4 @@ data class ResBean<T>(
     val message: String = "",
     @SerialName("ttl")
     val ttl: Int = 0
-):java.io.Serializable
+)
