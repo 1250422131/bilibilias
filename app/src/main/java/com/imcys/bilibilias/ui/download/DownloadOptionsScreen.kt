@@ -58,7 +58,7 @@ fun DownloadOptionsScreen(
     state: PlayerState,
     onBack: () -> Unit,
     downloadOptions: DownloadOptionsStateHolders,
-    downloadVideo: (String, DownloadOptionsStateHolders, String) -> Unit,
+    downloadVideo: (String, DownloadOptionsStateHolders) -> Unit,
 ) {
     Box(Modifier.statusBarsPadding()) {
         Column(Modifier.padding(horizontal = 8.dp)) {
@@ -153,7 +153,6 @@ fun DownloadOptionsScreen(
                     downloadVideo(
                         state.videoDetails.bvid,
                         downloadOptions,
-                        state.videoDetails.title
                     )
                 },
                 Modifier
@@ -171,9 +170,9 @@ fun DownloadVideoOrAudioRadioGroup(downloadOptions: DownloadOptionsStateHolders)
     Row {
         RadioGroup(
             DownloadFileType.values(),
-            downloadOptions.fileType,
+            downloadOptions.requireDownloadFileType,
             {
-                downloadOptions.fileType = it
+                downloadOptions.requireDownloadFileType = it
             },
             listOf(
                 stringResource(R.string.app_dialog_dl_radio_video_and_audio),

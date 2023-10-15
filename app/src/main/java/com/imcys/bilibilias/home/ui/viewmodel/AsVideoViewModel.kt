@@ -493,7 +493,7 @@ class AsVideoViewModel @Inject constructor(
     }
 
     suspend fun loadDanmakuFlameMaster(cid: String): ByteArray {
-        return videoRepository.get实时弹幕(cid)
+        return TODO()
     }
 
     suspend fun loadUserCardData() = userRepository.get用户名片信息(mid)

@@ -1,4 +1,5 @@
 import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.proto
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -69,6 +70,27 @@ android {
             excludes += "META-INF/versions/9/previous-compilation-data.bin"
         }
     }
+    sourceSets {
+        getByName("main") {
+            proto {
+                srcDir("src/main/proto")
+            }
+        }
+        getByName("test") {
+            proto {
+                srcDir("src/test/proto")
+            }
+        }
+        getByName("androidTest") {
+            proto {
+                srcDir("src/androidTest/proto")
+            }
+        }
+    }
+    // main.java.srcDirs += "src/main/kotlin/"
+    // main.java.srcDirs += "build/generated/source/protos/main/java"
+    // test.java.srcDirs += "src/test/kotlin/"
+    // test.java.srcDirs += "build/generated/source/protos/main/java"
 }
 
 kapt {
@@ -160,8 +182,8 @@ dependencies {
     api(libs.asBottomDialog)
 
     // kotlinx
-    api(libs.kotlinx.coroutines.android)
-    api(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.datetime)
@@ -279,9 +301,9 @@ dependencies {
     implementation(libs.okio)
     api(libs.okhttp)
 
-    implementation("io.grpc:grpc-kotlin-stub:1.4.0")
-    implementation("io.grpc:grpc-protobuf:1.58.0")
+    implementation(libs.grpc.kotlin.stub)
+    implementation(libs.grpc.protobuf)
 
-    implementation("com.google.protobuf:protobuf-kotlin:3.24.4")
-    implementation("com.google.protobuf:protobuf-java-util:3.24.4")
+    implementation(libs.protobuf.kotlin)
+    implementation(libs.protobuf.java.util)
 }

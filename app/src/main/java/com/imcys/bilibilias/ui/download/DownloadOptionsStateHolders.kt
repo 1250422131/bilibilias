@@ -35,10 +35,19 @@ class DownloadOptionsStateHolders {
     var audioFormatDescription by mutableIntStateOf(0)
     var audioQuality = 0
 
-    var fileType by mutableStateOf(DownloadFileType.VideoAndAudio)
+    var requireDownloadFileType by mutableStateOf(DownloadFileType.VideoAndAudio)
 
     // 下载工具
     var toolType = DownloadToolType.BUILTIN
+    override fun toString(): String {
+        return "DownloadOptionsStateHolders(" +
+                "videoFormatDescription='$videoFormatDescription', " +
+                "videoQuality=$videoQuality, " +
+                "subset=$subset, " +
+                "audioFormatDescription=$audioFormatDescription, " +
+                "audioQuality=$audioQuality"
+    }
+
 }
 
 @Composable

@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.base.model.video
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import timber.log.Timber
 
 /**
  * dash类型视频返回数据
@@ -42,7 +43,7 @@ data class DashVideoPlayBean(
     @SerialName("timelength")
     val timelength: Int = 0, // 53962
     @SerialName("video_codecid")
-    val videoCodecid: Int = 0 // 7
+    val videoCodecid: Int = 0
 )
 
 @Serializable
@@ -109,7 +110,7 @@ data class Dash(
         @SerialName("bandwidth")
         val bandwidth: Int = 0, // 126915
         @SerialName("base_url")
-        val baseUrl: String = "", // https://cn-hbsjz-cm-02-10.bilivideo.com/upgcxcode/73/76/1260927673/1260927673-1-30032.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1695274017&gen=playurlv2&os=bcache&oi=1974978899&trid=00006be45ed97ed6495eb8eed39ae3a9d16eu&mid=10993030&platform=pc&upsig=a01f354aa9a9cc73f8c07e8a8b534dbd&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&cdnid=11153&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&f=u_0_0&agrr=0&bw=16101&logo=80000000
+        val baseUrl: String = "",
         @SerialName("codecid")
         val codecid: Int = 0, // 7
         @SerialName("codecs")
@@ -138,5 +139,32 @@ data class Dash(
             @SerialName("initialization")
             val initialization: String = "" // 0-1006
         )
+
+        /**
+         * 判断视频编码
+         */
+        fun videoEncode() {
+            when (codecid) {
+                VideoEncode.AV1.codecid -> {}
+                VideoEncodingFormatHEVC -> {}
+                VideoEncodingFormatAV1 -> {}
+                else -> Timber.d("未知编码格式: codecid=$codecid,codecs=$codecs")
+            }
+        }
+
     }
 }
+
+/**
+ * 7  AVC 8K 视频不支持该格式
+ * 12 HEVC
+ * 13 AV1
+ */
+enum class VideoEncode(val codecid: Int){
+    AVC(7),
+    HEVC(12),
+    AV1(13)
+}
+const val VideoEncodingFormatAVC = 7
+const val VideoEncodingFormatHEVC = 12
+const val VideoEncodingFormatAV1 = 13
