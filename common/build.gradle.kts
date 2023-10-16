@@ -1,3 +1,6 @@
+import com.google.protobuf.gradle.id
+import io.grpc.InternalChannelz.id
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
@@ -6,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.protobuf)
     kotlin("kapt")
 }
 apply {
@@ -32,7 +36,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -54,7 +58,52 @@ kotlin {
     jvmToolchain(17)
 }
 
+// https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
+// https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.4"
+    }
+    plugins {
+        id("java") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("java") {
+                    option("lite")
+                }
+                id("grpc") {
+                    option("lite")
+                }
+                id("grpckt") {
+                    option("lite")
+                }
+            }
+            it.builtins {
+                id("kotlin") {
+                    option("lite")
+                }
+            }
+        }
+    }
+}
 dependencies {
+
+    api(libs.grpc.kotlin.stub)
+    api(libs.grpc.protobuf)
+
+    api(libs.protobuf.kotlin)
+    api(libs.protobuf.java.util)
 
     // 深拷贝
     api(libs.deeprecopy.core)

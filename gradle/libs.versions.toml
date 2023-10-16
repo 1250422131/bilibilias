@@ -18,6 +18,8 @@ flexbox = "3.0.0"
 github-GuidePro = "1.1.0"
 gitlab-detektFormatting = "1.23.1"
 glide = "4.13.2"
+grpcProtobuf = "1.58.0"
+grpcKotlinStub = "1.4.0"
 gson = "2.10"
 hbmartinDetektRules = "0.1.0"
 hilt = "2.47"
@@ -37,6 +39,9 @@ mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 okdownload = "1.0.7"
 preferenceKtx = "1.2.1"
+protobufJavaUtil = "3.24.4"
+protobufKotlin = "3.24.4"
+protobuf = "0.9.4"
 room = "2.5.2"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
@@ -56,8 +61,12 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
+grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlinStub" }
 hbmartin-detekt-rules = { module = "com.github.hbmartin:hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+protobuf-java-util = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobufJavaUtil" }
+protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobufKotlin" }
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work-runtime-ktx" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -146,6 +155,7 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 [plugins]
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
 android-application = { id = "com.android.application", version.ref = "android" }
 android-library = { id = "com.android.library", version.ref = "android" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
