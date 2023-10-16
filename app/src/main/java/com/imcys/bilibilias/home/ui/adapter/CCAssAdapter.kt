@@ -1,14 +1,13 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.ItemCcAssLangBinding
-import com.imcys.bilibilias.home.ui.model.VideoInfoV2
 
 class CCAssAdapter(private val selectEvent: (index: Int) -> Unit) :
     ListAdapter<VideoInfoV2.Subtitle.MSubtitle, ViewHolder>(object :
@@ -24,7 +23,7 @@ class CCAssAdapter(private val selectEvent: (index: Int) -> Unit) :
             oldItem: VideoInfoV2.Subtitle.MSubtitle,
             newItem: VideoInfoV2.Subtitle.MSubtitle,
         ): Boolean {
-            return oldItem.check == newItem.check
+            return oldItem == newItem
         }
     }) {
 
@@ -39,8 +38,9 @@ class CCAssAdapter(private val selectEvent: (index: Int) -> Unit) :
             ViewHolder(root)
         }
 
-    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         DataBindingUtil.getBinding<ItemCcAssLangBinding>(holder.itemView)?.apply {
+            val position = holder.bindingAdapterPosition
             if (selectIndex == position) {
                 getItem(position).check = true
             }

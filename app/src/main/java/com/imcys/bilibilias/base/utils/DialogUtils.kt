@@ -43,6 +43,7 @@ import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -684,14 +685,7 @@ object DialogUtils {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
@@ -707,6 +701,19 @@ object DialogUtils {
     }
 
     /**
+     * 设置动态高斯模糊效果
+     */
+    fun BottomSheetDialog.setDynamicGaussianBlurEffect(blurRadius: Int = 40) {
+        window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setBackgroundBlurRadius(40)
+            }
+        }
+    }
+
+    /**
      * 下载字幕文件
      */
     fun downloadCCAssDialog(
@@ -716,16 +723,7 @@ object DialogUtils {
     ): BottomSheetDialog {
         val binding = DialogDownloadCcAssBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
-            setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
-            }
+            setOnShowListener { setDynamicGaussianBlurEffect() }
         }
 
         // 设置布局
@@ -789,14 +787,7 @@ object DialogUtils {
 
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
