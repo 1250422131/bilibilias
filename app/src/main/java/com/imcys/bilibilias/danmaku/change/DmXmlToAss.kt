@@ -77,7 +77,7 @@ object DmXmlToAss {
 
                 val startTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble())
                 // 6秒延迟
-                val endTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble() + 12)
+                var endTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble() + 12.5)
 
                 // 字号
                 val fontStyle = when (danmakuInfos[2]) {
@@ -88,23 +88,29 @@ object DmXmlToAss {
                 }
 
                 // 字体颜色
-                val textColor = "\\c&H${textColors[danmakuInfos[3]]}&"
+                val textColor = if (textColors[danmakuInfos[3]] == "FFFFFF") {
+                    "\\c&HFFFFFF"
+                } else {
+                    "\\c&H${textColors[danmakuInfos[3]]}\\3c&HFFFFFF"
+                }
 
                 val positionInfo =
                     if (danmakuInfos[1] == "5" && oldDmType == DanmakuType.TopDanmaku) {
                         // 这种情况下就是说顶部弹幕连起来了
                         oldDmPosition += 30
-                        "{\\pos(960,${(oldDmPosition)})$textColor}"
+                        endTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble() + 4)
+                        "{\\a6\\pos(960,${(oldDmPosition)})$textColor}"
                     } else if (danmakuInfos[1] == "4") {
-                        "{\\pos(960,1050)$textColor}"
+                        endTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble() + 4)
+                        "{\\a6\\pos(960,1050)$textColor}"
                     } else {
                         // 产生一个随机Y轴位置
                         val y = (0..18).random() * 60
-                        val starX = (1980..2000).random()
+                        val starX = (2150..2400).random()
                         // 清除连续
                         oldDmPosition = 0
                         // 确保前后经过了1920
-                        "{\\move($starX,$y,${1920 - starX},$y,0,12000)\\c$textColor}"
+                        "{\\move($starX,$y,${1920 - starX},$y)\\c$textColor}"
                     }
 
                 // 记录本次弹幕类型
@@ -118,7 +124,7 @@ object DmXmlToAss {
 
                 val textContent = danmakuElement.textContent
 
-                danmakus += "Dialogue: 0,$startTime,$endTime,$fontStyle,,0,0,0,,${positionInfo}${textContent}\n"
+                danmakus += "Dialogue: 3,$startTime,$endTime,$fontStyle,,0000,0000,0000,,${positionInfo}${textContent}\n"
             }
         }
 

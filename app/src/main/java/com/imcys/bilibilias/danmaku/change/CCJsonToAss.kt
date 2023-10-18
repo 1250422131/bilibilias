@@ -25,8 +25,6 @@ object CCJsonToAss {
         ScriptType: v4.00+
         PlayResX:$playResX
         PlayResY:$playResY
-        Timer: 10.0000
-        WrapStyle: 2
         ScaledBorderAndShadow: no
         """.trimIndent()
 
@@ -55,11 +53,11 @@ object CCJsonToAss {
         return """
         [V4+ Styles]
         Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-        Style: Small,黑体,36,&amp;H66FFFFFF,&amp;H66FFFFFF,&amp;H66000000,&amp;H66000000,0,0,0,0,100,100,0,0,1,1.2,0,5,0,0,0,0
-        Style: Medium,黑体,52,&amp;H66FFFFFF,&amp;H66FFFFFF,&amp;H66000000,&amp;H66000000,0,0,0,0,100,100,0,0,1,1.2,0,5,0,0,0,0
-        Style: Large,黑体,64,&amp;H66FFFFFF,&amp;H66FFFFFF,&amp;H66000000,&amp;H66000000,0,0,0,0,100,100,0,0,1,1.2,0,5,0,0,0,0
-        Style: Larger,黑体,72,&amp;H66FFFFFF,&amp;H66FFFFFF,&amp;H66000000,&amp;H66000000,0,0,0,0,100,100,0,0,1,1.2,0,5,0,0,0,0
-        Style: ExtraLarge,黑体,90,&amp;H66FFFFFF,&amp;H66FFFFFF,&amp;H66000000,&amp;amp;H66000000,0,0,0,0,100,100,0,0,1,1.2,0,5,0,0,0,0
+        Style: Small,Microsoft YaHei,36,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
+        Style: Medium,Microsoft YaHei,52,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
+        Style: Large,Microsoft YaHei,64,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
+        Style: Larger,Microsoft YaHei,72,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
+        Style: ExtraLarge,Microsoft YaHei,90,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
         """.trimIndent()
     }
 
@@ -80,7 +78,7 @@ object CCJsonToAss {
             // 6秒延迟
             val endTime = formatSeconds(it.to)
 
-            danmakus += "Dialogue: 0,$startTime,$endTime,Large,,0,0,0,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
+            danmakus += "Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
         }
 
         return danmakus
