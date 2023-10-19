@@ -1,27 +1,31 @@
 package com.imcys.bilibilias.ui.download
 
 import com.imcys.bilibilias.base.utils.DownloadQueue
-import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
+import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
-
-@Singleton
-class VideoDownloadTaskManage
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val downloadQueue: DownloadQueue
+    private val downloadQueue: DownloadQueue,
+    private val downloadTaskRepository: DownloadTaskRepository,
+    val groupDownloadProgress: GroupDownloadProgress
 ) : BaseViewModel() {
+
     /**
      * qn 该值在 DASH 格式下无效，因为 DASH 格式会取到所有分辨率的流地址
      *
@@ -32,27 +36,20 @@ class DownloadViewModel @Inject constructor(
      * "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
      */
     fun downloadVideo(
-        bvid: String,
+        details: VideoDetails,
         downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
         Timber.tag("downloadInfo").d(downloadOptionsStateHolders.toString())
         launchIO {
             downloadOptionsStateHolders.subset.asFlow().map {
                 delay(1.seconds)
-                videoRepository.getDashVideoStream(bvid, it.cid) to it
+                videoRepository.getDashVideoStream(details.bvid, it.cid) to it
             }.catch {
                 Timber.tag("下载视频异常").d(it)
             }.collect { (dash, page) ->
-                val videos = dash.dash.video
-                val videoUrl = getCurrentQualityEfficientEncode(videos, downloadOptionsStateHolders)
                 Timber.tag("audio").d("audio=${dash.dash.audio},quality=${downloadOptionsStateHolders.audioQuality}")
                 downloadQueue.addTask(
-                    bvid = bvid,
-                    cid = page.cid,
-                    videoUrl = videoUrl,
-                    audioUrl = dash.dash.audio.maxBy { it.id }.baseUrl,
-                    toolType = downloadOptionsStateHolders.toolType,
-                    qn = downloadOptionsStateHolders.videoQuality,
+                    details,
                     dash = dash,
                     page = page,
                     downloadOptionsStateHolders = downloadOptionsStateHolders
@@ -69,18 +66,15 @@ class DownloadViewModel @Inject constructor(
         // }
     }
 
-    /**
-     * key
-     * 7	AVC 编码	8K 视频不支持该格式
-     * 12	HEVC 编码
-     * 13	AV1 编码
-     * 选择当前清晰度的高效编码 13-》12-》7
-     */
-    private fun getCurrentQualityEfficientEncode(
-        videos: List<Dash.Video>,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders
-    ): String = videos
-        .groupBy { it.id }[downloadOptionsStateHolders.videoQuality]
-        ?.maxBy { it.codecid }!!
-        .baseUrl
+    private val _state = MutableStateFlow(DownloadState())
+    val state = _state.asStateFlow()
+    fun allTask() {
+        launchIO {
+            _state.update {
+                it.copy(tasks = downloadTaskRepository.allDownloadTask())
+            }
+        }
+    }
 }
+
+data class DownloadState(val tasks: List<DownloadTaskInfo> = emptyList())

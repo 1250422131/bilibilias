@@ -10,7 +10,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
+import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
@@ -31,7 +31,7 @@ class DownloadFragment : BaseFragment() {
     lateinit var downloadTaskAdapter: DownloadTaskAdapter
 
     @Inject
-    lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
+    lateinit var downloadTaskRepository: DownloadTaskRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -161,8 +161,8 @@ class DownloadFragment : BaseFragment() {
      * 删除记录以及文件
      */
     private fun deleteSelectTaskAndFile() {
-        downloadFinishTaskAd.currentList.filter { it.selectState }
-            .forEach { FileUtils.deleteFile(it.savePath) }
+        downloadFinishTaskAd.currentList.filter { false }
+            .forEach { FileUtils.deleteFile(it.file) }
         deleteSelectTaskRecords()
     }
 
@@ -171,10 +171,10 @@ class DownloadFragment : BaseFragment() {
      */
     private fun deleteSelectTaskRecords() {
         launchIO {
-            downloadFinishTaskAd.currentList.filter { it.selectState }
-                .forEach { downloadFinishTaskRepository.delete(it) }
+            downloadFinishTaskAd.currentList.filter { false }
+                .forEach { downloadTaskRepository.delete(it) }
 
-            val newTasks = downloadFinishTaskRepository.allDownloadFinishTask()
+            val newTasks = downloadTaskRepository.allDownloadTask()
 
             launchUI {
                 editCancel()
@@ -189,7 +189,7 @@ class DownloadFragment : BaseFragment() {
      */
     private fun loadDownloadTask() {
         launchIO {
-            downloadFinishTaskRepository.allDownloadFinishTask()
+            downloadTaskRepository.allDownloadTask()
         }
     }
 

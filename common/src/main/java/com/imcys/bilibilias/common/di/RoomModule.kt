@@ -3,6 +3,7 @@ package com.imcys.bilibilias.common.di
 import android.content.Context
 import androidx.room.Room
 import com.imcys.bilibilias.common.data.AppDatabase
+import com.imcys.bilibilias.common.data.dao.DownloadTaskDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,14 +24,13 @@ class RoomModule {
         "BILIBILIAS_DATABASE",
     )
         .fallbackToDestructiveMigration()
-        .addMigrations(AppDatabase.MIGRATION_1_2)
         .build()
 
     @Provides
     @Singleton
-    fun provideDownloadFinishTaskDao(
+    fun provideDownloadTaskDao(
         roomDatabase: AppDatabase,
-    ) = roomDatabase.downloadFinishTaskDao()
+    ): DownloadTaskDao = roomDatabase.downloadTaskDao()
 
     @Provides
     @Singleton

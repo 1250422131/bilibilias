@@ -17,10 +17,19 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO, start, block)
     }
 
+    protected fun launchOnIO(
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit,
+    ) {
+        viewModelScope.launch(Dispatchers.IO, start, block)
+    }
+
     protected fun launchUI(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.Main, start, block)
     }
+
+
 }

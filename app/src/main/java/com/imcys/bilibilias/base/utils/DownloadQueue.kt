@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -13,18 +12,14 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.VideoUtils
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
-import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.ui.download.DownloadOptionsStateHolders
 import com.imcys.bilibilias.ui.download.DownloadToolType
 import com.imcys.bilibilias.ui.download.FetchManage
@@ -32,8 +27,6 @@ import com.imcys.bilibilias.ui.download.TAG_AUDIO
 import com.imcys.bilibilias.ui.download.TAG_VIDEO
 import com.microsoft.appcenter.analytics.Analytics
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.microshow.rxffmpeg.RxFFmpegInvoke
-import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -69,25 +62,19 @@ class DownloadQueue @Inject constructor(
 ) : CoroutineScope by MainScope() {
 
     fun addTask(
-        bvid: String,
-        cid: Long,
-        videoUrl: String,
-        audioUrl: String,
-        toolType: DownloadToolType,
-        qn: Int,
+        details: VideoDetails,
         dash: DashVideoPlayBean,
         page: VideoDetails.Page,
         downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
         when (downloadOptionsStateHolders.requireDownloadFileType) {
             DownloadFileType.VideoAndAudio -> videoAndAudio(
-                videoUrl,
-                audioUrl,
                 dash,
-                bvid,
-                qn,
+                details.bvid,
                 page,
-                downloadOptionsStateHolders
+                downloadOptionsStateHolders,
+                details.aid,
+                details.title
             )
 
             DownloadFileType.OnlyAudio -> TODO()
@@ -95,16 +82,15 @@ class DownloadQueue @Inject constructor(
     }
 
     private fun videoAndAudio(
-        videoUrl: String,
-        audioUrl: String,
         dash: DashVideoPlayBean,
         bvid: String,
-        qn: Int,
         page: VideoDetails.Page,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders
+        downloadOptionsStateHolders: DownloadOptionsStateHolders,
+        aid: Long,
+        title: String
     ) {
         when (downloadOptionsStateHolders.toolType) {
-            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadOptionsStateHolders)
+            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadOptionsStateHolders,aid,title)
             DownloadToolType.IDM -> startIDMDownload()
             DownloadToolType.ADM -> startADMDownload()
         }
@@ -143,7 +129,9 @@ class DownloadQueue @Inject constructor(
         bvid: String,
         dash: DashVideoPlayBean,
         page: VideoDetails.Page,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders
+        downloadOptionsStateHolders: DownloadOptionsStateHolders,
+        aid: Long,
+        title: String
     ) {
         val qn = downloadOptionsStateHolders.videoQuality
         val d = dash.dash
@@ -158,8 +146,8 @@ class DownloadQueue @Inject constructor(
         val audioUrl = d.audio.maxBy { it.id }.baseUrl
         val video = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), VIDEO_M4S)
         val audio = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), AUDIO_M4S)
-        val requestVideo = createVideoRequest(videoUrl, video.absolutePath, cid)
-        val requestAudio = createAudioRequest(audioUrl, audio.path, cid)
+        val requestVideo = createVideoRequest(videoUrl, video.absolutePath, cid,title,page.part,bvid,aid)
+        val requestAudio = createAudioRequest(audioUrl, audio.path, cid,title,page.part,bvid,aid)
         fetchManage.add(listOf(requestVideo, requestAudio))
         downloadDanmaku(cid, "$bvid/c_$cid")
     }
@@ -219,17 +207,17 @@ class DownloadQueue @Inject constructor(
     private fun buildSavePath(bvid: String, cid: Long, qn: Int, name: String): String =
         "$savePath/$bvid/c_$cid/$qn/$name"
 
-    private fun createVideoRequest(url: String, file: String, cid: Long) =
-        fetchManage.createRequest(url, file, cid.toInt(), TAG_VIDEO)
+    private fun createVideoRequest(url: String, file: String, cid: Long, title: String, pageTitle: String, bvid: String, aid: Long) =
+        fetchManage.createRequest(url, file, cid, TAG_VIDEO, title, pageTitle, bvid, aid)
 
-    private fun createAudioRequest(url: String, file: String, cid: Long) =
-        fetchManage.createRequest(url, file, cid.toInt(), TAG_AUDIO)
+    private fun createAudioRequest(url: String, file: String, cid: Long, title: String, pageTitle: String, bvid: String, aid: Long) =
+        fetchManage.createRequest(url, file, cid, TAG_AUDIO, title, pageTitle, bvid, aid)
 
     /**
      * 储存完成的下载任务
      * @param task Task
      */
-    private fun saveFinishTask(task: DownloadTaskInfo) {
+    private fun saveFinishTask(task: com.imcys.bilibilias.base.model.task.DownloadTaskInfo) {
         CoroutineScope(Dispatchers.Default).launchIO {
             var videoTitle = ""
             var videoPageTitle = ""
@@ -252,16 +240,6 @@ class DownloadQueue @Inject constructor(
                 videoBvid = VideoUtils.toBvidOffline(avid)
             }
 
-            val downloadFinishTaskInfo = DownloadFinishTaskInfo(
-                videoTitle = videoTitle,
-                videoPageTitle = videoPageTitle,
-                videoAvid = avid,
-                videoBvid = videoBvid,
-                videoCid = cid,
-                savePath = task.savePath,
-                fileType = task.fileType,
-            )
-
             // val downloadFinishTaskDao = AppDatabase.getDatabase(App.context).downloadFinishTaskDao()
 
             // 协程提交
@@ -280,7 +258,7 @@ class DownloadQueue @Inject constructor(
      * 储存完成的下载任务集合
      * @param tasks Array<out Task>
      */
-    private fun saveFinishTask(vararg tasks: DownloadTaskInfo) {
+    private fun saveFinishTask(vararg tasks: com.imcys.bilibilias.common.data.entity.DownloadTaskInfo) {
         tasks.forEach {
             saveFinishTask(it)
         }
@@ -290,7 +268,7 @@ class DownloadQueue @Inject constructor(
      * 数据解析
      * @param task Task
      */
-    private fun videoDataSubmit(task: DownloadTaskInfo) {
+    private fun videoDataSubmit(task: com.imcys.bilibilias.base.model.task.DownloadTaskInfo) {
         var aid: Long? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
         launch {
@@ -357,93 +335,6 @@ class DownloadQueue @Inject constructor(
             }
             // 提交数据
         }
-    }
-
-    /**
-     * 参数合并
-     * @param cid Int
-     */
-    private fun videoMerge(cid: Long) {
-        val mergeState =
-            PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
-                "user_dl_finish_automatic_merge_switch",
-                true,
-            )
-        val importState =
-            PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
-                "user_dl_finish_automatic_import_switch",
-                false,
-            )
-
-        if (mergeState) {
-            // 耗时操作，这里直接开个新线程
-        } else if (importState) {
-            importVideo(cid)
-        } else {
-        }
-    }
-
-    private fun runFFmpegRxJavaVideoMerge(
-        task: DownloadTaskInfo,
-        videoPath: String,
-        audioPath: String,
-
-    ) {
-        val userDLMergeCmd =
-            PreferenceManager.getDefaultSharedPreferences(App.context).getString(
-                "user_dl_merge_cmd_editText",
-                "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}",
-            )
-
-        File(videoPath + "_merge.mp4")
-
-        val commands = userDLMergeCmd?.toAsFFmpeg(
-            videoPath,
-            audioPath,
-            videoPath + "_merge.mp4",
-        )
-        // context.getFileDir().getPath()
-
-        RxFFmpegInvoke.getInstance()
-            .runCommandRxJava(commands)
-            .subscribe(object : RxFFmpegSubscriber() {
-                override fun onError(message: String?) {
-                }
-
-                override fun onFinish() {
-                    asToast(App.context, "合并完成")
-                    // 删除合并文件
-                    val deleteMergeSatae =
-                        PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
-                            "user_dl_finish_delete_merge_switch",
-                            true,
-                        )
-                    if (deleteMergeSatae) {
-                        FileUtils.deleteFile(videoPath)
-                        FileUtils.deleteFile(audioPath)
-                        // 仅仅储存视频地址
-                        task.savePath = videoPath + "_merge.mp4"
-                        task.fileType = 0
-                        saveFinishTask(task)
-                        // 通知相册更新
-                        updatePhotoMedias(File(videoPath + "_merge.mp4"))
-                    } else {
-                        // 分别储存两次下载结果
-                        task.fileType = 0
-                        task.savePath = audioPath
-                        task.fileType = 1
-                        saveFinishTask(task, task)
-                        // 通知相册更新
-                        updatePhotoMedias(File(videoPath), File(audioPath))
-                    }
-                }
-
-                override fun onProgress(progress: Int, progressTime: Long) {
-                }
-
-                override fun onCancel() {
-                }
-            })
     }
 
     /**
@@ -555,7 +446,7 @@ class DownloadQueue @Inject constructor(
     }
 
     private fun fileImpVideo(
-        task: DownloadTaskInfo,
+        task: com.imcys.bilibilias.base.model.task.DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -657,7 +548,7 @@ class DownloadQueue @Inject constructor(
     }
 
     private fun safImpVideo(
-        task: DownloadTaskInfo,
+        task: com.imcys.bilibilias.base.model.task.DownloadTaskInfo,
         videoPath: String,
         audioPath: String,
         videoEntry: String,
@@ -813,33 +704,6 @@ class DownloadQueue @Inject constructor(
         // }
     }
 
-    // 解压deflate数据的函数
-    fun decompress(data: ByteArray): ByteArray {
-        var output: ByteArray
-        val decompress = Inflater(true)
-        decompress.reset()
-        decompress.setInput(data)
-        val o = ByteArrayOutputStream(data.size)
-        try {
-            val buf = ByteArray(4092)
-            while (!decompress.finished()) {
-                val i = decompress.inflate(buf)
-                o.write(buf, 0, i)
-            }
-            output = o.toByteArray()
-        } catch (e: Exception) {
-            output = data
-            e.printStackTrace()
-        } finally {
-            try {
-                o.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        decompress.end()
-        return output
-    }
 }
 
 val e3 = """

@@ -12,7 +12,7 @@
 
         <variable
             name="DownloadFinishTaskInfo"
-            type="com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo" />
+            type="com.imcys.bilibilias.common.data.entity.DownloadTaskInfo" />
 
     </data>
 
@@ -52,7 +52,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{DownloadFinishTaskInfo.fileType == 0 ? `VIDEO` : `AUDIO`}"
                             android:textColor="@color/white"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -76,7 +75,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="@{DownloadFinishTaskInfo.videoPageTitle}"
+                            android:text="@{DownloadFinishTaskInfo.pageTitle}"
                             android:textSize="18sp" />
 
                     </LinearLayout>
@@ -99,7 +98,7 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{``+DownloadFinishTaskInfo.videoBvid}"
+                                android:text="@{``+DownloadFinishTaskInfo.bvid}"
                                 android:textColor="@color/color_text_hint"
                                 android:textSize="12sp" />
 
@@ -108,7 +107,7 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{`完成日期：`+ LongKt.timeStampDateStr((long)(DownloadFinishTaskInfo.addTime/1000),`yyyy-MM-dd HH:mm:ss`)}"
+                                android:text="@{`完成日期：`+ LongKt.timeStampDateStr((long)(DownloadFinishTaskInfo.created/1000),`yyyy-MM-dd HH:mm:ss`)}"
                                 android:textColor="@color/color_text_hint"
                                 android:textSize="12sp" />
 
@@ -124,7 +123,6 @@
                             app:tint="?attr/colorPrimary" />
 
                         <CheckBox
-                            android:checked="@={DownloadFinishTaskInfo.selectState}"
                             android:theme="@style/CheckBoxTheme"
                             android:id="@+id/item_dl_finish_task_edit_checkBox"
                             android:layout_width="wrap_content"
