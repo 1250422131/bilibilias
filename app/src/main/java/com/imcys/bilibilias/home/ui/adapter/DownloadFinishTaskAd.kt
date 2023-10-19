@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.FileProvider
@@ -15,8 +14,8 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
+import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
+import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,30 +24,27 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
-class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
+class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadTaskInfo, ViewHolder>(
 
-    object : DiffUtil.ItemCallback<DownloadFinishTaskInfo>() {
+    object : DiffUtil.ItemCallback<DownloadTaskInfo>() {
         override fun areItemsTheSame(
-            oldItem: DownloadFinishTaskInfo,
-            newItem: DownloadFinishTaskInfo,
+            oldItem: DownloadTaskInfo,
+            newItem: DownloadTaskInfo,
         ): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: DownloadFinishTaskInfo,
-            newItem: DownloadFinishTaskInfo,
+            oldItem: DownloadTaskInfo,
+            newItem: DownloadTaskInfo,
         ): Boolean {
-            val showEditEqual = oldItem.showEdit == newItem.showEdit
-            val selectStateEqual = oldItem.selectState == newItem.selectState
-
-            return showEditEqual && selectStateEqual
+            return false
         }
     },
 ) {
 
     @Inject
-    lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
+    lateinit var downloadTaskRepository: DownloadTaskRepository
     var mLongClickEvent: () -> Boolean = { false }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -64,35 +60,14 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         DataBindingUtil.getBinding<ItemDownloadTaskFinishBinding>(holder.itemView)?.apply {
-            downloadFinishTaskInfo = getItem(position)
-            val taskId = getItem(position).id
             val task = getItem(position)
-
-            holder.itemView.setOnLongClickListener {
-                if (mLongClickEvent()) {
-                } else {
-                }
-                true
-            }
-
-            if (task.showEdit) {
-                itemDlFinishTaskDelete.visibility = View.GONE
-                itemDlFinishTaskEditCheckBox.visibility = View.VISIBLE
-            } else {
-                itemDlFinishTaskEditCheckBox.visibility = View.GONE
-                itemDlFinishTaskDelete.visibility = View.VISIBLE
-            }
-
-            itemDlFinishTaskEditCheckBox.isChecked = task.selectState
-
-            // 点击
             holder.itemView.setOnClickListener {
-                if (FileUtils.isFileExists(File(task.savePath))) {
+                if (FileUtils.isFileExists(File(task.file))) {
                     AsDialog.init(holder.itemView.context)
                         .setTitle("文件操作")
                         .setContent("请选择下面的按钮")
                         .setPositiveButton("分享文件") {
-                            val fileType: String = if (task.fileType == 0) {
+                            val fileType: String = if (true) {
                                 "video/*"
                             } else {
                                 "audio/*"
@@ -103,14 +78,14 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                                 FileProvider.getUriForFile(
                                     holder.itemView.context,
                                     "com.imcys.bilibilias.fileProvider",
-                                    File(task.savePath),
+                                    File(task.file),
                                 ),
                                 fileType,
                             )
                             it.cancel()
                         }
                         .setNeutralButton("播放文件") {
-                            val fileType: String = if (task.fileType == 0) {
+                            val fileType: String = if (true) {
                                 "video/*"
                             } else {
                                 "audio/*"
@@ -122,7 +97,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                                     FileProvider.getUriForFile(
                                         holder.itemView.context,
                                         "com.imcys.bilibilias.fileProvider",
-                                        File(task.savePath),
+                                        File(task.file),
                                     ),
                                     fileType,
                                 )
@@ -150,17 +125,15 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
     private fun bindingDeleteMethod(
         itemDlFinishTaskDelete: ImageView,
-        task: DownloadFinishTaskInfo,
+        task: DownloadTaskInfo,
     ) {
         AsDialog.init(itemDlFinishTaskDelete.context)
             .setTitle("删除警告")
             .setContent("确定删除这条纪录吗？")
             .setPositiveButton("删除纪录") {
-                deleteTaskRecords(task.id)
                 it.cancel()
             }.setNeutralButton("删除纪录和文件") {
-                deleteTaskRecords(task.id)
-                FileUtils.delete(task.savePath)
+                FileUtils.delete(task.file)
                 it.cancel()
             }
             .setNegativeButton("点错了") {
@@ -172,8 +145,8 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
     private fun deleteTaskRecords(taskId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             val newTasks = withContext(Dispatchers.Default) {
-                downloadFinishTaskRepository.deleteAndReturnList(
-                    downloadFinishTaskRepository.findById(taskId),
+                downloadTaskRepository.deleteAndReturnList(
+                    downloadTaskRepository.findById(taskId),
                 )
             }
             // 更新数据

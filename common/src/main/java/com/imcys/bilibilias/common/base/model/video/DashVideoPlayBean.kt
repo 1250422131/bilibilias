@@ -139,32 +139,5 @@ data class Dash(
             @SerialName("initialization")
             val initialization: String = "" // 0-1006
         )
-
-        /**
-         * 判断视频编码
-         */
-        fun videoEncode() {
-            when (codecid) {
-                VideoEncode.AV1.codecid -> {}
-                VideoEncodingFormatHEVC -> {}
-                VideoEncodingFormatAV1 -> {}
-                else -> Timber.d("未知编码格式: codecid=$codecid,codecs=$codecs")
-            }
-        }
-
     }
 }
-
-/**
- * 7  AVC 8K 视频不支持该格式
- * 12 HEVC
- * 13 AV1
- */
-enum class VideoEncode(val codecid: Int){
-    AVC(7),
-    HEVC(12),
-    AV1(13)
-}
-const val VideoEncodingFormatAVC = 7
-const val VideoEncodingFormatHEVC = 12
-const val VideoEncodingFormatAV1 = 13

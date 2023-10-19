@@ -20,6 +20,7 @@ import com.imcys.bilibilias.common.base.model.video.VideoHasLike
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
 import com.imcys.bilibilias.dm.Dm
+import com.imcys.bilibilias.dm.DmSegMobileReplyKt
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -27,7 +28,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.HttpHeaders
 import io.ktor.utils.io.core.readBytes
-import io.ktor.utils.io.streams.inputStream
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -154,8 +155,12 @@ class VideoRepository @Inject constructor(
                 parameter("segment_index", segmentIndex)
                 parameter("type", type)
             }.bodyAsChannel()
+            Dm.DmSegMobileReq.newBuilder()
+            Dm.DmSegMobileReply.newBuilder()
+            DmSegMobileReplyKt
 
-            val parseFrom = Dm.DmSegMobileReply.parseFrom(text.readRemaining().inputStream())
+            // ServerCalls.clientStreamingServerMethodDefinition(EmptyCoroutineContext,)
+            val parseFrom = Dm.DmSegMobileReply.parseFrom(text.toInputStream())
             tag.d("danmu=$parseFrom")
             emit(parseFrom)
         }.asResult()
