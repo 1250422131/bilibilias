@@ -6,7 +6,6 @@ import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
@@ -16,6 +15,7 @@ import com.tonyodev.fetch2.FetchGroup
 import com.tonyodev.fetch2.FetchGroupListener
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Request
+import com.tonyodev.fetch2.Status
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Extras
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,6 +53,7 @@ class FetchManage @Inject constructor(
     private fun initConfig(context: Context) =
         FetchConfiguration.Builder(context)
             .setDownloadConcurrentLimit(4)
+            .setAutoRetryMaxAttempts(10)
             .setGlobalNetworkType(NetworkType.ALL)
             .build()
 
@@ -97,18 +98,17 @@ class FetchManage @Inject constructor(
     }
 
     override fun onAdded(download: Download) {
-        downloadTaskRepository.insert(download.toEntity())
+
     }
 
     override fun onCancelled(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onCancelled(download: Download) {
-        updateDownloadTaskInfo(download)
     }
 
     private fun updateDownloadTaskInfo(download: Download) {
-        val cid = download.extras.getLong(EXTRAS_CID, 0)
+        val cid = download.cid
         val tag = download.tag
         scope.launch {
             val task = downloadTaskRepository.findByCidAndTag(cid, tag!!)?.apply {
@@ -142,14 +142,14 @@ class FetchManage @Inject constructor(
     }
 
     override fun onCompleted(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onDeleted(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onDeleted(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onDownloadBlockUpdated(
@@ -162,7 +162,7 @@ class FetchManage @Inject constructor(
     }
 
     override fun onDownloadBlockUpdated(download: Download, downloadBlock: DownloadBlock, totalBlocks: Int) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onError(
@@ -175,14 +175,14 @@ class FetchManage @Inject constructor(
     }
 
     override fun onError(download: Download, error: Error, throwable: Throwable?) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onPaused(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onPaused(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onProgress(
@@ -204,21 +204,21 @@ class FetchManage @Inject constructor(
     }
 
     override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onRemoved(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onRemoved(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onResumed(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onResumed(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onStarted(
@@ -231,29 +231,49 @@ class FetchManage @Inject constructor(
     }
 
     override fun onStarted(download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int) {
-        updateDownloadTaskInfo(download)
+
     }
 
     override fun onWaitingNetwork(groupId: Int, download: Download, fetchGroup: FetchGroup) {
     }
 
     override fun onWaitingNetwork(download: Download) {
-        updateDownloadTaskInfo(download)
+
     }
 
-    private fun Download.toEntity(): DownloadTaskInfo {
-        return DownloadTaskInfo(
-            title = extras.getString(EXTRAS_TITLE, ""),
-            pageTitle = extras.getString(EXTRAS_PAGE_TITLE, ""),
-            bvid = extras.getString(EXTRAS_BV_ID, ""),
-            avid = extras.getLong(EXTRAS_AV_ID, 0),
-            cid = extras.getLong(EXTRAS_CID, 0),
-            file = file,
-            fileUri = fileUri.toString(),
-            fileType = tag,
-            created = created,
-            error = error.value,
-            state = status.value
+
+
+    fun findAllTask(result: (List<Download>) -> Unit) {
+        fetch.getDownloadsWithStatus(
+            listOf(
+                Status.NONE,
+                Status.QUEUED,
+                Status.DOWNLOADING,
+                Status.PAUSED,
+                Status.COMPLETED,
+                Status.CANCELLED,
+                Status.FAILED,
+                Status.REMOVED,
+                Status.DELETED,
+                Status.ADDED,
+            ),
+            result
         )
+    }
+
+    fun deleteAll() {
+        fetch.deleteAll()
+    }
+
+    fun deleteFiles(ids: List<Int>, onSuccess: (List<Download>) -> Unit, onError: (Error) -> Unit) {
+        fetch.delete(ids, onSuccess, onError)
+    }
+
+    fun deleteFile(id: Int, onSuccess: (Download) -> Unit, onError: (Error) -> Unit) {
+        fetch.delete(id, onSuccess, onError)
+    }
+
+    fun deleteGroup(id: Int, onSuccess: (List<Download>) -> Unit, onError: (Error) -> Unit) {
+        fetch.deleteGroup(id, onSuccess, onError)
     }
 }
