@@ -10,6 +10,9 @@ import androidx.compose.runtime.setValue
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 
+/**
+ * todo bug 这个类在搜索多个视频有几率cid与bvid对应不上
+ */
 class DownloadOptionsStateHolders {
     /**
      * 视频清晰度描述
@@ -40,14 +43,8 @@ class DownloadOptionsStateHolders {
     // 下载工具
     var toolType = DownloadToolType.BUILTIN
     override fun toString(): String {
-        return "DownloadOptionsStateHolders(" +
-                "videoFormatDescription='$videoFormatDescription', " +
-                "videoQuality=$videoQuality, " +
-                "subset=$subset, " +
-                "audioFormatDescription=$audioFormatDescription, " +
-                "audioQuality=$audioQuality"
+        return "DownloadOptionsStateHolders(videoFormatDescription='$videoFormatDescription', videoQuality=$videoQuality, subset=$subset, audioFormatDescription=$audioFormatDescription, audioQuality=$audioQuality, requireDownloadFileType=$requireDownloadFileType, toolType=$toolType)"
     }
-
 }
 
 @Composable

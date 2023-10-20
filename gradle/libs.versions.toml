@@ -36,7 +36,7 @@ junit = "4.13.2"
 jxl = "2.6.12"
 kcomponent-compiler = "1.0.0-rc4"
 kotlin = "1.9.10"
-kotlinx-coroutines-android = "1.7.3"
+kotlinx-coroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
 kotlinxDatetime = "0.4.1"
 kotlinxSerializationJson = "1.6.0"
@@ -47,7 +47,7 @@ orgJetbrainsDokka = "1.9.0"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.5"
 kurePotlin = "0.7.0"
-lifecycle = "2.7.0-alpha02"
+lifecycle = "2.7.0-alpha03"
 lottie = "6.1.0"
 material = "1.10.0"
 mmkv = "1.3.1"
@@ -62,7 +62,7 @@ pagingRuntimeKtx = "3.2.1"
 preferenceKtx = "1.2.1"
 protobufJavaUtil = "3.24.4"
 protobufKotlin = "3.24.4"
-room = "2.5.2"
+room = "2.6.0"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
 timber = "5.0.1"
@@ -72,7 +72,7 @@ work-runtime-ktx = "2.8.1"
 xfetch2 = "3.1.6"
 xutils = "3.9.0"
 activity-compose = "1.8.0"
-compose-bom = "2023.10.00"
+compose-bom = "2023.10.01"
 protobuf = "0.9.4"
 [libraries]
 accompanist-insets-ui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
@@ -163,10 +163,10 @@ jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
 kcomponent-compiler = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-compiler", version.ref = "kcomponent-compiler" }
 kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-rx", version.ref = "kcomponent-compiler" }
 
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-android" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlinxSerializationJson" }
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationJson" }

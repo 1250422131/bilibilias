@@ -1,9 +1,7 @@
 package com.imcys.bilibilias.ui.download
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -28,16 +26,15 @@ fun NavGraphBuilder.downloadRoute(
 ) = composable(ROUTE_DOWNLOAD) {
     val viewModel: DownloadViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val groupDownloadProgress = remember { viewModel.groupDownloadProgress }
-    LaunchedEffect(Unit) {
-        viewModel.allTask()
-    }
-    DownloadRoute(state,groupDownloadProgress)
+    DownloadRoute(state, viewModel::deleteFileById,)
 }
 
 @Composable
-fun DownloadRoute(state: DownloadState, groupDownloadProgress: GroupDownloadProgress) {
-    DownloadListScreen(state,groupDownloadProgress)
+fun DownloadRoute(
+    state: DownloadListState,
+    deleteFile: (Int) -> Unit
+) {
+    DownloadListScreen(state, deleteFile, state.bvGroup)
 }
 
 const val ROUTE_DOWNLOAD_OPTIONS = "download_options"
