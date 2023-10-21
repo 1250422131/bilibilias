@@ -19,7 +19,7 @@ import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
-import com.imcys.bilibilias.ui.download.DownloadOptionsStateHolders
+import com.imcys.bilibilias.ui.download.DownloadListHolders
 import com.imcys.bilibilias.ui.download.DownloadToolType
 import com.imcys.bilibilias.ui.download.FetchManage
 import com.imcys.bilibilias.ui.download.TAG_AUDIO
@@ -62,14 +62,14 @@ class DownloadManage @Inject constructor(
         details: VideoDetails,
         dash: DashVideoPlayBean,
         page: VideoDetails.Page,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders
+        downloadListHolders: DownloadListHolders
     ) {
-        when (downloadOptionsStateHolders.requireDownloadFileType) {
+        when (downloadListHolders.requireDownloadFileType) {
             DownloadFileType.VideoAndAudio -> videoAndAudio(
                 dash,
                 details.bvid,
                 page,
-                downloadOptionsStateHolders,
+                downloadListHolders,
                 details.aid,
                 details.title
             )
@@ -82,12 +82,12 @@ class DownloadManage @Inject constructor(
         dash: DashVideoPlayBean,
         bvid: String,
         page: VideoDetails.Page,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders,
+        downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
     ) {
-        when (downloadOptionsStateHolders.toolType) {
-            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadOptionsStateHolders, aid, title)
+        when (downloadListHolders.toolType) {
+            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadListHolders, aid, title)
             DownloadToolType.IDM -> startIDMDownload()
             DownloadToolType.ADM -> startADMDownload()
         }
@@ -126,18 +126,18 @@ class DownloadManage @Inject constructor(
         bvid: String,
         dash: DashVideoPlayBean,
         page: VideoDetails.Page,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders,
+        downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
     ) {
-        val qn = downloadOptionsStateHolders.videoQuality
+        val qn = downloadListHolders.videoQuality
         val d = dash.dash
         buildIndexJson(d)
         buildEntryJson(qn, bvid, page)
         val cid = page.cid
 
         val videoUrl: String =
-            d.video.groupBy { it.id }[downloadOptionsStateHolders.videoQuality]?.last()?.baseUrl
+            d.video.groupBy { it.id }[downloadListHolders.videoQuality]?.last()?.baseUrl
                 ?: d.video.groupBy { it.id }.firstNotNullOf { (_, v) -> v.last().backupUrl.last() }
         val audioUrl = d.audio.maxBy { it.id }.baseUrl
         Timber.tag("downloadUrl").d("video=$videoUrl,audio=$audioUrl")

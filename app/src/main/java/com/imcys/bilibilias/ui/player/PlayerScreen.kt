@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -111,37 +113,44 @@ fun PlayerScreen(
             //     Spacer(modifier = Modifier.weight(1f))
             //     Text("已完结，全13话")
             // }
-            var selected by remember { mutableLongStateOf(state.videoDetails.pages.firstOrNull()?.cid ?: 0) }
-            val w = LocalConfiguration.current.screenWidthDp.dp / 3
-            LazyRow(
-                Modifier
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(state.videoDetails.pages, key = { it.cid }) { item ->
-                    Card(
-                        onClick = {
-                            changeUrl(item.cid)
-                            selected = item.cid
-                        },
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            item.part,
-                            Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .width(w),
-                            color = if (item.cid == selected) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                            maxLines = 2,
-                        )
+            Box {
+                var selected by remember { mutableLongStateOf(state.videoDetails.pages.firstOrNull()?.cid ?: 0) }
+                val w = LocalConfiguration.current.screenWidthDp.dp / 3
+                LazyRow(
+                    Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.videoDetails.pages, key = { it.cid }) { item ->
+                        Card(
+                            onClick = {
+                                changeUrl(item.cid)
+                                selected = item.cid
+                            },
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                item.part,
+                                Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .width(w)
+                                    .padding(4.dp),
+                                color = if (item.cid == selected) MaterialTheme.colorScheme.primary else Color.Unspecified,
+                                maxLines = 2,
+                                fontSize = 13.sp
+                            )
+                        }
                     }
+                    // item {
+                    //     Surface(onClick = { /*TODO*/ }, Modifier) {
+                    //         Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "打开选集")
+                    //     }
+                    // }
                 }
-                // item {
-                //     Surface(onClick = { /*TODO*/ }, Modifier) {
-                //         Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "打开选集")
-                //     }
-                // }
+                IconButton(onClick = { /*TODO*/ }, Modifier.align(Alignment.CenterEnd)) {
+                    Icon(painter = painterResource(id = R.drawable.chevron_right), contentDescription = null)
+                }
             }
             Button(
                 onClick = {
@@ -176,7 +185,7 @@ private fun VideoActions(
                 Image(
                     painterResource(R.drawable.ic_as_video_like),
                     contentDescription = "点赞按钮",
-                    Modifier.size(18.dp),
+                    Modifier.size(22.dp),
                     colorFilter = if (isLike) {
                         ColorFilter.tint(
                             MaterialTheme.colorScheme.primary
@@ -186,7 +195,7 @@ private fun VideoActions(
                     }
                 )
             },
-            bottom = { Text(like.digitalConversion(), fontWeight = FontWeight.Thin) },
+            bottom = { Text(like.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp) },
             Modifier
                 .clickable { }
                 .padding(16.dp)
@@ -197,7 +206,7 @@ private fun VideoActions(
                 Image(
                     painterResource(R.drawable.ic_as_video_throw),
                     contentDescription = "投币按钮",
-                    Modifier.size(18.dp),
+                    Modifier.size(22.dp),
                     colorFilter = if (isCoins) {
                         ColorFilter.tint(
                             MaterialTheme.colorScheme.primary
@@ -207,7 +216,7 @@ private fun VideoActions(
                     }
                 )
             },
-            bottom = { Text(coin.digitalConversion(), fontWeight = FontWeight.Thin) },
+            bottom = { Text(coin.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
             Modifier
                 .clickable { }
                 .padding(16.dp)
@@ -219,7 +228,7 @@ private fun VideoActions(
                 Image(
                     painterResource(R.drawable.ic_as_video_collec),
                     contentDescription = "收藏按钮",
-                    Modifier.size(18.dp),
+                    Modifier.size(22.dp),
                     colorFilter = if (isCollection) {
                         ColorFilter.tint(
                             MaterialTheme.colorScheme.primary
@@ -229,7 +238,7 @@ private fun VideoActions(
                     }
                 )
             },
-            bottom = { Text(favorite.digitalConversion(), fontWeight = FontWeight.Thin) },
+            bottom = { Text(favorite.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
             Modifier
                 .clickable { }
                 .padding(16.dp)
@@ -241,10 +250,10 @@ private fun VideoActions(
                 Image(
                     painterResource(R.drawable.ic_as_video_fasong),
                     contentDescription = "分享按钮",
-                    Modifier.size(18.dp)
+                    Modifier.size(22.dp)
                 )
             },
-            bottom = { Text(share.digitalConversion(), fontWeight = FontWeight.Thin) },
+            bottom = { Text(share.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
             Modifier
                 .clickable { }
                 .padding(16.dp)

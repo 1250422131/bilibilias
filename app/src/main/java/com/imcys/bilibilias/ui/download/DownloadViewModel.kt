@@ -1,23 +1,18 @@
 package com.imcys.bilibilias.ui.download
 
 import com.imcys.bilibilias.base.utils.DownloadManage
+import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import com.tonyodev.fetch2.Download
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
-import kotlin.io.path.Path
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
@@ -30,6 +25,20 @@ class DownloadViewModel @Inject constructor(
 
     init {
         findAllTask()
+        getPages()
+        setInitAcceptDescription()
+    }
+
+    private fun getPages() {
+        when (val res = videoRepository.videoDetails2.replayCache.lastOrNull()) {
+            is Result.Error -> TODO()
+            Result.Loading -> TODO()
+            is Result.Success -> _state.update {
+                it.copy(availablePages = res.data.pages, selectedPages = listOf(res.data.pages.first()))
+            }
+
+            null -> Timber.d("replayCache is null")
+        }
     }
 
     /**
@@ -43,9 +52,9 @@ class DownloadViewModel @Inject constructor(
      */
     fun downloadVideo(
         details: VideoDetails,
-        downloadOptionsStateHolders: DownloadOptionsStateHolders
+        downloadListHolders: DownloadListHolders
     ) {
-        Timber.tag("downloadInfo").d(downloadOptionsStateHolders.toString())
+        Timber.tag("downloadInfo").d(downloadListHolders.toString())
         // launchIO {
         //     downloadOptionsStateHolders.subset.asFlow().map {
         //         delay(1.seconds)
@@ -79,17 +88,79 @@ class DownloadViewModel @Inject constructor(
         downloadManage.deleteFile(id, { download ->
             Timber.tag("deleteFile").d(download.toString())
             // /storage/emulated/0/Android/data/com.imcys.bilibilias.debug/files/download/BV1ky4y1N7K2/c_1300196787/112/video.m4s
-
         }, {
-
         })
         findAllTask()
     }
+
     fun deleteGroupFile(groupId: Long) {
         // downloadManage.deleteFile(groupId, {}, {})
+    }
+
+    private fun setInitAcceptDescription() {
+        videoRepository.dashVideo.replayCache.forEach { res ->
+            when (res) {
+                is Result.Error -> TODO()
+                Result.Loading -> TODO()
+                is Result.Success -> _state.update {
+                    it.copy(
+                        selectedDescription = res.data.acceptDescription.first(),
+                        availableAcceptDescription = res.data.acceptDescription,
+                        availableQuality = res.data.acceptQuality,
+                    )
+                }
+            }
+        }
+    }
+
+    fun setAcceptDescription(index: Int) {
+        _state.update {
+            it.copy(
+                selectedDescription = it.availableAcceptDescription[index],
+                selectedQuality = it.availableQuality[index]
+            )
+        }
+    }
+
+    fun setPages(page: VideoDetails.Page) {
+        _state.update {
+            val pageList = it.selectedPages
+            if (page in pageList && pageList.size > 1) {
+                it.copy(selectedPages = pageList - page)
+            } else {
+                it.copy(selectedPages = pageList + page)
+            }
+        }
+    }
+
+    fun setDownloadTool(downloadTool: DownloadToolType) {
+        _state.update {
+            it.copy(downloadTool = downloadTool)
+        }
+    }
+
+    fun setRequireDownloadFileType(type: DownloadFileType) {
+        _state.update {
+            it.copy(requireDownloadFileType = type)
+        }
     }
 }
 
 data class DownloadListState(
-    val bvGroup: Map<String, List<Download>> = emptyMap()
+    val bvGroup: Map<String, List<Download>> = emptyMap(),
+    val downloadTool: DownloadToolType = DownloadToolType.BUILTIN,
+    val requireDownloadFileType: DownloadFileType = DownloadFileType.VideoAndAudio,
+
+    // 可选剧集
+    val availablePages: List<VideoDetails.Page> = emptyList(),
+    // 已选剧集
+    val selectedPages: List<VideoDetails.Page> = emptyList(),
+
+    val availableQuality: List<Int> = emptyList(),
+    val selectedQuality: Int = 0,
+
+    // "真彩 HDR"
+    val selectedDescription: String = "",
+    // "真彩 HDR", "超清 4K", "高清 1080P60", "高清 1080P","高清 720P60", "清晰 480P", "流畅 360P"
+    val availableAcceptDescription: List<String> = emptyList(),
 )

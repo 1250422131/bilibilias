@@ -3,7 +3,6 @@ package com.imcys.bilibilias.ui.player
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -16,26 +15,23 @@ fun NavController.navigateToPlayer() {
 }
 
 fun NavGraphBuilder.playerRoute(
-    onBack: () -> Unit,
     onNavigateToDownloadOption: () -> Unit,
     navController: NavHostController
 ) = composable(ROUTE_PLAYER) { backStackEntry ->
+    val viewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
+    val state by viewModel.playerState.collectAsStateWithLifecycle()
     PlayerRoute(
-        backStackEntry,
-        navController,
-        onBack,
-        onNavigateToDownloadOption
+        onNavigateToDownloadOption,
+        state,
+        viewModel::changeUrl
     )
 }
 
 @Composable
 fun PlayerRoute(
-    backStackEntry: NavBackStackEntry,
-    navController: NavHostController,
-    onBack: () -> Unit,
-    onNavigateToDownloadOption: () -> Unit
+    onNavigateToDownloadOption: () -> Unit,
+    state: PlayerState,
+    changeUrl: (Long) -> Unit
 ) {
-    val viewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController = navController)
-    val state by viewModel.event.collectAsStateWithLifecycle()
-    PlayerScreen(state, onNavigateToDownloadOption, viewModel::changeUrl)
+    PlayerScreen(state, onNavigateToDownloadOption, changeUrl)
 }

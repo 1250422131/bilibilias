@@ -11,17 +11,16 @@ import com.imcys.bilibilias.common.base.extend.print
 import com.imcys.bilibilias.common.base.extend.safeGet
 import com.imcys.bilibilias.common.base.extend.safeGetText
 import com.imcys.bilibilias.common.base.model.BangumiPlayBean
-import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoCollection
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.model.video.VideoHasCoins
 import com.imcys.bilibilias.common.base.model.video.VideoHasLike
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
-import com.imcys.bilibilias.common.base.model.video.VideoPlayDetails
 import com.imcys.bilibilias.dm.Dm
 import com.imcys.bilibilias.dm.DmSegMobileReplyKt
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -42,14 +41,9 @@ import javax.inject.Singleton
 @Singleton
 class VideoRepository @Inject constructor(
     private val httpClient: HttpClient,
-    private val wbiKeyRepository: WbiKeyRepository
+    private val wbiKeyRepository: WbiKeyRepository,
+    private val json: Json
 ) {
-
-    private val json = Json {
-        prettyPrint = true
-        isLenient = true
-        ignoreUnknownKeys = true
-    }
 
     suspend fun getVideoPageList(bvid: String): Result<List<VideoPageListData>> {
         val result = httpClient.safeGet<List<VideoPageListData>>(BilibiliApi.videoPageListPath) {
@@ -81,10 +75,8 @@ class VideoRepository @Inject constructor(
         _bangumi.emit(text)
     }
 
-    private val _videoPlayDetails = MutableSharedFlow<VideoPlayDetails>(1)
-    val videoPlayDetailsFlow = _videoPlayDetails.asSharedFlow()
-    private val _dashFormat = MutableSharedFlow<DashVideoPlayBean>(1)
-    val dashFormat = _dashFormat.asSharedFlow()
+    private val _dashVideo = MutableSharedFlow<Result<DashVideoPlayBean>>(1)
+    val dashVideo = _dashVideo.asSharedFlow()
 
     /**
      * fnval 默认值已经取到所有值
@@ -94,9 +86,9 @@ class VideoRepository @Inject constructor(
         cid: Long,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
-    ): Result<DashVideoPlayBean> {
+    ) {
+        _dashVideo.emit(getVideoStreamAddress(bvid, cid, 0, fnval, fourk))
         Timber.d("bv=$bvid,cid=$cid,fnval=$fnval,fourk=$fourk")
-        return getVideoStreamAddress(bvid, cid, 0, fnval, fourk)
     }
 
     /**
@@ -169,9 +161,6 @@ class VideoRepository @Inject constructor(
         return result
     }
 
-    private val _videoDetails = MutableSharedFlow<VideoDetails>(1)
-    val videoDetails = _videoDetails.asSharedFlow()
-
     private val _videoDetails2 = MutableSharedFlow<Result<VideoDetails>>(1)
     val videoDetails2 = _videoDetails2.asSharedFlow()
 
@@ -197,18 +186,22 @@ class VideoRepository @Inject constructor(
     /**
      * 点赞
      */
-    suspend fun hasLike(bvid: String): Result<VideoHasLike> =
-        httpClient.safeGet(BilibiliApi.videoHasLike) {
+    suspend fun hasLike(bvid: String): Boolean {
+        val hasLike = httpClient.get(BilibiliApi.videoHasLike) {
             parameter(BVID, bvid)
-        }
+        }.body<VideoHasLike>()
+        return hasLike.like
+    }
 
     /**
      * 投币
      */
-    suspend fun hasCoins(bvid: String): Result<VideoHasCoins> =
-        httpClient.safeGet(BilibiliApi.videoHasCoins) {
+    suspend fun hasCoins(bvid: String): Boolean {
+        val hasCoins = httpClient.get(BilibiliApi.videoHasCoins) {
             parameter(BVID, bvid)
-        }
+        }.body<VideoHasCoins>()
+        return hasCoins.coins
+    }
 
     /**
      * 收藏
@@ -217,10 +210,12 @@ class VideoRepository @Inject constructor(
      *
      * aid=BV1Bb411H7Dv
      */
-    suspend fun hasCollection(id: String): Result<VideoCollection> =
-        httpClient.safeGet(BilibiliApi.videoHasCollection) {
-            parameter(AID, id)
-        }
+    suspend fun hasCollection(bvid: String): Boolean {
+        val collection = httpClient.get(BilibiliApi.videoHasCollection) {
+            parameter(AID, bvid)
+        }.body<VideoCollection>()
+        return collection.isFavoured
+    }
 
     suspend fun shortLink(url: String) = httpClient.safeGet<HttpResponse>(url)
 }
