@@ -46,23 +46,22 @@ class DownloadViewModel @Inject constructor(
         downloadOptionsStateHolders: DownloadOptionsStateHolders
     ) {
         Timber.tag("downloadInfo").d(downloadOptionsStateHolders.toString())
-        launchIO {
-            downloadOptionsStateHolders.subset.asFlow().map {
-                delay(1.seconds)
-                videoRepository.getDashVideoStream(details.bvid, it.cid) to it
-            }
-                .catch {
-                    Timber.tag("下载视频异常").d(it)
-                }.collect { (dash, page) ->
-                    Timber.tag("audio").d("audio=${dash.dash.audio},quality=${downloadOptionsStateHolders.audioQuality}")
-                    downloadManage.addTask(
-                        details,
-                        dash = dash,
-                        page = page,
-                        downloadOptionsStateHolders = downloadOptionsStateHolders
-                    )
-                }
-        }
+        // launchIO {
+        //     downloadOptionsStateHolders.subset.asFlow().map {
+        //         delay(1.seconds)
+        //         videoRepository.getDashVideoStream(details.bvid, it.cid) to it
+        //     }
+        //         .catch {
+        //             Timber.tag("下载视频异常").d(it)
+        //         }.collect { (dash, page) ->
+        //             downloadManage.addTask(
+        //                 details,
+        //                 dash = dash,
+        //                 page = page,
+        //                 downloadOptionsStateHolders = downloadOptionsStateHolders
+        //             )
+        //         }
+        // }
     }
 
     private fun findAllTask() {

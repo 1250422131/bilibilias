@@ -1,41 +1,52 @@
 package com.imcys.bilibilias.ui.tool
 
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.common.base.utils.AsVideoUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils.httpClient
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.request
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ToolViewModel @Inject constructor(
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val json: Json,
 ) : BaseViewModel() {
 
     private val _toolState = MutableStateFlow(ToolState())
     val toolState = _toolState.asStateFlow()
 
     init {
-        videoRepository.videoDetailsFlow.onEach { v ->
-            _toolState.update {
-                it.copy(videoDetails = v, isShowVideoCard = true)
-            }
-        }.launchIn(viewModelScope)
+        videoRepository.videoDetails2
+            .onEach { res ->
+                when (res) {
+                    is Result.Error -> TODO()
+                    Result.Loading -> {}
+                    is Result.Success -> _toolState.update { it.copy(videoDetails = res.data, isShowVideoCard = true) }
+                }
+            }.launchIn(viewModelScope)
 
-        videoRepository.bangumi.onEach { b ->
-            _toolState.update {
-                it.copy(bangumi = b, isShowVideoCard = true)
+        videoRepository.bangumi.onEach { res ->
+            when (res) {
+                is Result.Error -> TODO()
+                Result.Loading -> TODO()
+                is Result.Success -> {
+                    val bangumi = json.decodeFromString<Bangumi>(res.data)
+                    _toolState.update {
+                        it.copy(bangumi = bangumi.result, isShowVideoCard = true)
+                    }
+                }
             }
         }.launchIn(viewModelScope)
     }
@@ -47,12 +58,12 @@ class ToolViewModel @Inject constructor(
         } else if (AsVideoUtils.isBV(text)) {
             val id = AsVideoUtils.getBvid(text)
             if (id != null) VideoType.BV(id) else VideoType.None
-        } else if (AsVideoUtils.isShortLink(text)) {
-            val id = AsVideoUtils.getShortLink(text)
-            if (id != null) VideoType.ShortLink(id) else VideoType.None
         } else if (AsVideoUtils.isEp(text)) {
             val id = AsVideoUtils.getEpid(text)
             if (id != null) VideoType.EP(id) else VideoType.None
+        } else if (AsVideoUtils.isShortLink(text)) {
+            val id = AsVideoUtils.getShortLink(text)
+            if (id != null) VideoType.ShortLink(id) else VideoType.None
         } else {
             VideoType.None
         }
@@ -76,31 +87,33 @@ class ToolViewModel @Inject constructor(
 
     private fun handelEP(id: String) {
         launchIO {
-            videoRepository.get剧集基本信息(id)
+            videoRepository.getEp(id)
         }
     }
 
     private fun handelHttp(url: String) {
         launchIO {
-            httpClient.prepareGet(url).execute { response ->
-                parsesBvOrAvOrEp(response.request.url.toString())
+            when (val shortLink = videoRepository.shortLink(url)) {
+                is Result.Error -> TODO()
+                Result.Loading -> {}
+                is Result.Success -> parseTextTypes(shortLink.data.request.url.toString())
             }
         }
     }
 
     private fun handelAV(id: String) {
         launchIO {
-            videoRepository.getVideoDetailsAvid(id)
+            videoRepository.getVideoDetailsByAid(id)
         }
     }
 
     private fun handelBV(id: String) {
-        launchIO {
+        launchOnIO {
             videoRepository.getVideoDetailsByBvid(id)
         }
     }
 
-    fun clearSearchText() {
+    fun clearText() {
         _toolState.update {
             it.copy(text = "", inputError = false, isShowVideoCard = false)
         }

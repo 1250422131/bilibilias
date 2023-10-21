@@ -10,15 +10,11 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
 import timber.log.Timber
-import kotlin.Result
 
 internal suspend inline fun <reified T> HttpClient.safeGet(
     url: String,
     block: HttpRequestBuilder.() -> Unit = {},
-): Result<T> =
-    httpBlock {
-        get(url, block).body()
-    }
+): Result<T> = httpBlock { get(url, block).body() }
 
 internal suspend inline fun HttpClient.safeGetText(
     url: String,
@@ -26,17 +22,20 @@ internal suspend inline fun HttpClient.safeGetText(
 ): Result<String> = httpBlock { get(url, block).bodyAsText() }
 
 private inline fun <T> httpBlock(block: () -> T) = try {
-    Result.success(block())
+    Result.Success(block())
 } catch (e: ClientRequestException) {
-    Timber.tag("SafeGetCatching").d(e, "客户端异常")
-    Result.failure(e)
+    Timber.d(e, "客户端异常")
+    Result.Error(e)
 } catch (e: ServerResponseException) {
-    Timber.tag("SafeGetCatching").d(e, "服务器异常")
-    Result.failure(e)
+    Timber.d(e, "服务器异常")
+    Result.Error(e)
 } catch (e: IOException) {
-    Timber.tag("SafeGetCatching").d(e)
-    Result.failure(e)
+    Timber.d(e)
+    Result.Error(e)
 } catch (e: SerializationException) {
-    Timber.tag("SafeGetCatching").d(e, "序列化失败")
-    Result.failure(e)
+    Timber.d(e, "序列化失败")
+    Result.Error(e)
+} catch (e: Exception) {
+    Timber.d(e)
+    Result.Error(e)
 }

@@ -32,7 +32,7 @@ fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit, 
     ToolScreen(
         state,
         viewModel::parsesBvOrAvOrEp,
-        viewModel::clearSearchText,
+        viewModel::clearText,
         onNavigateToPlayer,
         onNavigateToSettings,
     )

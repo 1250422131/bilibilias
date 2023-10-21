@@ -37,5 +37,5 @@ fun PlayerRoute(
 ) {
     val viewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController = navController)
     val state by viewModel.event.collectAsStateWithLifecycle()
-    PlayerScreen(state, onNavigateToDownloadOption, viewModel::changeUrl,viewModel::getVideoPlayList)
+    PlayerScreen(state, onNavigateToDownloadOption, viewModel::changeUrl)
 }

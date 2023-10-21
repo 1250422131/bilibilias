@@ -23,9 +23,8 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
-import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import com.imcys.bilibilias.common.base.model.bangumi.Bangumi
+import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.repository.UserRepository
@@ -44,13 +43,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 /**
@@ -108,8 +105,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -164,8 +161,8 @@ class AsVideoViewModel @Inject constructor(
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -468,10 +465,6 @@ class AsVideoViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUserData(): UserSpaceInformation = withContext(Dispatchers.IO) {
-        userRepository.getUserSpaceDetails(mid)
-    }
-
     fun getVideoData(bvid: String) {
         launchIO {
             videoRepository.getVideoDetailsByBvid(bvid)
@@ -480,7 +473,7 @@ class AsVideoViewModel @Inject constructor(
 
     fun loadBangumiVideoList(epID: String) {
         launchIO {
-            val 剧集基本信息 = videoRepository.get剧集基本信息(epID)
+            val 剧集基本信息 = videoRepository.getEp(epID)
             Timber.d(剧集基本信息.toString())
             _videoUiState.update {
                 it.copy(

@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,13 +51,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.noRippleClickable
-import com.imcys.bilibilias.base.utils.observeAsState
 import com.imcys.bilibilias.common.base.components.CenterRow
 import com.imcys.bilibilias.common.base.components.VerticalTwoTerms
 import com.imcys.bilibilias.common.base.config.CookieRepository
@@ -78,28 +74,8 @@ private val tag = Timber.tag("PlayerScreen")
 fun PlayerScreen(
     state: PlayerState,
     onNavigateToDownloadOption: () -> Unit,
-    changeUrl: (Long) -> Unit,
-    getVideoPlayList: (String) -> Unit
+    changeUrl: (Long) -> Unit
 ) {
-    val lifecycleState by LocalLifecycleOwner.current.lifecycle.observeAsState()
-    LaunchedEffect(lifecycleState) {
-        when (lifecycleState) {
-            Lifecycle.Event.ON_CREATE -> {}
-            Lifecycle.Event.ON_START -> {}
-            Lifecycle.Event.ON_RESUME -> {}
-            Lifecycle.Event.ON_STOP -> {}
-            Lifecycle.Event.ON_ANY -> {}
-            Lifecycle.Event.ON_PAUSE -> {
-                // 暂停视频
-                // if (asJzvdStd.state == Jzvd.STATE_PLAYING) {
-                //     asJzvdStd.startButton.performClick()
-                //     changeFaButtonToPlay()
-                // }
-            }
-
-            Lifecycle.Event.ON_DESTROY -> JzvdStd.releaseAllVideos()
-        }
-    }
     Scaffold(Modifier.fillMaxSize(), topBar = {
         VideoWindows(
             url = state.dashVideo.dash.video.firstOrNull()?.baseUrl,
