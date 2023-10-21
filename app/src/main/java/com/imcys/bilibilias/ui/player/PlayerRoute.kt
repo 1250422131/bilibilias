@@ -16,6 +16,7 @@ fun NavController.navigateToPlayer() {
 
 fun NavGraphBuilder.playerRoute(
     onNavigateToDownloadOption: () -> Unit,
+    onNavigateToDownloadAanmaku: () -> Unit,
     navController: NavHostController
 ) = composable(ROUTE_PLAYER) { backStackEntry ->
     val viewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
@@ -23,7 +24,8 @@ fun NavGraphBuilder.playerRoute(
     PlayerRoute(
         onNavigateToDownloadOption,
         state,
-        viewModel::changeUrl
+        viewModel::changeUrl,
+        onNavigateToDownloadAanmaku
     )
 }
 
@@ -31,7 +33,8 @@ fun NavGraphBuilder.playerRoute(
 fun PlayerRoute(
     onNavigateToDownloadOption: () -> Unit,
     state: PlayerState,
-    changeUrl: (Long) -> Unit
+    changeUrl: (Long) -> Unit,
+    onNavigateToDownloadAanmaku: () -> Unit
 ) {
-    PlayerScreen(state, onNavigateToDownloadOption, changeUrl)
+    PlayerScreen(state, onNavigateToDownloadOption, changeUrl, onNavigateToDownloadAanmaku)
 }

@@ -14,6 +14,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.imcys.bilibilias.ui.download.danmaku.danmakuRoute
+import com.imcys.bilibilias.ui.download.danmaku.navigateToDanmaku
 import com.imcys.bilibilias.ui.download.downloadOptionsRoute
 import com.imcys.bilibilias.ui.download.downloadRoute
 import com.imcys.bilibilias.ui.download.navigateToDownloadOptions
@@ -54,8 +56,9 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 
         playerRoute(
             onNavigateToDownloadOption = navController::navigateToDownloadOptions,
-            navController = navController,
+            navController = navController, onNavigateToDownloadAanmaku = navController::navigateToDanmaku,
         )
+        danmakuRoute(navController = navController, onBack = navController::navigateUp)
     }
 }
 

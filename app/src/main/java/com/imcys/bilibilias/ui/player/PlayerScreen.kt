@@ -76,7 +76,8 @@ private val tag = Timber.tag("PlayerScreen")
 fun PlayerScreen(
     state: PlayerState,
     onNavigateToDownloadOption: () -> Unit,
-    changeUrl: (Long) -> Unit
+    changeUrl: (Long) -> Unit,
+    onNavigateToDownloadAanmaku: () -> Unit
 ) {
     Scaffold(Modifier.fillMaxSize(), topBar = {
         VideoWindows(
@@ -159,6 +160,14 @@ fun PlayerScreen(
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
             ) {
                 Text(text = "缓存视频")
+            }
+            Button(
+                onClick = {
+                    onNavigateToDownloadAanmaku()
+                },
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+            ) {
+                Text(text = "缓存字幕")
             }
         }
     }
