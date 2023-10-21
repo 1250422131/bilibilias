@@ -12,6 +12,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.player.PlayerState
 import com.imcys.bilibilias.ui.player.PlayerViewModel
 
@@ -28,7 +29,7 @@ fun NavGraphBuilder.downloadRoute(
 ) = composable(ROUTE_DOWNLOAD) {
     val viewModel: DownloadViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    DownloadRoute(state, viewModel::deleteFileById,)
+    DownloadRoute(state, viewModel::deleteFileById)
 }
 
 @Composable
@@ -53,12 +54,18 @@ fun NavGraphBuilder.downloadOptionsRoute(
 ) { backStackEntry ->
     val playerViewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
     val downloadViewModel: DownloadViewModel = hiltViewModel()
-    val state by playerViewModel.event.collectAsStateWithLifecycle()
+    val state by playerViewModel.playerState.collectAsStateWithLifecycle()
+    val downloadListState by downloadViewModel.state.collectAsStateWithLifecycle()
     DownloadOptionsRoute(
         state = state,
         onBack = onBack,
-        downloadOptions = playerViewModel.downloadOptions,
-        downloadViewModel::downloadVideo
+        downloadListHolders = playerViewModel.downloadListHolders,
+        downloadVideo = downloadViewModel::downloadVideo,
+        setDownloadTool = downloadViewModel::setDownloadTool,
+        setRequireDownloadFileType = downloadViewModel::setRequireDownloadFileType,
+        downloadListState = downloadListState,
+        setAcceptDescription = downloadViewModel::setAcceptDescription,
+        setPages = downloadViewModel::setPages
     )
 }
 
@@ -66,13 +73,23 @@ fun NavGraphBuilder.downloadOptionsRoute(
 fun DownloadOptionsRoute(
     state: PlayerState,
     onBack: () -> Unit,
-    downloadOptions: DownloadOptionsStateHolders,
-    kFunction2: (VideoDetails, DownloadOptionsStateHolders) -> Unit
+    downloadListHolders: DownloadListHolders,
+    downloadVideo: (VideoDetails, DownloadListHolders) -> Unit,
+    setDownloadTool: (DownloadToolType) -> Unit,
+    setRequireDownloadFileType: (DownloadFileType) -> Unit,
+    downloadListState: DownloadListState,
+    setAcceptDescription: (Int) -> Unit,
+    setPages: (VideoDetails.Page) -> Unit,
 ) {
     DownloadOptionsScreen(
-        state,
-        onBack,
-        downloadOptions,
-        kFunction2
-    )
+        state = state,
+        onBack = onBack,
+        downloadOptions = downloadListHolders,
+        downloadVideo = downloadVideo,
+        setDownloadTool = setDownloadTool,
+        downloadListState = downloadListState,
+        setRequireDownloadFileType = setRequireDownloadFileType,
+        setAcceptDescription = setAcceptDescription,
+        setPages = setPages,
+        )
 }

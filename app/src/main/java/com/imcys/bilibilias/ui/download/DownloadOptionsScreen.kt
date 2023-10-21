@@ -30,9 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,7 +48,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.LeadingTrailingIconRow
 import com.imcys.bilibilias.common.base.components.SingleLineText
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
-import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.player.PlayerState
 
@@ -58,8 +55,13 @@ import com.imcys.bilibilias.ui.player.PlayerState
 fun DownloadOptionsScreen(
     state: PlayerState,
     onBack: () -> Unit,
-    downloadOptions: DownloadOptionsStateHolders,
-    downloadVideo: (VideoDetails, DownloadOptionsStateHolders) -> Unit,
+    downloadOptions: DownloadListHolders,
+    downloadVideo: (VideoDetails, DownloadListHolders) -> Unit,
+    setDownloadTool: (DownloadToolType) -> Unit,
+    downloadListState: DownloadListState,
+    setRequireDownloadFileType: (DownloadFileType) -> Unit,
+    setAcceptDescription: (Int) -> Unit,
+    setPages: (VideoDetails.Page) -> Unit,
 ) {
     Box(Modifier.statusBarsPadding()) {
         Column(Modifier.padding(horizontal = 8.dp)) {
@@ -77,18 +79,15 @@ fun DownloadOptionsScreen(
             DownloadBottomSheetLeadingTrailingIcon(
                 R.drawable.ic_as_video_definition,
                 R.string.app_dialog_dl_video_definition,
-                downloadOptions.videoFormatDescription,
+                downloadListState.selectedDescription,
                 Modifier.clickable {
                     showVideoClarity = !showVideoClarity
                 }
             )
             if (showVideoClarity) {
                 LazyRow(contentPadding = PaddingValues(4.dp)) {
-                    itemsIndexed(state.dashVideo.acceptDescription) { index, item ->
-                        TextButton(onClick = {
-                            downloadOptions.videoFormatDescription = item
-                            downloadOptions.videoQuality = state.dashVideo.acceptQuality[index]
-                        }) {
+                    itemsIndexed(downloadListState.availableAcceptDescription) { index, item ->
+                        TextButton(onClick = { setAcceptDescription(index) }) {
                             Text(item)
                         }
                     }
@@ -96,46 +95,16 @@ fun DownloadOptionsScreen(
             }
             // </editor-fold>
 
-            // <editor-fold desc="音质选择">
-            var showAudioQuality by remember { mutableStateOf(false) }
-            DownloadBottomSheetLeadingTrailingIcon(
-                R.drawable.ic_as_audio_download_monitor,
-                R.string.app_dialog_dl_video_audio_quality,
-                AsVideoUtils.getQualityName(downloadOptions.audioFormatDescription),
-                Modifier.clickable {
-                    showAudioQuality = !showAudioQuality
-                }
-            )
-            if (showAudioQuality) {
-                LazyRow(contentPadding = PaddingValues(8.dp)) {
-                    items(state.dashVideo.dash.audio) { item ->
-                        TextButton(onClick = {
-                            downloadOptions.audioFormatDescription = item.id; downloadOptions.audioQuality = item.id
-                        }) {
-                            Text(AsVideoUtils.getQualityName(item.id))
-                        }
-                    }
-                }
-            }
-            // </editor-fold>
-
-            DownloadToolTypeRadioGroup()
-            DownloadVideoOrAudioRadioGroup(downloadOptions)
+            DownloadToolTypeRadioGroup(setDownloadTool, downloadListState.downloadTool)
+            DownloadVideoOrAudioRadioGroup(setRequireDownloadFileType, downloadListState.requireDownloadFileType)
             // <editor-fold desc="选择文件下载">
-            val subSets = remember { mutableStateListOf(state.videoDetails.pages.first()) }
             LazyColumn(Modifier.padding(bottom = 70.dp)) {
-                items(state.videoDetails.pages, key = { it.cid }) {
+                items(downloadListState.availablePages, key = { it.cid }) {
                     TextButton(
-                        onClick = {
-                            if (it in subSets) {
-                                subSets.remove(it)
-                            } else {
-                                subSets.add(it)
-                            }
-                        },
+                        onClick = { setPages(it) },
                         border = BorderStroke(
                             2.dp,
-                            if (it in subSets) MaterialTheme.colorScheme.primary else Color.Unspecified
+                            if (it in downloadListState.selectedPages) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
                     ) {
                         SingleLineText(it.part, Modifier.fillMaxWidth())
@@ -167,14 +136,15 @@ fun DownloadOptionsScreen(
 }
 
 @Composable
-fun DownloadVideoOrAudioRadioGroup(downloadOptions: DownloadOptionsStateHolders) {
+fun DownloadVideoOrAudioRadioGroup(
+    setDownloadFileType: (DownloadFileType) -> Unit,
+    requireDownloadFileType: DownloadFileType
+) {
     Row {
         RadioGroup(
             DownloadFileType.values(),
-            downloadOptions.requireDownloadFileType,
-            {
-                downloadOptions.requireDownloadFileType = it
-            },
+            requireDownloadFileType,
+            setDownloadFileType,
             listOf(
                 stringResource(R.string.app_dialog_dl_radio_video_and_audio),
                 stringResource(R.string.app_dialog_dl_radio_only_audio),
@@ -187,13 +157,12 @@ fun DownloadVideoOrAudioRadioGroup(downloadOptions: DownloadOptionsStateHolders)
  * 下载工具
  */
 @Composable
-fun DownloadToolTypeRadioGroup() {
-    val (type, setType) = remember { mutableStateOf(DownloadToolType.BUILTIN) }
+fun DownloadToolTypeRadioGroup(setDownloadTool: (DownloadToolType) -> Unit, downloadTool: DownloadToolType) {
     Row {
         RadioGroup(
             DownloadToolType.values(),
-            type,
-            setType,
+            downloadTool,
+            setDownloadTool,
             listOf(
                 stringResource(R.string.app_dialog_dl_video_radio_built_download),
                 stringResource(R.string.app_dialog_dl_video_idm_dl),
@@ -234,17 +203,17 @@ private fun DownloadBottomSheetLeadingTrailingIcon(
             )
         },
         trailingIcon = { Image(imageVector = imageVector, contentDescription = null) },
-        modifier = modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+        modifier = modifier.padding(horizontal = 10.dp, vertical = 4.dp)
     )
 }
 
 @Composable
 fun <T> RadioGroup(items: Array<T>, selected: T, onClick: (T) -> Unit, text: List<String>) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        items.forEachIndexed { index, t ->
+        items.forEachIndexed { index, item ->
             RadioButton(
-                selected = t == selected,
-                onClick = { onClick(t) },
+                selected = item == selected,
+                onClick = { onClick(item) },
                 colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
             )
             Text(text[index])

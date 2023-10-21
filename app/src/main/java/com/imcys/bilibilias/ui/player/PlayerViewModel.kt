@@ -2,60 +2,70 @@ package com.imcys.bilibilias.ui.player
 
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.extend.Result
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
-import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
-import com.imcys.bilibilias.ui.download.DownloadOptionsStateHolders
+import com.imcys.bilibilias.ui.download.DownloadListHolders
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
+    val downloadListHolders: DownloadListHolders
 ) : BaseViewModel() {
 
-    private val _event = MutableStateFlow(PlayerState())
-    val event = _event.asStateFlow()
+    private val _playerState = MutableStateFlow(PlayerState())
+    val playerState = _playerState.asStateFlow()
 
-    val downloadOptions by lazy(LazyThreadSafetyMode.NONE) {
-        DownloadOptionsStateHolders().apply {
-            videoFormatDescription = _event.value.dashVideo.acceptDescription.first()
-            videoQuality = _event.value.dashVideo.supportFormats.first().quality
-            subset.add(_event.value.videoDetails.pages.first())
-            audioFormatDescription = _event.value.dashVideo.acceptQuality.first()
-            _event.value.dashVideo.dash.audio.first().id
+    init {
+        viewModelScope.launchIO {
+            videoRepository.videoDetails2.collectLatest { res ->
+                when (res) {
+                    is Result.Error -> TODO()
+                    Result.Loading -> TODO()
+                    is Result.Success -> {
+                        val details = res.data
+                        getDash(details)
+                        setSubSet(details.pages)
+                        val hasLike = videoRepository.hasLike(details.bvid)
+                        val hasCoins = videoRepository.hasCoins(details.bvid)
+                        val hasCollection = videoRepository.hasCollection(details.bvid)
+                        _playerState.update {
+                            it.copy(
+                                videoDetails = details,
+                                hasLike = hasLike,
+                                hasCoins = hasCoins,
+                                hasCollection = hasCollection
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
-    init {
-        videoRepository.videoDetails.onEach { v ->
-            // val dash = videoRepository.getDashVideoStream(v.bvid, v.cid).collect{
-            //     when (it) {
-            //         is Result.Error -> TODO()
-            //         Result.Loading -> TODO()
-            //         is Result.Success -> TODO()
-            //     }
-            // }
-            // val hasLike = videoRepository.hasLike(v.bvid).like
-            // val hasCoins = videoRepository.hasCoins(v.bvid).coins
-            // val hasCollection = videoRepository.hasCollection(v.bvid).isFavoured
-            // _event.update {
-            //     it.copy(
-            //         videoDetails = v,
-            //         dashVideo = dash,
-            //         hasLike = hasLike,
-            //         hasCoins = hasCoins,
-            //         hasCollection = hasCollection
-            //     )
-            // }
-        }.launchIn(viewModelScope)
+    private fun setSubSet(pages: List<VideoDetails.Page>) {
+        downloadListHolders.subset.add(pages.first())
+    }
+
+    private suspend fun getDash(details: VideoDetails) {
+        videoRepository.getDashVideoStream(details.bvid, details.cid)
+        videoRepository.dashVideo.replayCache.forEach { res ->
+            when (res) {
+                is Result.Error -> TODO()
+                Result.Loading -> TODO()
+                is Result.Success -> _playerState.update {
+                    it.copy(dashVideo = res.data)
+                }
+            }
+        }
     }
 
     fun getVideoPlayList(bvid: String) {
@@ -68,16 +78,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     fun changeUrl(cid: Long) {
-        launchIO {
-            // val play = videoRepository.getMP4VideoStream(_event.value.videoDetails.bvid, cid)
-            // _event.update {
-            //     it.copy(
-            //         videoPlayDetails = play,
-            //     )
-            // }
-        }
     }
-
 }
 
 data class PlayerState(
@@ -85,6 +86,5 @@ data class PlayerState(
     val hasLike: Boolean = false,
     val hasCoins: Boolean = false,
     val hasCollection: Boolean = false,
-    val pageList: List<VideoPageListData> = emptyList(),
-    val dashVideo: DashVideoPlayBean = DashVideoPlayBean()
+    val dashVideo: DashVideoPlayBean = DashVideoPlayBean(),
 )

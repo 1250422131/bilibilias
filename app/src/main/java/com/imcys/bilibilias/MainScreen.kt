@@ -39,8 +39,7 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         homeRoute()
         toolRoute(
             onNavigateToPlayer = navController::navigateToPlayer,
-            onNavigateToSettings = navController::navigateToSettings,
-            onBack = navController::navigateUp
+            onNavigateToSettings = navController::navigateToSettings
         )
         settingsRoute()
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
@@ -54,9 +53,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
 
         playerRoute(
-            navController = navController,
-            onBack = navController::navigateUp,
             onNavigateToDownloadOption = navController::navigateToDownloadOptions,
+            navController = navController,
         )
     }
 }
