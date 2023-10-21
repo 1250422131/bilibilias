@@ -11,6 +11,8 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
+import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.bilibilias.ui.player.PlayerState
 import com.imcys.bilibilias.ui.player.PlayerViewModel
 
 const val ROUTE_DOWNLOAD = "download"
@@ -52,11 +54,25 @@ fun NavGraphBuilder.downloadOptionsRoute(
     val playerViewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
     val downloadViewModel: DownloadViewModel = hiltViewModel()
     val state by playerViewModel.event.collectAsStateWithLifecycle()
-
-    DownloadOptionsScreen(
+    DownloadOptionsRoute(
         state = state,
         onBack = onBack,
         downloadOptions = playerViewModel.downloadOptions,
         downloadViewModel::downloadVideo
+    )
+}
+
+@Composable
+fun DownloadOptionsRoute(
+    state: PlayerState,
+    onBack: () -> Unit,
+    downloadOptions: DownloadOptionsStateHolders,
+    kFunction2: (VideoDetails, DownloadOptionsStateHolders) -> Unit
+) {
+    DownloadOptionsScreen(
+        state,
+        onBack,
+        downloadOptions,
+        kFunction2
     )
 }

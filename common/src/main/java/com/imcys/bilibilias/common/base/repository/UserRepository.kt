@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.repository
 
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.safeGet
 import com.imcys.bilibilias.common.base.model.UserCardBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
@@ -20,15 +21,15 @@ class UserRepository @Inject constructor(
     suspend fun get用户名片信息(mid: Long) =
         httpClient.safeGet<UserCardBean>(BilibiliApi.getUserCardPath) {
             parameter("mid", mid)
-        }.getOrThrow()
+        }
 
-    suspend fun getUserSpaceDetails(mid: Long): UserSpaceInformation {
+    suspend fun getUserSpaceDetails(mid: Long): Result<UserSpaceInformation> {
         val params = wbiRepository.getUserNavToken(listOf("mid" to mid.toString()))
         val information = httpClient.safeGet<UserSpaceInformation>(BilibiliApi.userSpaceDetails) {
             params.forEach { (k, v) ->
                 parameter(k, v)
             }
-        }.getOrThrow()
+        }
         return information
     }
 }

@@ -30,11 +30,6 @@ import kotlin.system.exitProcess
 @Singleton
 class AsRepository @Inject constructor(private val httpClient: HttpClient) {
 
-    suspend fun getOldToolItem(action: (List<OldToolItemBean>) -> Unit) =
-        httpClient.safeGet<List<OldToolItemBean>>(BiliBiliAsApi.appFunction) {
-            parameter("type", "oldToolItem")
-        }.onSuccess { action(it) }
-
     suspend fun getBannerData() {
         httpClient.get(BiliBiliAsApi.updateDataPath) {
             parameter("type", "banner")

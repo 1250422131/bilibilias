@@ -28,32 +28,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,14 +46,7 @@ import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.startActivity
 import com.imcys.bilibilias.common.base.extend.digitalConversion
-import com.imcys.bilibilias.common.base.utils.AsVideoUtils
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapMerge
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,9 +76,7 @@ fun ToolScreen(
                         contentDescription = null,
                         Modifier
                             .size(24.dp)
-                            .clickable {
-                                context.startActivity(WebAsActivity::class.java)
-                            },
+                            .clickable { context.startActivity(WebAsActivity::class.java) },
                         colorFilter = ColorFilter.tint(Color(android.graphics.Color.parseColor("#fb7299")))
                     )
                     Icon(
@@ -120,14 +96,6 @@ fun ToolScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            val clipboardManager = LocalClipboardManager.current
-            LaunchedEffect(clipboardManager.getText()?.text) {
-                val text = clipboardManager.getText()?.text ?: return@LaunchedEffect
-                if (AsVideoUtils.isResolvable(text)) {
-                    clearSearchText()
-                    parsesBvOrAvOrEp(text)
-                }
-            }
             ToolScreenSearchTextField(
                 state.text,
                 onValueChange = { parsesBvOrAvOrEp(it) },
@@ -137,25 +105,21 @@ fun ToolScreen(
             AnimatedVisibility(visible = state.isShowVideoCard) {
                 if (state.videoType is VideoType.EP) {
                     VideoCard(
-                        bvid = state.bangumi.episodes[0].bvid,
                         pic = state.bangumi.cover,
                         title = state.bangumi.title,
                         desc = state.bangumi.evaluate,
                         view = state.bangumi.stat.views.digitalConversion(),
                         danmaku = state.bangumi.stat.danmakus.digitalConversion(),
-                        duration = 0,
                         onNavigateToPlayer = onNavigateToPlayer,
                         modifier = Modifier.animateContentSize()
                     )
                 } else {
                     VideoCard(
-                        bvid = state.videoDetails.bvid,
                         pic = state.videoDetails.pic,
                         title = state.videoDetails.title,
                         desc = state.videoDetails.desc,
                         view = state.videoDetails.stat.view.digitalConversion(),
                         danmaku = state.videoDetails.stat.danmaku.digitalConversion(),
-                        duration = state.videoDetails.duration,
                         onNavigateToPlayer = onNavigateToPlayer,
                         modifier = Modifier.animateContentSize()
                     )
@@ -184,15 +148,13 @@ fun ToolScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoCard(
-    bvid: String,
     pic: String,
     title: String,
     desc: String,
     view: String,
     danmaku: String,
     onNavigateToPlayer: () -> Unit,
-    modifier: Modifier = Modifier,
-    duration: Int = 0
+    modifier: Modifier = Modifier
 ) {
     Card(
         onClick = onNavigateToPlayer,
@@ -201,12 +163,6 @@ fun VideoCard(
             .height(200.dp),
     ) {
         Column(Modifier.padding(8.dp)) {
-            val time = remember(
-                duration
-            ) { String.format(Locale.SIMPLIFIED_CHINESE, "%d:%02d", duration / 60, duration % 60) }
-            val textMeasurer = rememberTextMeasurer()
-            val measure = textMeasurer.measure(time)
-
             AsyncImage(
                 model = pic,
                 contentDescription = "视频封面",
@@ -214,45 +170,6 @@ fun VideoCard(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        if (duration == 0) return@drawWithContent
-                        val topLeft = Offset(
-                            10.dp
-                                .roundToPx()
-                                .toFloat(),
-                            160.dp
-                                .roundToPx()
-                                .toFloat()
-                        )
-                        val textWidth = measure.size.width
-                        val textHeight = measure.size.height
-                        // todo 颜色记得更换为半透明的
-                        drawRect(
-                            Color.Red,
-                            topLeft = topLeft - Offset(
-                                1.dp
-                                    .roundToPx()
-                                    .toFloat(),
-                                2.dp
-                                    .roundToPx()
-                                    .toFloat()
-                            ),
-                            size = Size(
-                                (
-                                        textWidth + 3.dp
-                                            .roundToPx()
-                                            .toFloat()
-                                        ),
-                                (
-                                        textHeight + 2.dp
-                                            .roundToPx()
-                                            .toFloat()
-                                        )
-                            )
-                        )
-                        drawText(measure, topLeft = topLeft)
-                    }
             )
             Text(
                 title,
@@ -347,20 +264,10 @@ private fun ToolScreenSearchTextField(
     clearText: () -> Unit,
     isError: Boolean
 ) {
-    // 焦点
-    val focusRequester = remember { FocusRequester() }
-    // 软键盘
-    val softKeyboard = LocalSoftwareKeyboardController.current
-    LaunchedEffect(Unit) {
-        delay(100)
-        focusRequester.requestFocus()
-        softKeyboard?.show()
-    }
     OutlinedTextField(
         value = query,
         onValueChange = onValueChange,
         modifier = Modifier
-            .focusRequester(focusRequester)
             .fillMaxWidth()
             .padding(8.dp),
         leadingIcon = {
@@ -399,13 +306,11 @@ fun PreviewSearchBar() {
 @Composable
 fun PreviewVideoCard() {
     VideoCard(
-        bvid = "",
         pic = "",
         title = "这是一个标题",
         desc = "这是视频简介",
         view = "播放量",
         danmaku = "弹幕数",
-        duration = 123456,
         onNavigateToPlayer = {},
         modifier = Modifier
     )

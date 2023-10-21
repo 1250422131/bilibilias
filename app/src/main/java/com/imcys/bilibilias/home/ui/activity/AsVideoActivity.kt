@@ -472,14 +472,6 @@ class AsVideoActivity : BaseActivity<com.imcys.bilibilias.databinding.ActivityAs
     }
 
     /**
-     * 获取用户基础信息
-     * @return UserBaseBean
-     */
-    private suspend fun getUserData(): UserSpaceInformation {
-        return viewModel.getUserData()
-    }
-
-    /**
      * 加载视频列表信息
      *
      */
