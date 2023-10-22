@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.api
 
 import com.imcys.bilibilias.common.base.constant.ROAM_API
+
 /**
  * mid为UID
  */
@@ -42,6 +43,7 @@ object BilibiliApi {
 
     // 当前弹幕缓存
     const val thisVideoDanmakuPath = "x/v2/dm/web/seg.so"
+    const val thisVideoDanmakuWbiPath = "x/v2/dm/wbi/web/seg.so"
 
     // 视频列表
     const val videoPageListPath = "x/player/pagelist"

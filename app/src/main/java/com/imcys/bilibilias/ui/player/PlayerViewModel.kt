@@ -3,6 +3,7 @@ package com.imcys.bilibilias.ui.player
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,14 +58,12 @@ class PlayerViewModel @Inject constructor(
     }
 
     private suspend fun getDash(details: VideoDetails) {
-        videoRepository.getDashVideoStream(details.bvid, details.cid)
-        videoRepository.dashVideo.replayCache.forEach { res ->
-            when (res) {
-                is Result.Error -> TODO()
-                Result.Loading -> TODO()
-                is Result.Success -> _playerState.update {
-                    it.copy(dashVideo = res.data)
-                }
+        when (val res = videoRepository.getDashVideoStream(details.bvid, details.cid)) {
+            is Result.Error -> TODO()
+            Result.Loading -> TODO()
+            is Result.Success -> _playerState.update {
+                Timber.tag("PlayerViewModel").d(res.data.dash.video.toString())
+                it.copy(dashVideo = res.data, audios = res.data.dash.audio, videos = res.data.dash.video)
             }
         }
     }
@@ -87,4 +87,6 @@ data class PlayerState(
     val hasCoins: Boolean = false,
     val hasCollection: Boolean = false,
     val dashVideo: DashVideoPlayBean = DashVideoPlayBean(),
+    val videos: List<Dash.Video> = emptyList(),
+    val audios: List<Dash.Audio> = emptyList(),
 )

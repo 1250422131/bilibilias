@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.common.base.repository
 
+import com.baidu.mobstat.k
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.WTS
 import com.imcys.bilibilias.common.base.constant.W_RID
@@ -24,13 +25,13 @@ class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
 
     private var token: String? = null
 
-    suspend fun getUserNavToken(params: List<Pair<String, String>>): List<Pair<String, String>> {
+    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> {
         val userNav = httpClient.get(BilibiliApi.Token).body<UserNav>()
         return getParam(params, userNav.imgKey, userNav.subKey)
     }
 
     private fun getParam(
-        params: List<Pair<String, String>>,
+        params: List<Pair<String, Any>>,
         imgKey: String,
         subKey: String
     ): List<Pair<String, String>> {
@@ -51,9 +52,11 @@ class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
         return token!!
     }
 
-    private fun sign(params: List<Pair<String, String>>, mixinKey: String): List<Pair<String, String>> {
+    private fun sign(params: List<Pair<String, Any>>, mixinKey: String): List<Pair<String, String>> {
         val map = mutableListOf(WTS to (System.currentTimeMillis() / 1000).toString()).apply {
-            addAll(params)
+            params.forEach {(k,v)->
+                add(k to v.toString())
+            }
             sortBy { it.first }
         }
         val param = map.joinToString("&") { (k, v) ->

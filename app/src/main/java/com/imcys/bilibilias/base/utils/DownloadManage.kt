@@ -119,6 +119,18 @@ class DownloadManage @Inject constructor(
         }
     }
 
+    fun downloadDanmaku(cid: Long, aid: Long) {
+        scope.launchIO {
+            videoRepository.getRealTimeDanmaku(cid = cid, aid = aid, useWbi = true).collect { res ->
+                when (res) {
+                    is Result.Error -> TODO()
+                    Result.Loading -> {}
+                    is Result.Success -> Timber.d(res.data.elemsCount.toString())
+                }
+            }
+        }
+    }
+
     private fun startADMDownload() {}
 
     private fun startIDMDownload() {}
