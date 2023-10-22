@@ -187,4 +187,5 @@ dependencies {
      * protobuf
      */
     implementation(libs.protobuf.kotlin)
+    implementation(libs.gsyVideoPlayer)
 }

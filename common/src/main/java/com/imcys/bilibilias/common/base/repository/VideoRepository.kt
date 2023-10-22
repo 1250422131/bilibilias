@@ -18,7 +18,6 @@ import com.imcys.bilibilias.common.base.model.video.VideoHasCoins
 import com.imcys.bilibilias.common.base.model.video.VideoHasLike
 import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.dm.Dm
-import com.imcys.bilibilias.dm.DmSegMobileReplyKt
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -86,9 +85,11 @@ class VideoRepository @Inject constructor(
         cid: Long,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
-    ) {
-        _dashVideo.emit(getVideoStreamAddress(bvid, cid, 0, fnval, fourk))
+    ): Result<DashVideoPlayBean> {
+        val value = getVideoStreamAddress<DashVideoPlayBean>(bvid, cid, 0, fnval, fourk)
+        _dashVideo.emit(value)
         Timber.d("bv=$bvid,cid=$cid,fnval=$fnval,fourk=$fourk")
+        return value
     }
 
     /**
@@ -141,24 +142,46 @@ class VideoRepository @Inject constructor(
     fun getRealTimeDanmaku(cid: Long, segmentIndex: Int, type: Int = 1): Flow<Result<Dm.DmSegMobileReply>> {
         // av810872(cid=1176840)
         val result = flow {
-            val tag = Timber.tag("Danmaku")
-            tag.d("cid=$cid,index=$segmentIndex")
-
             val text = httpClient.get(BilibiliApi.thisVideoDanmakuPath) {
-                parameter("oid", 1282435536)
+                parameter("oid", cid)
                 parameter("segment_index", segmentIndex)
                 parameter("type", type)
             }.bodyAsChannel()
-            Dm.DmSegMobileReq.newBuilder()
-            Dm.DmSegMobileReply.newBuilder()
-            DmSegMobileReplyKt
 
-            // ServerCalls.clientStreamingServerMethodDefinition(EmptyCoroutineContext,)
             val parseFrom = Dm.DmSegMobileReply.parseFrom(text.toInputStream())
-            tag.d("danmu=$parseFrom")
             emit(parseFrom)
         }.asResult()
         return result
+    }
+
+    suspend fun getRealTimeDanmaku(
+        cid: Long,
+        aid: Long,
+        segmentIndex: Int = 1,
+        type: Int = 1,
+        useWbi: Boolean = true
+    ): Flow<Result<Dm.DmSegMobileReply>> {
+        return if (useWbi) {
+            flow {
+                val navToken = wbiKeyRepository.getUserNavToken(
+                    listOf(
+                        "oid" to cid,
+                        "segment_index" to segmentIndex,
+                        "type" to type,
+                        "pid" to aid,
+                    )
+                )
+                val channel = httpClient.get(BilibiliApi.thisVideoDanmakuWbiPath) {
+                    navToken.forEach {
+                        parameter(it.first, it.second)
+                    }
+                }.bodyAsChannel()
+                val parseFrom = Dm.DmSegMobileReply.parseFrom(channel.toInputStream())
+                emit(parseFrom)
+            }.asResult()
+        } else {
+            getRealTimeDanmaku(cid, segmentIndex, type)
+        }
     }
 
     private val _videoDetails2 = MutableSharedFlow<Result<VideoDetails>>(1)

@@ -73,6 +73,10 @@ class DownloadViewModel @Inject constructor(
         // }
     }
 
+    fun downloadDanmaku(cid: Long, aid:Long) {
+        downloadManage.downloadDanmaku(cid, aid)
+    }
+
     private fun findAllTask() {
         launchOnIO {
             downloadManage.findAllTask { tasks ->

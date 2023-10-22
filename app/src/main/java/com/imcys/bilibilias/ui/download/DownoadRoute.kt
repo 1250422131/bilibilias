@@ -53,7 +53,7 @@ fun NavGraphBuilder.downloadOptionsRoute(
     ROUTE_DOWNLOAD_OPTIONS,
 ) { backStackEntry ->
     val playerViewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
-    val downloadViewModel: DownloadViewModel = hiltViewModel()
+    val downloadViewModel: DownloadViewModel = backStackEntry.sharedHiltViewModel(navController)
     val state by playerViewModel.playerState.collectAsStateWithLifecycle()
     val downloadListState by downloadViewModel.state.collectAsStateWithLifecycle()
     DownloadOptionsRoute(

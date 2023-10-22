@@ -7,6 +7,7 @@ import com.imcys.bilibilias.common.base.model.UserCardBean
 import com.imcys.bilibilias.common.base.model.UserSpaceInformation
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
+import io.ktor.http.parametersOf
 import javax.inject.Inject
 import javax.inject.Singleton
 

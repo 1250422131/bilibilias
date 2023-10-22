@@ -28,6 +28,7 @@ glide = "4.13.2"
 grpcProtobuf = "1.58.0"
 grpcKotlinStub = "1.4.0"
 gson = "2.10"
+gsyVideoPlayer = "v8.4.0-release-jitpack"
 hbmartinDetektRules = "0.1.1"
 hilt = "2.48.1"
 hiltNavigationCompose = "1.0.0"
@@ -93,6 +94,7 @@ ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffm
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
 grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlinStub" }
+gsyVideoPlayer = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer", version.ref = "gsyVideoPlayer" }
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
