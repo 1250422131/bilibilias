@@ -187,5 +187,20 @@ dependencies {
      * protobuf
      */
     implementation(libs.protobuf.kotlin)
-    implementation(libs.gsyVideoPlayer)
+    /**
+     * gsy 播放器
+     */
+    implementation(libs.gsyVideoPlayer.java)
+    /**
+     * ExoPlayer模式
+     */
+    implementation(libs.gsyVideoPlayer.exo2)
+
+    /**
+     * 视频网络请求
+     */
+    implementation("androidx.media3:media3-exoplayer:1.1.1")
+    implementation("androidx.media3:media3-ui:1.1.1")
+    implementation("androidx.media3:media3-common:1.1.1")
+    implementation(libs.androidx.media3.datasource.okhttp)
 }
