@@ -227,6 +227,7 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 material3-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.ref = "github-Banner" }
+androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "1.1.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android" }

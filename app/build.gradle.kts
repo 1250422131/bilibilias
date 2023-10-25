@@ -202,5 +202,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.1.1")
     implementation("androidx.media3:media3-ui:1.1.1")
     implementation("androidx.media3:media3-common:1.1.1")
+    implementation(libs.androidx.media3.transformer)
     implementation(libs.androidx.media3.datasource.okhttp)
+    implementation("androidx.media3:media3-datasource-cronet:1.1.1")
 }
