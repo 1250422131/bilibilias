@@ -5,6 +5,7 @@ import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.config.CacheManager
 import com.imcys.bilibilias.common.base.config.CookieManager
 import com.imcys.bilibilias.common.base.config.LoggerManager
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.extend.ofMap
 import com.imcys.bilibilias.common.base.extend.print
@@ -33,6 +34,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
 import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.*
@@ -62,6 +64,14 @@ class NetworkModule {
         @ApplicationContext context: Context,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(MonitorInterceptor(context))
+        .addInterceptor { chain ->
+            chain.proceed(
+                chain.request()
+                    .newBuilder()
+                    .addHeader(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
+                    .build()
+            )
+        }
         .followRedirects(false)
         .followSslRedirects(false)
         .retryOnConnectionFailure(true)
