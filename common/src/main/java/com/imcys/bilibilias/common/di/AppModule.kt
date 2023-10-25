@@ -16,5 +16,7 @@ class AppModule {
         prettyPrint = true
         isLenient = true
         ignoreUnknownKeys = true
+        allowSpecialFloatingPointValues = true
+        allowStructuredMapKeys = true
     }
 }
