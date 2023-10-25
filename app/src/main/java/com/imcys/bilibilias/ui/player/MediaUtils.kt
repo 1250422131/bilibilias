@@ -26,10 +26,8 @@ import tv.danmaku.ijk.media.exo2.IjkExo2MediaPlayer
 fun createMediaSource(
     dataSourceFactory: DataSource.Factory,
     url: String,
-    mimeType: String?
 ) = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
     MediaItem.Builder()
-        .setMimeType(mimeType)
         .setUri(url)
         .build()
 )

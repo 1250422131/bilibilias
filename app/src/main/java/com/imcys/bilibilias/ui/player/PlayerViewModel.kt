@@ -1,10 +1,13 @@
 package com.imcys.bilibilias.ui.player
 
+import android.media.MediaCodecList
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MimeTypes
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.base.model.video.DashVideoPlayBean
+import com.imcys.bilibilias.common.base.model.video.SupportFormat
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.base.repository.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
@@ -27,6 +30,17 @@ class PlayerViewModel @Inject constructor(
 
     private val _playerState = MutableStateFlow(PlayerState(okHttpClient = okHttpClient))
     val playerState = _playerState.asStateFlow()
+
+    /**
+     * key 是视频清晰度
+     * 126,120,112,80,64,32,16
+     */
+    private val qualityGroup = sortedMapOf<Int, List<Dash.Video>>()
+
+    /**
+     * 视频支持的格式
+     */
+    private val supportFormat = mutableListOf<SupportFormat>()
 
     init {
         getMediaCodecInfo()
@@ -64,10 +78,61 @@ class PlayerViewModel @Inject constructor(
         when (val res = videoRepository.getDashVideoStream(details.bvid, details.cid)) {
             is Result.Error -> TODO()
             Result.Loading -> TODO()
-            is Result.Success -> _playerState.update {
-                Timber.tag("PlayerViewModel").d(res.data.dash.video.toString())
-                it.copy(dashVideo = res.data, audios = res.data.dash.audio, videos = res.data.dash.video)
+            is Result.Success -> {
+                val data = res.data
+                val videos = data.dash.video
+                _playerState.update { state ->
+                    Timber.tag("PlayerViewModel").d(videos.toString())
+                    val descriptionAndQuality = data.acceptDescription.zip(data.acceptQuality)
+                    state.copy(
+                        dashVideo = data,
+                        audio = data.dash.audio.maxBy { it.id },
+                        videos = videos,
+                        descriptionAndQuality = descriptionAndQuality
+                    )
+                }
+                qualityGroup.clear()
+                supportFormat.clear()
+
+                supportFormat.addAll(data.supportFormats)
+                qualityGroup.putAll(videos.画质分组())
             }
+        }
+    }
+
+    // 选择视频清晰度
+    // todo 是否还需要查看手机支持的编码器，以选择合适的 url？
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    fun selectedQuality(quality: Int) {
+        Timber.d("qn=$quality")
+        val mediaCodecInfos = get软解()
+
+        val videoList = qualityGroup[quality]
+        val format = supportFormat.find { it.quality == quality } ?: supportFormat.maxBy { it.quality }
+
+        if (videoList == null) {
+            _playerState.update { state ->
+                state.copy(video = qualityGroup.maxBy { it.key }.value.maxBy { it.codecid })
+            }
+        } else {
+            _playerState.update { state ->
+                state.copy(video = videoList.maxBy { it.codecid })
+            }
+            // val codes = format.codecs.map { MimeTypes.getMediaMimeType(it)?.drop(6) ?: "" }
+            // mediaCodecInfos.forEach { media ->
+            //     codes.forEach { code ->
+            //         if (media.contains(code)) {
+            //             Timber.d("media=$media,code=$code")
+            //             videoList.forEach {
+            //                 if (it.codecs.contains(code)) {
+            //                     _playerState.update { state ->
+            //                         state.copy(video = it)
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
 
@@ -78,6 +143,11 @@ class PlayerViewModel @Inject constructor(
         //         it.copy(pageList = pageList)
         //     }
         // }
+    }
+
+    // 切换page
+    fun switchPage(cid: Long) {
+
     }
 
     fun changeUrl(cid: Long) {
@@ -91,9 +161,26 @@ data class PlayerState(
     val hasCollection: Boolean = false,
     val dashVideo: DashVideoPlayBean = DashVideoPlayBean(),
     val videos: List<Dash.Video> = emptyList(),
-    val audios: List<Dash.Audio> = emptyList(),
-    val okHttpClient: OkHttpClient
+
+    val okHttpClient: OkHttpClient,
+    val descriptionAndQuality: List<Pair<String, Int>> = emptyList(),
+
+    // 清晰度
+    val video: Dash.Video = Dash.Video(),
+    val audio: Dash.Audio = Dash.Audio(),
 )
+
+fun get软解(): List<String> {
+    val list = MediaCodecList(MediaCodecList.REGULAR_CODECS)
+    val supportCodes = list.codecInfos
+    val codecInfoList = supportCodes.filterNot { it.isEncoder }.filter { it.name.startsWith("OMX.google") }.map { it.name }
+    codecInfoList.forEach {
+        Timber.i("软解列表：${it}\n")
+    }
+    return codecInfoList
+
+}
+
 fun List<Dash.Video>.画质分组(): Map<Int, List<Dash.Video>> = groupBy { it.id }
 
 fun List<Dash.Video>.画质最高队列(): List<Dash.Video> =

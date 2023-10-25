@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -72,11 +74,12 @@ fun PlayerScreen(
     onNavigateToDownloadOption: () -> Unit,
     changeUrl: (Long) -> Unit,
     onNavigateToDownloadAanmaku: () -> Unit,
+    selectedQuality: (Int) -> Unit,
 ) {
     Scaffold(Modifier.fillMaxSize(), topBar = {
         VideoWindows(
-            video = state.videos,
-            audio = state.audios,
+            video = state.video,
+            audio = state.audio,
             title = state.videoDetails.title,
             pic = state.videoDetails.pic,
             http = state.okHttpClient
@@ -103,12 +106,19 @@ fun PlayerScreen(
                 isCollection = state.hasCollection,
                 modifier = Modifier,
             )
-            Box {
+            LazyRow(Modifier.fillMaxWidth()) {
+                items(state.descriptionAndQuality) { pair ->
+                    // todo 缺少个边框 bro
+                    TextButton(onClick = { selectedQuality(pair.second) }) {
+                        Text(text = pair.first)
+                    }
+                }
+            }
+            Box(Modifier.fillMaxWidth()) {
                 var selected by remember { mutableLongStateOf(state.videoDetails.pages.firstOrNull()?.cid ?: 0) }
                 val w = LocalConfiguration.current.screenWidthDp.dp / 3
                 LazyRow(
-                    Modifier
-                        .fillMaxWidth(),
+                    Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -315,17 +325,13 @@ private fun VideoIntroduction(title: String, desc: String, modifier: Modifier = 
 private fun VideoWindows(
     title: String,
     pic: String,
-    video: List<Dash.Video>,
-    audio: List<Dash.Audio>,
+    video: Dash.Video,
+    audio: Dash.Audio,
     http: OkHttpClient,
     modifier: Modifier = Modifier,
 ) {
     AndroidView(
-        factory = { context ->
-            GSYVideoType.enableMediaCodec()
-            GSYVideoType.enableMediaCodecTexture()
-            AsGSYVideoPlayer(context)
-        },
+        factory = { context -> AsGSYVideoPlayer(context) },
         modifier
             .fillMaxWidth()
             .height(200.dp),
@@ -337,10 +343,8 @@ private fun VideoWindows(
             // MimeTypes.VIDEO_DOLBY_VISION
             // MediaCodecVideoRenderer.getDecoderInfos()
 
-            val video1 = video.firstOrNull()
-            val audio1 = audio.firstOrNull()
-            gsy.setMediaSource(http, video1, audio1)
-            gsy.setUp(video1?.baseUrl, title, pic)
+            gsy.setMediaSource(http, video, audio)
+            gsy.setUp(video.baseUrl, title, pic)
 
             // 设置返回按键功能
             // gsy.backButton.setOnClickListener { }
