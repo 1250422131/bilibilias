@@ -7,9 +7,11 @@ import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
+import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import timber.log.Timber
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 
 @HiltAndroidApp
 class App : BaseApplication() {
@@ -27,7 +29,14 @@ class App : BaseApplication() {
 
         context = applicationContext()
         initTimber()
+
+        initPlayManager()
     }
+
+    private fun initPlayManager() {
+        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+    }
+
     private fun initTimber() {
         Timber.plant(Timber.DebugTree())
     }
