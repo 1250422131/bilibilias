@@ -60,10 +60,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkhttp(
-        @ApplicationContext context: Context,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(MonitorInterceptor(context))
+    fun provideOkhttp(): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
             chain.proceed(
                 chain.request()
@@ -72,15 +69,13 @@ class NetworkModule {
                     .build()
             )
         }
-        .followRedirects(false)
-        .followSslRedirects(false)
-        .retryOnConnectionFailure(true)
         .build()
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(okHttpClient: OkHttpClient): HttpClientEngine = OkHttp.create {
+    fun provideHttpClientEngine(okHttpClient: OkHttpClient, @ApplicationContext context: Context): HttpClientEngine = OkHttp.create {
         preconfigured = okHttpClient
+        addInterceptor(MonitorInterceptor(context))
     }
 
     @OptIn(ExperimentalSerializationApi::class)
