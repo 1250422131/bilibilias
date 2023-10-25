@@ -139,7 +139,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:configChanges="keyboardHidden|smallestScreenSize"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
             android:theme="@style/Theme.BILIBILIAS"
             android:windowSoftInputMode="adjustResize">
