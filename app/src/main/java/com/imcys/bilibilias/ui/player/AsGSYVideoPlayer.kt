@@ -65,7 +65,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context) {
     }
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    fun setMediaSource(http: OkHttpClient, videoUrl: Dash.Video?, audioUrl: Dash.Audio?) {
+    fun setMediaSource(http: OkHttpClient, videoUrl: Dash.Video, audioUrl: Dash.Audio) {
         val dataSourceFactory = OkHttpDataSource.Factory(http)
         val cronetEngine = CronetEngine.Builder(context)
             .enableQuic(true)
@@ -73,11 +73,12 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context) {
             .enableHttp2(true)
             .setUserAgent(BROWSER_USER_AGENT)
             .build()
-        val videoType = MimeTypes.getMediaMimeType(videoUrl?.codecs)
-        val audioType = MimeTypes.getMediaMimeType(audioUrl?.codecs)
-        val cronetDataSource = CronetDataSource.Factory(cronetEngine, Executors.newFixedThreadPool(4))
-        val videoSource = createMediaSource(cronetDataSource, videoUrl?.baseUrl ?: "", videoType)
-        val audioSource = createMediaSource(cronetDataSource, audioUrl?.baseUrl ?: "", audioType)
+        // todo 设置了这个 Decoder init failed: c2.android.av1.decoder, Format(1, null, null, video/av01, null, -1, null, [3840, 2160, -1.0, null], [-1, -1])
+        val videoType = MimeTypes.getMediaMimeType(videoUrl.codecs)
+        val audioType = MimeTypes.getMediaMimeType(audioUrl.codecs)
+        val cronetDataSource = CronetDataSource.Factory(cronetEngine, Executors.newSingleThreadExecutor())
+        val videoSource = createMediaSource(cronetDataSource, videoUrl.baseUrl)
+        val audioSource = createMediaSource(cronetDataSource, audioUrl.baseUrl)
         ExoSourceManager.setExoMediaSourceInterceptListener(object : ExoMediaSourceInterceptListener {
             override fun getMediaSource(
                 dataSource: String?,

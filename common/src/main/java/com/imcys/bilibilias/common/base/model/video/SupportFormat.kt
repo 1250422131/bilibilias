@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SupportFormat(
     @SerialName("codecs")
-    val codecs: List<String>? = null, // null
+    val codecs: List<String> = emptyList(), // null
     @SerialName("display_desc")
     val displayDesc: String = "", // 1080P
     @SerialName("format")
