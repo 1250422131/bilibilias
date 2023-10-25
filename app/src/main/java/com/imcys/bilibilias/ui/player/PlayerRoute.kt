@@ -25,7 +25,7 @@ fun NavGraphBuilder.playerRoute(
         onNavigateToDownloadOption,
         state,
         viewModel::changeUrl,
-        onNavigateToDownloadAanmaku
+        onNavigateToDownloadAanmaku,
     )
 }
 
@@ -34,7 +34,12 @@ fun PlayerRoute(
     onNavigateToDownloadOption: () -> Unit,
     state: PlayerState,
     changeUrl: (Long) -> Unit,
-    onNavigateToDownloadAanmaku: () -> Unit
+    onNavigateToDownloadAanmaku: () -> Unit,
 ) {
-    PlayerScreen(state, onNavigateToDownloadOption, changeUrl, onNavigateToDownloadAanmaku)
+    PlayerScreen(
+        state,
+        onNavigateToDownloadOption,
+        changeUrl,
+        onNavigateToDownloadAanmaku,
+    )
 }
