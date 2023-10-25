@@ -14,19 +14,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    val downloadListHolders: DownloadListHolders
+    val downloadListHolders: DownloadListHolders,
+    okHttpClient: OkHttpClient
 ) : BaseViewModel() {
 
-    private val _playerState = MutableStateFlow(PlayerState())
+    private val _playerState = MutableStateFlow(PlayerState(okHttpClient = okHttpClient))
     val playerState = _playerState.asStateFlow()
 
     init {
+        getMediaCodecInfo()
         viewModelScope.launchIO {
             videoRepository.videoDetails2.collectLatest { res ->
                 when (res) {
@@ -89,4 +92,15 @@ data class PlayerState(
     val dashVideo: DashVideoPlayBean = DashVideoPlayBean(),
     val videos: List<Dash.Video> = emptyList(),
     val audios: List<Dash.Audio> = emptyList(),
+    val okHttpClient: OkHttpClient
 )
+fun List<Dash.Video>.画质分组(): Map<Int, List<Dash.Video>> = groupBy { it.id }
+
+fun List<Dash.Video>.画质最高队列(): List<Dash.Video> =
+    groupBy { it.id }
+        .maxBy { it.key }
+        .value
+        .sortedBy { it.codecid }
+
+fun List<Dash.Video>.画质最高队列的高效编码(): Dash.Video =
+    画质最高队列().maxBy { it.codecid }

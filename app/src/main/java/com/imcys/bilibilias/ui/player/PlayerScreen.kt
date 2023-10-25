@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.ui.player
 
 import android.content.res.Configuration
-import android.net.Uri
-import android.widget.ImageView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -55,35 +53,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.isVisible
-import androidx.media3.common.MediaItem.fromUri
-import androidx.media3.datasource.DataSink
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultHttpDataSource
-import androidx.media3.datasource.TransferListener
-import androidx.media3.exoplayer.dash.DashMediaSource
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.source.MergingMediaSource
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import coil.load
-import com.imcys.bilibilias.base.utils.getActivity
 import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.bilibilias.common.base.components.CenterRow
 import com.imcys.bilibilias.common.base.components.VerticalTwoTerms
-import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.extend.digitalConversion
 import com.imcys.bilibilias.common.base.model.video.Dash
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.shuyu.gsyvideoplayer.player.PlayerFactory
-import com.shuyu.gsyvideoplayer.utils.OrientationUtils
-import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-import io.ktor.http.HttpHeaders
+import com.shuyu.gsyvideoplayer.utils.GSYVideoType
+import okhttp3.OkHttpClient
 import timber.log.Timber
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
-import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
-import tv.danmaku.ijk.media.exo2.ExoSourceManager
-import tv.danmaku.ijk.media.exo2.ExoSourceManager.inferContentType
-import java.io.File
 
 private val tag = Timber.tag("PlayerScreen")
 
@@ -93,7 +71,7 @@ fun PlayerScreen(
     state: PlayerState,
     onNavigateToDownloadOption: () -> Unit,
     changeUrl: (Long) -> Unit,
-    onNavigateToDownloadAanmaku: () -> Unit
+    onNavigateToDownloadAanmaku: () -> Unit,
 ) {
     Scaffold(Modifier.fillMaxSize(), topBar = {
         VideoWindows(
@@ -101,6 +79,7 @@ fun PlayerScreen(
             audio = state.audios,
             title = state.videoDetails.title,
             pic = state.videoDetails.pic,
+            http = state.okHttpClient
         )
     }) { paddingValues ->
         Column(
@@ -336,92 +315,33 @@ private fun VideoIntroduction(title: String, desc: String, modifier: Modifier = 
 private fun VideoWindows(
     title: String,
     pic: String,
-    modifier: Modifier = Modifier,
     video: List<Dash.Video>,
-    audio: List<Dash.Audio>
+    audio: List<Dash.Audio>,
+    http: OkHttpClient,
+    modifier: Modifier = Modifier,
 ) {
-    // val url = remember(video) {
-    //     video.groupBy { it.id }.maxBy { it.key }.value.firstOrNull()?.baseUrl ?: ""
-    // }
     AndroidView(
         factory = { context ->
-            PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
-            StandardGSYVideoPlayer(context)
+            GSYVideoType.enableMediaCodec()
+            GSYVideoType.enableMediaCodecTexture()
+            AsGSYVideoPlayer(context)
         },
         modifier
             .fillMaxWidth()
             .height(200.dp),
         update = { gsy ->
-            Timber.tag("video").d(video.toString())
-            val dataSourceFactory: DataSource.Factory =
-                DefaultHttpDataSource.Factory()
-            val videoSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(fromUri(video.firstOrNull()?.baseUrl ?: ""))
-            val audioSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(fromUri(audio.firstOrNull()?.baseUrl ?: ""))
+            val tree = Timber.tag("videoWindows")
 
-            val mergeSource: MediaSource = MergingMediaSource(videoSource, audioSource)
-            ExoSourceManager.setExoMediaSourceInterceptListener(object : ExoMediaSourceInterceptListener {
-                override fun getMediaSource(
-                    dataSource: String?,
-                    preview: Boolean,
-                    cacheEnable: Boolean,
-                    isLooping: Boolean,
-                    cacheDir: File?
-                ): MediaSource {
-                    val contentUri = Uri.parse(dataSource)
-                    val contentType: Int = inferContentType(dataSource, "mpd")
-                    // Type =  4
-                    // when (contentType) {
-                    // HlsMediaSource.Factory()
-                    // DashMediaSource.Factory(DataSource.Factory {mergeSource })
-                    //     C.CONTENT_TYPE_HLS -> return HlsMediaSource.Factory(CustomSourceTag.getDataSourceFactory(this@GSYApplication.getApplicationContext(), preview))
-                    // //         .createMediaSource(contentUri)
-                    // }
-                    // CONTENT_TYPE_OTHER
-                    Timber.tag("source").d("type=$contentType,uri=$contentUri")
-                    return mergeSource
-                }
+            // getFormat(gsy, tree)
+            getFormat2(gsy)
+            // MimeTypes.VIDEO_DOLBY_VISION
+            // MediaCodecVideoRenderer.getDecoderInfos()
 
-                override fun getHttpDataSourceFactory(
-                    userAgent: String?,
-                    listener: TransferListener?,
-                    connectTimeoutMillis: Int,
-                    readTimeoutMillis: Int,
-                    mapHeadData: MutableMap<String, String>?,
-                    allowCrossProtocolRedirects: Boolean
-                ): DataSource.Factory? = null
+            val video1 = video.firstOrNull()
+            val audio1 = audio.firstOrNull()
+            gsy.setMediaSource(http, video1, audio1)
+            gsy.setUp(video1?.baseUrl, title, pic)
 
-                override fun cacheWriteDataSinkFactory(cachePath: String?, url: String?): DataSink.Factory? = null
-            })
-            // type=4,uri=http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
-            gsy.titleTextView.text = title
-            gsy.isReleaseWhenLossAudio = false
-            gsy.setUp(
-                video.firstOrNull()?.baseUrl ?: "",
-                false,
-                null,
-                mapOf(HttpHeaders.UserAgent to BROWSER_USER_AGENT),
-                null
-            )
-            val imageView = ImageView(gsy.context)
-            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-            imageView.load(pic)
-            gsy.thumbImageView = imageView
-            // 增加title
-            gsy.titleTextView.isVisible = true
-            // 设置返回键
-            gsy.backButton.isVisible = true
-            // 设置旋转
-            val orientationUtils = OrientationUtils(gsy.context.getActivity(), gsy)
-            gsy.fullscreenButton.setOnClickListener { // ------- ！！！如果不需要旋转屏幕，可以不调用！！！-------
-                // 不需要屏幕旋转，还需要设置 setNeedOrientationUtils(false)
-                orientationUtils.resolveByClick()
-            }
-            // gsy.overrideExtension = "mpd"
-
-            // 是否可以滑动调整
-            gsy.setIsTouchWiget(true)
             // 设置返回按键功能
             // gsy.backButton.setOnClickListener { }
         },
@@ -429,6 +349,7 @@ private fun VideoWindows(
             GSYVideoManager.releaseAllVideos()
         },
         onReset = { gsy ->
+            // GSYVideoManager.releaseAllVideos()
         },
     )
 }
