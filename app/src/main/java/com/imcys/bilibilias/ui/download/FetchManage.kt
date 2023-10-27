@@ -7,6 +7,7 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
+import com.imcys.bilibilias.common.di.AppCoroutineScope
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.Fetch
@@ -39,7 +40,7 @@ const val EXTRAS_TITLE = "title"
 class FetchManage @Inject constructor(
     @ApplicationContext context: Context,
     private val downloadTaskRepository: DownloadTaskRepository,
-    private val scope: CoroutineScope,
+    @AppCoroutineScope private val scope: CoroutineScope,
     private val groupDownloadProgress: GroupDownloadProgress
 ) : FetchGroupListener {
 

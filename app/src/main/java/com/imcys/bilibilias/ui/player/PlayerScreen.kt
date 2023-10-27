@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,15 +31,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,14 +53,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.bilibilias.common.base.components.CenterRow
-import com.imcys.bilibilias.common.base.components.VerticalTwoTerms
 import com.imcys.bilibilias.common.base.extend.digitalConversion
 import com.imcys.bilibilias.common.base.model.video.Dash
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.shuyu.gsyvideoplayer.utils.GSYVideoType
-import okhttp3.OkHttpClient
+import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import timber.log.Timber
 
 private val tag = Timber.tag("PlayerScreen")
@@ -72,17 +69,16 @@ private val tag = Timber.tag("PlayerScreen")
 fun PlayerScreen(
     state: PlayerState,
     onNavigateToDownloadOption: () -> Unit,
-    changeUrl: (Long) -> Unit,
     onNavigateToDownloadAanmaku: () -> Unit,
     selectedQuality: (Int) -> Unit,
+    selectedPage: (Long, Long) -> Unit,
 ) {
     Scaffold(Modifier.fillMaxSize(), topBar = {
         VideoWindows(
             video = state.video,
             audio = state.audio,
-            title = state.videoDetails.title,
-            pic = state.videoDetails.pic,
-            http = state.okHttpClient
+            title = state.title,
+            pic = state.pic,
         )
     }) { paddingValues ->
         Column(
@@ -92,15 +88,15 @@ fun PlayerScreen(
         ) {
             // 视频简介
             VideoIntroduction(
-                title = state.videoDetails.title,
-                desc = state.videoDetails.descV2?.firstOrNull()?.rawText ?: state.videoDetails.desc,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                title = state.title,
+                desc = state.desc,
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
             VideoActions(
-                like = state.videoDetails.stat.like,
-                coin = state.videoDetails.stat.coin,
-                favorite = state.videoDetails.stat.favorite,
-                share = state.videoDetails.stat.share,
+                like = state.like,
+                coin = state.coins,
+                favorite = state.favorite,
+                share = state.share,
                 isLike = state.hasLike,
                 isCoins = state.hasCoins,
                 isCollection = state.hasCollection,
@@ -115,19 +111,15 @@ fun PlayerScreen(
                 }
             }
             Box(Modifier.fillMaxWidth()) {
-                var selected by remember { mutableLongStateOf(state.videoDetails.pages.firstOrNull()?.cid ?: 0) }
                 val w = LocalConfiguration.current.screenWidthDp.dp / 3
                 LazyRow(
                     Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(state.videoDetails.pages, key = { it.cid }) { item ->
+                    items(state.pages, key = { it.cid }) { item ->
                         Card(
-                            onClick = {
-                                changeUrl(item.cid)
-                                selected = item.cid
-                            },
+                            onClick = { selectedPage(item.cid, state.aid) },
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
@@ -135,31 +127,25 @@ fun PlayerScreen(
                                 Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .width(w)
+                                    .height(60.dp)
                                     .padding(4.dp),
-                                color = if (item.cid == selected) MaterialTheme.colorScheme.primary else Color.Unspecified,
+                                color = if (item.cid == state.cid) MaterialTheme.colorScheme.primary else Color.Unspecified,
                                 maxLines = 2,
                                 fontSize = 13.sp
                             )
                         }
                     }
-                    // item {
-                    //     Surface(onClick = { /*TODO*/ }, Modifier) {
-                    //         Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "打开选集")
-                    //     }
-                    // }
                 }
                 IconButton(onClick = { /*TODO*/ }, Modifier.align(Alignment.CenterEnd)) {
                     Icon(
                         painter = painterResource(id = com.imcys.bilibilias.R.drawable.chevron_right),
-                        contentDescription = null
+                        contentDescription = "打开选集"
                     )
                 }
             }
             Row {
                 Button(
-                    onClick = {
-                        onNavigateToDownloadOption()
-                    },
+                    onClick = { onNavigateToDownloadOption() },
                     Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
@@ -195,85 +181,72 @@ private fun VideoActions(
             .padding(16.dp)
             .fillMaxWidth()
     ) {
-        VerticalTwoTerms(
-            top = {
+        ListItem(
+            headlineContent = {
                 Image(
-                    painterResource(com.imcys.bilibilias.R.drawable.ic_as_video_like),
+                    painter = painterResource(R.drawable.ic_as_video_like),
                     contentDescription = "点赞按钮",
                     Modifier.size(22.dp),
-                    colorFilter = if (isLike) {
-                        ColorFilter.tint(
-                            MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        null
-                    }
+                    colorFilter = if (isLike) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
-            bottom = { Text(like.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp) },
-            Modifier
+            supportingContent = {
+                Text(like.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+            },
+            modifier = Modifier
                 .clickable { }
                 .padding(16.dp)
                 .weight(1f)
         )
-        VerticalTwoTerms(
-            top = {
+        ListItem(
+            headlineContent = {
                 Image(
-                    painterResource(com.imcys.bilibilias.R.drawable.ic_as_video_throw),
+                    painter = painterResource(R.drawable.ic_as_video_throw),
                     contentDescription = "投币按钮",
                     Modifier.size(22.dp),
-                    colorFilter = if (isCoins) {
-                        ColorFilter.tint(
-                            MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        null
-                    }
+                    colorFilter = if (isCoins) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
-            bottom = { Text(coin.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
-            Modifier
+            supportingContent = {
+                Text(coin.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+            },
+            modifier = Modifier
                 .clickable { }
                 .padding(16.dp)
                 .weight(1f)
-
         )
-        VerticalTwoTerms(
-            top = {
+        ListItem(
+            headlineContent = {
                 Image(
-                    painterResource(com.imcys.bilibilias.R.drawable.ic_as_video_collec),
+                    painter = painterResource(R.drawable.ic_as_video_collec),
                     contentDescription = "收藏按钮",
                     Modifier.size(22.dp),
-                    colorFilter = if (isCollection) {
-                        ColorFilter.tint(
-                            MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        null
-                    }
+                    colorFilter = if (isCollection) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
-            bottom = { Text(favorite.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
-            Modifier
+            supportingContent = {
+                Text(favorite.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+            },
+            modifier = Modifier
                 .clickable { }
                 .padding(16.dp)
                 .weight(1f)
-
         )
-        VerticalTwoTerms(
-            top = {
+        ListItem(
+            headlineContent = {
                 Image(
-                    painterResource(com.imcys.bilibilias.R.drawable.ic_as_video_fasong),
+                    painter = painterResource(R.drawable.ic_as_video_fasong),
                     contentDescription = "分享按钮",
-                    Modifier.size(22.dp)
+                    Modifier.size(22.dp),
                 )
             },
-            bottom = { Text(share.digitalConversion(), fontWeight = FontWeight.Thin, fontSize = 11.sp) },
-            Modifier
+            supportingContent = {
+                Text(share.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+            },
+            modifier = Modifier
                 .clickable { }
                 .padding(16.dp)
                 .weight(1f)
-
         )
     }
 }
@@ -314,20 +287,16 @@ private fun VideoIntroduction(title: String, desc: String, modifier: Modifier = 
 }
 
 /**
- * @param url 播放地址
  * @param title 视频标题
  * @param pic 封面
  */
 @Composable
-@androidx.annotation.OptIn(
-    androidx.media3.common.util.UnstableApi::class,
-)
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 private fun VideoWindows(
     title: String,
     pic: String,
     video: Dash.Video,
     audio: Dash.Audio,
-    http: OkHttpClient,
     modifier: Modifier = Modifier,
 ) {
     AndroidView(
@@ -343,9 +312,40 @@ private fun VideoWindows(
             // MimeTypes.VIDEO_DOLBY_VISION
             // MediaCodecVideoRenderer.getDecoderInfos()
 
-            gsy.setMediaSource(http, video, audio)
+            gsy.setMediaSource(video, audio)
             gsy.setUp(video.baseUrl, title, pic)
+            when (gsy.currentState) {
+                StandardGSYVideoPlayer.CURRENT_STATE_NORMAL -> {
+                    Timber.tag(
+                        "playerState"
+                    ).d("正常=${gsy.gsyVideoManager.lastState},${gsy.progress},${gsy.currentPosition}")
+                }
 
+                StandardGSYVideoPlayer.CURRENT_STATE_PREPAREING -> {
+                    Timber.tag("playerState").d("准备播放")
+                }
+
+                StandardGSYVideoPlayer.CURRENT_STATE_PLAYING -> {
+                    Timber.tag("playerState").d("播放")
+                }
+
+                StandardGSYVideoPlayer.CURRENT_STATE_PLAYING_BUFFERING_START -> {
+                    Timber.tag("playerState").d("缓冲")
+                }
+
+                StandardGSYVideoPlayer.CURRENT_STATE_PAUSE -> {
+                    Timber.tag("playerState").d("暂停=${gsy.progress},${gsy.currentPosition}")
+                }
+
+                StandardGSYVideoPlayer.CURRENT_STATE_AUTO_COMPLETE -> {}
+                StandardGSYVideoPlayer.CURRENT_STATE_ERROR -> {
+                    Timber.tag("playerState").d("错误")
+                }
+
+                else -> {
+                    Timber.tag("playerState").d("unknow")
+                }
+            }
             // 设置返回按键功能
             // gsy.backButton.setOnClickListener { }
         },

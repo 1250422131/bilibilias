@@ -37,7 +37,7 @@ object BilibiliApi {
     const val videLikePath = ROAM_API + "x/web-interface/archive/like"
 
     const val videoPlayPath = "x/player/playurl"
-
+    const val VIDEO_PLAY_WBI = "x/player/wbi/playurl"
     // 弹幕下载
     const val videoDanMuPath = ROAM_API + "x/v1/dm/list.so"
 

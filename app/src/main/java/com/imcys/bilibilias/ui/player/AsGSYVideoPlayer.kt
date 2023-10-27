@@ -1,42 +1,92 @@
 package com.imcys.bilibilias.ui.player
 
 import android.content.Context
-import android.net.Uri
+import android.view.Surface
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
-import androidx.media3.common.util.Util
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSink
 import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.TransferListener
 import androidx.media3.datasource.cronet.CronetDataSource
-import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.SingleSampleMediaSource
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
 import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.bilibilias.common.di.AsDispatchers
+import com.imcys.bilibilias.common.di.Dispatcher
+import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
-import okhttp3.OkHttpClient
+import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.http.HttpHeaders
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.asExecutor
 import org.chromium.net.CronetEngine
+import org.chromium.net.RequestFinishedInfo
 import timber.log.Timber
 import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
 import tv.danmaku.ijk.media.exo2.ExoSourceManager
 import java.io.File
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context) {
+@UnstableApi
+@AndroidEntryPoint
+class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoMediaSourceInterceptListener {
+
+    @Inject
+    @Dispatcher(AsDispatchers.IO)
+    lateinit var ioDispatcher: CoroutineDispatcher
+
+    private val excetor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2)
+    private val cronetEngine = CronetEngine.Builder(context)
+        .enableQuic(true)
+        .enableBrotli(true)
+        .enableHttp2(true)
+        // .setStoragePath(context.cacheDir.path)
+        // .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK_NO_HTTP, 1024 * 1024 * 1024L)
+        .setUserAgent(BROWSER_USER_AGENT)
+        .enableNetworkQualityEstimator(true)
+        .build()
+
+    private val cronetDataSource = CronetDataSource.Factory(cronetEngine, ioDispatcher.asExecutor())
+        .setDefaultRequestProperties(mapOf(HttpHeaders.Referrer to BILIBILI_URL))
+
     init {
+        cronetRequestListener()
         val orientationUtils = OrientationUtils(context.getActivity(), this)
-        fullscreenButton.setOnClickListener {
-            // ------- ！！！如果不需要旋转屏幕，可以不调用！！！-------
-            // 不需要屏幕旋转，还需要设置 setNeedOrientationUtils(false)
-            orientationUtils.resolveByClick()
-        }
-
+        // fullscreenButton.setOnClickListener {
+        //     // ------- ！！！如果不需要旋转屏幕，可以不调用！！！-------
+        //     // 不需要屏幕旋转，还需要设置 setNeedOrientationUtils(false)
+        //     orientationUtils.resolveByClick()
+        // }
         initConfig()
+    }
+
+    private inner class RequestInfo : RequestFinishedInfo.Listener(ioDispatcher.asExecutor()) {
+        override fun onRequestFinished(requestInfo: RequestFinishedInfo) {
+            Timber.d("cronet header=${requestInfo.responseInfo?.allHeaders}")
+            val exception = requestInfo.exception
+            if (exception != null) {
+                Timber.e("视频流异常", exception.message)
+            }
+        }
+    }
+
+    private fun cronetRequestListener() {
+        cronetEngine.addRequestFinishedListener(RequestInfo())
     }
 
     private fun initConfig() {
@@ -60,58 +110,91 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context) {
         load(pic)
     }
 
+    override fun setVideoAllCallBack(mVideoAllCallBack: VideoAllCallBack?) {
+        super.setVideoAllCallBack(mVideoAllCallBack)
+    }
+
+    private var mergingMediaSource: MediaSource? = null
+    override fun onError(what: Int, extra: Int) {
+        super.onError(what, extra)
+    }
+
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    fun setMediaSource(videoUrl: Dash.Video, audioUrl: Dash.Audio) {
+        // /data/data/com.imcys.bilibilias.debug/files/amv.ass
+        val uri = File(context.filesDir, "/amv.ass").toUri()
+
+        ConcatenatingMediaSource()
+        val subtitle =
+            MediaItem.SubtitleConfiguration.Builder(uri)
+                .setMimeType(MimeTypes.TEXT_SSA) // The correct MIME type (required).
+                .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+                .setLanguage("")
+                .build()
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(
+            context
+        ).setInitialBitrateEstimate(videoUrl.bandwidth.toLong()).build()
+
+        // todo 设置了这个 Decoder init failed: c2.android.av1.decoder, Format(1, null, null, video/av01, null, -1, null, [3840, 2160, -1.0, null], [-1, -1])
+        val videoType = MimeTypes.getMediaMimeType(videoUrl.codecs)
+        val audioType = MimeTypes.getMediaMimeType(audioUrl.codecs)
+        cronetDataSource.setTransferListener(bandwidthMeter)
+
+        val videoSource = createMediaSource(cronetDataSource, videoUrl.baseUrl)
+        val audioSource = createMediaSource(cronetDataSource, audioUrl.baseUrl)
+        videoSource.maybeThrowSourceInfoRefreshError()
+        val factory = DefaultDataSource.Factory(context)
+        val subSource = SingleSampleMediaSource.Factory(factory).createMediaSource(subtitle, C.TIME_UNSET)
+
+        mergingMediaSource = MergingMediaSource(true, false, videoSource, audioSource)
+        ExoSourceManager.setExoMediaSourceInterceptListener(this)
+    }
+
+    override fun getMediaSource(
+        dataSource: String?,
+        preview: Boolean,
+        cacheEnable: Boolean,
+        isLooping: Boolean,
+        cacheDir: File?
+    ): MediaSource? =
+        mergingMediaSource
+
+    override fun getHttpDataSourceFactory(
+        userAgent: String?,
+        listener: TransferListener?,
+        connectTimeoutMillis: Int,
+        readTimeoutMillis: Int,
+        mapHeadData: MutableMap<String, String>?,
+        allowCrossProtocolRedirects: Boolean
+    ): DataSource.Factory = cronetDataSource
+
+    override fun cacheWriteDataSinkFactory(CachePath: String?, url: String?): DataSink.Factory? = null
     override fun setUp(url: String?, cacheWithPlay: Boolean, title: String?): Boolean {
         return super.setUp(url, cacheWithPlay, title)
     }
 
+    var currentPosition = 0L
+        private set
+    var progress: Int = 0
+        get() = mProgressBar.progress
+        private set
+
+    override fun onLossAudio() {
+        super.onLossAudio()
+    }
+
+    override fun onAutoCompletion() {
+        super.onAutoCompletion()
+    }
+
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    fun setMediaSource(http: OkHttpClient, videoUrl: Dash.Video, audioUrl: Dash.Audio) {
-        val dataSourceFactory = OkHttpDataSource.Factory(http)
-        val cronetEngine = CronetEngine.Builder(context)
-            .enableQuic(true)
-            .enableBrotli(true)
-            .enableHttp2(true)
-            .setUserAgent(BROWSER_USER_AGENT)
-            .build()
-        // todo 设置了这个 Decoder init failed: c2.android.av1.decoder, Format(1, null, null, video/av01, null, -1, null, [3840, 2160, -1.0, null], [-1, -1])
-        val videoType = MimeTypes.getMediaMimeType(videoUrl.codecs)
-        val audioType = MimeTypes.getMediaMimeType(audioUrl.codecs)
-        val cronetDataSource = CronetDataSource.Factory(cronetEngine, Executors.newSingleThreadExecutor())
-        val videoSource = createMediaSource(cronetDataSource, videoUrl.baseUrl)
-        val audioSource = createMediaSource(cronetDataSource, audioUrl.baseUrl)
-        ExoSourceManager.setExoMediaSourceInterceptListener(object : ExoMediaSourceInterceptListener {
-            override fun getMediaSource(
-                dataSource: String?,
-                preview: Boolean,
-                cacheEnable: Boolean,
-                isLooping: Boolean,
-                cacheDir: File?
-            ): MediaSource {
-                val contentUri = Uri.parse(dataSource)
-                val contentType: Int = Util.inferContentType(contentUri)
-                // Type =  4
-                // when (contentType) {
-                // HlsMediaSource.Factory()
-                // DashMediaSource.Factory(DataSource.Factory {mergeSource })
-                //     C.CONTENT_TYPE_HLS -> return HlsMediaSource.Factory(CustomSourceTag.getDataSourceFactory(this@GSYApplication.getApplicationContext(), preview))
-                // //         .createMediaSource(contentUri)
-                // }
-                // CONTENT_TYPE_OTHER
-                Timber.tag("getMediaSource").d("contentUri=$contentType,$contentUri,")
-                val mergingMediaSource = MergingMediaSource(videoSource, audioSource)
-                return mergingMediaSource
-            }
+    override fun onSurfaceUpdated(surface: Surface?) {
+        super.onSurfaceUpdated(surface)
+    }
 
-            override fun getHttpDataSourceFactory(
-                userAgent: String?,
-                listener: TransferListener?,
-                connectTimeoutMillis: Int,
-                readTimeoutMillis: Int,
-                mapHeadData: MutableMap<String, String>?,
-                allowCrossProtocolRedirects: Boolean
-            ): DataSource.Factory? = null
-
-            override fun cacheWriteDataSinkFactory(CachePath: String?, url: String?): DataSink.Factory? = null
-        })
+    override fun onVideoPause() {
+        super.onVideoPause()
+        Timber.d("进度=4$progress,$currentPosition,$currentState")
+        currentPosition = gsyVideoManager.currentPosition
     }
 }

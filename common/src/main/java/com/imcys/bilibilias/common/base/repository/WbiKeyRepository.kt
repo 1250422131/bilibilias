@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.common.base.repository
 
-import com.baidu.mobstat.k
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.WTS
 import com.imcys.bilibilias.common.base.constant.W_RID
@@ -8,7 +7,9 @@ import com.imcys.bilibilias.common.base.extend.md5
 import com.imcys.bilibilias.common.base.model.UserNav
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.http.encodeURLParameter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -54,7 +55,7 @@ class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
 
     private fun sign(params: List<Pair<String, Any>>, mixinKey: String): List<Pair<String, String>> {
         val map = mutableListOf(WTS to (System.currentTimeMillis() / 1000).toString()).apply {
-            params.forEach {(k,v)->
+            params.forEach { (k, v) ->
                 add(k to v.toString())
             }
             sortBy { it.first }
