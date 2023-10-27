@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.data.repository
 
 import com.imcys.bilibilias.common.data.dao.DownloadTaskDao
 import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
+import com.imcys.bilibilias.common.di.AppCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -9,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DownloadTaskRepository @Inject constructor(private val dao: DownloadTaskDao, private val scope: CoroutineScope) {
+class DownloadTaskRepository @Inject constructor(private val dao: DownloadTaskDao,@AppCoroutineScope private val scope: CoroutineScope) {
 
     suspend fun allDownloadTask() = dao.getByIdOrderList()
 

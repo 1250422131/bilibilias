@@ -20,6 +20,7 @@ import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 import com.imcys.bilibilias.dm.Dm
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -86,10 +87,42 @@ class VideoRepository @Inject constructor(
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
     ): Result<DashVideoPlayBean> {
-        val value = getVideoStreamAddress<DashVideoPlayBean>(bvid, cid, 0, fnval, fourk)
+        val value = getDashVideoStream(bvid, cid, fnval, fourk, false)
         _dashVideo.emit(value)
         Timber.d("bv=$bvid,cid=$cid,fnval=$fnval,fourk=$fourk")
         return value
+    }
+
+    suspend fun getDashVideoStream(
+        bvid: String,
+        cid: Long,
+        fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
+        fourk: Int = 1,
+        useWbi: Boolean = false
+    ): Result<DashVideoPlayBean> {
+        val params: List<Pair<String, Any>> =
+            listOf(
+                "bvid" to bvid,
+                "cid" to cid,
+                "qn" to 0,
+                "fnval" to fnval,
+                "fourk" to fourk,
+                "fnver" to 0
+            )
+        return if (useWbi) {
+            val list = wbiKeyRepository.getUserNavToken(params)
+            httpClient.safeGet(BilibiliApi.VIDEO_PLAY_WBI) {
+                toParameter(list)
+            }
+        } else {
+            getVideoStreamAddress(params)
+        }
+    }
+
+    fun HttpRequestBuilder.toParameter(parameters: List<Pair<String, Any>>) {
+        parameters.forEach {
+            parameter(it.first, it.second)
+        }
     }
 
     /**
@@ -98,19 +131,10 @@ class VideoRepository @Inject constructor(
      * @param fnver 恒为0
      */
     private suspend inline fun <reified T> getVideoStreamAddress(
-        bvid: String,
-        cid: Long,
-        qn: Int,
-        fnval: Int,
-        fourk: Int
+        params: List<Pair<String, Any>>
     ): Result<T> = httpClient.safeGet(BilibiliApi.videoPlayPath) {
         header(HttpHeaders.Referrer, BILIBILI_URL)
-        parameter("bvid", bvid)
-        parameter("cid", cid)
-        parameter("qn", qn)
-        parameter("fnval", fnval)
-        parameter("fourk", fourk)
-        parameter("fnver", 0)
+        toParameter(params)
     }
 
     /**

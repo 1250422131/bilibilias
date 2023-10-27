@@ -199,10 +199,17 @@ dependencies {
     /**
      * 视频网络请求
      */
-    implementation("androidx.media3:media3-exoplayer:1.1.1")
-    implementation("androidx.media3:media3-ui:1.1.1")
-    implementation("androidx.media3:media3-common:1.1.1")
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.transformer)
     implementation(libs.androidx.media3.datasource.okhttp)
-    implementation("androidx.media3:media3-datasource-cronet:1.1.1")
+    implementation(libs.androidx.media3.datasource.cronet)
+
+    implementation(libs.androidx.media3.session) // [Required] MediaSession Extension dependency
+    implementation(libs.androidx.media3.decoder)
+    implementation(libs.androidx.media3.datasource)
+    implementation(libs.cronet.embedded) {
+        exclude(group = "com.google.protobuf")
+    }
 }
