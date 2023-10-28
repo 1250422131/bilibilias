@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player
+package com.imcys.bilibilias.ui.play
 
 import android.content.Context
 import android.media.MediaCodecInfo

@@ -21,8 +21,8 @@ import com.imcys.bilibilias.ui.download.downloadRoute
 import com.imcys.bilibilias.ui.download.navigateToDownloadOptions
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
-import com.imcys.bilibilias.ui.player.navigateToPlayer
-import com.imcys.bilibilias.ui.player.playerRoute
+import com.imcys.bilibilias.ui.play.navigateToPlayer
+import com.imcys.bilibilias.ui.play.playerRoute
 import com.imcys.bilibilias.ui.settings.navigateToSettings
 import com.imcys.bilibilias.ui.settings.settingsRoute
 import com.imcys.bilibilias.ui.tool.toolRoute

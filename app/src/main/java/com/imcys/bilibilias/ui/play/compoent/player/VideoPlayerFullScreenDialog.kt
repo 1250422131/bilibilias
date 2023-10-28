@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent
+package com.imcys.bilibilias.ui.play.compoent.player
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -22,9 +22,9 @@ import androidx.media3.common.util.RepeatModeUtil
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.imcys.bilibilias.base.utils.getActivity
-import com.imcys.bilibilias.ui.player.compoent.controller.VideoPlayerControllerConfig
-import com.imcys.bilibilias.ui.player.compoent.controller.applyToExoPlayerView
-import com.imcys.bilibilias.ui.player.compoent.utils.setFullScreen
+import com.imcys.bilibilias.ui.play.compoent.player.controller.VideoPlayerControllerConfig
+import com.imcys.bilibilias.ui.play.compoent.player.controller.applyToExoPlayerView
+import com.imcys.bilibilias.ui.play.compoent.player.utils.setFullScreen
 
 /**
  * ExoPlayer does not support full screen views by default.

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent.utils
+package com.imcys.bilibilias.ui.play.compoent.player.utils
 
 import android.app.Activity
 import android.view.View

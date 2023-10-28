@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent
+package com.imcys.bilibilias.ui.play.compoent.player
 
 import androidx.compose.runtime.Stable
 import androidx.media3.common.Player
