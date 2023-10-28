@@ -52,10 +52,11 @@ import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 @Composable
 fun ToolScreen(
     state: ToolState,
-    parsesBvOrAvOrEp: (String) -> Unit,
-    clearSearchText: () -> Unit,
+    clearInput: () -> Unit,
     onNavigateToPlayer: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    updateInput: (String) -> Unit,
+    inputText: String
 ) {
     Scaffold(
         Modifier.fillMaxSize(),
@@ -97,9 +98,9 @@ fun ToolScreen(
                 .fillMaxSize()
         ) {
             ToolScreenSearchTextField(
-                state.text,
-                onValueChange = { parsesBvOrAvOrEp(it) },
-                clearText = clearSearchText,
+                inputText,
+                onValueChange = updateInput,
+                clearText = clearInput,
                 isError = state.inputError
             )
             AnimatedVisibility(visible = state.isShowVideoCard) {
@@ -115,11 +116,11 @@ fun ToolScreen(
                     )
                 } else {
                     VideoCard(
-                        pic = state.videoDetails.pic,
-                        title = state.videoDetails.title,
-                        desc = state.videoDetails.desc,
-                        view = state.videoDetails.stat.view.digitalConversion(),
-                        danmaku = state.videoDetails.stat.danmaku.digitalConversion(),
+                        pic = state.pic,
+                        title = state.title,
+                        desc = state.desc,
+                        view = state.view,
+                        danmaku = state.danmaku,
                         onNavigateToPlayer = onNavigateToPlayer,
                         modifier = Modifier.animateContentSize()
                     )

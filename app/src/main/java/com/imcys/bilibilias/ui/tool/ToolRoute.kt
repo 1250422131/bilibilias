@@ -30,9 +30,10 @@ fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit) 
     val state by viewModel.toolState.collectAsStateWithLifecycle()
     ToolScreen(
         state,
-        viewModel::parsesBvOrAvOrEp,
-        viewModel::clearText,
+        viewModel::clearInput,
         onNavigateToPlayer,
         onNavigateToSettings,
+        viewModel::updateInput,
+        viewModel.inputText
     )
 }

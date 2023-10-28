@@ -72,6 +72,7 @@ class VideoRepository @Inject constructor(
             parameter("ep_id", id)
         }
         Timber.tag(TAG).d(text.ofMap()?.print())
+        BangumiPlayBean
         _bangumi.emit(text)
     }
 
@@ -216,18 +217,20 @@ class VideoRepository @Inject constructor(
      *
      * bvid=BV1Bt411z799
      */
-    suspend fun getVideoDetailsByBvid(bvid: String) {
-        val result = httpClient.safeGet<VideoDetails>(BilibiliApi.getVideoDataPath) {
+    suspend fun getVideoDetailsByBvid(bvid: String): Result<VideoDetails> {
+        val videoDetailsResult = httpClient.safeGet<VideoDetails>(BilibiliApi.getVideoDataPath) {
             parameter(BVID, bvid)
         }
-        _videoDetails2.emit(result)
+        _videoDetails2.emit(videoDetailsResult)
+        return videoDetailsResult
     }
 
-    suspend fun getVideoDetailsByAid(avid: String) {
-        val result = httpClient.safeGet<VideoDetails>(BilibiliApi.getVideoDataPath) {
+    suspend fun getVideoDetailsByAid(avid: String): Result<VideoDetails> {
+        val videoDetailsResult = httpClient.safeGet<VideoDetails>(BilibiliApi.getVideoDataPath) {
             parameter(AID, avid)
         }
-        _videoDetails2.emit(result)
+        _videoDetails2.emit(videoDetailsResult)
+        return videoDetailsResult
     }
 
     /**
@@ -264,7 +267,7 @@ class VideoRepository @Inject constructor(
         return collection.isFavoured
     }
 
-    suspend fun shortLink(url: String) = httpClient.safeGet<HttpResponse>(url)
+    suspend fun shortLink(url: String): Result<HttpResponse> = httpClient.safeGet(url)
 }
 
 private const val TAG = "VideoRepository"
