@@ -13,8 +13,8 @@ import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
-import com.imcys.bilibilias.ui.player.PlayerState
-import com.imcys.bilibilias.ui.player.PlayerViewModel
+import com.imcys.bilibilias.ui.play.PlayerState
+import com.imcys.bilibilias.ui.play.PlayerViewModel
 
 const val ROUTE_DOWNLOAD = "download"
 fun NavController.navigateToDownload() {

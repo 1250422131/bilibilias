@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent.pip
+package com.imcys.bilibilias.ui.play.compoent.player.pip
 
 import android.app.PictureInPictureParams
 import android.content.Context

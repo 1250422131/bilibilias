@@ -49,7 +49,7 @@ import com.imcys.bilibilias.common.base.components.LeadingTrailingIconRow
 import com.imcys.bilibilias.common.base.components.SingleLineText
 import com.imcys.bilibilias.common.base.model.video.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
-import com.imcys.bilibilias.ui.player.PlayerState
+import com.imcys.bilibilias.ui.play.PlayerState
 
 @Composable
 fun DownloadOptionsScreen(

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent.cache
+package com.imcys.bilibilias.ui.play.compoent.player.cache
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,7 +24,7 @@ object VideoPlayerCacheManager {
      */
     @SuppressLint("UnsafeOptInUsageError")
     fun initialize(context: Context, maxCacheBytes: Long) {
-        if (::cacheInstance.isInitialized) {
+        if (VideoPlayerCacheManager::cacheInstance.isInitialized) {
             return
         }
 
@@ -39,7 +39,7 @@ object VideoPlayerCacheManager {
      * Gets the ExoPlayer cache instance. If null, the cache to be disabled.
      */
     internal fun getCache(): Cache? =
-        if (::cacheInstance.isInitialized) {
+        if (VideoPlayerCacheManager::cacheInstance.isInitialized) {
             cacheInstance
         } else {
             null

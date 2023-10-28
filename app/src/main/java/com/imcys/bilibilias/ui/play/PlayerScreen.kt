@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player
+package com.imcys.bilibilias.ui.play
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
@@ -160,6 +160,15 @@ fun PlayerScreen(
                 ) {
                     Text(text = "缓存字幕")
                 }
+                Button(
+                    onClick = {
+                        onNavigateToDownloadAanmaku()
+                    },
+                    Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+                ) {
+                    Text(text = "直链解析")
+                }
             }
         }
     }
@@ -178,7 +187,6 @@ private fun VideoActions(
 ) {
     CenterRow(
         modifier
-            .padding(16.dp)
             .fillMaxWidth()
     ) {
         ListItem(
@@ -186,7 +194,9 @@ private fun VideoActions(
                 Image(
                     painter = painterResource(R.drawable.ic_as_video_like),
                     contentDescription = "点赞按钮",
-                    Modifier.size(22.dp),
+                    Modifier
+                        .padding(8.dp)
+                        .size(22.dp),
                     colorFilter = if (isLike) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
@@ -195,7 +205,6 @@ private fun VideoActions(
             },
             modifier = Modifier
                 .clickable { }
-                .padding(16.dp)
                 .weight(1f)
         )
         ListItem(
@@ -203,7 +212,9 @@ private fun VideoActions(
                 Image(
                     painter = painterResource(R.drawable.ic_as_video_throw),
                     contentDescription = "投币按钮",
-                    Modifier.size(22.dp),
+                    Modifier
+                        .padding(8.dp)
+                        .size(22.dp),
                     colorFilter = if (isCoins) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
@@ -212,7 +223,6 @@ private fun VideoActions(
             },
             modifier = Modifier
                 .clickable { }
-                .padding(16.dp)
                 .weight(1f)
         )
         ListItem(
@@ -220,7 +230,9 @@ private fun VideoActions(
                 Image(
                     painter = painterResource(R.drawable.ic_as_video_collec),
                     contentDescription = "收藏按钮",
-                    Modifier.size(22.dp),
+                    Modifier
+                        .padding(8.dp)
+                        .size(22.dp),
                     colorFilter = if (isCollection) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
                 )
             },
@@ -229,7 +241,6 @@ private fun VideoActions(
             },
             modifier = Modifier
                 .clickable { }
-                .padding(16.dp)
                 .weight(1f)
         )
         ListItem(
@@ -237,7 +248,9 @@ private fun VideoActions(
                 Image(
                     painter = painterResource(R.drawable.ic_as_video_fasong),
                     contentDescription = "分享按钮",
-                    Modifier.size(22.dp),
+                    Modifier
+                        .padding(8.dp)
+                        .size(22.dp),
                 )
             },
             supportingContent = {
@@ -245,7 +258,6 @@ private fun VideoActions(
             },
             modifier = Modifier
                 .clickable { }
-                .padding(16.dp)
                 .weight(1f)
         )
     }

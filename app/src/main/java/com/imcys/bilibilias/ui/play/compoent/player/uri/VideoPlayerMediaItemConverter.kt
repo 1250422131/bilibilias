@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent.uri
+package com.imcys.bilibilias.ui.play.compoent.player.uri
 
 import android.annotation.SuppressLint
 import android.content.Context

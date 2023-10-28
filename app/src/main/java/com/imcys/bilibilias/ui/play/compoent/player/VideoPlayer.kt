@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player.compoent
+package com.imcys.bilibilias.ui.play.compoent.player
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -37,16 +37,17 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
 import androidx.media3.ui.PlayerView
+import androidx.media3.ui.R
 import com.imcys.bilibilias.base.utils.OnLifecycleEvent
 import com.imcys.bilibilias.base.utils.getActivity
-import com.imcys.bilibilias.ui.player.compoent.cache.VideoPlayerCacheManager
-import com.imcys.bilibilias.ui.player.compoent.controller.VideoPlayerControllerConfig
-import com.imcys.bilibilias.ui.player.compoent.controller.applyToExoPlayerView
-import com.imcys.bilibilias.ui.player.compoent.pip.enterPIPMode
-import com.imcys.bilibilias.ui.player.compoent.pip.isActivityStatePipMode
-import com.imcys.bilibilias.ui.player.compoent.uri.VideoPlayerMediaItem
-import com.imcys.bilibilias.ui.player.compoent.uri.toUri
-import com.imcys.bilibilias.ui.player.compoent.utils.setFullScreen
+import com.imcys.bilibilias.ui.play.compoent.player.cache.VideoPlayerCacheManager
+import com.imcys.bilibilias.ui.play.compoent.player.controller.VideoPlayerControllerConfig
+import com.imcys.bilibilias.ui.play.compoent.player.controller.applyToExoPlayerView
+import com.imcys.bilibilias.ui.play.compoent.player.pip.enterPIPMode
+import com.imcys.bilibilias.ui.play.compoent.player.pip.isActivityStatePipMode
+import com.imcys.bilibilias.ui.play.compoent.player.uri.VideoPlayerMediaItem
+import com.imcys.bilibilias.ui.play.compoent.player.uri.toUri
+import com.imcys.bilibilias.ui.play.compoent.player.utils.setFullScreen
 import kotlinx.coroutines.delay
 import java.util.*
 
@@ -239,7 +240,7 @@ fun VideoPlayer(
             onDismissRequest = {
                 fullScreenPlayerView?.let {
                     PlayerView.switchTargetView(player, it, defaultPlayerView)
-                    defaultPlayerView.findViewById<ImageButton>(androidx.media3.ui.R.id.exo_fullscreen)
+                    defaultPlayerView.findViewById<ImageButton>(R.id.exo_fullscreen)
                         .performClick()
                     val currentActivity = context.getActivity()
                     currentActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player
+package com.imcys.bilibilias.ui.play
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

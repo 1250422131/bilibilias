@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui.player
+package com.imcys.bilibilias.ui.play
 
 import android.content.Context
 import android.view.Surface
@@ -21,8 +21,6 @@ import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
 import com.imcys.bilibilias.base.utils.getActivity
-import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
-import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.model.video.Dash
 import com.imcys.bilibilias.common.di.AsDispatchers
 import com.imcys.bilibilias.common.di.Dispatcher
@@ -30,7 +28,6 @@ import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import org.chromium.net.CronetEngine
@@ -39,7 +36,6 @@ import timber.log.Timber
 import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
 import tv.danmaku.ijk.media.exo2.ExoSourceManager
 import java.io.File
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 @UnstableApi
@@ -50,21 +46,14 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
     @Dispatcher(AsDispatchers.IO)
     lateinit var ioDispatcher: CoroutineDispatcher
 
-    private val excetor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2)
-    private val cronetEngine = CronetEngine.Builder(context)
-        .enableQuic(true)
-        .enableBrotli(true)
-        .enableHttp2(true)
-        // .setStoragePath(context.cacheDir.path)
-        // .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK_NO_HTTP, 1024 * 1024 * 1024L)
-        .setUserAgent(BROWSER_USER_AGENT)
-        .enableNetworkQualityEstimator(true)
-        .build()
+    @Inject
+    lateinit var cronetEngine: CronetEngine
 
-    private val cronetDataSource = CronetDataSource.Factory(cronetEngine, ioDispatcher.asExecutor())
-        .setDefaultRequestProperties(mapOf(HttpHeaders.Referrer to BILIBILI_URL))
+    @Inject
+    lateinit var cronetDataSource: CronetDataSource.Factory
 
     init {
+        cronetEngine.startNetLogToFile(context.cacheDir.path + "/netLog.log", false)
         cronetRequestListener()
         val orientationUtils = OrientationUtils(context.getActivity(), this)
         // fullscreenButton.setOnClickListener {
@@ -156,8 +145,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
         cacheEnable: Boolean,
         isLooping: Boolean,
         cacheDir: File?
-    ): MediaSource? =
-        mergingMediaSource
+    ): MediaSource? = mergingMediaSource
 
     override fun getHttpDataSourceFactory(
         userAgent: String?,

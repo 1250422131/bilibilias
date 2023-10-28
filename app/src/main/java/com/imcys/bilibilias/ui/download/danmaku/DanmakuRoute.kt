@@ -10,8 +10,8 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
 import com.imcys.bilibilias.ui.download.DownloadViewModel
-import com.imcys.bilibilias.ui.player.PlayerState
-import com.imcys.bilibilias.ui.player.PlayerViewModel
+import com.imcys.bilibilias.ui.play.PlayerState
+import com.imcys.bilibilias.ui.play.PlayerViewModel
 
 const val ROUTE_DANMAKU = "danmaku"
 fun NavController.navigateToDanmaku() {
