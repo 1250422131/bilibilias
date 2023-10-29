@@ -2,13 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <variable
-            name="data"
-            type="com.imcys.bilibilias.tool_log_export.data.model.BangumiFollowLogHeaderBean" />
-    </data>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/log_export_item_bangumi_log_header_ly"
         android:layout_width="wrap_content"
@@ -32,7 +25,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="@{data.title}"
                     android:textColor="@color/black"
                     android:textStyle="bold" />
             </androidx.appcompat.widget.LinearLayoutCompat>

@@ -53,7 +53,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
     lateinit var cronetDataSource: CronetDataSource.Factory
 
     init {
-        cronetEngine.startNetLogToFile(context.cacheDir.path + "/netLog.log", false)
+        // cronetEngine.startNetLogToFile(context.cacheDir.path + "/netLog.log", false)
         cronetRequestListener()
         val orientationUtils = OrientationUtils(context.getActivity(), this)
         // fullscreenButton.setOnClickListener {

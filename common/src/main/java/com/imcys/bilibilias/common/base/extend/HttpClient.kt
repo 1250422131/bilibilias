@@ -8,6 +8,8 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.utils.io.errors.IOException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.SerializationException
 import timber.log.Timber
 
@@ -15,6 +17,11 @@ internal suspend inline fun <reified T> HttpClient.safeGet(
     url: String,
     block: HttpRequestBuilder.() -> Unit = {},
 ): Result<T> = httpBlock { get(url, block).body() }
+
+internal suspend inline fun <reified T> HttpClient.flowGet(
+    url: String,
+    crossinline block: HttpRequestBuilder.() -> Unit = {},
+): Flow<Result<T>> = flow<T> { emit(get(url, block).body()) }.asResult()
 
 internal suspend inline fun HttpClient.safeGetText(
     url: String,

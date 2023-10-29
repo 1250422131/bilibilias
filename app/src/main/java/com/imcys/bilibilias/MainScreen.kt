@@ -25,6 +25,8 @@ import com.imcys.bilibilias.ui.play.navigateToPlayer
 import com.imcys.bilibilias.ui.play.playerRoute
 import com.imcys.bilibilias.ui.settings.navigateToSettings
 import com.imcys.bilibilias.ui.settings.settingsRoute
+import com.imcys.bilibilias.ui.tool.bangumiFollow.bangumiFollowRoute
+import com.imcys.bilibilias.ui.tool.bangumiFollow.navigateToBangumiFollow
 import com.imcys.bilibilias.ui.tool.toolRoute
 import com.imcys.bilibilias.ui.user.userRoute
 
@@ -41,8 +43,10 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         homeRoute()
         toolRoute(
             onNavigateToPlayer = navController::navigateToPlayer,
-            onNavigateToSettings = navController::navigateToSettings
+            onNavigateToSettings = navController::navigateToSettings,
+            onNavigateToBangumiFollow = navController::navigateToBangumiFollow
         )
+        bangumiFollowRoute()
         settingsRoute()
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         // <editor-fold desc="下载选项">
@@ -56,7 +60,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 
         playerRoute(
             onNavigateToDownloadOption = navController::navigateToDownloadOptions,
-            navController = navController, onNavigateToDownloadAanmaku = navController::navigateToDanmaku,
+            navController = navController,
+            onNavigateToDownloadAanmaku = navController::navigateToDanmaku,
         )
         danmakuRoute(navController = navController, onBack = navController::navigateUp)
     }

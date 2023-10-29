@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
+import com.imcys.bilibilias.common.base.repository.bangumi.model.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
@@ -20,7 +20,7 @@ import kotlin.math.ceil
 @AndroidEntryPoint
 class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
-    private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
+    // private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
     private lateinit var bangumiFollowList: BangumiFollowList
     override fun getLayoutRes(): Int = R.layout.activity_bangumi_follow
 
@@ -37,19 +37,14 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
                 "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
                 BangumiFollowList::class.java
             ) {
-                if (it.code == 0) {
-                    bangumiFollowList = it
-                    bangumiFollowMutableList.addAll(it.data.list)
-                }
+
             }
 
             bangumiFollowRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
-                        if (ceil((bangumiFollowList.data.total / 15).toDouble()) > bangumiFollowList.data.pn + 1) {
-                            loadBangumiFollow(bangumiFollowList.data.pn + 1)
-                        }
+
                     }
                 }
             })
@@ -61,10 +56,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
             "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=15",
             BangumiFollowList::class.java
         ) {
-            if (it.code == 0) {
-                bangumiFollowList = it
-                bangumiFollowMutableList.addAll(it.data.list)
-            }
+
         }
     }
 
