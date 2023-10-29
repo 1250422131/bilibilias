@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.tool_log_export.utils
+package com.imcys.bilibilias.base.utils
 
 import jxl.Workbook
 import jxl.format.CellFormat
@@ -6,10 +6,8 @@ import jxl.write.Label
 import jxl.write.WritableSheet
 import jxl.write.WritableWorkbook
 import java.io.File
-
-@Deprecated("")
 object ExcelUtils {
-    @Deprecated("")
+
     fun initExcel(path: String): WritableWorkbook {
         val file = File(path)
         if (!file.exists()) {
@@ -17,8 +15,6 @@ object ExcelUtils {
         }
         return Workbook.createWorkbook(file)
     }
-
-    @Deprecated("")
     fun WritableSheet.addCell(
         column: Int,
         row: Int,

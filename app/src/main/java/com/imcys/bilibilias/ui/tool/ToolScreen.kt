@@ -56,7 +56,8 @@ fun ToolScreen(
     onNavigateToPlayer: () -> Unit,
     onNavigateToSettings: () -> Unit,
     updateInput: (String) -> Unit,
-    inputText: String
+    inputText: String,
+    onNavigateToBangumiFollow: () -> Unit
 ) {
     Scaffold(
         Modifier.fillMaxSize(),
@@ -126,15 +127,13 @@ fun ToolScreen(
                     )
                 }
             }
-
             LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
-                item("日志导出") {
+                item("追番信息导出") {
                     ToolItem(
                         imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
-                        title = "日志导出",
+                        title = "追番信息导出",
                         containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
-                        modifier = Modifier.clickable {
-                        }
+                        onClick = onNavigateToBangumiFollow
                     )
                 }
             }
@@ -223,10 +222,11 @@ private fun ToolItem(
     imgUrl: String,
     title: String,
     containerColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick:()->Unit,
 ) {
     Card(
-        onClick = { /*todo*/ },
+        onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = containerColor),
         shape = RoundedCornerShape(10.dp),
         modifier = modifier

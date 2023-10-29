@@ -20,12 +20,13 @@ fun NavController.navigateToTool() {
 fun NavGraphBuilder.toolRoute(
     onNavigateToPlayer: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToBangumiFollow: () -> Unit,
 ) = composable(ROUTE_TOOL) {
-    ToolRoute(onNavigateToPlayer, onNavigateToSettings)
+    ToolRoute(onNavigateToPlayer, onNavigateToSettings, onNavigateToBangumiFollow)
 }
 
 @Composable
-fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit) {
+fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit, onNavigateToBangumiFollow: () -> Unit) {
     val viewModel: ToolViewModel = hiltViewModel()
     val state by viewModel.toolState.collectAsStateWithLifecycle()
     ToolScreen(
@@ -34,6 +35,7 @@ fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit) 
         onNavigateToPlayer,
         onNavigateToSettings,
         viewModel::updateInput,
-        viewModel.inputText
+        viewModel.inputText,
+        onNavigateToBangumiFollow
     )
 }

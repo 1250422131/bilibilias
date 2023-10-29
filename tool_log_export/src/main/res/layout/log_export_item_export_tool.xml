@@ -3,15 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="data"
-            type="com.imcys.bilibilias.tool_log_export.data.model.ExportItemBean" />
-    </data>
-
     <LinearLayout
 
         android:id="@+id/log_export_tool_item_ly"
@@ -45,7 +36,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.title}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -54,7 +44,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="@{data.longTitle}"
                     android:textColor="@color/black" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -70,8 +59,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{data.content}"
-                android:visibility="@{data.content == `` ? View.GONE : View.VISIBLE}"
                 tools:ignore="HardcodedText" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

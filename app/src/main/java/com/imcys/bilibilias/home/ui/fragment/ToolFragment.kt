@@ -167,9 +167,7 @@ class ToolFragment : BaseFragment() {
                             requireActivity().startActivity(intent)
                         }
                         // 导出日志
-                        4 -> {
-                            LogExportActivity.actionStart(requireContext())
-                        }
+                        4 -> {}
                         // 独立合并
                         5 -> {
                             MergeVideoActivity.actionStart(requireContext())

@@ -73,7 +73,7 @@ object BilibiliApi {
     const val userPlayHistoryPath = ROAM_API + "x/web-interface/history/cursor"
 
     // 追番剧列表
-    const val bangumiFollowPath = ROAM_API + "x/space/bangumi/follow/list"
+    const val bangumiFollowPath = "x/space/bangumi/follow/list"
 
     const val Token = "x/web-interface/nav"
 
