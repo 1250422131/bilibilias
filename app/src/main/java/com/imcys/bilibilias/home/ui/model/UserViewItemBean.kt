@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.home.ui.model
 
-import com.imcys.bilibilias.common.base.model.UserCardBean
-import com.imcys.bilibilias.common.base.model.UserSpaceInformation
+import com.imcys.model.UserCardBean
+import com.imcys.model.UserSpaceInformation
 
 data class UserViewItemBean(
     val type: Int,

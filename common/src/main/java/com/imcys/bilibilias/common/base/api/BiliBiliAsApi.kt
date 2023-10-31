@@ -9,5 +9,4 @@ object BiliBiliAsApi {
     const val appFunction = serviceApi + "app/AppFunction.php"
     const val appAddAsVideoData = serviceApi + "bilibili/AppVideoAsAdd.php"
 
-    const val appVersionDataPath = serviceTestApi + "versions/$version"
 }

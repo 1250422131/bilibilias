@@ -3,10 +3,7 @@ package com.imcys.bilibilias.common.base.extend
 import android.content.Context
 import android.graphics.Color
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.base.config.SettingsRepository
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import java.math.BigInteger
-import java.security.MessageDigest
 
 fun String.toColorInt(): Int = Color.parseColor(this)
 
@@ -70,28 +67,6 @@ fun String.toAsDownloadSavePath(
     return "$savePath/$downloadName"
 }
 
-fun String.toAsDownloadSavePath(
-    bvid: String,
-    pTitle: String,
-    cid: String,
-    fileType: String,
-    p: String,
-    title: String,
-    type: String,
-): String {
-    // "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}
-    // download/bvid/cid/画质/video.m4s
-    val rule = SettingsRepository.videoNameRule ?: SettingsRepository.DefaultVideoNameRule
-    rule.filterNot { it.isWhitespace() }
-    rule.replace("{BV}",bvid)
-        .replace("{FILE_TYPE}",fileType)
-        .replace("{P_TITLE}",pTitle)
-        .replace("{CID}",cid)
-        .plus(".")
-        .plus(type)
-    return ""
-}
-
 /**
  * 转换为FFmpeg命令
  * @receiver String
@@ -112,7 +87,4 @@ fun String.toAsFFmpeg(
         .toTypedArray()
 }
 
-fun md5(input: String): String {
-    val md = MessageDigest.getInstance("MD5")
-    return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
-}
+

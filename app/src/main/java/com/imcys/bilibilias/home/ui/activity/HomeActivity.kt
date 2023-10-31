@@ -36,8 +36,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
         loadFragment()
-
-        parseShare()
     }
 
     /**
@@ -49,48 +47,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         userFragment = UserFragment.newInstance()
         downloadFragment = DownloadFragment.newInstance()
     }
-
-    // 启动时解析视频数据
-    @SuppressLint("ResourceType")
-    private fun parseShare() {
-        val intent = intent
-        val action = intent.action
-        val type = intent.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                binding.apply {
-                    homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
-                    toolFragment.parseShare(intent)
-                }
-            }
-        }
-    }
-
-    // 复用/创建时检测
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        val action = intent?.action
-        val type = intent?.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                binding.apply {
-                    homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
-                    toolFragment.parseShare(intent)
-                }
-            }
-        }
-        val asUrl = intent?.extras?.getString("asUrl")
-        if (asUrl != null) {
-            binding.apply {
-                homeViewPage.currentItem = 1
-                homeBottomNavigationView.menu.getItem(1).isChecked = true
-                toolFragment.parseShare(intent)
-            }
-        }
-    }
-
     // 加载fragment
     private fun loadFragment() {
         val fragmentArrayList = ArrayList<Fragment>()

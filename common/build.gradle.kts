@@ -3,73 +3,36 @@ import com.google.protobuf.gradle.proto
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.bilibili.android.library)
+    alias(libs.plugins.bilibili.android.hilt)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
     alias(libs.plugins.protobuf)
 }
 
-apply {
-    from("/../config.gradle")
-}
-
-ksp {
-    arg("ModuleName", project.name)
-}
-
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 34
 
-    defaultConfig {
-        minSdk = 21
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
 
     buildFeatures {
         dataBinding = true
         compose = true
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    packaging {
-        resources {
-            excludes += "META-INF/DEPENDENCIES"
-            excludes += "META-INF/LICENSE"
-            excludes += "META-INF/LICENSE.txt"
-            excludes += "META-INF/license.txt"
-            excludes += "META-INF/NOTICE"
-            excludes += "META-INF/NOTICE.txt"
-            excludes += "META-INF/notice.txt"
-            excludes += "META-INF/ASL2.0"
-            excludes += "META-INF/*.kotlin_module"
-            excludes += "META-INF/versions/9/previous-compilation-data.bin"
-        }
-    }
+    // packaging {
+    //     resources {
+    //         excludes += "META-INF/DEPENDENCIES"
+    //         excludes += "META-INF/LICENSE"
+    //         excludes += "META-INF/LICENSE.txt"
+    //         excludes += "META-INF/license.txt"
+    //         excludes += "META-INF/NOTICE"
+    //         excludes += "META-INF/NOTICE.txt"
+    //         excludes += "META-INF/notice.txt"
+    //         excludes += "META-INF/ASL2.0"
+    //         excludes += "META-INF/*.kotlin_module"
+    //         excludes += "META-INF/versions/9/previous-compilation-data.bin"
+    //     }
+    // }
     sourceSets {
         getByName("main") {
             proto {
@@ -87,20 +50,8 @@ android {
             }
         }
     }
-    // main.java.srcDirs += "src/main/kotlin/"
-    // main.java.srcDirs += "build/generated/source/protos/main/java"
-    // test.java.srcDirs += "src/test/kotlin/"
-    // test.java.srcDirs += "build/generated/source/protos/main/java"
 }
 
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-kotlin {
-    jvmToolchain(17)
-}
 // https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
 // https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
 protobuf {
@@ -140,9 +91,6 @@ protobuf {
     }
 }
 dependencies {
-    // hilt库，实现控制反转
-    api(libs.hilt.android)
-    ksp(libs.hilt.compiler)
     api(libs.androidx.hilt.navigation.compose)
 
     /**
@@ -153,21 +101,9 @@ dependencies {
     api(libs.srl.ext.classics)
 
     /**
-     * MMKV 储存框架
-     */
-    api(libs.mmkv)
-    api(libs.fastkv)
-
-    /**
      * 伸缩布局
      */
     api(libs.flexbox)
-
-    /**
-     * jxl库
-     * 直接生成excel文件时采用
-     */
-    api(libs.jxl)
 
     /**
      * rv框架
@@ -185,7 +121,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.collections.immutable)
-    api(libs.kotlinx.serialization.json)
+
     api(libs.kotlinx.datetime)
 
     /**
@@ -279,7 +215,7 @@ dependencies {
 
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
-    implementation(libs.material3)
+    implementation(libs.androidx.material3)
     implementation(libs.accompanist.systemuicontroller)
 
     implementation(libs.androidx.paging.compose)
@@ -287,14 +223,10 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     implementation(libs.ui.tooling.preview)
 
-    api(libs.timber)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(libs.coil)
 

@@ -11,45 +11,40 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.common.base.model.video.VideoDetails" />
+            type="com.imcys.model.VideoDetails" />
 
         <variable
             name="UserCardBean"
-            type="com.imcys.bilibilias.common.base.model.UserCardBean" />
-
-        <variable
-            name="AsVideoViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel" />
-
+            type="com.imcys.model.UserCardBean" />
 
         <variable
             name="BangumiSeasonBean"
-            type="com.imcys.bilibilias.common.base.model.bangumi.Bangumi" />
+            type="com.imcys.model.Bangumi" />
 
         <variable
             name="VideoPlayBean"
-            type="com.imcys.bilibilias.common.base.model.video.VideoPlayDetails" />
+            type="com.imcys.model.VideoPlayDetails" />
 
         <variable
             name="VideoPageListData"
-            type="com.imcys.bilibilias.common.base.model.video.VideoPageListData" />
+            type="com.imcys.model.VideoPageListData" />
 
         <variable
             name="BangumiPlayBean"
-            type="com.imcys.bilibilias.common.base.model.BangumiPlayBean" />
+            type="com.imcys.model.BangumiPlayBean" />
 
         <variable
             name="ArchiveHasLikeBean"
-            type="com.imcys.bilibilias.common.base.model.video.VideoHasLike" />
+            type="com.imcys.model.VideoHasLike" />
 
 
         <variable
             name="ArchiveCoinsBean"
-            type="com.imcys.bilibilias.common.base.model.video.VideoHasCoins" />
+            type="com.imcys.model.VideoHasCoins" />
 
         <variable
             name="ArchiveFavouredBean"
-            type="com.imcys.bilibilias.common.base.model.video.VideoCollection" />
+            type="com.imcys.model.VideoCollection" />
     </data>
 
     <androidx.compose.ui.platform.ComposeView

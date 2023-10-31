@@ -7,10 +7,6 @@
 
     <data>
 
-        <variable
-            name="TaskBean"
-            type="com.imcys.bilibilias.base.model.task.DownloadTaskInfo" />
-
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -57,7 +53,6 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{TaskBean.fileType == 0 ? `VIDEO` : `AUDIO`}"
                                 android:textColor="@color/white"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -81,7 +76,6 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{TaskBean.downloadTaskDataBean.pageTitle}"
                                 android:textSize="18sp" />
 
                         </LinearLayout>
@@ -104,7 +98,6 @@
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
                                     android:maxLines="1"
-                                    android:text="@{`清晰度：`+TaskBean.downloadTaskDataBean.qn}"
                                     android:textColor="@color/color_text_hint"
                                     android:textSize="12sp" />
 
@@ -113,7 +106,6 @@
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
                                     android:maxLines="1"
-                                    android:text="@{`子集：`+TaskBean.downloadTaskDataBean.cid}"
                                     android:textColor="@color/color_text_hint"
                                     android:textSize="12sp" />
 
@@ -139,7 +131,6 @@
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
-                    android:progress="@{(int)TaskBean.progress}"
                     android:progressDrawable="@drawable/download_progress_bg" />
 
 

@@ -56,8 +56,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.bilibilias.common.base.components.CenterRow
-import com.imcys.bilibilias.common.base.extend.digitalConversion
-import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.common.utils.digitalConversion
+import com.imcys.model.Dash
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import timber.log.Timber
@@ -307,8 +307,8 @@ private fun VideoIntroduction(title: String, desc: String, modifier: Modifier = 
 private fun VideoWindows(
     title: String,
     pic: String,
-    video: Dash.Video,
-    audio: Dash.Audio,
+    video: com.imcys.model.Dash.Video,
+    audio: com.imcys.model.Dash.Audio,
     modifier: Modifier = Modifier,
 ) {
     AndroidView(

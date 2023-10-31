@@ -33,12 +33,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.getActivity
-import com.imcys.bilibilias.base.utils.gotoApplicationSettings
-import com.imcys.bilibilias.base.utils.hasPickMediaPermission
-import com.imcys.bilibilias.base.utils.shouldShowRationale
+import com.imcys.common.utils.getActivity
+import com.imcys.common.utils.gotoApplicationSettings
+import com.imcys.common.utils.hasPickMediaPermission
+import com.imcys.common.utils.shouldShowRationale
 import com.imcys.bilibilias.common.base.components.BottomSheetDialog
-import com.imcys.bilibilias.common.base.config.CookieRepository
+import com.imcys.network.configration.CookieRepository
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -67,7 +67,7 @@ fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: 
     }
     LaunchedEffect(permissionState.status.isGranted) {
         if (context.hasPickMediaPermission()) {
-            if (CookieRepository.isExpired) {
+            if (com.imcys.network.configration.CookieRepository.isExpired) {
                 onNavigateToAuthMethod()
             } else {
                 onNavigateToHome()

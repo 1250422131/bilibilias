@@ -12,7 +12,7 @@
 
         <variable
             name="UserCardBean"
-            type="com.imcys.bilibilias.common.base.model.UserCardBean" />
+            type="com.imcys.model.UserCardBean" />
 
     </data>
 

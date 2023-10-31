@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-        <variable
-            name="LoginViewModel"
-            type="com.imcys.bilibilias.base.model.login.view.LoginViewModel" />
-
     </data>
 
     <RelativeLayout
@@ -185,7 +180,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
                             android:textColor="?attr/colorPrimary" />
 
@@ -193,7 +187,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_2"
                             android:textColor="?attr/colorPrimary" />
 

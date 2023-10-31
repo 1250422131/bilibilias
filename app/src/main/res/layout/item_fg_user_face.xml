@@ -7,7 +7,7 @@
 
         <variable
             name="UserBaseBean"
-            type="com.imcys.bilibilias.common.base.model.UserSpaceInformation" />
+            type="com.imcys.model.UserSpaceInformation" />
 
     </data>
 

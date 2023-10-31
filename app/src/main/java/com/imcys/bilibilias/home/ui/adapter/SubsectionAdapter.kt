@@ -7,11 +7,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemSubsectionBinding
-import com.imcys.bilibilias.common.base.model.video.VideoPageListData
 
 class SubsectionAdapter(
-    val datas: MutableList<VideoPageListData>,
-    val onClickMethod: (datas: VideoPageListData, position: Int) -> Unit,
+    val datas: MutableList<com.imcys.model.VideoPageListData>,
+    val onClickMethod: (datas: com.imcys.model.VideoPageListData, position: Int) -> Unit,
 ) :
     RecyclerView.Adapter<SubsectionAdapter.ViewHolder>() {
 

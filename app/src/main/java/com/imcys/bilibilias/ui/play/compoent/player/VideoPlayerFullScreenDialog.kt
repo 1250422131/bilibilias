@@ -21,7 +21,7 @@ import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.media3.common.util.RepeatModeUtil
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.common.utils.getActivity
 import com.imcys.bilibilias.ui.play.compoent.player.controller.VideoPlayerControllerConfig
 import com.imcys.bilibilias.ui.play.compoent.player.controller.applyToExoPlayerView
 import com.imcys.bilibilias.ui.play.compoent.player.utils.setFullScreen

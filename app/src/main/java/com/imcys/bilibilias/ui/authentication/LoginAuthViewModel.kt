@@ -7,10 +7,9 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.repository.login.LoginRepository
+import com.imcys.network.LoginRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +25,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class LoginAuthViewModel @Inject constructor(private val loginRepository: LoginRepository) : BaseViewModel() {
+class LoginAuthViewModel @Inject constructor(private val loginRepository: com.imcys.network.LoginRepository) : BaseViewModel() {
 
     private val _loginAuthState = MutableStateFlow(LoginAuthState())
     val loginAuthUiState = _loginAuthState.asStateFlow()

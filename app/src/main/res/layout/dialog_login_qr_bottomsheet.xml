@@ -2,20 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="LoginQRModel"
-            type="com.imcys.bilibilias.base.model.login.view.LoginQRModel" />
-
-
-        <variable
-            name="DataBean"
-            type="com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode" />
-
-    </data>
+    <data></data>
 
     <RelativeLayout
 
@@ -76,11 +63,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{LoginQRModel.loginTip}"
                 android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
-                android:visibility="@{LoginQRModel.loginTip == `` ? View.GONE : View.VISIBLE}" />
-
+                android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"

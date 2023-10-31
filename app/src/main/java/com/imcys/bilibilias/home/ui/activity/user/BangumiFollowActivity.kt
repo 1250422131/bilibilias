@@ -8,20 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.repository.bangumi.model.BangumiFollowList
+import com.imcys.model.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.ceil
 
 @AndroidEntryPoint
 class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
     // private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
-    private lateinit var bangumiFollowList: BangumiFollowList
+    private lateinit var bangumiFollowList: com.imcys.model.BangumiFollowList
     override fun getLayoutRes(): Int = R.layout.activity_bangumi_follow
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +34,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
             HttpUtils.addHeader("coolie", asUser.cookie).get(
                 "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
-                BangumiFollowList::class.java
+                com.imcys.model.BangumiFollowList::class.java
             ) {
 
             }
@@ -54,7 +53,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
     private fun loadBangumiFollow(pn: Int) {
         HttpUtils.get(
             "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=15",
-            BangumiFollowList::class.java
+            com.imcys.model.BangumiFollowList::class.java
         ) {
 
         }

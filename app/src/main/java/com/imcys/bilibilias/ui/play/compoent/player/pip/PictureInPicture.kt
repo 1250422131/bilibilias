@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Rational
 import androidx.media3.ui.PlayerView
-import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.common.utils.getActivity
 
 /**
  * Enables PIP mode for the current activity.

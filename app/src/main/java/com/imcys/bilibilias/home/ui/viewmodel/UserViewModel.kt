@@ -9,8 +9,8 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.home.ui.model.UpStatBean
-import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.common.base.model.UserCardBean
+import com.imcys.model.UserSpaceInformation
+import com.imcys.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
