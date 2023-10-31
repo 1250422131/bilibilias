@@ -2,19 +2,14 @@ package com.imcys.bilibilias.ui.user
 
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
-import com.imcys.bilibilias.base.utils.WbiUtils
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.constant.MID
-import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.repository.FavoritesRepository
 import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.home.ui.model.UpStatBean
-import com.imcys.bilibilias.common.base.model.UserSpaceInformation
-import com.imcys.bilibilias.common.base.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.common.base.model.UserNav
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
+import com.imcys.model.UserCardBean
+import com.imcys.model.UserSpaceInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -27,13 +22,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val http: HttpClient,
-    private val favoritesRepository: FavoritesRepository
+    private val http: HttpClient
 ) : BaseViewModel() {
     private val _userDataState = MutableStateFlow(UserState())
     val userDataState = _userDataState.asStateFlow()
@@ -64,12 +57,9 @@ class UserViewModel @Inject constructor(
             val bean = http.get(BilibiliApi.userAllFavorites) {
                 parameter("up_mid", mid)
             }.body<UserCreateCollectionBean>()
-            Timber.tag(TAG).d(bean.list.toString())
-            _userDataState.update {
-                it.copy(collectionList = bean.list.toImmutableList())
+
             }
         }
-    }
 
     fun loadCollectionData(id: Int, pn: Int, ps: Int = 20) {
         launchIO {
@@ -111,13 +101,8 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun getMyUserData(): Long {
-        if (UserInfoRepository.mid == mid) return UserInfoRepository.mid
 
-        val data = http.get(BilibiliApi.getMyUserData).body<MyUserData>()
-
-        UserInfoRepository.mid = data.mid
-        mid = data.mid
-        return data.mid
+      return 0
     }
 
     /**
@@ -140,13 +125,7 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun getWbiKey(mid: Long): List<Pair<String, String>> {
-        val bean = http.get(BilibiliApi.Token).body<UserNav>()
-        val params = listOf(MID to mid.toString())
-        return WbiUtils.getParamStr(
-            params,
-            bean.imgKey,
-            bean.subKey
-        )
+        return emptyList()
     }
 }
 

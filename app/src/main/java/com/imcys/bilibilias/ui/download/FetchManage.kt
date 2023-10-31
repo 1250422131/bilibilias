@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.ui.download
 
 import android.content.Context
-import com.imcys.bilibilias.common.base.config.SettingsRepository
+import com.imcys.network.configration.SettingsRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.REFERER
@@ -125,11 +125,11 @@ class FetchManage @Inject constructor(
     override fun onCompleted(groupId: Int, download: Download, fetchGroup: FetchGroup) {
         Timber.d(download.extras.toString())
         // 导入到B站不用合并视频
-        if (SettingsRepository.autoImportToBilibili) {
+        if (com.imcys.network.configration.SettingsRepository.autoImportToBilibili) {
             return
         }
         // 自动合并音视频关闭
-        if (!SettingsRepository.autoMergeVideoAndAudio) {
+        if (!com.imcys.network.configration.SettingsRepository.autoMergeVideoAndAudio) {
             return
         }
         // val v = fetchGroup.completedDownloads.find { it.group == groupId && it.tag == TAG_VIDEO }

@@ -1,9 +1,8 @@
 package com.imcys.bilibilias.ui.download
 
-import com.imcys.bilibilias.base.utils.DownloadManage
-import com.imcys.bilibilias.common.base.extend.Result
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
-import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.network.DownloadManage
+import com.imcys.common.utils.Result
+import com.imcys.network.VideoRepository
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import com.tonyodev.fetch2.Download
@@ -16,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
-    private val downloadManage: DownloadManage
+    private val videoRepository: com.imcys.network.VideoRepository,
+    private val downloadManage: com.imcys.network.DownloadManage
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(DownloadListState())
@@ -31,9 +30,9 @@ class DownloadViewModel @Inject constructor(
 
     private fun getPages() {
         when (val res = videoRepository.videoDetails2.replayCache.lastOrNull()) {
-            is Result.Error -> TODO()
-            Result.Loading -> TODO()
-            is Result.Success -> _state.update {
+            is com.imcys.common.utils.Result.Error -> TODO()
+            com.imcys.common.utils.Result.Loading -> TODO()
+            is com.imcys.common.utils.Result.Success -> _state.update {
                 it.copy(availablePages = res.data.pages, selectedPages = listOf(res.data.pages.first()))
             }
 
@@ -51,7 +50,7 @@ class DownloadViewModel @Inject constructor(
      * "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
      */
     fun downloadVideo(
-        details: VideoDetails,
+        details: com.imcys.model.VideoDetails,
         downloadListHolders: DownloadListHolders
     ) {
         Timber.tag("downloadInfo").d(downloadListHolders.toString())
@@ -104,9 +103,9 @@ class DownloadViewModel @Inject constructor(
     private fun setInitAcceptDescription() {
         videoRepository.dashVideo.replayCache.forEach { res ->
             when (res) {
-                is Result.Error -> TODO()
-                Result.Loading -> TODO()
-                is Result.Success -> _state.update {
+                is com.imcys.common.utils.Result.Error -> TODO()
+                com.imcys.common.utils.Result.Loading -> TODO()
+                is com.imcys.common.utils.Result.Success -> _state.update {
                     it.copy(
                         selectedDescription = res.data.acceptDescription.first(),
                         availableAcceptDescription = res.data.acceptDescription,
@@ -126,7 +125,7 @@ class DownloadViewModel @Inject constructor(
         }
     }
 
-    fun setPages(page: VideoDetails.Page) {
+    fun setPages(page: com.imcys.model.VideoDetails.Page) {
         _state.update {
             val pageList = it.selectedPages
             if (page in pageList && pageList.size > 1) {
@@ -156,9 +155,9 @@ data class DownloadListState(
     val requireDownloadFileType: DownloadFileType = DownloadFileType.VideoAndAudio,
 
     // 可选剧集
-    val availablePages: List<VideoDetails.Page> = emptyList(),
+    val availablePages: List<com.imcys.model.VideoDetails.Page> = emptyList(),
     // 已选剧集
-    val selectedPages: List<VideoDetails.Page> = emptyList(),
+    val selectedPages: List<com.imcys.model.VideoDetails.Page> = emptyList(),
 
     val availableQuality: List<Int> = emptyList(),
     val selectedQuality: Int = 0,

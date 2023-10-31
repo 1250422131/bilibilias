@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.model.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.play.PlayerState
 import com.imcys.bilibilias.ui.play.PlayerViewModel
@@ -74,12 +74,12 @@ fun DownloadOptionsRoute(
     state: PlayerState,
     onBack: () -> Unit,
     downloadListHolders: DownloadListHolders,
-    downloadVideo: (VideoDetails, DownloadListHolders) -> Unit,
+    downloadVideo: (com.imcys.model.VideoDetails, DownloadListHolders) -> Unit,
     setDownloadTool: (DownloadToolType) -> Unit,
     setRequireDownloadFileType: (DownloadFileType) -> Unit,
     downloadListState: DownloadListState,
     setAcceptDescription: (Int) -> Unit,
-    setPages: (VideoDetails.Page) -> Unit,
+    setPages: (com.imcys.model.VideoDetails.Page) -> Unit,
 ) {
     DownloadOptionsScreen(
         state = state,

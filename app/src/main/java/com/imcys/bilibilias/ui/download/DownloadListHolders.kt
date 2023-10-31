@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.model.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,7 +32,7 @@ class DownloadListHolders @Inject constructor() {
     /**
      * 要下载的文件集合
      */
-    var subset = mutableStateListOf<VideoDetails.Page>()
+    var subset = mutableStateListOf<com.imcys.model.VideoDetails.Page>()
 
     var requireDownloadFileType by mutableStateOf(DownloadFileType.VideoAndAudio)
 

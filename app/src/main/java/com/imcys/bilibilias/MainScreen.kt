@@ -14,6 +14,9 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.imcys.bilibilias.tool.bangumiFollow.bangumiFollowRoute
+import com.imcys.bilibilias.tool.bangumiFollow.navigateToBangumiFollow
+import com.imcys.bilibilias.tool.navigation.toolRoute
 import com.imcys.bilibilias.ui.download.danmaku.danmakuRoute
 import com.imcys.bilibilias.ui.download.danmaku.navigateToDanmaku
 import com.imcys.bilibilias.ui.download.downloadOptionsRoute
@@ -25,9 +28,6 @@ import com.imcys.bilibilias.ui.play.navigateToPlayer
 import com.imcys.bilibilias.ui.play.playerRoute
 import com.imcys.bilibilias.ui.settings.navigateToSettings
 import com.imcys.bilibilias.ui.settings.settingsRoute
-import com.imcys.bilibilias.ui.tool.bangumiFollow.bangumiFollowRoute
-import com.imcys.bilibilias.ui.tool.bangumiFollow.navigateToBangumiFollow
-import com.imcys.bilibilias.ui.tool.toolRoute
 import com.imcys.bilibilias.ui.user.userRoute
 
 const val ROUTE_MAIN_SCREEN = "main_screen"

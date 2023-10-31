@@ -24,8 +24,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.repository.login.model.AuthQrCode
-import com.imcys.bilibilias.common.base.model.UserNav
+import com.imcys.model.AuthQrCode
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
 import com.imcys.bilibilias.common.base.utils.AESUtils
@@ -271,7 +270,7 @@ class AsLoginBsViewModel(
             // 获取用户数据
             val UserNav =
                 KtHttpUtils.addHeader(HttpHeaders.Cookie, cookie)
-                    .asyncGet<UserNav>(BilibiliApi.userNavDataPath)
+                    .asyncGet<com.imcys.model.UserNav>(BilibiliApi.userNavDataPath)
 
             // 储存
             kv.apply {
@@ -336,7 +335,7 @@ class AsLoginBsViewModel(
         viewModelScope.launch {
             // 获取用户数据
             val UserNav = KtHttpUtils.addHeader(HttpHeaders.Cookie, asUser.cookie)
-                .asyncGet<UserNav>(BilibiliApi.userNavDataPath)
+                .asyncGet<com.imcys.model.UserNav>(BilibiliApi.userNavDataPath)
 
             val biliBiliCookieInfo = BiliBiliCookieInfo(
                 UserNav.uname,

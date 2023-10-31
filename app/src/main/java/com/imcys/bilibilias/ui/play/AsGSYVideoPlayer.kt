@@ -20,8 +20,8 @@ import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
-import com.imcys.bilibilias.base.utils.getActivity
-import com.imcys.bilibilias.common.base.model.video.Dash
+import com.imcys.common.utils.getActivity
+import com.imcys.model.Dash
 import com.imcys.bilibilias.common.di.AsDispatchers
 import com.imcys.bilibilias.common.di.Dispatcher
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
@@ -109,7 +109,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
     }
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
-    fun setMediaSource(videoUrl: Dash.Video, audioUrl: Dash.Audio) {
+    fun setMediaSource(videoUrl: com.imcys.model.Dash.Video, audioUrl: com.imcys.model.Dash.Audio) {
         // /data/data/com.imcys.bilibilias.debug/files/amv.ass
         val uri = File(context.filesDir, "/amv.ass").toUri()
 

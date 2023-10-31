@@ -4,7 +4,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegSession
 import com.arthenica.ffmpegkit.ReturnCode
 import com.arthenica.ffmpegkit.SessionState
-import com.imcys.bilibilias.base.utils.updatePhotoMedias
+import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.tonyodev.fetch2.Download
 import io.microshow.rxffmpeg.RxFFmpegCommandList
@@ -76,7 +76,7 @@ class RxFFmpegManage constructor(
 
     override fun onFinish() {
         FileUtils.deleteFiles(video.file, audio.file)
-        updatePhotoMedias(File(filename))
+        com.imcys.common.utils.updatePhotoMedias(File(filename))
     }
 
     override fun onProgress(progress: Int, progressTime: Long) {

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
@@ -47,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.components.LeadingTrailingIconRow
 import com.imcys.bilibilias.common.base.components.SingleLineText
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
+import com.imcys.model.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.play.PlayerState
 
@@ -56,12 +55,12 @@ fun DownloadOptionsScreen(
     state: PlayerState,
     onBack: () -> Unit,
     downloadOptions: DownloadListHolders,
-    downloadVideo: (VideoDetails, DownloadListHolders) -> Unit,
+    downloadVideo: (com.imcys.model.VideoDetails, DownloadListHolders) -> Unit,
     setDownloadTool: (DownloadToolType) -> Unit,
     downloadListState: DownloadListState,
     setRequireDownloadFileType: (DownloadFileType) -> Unit,
     setAcceptDescription: (Int) -> Unit,
-    setPages: (VideoDetails.Page) -> Unit,
+    setPages: (com.imcys.model.VideoDetails.Page) -> Unit,
 ) {
     Box(Modifier.statusBarsPadding()) {
         Column(Modifier.padding(horizontal = 8.dp)) {

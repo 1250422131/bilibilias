@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import com.imcys.bilibilias.base.utils.openUri
+import com.imcys.common.utils.openUri
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.base.config.CookieRepository
-import com.imcys.bilibilias.common.base.repository.login.LoginRepository
+import com.imcys.network.configration.CookieRepository
+import com.imcys.network.LoginRepository
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.xiaojinzi.component.impl.Router
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val loginRepository: LoginRepository
+    private val loginRepository: com.imcys.network.LoginRepository
 ) : BaseViewModel() {
 
     fun goToPrivacyPolicy(view: View) {
@@ -74,14 +74,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun logoutLogin() {
-        val cookie = CookieRepository.sessionData
+        val cookie = com.imcys.network.configration.CookieRepository.sessionData
 
         if (cookie.isNullOrEmpty()) {
             return
         }
         launchIO {
             loginRepository.logout()
-            CookieRepository.clearCookies()
+            com.imcys.network.configration.CookieRepository.clearCookies()
         }
     }
 }

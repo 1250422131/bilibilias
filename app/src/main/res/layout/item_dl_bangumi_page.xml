@@ -9,7 +9,7 @@
 
         <variable
             name="EpisodesBean"
-            type="com.imcys.bilibilias.common.base.model.bangumi.Bangumi" />
+            type="com.imcys.model.Bangumi" />
 
     </data>
 

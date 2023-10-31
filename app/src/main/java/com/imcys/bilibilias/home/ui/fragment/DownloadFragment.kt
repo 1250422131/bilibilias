@@ -13,7 +13,6 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
-import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.view.base.BaseFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,9 +25,6 @@ class DownloadFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadFinishTaskAd: DownloadFinishTaskAd
-
-    @Inject
-    lateinit var downloadTaskAdapter: DownloadTaskAdapter
 
     @Inject
     lateinit var downloadTaskRepository: DownloadTaskRepository

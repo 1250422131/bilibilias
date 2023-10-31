@@ -36,10 +36,10 @@ import com.alorma.compose.settings.ui.SettingsList
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.appDownloadPath
-import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.network.appDownloadPath
+import com.imcys.common.utils.getActivity
 import com.imcys.bilibilias.base.utils.observeAsState
-import com.imcys.bilibilias.common.base.config.SettingsRepository
+import com.imcys.network.configration.SettingsRepository
 import me.rosuh.filepicker.config.FilePickerManager
 import timber.log.Timber
 
@@ -118,7 +118,7 @@ private fun Theme() {
 
 @Composable
 fun AutomaticMerge() {
-    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportToBilibili)
+    val autoImport by rememberBooleanSettingState(com.imcys.network.configration.SettingsRepository.autoImportToBilibili)
     SettingsSwitch(
         title = { Text(stringResource(R.string.user_dl_finish_automatic_merge_switch_title)) },
         subtitle = {
@@ -132,13 +132,13 @@ fun AutomaticMerge() {
             Image(painter = painterResource(R.drawable.ic_setting_bilibili), contentDescription = "bilibili_icon")
         }
     ) {
-        SettingsRepository.autoImportToBilibili = it
+        com.imcys.network.configration.SettingsRepository.autoImportToBilibili = it
     }
 }
 
 @Composable
 private fun GoogleAD() {
-    val googleAD = rememberBooleanSettingState(SettingsRepository.googleAD)
+    val googleAD = rememberBooleanSettingState(com.imcys.network.configration.SettingsRepository.googleAD)
     SettingsSwitch(state = googleAD, title = {
         Text("展示谷歌广告")
     }, subtitle = {
@@ -148,7 +148,7 @@ private fun GoogleAD() {
             Text("很抱歉广告打扰了你，我们利用广告展示和点击获取一些收入。")
         }
     }) {
-        SettingsRepository.googleAD = it
+        com.imcys.network.configration.SettingsRepository.googleAD = it
     }
 }
 
@@ -157,7 +157,7 @@ private fun Statistics() {
     SettingsGroup(title = {
         Text(stringResource(R.string.app_root_preferences_title_privacy_policy))
     }) {
-        val microsoft = rememberBooleanSettingState(SettingsRepository.microsoftStatistics)
+        val microsoft = rememberBooleanSettingState(com.imcys.network.configration.SettingsRepository.microsoftStatistics)
         SettingsSwitch(
             state = microsoft,
             icon = {
@@ -169,9 +169,9 @@ private fun Statistics() {
             title = { Text(stringResource(R.string.microsoft_app_center_type_title)) },
             subtitle = { Text(stringResource(R.string.microsoft_app_center_type_summary)) }
         ) {
-            SettingsRepository.microsoftStatistics = it
+            com.imcys.network.configration.SettingsRepository.microsoftStatistics = it
         }
-        val baiDu = rememberBooleanSettingState(SettingsRepository.baiduStatistics)
+        val baiDu = rememberBooleanSettingState(com.imcys.network.configration.SettingsRepository.baiduStatistics)
         SettingsSwitch(
             state = baiDu,
             icon = {
@@ -180,14 +180,14 @@ private fun Statistics() {
             title = { Text(stringResource(R.string.baidu_statistics_type_title)) },
             subtitle = { Text(stringResource(R.string.baidu_statistics_type_summary)) }
         ) {
-            SettingsRepository.baiduStatistics = it
+            com.imcys.network.configration.SettingsRepository.baiduStatistics = it
         }
     }
 }
 
 @Composable
 private fun AutomaticImportBilibili() {
-    val autoImport by rememberBooleanSettingState(SettingsRepository.autoImportToBilibili)
+    val autoImport by rememberBooleanSettingState(com.imcys.network.configration.SettingsRepository.autoImportToBilibili)
     SettingsSwitch(
         title = { Text(stringResource(R.string.user_dl_finish_automatic_import_switch_title)) },
         subtitle = {
@@ -201,7 +201,7 @@ private fun AutomaticImportBilibili() {
             Image(painter = painterResource(R.drawable.ic_setting_bilibili), contentDescription = "bilibili_icon")
         }
     ) {
-        SettingsRepository.autoImportToBilibili = it
+        com.imcys.network.configration.SettingsRepository.autoImportToBilibili = it
     }
 }
 
@@ -211,10 +211,10 @@ private fun EditVideoNamingConvention() {
     // 编辑视频命名规则，还原命名规则
     rememberBooleanSettingState()
     var show by rememberBooleanSettingState(false)
-    var rules by rememberStringSettingState(SettingsRepository.videoNameRule)
+    var rules by rememberStringSettingState(com.imcys.network.configration.SettingsRepository.videoNameRule)
     SettingsMenuLink(
         title = { Text(stringResource(R.string.user_download_file_name)) },
-        subtitle = { Text(rules ?: SettingsRepository.DefaultVideoNameRule) },
+        subtitle = { Text(rules ?: com.imcys.network.configration.SettingsRepository.DefaultVideoNameRule) },
         onClick = { show = true },
     )
     if (show) {
@@ -235,7 +235,7 @@ private fun EditVideoNamingConvention() {
                     ) {
                         Text(stringResource(R.string.dl_file_rename_rules))
                         OutlinedTextField(
-                            value = rules ?: SettingsRepository.DefaultVideoNameRule,
+                            value = rules ?: com.imcys.network.configration.SettingsRepository.DefaultVideoNameRule,
                             onValueChange = { rules = it }
                         )
                         Row {
@@ -244,7 +244,7 @@ private fun EditVideoNamingConvention() {
                             }
                             Spacer(modifier = Modifier.weight(1f))
                             TextButton(
-                                onClick = { show = false; SettingsRepository.resetVideoNamingRule() }
+                                onClick = { show = false; com.imcys.network.configration.SettingsRepository.resetVideoNamingRule() }
                             ) {
                                 Text(stringResource(R.string.rename_user_download_file_name_editText_title))
                             }
@@ -252,7 +252,7 @@ private fun EditVideoNamingConvention() {
                                 onClick = {
                                     show = false
                                     rules?.let {
-                                        SettingsRepository.saveVideoNamingRule(it)
+                                        com.imcys.network.configration.SettingsRepository.saveVideoNamingRule(it)
                                     }
                                 }
                             ) {
@@ -272,7 +272,7 @@ private fun EditVideoNamingConvention() {
 @Composable
 private fun SaveVideoPath() {
     val context = LocalContext.current
-    var path by rememberStringSettingState(SettingsRepository.saveFilePath)
+    var path by rememberStringSettingState(com.imcys.network.configration.SettingsRepository.saveFilePath)
     SettingsMenuLink(
         title = { Text(stringResource(R.string.user_download_save_path_title)) },
         subtitle = { Text(path ?: context.appDownloadPath) },
@@ -284,7 +284,7 @@ private fun SaveVideoPath() {
             Lifecycle.Event.ON_RESUME ->
                 FilePickerManager.obtainData().filterNot { it.isBlank() }.forEach {
                     Timber.tag("saveVideoUri").d(it)
-                    SettingsRepository.saveFilePath = it
+                    com.imcys.network.configration.SettingsRepository.saveFilePath = it
                     path = it
                 }
 

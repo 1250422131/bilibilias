@@ -7,13 +7,10 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import com.imcys.bilibilias.base.utils.DownloadManage
-import com.imcys.bilibilias.common.base.extend.Result
+import com.imcys.network.DownloadManage
+import com.imcys.common.utils.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.common.base.model.video.Dash
-import com.imcys.bilibilias.common.base.model.video.SupportFormat
-import com.imcys.bilibilias.common.base.model.video.VideoDetails
-import com.imcys.bilibilias.common.base.repository.VideoRepository
+import com.imcys.network.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import com.imcys.bilibilias.ui.download.DownloadListHolders
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +23,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
+    private val videoRepository: com.imcys.network.VideoRepository,
     val downloadListHolders: DownloadListHolders,
-    private val downloadManage: DownloadManage
+    private val downloadManage: com.imcys.network.DownloadManage
 ) : BaseViewModel() {
 
     private val _playerState = MutableStateFlow(PlayerState())
@@ -38,23 +35,23 @@ class PlayerViewModel @Inject constructor(
      * key 是视频清晰度
      * 126,120,112,80,64,32,16
      */
-    private val qualityGroup = sortedMapOf<Int, List<Dash.Video>>()
+    private val qualityGroup = sortedMapOf<Int, List<com.imcys.model.Dash.Video>>()
 
     /**
      * 视频支持的格式
      */
-    private val supportFormat = mutableListOf<SupportFormat>()
+    private val supportFormat = mutableListOf<com.imcys.model.SupportFormat>()
 
-    private val pages = mutableListOf<VideoDetails.Page>()
+    private val pages = mutableListOf<com.imcys.model.VideoDetails.Page>()
 
     init {
         getMediaCodecInfo()
         viewModelScope.launchIO {
             videoRepository.videoDetails2.collectLatest { res ->
                 when (res) {
-                    is Result.Error -> TODO()
-                    Result.Loading -> TODO()
-                    is Result.Success -> {
+                    is com.imcys.common.utils.Result.Error -> TODO()
+                    com.imcys.common.utils.Result.Loading -> TODO()
+                    is com.imcys.common.utils.Result.Success -> {
                         val details = res.data
                         getDash(details)
                         setSubSet(details.pages)
@@ -76,7 +73,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private fun setVideoBasicInfo(details: VideoDetails) {
+    private fun setVideoBasicInfo(details: com.imcys.model.VideoDetails) {
         _playerState.update {
             it.copy(
                 title = details.title,
@@ -133,9 +130,9 @@ class PlayerViewModel @Inject constructor(
         val bvid = _playerState.value.bvid
         launchOnIO {
             when (val res = videoRepository.getDashVideoStream(bvid, cid, useWbi = true)) {
-                is Result.Error -> TODO()
-                Result.Loading -> TODO()
-                is Result.Success -> {
+                is com.imcys.common.utils.Result.Error -> TODO()
+                com.imcys.common.utils.Result.Loading -> TODO()
+                is com.imcys.common.utils.Result.Success -> {
                     setQualityGroup(res.data.dash.video)
                     val qn = _playerState.value.currentQn
                     selectedQuality(qn)
@@ -157,15 +154,15 @@ class PlayerViewModel @Inject constructor(
         downloadManage.downloadDanmaku(cid, aid)
     }
 
-    private fun setSubSet(pages: List<VideoDetails.Page>) {
+    private fun setSubSet(pages: List<com.imcys.model.VideoDetails.Page>) {
         downloadListHolders.subset.add(pages.first())
     }
 
-    private suspend fun getDash(details: VideoDetails) {
+    private suspend fun getDash(details: com.imcys.model.VideoDetails) {
         when (val res = videoRepository.getDashVideoStream(details.bvid, details.cid)) {
-            is Result.Error -> TODO()
-            Result.Loading -> TODO()
-            is Result.Success -> {
+            is com.imcys.common.utils.Result.Error -> TODO()
+            com.imcys.common.utils.Result.Loading -> TODO()
+            is com.imcys.common.utils.Result.Success -> {
                 val data = res.data
                 val videos = data.dash.video
                 setQualityGroup(videos)
@@ -188,12 +185,12 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private fun setQualityGroup(videos: List<Dash.Video>) {
+    private fun setQualityGroup(videos: List<com.imcys.model.Dash.Video>) {
         qualityGroup.clear()
         qualityGroup.putAll(videos.画质分组())
     }
 
-    private fun selectedQuality(videoList: List<Dash.Video>) {
+    private fun selectedQuality(videoList: List<com.imcys.model.Dash.Video>) {
         for (v in videoList) {
             if (selectDecoder(v.codecs) != null) {
                 _playerState.update { state -> state.copy(video = v) }
@@ -215,7 +212,7 @@ data class PlayerState(
     val coins: Int = 0,
     val favorite: Int = 0,
     @Deprecated("")
-    val videoDetails: VideoDetails = VideoDetails(),
+    val videoDetails: com.imcys.model.VideoDetails = com.imcys.model.VideoDetails(),
 
     val hasLike: Boolean = false,
     val hasCoins: Boolean = false,
@@ -223,17 +220,17 @@ data class PlayerState(
     val share: Int = 0,
 
     val descriptionAndQuality: List<Pair<String, Int>> = emptyList(),
-    val pages: List<VideoDetails.Page> = emptyList(),
+    val pages: List<com.imcys.model.VideoDetails.Page> = emptyList(),
 
     val currentQn: Int = 0,
 
-    val video: Dash.Video = Dash.Video(),
-    val audio: Dash.Audio = Dash.Audio(),
+    val video: com.imcys.model.Dash.Video = com.imcys.model.Dash.Video(),
+    val audio: com.imcys.model.Dash.Audio = com.imcys.model.Dash.Audio(),
 )
 
-fun List<Dash.Video>.画质分组(): Map<Int, List<Dash.Video>> = groupBy { it.id }
+fun List<com.imcys.model.Dash.Video>.画质分组(): Map<Int, List<com.imcys.model.Dash.Video>> = groupBy { it.id }
 
-fun List<Dash.Video>.画质最高队列(): List<Dash.Video> =
+fun List<com.imcys.model.Dash.Video>.画质最高队列(): List<com.imcys.model.Dash.Video> =
     groupBy { it.id }
         .maxBy { it.key }
         .value

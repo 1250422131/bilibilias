@@ -1,11 +1,8 @@
 dependencyResolutionManagement {
     repositories {
-        maven("https://maven.aliyun.com/repository/central")
-        maven("https://maven.aliyun.com/repository/public")
-        maven("https://jitpack.io")
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 
     versionCatalogs {
@@ -17,4 +14,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "build-logic"
 
-// include(":convention")
+include(":convention")

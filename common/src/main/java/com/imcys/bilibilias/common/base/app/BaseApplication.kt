@@ -4,16 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.os.Handler
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.preference.PreferenceManager
 import androidx.work.Configuration
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.BuildConfig
 import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.tencent.mmkv.MMKV
-import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.Config
-import com.xiaojinzi.component.impl.application.ModuleManager
 import javax.inject.Inject
 
 open class BaseApplication : Application(), Configuration.Provider {
@@ -25,14 +18,6 @@ open class BaseApplication : Application(), Configuration.Provider {
         super.onCreate()
 
         handler = Handler(mainLooper)
-
-        // 百度统计开始
-        startBaiDuService()
-
-        initKComponent()
-
-        // 初始化MMKV
-        initMMKV()
     }
 
     @Inject
@@ -43,53 +28,14 @@ open class BaseApplication : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    private fun initMMKV() {
-        MMKV.initialize(this)
-        dataKv = MMKV.mmkvWithID("data")
-    }
-
-    private fun initKComponent() {
-        Component.init(
-            application = this,
-            isDebug = BuildConfig.DEBUG,
-            config = Config.Builder()
-                .build(),
-        )
-        // 手动加载模块
-        ModuleManager.registerArr(
-            "app",
-            "common",
-            "tool_livestream",
-            "tool_log_export",
-        )
-    }
-
-    /**
-     * 百度统计
-     */
-    private fun startBaiDuService() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
-        StatService.setAuthorizedState(applicationContext, authorizedState)
-        StatService.autoTrace(applicationContext)
-    }
-
     companion object {
 
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
 
-        // 全局应用数据的MMKV
-        lateinit var dataKv: MMKV
-            private set
+
         val asUser: AsUser
-            get() = run {
-                val kv = BaseApplication.dataKv
-                AsUser.apply {
-                    mid = kv.decodeLong("mid", 0)
-                    asCookie = kv.decodeString("as_cookie", "")!!
-                }
-            }
+            get() = TODO()
 
         // ——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler

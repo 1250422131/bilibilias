@@ -39,7 +39,7 @@ import androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.R
 import com.imcys.bilibilias.base.utils.OnLifecycleEvent
-import com.imcys.bilibilias.base.utils.getActivity
+import com.imcys.common.utils.getActivity
 import com.imcys.bilibilias.ui.play.compoent.player.cache.VideoPlayerCacheManager
 import com.imcys.bilibilias.ui.play.compoent.player.controller.VideoPlayerControllerConfig
 import com.imcys.bilibilias.ui.play.compoent.player.controller.applyToExoPlayerView
