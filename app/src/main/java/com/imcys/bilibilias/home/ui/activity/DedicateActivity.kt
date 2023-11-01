@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.components.FullScreenScaffold
 import com.imcys.bilibilias.home.ui.model.DedicateBean
+import com.imcys.designsystem.component.FullScreenScaffold
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

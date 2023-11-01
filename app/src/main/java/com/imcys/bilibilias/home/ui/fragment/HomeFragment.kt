@@ -21,7 +21,6 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
@@ -29,12 +28,10 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.OldUpdateDataBean
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.model.AuthQrCode
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
@@ -48,13 +45,8 @@ import com.imcys.bilibilias.home.ui.viewmodel.HomeViewModel
 import com.imcys.bilibilias.view.base.BaseFragment
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.distribute.Distribute
-import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import java.net.URLEncoder
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
-)
 class HomeFragment : BaseFragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
@@ -244,21 +236,7 @@ class HomeFragment : BaseFragment() {
      * 加载登陆对话框
      */
     internal fun loadLogin() {
-        HttpUtils.get(BilibiliApi.getLoginQRPath, AuthQrCode::class.java) {
-            URLEncoder.encode(it.url, "UTF-8")
-            loginQRDialog = DialogUtils.loginQRDialog(
-                context as Activity,
-                it,
-            ) { code: Int, _: LoginStateBean ->
-                // 登陆成功
-                if (code == 0) {
-                    initUserData()
-                    startStatistics()
-                }
-            }.apply {
-                show()
-            }
-        }
+
     }
 
     /**
@@ -300,23 +278,6 @@ class HomeFragment : BaseFragment() {
      * 检查用户是否登陆
      */
     private fun detectUserLogin() {
-        launchIO {
-            val myUserData =
-                HttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-                    .asyncGet(
-                        BilibiliApi.getMyUserData,
-                        MyUserData::class.java,
-                    )
-
-            launchUI {
-                if (myUserData.mid == 0L) {
-                    DialogUtils.loginDialog(requireContext())
-                        .show()
-                } else {
-                    BaseApplication.myUserData = myUserData
-                }
-            }
-        }
     }
 
     // 加载用户数据

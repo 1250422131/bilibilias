@@ -1,10 +1,12 @@
 package com.imcys.bilibilias.ui.download
 
-import com.imcys.network.DownloadManage
-import com.imcys.common.utils.Result
-import com.imcys.network.VideoRepository
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
+import com.imcys.network.download.DownloadListHolders
+import com.imcys.network.download.DownloadManage
+import com.imcys.network.download.DownloadToolType
+import com.imcys.network.download.bvid
+import com.imcys.network.repository.VideoRepository
 import com.tonyodev.fetch2.Download
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
-    private val videoRepository: com.imcys.network.VideoRepository,
-    private val downloadManage: com.imcys.network.DownloadManage
+    private val videoRepository: VideoRepository,
+    private val downloadManage: DownloadManage
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(DownloadListState())

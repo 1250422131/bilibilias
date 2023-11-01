@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.common.base.model.user
 
 import com.google.gson.annotations.SerializedName
-import com.imcys.bilibilias.common.base.model.common.IPostBody
 import java.io.Serializable
 
 
@@ -24,5 +23,5 @@ data class UserBiliBiliCookieModel(
         val name: String, // 萌新杰少
         @SerializedName("type")
         val type: Int, // 1
-    ) : Serializable, IPostBody
+    ) : Serializable
 }

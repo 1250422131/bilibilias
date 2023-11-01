@@ -29,9 +29,10 @@ class ComposeConventionPlugin : Plugin<Project> {
 
     private fun Project.applyDependencies(libs: VersionCatalog) {
         dependencies {
-            val bom = libs.findLibrary("compose-bom").get()
+            val bom = libs.findLibrary("androidx-compose-bom").get()
             add("implementation", platform(bom))
             add("androidTestImplementation", platform(bom))
+            add("debugImplementation", libs.findLibrary("androidx.compose.ui.testManifest").get())
         }
     }
 

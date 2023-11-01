@@ -7,10 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 fun SnackbarHostState.showSnackBar(
+    coroutineScope: CoroutineScope,
     message: String? = null,
     action: String? = null,
     duration: SnackbarDuration = SnackbarDuration.Short,
-    coroutineScope: CoroutineScope,
     onSnackBarAction: () -> Unit = {},
     onSnackBarDismiss: () -> Unit = {},
 ) {

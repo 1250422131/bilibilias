@@ -21,7 +21,6 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/log_export_tool_item_bg"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:orientation="vertical"
             android:padding="20dp"

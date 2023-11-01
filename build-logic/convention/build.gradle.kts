@@ -48,5 +48,9 @@ gradlePlugin {
             id = "bilibili.android.koin"
             implementationClass = "plugin.KoinConventionPlugin"
         }
+        register("androidFeature") {
+            id = "bilibili.android.feature"
+            implementationClass = "plugin.AndroidFeatureConventionPlugin"
+        }
     }
 }

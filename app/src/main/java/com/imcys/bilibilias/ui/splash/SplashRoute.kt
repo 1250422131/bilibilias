@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,14 +21,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.components.FullScreenScaffold
+import com.imcys.designsystem.component.FullScreenScaffold
 import com.imcys.bilibilias.permission.CheckPermissionDialog
 import kotlinx.coroutines.delay
 
@@ -75,13 +71,14 @@ fun SplashRoute(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: () -> Unit
                 contentScale = ContentScale.FillWidth,
                 colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
             )
-            Text(
-                text = stringResource(id = R.string.app_name),
-                maxLines = 1,
-                fontSize = 56.sp,
-                softWrap = false,
-                color = MaterialTheme.colorScheme.primary
-            )
+            // todo bug fix
+            // Text(
+            //     text = stringResource(id = R.string.app_name),
+            //     maxLines = 1,
+            //     fontSize = 56.sp,
+            //     softWrap = false,
+            //     color = MaterialTheme.colorScheme.primary
+            // )
         }
     }
     Box(Modifier.height(600.dp)) { CheckPermissionDialog(onNavigateToAuthMethod, onNavigateToHome) }

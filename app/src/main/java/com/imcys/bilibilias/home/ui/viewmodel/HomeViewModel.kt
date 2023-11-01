@@ -4,34 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import com.imcys.common.utils.openUri
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.network.configration.CookieRepository
-import com.imcys.network.LoginRepository
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.xiaojinzi.component.impl.Router
+import com.imcys.common.utils.openUri
+import com.imcys.datastore.mmkv.CookieRepository
+import com.imcys.network.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val loginRepository: com.imcys.network.LoginRepository
+    private val loginRepository: LoginRepository
 ) : BaseViewModel() {
-
-    fun goToPrivacyPolicy(view: View) {
-        val uri =
-            Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        view.context.startActivity(intent)
-    }
-
-    fun goToRoam(view: View) {
-        // 跳转
-        Router
-            .with(view.context)
-            .hostAndPath(hostAndPath = ARouterAddress.LiveStreamActivity).forward()
-    }
 
     /**
      * 更新信息
@@ -74,14 +58,15 @@ class HomeViewModel @Inject constructor(
     }
 
     fun logoutLogin() {
-        val cookie = com.imcys.network.configration.CookieRepository.sessionData
+        TODO("未实现")
+        val cookie = CookieRepository.sessionData
 
         if (cookie.isNullOrEmpty()) {
             return
         }
         launchIO {
             loginRepository.logout()
-            com.imcys.network.configration.CookieRepository.clearCookies()
+            CookieRepository.clearCookies()
         }
     }
 }

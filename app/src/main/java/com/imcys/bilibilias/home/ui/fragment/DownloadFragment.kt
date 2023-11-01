@@ -9,8 +9,8 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
+import com.imcys.common.utils.FileUtils
+import com.imcys.network.download.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.view.base.BaseFragment

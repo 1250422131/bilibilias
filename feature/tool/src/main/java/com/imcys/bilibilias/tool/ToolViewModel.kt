@@ -12,7 +12,7 @@ import com.imcys.common.utils.Result
 import com.imcys.common.utils.digitalConversion
 import com.imcys.model.Bangumi
 import com.imcys.model.VideoDetails
-import com.imcys.network.VideoRepository
+import com.imcys.network.repository.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

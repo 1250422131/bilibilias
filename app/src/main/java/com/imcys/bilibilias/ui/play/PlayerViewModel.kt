@@ -7,12 +7,11 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import com.imcys.network.DownloadManage
-import com.imcys.common.utils.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.network.VideoRepository
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
-import com.imcys.bilibilias.ui.download.DownloadListHolders
+import com.imcys.network.download.DownloadListHolders
+import com.imcys.network.download.DownloadManage
+import com.imcys.network.repository.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,9 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val videoRepository: com.imcys.network.VideoRepository,
+    private val videoRepository: VideoRepository,
     val downloadListHolders: DownloadListHolders,
-    private val downloadManage: com.imcys.network.DownloadManage
+    private val downloadManage: DownloadManage
 ) : BaseViewModel() {
 
     private val _playerState = MutableStateFlow(PlayerState())

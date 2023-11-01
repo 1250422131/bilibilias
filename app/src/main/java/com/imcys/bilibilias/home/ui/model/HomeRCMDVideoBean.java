@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.model;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
@@ -176,7 +175,7 @@ public class HomeRCMDVideoBean implements Serializable {
             private int id;
             private String bvid;
             private Long cid;
-            @SerializedName("goto")
+
             private String gotoX;
             private String uri;
             private String pic;

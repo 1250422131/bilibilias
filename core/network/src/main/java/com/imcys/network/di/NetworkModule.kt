@@ -35,8 +35,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.errors.IOException
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -54,6 +52,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+
     @Provides
     @Singleton
     fun provideOkhttp(): OkHttpClient = OkHttpClient.Builder()
@@ -69,28 +68,31 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(okHttpClient: OkHttpClient, @ApplicationContext context: Context): HttpClientEngine = OkHttp.create {
+    fun provideHttpClientEngine(okHttpClient: OkHttpClient,
+                                @ApplicationContext context: Context): HttpClientEngine = OkHttp.create {
         preconfigured = okHttpClient
         addInterceptor(MonitorInterceptor(context))
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideHttpClient(
         httpClientEngine: HttpClientEngine,
         json: Json,
-        transform: ClientPlugin<Unit>
+        transform: ClientPlugin<Unit>,
+        cookieManager: CookieManager,
+        cacheManager: CacheManager,
+        loggerManager: LoggerManager
     ): HttpClient = HttpClient(httpClientEngine) {
         defaultRequest { url(ROAM_API) }
         BrowserUserAgent()
         ContentEncoding()
-        Logging { logger = LoggerManager(); level = LogLevel.BODY }
+        Logging { logger = loggerManager; level = LogLevel.BODY }
         ResponseObserver { response ->
             Timber.tag("http client").d(response.toString())
         }
         install(HttpCookies) {
-            storage = CookieManager()
+            storage = cookieManager
         }
         install(transform)
 
@@ -108,7 +110,7 @@ class NetworkModule {
             level = LogLevel.BODY
         }
         install(HttpCache) {
-            publicStorage(CacheManager())
+            publicStorage(cacheManager)
         }
     }.apply {
         plugin(HttpSend).intercept { request ->
@@ -225,7 +227,7 @@ class NetworkModule {
      * -799	请求过于频繁，请稍后再试
      * -8888 对不起，服务器开小差了~ (ಥ﹏ಥ)
      */
-    internal class ApiIOException(errorMessage: String?) : IOException(errorMessage)
+    internal class ApiIOException(errorMessage: String?) : Exception(errorMessage)
     internal class NullResponseDataIOException : Exception()
     internal class NoTypeException(msg: String) : Exception(msg)
 }

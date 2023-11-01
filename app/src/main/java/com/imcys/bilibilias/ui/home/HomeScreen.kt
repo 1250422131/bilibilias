@@ -22,13 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
+import com.imcys.designsystem.component.IconCard
 import com.imcys.common.utils.getActivity
-import com.imcys.bilibilias.common.base.components.IconCard
 import com.zj.banner.BannerPager
 import com.zj.banner.model.BaseBannerBean
 
@@ -43,13 +41,6 @@ fun HomeScreen(
         Modifier
             .padding(horizontal = 20.dp)
             .fillMaxSize(),
-        topBar = {
-            Text(
-                stringResource(R.string.app_name),
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
-            )
-        },
     ) { innerPadding ->
         Column(
             Modifier

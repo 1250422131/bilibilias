@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="ToolViewHolder"
-            type="com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder" />
     </data>
 
 

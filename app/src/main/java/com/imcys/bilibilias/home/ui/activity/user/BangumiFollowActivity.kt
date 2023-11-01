@@ -8,11 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.model.BangumiFollowList
-import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.view.base.BaseActivity
+import com.imcys.model.BangumiFollowList
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,9 +41,6 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
             bangumiFollowRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
-
-                    }
                 }
             })
         }

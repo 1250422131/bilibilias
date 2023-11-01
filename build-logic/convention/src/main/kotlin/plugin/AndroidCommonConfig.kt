@@ -54,9 +54,9 @@ internal fun CommonExtension<*, *, *, *, *>.configureAndroidCommon() {
 
     packaging {
         resources {
-            // excludes += "META-INF/*"
-            // excludes += "DebugProbesKt.bin"
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/*"
+            excludes += "DebugProbesKt.bin"
+            // excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }

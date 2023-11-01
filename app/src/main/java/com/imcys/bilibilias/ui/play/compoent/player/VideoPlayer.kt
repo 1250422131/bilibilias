@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MOVIE
@@ -38,8 +39,6 @@ import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.R
-import com.imcys.bilibilias.base.utils.OnLifecycleEvent
-import com.imcys.common.utils.getActivity
 import com.imcys.bilibilias.ui.play.compoent.player.cache.VideoPlayerCacheManager
 import com.imcys.bilibilias.ui.play.compoent.player.controller.VideoPlayerControllerConfig
 import com.imcys.bilibilias.ui.play.compoent.player.controller.applyToExoPlayerView
@@ -48,6 +47,8 @@ import com.imcys.bilibilias.ui.play.compoent.player.pip.isActivityStatePipMode
 import com.imcys.bilibilias.ui.play.compoent.player.uri.VideoPlayerMediaItem
 import com.imcys.bilibilias.ui.play.compoent.player.uri.toUri
 import com.imcys.bilibilias.ui.play.compoent.player.utils.setFullScreen
+import com.imcys.common.utils.LifecycleEventEffect
+import com.imcys.common.utils.getActivity
 import kotlinx.coroutines.delay
 import java.util.*
 
@@ -284,7 +285,10 @@ internal fun VideoPlayerSurface(
             }
         },
     )
-    OnLifecycleEvent { owner, event ->
+    LifecycleStartEffect(null,){
+        onStopOrDispose{}
+    }
+    LifecycleEventEffect { _, event ->
         when (event) {
             Lifecycle.Event.ON_PAUSE -> {
                 if (handleLifecycle) {

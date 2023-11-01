@@ -1,143 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="action_settings">Settings</string>
     <string name="title_activity_user">UserActivity</string>
-    <string name="dl_file_rename_rules">Let me briefly introduce some named variables: \nAV Num: {AV}\nBV Num.: {BV}\nCID Nnum.: {CID}\nVideo Name: {TITLE}\nSub-P Name: {P_TITLE}\nFile Type: {FILE_TYPE}\nIf the video is av10086, the custom naming rules are as follows. \n{BV}/{TITLE}. {FILE_TYPE}\nThen the download path and file name are:\n\"Download Path/BV1bx411c7u3/Funny Comics Day Hezhi Sticker.mp4\". \n[Note]: If the file download fails after modification, try to directly use CID as the name, or the system may hijack the file name.\nTry to ensure that the audio and video are not in the same folder. After testing, this may cause a file download failure.</string>
-    <string name="user_download_save_path_title">Storage Path</string>
-    <string name="user_download_file_name">Name Rules</string>
 
-    <string name="BangumiEntry">
-        {
-          \"media_type\": 2,
-          \"has_dash_audio\": true,
-          \"is_completed\": true,
-          \"total_bytes\": 下载大小,
-          \"downloaded_bytes\": 下载大小,
-          \"title\": \"标题\",
-          \"type_tag\": \"QN编码\",
-          \"cover\": \"封面地址\",
-          \"video_quality\": QN编码,
-          \"prefered_video_quality\": QN编码,
-          \"guessed_total_bytes\": 0,
-          \"total_time_milli\": 总时间,
-          \"danmaku_count\": 弹幕数量,
-          \"time_update_stamp\": 1672473810242,
-          \"time_create_stamp\": 1672473771023,
-          \"can_play_in_advance\": true,
-          \"interrupt_transform_temp_file\": false,
-          \"quality_pithy_description\": \"清晰度\",
-          \"quality_superscript\": \"码率\",
-          \"cache_version_code\": 7010500,
-          \"preferred_audio_quality\": 0,
-          \"audio_quality\": 0,
-          \"source\": { \"av_id\": AID编号, \"cid\": CID编号, \"website\": \"bangumi\" },
-          \"ep\": {
-            \"av_id\": AID编号,
-            \"page\": 子集索引,
-            \"danmaku\": CID编号,
-            \"cover\": \"封面地址\",
-            \"episode_id\": EPID编号,
-            \"index\": \"子集号\",
-            \"index_title\": \"下载子TITLE\",
-            \"from\": \"bangumi\",
-            \"season_type\": 4,
-            \"width\": 宽度,
-            \"height\": 高度,
-            \"rotate\": 0,
-            \"link\": \"LINK地址\",
-            \"bvid\": \"BVID编号\",
-            \"sort_index\": 排序号
-          },
-          \"season_id\": \"SSID编号\"
-        }
-
-    </string>
-
-
-    <string name="VideoIndex">
-        {
-            \"video\": [{
-                \"id\": QN编码,
-                \"base_url\": \"https:\/\/upos-sz-mirrorcoso1.bilivideo.com\",
-                \"backup_url\": [\"https:\/\/upos-sz-mirrorcos.bilivideo.com\"],
-                \"bandwidth\": 348483,
-                \"codecid\": 7,
-                \"size\": 视频大小,
-                \"md5\": \"01c0e7ba2efc8a36f16e993a194d2d5d\",
-                \"no_rexcode\": false,
-                \"frame_rate\": \"\",
-                \"width\": 宽度,
-                \"height\": 高度,
-                \"dash_drm_type\": 0
-            }],
-            \"audio\": [{
-                \"id\": 30216,
-                \"base_url\": \"https:\/\/upos-sz-mirrorkodoo1.bilivideo.com\",
-                \"backup_url\": [\"https:\/\/upos-sz-mirrorkodo.bilivideo.com\"],
-                \"bandwidth\": 67463,
-                \"codecid\": 0,
-                \"size\": 音频大小,
-                \"md5\": \"2f785a38a9e46c4834347ec73b6802c0\",
-                \"no_rexcode\": false,
-                \"frame_rate\": \"\",
-                \"width\": 0,
-                \"height\": 0,
-                \"dash_drm_type\": 0
-            }]
-        }
-	</string>
-
-    <string name="VideoEntry">
-        {
-            \"media_type\": 2,
-            \"has_dash_audio\": true,
-            \"is_completed\": true,
-            \"total_bytes\": 下载大小,
-            \"downloaded_bytes\": 下载大小,
-            \"title\": \"标题\",
-            \"type_tag\": \"QN编码\",
-            \"cover\": \"封面地址\",
-            \"video_quality\": QN编码,
-            \"prefered_video_quality\": QN编码,
-            \"guessed_total_bytes\": 0,
-            \"total_time_milli\": 总时间,
-            \"danmaku_count\": 弹幕数量,
-            \"time_update_stamp\": 1627134435654,
-            \"time_create_stamp\": 1627134431287,
-            \"can_play_in_advance\": true,
-            \"interrupt_transform_temp_file\": false,
-            \"quality_pithy_description\": \"清晰度\",
-            \"quality_superscript\": \"码率\",
-            \"cache_version_code\": 6340400,
-            \"preferred_audio_quality\": 0,
-            \"audio_quality\": 0,
-            \"avid\": AID编号,
-            \"spid\": 0,
-            \"seasion_id\": 0,
-            \"bvid\": \"BVID编号\",
-            \"owner_id\": UP主UID,
-            \"owner_name\": \"UP名称\",
-            \"owner_avatar\": \"UP头像\",
-            \"page_data\": {
-                \"cid\": CID编号,
-                \"page\": 1,
-                \"from\": \"vupload\",
-                \"part\": \"标题\",
-                \"link\": \"\",
-                \"vid\": \"\",
-                \"has_alias\": false,
-                \"tid\": 17,
-                \"width\": 宽度,
-                \"height\": 高度,
-                \"rotate\": 0,
-                \"download_title\": \"视频已缓存完成\",
-                \"download_subtitle\": \"下载子标题\"
-            }
-        }
-    </string>
     <string name="new_version_doc">"2.0.2 supports the export of tracking records and web page parsing functions."</string>
     <string name="user_dl_merge_cmd">"If you do not know the FFmpeg command, please do not modify it. \nBILIBILIAS provides you with simple command parameters. \n{VIDEO_PATH} video download path. \n{AUDIO_PATH} audio storage path. \n{VIDEO_MERGE_PATH} Storage path after merging. "</string>
 
@@ -149,10 +14,7 @@
     <string name="app_fragment_tool_input_tip">Input BV/AV/EP Num</string>
     <string name="app_fragment_download_task_tab_downloading_title">Downloading</string>
     <string name="app_fragment_download_task_tab_finish_title">Download Complete</string>
-    <string name="app_item_fg_user_card_data_fans">Fans</string>
-    <string name="app_item_fg_user_card_data_friend">Followers</string>
-    <string name="app_item_fg_user_card_data_liks">Likes</string>
-    <string name="app_item_fg_user_card_data_view">Plays</string>
+
     <string name="app_fragment_user_works_title">Works</string>
     <string name="app_dialog_dl_video_bar_title">Video Info</string>
     <string name="app_dialog_dl_video_tip">Reproduction of this video without permission is prohibited. </string>
@@ -182,14 +44,14 @@
     <string name="app_fragment_home_logout_text">Log out of this account</string>
     <string name="app_fragment_home_logout">Log out</string>
     <string name="app_fragment_tool_title">Tool</string>
-    <string name="app_fragment_user_title">User</string>
+
     <string name="app_jz_layout_std_download_cover">Download cover</string>
     <string name="app_home_menu_button_navigation_home">Home</string>
     <string name="app_home_menu_button_navigation_tool">Tool</string>
     <string name="app_home_menu_button_navigation_download">Down</string>
     <string name="app_home_menu_button_navigation_user">User</string>
     <string name="app_dialog_tone_quality_sound_quality_selection">Sound quality selection</string>
-    <string name="app_dialog_tone_quality_finish">Finish</string>
+
     <string name="app_dialog_user_data_bottomsheet_finish">Finish</string>
     <string name="app_dialog_user_data_bottomsheet_personal_information">Personal information</string>
     <string name="app_activity_fav_list_title">Favorites</string>
@@ -202,25 +64,7 @@
     <string name="app_dialog_load_bottomsheet_loading">Loading</string>
     <string name="app_dialog_dl_video_idm_dl">IDM</string>
     <string name="app_dialog_dl_video_adm_dl">ADM</string>
-    <string name="app_dialog_login_bottomsheet_title">Select login method</string>
-    <string name="app_dialog_login_bottomsheet_option_1">Bilibili code scanning</string>
-    <string name="app_dialog_login_bottomsheet_option_2">BILIBILIAS Cloud</string>
-    <string name="app_dialog_login_bottomsheet_text">After logging in, you can:</string>
-    <string name="app_dialog_login_bottomsheet_list_text_1">· For a good experience, this version must complete the login</string>
-    <string name="app_dialog_login_bottomsheet_list_text_2">· The cloud account is encrypted \nand saved, and switching devices \ndoes not require repeated login.</string>
-    <string name="app_dialog_login_bottomsheet_list_text_3">· Download videos with higher definition and higher bit rate</string>
-    <string name="app_dialog_login_bottomsheet_list_text_4">· Enjoy the video and picture quality of large member rights (if you have one)</string>
-    <string name="app_dialog_login_bottomsheet_list_text_5">· Download the opera and import it into Bilibili \nto realize offline playback with bullet screen.</string>
-    <string name="app_dialog_login_bottomsheet_text2">"Use means you agree: "</string>
-    <string name="app_dialog_login_bottomsheet_list_text2_1">· Bilibili account and community related agreements</string>
-    <string name="app_dialog_login_bottomsheet_list_text2_2">· 𝘉𝘐𝘓𝘐𝘉𝘐𝘓𝘐𝘈𝘚 𝘜𝘴𝘦𝘳 𝘈𝘨𝘳𝘦𝘦𝘮𝘦𝘯𝘵 and 𝘉𝘐𝘓𝘐𝘉𝘐𝘓𝘐𝘈𝘚 𝘗𝘳𝘪𝘷𝘢𝘤𝘺 𝘈𝘨𝘳𝘦𝘦𝘮𝘦𝘯𝘵</string>
-    <string name="app_dialog_login_bottomsheet_list_text2_3">· This app is not licensed by Bilibili, and Bilibili is not responsible for it.</string>
-    <string name="app_dialog_login_bottomsheet_list_text2_4">·  APP function is only for learning and reference</string>
-    <string name="app_dialog_login_bottomsheet_list_text2_5">· BILIBILIAS is not responsible for any consequences caused by use</string>
-    <string name="app_dialog_login_qr_bottomsheet_title">Scan QR code login</string>
-    <string name="app_dialog_login_qr_bottomsheet_finish">Completed login</string>
-    <string name="app_dialog_login_qr_bottomsheet_download">Download QR code</string>
-    <string name="app_dialog_login_qr_bottomsheet_go">Go to QR code</string>
+
     <string name="app_fragment_download_title">Download</string>
     <string name="app_permission_application_text">In order to save the download and content, BILIBILIAS needs to apply for storage permission. You can be assured of authorization. If your device brand is Xiaomi, you may see the description of access to other files such as photo albums. Don\'t worry. This software is released open source and only uses permissions to store files. Unless you change the download path to the album, you will not read the contents of the album.</string>
     <string name="app_permission_application_title">Permission application</string>
@@ -229,34 +73,8 @@
     <string name="app_permission_application_msg">To use BILIBILIAS, you need to agree to this permission, because you need to apply for storage permission from the system for downloading video.</string>
     <string name="app_guide_home">The contents of the new version can be viewed here</string>
     <string name="app_guide_tool">The parsing function has moved here</string>
-    <string name="app_root_preferences_title_language">Language</string>
-    <string name="app_root_preferences_title_download_conf">Download Configuration</string>
-    <string name="user_download_save_sd_path_switch_title">Use memory card as download path</string>
-    <string name="user_download_save_sd_path_switch_off">Store with memory card</string>
-    <string name="user_download_save_sd_path_switch_on">The path here cannot be modified. The storage location is:\nMemory card/Android/data/com.imcys.bilibilias/files/download\nNote: Unloading the application will empty the stored data.</string>
-    <string name="rename_user_download_save_path_title">Restore download path</string>
-    <string name="rename_user_download_file_name_editText_title">Restore naming rules</string>
-    <string name="app_root_preferences_title_behavior">Behavior after cache completion</string>
-    <string name="user_dl_finish_automatic_merge_switch_off">Default download is audio separated</string>
-    <string name="user_dl_finish_automatic_merge_switch_on">At present, audio merging is only a very simple behavior, so it may have a bug, and may cause problems. Please be familiar with it.</string>
-    <string name="user_dl_finish_automatic_merge_switch_title">Automatically merge after cache completion</string>
-    <string name="user_dl_finish_automatic_import_switch_off">This requires you to authorize the folder separately. It needs to be noted that it is only effective for downloading the opera Dash.</string>
-    <string name="user_dl_finish_automatic_import_switch_on">Now the cache list of station B will be automatically imported after the download is completed</string>
-    <string name="user_dl_finish_automatic_import_switch_title">Automatically import station B after cache completion</string>
-    <string name="app_root_preferences_title_merge_conf">Merge Configuration</string>
-    <string name="user_dl_finish_delete_merge_switch_title">Delete the original audio and video files after merging</string>
-    <string name="user_dl_merge_cmd_editText_title">FFmpeg command when merging</string>
-    <string name="app_root_preferences_title_import_conf">Import Configuration</string>
-    <string name="user_language_title">Set the language displayed by BILIBILIAS</string>
-    <string name="app_root_preferences_title_privacy_policy">Privacy Policy</string>
-    <string name="microsoft_app_center_type_summary">This will anonymously pass the statistical data used by the APP, such as: how to cache, FLV or DASH, to help us optimize the APP.</string>
-    <string name="microsoft_app_center_type_title">Allow Microsoft AppCenter</string>
-    <string name="baidu_statistics_type_summary">Upload your usage duration, page dwell time, and region information anonymously, which will help us optimize the APP.</string>
-    <string name="baidu_statistics_type_title">Allow to use Baidu Statistics</string>
-    <string name="app_item_fg_user_tool_favorites">Favorites</string>
-    <string name="app_item_fg_user_tool_follow_series">Follow\nSeries</string>
-    <string name="app_item_fg_user_tool_play_history">Play\nHistory</string>
-    <string name="app_item_fg_user_tool_coin_history">Coin\nHistory</string>
+
+
     <string name="user_dl_delete_import_file_switch_title">Delete the original audio and video file after import</string>
     <string name="app_tool_toolbar_menu_title">Done</string>
     <string name="app_tool_toolbar_menu_tooltipText">Done</string>
@@ -273,12 +91,7 @@
     <string name="app_HomeFragment_loadNotice_title">Latest notification</string>
     <string name="app_HomeFragment_loadNotice_negativeButtonText">This announcement doesn\'t work</string>
     <string name="app_HomeFragment_loadNotice_positiveButtonText">Oh, I see</string>
-    <string name="app_root_preferences_title_theme">Theme</string>
-    <string name="app_root_preferences_long_title_theme">Change Theme</string>
-    <string name="app_root_preferences_long_title_theme_tip">Note: This is an experimental function and will be continuously adjusted.</string>
     <string name="app_merge_video_top_ly_title">Merge Videos</string>
     <string name="download_barrage">Download Barrage</string>
     <string name="Copied">Copied</string>
-    <string name="app_root_preferences_long_title_language">Set the display language</string>
-    <string name="app_root_preferences_long_title_language_tip">Set the language in which the software is displayed (test function)</string>
 </resources>

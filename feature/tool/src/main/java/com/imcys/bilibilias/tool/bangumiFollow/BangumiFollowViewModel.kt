@@ -8,7 +8,7 @@ import com.imcys.bilibilias.tool.bangumiFollow.ExcelUtils.addCell
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.model.BangumiFollowList
-import com.imcys.network.BangumiRepository
+import com.imcys.network.repository.BangumiRepository
 import com.imcys.tool.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

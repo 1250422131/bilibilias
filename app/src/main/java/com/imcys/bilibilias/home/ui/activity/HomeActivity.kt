@@ -18,11 +18,7 @@ import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.anno.RouterAnno
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeActivity,
-)
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     private var exitTime: Long = 0
 

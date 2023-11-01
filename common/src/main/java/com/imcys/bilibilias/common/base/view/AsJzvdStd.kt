@@ -13,7 +13,6 @@ import android.widget.*
 import androidx.core.view.isVisible
 import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
-import coil.load
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -54,7 +53,6 @@ open class AsJzvdStd : JzvdStd {
 
     fun updatePoster(url: String) {
         posterImageUrl = url
-        posterImageView.load(url)
     }
 
     @SuppressLint("Recycle")
