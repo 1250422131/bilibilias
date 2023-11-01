@@ -1,3 +1,5 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 buildscript {
     repositories {
         maven("https://maven.aliyun.com/repository/central")
@@ -16,6 +18,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.protobuf) apply false
+    // Run ./gradlew dependencyUpdates to check for dependency updates
+    id("com.github.ben-manes.versions") version "0.49.0"
 }
 
 detekt {
@@ -84,4 +88,11 @@ tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configure
 }
 tasks.register("clean", Delete::class) {
     delete(rootProject.layout.buildDirectory)
+}
+tasks.withType<DependencyUpdatesTask> {
+    rejectVersionIf {
+        listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any { qualifier ->
+            candidate.version.contains(qualifier, ignoreCase = true)
+        }
+    }
 }
