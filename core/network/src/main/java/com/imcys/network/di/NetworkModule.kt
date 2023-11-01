@@ -1,6 +1,5 @@
 package com.imcys.network.di
 
-import android.content.Context
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
@@ -11,7 +10,6 @@ import com.imcys.network.constants.ROAM_API
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
@@ -68,10 +66,9 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(okHttpClient: OkHttpClient,
-                                @ApplicationContext context: Context): HttpClientEngine = OkHttp.create {
+    fun provideHttpClientEngine(okHttpClient: OkHttpClient): HttpClientEngine = OkHttp.create {
         preconfigured = okHttpClient
-        addInterceptor(MonitorInterceptor(context))
+        addInterceptor(MonitorInterceptor())
     }
 
     @Provides

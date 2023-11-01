@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.tool
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,18 +38,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+
+@Composable
+internal fun ToolRoute(
+    onNavigateToPlayer: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToBangumiFollow: () -> Unit,
+    viewModel: ToolViewModel = hiltViewModel()
+) {
+    val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    ToolScreen(
+        onNavigateToPlayer = onNavigateToPlayer,
+        onNavigateToSettings = onNavigateToSettings,
+        onNavigateToBangumiFollow = onNavigateToBangumiFollow,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        clearSearches = viewModel::clearSearches,
+        searchQuery = searchQuery,
+        searchResultUiState = searchResultUiState
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolScreen(
-    state: ToolState,
-    clearInput: () -> Unit,
+internal fun ToolScreen(
     onNavigateToPlayer: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    updateInput: (String) -> Unit,
-    inputText: String,
-    onNavigateToBangumiFollow: () -> Unit
+    onNavigateToBangumiFollow: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
+    clearSearches: () -> Unit,
+    searchQuery: String,
+    searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
 ) {
     Scaffold(
         Modifier.fillMaxSize(),
@@ -83,44 +105,36 @@ fun ToolScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            ToolScreenSearchTextField(
-                inputText,
-                onValueChange = updateInput,
-                clearText = clearInput,
-                isError = state.inputError
+            SearchTextField(
+                query = searchQuery,
+                onValueChange = onSearchQueryChanged,
+                clearText = clearSearches,
             )
-            AnimatedVisibility(visible = state.isShowVideoCard) {
-                if (state.videoType is VideoType.EP) {
-                    // VideoCard(
-                    //     pic = state.bangumi.cover,
-                    //     title = state.bangumi.title,
-                    //     desc = state.bangumi.evaluate,
-                    //     view = state.bangumi.stat.views.digitalConversion(),
-                    //     danmaku = state.bangumi.stat.danmakus.digitalConversion(),
-                    //     onNavigateToPlayer = onNavigateToPlayer,
-                    //     modifier = Modifier.animateContentSize()
-                    // )
-                } else {
+            when (searchResultUiState) {
+                SearchResultUiState.EmptyQuery -> Unit
+                SearchResultUiState.LoadFailed, SearchResultUiState.Loading -> Unit
+                is SearchResultUiState.Success -> {
                     VideoCard(
-                        pic = state.pic,
-                        title = state.title,
-                        desc = state.desc,
-                        view = state.view,
-                        danmaku = state.danmaku,
+                        pic = searchResultUiState.pic,
+                        title = searchResultUiState.title,
+                        desc = searchResultUiState.desc,
+                        view = searchResultUiState.view,
+                        danmaku = searchResultUiState.danmaku,
                         onNavigateToPlayer = onNavigateToPlayer,
                         modifier = Modifier.animateContentSize()
                     )
                 }
             }
-            LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
-                item("追番信息导出") {
-                    ToolItem(
-                        imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
-                        title = "追番信息导出",
-                        containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
-                        onClick = onNavigateToBangumiFollow
-                    )
-                }
+        }
+
+        LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
+            item("追番信息导出") {
+                ToolItem(
+                    imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
+                    title = "追番信息导出",
+                    containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
+                    onClick = onNavigateToBangumiFollow
+                )
             }
         }
     }
@@ -132,7 +146,7 @@ fun ToolScreen(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VideoCard(
+private fun VideoCard(
     pic: String,
     title: String,
     desc: String,
@@ -243,11 +257,10 @@ private fun ToolItem(
 }
 
 @Composable
-private fun ToolScreenSearchTextField(
+private fun SearchTextField(
     query: String,
     onValueChange: (String) -> Unit,
     clearText: () -> Unit,
-    isError: Boolean
 ) {
     OutlinedTextField(
         value = query,
@@ -270,12 +283,6 @@ private fun ToolScreenSearchTextField(
                 )
             }
         },
-        supportingText = {
-            if (isError) {
-                // Text(stringResource(R.string.app_ToolFragment_asVideoId2))
-            }
-        },
-        isError = isError,
         // placeholder = { Text(text = stringResource(R.string.app_fragment_tool_input_tip)) },
         singleLine = true,
     )
@@ -284,7 +291,7 @@ private fun ToolScreenSearchTextField(
 @Preview(showBackground = true, name = "搜索框")
 @Composable
 fun PreviewSearchBar() {
-    ToolScreenSearchTextField("bv1234567899", {}, {}, false)
+    SearchTextField("bv1234567899", {}, {})
 }
 
 @Preview(showBackground = true, name = "搜索结果")

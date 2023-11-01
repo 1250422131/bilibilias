@@ -33,7 +33,7 @@ object AsVideoUtils {
         return null
     }
 
-    fun getAvid(text: String): String? {
+    fun getAid(text: String): String? {
         if (isAV(text)) {
             return RegexUtils.avRegex.find(text)?.value
         }

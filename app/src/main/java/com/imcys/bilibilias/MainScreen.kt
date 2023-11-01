@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.tool.bangumiFollow.bangumiFollowRoute
 import com.imcys.bilibilias.tool.bangumiFollow.navigateToBangumiFollow
-import com.imcys.bilibilias.tool.navigation.toolRoute
+import com.imcys.bilibilias.tool.navigation.toolScreen
 import com.imcys.bilibilias.ui.download.danmaku.danmakuRoute
 import com.imcys.bilibilias.ui.download.danmaku.navigateToDanmaku
 import com.imcys.bilibilias.ui.download.downloadOptionsRoute
@@ -41,10 +41,10 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         route = ROUTE_MAIN_SCREEN,
     ) {
         homeRoute()
-        toolRoute(
-            onNavigateToPlayer = navController::navigateToPlayer,
-            onNavigateToSettings = navController::navigateToSettings,
-            onNavigateToBangumiFollow = navController::navigateToBangumiFollow
+        toolScreen(
+            navigateToPlayer = navController::navigateToPlayer,
+            navigateToSetting = navController::navigateToSettings,
+            navigateToExportBangumiFollowList = navController::navigateToBangumiFollow
         )
         bangumiFollowRoute()
         settingsRoute()

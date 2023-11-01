@@ -6,6 +6,7 @@ import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
+import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
 import com.imcys.model.DashVideoPlayBean
 import com.imcys.model.VideoCollection
@@ -25,6 +26,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
 import io.ktor.utils.io.core.readBytes
 import kotlinx.coroutines.CoroutineDispatcher
@@ -68,13 +70,12 @@ class VideoRepository @Inject constructor(
 
     private val _bangumi = MutableSharedFlow<Result<String>>(1)
     val bangumi = _bangumi.asSharedFlow()
-    suspend fun getEp(id: String) {
-        val text = httpClient.safeGetText(BilibiliApi2.bangumiVideoDataPath) {
+    suspend fun getEp(id: String): Bangumi = withContext(ioDispatcher) {
+        val text = httpClient.get(BilibiliApi2.bangumiVideoDataPath) {
             parameter("ep_id", id)
-        }
+        }.bodyAsText()
         Timber.tag(TAG).d(text.ofMap()?.print())
-        BangumiPlayBean
-        _bangumi.emit(text)
+        json.decodeFromString(text)
     }
 
     private val _dashVideo = MutableSharedFlow<Result<DashVideoPlayBean>>(1)
@@ -218,20 +219,18 @@ class VideoRepository @Inject constructor(
      *
      * bvid=BV1Bt411z799
      */
-    suspend fun getVideoDetailsByBvid(bvid: String): Result<VideoDetails> {
-        val videoDetailsResult = httpClient.safeGet<VideoDetails>(BilibiliApi2.getVideoDataPath) {
+    suspend fun getVideoDetailsByBvid(bvid: String): VideoDetails = withContext(ioDispatcher) {
+        val videoDetailsResult = httpClient.get(BilibiliApi2.getVideoDataPath) {
             parameterBV(bvid)
-        }
-        _videoDetails2.emit(videoDetailsResult)
-        return videoDetailsResult
+        }.body<VideoDetails>()
+        videoDetailsResult
     }
 
-    suspend fun getVideoDetailsByAid(avid: String): Result<VideoDetails> {
-        val videoDetailsResult = httpClient.safeGet<VideoDetails>(BilibiliApi2.getVideoDataPath) {
+    suspend fun getVideoDetailsByAid(avid: String): VideoDetails = withContext(ioDispatcher) {
+        val videoDetailsResult = httpClient.get(BilibiliApi2.getVideoDataPath) {
             parameter("aid", avid)
-        }
-        _videoDetails2.emit(videoDetailsResult)
-        return videoDetailsResult
+        }.body<VideoDetails>()
+        videoDetailsResult
     }
 
     /**
@@ -268,15 +267,14 @@ class VideoRepository @Inject constructor(
         return collection.isFavoured
     }
 
-    suspend fun shortLink(url: String): String? {
-        return when (val httpResponse: Result<HttpResponse> = httpClient.safeGet(url)) {
-            is Result.Error -> null
-            Result.Loading -> null
-            is Result.Success -> httpResponse.data.request.url.toString()
-        }
+    suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
+        httpClient.get(url)
+            .body<HttpResponse>()
+            .request
+            .url
+            .toString()
     }
 }
-
 
 
 private const val TAG = "VideoRepository"
