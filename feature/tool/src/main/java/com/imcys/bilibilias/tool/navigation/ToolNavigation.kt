@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.imcys.bilibilias.tool.ToolRoute
 import com.imcys.bilibilias.tool.ToolScreen
 import com.imcys.bilibilias.tool.ToolViewModel
 
@@ -19,25 +20,11 @@ fun NavController.navigateToTool() {
     }
 }
 
-fun NavGraphBuilder.toolRoute(
-    onNavigateToPlayer: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    onNavigateToBangumiFollow: () -> Unit,
+fun NavGraphBuilder.toolScreen(
+    navigateToPlayer: () -> Unit,
+    navigateToSetting: () -> Unit,
+    navigateToExportBangumiFollowList: () -> Unit,
 ) = composable(ROUTE_TOOL) {
-    ToolRoute(onNavigateToPlayer, onNavigateToSettings, onNavigateToBangumiFollow)
+    ToolRoute(navigateToPlayer, navigateToSetting, navigateToExportBangumiFollowList)
 }
 
-@Composable
-fun ToolRoute(onNavigateToPlayer: () -> Unit, onNavigateToSettings: () -> Unit, onNavigateToBangumiFollow: () -> Unit) {
-    val viewModel: ToolViewModel = hiltViewModel()
-    val state by viewModel.toolState.collectAsStateWithLifecycle()
-    ToolScreen(
-        state,
-        viewModel::clearInput,
-        onNavigateToPlayer,
-        onNavigateToSettings,
-        viewModel::updateInput,
-        viewModel.inputText,
-        onNavigateToBangumiFollow
-    )
-}

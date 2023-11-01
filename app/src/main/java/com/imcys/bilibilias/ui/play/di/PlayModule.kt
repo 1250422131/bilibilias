@@ -28,7 +28,6 @@ class PlayModule {
         .enableQuic(true)
         .enableBrotli(true)
         .enableHttp2(true)
-        .enableNetworkQualityEstimator(true)
         .setStoragePath(context.cacheDir.path)
         .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK_NO_HTTP, 1024 * 1024 * 1024L)
         .setUserAgent(BROWSER_USER_AGENT)

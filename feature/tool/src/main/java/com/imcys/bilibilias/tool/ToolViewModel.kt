@@ -1,171 +1,134 @@
 package com.imcys.bilibilias.tool
 
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.common.utils.AsVideoUtils
 import com.imcys.common.utils.Result
+import com.imcys.common.utils.asResult
 import com.imcys.common.utils.digitalConversion
 import com.imcys.model.Bangumi
 import com.imcys.model.VideoDetails
 import com.imcys.network.repository.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import timber.log.Timber
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class ToolViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val json: Json,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _toolState = MutableStateFlow(ToolState())
-    val toolState = _toolState.asStateFlow()
-    var inputText by mutableStateOf("")
-        private set
+    val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
+    val searchResultUiState: StateFlow<SearchResultUiState> = searchQuery
+        .flatMapLatest {
+            if (it.length < SEARCH_QUERY_MIN_LENGTH) {
+                flowOf(SearchResultUiState.EmptyQuery)
+            } else {
+                when (val type = searchType(it)) {
+                    is SearchType.AV -> handleAV(type.id).mapToUserSearchResult()
+                    is SearchType.BV -> handleBV(type.id).mapToUserSearchResult()
 
-    init {
-        videoRepository.videoDetails2
-            .onEach { res ->
-                when (res) {
-                    is Result.Error -> TODO()
-                    Result.Loading -> {}
-                    is Result.Success -> _toolState.update {
-                        val data = res.data
-                        it.copy(
-                            isShowVideoCard = true,
-                            pic = data.pic,
-                            title = data.title,
-                            desc = data.descV2?.first()?.rawText ?: data.desc,
-                            view = data.stat.view.digitalConversion(),
-                            danmaku = data.stat.danmaku.digitalConversion(),
-                        )
+                    is SearchType.EP -> handleEP(type.id)
+                    is SearchType.ShortLink -> {
+                        val fullUrl = handleShortLink(type.url)
+                        val bvid = AsVideoUtils.getBvid(fullUrl)
+                        if (bvid == null) flowOf(SearchResultUiState.LoadFailed)
+                        else handleBV(bvid).mapToUserSearchResult()
                     }
-                }
-            }.launchIn(viewModelScope)
 
-        videoRepository.bangumi.onEach { res ->
-            when (res) {
-                is Result.Error -> TODO()
-                Result.Loading -> TODO()
-                is Result.Success -> {
-                    val bangumi = json.decodeFromString<Bangumi>(res.data)
-                    _toolState.update {
-                        it.copy(bangumi = bangumi.result, isShowVideoCard = true)
-                    }
+                    SearchType.None -> flowOf(SearchResultUiState.LoadFailed)
                 }
             }
-        }.launchIn(viewModelScope)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = SearchResultUiState.Loading,
+        )
+
+    fun onSearchQueryChanged(query: String) {
+        savedStateHandle[SEARCH_QUERY] = query
     }
 
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val result = snapshotFlow { inputText }
-        .filterNot { it.isBlank() }
-        .debounce(300)
-        .distinctUntilChanged()
-        .mapLatest { parsingTextTypes(it) }
-        .onEach { type ->
-            Timber.tag(TAG).i("解析结果=$type")
-            when (type) {
-                is VideoType.AV -> handelAV(type.id)
-                is VideoType.BV -> handelBV(type.id)
-                is VideoType.EP -> handelEP(type.id)
-                is VideoType.ShortLink -> handelHttp(type.url)
-                VideoType.None -> _toolState.update {
-                    it.copy(isShowVideoCard = false, inputError = true)
+    fun clearSearches() {
+        savedStateHandle[SEARCH_QUERY] = ""
+    }
+
+    @Suppress("ReturnCount")
+    private fun searchType(text: String): SearchType {
+        val bv = AsVideoUtils.getBvid(text)
+        if (bv != null) {
+            return SearchType.BV(bv)
+        }
+        val ep = AsVideoUtils.getEpid(text)
+        if (ep != null) {
+            return SearchType.EP(ep)
+        }
+        val aid = AsVideoUtils.getAid(text)
+        if (aid != null) {
+            return SearchType.AV(aid)
+        }
+        val link = AsVideoUtils.getShortLink(text)
+        if (link != null) {
+            return SearchType.ShortLink(link)
+        }
+        return SearchType.None
+    }
+
+    private suspend fun handleEP(id: String) =
+        flowOf(videoRepository.getEp(id)).mapToUserSearchResult()
+
+    private suspend fun handleShortLink(url: String) = videoRepository.shortLink(url)
+
+    private suspend fun handleAV(id: String): Flow<VideoDetails> =
+        flowOf(videoRepository.getVideoDetailsByAid(id))
+
+    private suspend fun handleBV(id: String): Flow<VideoDetails> =
+        flowOf(videoRepository.getVideoDetailsByBvid(id))
+
+    fun Flow<Bangumi>.mapToUserSearchResult(): Flow<SearchResultUiState> =
+        this.asResult()
+            .map { result ->
+                when (result) {
+                    is Result.Error -> SearchResultUiState.LoadFailed
+                    Result.Loading -> SearchResultUiState.Loading
+                    is Result.Success -> SearchResultUiState.Success(
+                        pic = result.data.result.cover,
+                        title = result.data.result.title,
+                        desc = result.data.result.evaluate,
+                        view = result.data.result.stat.views.digitalConversion(),
+                        danmaku = result.data.result.stat.danmakus.digitalConversion()
+                    )
                 }
             }
-        }.launchIn(viewModelScope)
 
-    fun updateInput(newText: String) {
-        inputText = newText
-    }
-
-    private fun parsingTextTypes(text: String): VideoType {
-        return if (AsVideoUtils.isAV(text)) {
-            val id = AsVideoUtils.getAvid(text)
-            if (id != null) VideoType.AV(id) else VideoType.None
-        } else if (AsVideoUtils.isBV(text)) {
-            val id = AsVideoUtils.getBvid(text)
-            if (id != null) VideoType.BV(id) else VideoType.None
-        } else if (AsVideoUtils.isEp(text)) {
-            val id = AsVideoUtils.getEpid(text)
-            if (id != null) VideoType.EP(id) else VideoType.None
-        } else if (AsVideoUtils.isShortLink(text)) {
-            val id = AsVideoUtils.getShortLink(text)
-            if (id != null) VideoType.ShortLink(id) else VideoType.None
-        } else {
-            VideoType.None
-        }
-    }
-
-    fun parsesBvOrAvOrEp(text: String) {
-    }
-
-    private fun handelEP(id: String) {
-        viewModelScope.launch {
-            videoRepository.getEp(id)
-        }
-    }
-
-    private fun handelHttp(url: String) {
-        viewModelScope.launch {
-            val shortLink = videoRepository.shortLink(url)
-            if (shortLink != null) {
-                parsingTextTypes(shortLink)
+    fun Flow<VideoDetails>.mapToUserSearchResult(): Flow<SearchResultUiState> =
+        this.asResult().map { result ->
+            when (result) {
+                is Result.Error -> SearchResultUiState.LoadFailed
+                Result.Loading -> SearchResultUiState.Loading
+                is Result.Success -> SearchResultUiState.Success(
+                    pic = result.data.pic,
+                    title = result.data.title,
+                    desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
+                    view = result.data.stat.view.digitalConversion(),
+                    danmaku = result.data.stat.danmaku.digitalConversion()
+                )
             }
         }
-    }
-
-    private suspend fun handelAV(id: String): Result<VideoDetails> =
-        videoRepository.getVideoDetailsByAid(id)
-
-    private suspend fun handelBV(id: String): Result<VideoDetails> =
-        videoRepository.getVideoDetailsByBvid(id)
-
-    fun clearInput() {
-        inputText = ""
-        _toolState.update {
-            it.copy(inputError = false, isShowVideoCard = false)
-        }
-    }
 }
-
-sealed class VideoType {
-    data object None : VideoType()
-    data class BV(val id: String) : VideoType()
-    data class AV(val id: String) : VideoType()
-    data class EP(val id: String) : VideoType()
-    data class ShortLink(val url: String) : VideoType()
-}
-
-data class ToolState(
-    val inputError: Boolean = false,
-    val isShowVideoCard: Boolean = false,
-    val bangumi: Bangumi.Result = Bangumi.Result(),
-    val videoType: VideoType = VideoType.None,
-    val pic: String = "",
-    val title: String = "",
-    val desc: String = "",
-    val view: String = "",
-    val danmaku: String = "",
-)
 
 private const val TAG = "ToolViewModel"
+private const val SEARCH_QUERY = "searchQuery"
+
+/** Minimum length where search query is considered as [SearchResultUiState.EmptyQuery] */
+private const val SEARCH_QUERY_MIN_LENGTH = 2
