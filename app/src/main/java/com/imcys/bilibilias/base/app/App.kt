@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
+import com.tencent.mmkv.MMKV
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import timber.log.Timber
@@ -21,6 +22,7 @@ class App : BaseApplication() {
         initTimber()
 
         initPlayManager()
+        MMKV.initialize(this)
     }
 
     private fun initPlayManager() {

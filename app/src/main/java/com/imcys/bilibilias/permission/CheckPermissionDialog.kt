@@ -37,8 +37,8 @@ import com.imcys.common.utils.getActivity
 import com.imcys.common.utils.gotoApplicationSettings
 import com.imcys.common.utils.hasPickMediaPermission
 import com.imcys.common.utils.shouldShowRationale
-import com.imcys.bilibilias.common.base.components.BottomSheetDialog
-import com.imcys.network.configration.CookieRepository
+import com.imcys.datastore.mmkv.CookieRepository
+import com.imcys.ui.BottomSheetDialog
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -67,7 +67,7 @@ fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: 
     }
     LaunchedEffect(permissionState.status.isGranted) {
         if (context.hasPickMediaPermission()) {
-            if (com.imcys.network.configration.CookieRepository.isExpired) {
+            if (CookieRepository.isExpired) {
                 onNavigateToAuthMethod()
             } else {
                 onNavigateToHome()

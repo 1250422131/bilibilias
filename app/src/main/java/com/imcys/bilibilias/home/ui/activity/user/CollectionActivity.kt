@@ -5,17 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.Collections
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.view.base.BaseActivity
@@ -67,53 +62,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
     }
 
     private fun loadCollectionList() {
-        launchIO {
-            val userCreateCollectionBean = KtHttpUtils.addHeader(
-                COOKIE,
-                BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-            )
-                .asyncGet<UserCreateCollectionBean>("")
-
-            launchUI {
-                userCreateCollectionBean.list.forEach { it1 ->
-                    binding.apply {
-                        val tab = collectionTabLayout.newTab()
-                        tab.text = it1.title
-                        collectionTabLayout.addTab(tab)
-                    }
-                }
-
-                // 让监听器可以知道有多少内容加载
-                createCollectionList = userCreateCollectionBean.list[0]
-                // 加载第一个收藏夹
-                loadCollectionData(userCreateCollectionBean.list[0])
-
-                // 设置监听器
-                binding.apply {
-                    // 这里监听选择的是哪个收藏夹
-                    collectionTabLayout.addOnTabSelectedListener(object :
-                        TabLayout.OnTabSelectedListener {
-                        override fun onTabSelected(tab: TabLayout.Tab?) {
-                            userCreateCollectionBean.list.forEach { it1 ->
-                                if (it1.title == tab?.text) {
-                                    // 更新数据
-                                    pn = 0
-                                    collectionDataMutableList.clear()
-                                    createCollectionList = it1
-                                    loadCollectionData(it1)
-                                }
-                            }
-                        }
-
-                        override fun onTabUnselected(tab: TabLayout.Tab?) {
-                        }
-
-                        override fun onTabReselected(tab: TabLayout.Tab?) {
-                        }
-                    })
-                }
-            }
-        }
     }
 
     /**

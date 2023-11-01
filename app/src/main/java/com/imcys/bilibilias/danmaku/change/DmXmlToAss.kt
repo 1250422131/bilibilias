@@ -2,7 +2,6 @@ package com.imcys.bilibilias.danmaku.change
 
 import android.content.Context
 import android.util.Log
-import com.imcys.bilibilias.R
 import com.imcys.bilibilias.danmaku.enmu.DanmakuType
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -46,7 +45,7 @@ object DmXmlToAss {
         // 组装头部信息
         val headersInfo = buildHeadersInfo(title, playResX, playResY, context)
 
-        val fontStyleInfo = context.getString(R.string.ass_font_info_model)
+        val fontStyleInfo = ""
         val danmakuInfo = buildDanmakuInfo(xmlString, context)
 
         // 封装身体
@@ -59,7 +58,7 @@ object DmXmlToAss {
     private fun buildDanmakuInfo(xmlString: String, context: Context): String {
         // 使用原生的XML解析
         Log.e("测试", xmlString)
-        var danmakus = context.getString(R.string.ass_events_info_model) + "\n"
+        var danmakus = ""
         // 拿到xml文档对象
         val dbf = DocumentBuilderFactory.newInstance()
         val db = dbf.newDocumentBuilder()
@@ -157,7 +156,6 @@ object DmXmlToAss {
         playResY: String,
         context: Context,
     ) = context.run {
-        getString(R.string.ass_script_info_model) + "\n" +
             "Title: $title\n" +
             "ScriptType: v4.00+\n" +
             "PlayResX:$playResX \n" +

@@ -4,10 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.tool.navigation.ROUTE_TOOL
 import com.imcys.bilibilias.ui.download.ROUTE_DOWNLOAD
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
-import com.imcys.bilibilias.ui.tool.ROUTE_TOOL
-import com.imcys.bilibilias.ui.user.ROUTE_USER
+import com.imcys.user.navigation.ROUTE_USER
 @Immutable
 sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val icon: Int) {
     data object Home : Screen(ROUTE_HOME, R.string.app_home_menu_button_navigation_home, R.drawable.ic_home_home)

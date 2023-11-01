@@ -40,18 +40,17 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.imcys.authentication.login.navigation.loginAuthRoute
+import com.imcys.authentication.login.navigation.navigateToLoginAuth
+import com.imcys.authentication.method.navigation.authMethodRoute
+import com.imcys.authentication.method.navigation.navigateToAuthMethod
 import com.imcys.bilibilias.base.router.Screen
-import com.imcys.bilibilias.ui.authentication.login.loginAuthRoute
-import com.imcys.bilibilias.ui.authentication.login.navigateToLoginAuth
-import com.imcys.bilibilias.ui.authentication.method.authMethodRoute
-import com.imcys.bilibilias.ui.authentication.method.navigateToAuthMethod
 import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.navigateToHome
 import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
-import com.imcys.bilibilias.ui.theme.BILIBILIASTheme
+import com.imcys.designsystem.theme.BILIBILIASTheme
 import dagger.hilt.android.AndroidEntryPoint
-import me.rosuh.filepicker.config.FilePickerManager
 import timber.log.Timber
 
 @AndroidEntryPoint

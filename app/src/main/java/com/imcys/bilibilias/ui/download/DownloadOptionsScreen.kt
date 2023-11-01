@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
@@ -44,11 +45,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.components.LeadingTrailingIconRow
-import com.imcys.bilibilias.common.base.components.SingleLineText
-import com.imcys.model.VideoDetails
+import com.imcys.designsystem.component.LeadingTrailingIconRow
+import com.imcys.designsystem.component.SingleLineText
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.play.PlayerState
+import com.imcys.network.download.DownloadListHolders
+import com.imcys.network.download.DownloadToolType
 
 @Composable
 fun DownloadOptionsScreen(

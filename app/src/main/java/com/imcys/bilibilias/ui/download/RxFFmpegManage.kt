@@ -4,8 +4,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegSession
 import com.arthenica.ffmpegkit.ReturnCode
 import com.arthenica.ffmpegkit.SessionState
-import com.imcys.common.utils.updatePhotoMedias
-import com.imcys.bilibilias.common.base.utils.file.FileUtils
+import com.imcys.common.utils.FileUtils
 import com.tonyodev.fetch2.Download
 import io.microshow.rxffmpeg.RxFFmpegCommandList
 import io.microshow.rxffmpeg.RxFFmpegInvoke

@@ -21,9 +21,8 @@ import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
 import com.imcys.common.utils.getActivity
-import com.imcys.model.Dash
-import com.imcys.bilibilias.common.di.AsDispatchers
-import com.imcys.bilibilias.common.di.Dispatcher
+import com.imcys.common.di.AsDispatchers
+import com.imcys.common.di.Dispatcher
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer

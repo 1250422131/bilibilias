@@ -8,7 +8,7 @@
 
         <variable
             name="UpStatBeam"
-            type="com.imcys.bilibilias.home.ui.model.UpStatBean" />
+            type="com.imcys.model.UpStatBean" />
 
         <variable
             name="UserCardBean"

@@ -4,10 +4,15 @@ import com.google.protobuf.gradle.proto
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
+    alias(libs.plugins.bilibili.android.compose)
     alias(libs.plugins.bilibili.android.hilt)
+    alias(libs.plugins.bilibili.android.room)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
     alias(libs.plugins.protobuf)
+}
+
+ksp {
+    arg("ModuleName", project.name)
 }
 
 android {
@@ -19,20 +24,6 @@ android {
         compose = true
     }
 
-    // packaging {
-    //     resources {
-    //         excludes += "META-INF/DEPENDENCIES"
-    //         excludes += "META-INF/LICENSE"
-    //         excludes += "META-INF/LICENSE.txt"
-    //         excludes += "META-INF/license.txt"
-    //         excludes += "META-INF/NOTICE"
-    //         excludes += "META-INF/NOTICE.txt"
-    //         excludes += "META-INF/notice.txt"
-    //         excludes += "META-INF/ASL2.0"
-    //         excludes += "META-INF/*.kotlin_module"
-    //         excludes += "META-INF/versions/9/previous-compilation-data.bin"
-    //     }
-    // }
     sourceSets {
         getByName("main") {
             proto {
@@ -149,14 +140,6 @@ dependencies {
     api(libs.appcenter.crashes)
 
     /**
-     * room
-     * 本地化数据库
-     */
-    api(libs.room.runtime)
-    api(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    /**
      * 文件选择器
      */
     api(libs.androidFilePicker)
@@ -204,31 +187,29 @@ dependencies {
     implementation(libs.ktor.serialization.gson)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
-    api(libs.gson)
 
     api(libs.constraintlayout)
-    api(libs.androidx.lifecycle.viewmodel.ktx)
-    api(libs.androidx.lifecycle.runtime.ktx)
+    // api(libs.androidx.lifecycle.viewmodel.ktx)
+    // api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
 
-    implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.accompanist.systemuicontroller)
 
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.runtime.ktx)
-    debugImplementation(libs.ui.tooling)
-    implementation(libs.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
 
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
 
-    implementation(libs.coil)
+    // implementation(libs.coil)
 
     implementation(libs.okio)
     api(libs.okhttp)

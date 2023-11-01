@@ -20,11 +20,11 @@ class RoomConventionPlugin : Plugin<Project> {
     }
 
     private fun Project.applyDependencies() {
-        // dependencies {
-        //     add("implementation", libs.findLibrary("room.runtime").get())
-        //     add("implementation", libs.findLibrary("room.ktx").get())
-        //     add("ksp", libs.findLibrary("room.compiler").get())
-        // }
+        dependencies {
+            add("implementation", libs.findLibrary("room.runtime").get())
+            add("implementation", libs.findLibrary("room.ktx").get())
+            add("ksp", libs.findLibrary("room.compiler").get())
+        }
     }
 
 }

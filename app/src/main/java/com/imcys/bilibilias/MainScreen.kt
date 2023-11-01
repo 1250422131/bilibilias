@@ -26,9 +26,9 @@ import com.imcys.bilibilias.ui.home.ROUTE_HOME
 import com.imcys.bilibilias.ui.home.homeRoute
 import com.imcys.bilibilias.ui.play.navigateToPlayer
 import com.imcys.bilibilias.ui.play.playerRoute
-import com.imcys.bilibilias.ui.settings.navigateToSettings
-import com.imcys.bilibilias.ui.settings.settingsRoute
-import com.imcys.bilibilias.ui.user.userRoute
+import com.imcys.setting.navigation.navigateToSettings
+import com.imcys.setting.navigation.settingsRoute
+import com.imcys.user.navigation.userRoute
 
 const val ROUTE_MAIN_SCREEN = "main_screen"
 

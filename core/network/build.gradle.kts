@@ -11,6 +11,8 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
+    implementation(project(":core:datastore"))
+    implementation(project(":common"))
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.okhttp)
     // 日志
@@ -21,7 +23,8 @@ dependencies {
     // json解析支持
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.encoding)
-    implementation(libs.ktor.serialization.gson)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
+
+    implementation(libs.androidx.xfetch2)
 }

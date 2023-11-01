@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.home.ui.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -155,15 +153,10 @@ public class UserWorksBean implements Serializable {
                  * 4 : {"tid":4,"count":6,"name":"游戏"}
                  */
 
-                @SerializedName("1")
                 private _$1Bean _$1;
-                @SerializedName("160")
                 private _$160Bean _$160;
-                @SerializedName("188")
                 private _$188Bean _$188;
-                @SerializedName("36")
                 private _$36Bean _$36;
-                @SerializedName("4")
                 private _$4Bean _$4;
 
                 public _$1Bean get_$1() {

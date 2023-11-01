@@ -15,7 +15,6 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt)
-    kotlin("kapt") version "1.9.10"
     alias(libs.plugins.protobuf) apply false
 }
 

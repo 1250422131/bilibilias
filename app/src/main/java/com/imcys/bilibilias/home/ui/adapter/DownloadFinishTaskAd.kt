@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.utils.file.FileUtils
+import com.imcys.common.utils.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
-import com.imcys.bilibilias.common.data.repository.DownloadTaskRepository
+import com.imcys.network.download.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

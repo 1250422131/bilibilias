@@ -1,6 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
+    alias(libs.plugins.bilibili.android.compose)
     alias(libs.plugins.bilibili.android.hilt)
 }
 
@@ -20,4 +21,6 @@ dependencies {
      */
     implementation(libs.mmkv)
     implementation(libs.fastkv)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.ui.tooling)
 }

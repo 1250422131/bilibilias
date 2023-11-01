@@ -1,16 +1,12 @@
 package com.imcys.bilibilias.base.view
 
 import android.content.Context
-import android.os.Build.VERSION.SDK_INT
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
-import coil.ImageLoader
-import coil.decode.ImageDecoderDecoder
-import coil.load
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
 
@@ -87,21 +83,21 @@ class AppAsJzvdStd : AsJzvdStd {
         posterImageView.visibility = View.GONE
         asJzvdstdPosterFL.setBackgroundColor(resources.getColor(R.color.white))
         appAsJzStdLoadImage.visibility = View.VISIBLE
-        appAsJzStdLoadImage.load(
-            when ((0..1).random()) {
-                0 -> com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_1
-                else -> com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_2
-            },
-            ImageLoader.Builder(context)
-                .components {
-                    if (SDK_INT >= 28) {
-                        add(ImageDecoderDecoder.Factory())
-                    } else {
-                        add(coil.decode.GifDecoder.Factory())
-                    }
-                }
-                .build()
-        )
+        // appAsJzStdLoadImage.load(
+        //     when ((0..1).random()) {
+        //         0 -> com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_1
+        //         else -> com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_2
+        //     },
+        //     ImageLoader.Builder(context)
+        //         .components {
+        //             if (SDK_INT >= 28) {
+        //                 add(ImageDecoderDecoder.Factory())
+        //             } else {
+        //                 add(coil.decode.GifDecoder.Factory())
+        //             }
+        //         }
+        //         .build()
+        // )
     }
 
     override fun getLayoutId(): Int {

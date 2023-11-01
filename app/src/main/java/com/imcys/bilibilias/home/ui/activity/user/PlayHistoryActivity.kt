@@ -9,14 +9,12 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.view.base.BaseActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
@@ -51,9 +49,7 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
 
             playHistoryTopRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
                         loadPlayHistory()
-                    }
                 }
             })
         }

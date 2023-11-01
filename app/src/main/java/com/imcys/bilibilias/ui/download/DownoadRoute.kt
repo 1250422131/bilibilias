@@ -11,10 +11,11 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.bilibilias.base.utils.sharedHiltViewModel
-import com.imcys.model.VideoDetails
 import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import com.imcys.bilibilias.ui.play.PlayerState
 import com.imcys.bilibilias.ui.play.PlayerViewModel
+import com.imcys.network.download.DownloadListHolders
+import com.imcys.network.download.DownloadToolType
 
 const val ROUTE_DOWNLOAD = "download"
 fun NavController.navigateToDownload() {

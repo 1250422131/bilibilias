@@ -1,7 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.hilt)
+    alias(libs.plugins.bilibili.android.compose)
 }
 
 android {
@@ -9,12 +9,19 @@ android {
 }
 
 dependencies {
-    api(libs.ui)
-    api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
-    api(libs.ui.tooling)
-    api(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.foundation.layout)
     api(libs.androidx.compose.material.iconsExtended)
-    api(libs.coil.compose)
-    implementation(project(":core:common"))
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.ui.util)
+
+    debugApi(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.coil.kt.compose)
+
+    implementation(libs.accompanist.systemuicontroller)
 }

@@ -1,7 +1,10 @@
 package com.imcys.network.configration
 
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.client.plugins.cache.storage.CacheStorage
 import io.ktor.client.plugins.cache.storage.FileStorage
+import javax.inject.Inject
 
-class CacheManager : CacheStorage by FileStorage(BaseApplication.applicationContext().cacheDir)
+class CacheManager@Inject constructor(@ApplicationContext context: Context) :
+    CacheStorage by FileStorage(context.cacheDir)

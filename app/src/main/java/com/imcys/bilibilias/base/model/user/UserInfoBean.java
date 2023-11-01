@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.base.model.user;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -1168,7 +1166,6 @@ public class UserInfoBean implements Serializable {
                  * icon_web : https://i0.hdslb.com/bfs/live/8d9d0f33ef8bf6f308742752d13dd0df731df19c.png
                  */
 
-                @SerializedName("switch")
                 private boolean switchX;
                 private int num;
                 private String text_small;
