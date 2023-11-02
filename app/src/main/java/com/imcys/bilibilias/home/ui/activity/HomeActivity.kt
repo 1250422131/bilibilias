@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment

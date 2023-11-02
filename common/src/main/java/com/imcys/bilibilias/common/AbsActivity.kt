@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.R
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.utils.asLogD
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
@@ -87,7 +86,7 @@ open class AbsActivity : AppCompatActivity() {
                 // 统计接入
                 AppCenter.start(
                     application,
-                    BaseApplication.appSecret,
+                    "3c7c5174-a6be-4093-a0df-c6fbf7371480",
                     Analytics::class.java,
                     Crashes::class.java,
                 )

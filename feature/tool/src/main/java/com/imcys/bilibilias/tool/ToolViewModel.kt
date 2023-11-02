@@ -112,19 +112,20 @@ class ToolViewModel @Inject constructor(
             }
 
     fun Flow<VideoDetails>.mapToUserSearchResult(): Flow<SearchResultUiState> =
-        this.asResult().map { result ->
-            when (result) {
-                is Result.Error -> SearchResultUiState.LoadFailed
-                Result.Loading -> SearchResultUiState.Loading
-                is Result.Success -> SearchResultUiState.Success(
-                    pic = result.data.pic,
-                    title = result.data.title,
-                    desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
-                    view = result.data.stat.view.digitalConversion(),
-                    danmaku = result.data.stat.danmaku.digitalConversion()
-                )
+        this.asResult()
+            .map { result ->
+                when (result) {
+                    is Result.Error -> SearchResultUiState.LoadFailed
+                    Result.Loading -> SearchResultUiState.Loading
+                    is Result.Success -> SearchResultUiState.Success(
+                        pic = result.data.pic,
+                        title = result.data.title,
+                        desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
+                        view = result.data.stat.view.digitalConversion(),
+                        danmaku = result.data.stat.danmaku.digitalConversion()
+                    )
+                }
             }
-        }
 }
 
 private const val TAG = "ToolViewModel"

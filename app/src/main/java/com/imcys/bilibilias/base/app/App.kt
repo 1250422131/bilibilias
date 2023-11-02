@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.base.app
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.HiltAndroidApp
@@ -11,14 +11,13 @@ import timber.log.Timber
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 
 @HiltAndroidApp
-class App : BaseApplication() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
         RxFFmpegInvoke.getInstance().setDebug(false)
 
-        context = applicationContext()
         initTimber()
 
         initPlayManager()

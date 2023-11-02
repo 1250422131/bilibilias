@@ -11,8 +11,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.webkit.WebSettings;
 
-import com.imcys.bilibilias.common.base.app.BaseApplication;
-
 import java.util.Locale;
 
 /**
@@ -84,10 +82,10 @@ public class SystemUtil {
         return versionName;
     }
 
-    public static String getUserAgent() {
+    public static String getUserAgent(Context context) {
         String userAgent = "";
         try {
-            userAgent = WebSettings.getDefaultUserAgent(BaseApplication.applicationContext());
+            userAgent = WebSettings.getDefaultUserAgent(context);
         } catch (Exception e) {
             userAgent = System.getProperty("http.agent");
         }

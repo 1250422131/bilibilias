@@ -107,7 +107,6 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{`完成日期：`+ LongKt.timeStampDateStr((long)(DownloadFinishTaskInfo.created/1000),`yyyy-MM-dd HH:mm:ss`)}"
                                 android:textColor="@color/color_text_hint"
                                 android:textSize="12sp" />
 

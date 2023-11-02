@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hyy.highlightpro.HighlightPro
@@ -23,28 +21,13 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.OldUpdateDataBean
-import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
-import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
-import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.viewmodel.HomeViewModel
 import com.imcys.bilibilias.view.base.BaseFragment
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.distribute.Distribute
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 class HomeFragment : BaseFragment() {
@@ -124,8 +107,6 @@ class HomeFragment : BaseFragment() {
      * 加载服务器信息
      */
     private fun loadServiceData() {
-        loadAppData()
-        loadBannerData()
         initHomeAd()
     }
 
@@ -136,49 +117,6 @@ class HomeFragment : BaseFragment() {
         val userGoogleADSwitch =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("user_google_ad_switch", true)
-
-        if (userGoogleADSwitch) {
-            launchIO {
-                val oldHomeAdBean = getOldHomeAdBean()
-                // 切换主线程
-                launchUI {
-                    val adapter = OldHomeAdAdapter()
-                    fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
-                    fragmentHomeBinding.fragmentHomeAdRv.layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-
-                    adapter.submitList(oldHomeAdBean.data)
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取广告请求
-     * @return OldHomeAdBean
-     */
-    private suspend fun getOldHomeAdBean(): OldHomeAdBean {
-        return HttpUtils.asyncGet(
-            "${BiliBiliAsApi.appFunction}?type=oldHomeAd",
-            OldHomeAdBean::class.java,
-        )
-    }
-
-    /**
-     * 加载轮播图信息
-     */
-    private fun loadBannerData() {
-        OldHomeBeanAdapter(TODO(), TODO())
-    }
-
-    /**
-     * 加载APP数据
-     */
-    private fun loadAppData() {
-        AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
-        loadNotice(TODO())
-        // 检测更新
-        loadVersionData(TODO())
     }
 
     /**
@@ -248,30 +186,6 @@ class HomeFragment : BaseFragment() {
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
             .apply()
-    }
-
-    // 初始化用户数据
-    internal fun initUserData() {
-        // mid
-        bottomSheetDialog.show()
-
-        launchIO {
-            val myUserData =
-                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                    .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
-
-            launchUI {
-                if (myUserData.mid == 0L) {
-                    // 提交
-                    BaseApplication.myUserData = myUserData
-                } else {
-                    asToast(requireContext(), "登录出现意外，请重新完成登录")
-                    loadLogin()
-                }
-
-                bottomSheetDialog.cancel()
-            }
-        }
     }
 
     /**
