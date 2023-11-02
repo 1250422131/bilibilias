@@ -55,7 +55,7 @@ internal fun DonationRoute() {
 
 @Composable
 internal fun DonationScreen() {
-    var payment by remember { mutableStateOf(Payment.Alipay) }
+    var payment by remember { mutableStateOf(Payment.None) }
     val scope = rememberCoroutineScope()
     val sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Hidden, skipHiddenState = false)
     val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
@@ -73,6 +73,8 @@ internal fun DonationScreen() {
                         scaffoldState.bottomSheetState.hide()
                     }
                 }
+
+                Payment.None -> Unit
             }
         }, scaffoldState = scaffoldState, sheetPeekHeight = 0.dp
     ) { padding ->
@@ -167,5 +169,5 @@ private fun PaymentCodeScreen(url: String, desc: String, action: () -> Unit) {
 }
 
 enum class Payment {
-    Alipay, WeChat
+    None, Alipay, WeChat
 }
