@@ -15,9 +15,9 @@ fun NavController.navigateToAuthMethod() {
     }
 }
 
-fun NavGraphBuilder.authMethodRoute(onNavigateToLoginAuth: () -> Unit) =
+fun NavGraphBuilder.authMethodRoute(navigateToLoginAuth: () -> Unit) =
     composable(ROUTE_AUTH_METHOD) {
-        AuthMethodRoute(onNavigateToLoginAuth)
+        AuthMethodRoute(navigateToLoginAuth)
     }
 
 @Composable

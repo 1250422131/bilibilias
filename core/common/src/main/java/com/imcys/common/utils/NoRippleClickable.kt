@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.utils
+package com.imcys.common.utils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

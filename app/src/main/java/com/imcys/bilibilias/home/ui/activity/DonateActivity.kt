@@ -1,20 +1,16 @@
 package com.imcys.bilibilias.home.ui.activity
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ActivityDonateBinding
-import com.imcys.bilibilias.home.ui.adapter.DonateItemAdapter
 import com.imcys.bilibilias.home.ui.model.DonateViewBean
 import com.imcys.bilibilias.view.base.BaseActivity
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DonateActivity : BaseActivity<ActivityDonateBinding>() {
     private val donateMutableList = mutableListOf<DonateViewBean>()
-    
-    lateinit var donateAdapter: DonateItemAdapter
+
     override fun getLayoutRes(): Int = R.layout.activity_donate
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,11 +18,6 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
     }
 
     override fun initView() {
-        binding.apply {
-            donateRv.adapter = donateAdapter
-            donateRv.layoutManager =
-                LinearLayoutManager(this@DonateActivity, LinearLayoutManager.VERTICAL, false)
-        }
     }
 
     override fun initData() {

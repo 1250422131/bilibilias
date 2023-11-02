@@ -19,8 +19,8 @@ fun NavController.navigateToLoginAuth() {
     }
 }
 
-fun NavGraphBuilder.loginAuthRoute(onNavigateToHome: () -> Unit) = composable(ROUTE_AUTH_LOGIN) {
-    LoginAuthRoute(onNavigateToHome)
+fun NavGraphBuilder.loginAuthRoute(navigateToHome: () -> Unit) = composable(ROUTE_AUTH_LOGIN) {
+    LoginAuthRoute(navigateToHome)
 }
 
 @Composable

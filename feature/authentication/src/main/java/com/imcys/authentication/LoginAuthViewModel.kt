@@ -104,7 +104,7 @@ class LoginAuthViewModel @Inject constructor(private val loginRepository: LoginR
                 while (isActive) {
                     delay(seconds)
                     var success = false
-                    loginRepository.onPollingLogin(key) { data ->
+                    loginRepository.pollLogin(key) { data ->
                         success = data.isSuccess
                         _loginAuthState.update {
                             it.copy(

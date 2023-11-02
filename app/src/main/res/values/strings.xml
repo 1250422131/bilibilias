@@ -7,10 +7,6 @@
     <string name="action_settings">设置</string>
     <string name="title_activity_user">用户活动</string>
 
-
-
-
-    <string name="new_version_doc">2.0.31紧急修复了B站接口改动的问题（但不确定是否后面还会有其他接口改动）</string>
     <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
@@ -41,21 +37,7 @@
     <string name="app_dialog_dl_radio_only_video">仅视频</string>
     <string name="app_activity_as_video_dl_bt_text">缓 存 视 频</string>
     <string name="app_activity_as_bangumi_dl_bt_text">缓 存 番 剧</string>
-    <string name="app_donate_doc">"\n        BILIBILIAS自运营之初，就有后端支持，我们目前采用的是学生机，但即使如此，每月也会产生费用。\n        因此，希望BILIBILIAS的用户们可以支援一些费用，一次早餐钱，一次奶茶钱，一次午饭钱就可以满足BILIBILIAS绝大部分的费用。\n        最后，感谢所有为BILIBILIAS捐款和支持AS的用户。\n\n        你可以不匿名和匿名捐款，推荐不匿名捐款。\n带上AS和QQ号等联系方式\n    "</string>
-    <string name="app_fragment_home_donate">捐款</string>
-    <string name="app_fragment_home_salute">致敬</string>
-    <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.31</string>
-    <string name="app_fragment_home_salute_text">向全体BILIBILIAS用户致敬</string>
-    <string name="app_fragment_home_salute_doc">爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户</string>
-    <string name="app_fragment_home_donate_text">为BILIBILIAS的开发提供支持</string>
-    <string name="app_fragment_home_donate_doc">BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。</string>
-    <string name="app_fragment_home_donate_list">捐款名单</string>
-    <string name="app_fragment_home_feedback">反馈问题</string>
-    <string name="app_fragment_home_feedback_text">利用兔小巢来反馈问题</string>
-    <string name="app_fragment_home_feedback_doc">如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。</string>
-    <string name="app_fragment_home_logout">退出登录</string>
-    <string name="app_fragment_home_logout_text">退出这个账户的登录</string>
+
     <string name="app_fragment_tool_title">工具</string>
     <string name="app_fragment_user_title">用户</string>
     <string name="app_jz_layout_std_download_cover">封面下载</string>

@@ -26,8 +26,8 @@ import com.imcys.bilibilias.common.model.OldUpdateDataBean
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.viewmodel.HomeViewModel
 import com.imcys.bilibilias.view.base.BaseFragment
+import com.imcys.home.HomeViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 class HomeFragment : BaseFragment() {
