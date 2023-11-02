@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.utils
+package com.imcys.bilibilias.common.utils
 
 import kotlin.math.pow
 

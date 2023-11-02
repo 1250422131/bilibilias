@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.utils.asToast
 import com.imcys.common.utils.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadTaskInfo
 import com.imcys.network.download.DownloadTaskRepository

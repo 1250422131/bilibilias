@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.model
+package com.imcys.bilibilias.common.model
 
 import java.io.Serializable
 

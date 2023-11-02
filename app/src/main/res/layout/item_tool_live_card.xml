@@ -5,9 +5,6 @@
     tools:ignore="MissingDefaultResource">
 
     <data>
-
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-        <!--com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean-->
         <variable
             name="LiveRoomDataBean"
             type="java.lang.Void" />
@@ -107,7 +104,6 @@
                             android:layout_height="18dp"
                             android:src="@drawable/ic_play_num"
                             app:tint="@color/color_text_hint" />
-                        <!--android:text="@{NumberUtils.digitalConversion(LiveRoomDataBean.data.online)}"-->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -4,12 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="com.imcys.bilibilias.common.base.extend.LongKt" />
-
         <variable
             name="MediasBean"
-            type="com.imcys.bilibilias.common.base.model.Collections.Media" />
+            type="com.imcys.bilibilias.common.model.Collections.Media" />
 
     </data>
 

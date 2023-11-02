@@ -6,7 +6,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.base.AbsActivity
+import com.imcys.bilibilias.common.AbsActivity
 
 abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseInit {
 
@@ -23,11 +23,10 @@ abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseInit {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        statusBarOnly(this)
         initView()
         initData()
     }
 
-    override fun initView() {}
-    override fun initData() {}
+    override fun initView() = Unit
+    override fun initData() = Unit
 }

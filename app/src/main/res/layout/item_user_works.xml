@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
         <variable
             name="VlistBean"
             type="com.imcys.bilibilias.home.ui.model.UserWorksBean.DataBean.ListBean.VlistBean" />
@@ -61,7 +58,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.play)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
@@ -76,7 +72,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.video_review)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>

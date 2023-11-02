@@ -8,7 +8,6 @@ import com.imcys.common.utils.AsVideoUtils
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.common.utils.digitalConversion
-import com.imcys.model.Bangumi
 import com.imcys.model.VideoDetails
 import com.imcys.network.repository.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,18 +84,8 @@ class ToolViewModel @Inject constructor(
     }
 
     private suspend fun handleEP(id: String) =
-        flowOf(videoRepository.getEp(id)).mapToUserSearchResult()
-
-    private suspend fun handleShortLink(url: String) = videoRepository.shortLink(url)
-
-    private suspend fun handleAV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.getVideoDetailsByAid(id))
-
-    private suspend fun handleBV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.getVideoDetailsByBvid(id))
-
-    fun Flow<Bangumi>.mapToUserSearchResult(): Flow<SearchResultUiState> =
-        this.asResult()
+        flowOf(videoRepository.getEp(id))
+            .asResult()
             .map { result ->
                 when (result) {
                     is Result.Error -> SearchResultUiState.LoadFailed
@@ -110,6 +99,14 @@ class ToolViewModel @Inject constructor(
                     )
                 }
             }
+
+    private suspend fun handleShortLink(url: String) = videoRepository.shortLink(url)
+
+    private suspend fun handleAV(id: String): Flow<VideoDetails> =
+        flowOf(videoRepository.getVideoDetailsByAid(id))
+
+    private suspend fun handleBV(id: String): Flow<VideoDetails> =
+        flowOf(videoRepository.getVideoDetailsByBvid(id))
 
     fun Flow<VideoDetails>.mapToUserSearchResult(): Flow<SearchResultUiState> =
         this.asResult()

@@ -1,6 +1,8 @@
 package com.imcys.network.repository
 
 
+import com.imcys.common.di.AsDispatchers
+import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.md5
 import com.imcys.model.UserNav
 import com.imcys.network.api.BilibiliApi2
@@ -8,11 +10,16 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.encodeURLParameter
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
+class WbiKeyRepository @Inject constructor(
+    private val httpClient: HttpClient,
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+) {
 
     private val mixinKeyEncTab = intArrayOf(
         46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
@@ -23,9 +30,9 @@ class WbiKeyRepository @Inject constructor(private val httpClient: HttpClient) {
 
     private var token: String? = null
 
-    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> {
+    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> = withContext(ioDispatcher) {
         val userNav = httpClient.get(BilibiliApi2.Token).body<UserNav>()
-        return getParam(params, userNav.imgKey, userNav.subKey)
+        getParam(params, userNav.imgKey, userNav.subKey)
     }
 
     private fun getParam(

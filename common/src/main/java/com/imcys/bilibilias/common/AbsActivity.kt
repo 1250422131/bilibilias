@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base
+package com.imcys.bilibilias.common
 
 import android.app.Activity
 import android.content.res.Configuration
@@ -9,8 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.R
-import com.imcys.bilibilias.common.base.utils.asLogD
+import com.imcys.bilibilias.common.utils.asLogD
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes

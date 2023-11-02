@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.common.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.youth.banner.adapter.BannerAdapter

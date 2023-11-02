@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
         <variable
             name="VideoBaseBean"
             type="com.imcys.model.VideoDetails" />
@@ -97,7 +94,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.view)}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 
@@ -112,7 +108,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VideoBaseBean.stat.danmaku)}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>

@@ -20,9 +20,9 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.extend.toColorInt
-import com.imcys.bilibilias.common.base.model.OldUpdateDataBean
+import com.imcys.bilibilias.common.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.extend.toColorInt
+import com.imcys.bilibilias.common.model.OldUpdateDataBean
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity

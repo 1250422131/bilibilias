@@ -23,11 +23,12 @@ class CookieManager @Inject constructor(
     private val cache = mutableSetOf<Cookie>()
 
     init {
-        if (cookiesData.sessionData.isNotBlank()) {
+        if (cookiesData.hasSessionData()) {
             cache.add(
                 Cookie(
                     "SESSDATA",
-                    cookiesData.sessionData, CookieEncoding.RAW, domain = "bilibili.com", path = "/"
+                    cookiesData.sessionData, CookieEncoding.RAW, domain = "bilibili.com", path = "/",
+                    httpOnly = true, secure = true
                 )
             )
         }
@@ -35,14 +36,10 @@ class CookieManager @Inject constructor(
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
         cache.add(cookie)
-        if (cookie.name == "SESSDATA") cookiesData.sessionData = cookie.value
-        if (cookie.name == "bili_jct") cookiesData.jct = cookie.value
-        if (cookie.name == "DedeUserID") cookiesData.userID = cookie.value
-        if (cookie.name == "sid") cookiesData.sid = cookie.value
-        cookiesData.timestamp = cookie.expires?.timestamp ?: 0
+        cookiesData.setCookie(cookie.name, cookie.value, cookie.expires?.timestamp)
     }
 
-    override fun close() {}
+    override fun close() = Unit
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
         return if (requestUrl.host == ROAM_HOST) cache.toList() else emptyList()

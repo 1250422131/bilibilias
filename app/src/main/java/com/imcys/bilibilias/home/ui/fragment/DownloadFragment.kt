@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.extend.launchUI
 import com.imcys.common.utils.FileUtils
 import com.imcys.network.download.DownloadTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding

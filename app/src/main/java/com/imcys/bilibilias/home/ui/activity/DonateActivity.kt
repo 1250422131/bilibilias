@@ -19,7 +19,6 @@ class DonateActivity : BaseActivity<ActivityDonateBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.donateTopLy.addStatusBarTopPadding()
     }
 
     override fun initView() {

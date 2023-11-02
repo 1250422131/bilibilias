@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.extend
+package com.imcys.bilibilias.common.extend
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart

@@ -2,16 +2,13 @@ package com.imcys.bilibilias.home.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.VideoUtils
+import androidx.activity.ComponentActivity
+import com.imcys.bilibilias.common.utils.VideoUtils
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.view.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity<com.imcys.bilibilias.databinding.ActivityAsVideoBinding>() {
-    override fun getLayoutRes(): Int = R.layout.activity_as_video
-
+class AsVideoActivity : ComponentActivity() {
     companion object {
 
         fun actionStart(context: Context, bvId: String) {

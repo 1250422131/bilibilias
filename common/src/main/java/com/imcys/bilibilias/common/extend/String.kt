@@ -1,9 +1,9 @@
-package com.imcys.bilibilias.common.base.extend
+package com.imcys.bilibilias.common.extend
 
 import android.content.Context
 import android.graphics.Color
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.common.utils.file.AppFilePathUtils
 
 fun String.toColorInt(): Int = Color.parseColor(this)
 
