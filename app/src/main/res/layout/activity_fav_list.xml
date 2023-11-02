@@ -13,15 +13,6 @@
         android:orientation="vertical"
         tools:context=".home.ui.activity.favlist.FavListActivity">
 
-        <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-            android:id="@+id/fav_list_top_ly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_activity_fav_list_title"
-            tools:ignore="MissingConstraints">
-
-        </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

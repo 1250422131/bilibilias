@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
 import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.utils.asToast
 
 class LoginViewModel : ViewModel() {
 

@@ -12,15 +12,6 @@
         android:orientation="vertical"
         tools:context=".home.ui.activity.tool.MergeVideoActivity">
 
-
-        <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-            android:id="@+id/merge_video_top_ly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_merge_video_top_ly_title"
-            tools:ignore="MissingConstraints" />
-
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"

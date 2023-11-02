@@ -7,7 +7,7 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.extend.launchIO
 import com.imcys.bilibilias.home.ui.viewmodel.BaseViewModel
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage

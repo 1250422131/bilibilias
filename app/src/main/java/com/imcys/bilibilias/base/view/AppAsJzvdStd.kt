@@ -8,7 +8,7 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.view.AsJzvdStd
+import com.imcys.bilibilias.common.view.AsJzvdStd
 
 class AppAsJzvdStd : AsJzvdStd {
 

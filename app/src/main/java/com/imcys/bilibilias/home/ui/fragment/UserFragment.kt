@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.extend.launchUI
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.imcys.bilibilias.view.base.BaseFragment

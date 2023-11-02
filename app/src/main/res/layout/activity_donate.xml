@@ -14,16 +14,6 @@
         android:orientation="vertical"
         tools:context=".home.ui.activity.DonateActivity">
 
-        <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-            android:id="@+id/donate_top_ly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/app_activity_donate_title"
-            tools:ignore="MissingConstraints">
-
-        </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
-
-
         <me.dkzwm.widget.srl.SmoothRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

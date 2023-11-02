@@ -15,11 +15,11 @@ fun HttpRequestBuilder.parameterPlatform(platform: String = "web"): Unit =
 fun HttpRequestBuilder.parameterMediaID(mediaId: Long): Unit =
     url.parameters.append("media_id", mediaId.toString())
 
-/**
- *   parameter(, page)
- *             parameter(, limit.coerceAtMost(20))
- */
 fun HttpRequestBuilder.parameterPageNumber(page: Int): Unit =
     url.parameters.append("pn", page.toString())
+
 fun HttpRequestBuilder.parameterPageLimit(limit: Int): Unit =
     url.parameters.append("ps", limit.toString())
+
+fun HttpRequestBuilder.parameterMID(mid: Long): Unit =
+    url.parameters.append("mid", mid.toString())

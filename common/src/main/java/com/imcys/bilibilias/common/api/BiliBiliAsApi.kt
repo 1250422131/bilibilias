@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.base.api
+package com.imcys.bilibilias.common.api
 
 object BiliBiliAsApi {
 

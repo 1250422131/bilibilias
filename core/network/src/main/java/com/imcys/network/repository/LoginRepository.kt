@@ -1,10 +1,12 @@
 package com.imcys.network.repository
 
+import com.imcys.common.di.AsDispatchers
+import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.Result
+import com.imcys.datastore.mmkv.CookieRepository
 import com.imcys.model.AuthQrCode
 import com.imcys.model.LoginResponse
 import com.imcys.network.api.BilibiliApi2
-import com.imcys.datastore.mmkv.CookieRepository
 import com.imcys.network.safeGet
 import io.ktor.client.HttpClient
 import io.ktor.client.request.headers
@@ -13,11 +15,15 @@ import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.encodeURLParameter
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LoginRepository @Inject constructor(private val httpClient: HttpClient) {
+class LoginRepository @Inject constructor(
+    private val httpClient: HttpClient,
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+) {
     // todo userRepository
     suspend fun getQrCode(action: (AuthQrCode) -> Unit) {
         when (val qr = httpClient.safeGet<AuthQrCode>(BilibiliApi2.getLoginQRPath)) {

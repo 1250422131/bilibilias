@@ -7,7 +7,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.view.base.BaseActivity
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.ceil
 
@@ -23,7 +22,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.collectionTopLy.addStatusBarTopPadding()
     }
 
     override fun initView() {
