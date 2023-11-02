@@ -17,10 +17,12 @@ import io.ktor.client.request.parameter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * ![收藏夹内容](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/fav/list.md#%E6%94%B6%E8%97%8F%E5%A4%B9%E5%86%85%E5%AE%B9)
  */
+@Singleton
 class FavoritesRepository @Inject constructor(
     private val httpClient: HttpClient,
     @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
