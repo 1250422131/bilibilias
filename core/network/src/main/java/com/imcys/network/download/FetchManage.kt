@@ -1,8 +1,6 @@
 package com.imcys.network.download
 
 import android.content.Context
-import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.common.di.AppCoroutineScope
 import com.imcys.datastore.mmkv.SettingsRepository
 import com.imcys.network.constants.BILIBILI_URL
@@ -19,6 +17,7 @@ import com.tonyodev.fetch2.Status
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Extras
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -78,8 +77,8 @@ class FetchManage @Inject constructor(
         bvid: String,
         avid: Long,
     ) = Request(url, file).apply {
-        headers[USER_AGENT] = BROWSER_USER_AGENT
-        headers[REFERER] = BILIBILI_URL
+        headers[HttpHeaders.UserAgent] = BROWSER_USER_AGENT
+        headers[HttpHeaders.Referrer] = BILIBILI_URL
         this.groupId = groupId.toInt()
         this.tag = tag
         extras = Extras(

@@ -200,7 +200,7 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
 
     implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.paging.runtime.ktx)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
 
