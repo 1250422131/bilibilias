@@ -22,10 +22,14 @@ import com.imcys.bilibilias.ui.download.danmaku.navigateToDanmaku
 import com.imcys.bilibilias.ui.download.downloadOptionsRoute
 import com.imcys.bilibilias.ui.download.downloadRoute
 import com.imcys.bilibilias.ui.download.navigateToDownloadOptions
-import com.imcys.bilibilias.ui.home.ROUTE_HOME
-import com.imcys.bilibilias.ui.home.homeRoute
 import com.imcys.bilibilias.ui.play.navigateToPlayer
 import com.imcys.bilibilias.ui.play.playerRoute
+import com.imcys.home.navigation.ROUTE_HOME
+import com.imcys.home.navigation.contributeScreen
+import com.imcys.home.navigation.donationScreen
+import com.imcys.home.navigation.homeScreen
+import com.imcys.home.navigation.navigateToContribute
+import com.imcys.home.navigation.navigateToDonation
 import com.imcys.setting.navigation.navigateToSettings
 import com.imcys.setting.navigation.settingsRoute
 import com.imcys.user.navigation.userRoute
@@ -40,7 +44,12 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         startDestination = ROUTE_HOME,
         route = ROUTE_MAIN_SCREEN,
     ) {
-        homeRoute()
+        homeScreen(
+            navigationToDonation = navController::navigateToDonation,
+            navigateToContribute = navController::navigateToContribute)
+        donationScreen()
+        contributeScreen()
+
         toolScreen(
             navigateToPlayer = navController::navigateToPlayer,
             navigateToSetting = navController::navigateToSettings,

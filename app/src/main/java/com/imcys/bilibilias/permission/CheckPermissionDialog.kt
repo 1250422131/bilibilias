@@ -37,14 +37,13 @@ import com.imcys.common.utils.getActivity
 import com.imcys.common.utils.gotoApplicationSettings
 import com.imcys.common.utils.hasPickMediaPermission
 import com.imcys.common.utils.shouldShowRationale
-import com.imcys.datastore.mmkv.CookieRepository
 import com.imcys.ui.BottomSheetDialog
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.M)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: () -> Unit) {
+fun CheckPermissionDialog(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, expired: Boolean) {
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -67,10 +66,10 @@ fun CheckPermissionDialog(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: 
     }
     LaunchedEffect(permissionState.status.isGranted) {
         if (context.hasPickMediaPermission()) {
-            if (CookieRepository.isExpired) {
-                onNavigateToAuthMethod()
+            if (expired) {
+                navigateToAuthMethod()
             } else {
-                onNavigateToHome()
+                navigateToHome()
             }
         } else {
             showDialog = true

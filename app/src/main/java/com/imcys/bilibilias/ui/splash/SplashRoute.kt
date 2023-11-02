@@ -22,29 +22,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.imcys.bilibilias.R
-import com.imcys.designsystem.component.FullScreenScaffold
 import com.imcys.bilibilias.permission.CheckPermissionDialog
+import com.imcys.designsystem.component.FullScreenScaffold
 import kotlinx.coroutines.delay
 
 const val ROUTE_SPLASH = "splash"
 
 @RequiresApi(Build.VERSION_CODES.M)
 fun NavGraphBuilder.splashRoute(
-    onNavigateToAuthMethod: () -> Unit,
-    onNavigateToHome: () -> Unit,
+    navigateToAuthMethod: () -> Unit,
+    navigateToHome: () -> Unit,
 ) = composable(ROUTE_SPLASH) {
+    val viewModel: SplashViewModel = hiltViewModel()
     SplashRoute(
-        onNavigateToAuthMethod,
-        onNavigateToHome
+        navigateToAuthMethod,
+        navigateToHome,
+        viewModel.expired
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun SplashRoute(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: () -> Unit) {
+fun SplashRoute(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, expired: Boolean) {
     var show by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(200)
@@ -81,5 +84,5 @@ fun SplashRoute(onNavigateToAuthMethod: () -> Unit, onNavigateToHome: () -> Unit
             // )
         }
     }
-    Box(Modifier.height(600.dp)) { CheckPermissionDialog(onNavigateToAuthMethod, onNavigateToHome) }
+    Box(Modifier.height(600.dp)) { CheckPermissionDialog(navigateToAuthMethod, navigateToHome,expired) }
 }

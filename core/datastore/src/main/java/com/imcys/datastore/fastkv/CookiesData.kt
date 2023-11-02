@@ -9,10 +9,14 @@ import javax.inject.Singleton
 class CookiesData @Inject constructor(@ApplicationContext context: Context) : GlobalStorage(context, "cookies") {
     var sessionData by string("session")
         private set
-    private var jct by string("jct")
-    private var userID by string("userID")
-    private var sid by string("sid")
-    private var timestamp by long("timestamp")
+    var jct by string("jct")
+        private set
+    var userID by string("userID")
+        private set
+    var sid by string("sid")
+        private set
+    var timestamp by long("timestamp")
+        private set
     val isExpired: Boolean get() = (timestamp < System.currentTimeMillis())
 
     fun clearCookieData() {

@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.noRippleClickable
 import com.imcys.common.utils.digitalConversion
+import com.imcys.common.utils.noRippleClickable
 import com.imcys.designsystem.component.CenterRow
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.tool.navigation.ROUTE_TOOL
 import com.imcys.bilibilias.ui.download.ROUTE_DOWNLOAD
-import com.imcys.bilibilias.ui.home.ROUTE_HOME
+import com.imcys.home.navigation.ROUTE_HOME
 import com.imcys.user.navigation.ROUTE_USER
 @Immutable
 sealed class Screen(val route: String, @StringRes val resourceId: Int, @DrawableRes val icon: Int) {

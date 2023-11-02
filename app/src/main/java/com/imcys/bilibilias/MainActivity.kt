@@ -45,11 +45,11 @@ import com.imcys.authentication.login.navigation.navigateToLoginAuth
 import com.imcys.authentication.method.navigation.authMethodRoute
 import com.imcys.authentication.method.navigation.navigateToAuthMethod
 import com.imcys.bilibilias.base.router.Screen
-import com.imcys.bilibilias.ui.home.ROUTE_HOME
-import com.imcys.bilibilias.ui.home.navigateToHome
 import com.imcys.bilibilias.ui.splash.ROUTE_SPLASH
 import com.imcys.bilibilias.ui.splash.splashRoute
 import com.imcys.designsystem.theme.BILIBILIASTheme
+import com.imcys.home.navigation.ROUTE_HOME
+import com.imcys.home.navigation.navigateToHome
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -71,12 +71,12 @@ class MainActivity : ComponentActivity() {
                     Modifier
                 ) {
                     splashRoute(
-                        onNavigateToAuthMethod = navController::navigateToAuthMethod,
-                        onNavigateToHome = navController::navigateToHome
+                        navigateToAuthMethod = navController::navigateToAuthMethod,
+                        navigateToHome = navController::navigateToHome
                     )
                     // region 登录认证
-                    authMethodRoute(onNavigateToLoginAuth = navController::navigateToLoginAuth)
-                    loginAuthRoute(onNavigateToHome = navController::navigateToHome)
+                    authMethodRoute(navigateToLoginAuth = navController::navigateToLoginAuth)
+                    loginAuthRoute(navigateToHome = navController::navigateToHome)
                     // endregion
                     // todo 放置到另一个文件中
                     composable(ROUTE_HOME) { Screen() }
