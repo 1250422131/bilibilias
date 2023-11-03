@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:design-system"))
+    implementation(project(":core:datastore"))
 }
