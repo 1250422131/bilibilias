@@ -1,7 +1,5 @@
 package com.imcys.datastore.fastkv
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,7 +7,7 @@ import javax.inject.Singleton
  * APP使用信息
  */
 @Singleton
-class UsageData @Inject constructor(@ApplicationContext context: Context) : GlobalStorage(context, "common_storage") {
+class UsageData @Inject constructor() : GlobalStorage("common_storage") {
     var launchCount by int("launch_count")
 
     // 首次启动时间

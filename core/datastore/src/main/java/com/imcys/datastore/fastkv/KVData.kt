@@ -7,21 +7,19 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class KVData {
+abstract class KVData{
     abstract val kv: FastKV
     protected open fun encoders(): Array<FastEncoder<*>>? {
         return null
     }
 
-    protected fun buildKV(path: String, name: String): FastKV {
-        return FastKV.Builder(path, name)
-            .encoder(encoders())
-            .build()
+    protected fun buildKV(path: String, name: String, block: FastKV.Builder.() -> Unit = {}): FastKV {
+        return FastKV.Builder(path, name).apply { block();encoder(encoders()) }.build()
     }
 
-    protected fun buildKV(context: Context, name: String) = FastKV.Builder(context, name)
-        .encoder(encoders())
-        .build()
+    protected fun buildKV(context: Context, name: String, block: FastKV.Builder.() -> Unit = {}): FastKV =
+        FastKV.Builder(context, name)
+            .apply { block();encoder(encoders()) }.build()
 
     protected fun boolean(key: String, defValue: Boolean = false) = BooleanProperty(key, defValue)
     protected fun int(key: String, defValue: Int = 0) = IntProperty(key, defValue)

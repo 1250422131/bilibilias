@@ -27,7 +27,6 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
@@ -85,9 +84,6 @@ class NetworkModule {
         BrowserUserAgent()
         ContentEncoding()
         Logging { logger = loggerManager; level = LogLevel.BODY }
-        ResponseObserver { response ->
-            Timber.tag("http client").d(response.toString())
-        }
         install(HttpCookies) {
             storage = cookieManager
         }

@@ -5,8 +5,17 @@ object BilibiliApi2 {
     // <editor-fold desc="登录">
     private const val loginApi = "https://passport.bilibili.com/"
 
-    //检查 cookie 是否需要刷新
+    // 检查 cookie 是否需要刷新
     const val CHECK_COOKIE_REFRESH = loginApi + "x/passport-login/web/cookie/info"
+
+    // 刷新 cookie
+    const val COOKIE_REFRESH = loginApi + "x/passport-login/web/cookie/refresh"
+
+    // 让旧 cookie 失效
+    const val CONFIRM_REFRESH = loginApi + "x/passport-login/web/confirm/refresh"
+
+    // 刷新 cookie
+    const val CORRESPOND = "https://www.bilibili.com/correspond/1/"
 
     // 申请二维码
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
