@@ -1,4 +1,4 @@
-package com.imcys.model
+package com.imcys.model.login
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -23,7 +23,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AuthQrCode(
     @SerialName("qrcode_key")
-    val qrcodeKey: String,
+    val qrcodeKey: String = "",
     @SerialName("url")
     val url: String
 )

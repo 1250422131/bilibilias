@@ -23,10 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +44,7 @@ fun LoginAuthScreen(
     onNavigateToHome: () -> Unit,
     onGetQRCode: () -> Unit,
     onDownloadQRCode: (Bitmap, String, Context) -> Unit,
-    onGoToBiliBiliQRScan: (Context) -> Unit,
+    goToBiliBiliQRScan: (Context) -> Unit,
     loginAuthState: LoginAuthState,
     modifier: Modifier = Modifier
 ) {
@@ -74,14 +71,15 @@ fun LoginAuthScreen(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+            val photoName = stringResource(R.string.app_LoginQRModel_downloadLoginQR_fileName)
+            val context = LocalContext.current
             SubcomposeAsyncImage(
                 model = loginAuthState.qrCodeUrl,
                 loading = {
                     CircularProgressIndicator()
                 },
                 onSuccess = {
-                    bitmap = it.result.drawable.toBitmap()
+                    onDownloadQRCode(it.result.drawable.toBitmap(), photoName, context)
                 },
                 contentDescription = "二维码",
                 contentScale = ContentScale.Crop,
@@ -101,13 +99,9 @@ fun LoginAuthScreen(
                 }
             }
             // region 下载二维码
-            val photoName = stringResource(R.string.app_LoginQRModel_downloadLoginQR_fileName)
-            val context = LocalContext.current
             Button(
                 onClick = {
-                    bitmap?.let {
-                        onDownloadQRCode(it, photoName, context)
-                    }
+                    goToBiliBiliQRScan(context)
                 },
                 Modifier
                     .padding(horizontal = 25.dp, vertical = 10.dp)
@@ -127,7 +121,7 @@ fun LoginAuthScreen(
             // endregion
             // region 跳转扫码
             Button(
-                onClick = { onGoToBiliBiliQRScan(context) },
+                onClick = { goToBiliBiliQRScan(context) },
                 Modifier
                     .padding(horizontal = 25.dp, vertical = 10.dp)
                     .height(60.dp)

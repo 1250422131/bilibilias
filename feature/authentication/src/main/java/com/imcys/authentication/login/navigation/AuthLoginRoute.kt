@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.imcys.authentication.LoginAuthViewModel
+import com.imcys.authentication.AuthViewModel
 import com.imcys.authentication.login.LoginAuthScreen
 
 const val ROUTE_AUTH_LOGIN = "auth_login"
@@ -27,14 +27,14 @@ fun NavGraphBuilder.loginAuthRoute(navigateToHome: () -> Unit) = composable(ROUT
 fun LoginAuthRoute(
     onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginAuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val loginAuthState by viewModel.loginAuthUiState.collectAsStateWithLifecycle()
     LoginAuthScreen(
         onNavigateToHome = onNavigateToHome,
         onGetQRCode = viewModel::getQRCode,
         onDownloadQRCode = viewModel::downloadQRCode,
-        onGoToBiliBiliQRScan = viewModel::goToBilibiliQRScan,
+        goToBiliBiliQRScan = viewModel::goToBilibiliQRScan,
         loginAuthState = loginAuthState,
         modifier = modifier
     )

@@ -17,6 +17,8 @@ class CookiesData @Inject constructor(@ApplicationContext context: Context) : Gl
         private set
     var timestamp by long("timestamp")
         private set
+
+    var refreshToken by string("refreshToken")
     val isExpired: Boolean get() = (timestamp < System.currentTimeMillis())
 
     fun clearCookieData() {
