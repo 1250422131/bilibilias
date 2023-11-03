@@ -23,3 +23,6 @@ fun HttpRequestBuilder.parameterPageLimit(limit: Int): Unit =
 
 fun HttpRequestBuilder.parameterMID(mid: Long): Unit =
     url.parameters.append("mid", mid.toString())
+
+fun HttpRequestBuilder.parameterCSRF(csrf: String): Unit =
+    url.parameters.append("csrf", csrf)

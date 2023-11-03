@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(libs.fastkv)
     implementation(libs.mmkv)
+    implementation(project(":core:common"))
 }
