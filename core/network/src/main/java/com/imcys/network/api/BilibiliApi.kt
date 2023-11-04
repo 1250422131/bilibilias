@@ -3,7 +3,7 @@ package com.imcys.network.api
 object BilibiliApi2 {
 
     // <editor-fold desc="登录">
-    private const val loginApi = "https://passport.bilibili.com/"
+    const val loginApi = "https://passport.bilibili.com/"
 
     // 检查 cookie 是否需要刷新
     const val CHECK_COOKIE_REFRESH = loginApi + "x/passport-login/web/cookie/info"

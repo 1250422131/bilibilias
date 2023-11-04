@@ -1,11 +1,12 @@
 package com.imcys.network.configration
 
 import com.imcys.datastore.fastkv.CookiesData
-import com.imcys.network.constants.ROAM_HOST
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
+import kotlinx.collections.immutable.persistentSetOf
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +21,7 @@ class CookieManager @Inject constructor(
      * Cookie(name=DedeUserID__ckMd5, value=70b078dc71b5cc07, encoding=RAW, maxAge=0, expires=GMTDate(seconds=49, minutes=56, hours=15, dayOfWeek=SUNDAY, dayOfMonth=3, dayOfYear=63, month=MARCH, year=2024, timestamp=1709481409000), domain=bilibili.com, path=/, secure=false, httpOnly=false, extensions={})
      * Cookie(name=sid, value=p52c33i5, encoding=RAW, maxAge=0, expires=GMTDate(seconds=49, minutes=56, hours=15, dayOfWeek=SUNDAY, dayOfMonth=3, dayOfYear=63, month=MARCH, year=2024, timestamp=1709481409000), domain=bilibili.com, path=/, secure=false, httpOnly=false, extensions={})
      */
-    private val cache = mutableSetOf<Cookie>()
+    private val cache = persistentSetOf<Cookie>()
 
     init {
         if (cookiesData.hasSessionData()) {
@@ -35,13 +36,13 @@ class CookieManager @Inject constructor(
     }
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
+        Timber.d(cookie.toString())
         cache.add(cookie)
         cookiesData.setCookie(cookie.name, cookie.value, cookie.expires?.timestamp)
     }
 
-    override fun close() = Unit
-
     override suspend fun get(requestUrl: Url): List<Cookie> {
-        return if (requestUrl.host == ROAM_HOST) cache.toList() else emptyList()
+        return cache.toList()
     }
+    override fun close() = Unit
 }

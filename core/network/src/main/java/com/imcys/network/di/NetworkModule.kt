@@ -2,10 +2,10 @@ package com.imcys.network.di
 
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
+import com.imcys.datastore.fastkv.CookiesData
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
-import com.imcys.network.constants.BROWSER_USER_AGENT
 import com.imcys.network.constants.ROAM_API
 import dagger.Module
 import dagger.Provides
@@ -29,9 +29,10 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.utils.io.ByteReadChannel
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -48,19 +49,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
-
-
     @Provides
     @Singleton
     fun provideOkhttp(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            chain.proceed(
-                chain.request()
-                    .newBuilder()
-                    .addHeader(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
-                    .build()
-            )
-        }
         .build()
 
     @Provides
@@ -70,6 +61,7 @@ class NetworkModule {
         addInterceptor(MonitorInterceptor())
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideHttpClient(
@@ -78,12 +70,16 @@ class NetworkModule {
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
         cacheManager: CacheManager,
-        loggerManager: LoggerManager
+        loggerManager: LoggerManager,
+        cookiesData: CookiesData
     ): HttpClient = HttpClient(httpClientEngine) {
-        defaultRequest { url(ROAM_API) }
+        defaultRequest {
+            url(ROAM_API)
+            headers.append("Cookie", "SESSDATA=${cookiesData.sessionData}")
+        }
         BrowserUserAgent()
         ContentEncoding()
-        Logging { logger = loggerManager; level = LogLevel.BODY }
+        Logging { logger = loggerManager; level = LogLevel.ALL }
         install(HttpCookies) {
             storage = cookieManager
         }
@@ -91,7 +87,7 @@ class NetworkModule {
 
         install(ContentNegotiation) {
             json(json)
-            // io.ktor.serialization.kotlinx.protobuf.protobuf()
+            protobuf()
         }
 
         install(HttpRequestRetry) {
@@ -151,6 +147,7 @@ class NetworkModule {
                         val element = json.decodeFromJsonElement(serializer(type), realData)
                         element
                     }
+
                     else -> null
                 }
             } catch (e: Exception) {
