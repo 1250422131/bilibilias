@@ -17,18 +17,21 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.contentType
 import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.security.InvalidAlgorithmParameterException
+import java.security.InvalidKeyException
 import java.security.KeyFactory
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.MGF1ParameterSpec
 import java.security.spec.X509EncodedKeySpec
+import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
+import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.OAEPParameterSpec
 import javax.crypto.spec.PSource
@@ -103,14 +106,12 @@ class LoginRepository @Inject constructor(
         httpClient.get(BilibiliApi2.CHECK_COOKIE_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
             parameterCSRF(cookiesData.csrf)
-            headerCookie(cookiesData.sessionData)
         }.body()
     }
 
     suspend fun getRefreshCsrf(correspondPath: String): String = withContext(ioDispatcher) {
-        val html = httpClient.get(BilibiliApi2.CORRESPOND + correspondPath) {
-            headerCookie(cookiesData.sessionData)
-        }.bodyAsText()
+        val html = httpClient.get(BilibiliApi2.CORRESPOND + correspondPath).bodyAsText()
+        Timber.tag(TAG).d(html)
         if (html.isEmpty()) return@withContext ""
         val target = "<div id=\"1-name\">"
         val index = html.indexOf(target) + target.length
@@ -146,7 +147,6 @@ class LoginRepository @Inject constructor(
         val oldRefreshToken = cookiesData.refreshToken
         val newRefreshToken = httpClient.post(BilibiliApi2.COOKIE_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
-            headerCookie(cookiesData.sessionData)
             parameterCSRF(cookiesData.csrf)
             parameter("refresh_csrf", refreshCsrf)
             parameter("source", "main_web")
@@ -155,9 +155,6 @@ class LoginRepository @Inject constructor(
         cookiesData.refreshToken = newRefreshToken.refreshToken
         oldRefreshToken
     }
-
-    private fun HttpMessageBuilder.headerCookie(sessionData: String): Unit =
-        headers.append("Cookie", "SESSDATA=${sessionData}")
 
     /**
      * ```
@@ -177,7 +174,6 @@ class LoginRepository @Inject constructor(
     suspend fun confirmRefresh(oldRefreshToken: String): Unit = withContext(ioDispatcher) {
         httpClient.post(BilibiliApi2.CONFIRM_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
-            headerCookie(cookiesData.sessionData)
             parameterCSRF(cookiesData.csrf)
             parameter("refresh_token", oldRefreshToken)
         }
@@ -222,18 +218,20 @@ class LoginRepository @Inject constructor(
         } catch (e: InvalidKeySpecException) {
             Timber.e(e)
             ""
-        } catch (e: java.security.InvalidAlgorithmParameterException) {
+        } catch (e: InvalidAlgorithmParameterException) {
             Timber.e(e)
             ""
-        } catch (e: java.security.InvalidKeyException) {
+        } catch (e: InvalidKeyException) {
             Timber.e(e)
             ""
-        } catch (e: javax.crypto.BadPaddingException) {
+        } catch (e: BadPaddingException) {
             Timber.e(e)
             ""
-        } catch (e: javax.crypto.IllegalBlockSizeException) {
+        } catch (e: IllegalBlockSizeException) {
             Timber.e(e)
             ""
         }
     }
 }
+
+private const val TAG = "LoginRepository"
