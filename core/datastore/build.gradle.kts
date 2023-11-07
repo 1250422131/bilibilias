@@ -9,7 +9,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
     implementation(libs.fastkv)
     implementation(libs.mmkv)
-    implementation(project(":core:common"))
+    implementation(project(mapOf("path" to ":core:model")))
+
+
 }

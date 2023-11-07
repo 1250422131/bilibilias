@@ -40,9 +40,7 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-        <me.dkzwm.widget.srl.SmoothRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/collection_recyclerView"
@@ -50,6 +48,5 @@
                 android:layout_height="match_parent"
                 android:padding="20dp" />
 
-        </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

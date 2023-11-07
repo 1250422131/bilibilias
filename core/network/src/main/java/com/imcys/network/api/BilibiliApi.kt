@@ -53,8 +53,8 @@ object BilibiliApi2 {
     const val thisVideoDanmakuPath = "x/v2/dm/web/seg.so"
     const val thisVideoDanmakuWbiPath = "x/v2/dm/wbi/web/seg.so"
 
-    // 视频列表
-    const val videoPageListPath = "x/player/pagelist"
+    // 查询视频分P列表
+    const val PLAYER_PAGE_LIST = "x/player/pagelist"
 
     // 修改视频收藏
     const val videoCollectionSetPath = "x/v3/fav/resource/deal"
@@ -67,9 +67,6 @@ object BilibiliApi2 {
 
     // 获取用户基本信息
     const val userSpaceDetails = "x/space/wbi/acc/info"
-
-    // 用户导航栏信息
-    const val userNavDataPath = "x/web-interface/nav"
 
     // 用户状态
     const val userUpStat = "x/space/upstat"

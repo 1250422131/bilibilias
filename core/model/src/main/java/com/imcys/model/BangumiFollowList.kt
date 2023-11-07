@@ -243,18 +243,14 @@ data class BangumiFollowList(
             val allowPreview: Int? = 0,
             @SerialName("allow_review")
             val allowReview: Int? = 0,
-            @SerialName("demand_end_time")
-            val demandEndTime: DemandEndTime? = DemandEndTime(),
+
             @SerialName("is_rcmd")
             val isRcmd: Int = 0,
             @SerialName("is_selection")
             val isSelection: Int = 0,
             @SerialName("selection_style")
             val selectionStyle: Int = 0
-        ) {
-            @Serializable
-            class DemandEndTime
-        }
+        )
 
         @Serializable
         data class Section(

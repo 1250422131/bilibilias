@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.tool
 
-sealed interface SearchResultUiState{
+sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState
     data object EmptyQuery : SearchResultUiState
 
@@ -11,5 +11,8 @@ sealed interface SearchResultUiState{
         val desc: String = "",
         val view: String = "",
         val danmaku: String = "",
+        val aid: Long = 0,
+        val bvid: String = "",
+        val cid: Long = 0,
     ) : SearchResultUiState
 }

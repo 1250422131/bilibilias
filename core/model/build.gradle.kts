@@ -1,8 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.hilt)
-    alias(libs.plugins.kotlin.serialization)
+    id("kotlinx-serialization")
 }
 
 android {

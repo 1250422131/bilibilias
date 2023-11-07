@@ -2,15 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-        <variable
-            name="data"
-            type="com.imcys.bilibilias.common.model.user.UserBiliBiliCookieModel.Data" />
-
-    </data>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +27,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{data.name}"
                 android:textSize="18sp" />
 
             <androidx.cardview.widget.CardView

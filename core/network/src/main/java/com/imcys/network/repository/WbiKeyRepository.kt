@@ -30,10 +30,11 @@ class WbiKeyRepository @Inject constructor(
 
     private var token: String? = null
 
-    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> = withContext(ioDispatcher) {
-        val userNav = httpClient.get(BilibiliApi2.Token).body<UserNav>()
-        getParam(params, userNav.imgKey, userNav.subKey)
-    }
+    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> =
+        withContext(ioDispatcher) {
+            val userNav = httpClient.get(BilibiliApi2.Token).body<UserNav>()
+            getParam(params, userNav.imgKey, userNav.subKey)
+        }
 
     private fun getParam(
         params: List<Pair<String, Any>>,

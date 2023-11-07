@@ -1,60 +1,25 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.KeyEvent
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
-import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
-import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
-import com.imcys.bilibilias.home.ui.fragment.HomeFragment
-import com.imcys.bilibilias.home.ui.fragment.ToolFragment
-import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.imcys.bilibilias.view.base.BaseActivity
-import com.xiaojinzi.component.Component
 
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
-    private var exitTime: Long = 0
-
-    lateinit var toolFragment: ToolFragment
-    lateinit var homeFragment: HomeFragment
-    lateinit var downloadFragment: DownloadFragment
-    lateinit var userFragment: UserFragment
     override fun getLayoutRes(): Int = R.layout.activity_home
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Component.inject(target = this)
         loadFragment()
     }
 
-    /**
-     * 初始化fragment
-     */
-    override fun initView() {
-        homeFragment = HomeFragment.newInstance()
-        toolFragment = ToolFragment.newInstance()
-        userFragment = UserFragment.newInstance()
-        downloadFragment = DownloadFragment.newInstance()
-    }
+
     // 加载fragment
     private fun loadFragment() {
-        val fragmentArrayList = ArrayList<Fragment>()
-        // 添加fragment
-        fragmentArrayList.add(homeFragment)
-        fragmentArrayList.add(toolFragment)
-        fragmentArrayList.add(downloadFragment)
-        fragmentArrayList.add(userFragment)
-
-        val myFragmentPageAdapter =
-            MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
         binding.let {
-            it.homeViewPage.adapter = myFragmentPageAdapter
             it.homeViewPage.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
 
@@ -100,27 +65,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("asUrl", asUrl)
             context.startActivity(intent)
-        }
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exit()
-            return false
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    private fun exit() {
-        if (System.currentTimeMillis() - exitTime > 2000) {
-            Toast.makeText(
-                applicationContext,
-                getString(R.string.app_HomeActivity_exit),
-                Toast.LENGTH_SHORT
-            ).show()
-            exitTime = System.currentTimeMillis()
-        } else {
-            finishAll()
         }
     }
 }

@@ -1,5 +1,5 @@
 [versions]
-androidxComposeCompiler = "1.5.3"
+androidxComposeCompiler = "1.5.4-dev-k1.9.20-50f08dfa4b4"
 androidxComposeRuntimeTracing = "1.0.0-alpha04"
 accompanist = "0.32.0"
 androidGradlePlugin = "8.1.2"
@@ -9,15 +9,14 @@ appcenter = "5.0.2"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 banner = "2.2.2"
-brv = "1.3.90"
 coil = "2.5.0"
 composeSettingsUiM3 = "1.0.2"
 cronetEmbedded = "113.5672.61"
-cronetOkhttp = "0.1.0"
+kotlinReflect = "1.9.20"
 materialIconsExtended = "1.6.0-alpha08"
 constraintlayout = "2.1.4"
 coreKtx = "1.12.0"
-detekt = "1.23.1"
+detekt = "1.23.3"
 detektRulesCompose = "1.3.0"
 detektVerifyImplementation = "1.2.5"
 dfm = "0.9.25"
@@ -31,7 +30,6 @@ gitlab-detektFormatting = "1.23.1"
 glide = "4.13.2"
 grpcProtobuf = "1.59.0"
 grpcKotlinStub = "1.4.0"
-gson = "2.10"
 gsyVideoPlayer = "v8.4.0-release-jitpack"
 hbmartinDetektRules = "0.1.1"
 hilt = "2.48.1"
@@ -39,21 +37,19 @@ hiltNavigationCompose = "1.0.0"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
-kcomponent-compiler = "1.0.0-rc4"
-kotlin = "1.9.10"
+kotlin = "1.9.20"
 kotlinx-coroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
 kotlinxDatetime = "0.4.1"
 kotlinxSerialization = "1.6.0"
 kotlinSerialization = "1.9.0"
 media3 = "1.1.1"
-okhttp = "4.11.0"
+okhttp = "4.12.0"
 okio = "3.6.0"
-orgJetbrainsDokka = "1.9.0"
-ksp = "1.9.10-1.0.13"
+ksp = "1.9.20-1.0.14"
 ktor = "2.3.5"
 kurePotlin = "0.7.0"
-androidxLifecycle = "2.7.0-alpha03"
+androidxLifecycle = "2.7.0-beta01"
 lottie = "6.1.0"
 material = "1.10.0"
 mmkv = "1.3.1"
@@ -62,7 +58,6 @@ mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 navigationCompose = "2.7.4"
 nlopez-detekt = "0.2.3"
-okdownload = "1.0.7"
 pagingCompose = "3.2.1"
 pagingRuntimeKtx = "3.2.1"
 preferenceKtx = "1.2.1"
@@ -92,7 +87,6 @@ androidx-xfetch2 = { module = "androidx.tonyodev.fetch2:xfetch2", version.ref = 
 compose-settings-ui-m3 = { module = "com.github.alorma:compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
 cronet-embedded = { module = "org.chromium.net:cronet-embedded", version.ref = "cronetEmbedded" }
-cronet-okhttp = { module = "com.google.net.cronet:cronet-okhttp", version.ref = "cronetOkhttp" }
 
 ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
@@ -107,6 +101,7 @@ hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
 detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinReflect" }
 rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -152,15 +147,11 @@ asBottomDialog = { group = "com.github.1250422131", name = "AsBottomDialog", ver
 
 banner = { group = "io.github.youth5201314", name = "banner", version.ref = "banner" }
 
-brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
-
 dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
 
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
@@ -172,9 +163,6 @@ hyy920109-GuidePro = { group = "com.github.hyy920109", name = "GuidePro", versio
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
-
-kcomponent-compiler = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-compiler", version.ref = "kcomponent-compiler" }
-kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-rx", version.ref = "kcomponent-compiler" }
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -188,20 +176,15 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
-ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
 ktor-serialization-kotlinx-protobuf = { group = "io.ktor", name = "ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }
-
-ktx = { group = "com.liulishuo.okdownload", name = "ktx", version.ref = "okdownload" }
 
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 
 mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
-
-okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
 
@@ -221,11 +204,11 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "media3" }
 androidx-media3-datasource-cronet = { module = "androidx.media3:media3-datasource-cronet", version.ref = "media3" }
 androidx-media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
-androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
 androidx-media3-decoder = { module = "androidx.media3:media3-decoder", version.ref = "media3" }
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "1.1.1" }
 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
 androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
@@ -255,7 +238,6 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.ref = "github-Banner" }
-androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "1.1.1" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

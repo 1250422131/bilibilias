@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-    </data>
+    <data></data>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -85,18 +84,10 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
-                        android:id="@+id/fragment_user_works_csr"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_user_works_rv"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:sr_enableLoadMore="true"
-                        app:sr_enableRefresh="false">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/fragment_user_works_rv"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
+                        android:layout_height="match_parent" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.coordinatorlayout.widget.CoordinatorLayout>

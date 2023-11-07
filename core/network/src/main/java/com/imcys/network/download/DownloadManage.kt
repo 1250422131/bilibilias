@@ -1,16 +1,14 @@
 package com.imcys.network.download
 
 import android.content.Context
-import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
-import com.imcys.bilibilias.dm.Dm
 import com.imcys.common.di.AppCoroutineScope
+import com.imcys.model.video.Page
 import com.imcys.network.repository.VideoRepository
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toDateTimePeriod
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okio.FileSystem
@@ -43,28 +41,28 @@ class DownloadManage @Inject constructor(
 
     fun addTask(
         details: com.imcys.model.VideoDetails,
-        dash: com.imcys.model.DashVideoPlayBean,
-        page: com.imcys.model.VideoDetails.Page,
+        dash: com.imcys.model.VideoFormatDash,
+        page: Page,
         downloadListHolders: DownloadListHolders
     ) {
-        when (downloadListHolders.requireDownloadFileType) {
-            DownloadFileType.VideoAndAudio -> videoAndAudio(
-                dash,
-                details.bvid,
-                page,
-                downloadListHolders,
-                details.aid,
-                details.title
-            )
-
-            DownloadFileType.OnlyAudio -> TODO()
-        }
+        // when (downloadListHolders.requireDownloadFileType) {
+        //     DownloadFileType.VideoAndAudio -> videoAndAudio(
+        //         dash,
+        //         details.bvid,
+        //         page,
+        //         downloadListHolders,
+        //         details.aid,
+        //         details.title
+        //     )
+        //
+        //     DownloadFileType.OnlyAudio -> TODO()
+        // }
     }
 
     private fun videoAndAudio(
-        dash: com.imcys.model.DashVideoPlayBean,
+        dash: com.imcys.model.VideoFormatDash,
         bvid: String,
-        page: com.imcys.model.VideoDetails.Page,
+        page: Page,
         downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
@@ -114,7 +112,7 @@ class DownloadManage @Inject constructor(
         // }
     }
 
-    fun buildAss(elemsList: List<Dm.DanmakuElem>) {
+    // fun buildAss(elemsList: List<Dm.DanmakuElem>) {
         // Fix
         // Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
         // Dialogue: 0,0:14:28.92,0:14:36.92,R2L,,20,20,2,,{\move(610,25,-50,25)}广告满分
@@ -148,7 +146,7 @@ class DownloadManage @Inject constructor(
         //         append(it.content)
         //     }
 
-    }
+    // }
 
 
     fun StringBuilder.appendComma(): StringBuilder = append(',')
@@ -156,15 +154,15 @@ class DownloadManage @Inject constructor(
 
     fun formatSecond(milliseconds: Int): Pair<String, String> {
         val duration = milliseconds.milliseconds
-        val period = duration.toDateTimePeriod()
+        // val period = duration.toDateTimePeriod()
 
-        val hours = period.hours
-        val minutes = period.minutes
-        val seconds = period.seconds
-
-        val startTime = String.format(null, "%02d:%02d:%02d", hours, minutes, seconds)
-        val endTime = String.format(null, "%02d:%02d:%02d", hours, minutes, (seconds + 8) % 60)
-        return startTime to endTime
+        // val hours = period.hours
+        // val minutes = period.minutes
+        // val seconds = period.seconds
+        //
+        // val startTime = String.format(null, "%02d:%02d:%02d", hours, minutes, seconds)
+        // val endTime = String.format(null, "%02d:%02d:%02d", hours, minutes, (seconds + 8) % 60)
+        return "startTime" to "endTime"
     }
 
     fun buildHeadersInfo(
@@ -227,8 +225,8 @@ class DownloadManage @Inject constructor(
     private fun startIDMDownload() {}
     private fun builtin(
         bvid: String,
-        dash: com.imcys.model.DashVideoPlayBean,
-        page: com.imcys.model.VideoDetails.Page,
+        dash: com.imcys.model.VideoFormatDash,
+        page: Page,
         downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
@@ -252,7 +250,7 @@ class DownloadManage @Inject constructor(
         downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
-    private fun buildEntryJson(qn: Int, bvid: String, page: com.imcys.model.VideoDetails.Page) {
+    private fun buildEntryJson(qn: Int, bvid: String, page: Page) {
         val entryJson = """
                       {
                             "media_type": 2,

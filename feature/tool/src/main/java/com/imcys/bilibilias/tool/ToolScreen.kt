@@ -44,7 +44,7 @@ import coil.compose.AsyncImage
 
 @Composable
 internal fun ToolRoute(
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (Long, String, Long) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToBangumiFollow: () -> Unit,
     viewModel: ToolViewModel = hiltViewModel()
@@ -52,10 +52,10 @@ internal fun ToolRoute(
     val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     ToolScreen(
-        onNavigateToPlayer = onNavigateToPlayer,
-        onNavigateToSettings = onNavigateToSettings,
-        onNavigateToBangumiFollow = onNavigateToBangumiFollow,
-        onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        navigateToPlayer = onNavigateToPlayer,
+        navigateToSetting = onNavigateToSettings,
+        navigateToBangumiFollow = onNavigateToBangumiFollow,
+        searchQueryChanged = viewModel::onSearchQueryChanged,
         clearSearches = viewModel::clearSearches,
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState
@@ -65,10 +65,10 @@ internal fun ToolRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ToolScreen(
-    onNavigateToPlayer: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    onNavigateToBangumiFollow: () -> Unit,
-    onSearchQueryChanged: (String) -> Unit,
+    navigateToPlayer: (Long, String, Long) -> Unit,
+    navigateToSetting: () -> Unit,
+    navigateToBangumiFollow: () -> Unit,
+    searchQueryChanged: (String) -> Unit,
     clearSearches: () -> Unit,
     searchQuery: String,
     searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
@@ -93,7 +93,7 @@ internal fun ToolScreen(
                         contentDescription = "设置",
                         Modifier
                             .padding(16.dp)
-                            .clickable { onNavigateToSettings() },
+                            .clickable { navigateToSetting() },
                         tint = Color(android.graphics.Color.parseColor("#fb7299"))
                     )
                 }
@@ -107,7 +107,7 @@ internal fun ToolScreen(
         ) {
             SearchTextField(
                 query = searchQuery,
-                onValueChange = onSearchQueryChanged,
+                onValueChange = searchQueryChanged,
                 clearText = clearSearches,
             )
             when (searchResultUiState) {
@@ -120,7 +120,13 @@ internal fun ToolScreen(
                         desc = searchResultUiState.desc,
                         view = searchResultUiState.view,
                         danmaku = searchResultUiState.danmaku,
-                        onNavigateToPlayer = onNavigateToPlayer,
+                        onClick = {
+                            navigateToPlayer(
+                                searchResultUiState.aid,
+                                searchResultUiState.bvid,
+                                searchResultUiState.cid,
+                            )
+                        },
                         modifier = Modifier.animateContentSize()
                     )
                 }
@@ -133,7 +139,7 @@ internal fun ToolScreen(
                     imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
                     title = "追番信息导出",
                     containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
-                    onClick = onNavigateToBangumiFollow
+                    onClick = navigateToBangumiFollow
                 )
             }
         }
@@ -152,11 +158,11 @@ private fun VideoCard(
     desc: String,
     view: String,
     danmaku: String,
-    onNavigateToPlayer: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        onClick = onNavigateToPlayer,
+        onClick = onClick,
         modifier
             .fillMaxWidth()
             .height(200.dp),
@@ -292,18 +298,4 @@ private fun SearchTextField(
 @Composable
 fun PreviewSearchBar() {
     SearchTextField("bv1234567899", {}, {})
-}
-
-@Preview(showBackground = true, name = "搜索结果")
-@Composable
-fun PreviewVideoCard() {
-    VideoCard(
-        pic = "",
-        title = "这是一个标题",
-        desc = "这是视频简介",
-        view = "播放量",
-        danmaku = "弹幕数",
-        onNavigateToPlayer = {},
-        modifier = Modifier
-    )
 }

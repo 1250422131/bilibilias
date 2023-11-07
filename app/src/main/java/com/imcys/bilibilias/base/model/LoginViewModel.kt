@@ -7,14 +7,11 @@ import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.utils.asToast
 
 class LoginViewModel : ViewModel() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun biliAgreement(context: Context) {
-        asToast(context, "无论如何，你都在间接使用B站")
 
         val lLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -24,8 +21,6 @@ class LoginViewModel : ViewModel() {
             val webChromeClient = object : WebChromeClient() {
             }
 
-            // 监听
-            StatService.trackWebView(context, this, webChromeClient)
 
             settings.javaScriptCanOpenWindowsAutomatically =
                 true // 设置js可以直接打开窗口，如window.open()，默认为false
@@ -62,8 +57,6 @@ class LoginViewModel : ViewModel() {
         }
         Privacy.webChromeClient = webChromeClient
 
-        // 监听
-        StatService.trackWebView(context, Privacy, webChromeClient)
         Privacy.settings.javaScriptCanOpenWindowsAutomatically =
             true // 设置js可以直接打开窗口，如window.open()，默认为false
         Privacy.settings.javaScriptEnabled = true // 是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞

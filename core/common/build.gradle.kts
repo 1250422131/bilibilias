@@ -14,14 +14,24 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     api(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.serialization.cbor)
+
     api(libs.timber)
 
-    /**
-     * MMKV 储存框架
-     */
-    implementation(libs.mmkv)
-    implementation(libs.fastkv)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.foundation)
+
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.kotlin.reflect)
+
+}
+kotlin {
+    sourceSets {
+        dependencies {
+            api(libs.kotlinx.collections.immutable)
+        }
+    }
 }

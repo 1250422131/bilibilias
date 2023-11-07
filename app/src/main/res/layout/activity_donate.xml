@@ -14,15 +14,12 @@
         android:orientation="vertical"
         tools:context=".home.ui.activity.DonateActivity">
 
-        <me.dkzwm.widget.srl.SmoothRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/donate_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp" />
-        </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </LinearLayout>
 </layout>
