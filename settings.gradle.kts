@@ -29,6 +29,7 @@ include(":core:network")
 include(":core:model")
 include(":core:database")
 include(":core:datastore")
+
 include(":feature:authentication")
 include(":feature:home")
 include(":feature:tool")
