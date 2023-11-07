@@ -3,20 +3,15 @@ package com.imcys.bilibilias.base.app
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.HiltAndroidApp
-import io.microshow.rxffmpeg.RxFFmpegInvoke
 import timber.log.Timber
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 
 @HiltAndroidApp
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        RxFFmpegInvoke.getInstance().setDebug(false)
 
         initTimber()
 
@@ -25,7 +20,7 @@ class App : Application() {
     }
 
     private fun initPlayManager() {
-        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+        // PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
     }
 
     private fun initTimber() {

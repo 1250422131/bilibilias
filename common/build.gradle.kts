@@ -96,11 +96,6 @@ dependencies {
      */
     api(libs.flexbox)
 
-    /**
-     * rv框架
-     * 实现RV的动画效果
-     */
-    api(libs.brv)
 
     /**
      * 底部对话框库
@@ -121,21 +116,14 @@ dependencies {
      */
     api(libs.rxFFmpeg)
 
-    /**
-     * 组件化路由库
-     */
-    api(libs.kcomponent.rx)
-    ksp(libs.kcomponent.compiler)
-
     // 百度统计
     api(libs.mtj.sdk.circle)
 
     // 开屏引导
     api(libs.hyy920109.guidePro)
 
-    // 微软分发
+    // 微软
     api(libs.appcenter.distribute)
-    // 微软统计
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
@@ -144,11 +132,6 @@ dependencies {
      */
     api(libs.androidFilePicker)
 
-    /**
-     * xutils
-     * 下载文件支持
-     */
-    api(libs.xutils)
 
     /**
      * DanmakuFlameMaster
@@ -171,26 +154,8 @@ dependencies {
      */
     api(libs.uiTimateBarX)
 
-    /**
-     * ktor全局支持
-     */
-    api(libs.ktor.client.android)
-    implementation(libs.ktor.client.okhttp)
-    // 日志
-    implementation(libs.ktor.client.logging)
-    debugImplementation(libs.monitor)
-    releaseImplementation(libs.monitor.no.op)
-
-    // json解析支持
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.client.encoding)
-    implementation(libs.ktor.serialization.gson)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.serialization.kotlinx.protobuf)
-
     api(libs.constraintlayout)
-    // api(libs.androidx.lifecycle.viewmodel.ktx)
-    // api(libs.androidx.lifecycle.runtime.ktx)
+
     api(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
@@ -204,15 +169,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
 
-
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
 
-    // implementation(libs.coil)
-
     implementation(libs.okio)
-    api(libs.okhttp)
 
     implementation(libs.grpc.kotlin.stub)
     implementation(libs.grpc.protobuf)

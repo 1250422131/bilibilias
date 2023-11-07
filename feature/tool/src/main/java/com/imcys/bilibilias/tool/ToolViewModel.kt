@@ -18,12 +18,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.serialization.ExperimentalSerializationApi
 import javax.inject.Inject
 
+@OptIn(ExperimentalSerializationApi::class)
 @HiltViewModel
-class ToolViewModel @Inject constructor(
+class ToolViewModel
+@Inject constructor(
     private val videoRepository: VideoRepository,
-    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
@@ -95,7 +98,10 @@ class ToolViewModel @Inject constructor(
                         title = result.data.result.title,
                         desc = result.data.result.evaluate,
                         view = result.data.result.stat.views.digitalConversion(),
-                        danmaku = result.data.result.stat.danmakus.digitalConversion()
+                        danmaku = result.data.result.stat.danmakus.digitalConversion(),
+                        aid = result.data.result.episodes.first().aid,
+                        bvid = result.data.result.episodes.first().bvid,
+                        cid = result.data.result.episodes.first().cid,
                     )
                 }
             }
@@ -119,7 +125,10 @@ class ToolViewModel @Inject constructor(
                         title = result.data.title,
                         desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
                         view = result.data.stat.view.digitalConversion(),
-                        danmaku = result.data.stat.danmaku.digitalConversion()
+                        danmaku = result.data.stat.danmaku.digitalConversion(),
+                        aid = result.data.aid,
+                        bvid = result.data.bvid,
+                        cid = result.data.cid,
                     )
                 }
             }

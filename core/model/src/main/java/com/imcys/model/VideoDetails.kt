@@ -1,5 +1,13 @@
 package com.imcys.model
 
+import com.imcys.model.video.Author
+import com.imcys.model.video.DescV2
+import com.imcys.model.video.HonorReply
+import com.imcys.model.video.Owner
+import com.imcys.model.video.Page
+import com.imcys.model.video.Rights
+import com.imcys.model.video.Staff
+import com.imcys.model.video.UserGarb
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -236,7 +244,7 @@ data class VideoDetails(
     @SerialName("desc_v2")
     val descV2: List<DescV2>? = null,
     @SerialName("dimension")
-    val dimension: com.imcys.model.Dimension = com.imcys.model.Dimension(),
+    val dimension: Dimension = Dimension(),
     @SerialName("duration")
     val duration: Int = 0,
     @SerialName("dynamic")
@@ -288,192 +296,6 @@ data class VideoDetails(
     @SerialName("videos")
     val videos: Int = 0
 ) {
-    @Serializable
-    data class DescV2(
-        @SerialName("biz_id")
-        val bizId: Int = 0,
-        @SerialName("raw_text")
-        val rawText: String = "",
-        @SerialName("type")
-        val type: Int = 0
-    )
-
-    @Serializable
-    data class HonorReply(
-        @SerialName("honor")
-        val honor: List<Honor> = listOf()
-    ) {
-        @Serializable
-        data class Honor(
-            @SerialName("aid")
-            val aid: Int = 0,
-            @SerialName("desc")
-            val desc: String = "",
-            @SerialName("type")
-            val type: Int = 0,
-            @SerialName("weekly_recommend_num")
-            val weeklyRecommendNum: Int = 0
-        )
-    }
-
-    @Serializable
-    data class Owner(
-        @SerialName("face")
-        val face: String = "",
-        @SerialName("mid")
-        val mid: Long = 0,
-        @SerialName("name")
-        val name: String = ""
-    )
-
-    @Serializable
-    data class Page(
-        @SerialName("cid")
-        val cid: Long = 0,
-        @SerialName("dimension")
-        val dimension: com.imcys.model.Dimension = com.imcys.model.Dimension(),
-        @SerialName("duration")
-        val duration: Int = 0,
-        @SerialName("from")
-        val from: String = "",
-        @SerialName("page")
-        val page: Int = 0,
-        @SerialName("part")
-        val part: String = "",
-        @SerialName("vid")
-        val vid: String = "",
-        @SerialName("weblink")
-        val weblink: String = ""
-    )
-
-    @Serializable
-    data class Rights(
-        @SerialName("arc_pay")
-        val arcPay: Int = 0,
-        @SerialName("autoplay")
-        val autoplay: Int = 0,
-        @SerialName("bp")
-        val bp: Int = 0,
-        @SerialName("clean_mode")
-        val cleanMode: Int = 0,
-        @SerialName("download")
-        val download: Int = 0,
-        @SerialName("elec")
-        val elec: Int = 0,
-        @SerialName("free_watch")
-        val freeWatch: Int = 0,
-        @SerialName("hd5")
-        val hd5: Int = 0,
-        @SerialName("is_360")
-        val is360: Int = 0,
-        @SerialName("is_cooperation")
-        val isCooperation: Int = 0,
-        @SerialName("is_stein_gate")
-        val isSteinGate: Int = 0,
-        @SerialName("movie")
-        val movie: Int = 0,
-        @SerialName("no_background")
-        val noBackground: Int = 0,
-        @SerialName("no_reprint")
-        val noReprint: Int = 0,
-        @SerialName("no_share")
-        val noShare: Int = 0,
-        @SerialName("pay")
-        val pay: Int = 0,
-        @SerialName("ugc_pay")
-        val ugcPay: Int = 0,
-        @SerialName("ugc_pay_preview")
-        val ugcPayPreview: Int = 0
-    )
-
-    @Serializable
-    data class Staff(
-        @SerialName("face")
-        val face: String = "",
-        @SerialName("follower")
-        val follower: Int = 0,
-        @SerialName("label_style")
-        val labelStyle: Int = 0,
-        @SerialName("mid")
-        val mid: Int = 0,
-        @SerialName("name")
-        val name: String = "",
-        @SerialName("official")
-        val official: Official = Official(),
-        @SerialName("title")
-        val title: String = "",
-        @SerialName("vip")
-        val vip: Vip = Vip()
-    ) {
-        @Serializable
-        data class Official(
-            @SerialName("desc")
-            val desc: String = "",
-            @SerialName("role")
-            val role: Int = 0,
-            @SerialName("title")
-            val title: String = "",
-            @SerialName("type")
-            val type: Int = 0
-        )
-
-        @Serializable
-        data class Vip(
-            @SerialName("avatar_subscript")
-            val avatarSubscript: Int = 0,
-            @SerialName("avatar_subscript_url")
-            val avatarSubscriptUrl: String = "",
-            @SerialName("due_date")
-            val dueDate: Long = 0,
-            @SerialName("label")
-            val label: Label = Label(),
-            @SerialName("nickname_color")
-            val nicknameColor: String = "",
-            @SerialName("role")
-            val role: Int = 0,
-            @SerialName("status")
-            val status: Int = 0,
-            @SerialName("theme_type")
-            val themeType: Int = 0,
-            @SerialName("tv_vip_pay_type")
-            val tvVipPayType: Int = 0,
-            @SerialName("tv_vip_status")
-            val tvVipStatus: Int = 0,
-            @SerialName("type")
-            val type: Int = 0,
-            @SerialName("vip_pay_type")
-            val vipPayType: Int = 0
-        ) {
-            @Serializable
-            data class Label(
-                @SerialName("bg_color")
-                val bgColor: String = "",
-                @SerialName("bg_style")
-                val bgStyle: Int = 0,
-                @SerialName("border_color")
-                val borderColor: String = "",
-                @SerialName("img_label_uri_hans")
-                val imgLabelUriHans: String = "",
-                @SerialName("img_label_uri_hans_static")
-                val imgLabelUriHansStatic: String = "",
-                @SerialName("img_label_uri_hant")
-                val imgLabelUriHant: String = "",
-                @SerialName("img_label_uri_hant_static")
-                val imgLabelUriHantStatic: String = "",
-                @SerialName("label_theme")
-                val labelTheme: String = "",
-                @SerialName("path")
-                val path: String = "",
-                @SerialName("text")
-                val text: String = "",
-                @SerialName("text_color")
-                val textColor: String = "",
-                @SerialName("use_img_label")
-                val useImgLabel: Boolean = false
-            )
-        }
-    }
-
     @Serializable
     data class Stat(
         @SerialName("aid")
@@ -530,22 +352,5 @@ data class VideoDetails(
         val author: Author = Author()
     )
 
-    @Serializable
-    data class Author(
-        @SerialName("mid") val mid: Long = 0,
-        @SerialName("name") val name: String = "",
-        @SerialName("sex") val sex: String = "",
-        @SerialName("face") val face: String = "",
-        @SerialName("sign") val sign: String = "",
-        @SerialName("rank") val rank: Int = 0,
-        @SerialName("birthday") val birthday: Int = 0,
-        @SerialName("is_fake_account") val isFakeAccount: Int = 0,
-        @SerialName("is_deleted") val isDeleted: Int = 0,
-    )
 
-    @Serializable
-    data class UserGarb(
-        @SerialName("url_image_ani_cut")
-        val urlImageAniCut: String = ""
-    )
 }

@@ -3,16 +3,6 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <import type="android.view.View"/>
-        <variable
-            name="DownloadFinishTaskInfo"
-            type="com.imcys.bilibilias.common.data.entity.DownloadTaskInfo" />
-
-    </data>
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,7 +62,6 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="@{DownloadFinishTaskInfo.pageTitle}"
                             android:textSize="18sp" />
 
                     </LinearLayout>
@@ -95,7 +84,6 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="@{``+DownloadFinishTaskInfo.bvid}"
                                 android:textColor="@color/color_text_hint"
                                 android:textSize="12sp" />
 

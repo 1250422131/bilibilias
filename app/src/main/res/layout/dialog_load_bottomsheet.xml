@@ -42,14 +42,6 @@
 
 
         </LinearLayout>
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="380dp"
-            android:padding="25dp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_url="https://assets10.lottiefiles.com/packages/lf20_imw8dd3h.json" />
     </LinearLayout>
 
 </RelativeLayout>

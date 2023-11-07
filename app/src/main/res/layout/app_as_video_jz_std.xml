@@ -12,15 +12,6 @@
         android:layout_height="match_parent"
         android:background="@android:color/black">
 
-        <master.flame.danmaku.ui.widget.DanmakuView
-            android:id="@+id/as_jzvdstd_DanmakuView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/video_control"
             android:layout_width="match_parent"
@@ -45,7 +36,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_asplay_barrage_on"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_play_pause"
                 app:layout_constraintStart_toEndOf="@+id/iv_play_pause"
                 app:layout_constraintTop_toTopOf="@+id/iv_play_pause" />
@@ -86,7 +76,6 @@
                 android:id="@+id/iv_fullscreen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/jz_enlarge"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_clarity"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_clarity" />

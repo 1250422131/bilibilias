@@ -19,7 +19,6 @@ import com.tonyodev.fetch2core.Extras
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,7 +36,6 @@ const val EXTRAS_TITLE = "title"
 @Suppress("TooManyFunctions")
 class FetchManage @Inject constructor(
     @ApplicationContext context: Context,
-    private val downloadTaskRepository: DownloadTaskRepository,
     @AppCoroutineScope private val scope: CoroutineScope,
 ) : FetchGroupListener {
 
@@ -105,19 +103,19 @@ class FetchManage @Inject constructor(
     override fun onCancelled(download: Download) {
     }
 
-    private fun updateDownloadTaskInfo(download: Download) {
-        val cid = download.cid
-        val tag = download.tag
-        scope.launch {
-            val task = downloadTaskRepository.findByCidAndTag(cid, tag!!)?.apply {
-                error = download.error.value
-                state = download.status.value
-            }
-            if (task != null) {
-                downloadTaskRepository.update(task)
-            }
-        }
-    }
+    // private fun updateDownloadTaskInfo(download: Download) {
+    //     val cid = download.cid
+    //     val tag = download.tag
+    //     scope.launch {
+    //         val task = downloadTaskRepository.findByCidAndTag(cid, tag!!)?.apply {
+    //             error = download.error.value
+    //             state = download.status.value
+    //         }
+    //         if (task != null) {
+    //             downloadTaskRepository.update(task)
+    //         }
+    //     }
+    // }
 
     override fun onCompleted(groupId: Int, download: Download, fetchGroup: FetchGroup) {
         Timber.d(download.extras.toString())

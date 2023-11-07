@@ -17,19 +17,19 @@ import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.tool.bangumiFollow.bangumiFollowRoute
 import com.imcys.bilibilias.tool.bangumiFollow.navigateToBangumiFollow
 import com.imcys.bilibilias.tool.navigation.toolScreen
-import com.imcys.bilibilias.ui.download.danmaku.danmakuRoute
-import com.imcys.bilibilias.ui.download.danmaku.navigateToDanmaku
-import com.imcys.bilibilias.ui.download.downloadOptionsRoute
-import com.imcys.bilibilias.ui.download.downloadRoute
-import com.imcys.bilibilias.ui.download.navigateToDownloadOptions
-import com.imcys.bilibilias.ui.play.navigateToPlayer
-import com.imcys.bilibilias.ui.play.playerRoute
 import com.imcys.home.navigation.ROUTE_HOME
 import com.imcys.home.navigation.contributeScreen
 import com.imcys.home.navigation.donationScreen
 import com.imcys.home.navigation.homeScreen
 import com.imcys.home.navigation.navigateToContribute
 import com.imcys.home.navigation.navigateToDonation
+import com.imcys.player.download.danmaku.danmakuRoute
+import com.imcys.player.download.danmaku.navigateToDanmaku
+import com.imcys.player.download.downloadOptionsRoute
+import com.imcys.player.download.downloadRoute
+import com.imcys.player.download.navigateToDownloadOptions
+import com.imcys.player.navigation.navigateToPlayer
+import com.imcys.player.navigation.playerScreen
 import com.imcys.setting.navigation.navigateToSettings
 import com.imcys.setting.navigation.settingsRoute
 import com.imcys.user.navigation.userRoute
@@ -67,10 +67,9 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
 
-        playerRoute(
-            onNavigateToDownloadOption = navController::navigateToDownloadOptions,
-            navController = navController,
-            onNavigateToDownloadAanmaku = navController::navigateToDanmaku,
+        playerScreen(
+            navigateToDownloadVideo = navController::navigateToDownloadOptions,
+            navigateToDownloadAanmaku = navController::navigateToDanmaku,
         )
         danmakuRoute(navController = navController, onBack = navController::navigateUp)
     }

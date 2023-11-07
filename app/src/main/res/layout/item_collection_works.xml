@@ -6,7 +6,7 @@
     <data>
         <variable
             name="MediasBean"
-            type="com.imcys.bilibilias.common.model.Collections.Media" />
+            type="com.imcys.model.Collections" />
 
     </data>
 
@@ -70,7 +70,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="@{MediasBean.title}"
                         android:textSize="14dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

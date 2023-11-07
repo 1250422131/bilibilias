@@ -4,11 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-
-        <variable
-            name="ItemBean"
-            type="com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean.DataBean.ItemBean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -68,7 +63,7 @@
                                 android:ellipsize="end"
                                 android:lines="2"
                                 android:maxEms="8"
-                                android:text="@{ItemBean.title}"
+
                                 android:textColor="#FFFFFF"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -83,14 +78,8 @@
                             android:background="@drawable/home_item_rcmd_like_background"
                             android:clickable="true"
                             android:focusable="true"
-                            android:gravity="center">
-                            <!--app:lottie_progress="@{ItemBean.likeState}"-->
-                            <com.airbnb.lottie.LottieAnimationView
-                                android:id="@+id/item_rcmd_like_lottie"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app:lottie_autoPlay="false"
-                                app:lottie_loop="false" />
+                            android:gravity="center"
+                            android:orientation="horizontal">
                         </LinearLayout>
 
 

@@ -60,7 +60,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":core:common"))
     implementation(project(":core:design-system"))
     implementation(project(":core:ui"))
@@ -73,16 +72,17 @@ dependencies {
     implementation(project(":feature:tool"))
     implementation(project(":feature:user"))
     implementation(project(":feature:setting"))
+    implementation(project(":feature:player"))
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.mmkv)
-    ksp(libs.kcomponent.compiler)
     implementation(libs.material)
 
     implementation(libs.androidx.lifecycle.viewModelCompose)
@@ -99,22 +99,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
 
     /**
-     * banner
-     */
-    implementation(libs.zhujiang.banner)
-
-    /**
-     * 网络图片加载库
-     */
-    // implementation(libs.coil)
-    // implementation(libs.coil.compose)
-    // implementation(libs.coil.gif)
-
-    implementation(libs.kotlinx.serialization.protobuf)
-    implementation(libs.kotlinx.serialization.cbor)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
-    /**
      * 下载
      */
     implementation(libs.androidx.xfetch2)
@@ -128,31 +112,6 @@ dependencies {
      * protobuf
      */
     implementation(libs.protobuf.kotlin)
-    /**
-     * gsy 播放器
-     */
-    implementation(libs.gsyVideoPlayer.java)
-    /**
-     * ExoPlayer模式
-     */
-    implementation(libs.gsyVideoPlayer.exo2)
-
-    /**
-     * 视频网络请求
-     */
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.media3.common)
-    implementation(libs.androidx.media3.transformer)
-    implementation(libs.androidx.media3.datasource.okhttp)
-    implementation(libs.androidx.media3.datasource.cronet)
-
-    implementation(libs.androidx.media3.session) // [Required] MediaSession Extension dependency
-    implementation(libs.androidx.media3.decoder)
-    implementation(libs.androidx.media3.datasource)
-    implementation(libs.cronet.embedded) {
-        exclude(group = "com.google.protobuf")
-    }
 
     implementation(libs.timber)
     implementation(libs.coil.kt)

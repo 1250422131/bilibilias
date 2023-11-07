@@ -15,6 +15,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io")
         google()
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "BILIBILIAS"
@@ -33,3 +34,4 @@ include(":feature:home")
 include(":feature:tool")
 include(":feature:user")
 include(":feature:setting")
+include(":feature:player")

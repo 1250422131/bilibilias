@@ -1,10 +1,5 @@
 package com.imcys.network.download
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.imcys.bilibilias.common.data.download.entity.DownloadFileType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,17 +15,13 @@ class DownloadListHolders @Inject constructor() {
      */
     var videoQuality = 0
 
-    /**
-     * 要下载的文件集合
-     */
-    var subset = mutableStateListOf<com.imcys.model.VideoDetails.Page>()
 
-    var requireDownloadFileType by mutableStateOf(DownloadFileType.VideoAndAudio)
+    // var requireDownloadFileType by mutableStateOf(DownloadFileType.VideoAndAudio)
 
     // 下载工具
     var toolType = DownloadToolType.BUILTIN
     override fun toString(): String {
-        return "DownloadListHolders(videoQuality=$videoQuality, subset=$subset, requireDownloadFileType=$requireDownloadFileType, toolType=$toolType)"
+        return "DownloadListHolders(videoQuality=$videoQuality, toolType=$toolType)"
     }
 }
 

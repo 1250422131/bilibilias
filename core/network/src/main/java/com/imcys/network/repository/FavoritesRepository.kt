@@ -2,7 +2,7 @@ package com.imcys.network.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.imcys.bilibilias.common.model.Collections
+import com.imcys.model.Collections
 import com.imcys.common.di.AsDispatchers.IO
 import com.imcys.common.di.Dispatcher
 import com.imcys.network.api.BilibiliApi2

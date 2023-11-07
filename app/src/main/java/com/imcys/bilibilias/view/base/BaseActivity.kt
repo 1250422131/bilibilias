@@ -1,18 +1,12 @@
 package com.imcys.bilibilias.view.base
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.AbsActivity
 
-abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseInit {
-
-    val asSharedPreferences: SharedPreferences by lazy(LazyThreadSafetyMode.NONE) {
-        PreferenceManager.getDefaultSharedPreferences(this)
-    }
+abstract class BaseActivity<DB : ViewDataBinding> : AppCompatActivity(), BaseInit {
 
     @LayoutRes
     abstract fun getLayoutRes(): Int

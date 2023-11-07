@@ -6,7 +6,7 @@
     android:background="@android:color/black"
     android:descendantFocusability="afterDescendants">
 
-    <FrameLayout
+ <!--   <FrameLayout
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
@@ -275,5 +275,5 @@
             android:textColor="@color/white" />
 
     </FrameLayout>
-
+-->
 </RelativeLayout>

@@ -11,9 +11,7 @@ android {
 dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:model"))
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
-    // implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(project(":core:common"))
     /**
      * jxl库
      * 直接生成excel文件时采用

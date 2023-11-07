@@ -2,7 +2,6 @@ package com.imcys.network.di
 
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
-import com.imcys.datastore.fastkv.CookiesData
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
@@ -42,7 +41,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
-import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -51,13 +49,7 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideOkhttp(): OkHttpClient = OkHttpClient.Builder()
-        .build()
-
-    @Provides
-    @Singleton
-    fun provideHttpClientEngine(okHttpClient: OkHttpClient): HttpClientEngine = OkHttp.create {
-        preconfigured = okHttpClient
+    fun provideHttpClientEngine(): HttpClientEngine = OkHttp.create {
         addInterceptor(MonitorInterceptor())
     }
 
@@ -70,12 +62,10 @@ class NetworkModule {
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
         cacheManager: CacheManager,
-        loggerManager: LoggerManager,
-        cookiesData: CookiesData
+        loggerManager: LoggerManager
     ): HttpClient = HttpClient(httpClientEngine) {
         defaultRequest {
             url(ROAM_API)
-            headers.append("Cookie", "SESSDATA=${cookiesData.sessionData}")
         }
         BrowserUserAgent()
         ContentEncoding()

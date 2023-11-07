@@ -8,14 +8,13 @@ import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
-import com.imcys.model.DashVideoPlayBean
 import com.imcys.model.VideoCollection
 import com.imcys.model.VideoDetails
+import com.imcys.model.VideoFormatDash
 import com.imcys.model.VideoHasCoins
 import com.imcys.model.VideoHasLike
-import com.imcys.model.VideoPageListData
+import com.imcys.model.video.Page
 import com.imcys.network.api.BilibiliApi2
-import com.imcys.network.safeGet
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
@@ -47,12 +46,21 @@ class VideoRepository @Inject constructor(
     private val json: Json,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
-
-    suspend fun getVideoPageList(bvid: String): Result<List<VideoPageListData>> = withContext(ioDispatcher) {
-        val result = httpClient.safeGet<List<VideoPageListData>>(BilibiliApi2.videoPageListPath) {
+    /**
+     * ### 查询用户创建的合集
+     * https://api.bilibili.com/x/polymer/space/seasons_series_list
+     *
+     * | 参数名 | 类型 | 内容        | 必要性 | 备注 |
+     * | ------ | ---- | ----------- | ------ | ---- |
+     * | mid   | num  | 目标用户mid | 必要   |      |
+     * | page_num   | num  | 页数 | 必要   |      |
+     * | page_size   | num  | 每页项数 | 必要   |   定义域1-20   |
+     *
+     */
+    suspend fun getPlayerPageList(bvid: String): List<Page> = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi2.PLAYER_PAGE_LIST) {
             parameterBV(bvid)
-        }
-        result
+        }.body()
     }
 
     suspend fun get番剧视频流(epID: String, cid: Long): BangumiPlayBean.Result {
@@ -78,7 +86,7 @@ class VideoRepository @Inject constructor(
         json.decodeFromString(text)
     }
 
-    private val _dashVideo = MutableSharedFlow<Result<DashVideoPlayBean>>(1)
+    private val _dashVideo = MutableSharedFlow<Result<VideoFormatDash>>(1)
     val dashVideo = _dashVideo.asSharedFlow()
 
     /**
@@ -89,12 +97,7 @@ class VideoRepository @Inject constructor(
         cid: Long,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
-    ): Result<DashVideoPlayBean> {
-        val value = getDashVideoStream(bvid, cid, fnval, fourk, false)
-        _dashVideo.emit(value)
-        Timber.d("bv=$bvid,cid=$cid,fnval=$fnval,fourk=$fourk")
-        return value
-    }
+    ): VideoFormatDash = getDashVideoStream(bvid, cid, fnval, fourk, false)
 
     suspend fun getDashVideoStream(
         bvid: String,
@@ -102,7 +105,7 @@ class VideoRepository @Inject constructor(
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1,
         useWbi: Boolean = false
-    ): Result<DashVideoPlayBean> {
+    ): VideoFormatDash {
         val params: List<Pair<String, Any>> =
             listOf(
                 "bvid" to bvid,
@@ -113,9 +116,11 @@ class VideoRepository @Inject constructor(
                 "fnver" to 0
             )
         return if (useWbi) {
-            val list = wbiKeyRepository.getUserNavToken(params)
-            httpClient.safeGet(BilibiliApi2.VIDEO_PLAY_WBI) {
-                toParameter(list)
+            withContext(ioDispatcher) {
+                val list = wbiKeyRepository.getUserNavToken(params)
+                httpClient.get(BilibiliApi2.VIDEO_PLAY_WBI) {
+                    toParameter(list)
+                }.body()
             }
         } else {
             getVideoStreamAddress(params)
@@ -135,9 +140,11 @@ class VideoRepository @Inject constructor(
      */
     private suspend inline fun <reified T> getVideoStreamAddress(
         params: List<Pair<String, Any>>
-    ): Result<T> = httpClient.safeGet(BilibiliApi2.videoPlayPath) {
-        headerRefBilibili()
-        toParameter(params)
+    ): T = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi2.videoPlayPath) {
+            headerRefBilibili()
+            toParameter(params)
+        }.body()
     }
 
     /**
@@ -236,21 +243,21 @@ class VideoRepository @Inject constructor(
     /**
      * 点赞
      */
-    suspend fun hasLike(bvid: String): Boolean {
+    suspend fun hasLike(bvid: String): Boolean = withContext(ioDispatcher) {
         val hasLike = httpClient.get(BilibiliApi2.videoHasLike) {
             parameterBV(bvid)
         }.body<VideoHasLike>()
-        return hasLike.like
+        hasLike.like
     }
 
     /**
      * 投币
      */
-    suspend fun hasCoins(bvid: String): Boolean {
+    suspend fun hasCoins(bvid: String): Boolean = withContext(ioDispatcher) {
         val hasCoins = httpClient.get(BilibiliApi2.videoHasCoins) {
             parameterBV(bvid)
         }.body<VideoHasCoins>()
-        return hasCoins.coins
+        hasCoins.coins
     }
 
     /**
@@ -260,11 +267,11 @@ class VideoRepository @Inject constructor(
      *
      * aid=BV1Bb411H7Dv
      */
-    suspend fun hasCollection(bvid: String): Boolean {
+    suspend fun hasCollection(bvid: String): Boolean = withContext(ioDispatcher) {
         val collection = httpClient.get(BilibiliApi2.videoHasCollection) {
             parameter("aid", bvid)
         }.body<VideoCollection>()
-        return collection.isFavoured
+        collection.isFavoured
     }
 
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
@@ -275,6 +282,5 @@ class VideoRepository @Inject constructor(
             .toString()
     }
 }
-
 
 private const val TAG = "VideoRepository"

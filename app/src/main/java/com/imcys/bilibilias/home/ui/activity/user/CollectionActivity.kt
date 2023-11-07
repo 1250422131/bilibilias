@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.imcys.bilibilias.view.base.BaseActivity
+import com.imcys.model.UserCreateCollectionBean
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.ceil
 
