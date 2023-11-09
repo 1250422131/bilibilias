@@ -9,6 +9,9 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
+    init {
+        context = this
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -29,7 +32,6 @@ class App : Application() {
 
     companion object {
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
-        const val AppGuideVersion = "1.0"
 
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context

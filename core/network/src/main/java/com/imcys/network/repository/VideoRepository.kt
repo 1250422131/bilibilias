@@ -8,9 +8,10 @@ import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
+import com.imcys.model.PlayerInfo
+import com.imcys.model.SeasonsSeriesList
 import com.imcys.model.VideoCollection
 import com.imcys.model.VideoDetails
-import com.imcys.model.VideoFormatDash
 import com.imcys.model.VideoHasCoins
 import com.imcys.model.VideoHasLike
 import com.imcys.model.video.Page
@@ -18,6 +19,9 @@ import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
+import com.imcys.network.utils.parameterMID
+import com.imcys.network.utils.parameterPageNum
+import com.imcys.network.utils.parameterPageSize
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -47,6 +51,7 @@ class VideoRepository @Inject constructor(
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
+     * https://github.com/SocialSisterYi/bilibili-API-collect/pull/437/commits/4403e7ba7ed6853fa00a11371868b917e26b162a
      * ### 查询用户创建的合集
      * https://api.bilibili.com/x/polymer/space/seasons_series_list
      *
@@ -57,6 +62,43 @@ class VideoRepository @Inject constructor(
      * | page_size   | num  | 每页项数 | 必要   |   定义域1-20   |
      *
      */
+    suspend fun queryCollections(mid: Long, pageNum: Int, pageSize: Int = 20): SeasonsSeriesList =
+        withContext(ioDispatcher) {
+            httpClient.get("x/polymer/space/seasons_series_list") {
+                parameterMID(mid)
+                parameterPageNum(pageNum)
+                parameterPageSize(pageSize)
+            }.body()
+        }
+
+    /**
+     * 获取合集内容
+     * https://api.bilibili.com/x/polymer/space/seasons_archives_list?
+     * mid=8047632&
+     * season_id=413472&
+     * sort_reverse=false&
+     * page_num=1&
+     * page_size=30
+     * mid是up uid,
+     * season_id是合集的id
+     */
+    suspend fun getCollectionContent(
+        mid: Long,
+        seasonId: Long,
+        pageNum: Int,
+        pageSize: Int = 30,
+        reverse: Boolean = false
+    ) = withContext(ioDispatcher) {
+        val text = httpClient.get("x/polymer/space/seasons_archives_list") {
+            parameterMID(mid)
+            parameter("season_id", seasonId)
+            parameter("sort_reverse", reverse)
+            parameterPageNum(pageNum)
+            parameterPageSize(pageSize)
+        }.bodyAsText()
+        Timber.d("合集内容=$text")
+    }
+
     suspend fun getPlayerPageList(bvid: String): List<Page> = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi2.PLAYER_PAGE_LIST) {
             parameterBV(bvid)
@@ -86,8 +128,10 @@ class VideoRepository @Inject constructor(
         json.decodeFromString(text)
     }
 
-    private val _dashVideo = MutableSharedFlow<Result<VideoFormatDash>>(1)
+    private val _dashVideo = MutableSharedFlow<Result<PlayerInfo>>(1)
     val dashVideo = _dashVideo.asSharedFlow()
+    lateinit var cachePlayerInfo: PlayerInfo
+        private set
 
     /**
      * fnval 默认值已经取到所有值
@@ -97,7 +141,7 @@ class VideoRepository @Inject constructor(
         cid: Long,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
-    ): VideoFormatDash = getDashVideoStream(bvid, cid, fnval, fourk, false)
+    ): PlayerInfo = getDashVideoStream(bvid, cid, fnval, fourk, false)
 
     suspend fun getDashVideoStream(
         bvid: String,
@@ -105,7 +149,7 @@ class VideoRepository @Inject constructor(
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1,
         useWbi: Boolean = false
-    ): VideoFormatDash {
+    ): PlayerInfo {
         val params: List<Pair<String, Any>> =
             listOf(
                 "bvid" to bvid,
@@ -115,7 +159,7 @@ class VideoRepository @Inject constructor(
                 "fourk" to fourk,
                 "fnver" to 0
             )
-        return if (useWbi) {
+        cachePlayerInfo = if (useWbi) {
             withContext(ioDispatcher) {
                 val list = wbiKeyRepository.getUserNavToken(params)
                 httpClient.get(BilibiliApi2.VIDEO_PLAY_WBI) {
@@ -125,6 +169,7 @@ class VideoRepository @Inject constructor(
         } else {
             getVideoStreamAddress(params)
         }
+        return cachePlayerInfo
     }
 
     fun HttpRequestBuilder.toParameter(parameters: List<Pair<String, Any>>) {
@@ -220,6 +265,8 @@ class VideoRepository @Inject constructor(
 
     private val _videoDetails2 = MutableSharedFlow<Result<VideoDetails>>(1)
     val videoDetails2 = _videoDetails2.asSharedFlow()
+    lateinit var cacheVideoView: VideoDetails
+        private set
 
     /**
      * aid=39330059
@@ -227,17 +274,17 @@ class VideoRepository @Inject constructor(
      * bvid=BV1Bt411z799
      */
     suspend fun getVideoDetailsByBvid(bvid: String): VideoDetails = withContext(ioDispatcher) {
-        val videoDetailsResult = httpClient.get(BilibiliApi2.getVideoDataPath) {
+        cacheVideoView = httpClient.get(BilibiliApi2.getVideoDataPath) {
             parameterBV(bvid)
-        }.body<VideoDetails>()
-        videoDetailsResult
+        }.body()
+        cacheVideoView
     }
 
     suspend fun getVideoDetailsByAid(avid: String): VideoDetails = withContext(ioDispatcher) {
-        val videoDetailsResult = httpClient.get(BilibiliApi2.getVideoDataPath) {
+        cacheVideoView = httpClient.get(BilibiliApi2.getVideoDataPath) {
             parameter("aid", avid)
-        }.body<VideoDetails>()
-        videoDetailsResult
+        }.body()
+        cacheVideoView
     }
 
     /**

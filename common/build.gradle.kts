@@ -85,17 +85,9 @@ dependencies {
     api(libs.androidx.hilt.navigation.compose)
 
     /**
-     * SmoothRefreshLayout支持
-     */
-    api(libs.srl.core)
-    api(libs.srl.ext.material) // md刷新头
-    api(libs.srl.ext.classics)
-
-    /**
      * 伸缩布局
      */
     api(libs.flexbox)
-
 
     /**
      * 底部对话框库
@@ -119,19 +111,10 @@ dependencies {
     // 百度统计
     api(libs.mtj.sdk.circle)
 
-    // 开屏引导
-    api(libs.hyy920109.guidePro)
-
     // 微软
     api(libs.appcenter.distribute)
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
-
-    /**
-     * 文件选择器
-     */
-    api(libs.androidFilePicker)
-
 
     /**
      * DanmakuFlameMaster
@@ -144,15 +127,6 @@ dependencies {
 
     // lottie动画库
     api(libs.lottie)
-
-    api(libs.banner)
-
-    api(libs.glide)
-
-    /**
-     * 沉浸式布局库
-     */
-    api(libs.uiTimateBarX)
 
     api(libs.constraintlayout)
 

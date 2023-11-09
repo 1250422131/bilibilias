@@ -6,8 +6,8 @@ import com.imcys.common.utils.Result
 import com.imcys.model.BangumiFollowList
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.flowGet
-import com.imcys.network.utils.parameterPageLimit
-import com.imcys.network.utils.parameterPageNumber
+import com.imcys.network.utils.parameterPN
+import com.imcys.network.utils.parameterPS
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,8 +23,8 @@ class BangumiRepository @Inject constructor(
     suspend fun bangumiFollowList(pn: Int): Flow<Result<BangumiFollowList>> {
         return httpClient.flowGet(BilibiliApi2.bangumiFollowPath) {
             parameter("vmid", TODO())
-            parameterPageNumber(pn)
-            parameterPageLimit(PAGE)
+            parameterPN(pn)
+            parameterPS(PAGE)
             parameter("type", 1)
         }
     }

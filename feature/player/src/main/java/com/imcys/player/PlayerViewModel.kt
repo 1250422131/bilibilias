@@ -2,26 +2,26 @@ package com.imcys.player
 
 import androidx.annotation.OptIn
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
-import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
-import com.imcys.model.VideoFormatDash
+import com.imcys.model.PlayerInfo
 import com.imcys.model.video.Page
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
+import com.imcys.network.repository.SpaceRepository
 import com.imcys.network.repository.VideoRepository
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
+import com.imcys.player.state.PlayInfoUiState
+import com.imcys.player.state.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +40,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
+    private val spaceRepository: SpaceRepository,
     val downloadListHolders: DownloadListHolders,
     private val downloadManage: DownloadManage,
     private val savedStateHandle: SavedStateHandle,
@@ -54,13 +55,6 @@ class PlayerViewModel @Inject constructor(
      */
     val downloadQuality = savedStateHandle.getStateFlow<Int?>(DOWNLOAD_QUALITY, null)
 
-    /**
-     * 下载列表
-     */
-    @kotlin.OptIn(SavedStateHandleSaveableApi::class)
-    var downloadQueue: List<Long> by savedStateHandle.saveable {
-        mutableStateOf(emptyList())
-    }
     private val info = combine(aid, bvid, cid, ::Triple)
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
@@ -72,7 +66,6 @@ class PlayerViewModel @Inject constructor(
                 is Result.Error -> PlayInfoUiState.LoadFailed
                 Result.Loading -> PlayInfoUiState.Loading
                 is Result.Success -> {
-                    addToDownloadQueue(result.data.pages.first().cid)
                     PlayInfoUiState.Success(
                         title = result.data.title,
                         pic = result.data.pic,
@@ -106,10 +99,15 @@ class PlayerViewModel @Inject constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, PlayerUiState.Loading)
 
-    private fun VideoFormatDash.mapToPlayerUiState(): PlayerUiState.Success {
-        val s = acceptDescription.zip(acceptQuality).toImmutableList()
+    private fun PlayerInfo.mapToPlayerUiState(): PlayerUiState.Success {
+        val pairs = acceptDescription.zip(acceptQuality).toImmutableList()
         onVideoQualityChanged(acceptQuality.first())
-        return PlayerUiState.Success(this, s)
+        return PlayerUiState.Success(
+            qualityDescription = pairs,
+            video = dash.video.toImmutableList(),
+            audio = dash.audio.toImmutableList(),
+            dolby = dash.dolby
+        )
     }
 
     val pageList = bvid.map {
@@ -144,12 +142,12 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch {
             videoRepository.videoDetails2.collectLatest { res ->
                 when (res) {
-                    is com.imcys.common.utils.Result.Error -> TODO()
-                    com.imcys.common.utils.Result.Loading -> TODO()
-                    is com.imcys.common.utils.Result.Success -> {
+                    is Result.Error -> TODO()
+                    Result.Loading -> TODO()
+                    is Result.Success -> {
                         val details = res.data
                         getDash(details)
-                        setSubSet(details.pages)
+                        setSubSet()
                         downloadDanmaku(details.cid, details.aid)
                         val hasLike = videoRepository.hasLike(details.bvid)
                         val hasCoins = videoRepository.hasCoins(details.bvid)
@@ -168,17 +166,29 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 选择下载清晰度
+     */
     fun onVideoQualityChanged(quality: Int) {
         savedStateHandle[DOWNLOAD_QUALITY] = quality
     }
 
-    fun addAllToDownloadQueue(cids: List<Long>) {
-        cids.forEach {
+    /**
+     * 下载所有视频
+     */
+    fun addAllToDownloadQueue(pages: List<Page>) {
+        pages.forEach {
             addToDownloadQueue(it)
         }
     }
 
-    fun addToDownloadQueue(cid: Long) {
+    /**
+     * 下载单个视频
+     */
+    fun addToDownloadQueue(page: Page) {
+        combine(bvid, downloadQuality) { id, quality ->
+            downloadManage.addTask(id, page.cid, quality)
+        }
     }
 
     private fun setVideoBasicInfo(details: com.imcys.model.VideoDetails) {
@@ -247,17 +257,11 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    @OptIn(UnstableApi::class)
-    fun getMimeType(codec: String) = MimeTypes.getMediaMimeType(codec)
-
-    @OptIn(UnstableApi::class)
-    fun getDecoderInfo(mimeType: String) = MediaCodecUtil.getDecoderInfo(mimeType, false, false)
-
     private fun downloadDanmaku(cid: Long, aid: Long) {
         downloadManage.downloadDanmaku(cid, aid)
     }
 
-    private fun setSubSet(pages: List<Page>) {
+    private fun setSubSet() {
     }
 
     private suspend fun getDash(details: com.imcys.model.VideoDetails) {
@@ -333,18 +337,24 @@ fun List<com.imcys.model.Dash.Video>.画质最高队列(): List<com.imcys.model.
         .value
         .sortedBy { it.codecid }
 
+@OptIn(UnstableApi::class)
+fun getDecoderInfo(mimeType: String) = MediaCodecUtil.getDecoderInfo(mimeType, false, false)
+
+@OptIn(UnstableApi::class)
+fun getMimeType(codec: String) = MimeTypes.getMediaMimeType(codec)
+
 private const val DOWNLOAD_QUALITY = "download_quality"
 private const val DOWNLOAD_PAGES = "download_pages"
 
-private const val QUALITY_8K = 127
-private const val QUALITY_DOLBY = 126
-private const val QUALITY_HDR = 125
-private const val QUALITY_4K = 120
-private const val QUALITY_1080P_60 = 116
-private const val QUALITY_1080P_PLUS = 112
-private const val QUALITY_1080P = 80
-private const val QUALITY_720P_60 = 74
-private const val QUALITY_720P = 64
-private const val QUALITY_480P = 32
-private const val QUALITY_360P = 16
-private const val QUALITY_240P = 6
+const val QUALITY_8K = 127
+const val QUALITY_DOLBY = 126
+const val QUALITY_HDR = 125
+const val QUALITY_4K = 120
+const val QUALITY_1080P_60 = 116
+const val QUALITY_1080P_PLUS = 112
+const val QUALITY_1080P = 80
+const val QUALITY_720P_60 = 74
+const val QUALITY_720P = 64
+const val QUALITY_480P = 32
+const val QUALITY_360P = 16
+const val QUALITY_240P = 6

@@ -1,4 +1,4 @@
-package com.imcys.player
+package com.imcys.player.sheet
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.model.video.Page
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -34,15 +35,15 @@ internal fun SheetDownloadVideo(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
     onVideoQualityChanged: (Int) -> Unit,
     downloadQuality: Int?,
-    downloadQueue: List<Long>,
-    addToDownloadQueue: (Long) -> Unit,
-    addAllToDownloadQueue: (List<Long>) -> Unit,
+    addToDownloadQueue: (Page) -> Unit,
+    addAllToDownloadQueue: (List<Page>) -> Unit,
+    pageList: List<Page>,
 ) {
-    var setting by remember { mutableStateOf(false) }
+    var openSetting by remember { mutableStateOf(false) }
     Column {
         Row {
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { setting = true }, modifier = Modifier) {
+            IconButton(onClick = { openSetting = true }, modifier = Modifier) {
                 Icon(imageVector = Icons.Default.Settings, contentDescription = "设置")
             }
         }
@@ -62,11 +63,11 @@ internal fun SheetDownloadVideo(
         }
         Box {
             LazyColumn(contentPadding = PaddingValues(8.dp, 4.dp)) {
-                items((1..100).toList()) { item ->
+                items(pageList) { item ->
+                    var selected by remember { mutableStateOf(false) }
                     TextButton(
-                        onClick = {
-                                addToDownloadQueue(item.toLong())
-                        }, border = if (item.toLong() in downloadQueue) {
+                        onClick = { addToDownloadQueue(item);selected = true },
+                        border = if (selected) {
                             BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         } else {
                             null
@@ -82,7 +83,7 @@ internal fun SheetDownloadVideo(
                 }
             }
             Button(
-                onClick = { addAllToDownloadQueue(listOf()) },
+                onClick = { addAllToDownloadQueue(pageList) },
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()

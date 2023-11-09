@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -65,6 +66,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.common.utils.digitalConversion
 import com.imcys.common.utils.noRippleClickable
 import com.imcys.designsystem.component.CenterRow
+import com.imcys.model.video.Page
+import com.imcys.player.sheet.SheetDirectLink
+import com.imcys.player.sheet.SheetDownloadVideo
+import com.imcys.player.state.PlayInfoUiState
+import com.imcys.player.state.PlayerUiState
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import kotlinx.coroutines.launch
@@ -83,19 +89,19 @@ internal fun PlayerRoute(
     val playerInfoUiState by viewModel.playerInfoUiState.collectAsStateWithLifecycle()
 
     val downloadQuality by viewModel.downloadQuality.collectAsStateWithLifecycle()
-
+    val pageList by viewModel.pageList.collectAsStateWithLifecycle()
     PlayerScreen(
         state = state,
         onNavigateToDownloadAanmaku = onNavigateToDownloadAanmaku,
         selectedQuality = viewModel::selectedQuality,
         selectedPage = viewModel::selectedPage,
-        downloadQuality = downloadQuality,
         onVideoQualityChanged = viewModel::onVideoQualityChanged,
-        playerUiState = playerUiState,
-        playerInfoUiState = playerInfoUiState,
-        downloadQueue = viewModel.downloadQueue,
+        downloadQuality = downloadQuality,
         addToDownloadQueue = viewModel::addToDownloadQueue,
         addAllToDownloadQueue = viewModel::addAllToDownloadQueue,
+        playerInfoUiState = playerInfoUiState,
+        playerUiState = playerUiState,
+        pageList = pageList
     )
 }
 
@@ -108,11 +114,11 @@ internal fun PlayerScreen(
     selectedPage: (Long, Long) -> Unit,
     onVideoQualityChanged: (Int) -> Unit,
     downloadQuality: Int?,
-    downloadQueue: List<Long>,
-    addToDownloadQueue: (Long) -> Unit,
-    addAllToDownloadQueue: (List<Long>) -> Unit,
+    addToDownloadQueue: (Page) -> Unit,
+    addAllToDownloadQueue: (List<Page>) -> Unit,
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
-    playerUiState: PlayerUiState = PlayerUiState.Loading
+    playerUiState: PlayerUiState = PlayerUiState.Loading,
+    pageList: List<Page>
 ) {
     var action by remember { mutableStateOf<Action?>(null) }
     val scope = rememberCoroutineScope()
@@ -139,23 +145,28 @@ internal fun PlayerScreen(
             )
         },
         sheetContent = {
-            when (action) {
-                Action.DOWNLOAD_VIDEO -> if (playerUiState is PlayerUiState.Success) {
-                    SheetDownloadVideo(
+            if (playerUiState is PlayerUiState.Success) {
+                when (action) {
+                    Action.DOWNLOAD_VIDEO -> SheetDownloadVideo(
                         playerUiState.qualityDescription,
                         onVideoQualityChanged,
                         downloadQuality,
-                        downloadQueue,
                         addToDownloadQueue,
                         addAllToDownloadQueue,
+                        pageList
                     )
-                } else {
-                    Unit
-                }
 
-                Action.DOWNLOAD_SUBTITLES -> TODO()
-                Action.STRAIGHT_CHAIN_ANALYSIS -> TODO()
-                null -> Unit
+                    Action.DOWNLOAD_SUBTITLES -> TODO()
+                    Action.DIRECT_LINK -> SheetDirectLink(
+                        video = playerUiState.video,
+                        audio = playerUiState.audio,
+                        dolby = playerUiState.dolby
+                    )
+
+                    null -> Unit
+                }
+            } else {
+                Unit
             }
         },
         snackbarHost = {
@@ -163,6 +174,8 @@ internal fun PlayerScreen(
         },
         sheetPeekHeight = if (action == null) 0.dp else 300.dp,
         scaffoldState = bottomSheetScaffoldState,
+        sheetDragHandle = null,
+        sheetShape = RectangleShape,
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         Column(
@@ -259,7 +272,10 @@ internal fun PlayerScreen(
                 }
                 Button(
                     onClick = {
-                        onNavigateToDownloadAanmaku()
+                        action = Action.DIRECT_LINK
+                        scope.launch {
+                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
+                        }
                     },
                     Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
