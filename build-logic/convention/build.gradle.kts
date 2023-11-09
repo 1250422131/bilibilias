@@ -52,5 +52,9 @@ gradlePlugin {
             id = "bilibili.android.feature"
             implementationClass = "plugin.AndroidFeatureConventionPlugin"
         }
+        register("androidLint") {
+            id = "bilibiliAs.android.lint"
+            implementationClass = "plugin.AndroidLintConventionPlugin"
+        }
     }
 }

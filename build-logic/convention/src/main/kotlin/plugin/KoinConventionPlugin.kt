@@ -14,12 +14,12 @@ class KoinConventionPlugin : Plugin<Project> {
     }
 
     private fun Project.applyDependencies() {
-        // val bom = libs.findLibrary("koin-bom").get()
-        // dependencies {
-        //     add("implementation", platform(bom))
-        //     add("implementation", libs.findLibrary("koin-core").get())
-        //     add("implementation", libs.findLibrary("koin-android").get())
-        //     // If you need compose library, add it in your module plz.
-        // }
+        val bom = libs.findLibrary("koin-bom").get()
+        dependencies {
+            add("implementation", platform(bom))
+            add("implementation", libs.findLibrary("koin-core").get())
+            add("implementation", libs.findLibrary("koin-android").get())
+            // If you need compose library, add it in your module plz.
+        }
     }
 }
