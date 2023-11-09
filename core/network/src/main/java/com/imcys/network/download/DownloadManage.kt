@@ -41,7 +41,7 @@ class DownloadManage @Inject constructor(
 
     fun addTask(
         details: com.imcys.model.VideoDetails,
-        dash: com.imcys.model.VideoFormatDash,
+        dash: com.imcys.model.PlayerInfo,
         page: Page,
         downloadListHolders: DownloadListHolders
     ) {
@@ -60,7 +60,7 @@ class DownloadManage @Inject constructor(
     }
 
     private fun videoAndAudio(
-        dash: com.imcys.model.VideoFormatDash,
+        dash: com.imcys.model.PlayerInfo,
         bvid: String,
         page: Page,
         downloadListHolders: DownloadListHolders,
@@ -225,7 +225,7 @@ class DownloadManage @Inject constructor(
     private fun startIDMDownload() {}
     private fun builtin(
         bvid: String,
-        dash: com.imcys.model.VideoFormatDash,
+        dash: com.imcys.model.PlayerInfo,
         page: Page,
         downloadListHolders: DownloadListHolders,
         aid: Long,
@@ -329,6 +329,10 @@ class DownloadManage @Inject constructor(
 
     fun deleteGroup(groupId: Int, onSuccess: (List<Download>) -> Unit, onError: (Error) -> Unit) {
         fetchManage.deleteGroup(groupId, onSuccess, onError)
+    }
+
+    fun addTask(bvid: String, cid: Long, quality: Int?) {
+
     }
 }
 

@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * todo dash部分类的字段或许是缺失的
  */
 @Serializable
-data class VideoFormatDash(
+data class PlayerInfo(
     @SerialName("accept_description")
     val acceptDescription: List<String> = listOf(),
     @SerialName("accept_format")

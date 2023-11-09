@@ -28,4 +28,10 @@ dependencies {
     implementation(libs.androidx.xfetch2)
 
     implementation(libs.androidx.paging.runtime.ktx)
+
+    implementation(libs.cronet.embedded) {
+        exclude(group = "com.google.protobuf")
+    }
+
+    implementation (libs.cronet.okhttp)
 }

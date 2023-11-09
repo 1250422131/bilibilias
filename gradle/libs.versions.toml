@@ -2,15 +2,16 @@
 androidxComposeCompiler = "1.5.4-dev-k1.9.20-50f08dfa4b4"
 androidxComposeRuntimeTracing = "1.0.0-alpha04"
 accompanist = "0.32.0"
-androidGradlePlugin = "8.1.2"
+androidGradlePlugin = "8.1.3"
 androidFilePicker = "0.8.2"
 androidx-junit = "1.1.5"
 appcenter = "5.0.2"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
-banner = "2.2.2"
 coil = "2.5.0"
 composeSettingsUiM3 = "1.0.2"
+cronetOkhttp = "0.1.0"
+materialDialogsCore = "0.9.0"
 cronetEmbedded = "113.5672.61"
 kotlinReflect = "1.9.20"
 materialIconsExtended = "1.6.0-alpha08"
@@ -25,15 +26,13 @@ fastkv = "2.3.0"
 ffmpegKitFull = "6.0-2.LTS"
 flexbox = "3.0.0"
 github-Banner = "2.6.5"
-github-GuidePro = "1.1.0"
 gitlab-detektFormatting = "1.23.1"
-glide = "4.13.2"
 grpcProtobuf = "1.59.0"
 grpcKotlinStub = "1.4.0"
 gsyVideoPlayer = "v8.4.0-release-jitpack"
 hbmartinDetektRules = "0.1.1"
 hilt = "2.48.1"
-hiltNavigationCompose = "1.0.0"
+hiltNavigationCompose = "1.1.0"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
@@ -56,7 +55,7 @@ mmkv = "1.3.1"
 monitor = "1.4.1"
 mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
-navigationCompose = "2.7.4"
+navigationCompose = "2.7.5"
 nlopez-detekt = "0.2.3"
 pagingCompose = "3.2.1"
 pagingRuntimeKtx = "3.2.1"
@@ -65,13 +64,10 @@ protobufJavaUtil = "3.24.4"
 protobufKotlin = "3.24.4"
 room = "2.6.0"
 rxFFmpeg = "4.9.0-lite"
-srl-core = "1.7.2.4"
 timber = "5.0.1"
 twitter-detekt = "0.0.26"
-uiTimateBarX = "0.8.0"
 work-runtime-ktx = "2.8.1"
 xfetch2 = "3.1.6"
-xutils = "3.9.0"
 androidxActivityCompose = "1.8.0"
 androidxComposeBom = "2023.10.01"
 protobuf = "0.9.4"
@@ -86,8 +82,10 @@ androidx-xfetch2 = { module = "androidx.tonyodev.fetch2:xfetch2", version.ref = 
 
 compose-settings-ui-m3 = { module = "com.github.alorma:compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
-cronet-embedded = { module = "org.chromium.net:cronet-embedded", version.ref = "cronetEmbedded" }
+cronet-okhttp = { module = "com.google.net.cronet:cronet-okhttp", version.ref = "cronetOkhttp" }
+material-dialogs-core = { module = "io.github.vanpra.compose-material-dialogs:core", version.ref = "materialDialogsCore" }
 
+cronet-embedded = { module = "org.chromium.net:cronet-embedded", version.ref = "cronetEmbedded" }
 ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
@@ -145,20 +143,14 @@ androidFilePicker = { group = "me.rosuh", name = "AndroidFilePicker", version.re
 
 asBottomDialog = { group = "com.github.1250422131", name = "AsBottomDialog", version.ref = "asBottomDialog" }
 
-banner = { group = "io.github.youth5201314", name = "banner", version.ref = "banner" }
-
 dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
 
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
-
-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
-hyy920109-GuidePro = { group = "com.github.hyy920109", name = "GuidePro", version.ref = "github-GuidePro" }
 
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
@@ -187,14 +179,6 @@ mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
-
-srl-core = { group = "com.github.dkzwm", name = "srl-core", version.ref = "srl-core" }
-srl-ext-classics = { group = "com.github.dkzwm", name = "srl-ext-classics", version.ref = "srl-core" }
-srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", version.ref = "srl-core" }
-
-uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
-
-xutils = { group = "org.xutils", name = "xutils", version.ref = "xutils" }
 
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }

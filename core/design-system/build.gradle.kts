@@ -24,4 +24,6 @@ dependencies {
     implementation(libs.coil.kt.compose)
 
     implementation(libs.accompanist.systemuicontroller)
+
+    implementation(libs.material.dialogs.core)
 }

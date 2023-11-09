@@ -32,11 +32,6 @@ dependencies {
     implementation(libs.androidx.media3.session) // [Required] MediaSession Extension dependency
     implementation(libs.androidx.media3.decoder)
     implementation(libs.androidx.media3.datasource)
-    implementation(libs.cronet.embedded) {
-        exclude(group = "com.google.protobuf")
-    }
-
 
     implementation(libs.accompanist.navigation.material)
-
 }

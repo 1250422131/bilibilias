@@ -1,14 +1,17 @@
 package com.imcys.network.di
 
+import android.content.Context
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
+import com.imcys.network.constants.BROWSER_USER_AGENT
 import com.imcys.network.constants.ROAM_API
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
@@ -41,23 +44,45 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
+import org.chromium.net.CronetEngine
 import timber.log.Timber
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OkhttpClient
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideHttpClientEngine(): HttpClientEngine = OkHttp.create {
+    fun provideCronetEngine(@ApplicationContext context: Context): CronetEngine =
+        CronetEngine.Builder(context)
+            .enableBrotli(true)
+            .enableHttp2(true)
+            .enableQuic(true)
+            .setStoragePath(context.cacheDir.path)
+            .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK_NO_HTTP, 1024 * 1024 * 1024L)
+            .setUserAgent(BROWSER_USER_AGENT)
+            .enableNetworkQualityEstimator(true)
+            .build()
+
+    @Provides
+    @Singleton
+    @OkhttpClient
+    fun provideOkHttpEngine(cornetEngine: CronetEngine): HttpClientEngine = OkHttp.create {
         addInterceptor(MonitorInterceptor())
+        // addInterceptor(CronetInterceptor.newBuilder(cornetEngine).build())
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideHttpClient(
-        httpClientEngine: HttpClientEngine,
+        @OkhttpClient httpClientEngine: HttpClientEngine,
         json: Json,
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
@@ -86,7 +111,7 @@ class NetworkModule {
         }
         install(Logging) {
             logger = LoggerManager()
-            level = LogLevel.BODY
+            level = LogLevel.ALL
         }
         install(HttpCache) {
             publicStorage(cacheManager)

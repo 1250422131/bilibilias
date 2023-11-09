@@ -2,13 +2,13 @@ package com.imcys.network.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.imcys.model.Collections
 import com.imcys.common.di.AsDispatchers.IO
 import com.imcys.common.di.Dispatcher
+import com.imcys.model.Collections
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.utils.parameterMediaID
-import com.imcys.network.utils.parameterPageLimit
-import com.imcys.network.utils.parameterPageNumber
+import com.imcys.network.utils.parameterPN
+import com.imcys.network.utils.parameterPS
 import com.imcys.network.utils.parameterPlatform
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -50,8 +50,8 @@ class FavoritesRepository @Inject constructor(
     ): Collections = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi2.getFavoritesContentList) {
             parameterMediaID(mediaId)
-            parameterPageNumber(page)
-            parameterPageLimit(limit.coerceAtMost(20))
+            parameterPN(page)
+            parameterPS(limit.coerceAtMost(20))
             parameterPlatform(platform)
         }.body()
     }

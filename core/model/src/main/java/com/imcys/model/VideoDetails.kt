@@ -351,6 +351,4 @@ data class VideoDetails(
         @SerialName("author")
         val author: Author = Author()
     )
-
-
 }
