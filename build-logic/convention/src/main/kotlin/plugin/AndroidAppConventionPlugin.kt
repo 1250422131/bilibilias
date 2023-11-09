@@ -25,6 +25,7 @@ class AndroidAppConventionPlugin : Plugin<Project> {
         apply("com.android.application")
         apply("org.jetbrains.kotlin.android")
         apply("kotlin-parcelize")
+        apply("bilibiliAs.android.lint")
     }
 
     private fun ApplicationExtension.configureAndroid() {

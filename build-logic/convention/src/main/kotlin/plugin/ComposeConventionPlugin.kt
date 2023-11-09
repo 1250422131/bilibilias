@@ -35,5 +35,4 @@ class ComposeConventionPlugin : Plugin<Project> {
             add("debugImplementation", libs.findLibrary("androidx.compose.ui.testManifest").get())
         }
     }
-
 }

@@ -36,3 +36,5 @@ include(":feature:tool")
 include(":feature:user")
 include(":feature:setting")
 include(":feature:player")
+
+include(":lint")
