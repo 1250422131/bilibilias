@@ -1,6 +1,3 @@
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.proto
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
@@ -8,7 +5,6 @@ plugins {
     alias(libs.plugins.bilibili.android.hilt)
     alias(libs.plugins.bilibili.android.room)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.protobuf)
 }
 
 ksp {
@@ -18,69 +14,68 @@ ksp {
 android {
     namespace = "com.imcys.bilibilias.common"
 
-
     buildFeatures {
         dataBinding = true
         compose = true
     }
 
-    sourceSets {
-        getByName("main") {
-            proto {
-                srcDir("src/main/proto")
-            }
-        }
-        getByName("test") {
-            proto {
-                srcDir("src/test/proto")
-            }
-        }
-        getByName("androidTest") {
-            proto {
-                srcDir("src/androidTest/proto")
-            }
-        }
-    }
+    // sourceSets {
+    //     getByName("main") {
+    //         proto {
+    //             srcDir("src/main/proto")
+    //         }
+    //     }
+    //     getByName("test") {
+    //         proto {
+    //             srcDir("src/test/proto")
+    //         }
+    //     }
+    //     getByName("androidTest") {
+    //         proto {
+    //             srcDir("src/androidTest/proto")
+    //         }
+    //     }
+    // }
 }
 
 // https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
 // https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.24.4"
-    }
-    plugins {
-        id("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
-        }
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
-        }
-        id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
-        }
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.plugins {
-                id("java") {
-                    option("lite")
-                }
-                id("grpc") {
-                    option("lite")
-                }
-                id("grpckt") {
-                    option("lite")
-                }
-            }
-            it.builtins {
-                id("kotlin") {
-                    option("lite")
-                }
-            }
-        }
-    }
-}
+// protobuf {
+//     protoc {
+//         artifact = "com.google.protobuf:protoc:3.24.4"
+//     }
+//     plugins {
+//         id("java") {
+//             artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
+//         }
+//         id("grpc") {
+//             artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
+//         }
+//         id("grpckt") {
+//             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+//         }
+//     }
+//     generateProtoTasks {
+//         all().forEach {
+//             it.plugins {
+//                 id("java") {
+//                     option("lite")
+//                 }
+//                 id("grpc") {
+//                     option("lite")
+//                 }
+//                 id("grpckt") {
+//                     option("lite")
+//                 }
+//             }
+//             it.builtins {
+//                 id("kotlin") {
+//                     option("lite")
+//                 }
+//             }
+//         }
+//     }
+// }
 dependencies {
     api(libs.androidx.hilt.navigation.compose)
 
@@ -148,10 +143,4 @@ dependencies {
     implementation(libs.material)
 
     implementation(libs.okio)
-
-    implementation(libs.grpc.kotlin.stub)
-    implementation(libs.grpc.protobuf)
-
-    implementation(libs.protobuf.kotlin)
-    implementation(libs.protobuf.java.util)
 }

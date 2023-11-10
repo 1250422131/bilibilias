@@ -26,7 +26,6 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.kotlin.reflect)
-
 }
 kotlin {
     sourceSets {

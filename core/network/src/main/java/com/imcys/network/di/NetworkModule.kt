@@ -6,8 +6,9 @@ import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
+import com.imcys.network.constants.API_BILIBILI
 import com.imcys.network.constants.BROWSER_USER_AGENT
-import com.imcys.network.constants.ROAM_API
+import com.squareup.wire.GrpcClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,8 +19,10 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
+import io.ktor.client.plugins.Charsets
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.addDefaultResponseValidation
 import io.ktor.client.plugins.api.ClientPlugin
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.cache.HttpCache
@@ -31,9 +34,11 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.charsets.Charset
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -44,11 +49,17 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
+import okhttp3.Cache
+import okhttp3.ConnectionSpec
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.brotli.BrotliInterceptor
 import org.chromium.net.CronetEngine
 import timber.log.Timber
+import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
-
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -72,10 +83,38 @@ class NetworkModule {
 
     @Provides
     @Singleton
+    fun provideGrpcClient(okHttpClient: OkHttpClient): GrpcClient =
+        GrpcClient.Builder()
+            .client(okHttpClient.newBuilder().protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE)).build())
+            .baseUrl(API_BILIBILI)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideOkhttpClient(@ApplicationContext context: Context): OkHttpClient =
+        OkHttpClient.Builder()
+            .pingInterval(1, TimeUnit.SECONDS)
+            .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
+            .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
+            .addInterceptor { chain ->
+                if (chain.request().header(HttpHeaders.UserAgent) == null) {
+                    val requestWithUserAgent = chain.request().newBuilder()
+                        .header(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
+                        .build()
+                    chain.proceed(requestWithUserAgent)
+                } else {
+                    chain.proceed(chain.request())
+                }
+            }
+            .addInterceptor(MonitorInterceptor())
+            .addInterceptor(BrotliInterceptor)
+            .build()
+
+    @Provides
+    @Singleton
     @OkhttpClient
-    fun provideOkHttpEngine(cornetEngine: CronetEngine): HttpClientEngine = OkHttp.create {
-        addInterceptor(MonitorInterceptor())
-        // addInterceptor(CronetInterceptor.newBuilder(cornetEngine).build())
+    fun provideOkHttpEngine(okHttpClient: OkHttpClient): HttpClientEngine = OkHttp.create {
+        preconfigured = okHttpClient
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -90,10 +129,15 @@ class NetworkModule {
         loggerManager: LoggerManager
     ): HttpClient = HttpClient(httpClientEngine) {
         defaultRequest {
-            url(ROAM_API)
+            url(API_BILIBILI)
         }
         BrowserUserAgent()
-        ContentEncoding()
+        Charsets {
+            register(Charset.defaultCharset(), 1f)
+            sendCharset = Charsets.UTF_8
+        }
+        addDefaultResponseValidation()
+        // ContentEncoding()
         Logging { logger = loggerManager; level = LogLevel.ALL }
         install(HttpCookies) {
             storage = cookieManager

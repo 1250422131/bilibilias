@@ -1,3 +1,13 @@
+buildscript {
+    dependencies {
+        classpath(libs.wireGradlePlugin)
+    }
+    repositories {
+        maven("https://maven.aliyun.com/repository/public")
+        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        google()
+    }
+}
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application) apply false
