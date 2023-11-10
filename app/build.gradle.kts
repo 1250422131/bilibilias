@@ -21,7 +21,6 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         debug {
@@ -108,10 +107,6 @@ dependencies {
      * ffmpeg
      */
     implementation(libs.ffmpeg.kit.full)
-    /**
-     * protobuf
-     */
-    implementation(libs.protobuf.kotlin)
 
     implementation(libs.timber)
     implementation(libs.coil.kt)

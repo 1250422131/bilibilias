@@ -23,7 +23,6 @@ import coil.load
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.getActivity
-import com.imcys.player.createMediaSource
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
@@ -75,7 +74,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
     }
 
     private fun cronetRequestListener() {
-        cronetEngine.addRequestFinishedListener(RequestInfo())
+        // cronetEngine.addRequestFinishedListener(RequestInfo())
     }
 
     private fun initConfig() {

@@ -29,9 +29,13 @@ dependencies {
 
     implementation(libs.androidx.paging.runtime.ktx)
 
-    implementation(libs.cronet.embedded) {
-        exclude(group = "com.google.protobuf")
-    }
+    implementation(libs.cronet.embedded)
 
-    implementation (libs.cronet.okhttp)
+    implementation(libs.cronet.okhttp)
+
+    implementation(libs.grpc.okhttp)
+
+    implementation(libs.wireGrpcClient)
+
+    implementation("com.squareup.okhttp3:okhttp-brotli:4.11.0")
 }

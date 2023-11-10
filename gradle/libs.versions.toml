@@ -27,8 +27,6 @@ ffmpegKitFull = "6.0-2.LTS"
 flexbox = "3.0.0"
 github-Banner = "2.6.5"
 gitlab-detektFormatting = "1.23.1"
-grpcProtobuf = "1.59.0"
-grpcKotlinStub = "1.4.0"
 gsyVideoPlayer = "v8.4.0-release-jitpack"
 hbmartinDetektRules = "0.1.1"
 hilt = "2.48.1"
@@ -37,7 +35,7 @@ jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
 kotlin = "1.9.20"
-kotlinx-coroutines = "1.7.3"
+kotlinxCoroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
 kotlinxDatetime = "0.4.1"
 kotlinxSerialization = "1.6.0"
@@ -60,8 +58,6 @@ nlopez-detekt = "0.2.3"
 pagingCompose = "3.2.1"
 pagingRuntimeKtx = "3.2.1"
 preferenceKtx = "1.2.1"
-protobufJavaUtil = "3.24.4"
-protobufKotlin = "3.24.4"
 room = "2.6.0"
 rxFFmpeg = "4.9.0-lite"
 timber = "5.0.1"
@@ -70,44 +66,49 @@ work-runtime-ktx = "2.8.1"
 xfetch2 = "3.1.6"
 androidxActivityCompose = "1.8.0"
 androidxComposeBom = "2023.10.01"
-protobuf = "0.9.4"
+protobuf = "3.24.4"
+protobufPlugin = "0.9.4"
+grpcProtobuf = "1.59.0"
 koin = "3.5.1"
 lint = "31.1.3"
+wire = "4.9.1"
 [libraries]
-accompanist-insets-ui = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
+accompanist-insets-ui = { group = "com.google.accompanist", name = "accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
-androidx-xfetch2 = { module = "androidx.tonyodev.fetch2:xfetch2", version.ref = "xfetch2" }
+androidx-xfetch2 = { group = "androidx.tonyodev.fetch2", name = "xfetch2", version.ref = "xfetch2" }
 
-compose-settings-ui-m3 = { module = "com.github.alorma:compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
+compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
-cronet-okhttp = { module = "com.google.net.cronet:cronet-okhttp", version.ref = "cronetOkhttp" }
-material-dialogs-core = { module = "io.github.vanpra.compose-material-dialogs:core", version.ref = "materialDialogsCore" }
+cronet-okhttp = { group = "com.google.net.cronet", name = "cronet-okhttp", version.ref = "cronetOkhttp" }
+material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogsCore" }
 
-cronet-embedded = { module = "org.chromium.net:cronet-embedded", version.ref = "cronetEmbedded" }
-ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
+cronet-embedded = { group = "org.chromium.net", name = "cronet-embedded", version.ref = "cronetEmbedded" }
+ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
-grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
-grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlinStub" }
+grpc-okhttp = { group = "io.grpc", name = "grpc-okhttp", version.ref = "grpcProtobuf" }
 
-gsyVideoPlayer = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer", version.ref = "gsyVideoPlayer" }
-gsyVideoPlayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyVideoPlayer" }
-gsyVideoPlayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
+protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
+protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
+
+gsyVideoPlayer = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYVideoPlayer", version.ref = "gsyVideoPlayer" }
+gsyVideoPlayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYVideoPlayer-exo2", version.ref = "gsyVideoPlayer" }
+gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
 
 hbmartin-detekt-rules = { group = "com.github.hbmartin", name = "hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
 gitlab-detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "nlopez-detekt" }
 detekt-rules-compose = { group = "ru.kode", name = "detekt-rules-compose", version.ref = "detektRulesCompose" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinReflect" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlinReflect" }
 rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
-
-protobuf-java-util = { module = "com.google.protobuf:protobuf-java-util", version.ref = "protobufJavaUtil" }
-protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobufKotlin" }
+wireRuntime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
+wireGrpcClient = { group = "com.squareup.wire", name = "wire-grpc-client", version.ref = "wire" }
+wireGradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
 
 fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
 
@@ -161,8 +162,8 @@ lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = 
 lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "lint" }
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "lint" }
 
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
@@ -190,13 +191,13 @@ coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "media3" }
-androidx-media3-datasource-cronet = { module = "androidx.media3:media3-datasource-cronet", version.ref = "media3" }
-androidx-media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
-androidx-media3-decoder = { module = "androidx.media3:media3-decoder", version.ref = "media3" }
-androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
-androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
-androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "media3" }
+androidx-media3-datasource-cronet = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "media3" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
+androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "media3" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "1.1.1" }
 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
@@ -241,7 +242,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 
 bilibili-android-application = { id = "bilibili.android.app", version = "unspecified" }
 bilibili-android-library = { id = "bilibili.android.library", version = "unspecified" }

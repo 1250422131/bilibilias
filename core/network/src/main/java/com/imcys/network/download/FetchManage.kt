@@ -3,7 +3,7 @@ package com.imcys.network.download
 import android.content.Context
 import com.imcys.common.di.AppCoroutineScope
 import com.imcys.datastore.mmkv.SettingsRepository
-import com.imcys.network.constants.BILIBILI_URL
+import com.imcys.network.constants.BILIBILI_WEB_URL
 import com.imcys.network.constants.BROWSER_USER_AGENT
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
@@ -76,7 +76,7 @@ class FetchManage @Inject constructor(
         avid: Long,
     ) = Request(url, file).apply {
         headers[HttpHeaders.UserAgent] = BROWSER_USER_AGENT
-        headers[HttpHeaders.Referrer] = BILIBILI_URL
+        headers[HttpHeaders.Referrer] = BILIBILI_WEB_URL
         this.groupId = groupId.toInt()
         this.tag = tag
         extras = Extras(
