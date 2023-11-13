@@ -29,6 +29,7 @@ jxl = "2.6.12"
 kcomponent-compiler = "1.0.0-rc4"
 kotlin = "1.9.10"
 kotlinx-coroutines-android = "1.7.3"
+kotlinxSerializationCbor = "1.6.0"
 ksp = "1.9.10-1.0.13"
 ktor = "2.3.6"
 lifecycle = "2.6.2"
@@ -68,6 +69,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpcProtobuf" }
 grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpcKotlinStub" }
 hbmartin-detekt-rules = { module = "com.github.hbmartin:hbmartin-detekt-rules", version.ref = "hbmartinDetektRules" }
+kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinxSerializationCbor" }
 monitor = { module = "io.github.leavesczy:monitor", version.ref = "monitor" }
 monitor-no-op = { module = "io.github.leavesczy:monitor-no-op", version.ref = "monitorNoOp" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }

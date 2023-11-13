@@ -160,6 +160,7 @@ dependencies {
 
     // 协程
     api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.serialization.cbor)
 
     /**
      * RxFFmpeg

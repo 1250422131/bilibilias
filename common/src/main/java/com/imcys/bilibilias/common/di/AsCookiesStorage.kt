@@ -7,23 +7,25 @@ import com.imcys.bilibilias.common.base.config.toCookie
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@OptIn(ExperimentalSerializationApi::class)
 @Singleton
 class AsCookiesStorage @Inject constructor(
-    private val json: Json
+    private val json: Json,
+    private val cbor: Cbor
 ) : CookiesStorage {
     private val cookies = mutableListOf<Cookie>()
 
     init {
-        UserInfoRepository.asCookies?.map {
-            json.decodeFromString<AsCookie>(it)
-        }
-            ?.map { it.toCookie() }
-            ?.map { cookies.add(it) }
+        cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies).map { it.toCookie() }
+            .forEach { cookies.add(it) }
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
@@ -35,8 +37,9 @@ class AsCookiesStorage @Inject constructor(
         val timestamp = cookie.expires?.timestamp ?: 0
         if (timestamp < System.currentTimeMillis()) return
         cookies.add(cookie)
-        UserInfoRepository.asCookies?.add(json.encodeToString(cookie.toAsCookie()))
     }
 
-    override fun close() = Unit
+    override fun close() {
+        UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
+    }
 }
