@@ -7,13 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.user.LikeVideoBean
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemRcmdVideoBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean
@@ -69,19 +64,19 @@ class RCMDVideoAdapter(
 
     private fun likeVideo(bvid: String, itemRcmdVideoBinding: ItemRcmdVideoBinding) {
         launchIO {
-            val likeVideoBean = KtHttpUtils.addHeader(COOKIE, "")
-                .addParam("bvid", bvid)
-                .addParam("like", "1")
-                .addParam("csrf", "")
-                .asyncPost<LikeVideoBean>(BilibiliApi.likeVideoPath)
+//            val likeVideoBean = KtHttpUtils.addHeader(COOKIE, "")
+//                .addParam("bvid", bvid)
+//                .addParam("like", "1")
+//                .addParam("csrf", "")
+//                .asyncPost<LikeVideoBean>(BilibiliApi.likeVideoPath)
 
             launchUI {
-                if (likeVideoBean.code == 0) {
-                    asToast(context, "点赞成功")
-                } else {
-                    itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
-                    asToast(context, "点赞失败，${likeVideoBean.message}")
-                }
+//                if (likeVideoBean.code == 0) {
+//                    asToast(context, "点赞成功")
+//                } else {
+//                    itemRcmdVideoBinding.itemRcmdLikeLottie.progress = 0f
+//                    asToast(context, "点赞失败，${likeVideoBean.message}")
+//                }
             }
         }
     }

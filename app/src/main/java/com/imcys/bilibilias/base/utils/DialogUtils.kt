@@ -29,20 +29,18 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -537,6 +535,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService:NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -564,6 +563,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     videoPageMutableList,
+                    networkService
                 )
             }
 
@@ -575,6 +575,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     videoPageMutableList,
+                    networkService
                 )
             }
         }
@@ -601,6 +602,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService:NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -628,6 +630,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
 
@@ -639,6 +642,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
         }
@@ -772,6 +776,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService:NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
         var selectDefinition = 80
@@ -946,6 +951,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
                 bottomSheetDialog.cancel()
             }
@@ -968,6 +974,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService:NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         var selectDefinition = 80
@@ -1142,6 +1149,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
 
                 bottomSheetDialog.cancel()
@@ -1160,6 +1168,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService:NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
@@ -1171,12 +1180,7 @@ object DialogUtils {
         launchIO {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<DashBangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
-                        )
+                    val dashBangumiPlayBean = networkService.n1(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1249,6 +1253,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService:NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
@@ -1260,12 +1265,7 @@ object DialogUtils {
         launchIO {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
-                            )
+                    val dashVideoPlayBean = networkService.n2(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
@@ -1345,6 +1345,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService:NetworkService
     ) {
         data class VideoData(
             val videoPlayBean: VideoPlayBean,
@@ -1356,12 +1357,7 @@ object DialogUtils {
         launchIO {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
-                            )
+                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1396,6 +1392,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService:NetworkService
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
@@ -1407,12 +1404,7 @@ object DialogUtils {
         launchIO {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
-                        )
+                    val bangumiPlayBean = networkService.n4(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {

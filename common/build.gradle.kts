@@ -1,5 +1,4 @@
 import com.google.protobuf.gradle.id
-import io.grpc.InternalChannelz.id
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -7,7 +6,6 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.protobuf)
     kotlin("kapt")
@@ -26,7 +24,7 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,7 +40,7 @@ android {
     }
 
     dataBinding {
-        isEnabled = true
+        enable = true
     }
 
     compileOptions {
@@ -53,8 +51,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-
 }
 kotlin {
     jvmToolchain(17)
@@ -69,10 +65,10 @@ protobuf {
     }
     plugins {
         id("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
         }
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.58.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.59.0"
         }
         id("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
@@ -113,7 +109,7 @@ dependencies {
 
     // hilt库，实现控制反转
     api(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // 核心代码库
     api(libs.okdownload)
@@ -125,7 +121,7 @@ dependencies {
      * SmoothRefreshLayout支持
      */
     api(libs.srl.core)
-    api(libs.srl.ext.material) // md刷新头
+    api(libs.srl.ext.material)
     api(libs.srl.ext.classics)
 
     /**
@@ -189,8 +185,6 @@ dependencies {
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    // api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
-
     /**
      * room
      * 本地化数据库
@@ -234,6 +228,11 @@ dependencies {
      */
     api(libs.uiTimateBarX)
 
+    debugImplementation(libs.monitor)
+    releaseImplementation(libs.monitor.no.op)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.brotli)
+
     /**
      * ktor全局支持
      */
@@ -265,18 +264,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-}
-
-tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
-    reports {
-        // Enable/Disable XML report (default: true)
-        xml.required.set(true)
-        xml.outputLocation.set(file("$projectDir/config/detekt.xml"))
-        // Enable/Disable HTML report (default: true)
-        html.required.set(true)
-        html.outputLocation.set(file("$projectDir/config/detekt.html"))
-        // Enable/Disable MD report (default: false)
-        md.required.set(true)
-        md.outputLocation.set(file("$projectDir/config/detekt.md"))
-    }
 }

@@ -22,6 +22,7 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -29,7 +30,6 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
@@ -55,6 +55,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import javax.inject.Inject
 
 @RouterAnno(
     hostAndPath = ARouterAddress.ToolFragment,
@@ -64,6 +65,8 @@ class ToolFragment : BaseFragment() {
     lateinit var fragmentToolBinding: FragmentToolBinding
     lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
+    @Inject
+    lateinit var networkService: NetworkService
 
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
@@ -247,9 +250,8 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-            val bangumiSeasonBean =
-                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                    .asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId")
+
+            val bangumiSeasonBean = networkService.n25(epId)
 
             if (bangumiSeasonBean.code == 0) {
                 bangumiSeasonBean.result.episodes.forEach { it1 ->
@@ -262,9 +264,9 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchIO {
-                val videoBaseBean =
-                    KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                        .asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvid")
+
+                val videoBaseBean = networkService.n26(bvid)
+
                 launchUI {
                     (mAdapter).apply {
                         // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。

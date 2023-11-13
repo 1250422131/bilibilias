@@ -10,15 +10,12 @@ import com.baidu.mobstat.StatService
 import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -41,6 +38,8 @@ class CollectionActivity : BaseActivity() {
     private lateinit var userCreateCollectionBean: UserCreateCollectionBean
     private lateinit var createCollectionList: UserCreateCollectionBean.DataBean.ListBean
 
+    @Inject
+    lateinit var networkService: NetworkService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<ActivityCollectionBinding?>(
@@ -83,11 +82,8 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         launchIO {
-            val userCreateCollectionBean = KtHttpUtils.addHeader(
-                COOKIE,
-                BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-            )
-                .asyncGet<UserCreateCollectionBean>("${BilibiliApi.userCreatedScFolderPath}?up_mid=${asUser.mid}")
+
+            val userCreateCollectionBean = networkService.n17()
 
             launchUI {
                 userCreateCollectionBean.data.list.forEach { it1 ->

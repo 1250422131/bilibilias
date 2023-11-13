@@ -13,6 +13,8 @@ import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
 import com.xiaojinzi.component.impl.application.ModuleManager
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 
 open class BaseApplication : Application() {
 
@@ -30,8 +32,12 @@ open class BaseApplication : Application() {
 
         initKComponent()
 
-        // 初始化MMKV
         initMMKV()
+        initNapier()
+    }
+
+    private fun initNapier() {
+        Napier.base(DebugAntilog())
     }
 
     private fun initMMKV() {

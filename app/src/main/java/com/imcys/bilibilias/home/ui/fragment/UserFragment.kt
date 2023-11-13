@@ -11,16 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
@@ -32,6 +28,7 @@ import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import javax.inject.Inject
 import kotlin.math.ceil
 
 class UserFragment : BaseFragment() {
@@ -44,6 +41,11 @@ class UserFragment : BaseFragment() {
 
     lateinit var fragmentUserBinding: FragmentUserBinding
 
+    @Inject
+    lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var tokenUtils: TokenUtils
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(context, "UserFragment")
@@ -59,13 +61,9 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
-        checkDataRecovery(savedInstanceState)
         initView()
 
         return fragmentUserBinding.root
-    }
-
-    private fun checkDataRecovery(savedInstanceState: Bundle?) {
     }
 
     private fun initView() {
@@ -85,18 +83,14 @@ class UserFragment : BaseFragment() {
                         val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-                            val params = mutableMapOf<String?, String?>()
+                            val params = mutableMapOf<String, String>()
                             params["mid"] = asUser.mid.toString()
                             params["pn"] = (userWorksBean.data.page.pn + 1).toString()
                             params["ps"] = "20"
-                            val paramsStr = TokenUtils.getParamStr(params)
+                            val paramsStr = tokenUtils.getParamStr(params)
 
-                            val userWorksBean =
-                                KtHttpUtils.addHeader(
-                                    COOKIE,
-                                    asUser.cookie,
-                                )
-                                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
+                            val userWorksBean = networkService.n19(paramsStr)
+
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launchUI {
@@ -124,12 +118,9 @@ class UserFragment : BaseFragment() {
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         launchIO {
-            val userWorksBean =
-                KtHttpUtils.addHeader(
-                    COOKIE,
-                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                )
-                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?mid=${asUser.mid}&pn=${userWorksBean.data.page.pn + 1}&ps=20")
+
+            val userWorksBean = networkService.n20(userWorksBean.data.page.pn + 1)
+
             this@UserFragment.userWorksBean = userWorksBean
 
             launchUI {
@@ -141,18 +132,13 @@ class UserFragment : BaseFragment() {
     private fun initUserWorks() {
         launchIO {
             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-            val params = mutableMapOf<String?, String?>()
+            val params = mutableMapOf<String, String>()
             params["mid"] = asUser.mid.toString()
             params["qn"] = "1"
             params["ps"] = "20"
-            val paramsStr = TokenUtils.getParamStr(params)
+            val paramsStr = tokenUtils.getParamStr(params)
 
-            val userWorksBean =
-                KtHttpUtils.addHeader(
-                    COOKIE,
-                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                )
-                    .asyncGet<UserWorksBean>("${BilibiliApi.userWorksPath}?$paramsStr")
+            val userWorksBean = networkService.n21(paramsStr)
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
@@ -231,12 +217,11 @@ class UserFragment : BaseFragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        val params = mutableMapOf<String?, String?>()
+        val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
+        val paramsStr = tokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.getUserCardPath}?$paramsStr")
+        return networkService.n22(paramsStr)
     }
 
     /**
@@ -244,8 +229,8 @@ class UserFragment : BaseFragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.userUpStat}?mid=${asUser.mid}")
+
+        return networkService.n23()
     }
 
     /**
@@ -253,12 +238,11 @@ class UserFragment : BaseFragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String?, String?>()
+        val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
+        val paramsStr = tokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
+        return networkService.n24(paramsStr)
     }
 
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {

@@ -6,17 +6,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.ItemBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import javax.inject.Inject
 
 class BangumiFollowAdapter @Inject constructor() :
@@ -36,6 +33,8 @@ class BangumiFollowAdapter @Inject constructor() :
             return oldItem.first_ep == oldItem.first_ep
         }
     }) {
+    @Inject
+    lateinit var networkService: NetworkService
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<ItemBangumiFollowBinding>(
@@ -55,14 +54,8 @@ class BangumiFollowAdapter @Inject constructor() :
                 val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
 
                 launchIO {
-                    val bangumiSeasonBean = KtHttpUtils.addHeader(COOKIE, cookie)
-                        .asyncGet<BangumiSeasonBean>(
-                            "${BilibiliApi.bangumiVideoDataPath}?ep_id=${
-                                getItem(
-                                    position,
-                                ).first_ep
-                            }",
-                        )
+
+                    val bangumiSeasonBean = networkService.n18(getItem(position).first_ep)
 
                     launchUI {
                         if (bangumiSeasonBean.code == 0) {

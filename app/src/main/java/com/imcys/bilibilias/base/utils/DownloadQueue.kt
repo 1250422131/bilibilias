@@ -11,6 +11,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -21,12 +22,10 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
-import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -84,7 +83,8 @@ class DownloadQueue @Inject constructor() :
     // 当前正在下载的任务
     private val currentTasks = mutableListOf<DownloadTaskInfo>()
 
-    var allTask = mutableListOf<DownloadTaskInfo>()
+    @Inject
+    lateinit var networkService: NetworkService
 
     // 添加下载任务到队列中
     fun addTask(
@@ -339,8 +339,7 @@ class DownloadQueue @Inject constructor() :
         launch {
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val videoBaseBean = KtHttpUtils.addHeader(COOKIE, cookie!!)
-                .asyncGet<VideoBaseBean>("${BilibiliApi.getVideoDataPath}?bvid=${task.downloadTaskDataBean.bvid}")
+            val videoBaseBean = networkService.n5(task.downloadTaskDataBean.bvid)
             val mid = videoBaseBean.data.owner.mid
             val name = videoBaseBean.data.owner.name
             val copyright = videoBaseBean.data.copyright
@@ -390,8 +389,7 @@ class DownloadQueue @Inject constructor() :
 
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val myUserData = KtHttpUtils.addHeader(COOKIE, cookie!!)
-                .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
+            val myUserData = networkService.n6()
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
@@ -459,7 +457,7 @@ class DownloadQueue @Inject constructor() :
         videoPath: String,
         audioPath: String,
 
-    ) {
+        ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(App.context).getString(
                 "user_dl_merge_cmd_editText",
@@ -801,8 +799,7 @@ class DownloadQueue @Inject constructor() :
                 TODO()
             }
 
-            val bangumiSeasonBean =
-                KtHttpUtils.asyncGet<BangumiSeasonBean>("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid")
+            val bangumiSeasonBean =networkService.n7(epid)
 
             val ssid = bangumiSeasonBean.result.season_id
             videoEntry =
