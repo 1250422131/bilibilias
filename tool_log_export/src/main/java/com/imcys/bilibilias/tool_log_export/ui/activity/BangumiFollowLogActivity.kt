@@ -46,10 +46,12 @@ import jxl.write.WritableCell
 import jxl.write.WritableCellFormat
 import jxl.write.WritableFont
 import jxl.write.WritableSheet
+import javax.inject.Inject
 import kotlin.math.ceil
 
 class BangumiFollowLogActivity : LogExportBaseActivity() {
-
+    @Inject
+    lateinit var ktHttpUtils: KtHttpUtils
     private lateinit var bangumiFollowList: BangumiFollowList
 
     lateinit var binding: ActivityBangumiFollowLogBinding
@@ -313,7 +315,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
+        return ktHttpUtils.addHeader(COOKIE, asUser.cookie)
             .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=30")
     }
 
@@ -374,7 +376,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      */
     private fun loadBanguiFollowData() {
         launchIO {
-            bangumiFollowList = KtHttpUtils.addHeader("coolie", asUser.cookie)
+            bangumiFollowList = ktHttpUtils.addHeader("coolie", asUser.cookie)
                 .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15")
 
             launchUI {

@@ -22,6 +22,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
@@ -31,14 +32,11 @@ import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -95,8 +93,10 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
-
     private val asVideoViewModel: AsVideoViewModel by viewModels()
+
+    @Inject
+    lateinit var networkService: NetworkService
 
     // 视频临时数据，方便及时调用，此方案考虑废弃
     var bvid: String = ""
@@ -169,9 +169,8 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 launchIO {
                     // 获取播放信息
-                    val videoPlayBean = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<VideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=0&fourk=1")
+
+                    val videoPlayBean = networkService.n9(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     launchUI {
@@ -189,13 +188,7 @@ class AsVideoActivity : BaseActivity() {
                                 }
                             }.show()
                         } else {
-                            val dashVideoPlayBean = KtHttpUtils.addHeader(
-                                COOKIE,
-                                BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                            )
-                                .addHeader(REFERER, BILIBILI_URL)
-                                .asyncGet<DashVideoPlayBean>("${BilibiliApi.videoPlayPath}?bvid=$bvid&cid=$cid&qn=64&fnval=4048&fourk=1")
-
+                            val dashVideoPlayBean = networkService.n10(bvid, cid)
                             if (dashVideoPlayBean.code != 0) {
                                 setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                             }
@@ -233,10 +226,8 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-                    val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>("${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1")
+
+                    val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
                         // 设置布局视频播放数据
@@ -261,10 +252,7 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         launchIO {
-            val videoBaseBean = KtHttpUtils.run {
-                addHeader(COOKIE, asUser.cookie)
-                asyncGet<VideoBaseBean>(BilibiliApi.getVideoDataPath + "?bvid=$bvId")
-            }
+            val videoBaseBean = networkService.n12(bvid)
 
             launchUI {
                 // 设置数据
@@ -344,11 +332,8 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadBangumiVideoList() {
         launchIO {
-            val bangumiSeasonBean = KtHttpUtils.run {
-                // 弃用漫游服务
-                addHeader(COOKIE, asUser.cookie)
-                asyncGet<BangumiSeasonBean>(ROAM_API + "pgc/view/web/season?ep_id=" + epid)
-            }
+
+            val bangumiSeasonBean = networkService.n13(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
             // 获取真实的cid
@@ -452,18 +437,17 @@ class AsVideoActivity : BaseActivity() {
             loadVideoPlay("bangumi")
         }
     }
-
+@Inject lateinit var tokenUtils: TokenUtils
     /**
      * 获取用户基础信息
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String?, String?>()
+        val params = mutableMapOf<String, String>()
         params["mid"] = asUser.mid.toString()
-        val paramsStr = TokenUtils.getParamStr(params)
+        val paramsStr = tokenUtils.getParamStr(params)
 
-        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet("${BilibiliApi.userBaseDataPath}?$paramsStr")
+        return networkService.n11(paramsStr)
     }
 
     /**
@@ -472,8 +456,8 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         launchIO {
-            val videoPlayListData = KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                .asyncGet<VideoPageListData>(BilibiliApi.videoPageListPath + "?bvid=" + bvid)
+
+            val videoPlayListData = networkService.n15(bvid)
 
             launchUI {
                 binding.apply {
@@ -564,9 +548,8 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadUserCardData(mid: Long) {
         launchIO {
-            val userCardBean = KtHttpUtils
-                .addHeader(COOKIE, asUser.cookie)
-                .asyncGet<UserCardBean>(BilibiliApi.getUserCardPath + "?mid=$mid")
+
+            val userCardBean = networkService.n14(mid)
             launchUI {
                 // 显示用户卡片
                 showUserCard()

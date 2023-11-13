@@ -18,7 +18,7 @@ android {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
         // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 32
+        targetSdk = 34
         versionCode = 203
         versionName = "2.0.31"
         // multiDexEnabled true
@@ -98,7 +98,9 @@ android {
         includeInBundle = true
     }
 }
-
+kapt {
+    correctErrorTypes = true
+}
 kotlin {
     jvmToolchain(17)
 }
@@ -115,7 +117,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     ksp(libs.kcomponent.compiler)
     implementation(libs.material)

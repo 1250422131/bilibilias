@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -26,26 +25,21 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils.getParamStr
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -60,7 +54,6 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -71,6 +64,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
 @RouterAnno(
@@ -78,10 +72,11 @@ import kotlin.system.exitProcess
 )
 class HomeFragment : BaseFragment() {
 
-    lateinit var viewModel: FragmentHomeViewModel
-
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
+
+    @Inject
+    lateinit var networkService: NetworkService
 
     // 懒加载
     private val bottomSheetDialog by lazy {
@@ -384,9 +379,9 @@ class HomeFragment : BaseFragment() {
         bottomSheetDialog.show()
 
         launchIO {
-            val myUserData =
-                KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                    .asyncGet<MyUserData>(BilibiliApi.getMyUserData)
+
+            val myUserData = networkService.n27()
+
 
             launchUI {
                 if (myUserData.code == 0) {
@@ -426,24 +421,18 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    @Inject
+    lateinit var tokenUtils: TokenUtils
+
     // 加载用户数据
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchIO {
-            val params = mutableMapOf<String?, String?>()
+            val params = mutableMapOf<String, String>()
             params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = getParamStr(params)
+            val paramsStr = tokenUtils.getParamStr(params)
 
-            val userInfoBean =
-                KtHttpUtils.addHeader(
-                    COOKIE,
-                    BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-                ).addHeader(
-                    USER_AGENT,
-                    BROWSER_USER_AGENT,
-                )
-                    .asyncGet<UserInfoBean>("${BilibiliApi.getUserInfoPath}?$paramsStr")
-
+            val userInfoBean = networkService.n28(paramsStr)
 
             launchUI {
                 // 这里需要储存下数据
