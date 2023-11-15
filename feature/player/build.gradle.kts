@@ -1,4 +1,4 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.feature)
     alias(libs.plugins.bilibili.android.compose)
@@ -27,11 +27,18 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.transformer)
-    implementation(libs.androidx.media3.datasource.cronet)
-
-    implementation(libs.androidx.media3.session) // [Required] MediaSession Extension dependency
+    implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.decoder)
     implementation(libs.androidx.media3.datasource)
+    implementation(libs.androidx.media3.datasource.okhttp)
+    implementation(libs.androidx.media3.exoplayer.workmanager)
+    implementation(libs.androidx.media3.extractor)
+    implementation(libs.androidx.media3.database)
 
     implementation(libs.accompanist.navigation.material)
+
+    implementation(libs.androidx.paging.compose)
+
+    implementation(libs.ffmpeg.kit.full)
+    implementation(libs.ffmpeg.ffmpegCommand)
 }

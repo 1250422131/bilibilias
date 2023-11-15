@@ -1,11 +1,10 @@
 package com.imcys.network.download
 
 import android.content.Context
+import com.billbook.lib.downloader.Download
 import com.imcys.common.di.AppCoroutineScope
 import com.imcys.model.video.Page
 import com.imcys.network.repository.VideoRepository
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Error
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -24,19 +23,20 @@ const val STATE_DOWNLOAD_WAIT = 0
 
 // 非正常结束
 const val STATE_DOWNLOAD_ERROR = -1
-private const val BILIBILI_DOWNLOAD_PATH = "/storage/emulated/0/Android/data/tv.danmaku.bili/download"
+private const val BILIBILI_DOWNLOAD_PATH =
+    "/storage/emulated/0/Android/data/tv.danmaku.bili/download"
 private const val INDEX_JSON = "index.json"
 private const val ENTRY_JSON = "entry.json"
-private const val VIDEO_M4S = "video.m4s"
-private const val AUDIO_M4S = "audio.m4s"
+const val VIDEO_M4S = "video.m4s"
+const val AUDIO_M4S = "audio.m4s"
 
 @Singleton
 class DownloadManage @Inject constructor(
-    private val fetchManage: FetchManage,
     private val videoRepository: VideoRepository,
     @ApplicationContext private val context: Context,
     @AppCoroutineScope private val scope: CoroutineScope,
-    private val json: Json
+    private val json: Json,
+    private val okDownload: OkDownload,
 ) {
 
     fun addTask(
@@ -81,7 +81,9 @@ class DownloadManage @Inject constructor(
         scope.launch {
             videoRepository.getDanmakuXml(cid).collect {
                 when (it) {
-                    is com.imcys.common.utils.Result.Error -> Timber.tag("下载弹幕异常").d(it.exception)
+                    is com.imcys.common.utils.Result.Error -> Timber.tag("下载弹幕异常")
+                        .d(it.exception)
+
                     com.imcys.common.utils.Result.Loading -> {}
                     is com.imcys.common.utils.Result.Success -> {
                         val file = File(
@@ -113,41 +115,40 @@ class DownloadManage @Inject constructor(
     }
 
     // fun buildAss(elemsList: List<Dm.DanmakuElem>) {
-        // Fix
-        // Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-        // Dialogue: 0,0:14:28.92,0:14:36.92,R2L,,20,20,2,,{\move(610,25,-50,25)}广告满分
-        // Dialogue: 0,0:00:27.52,0:00:31.52,Fix,,20,20,2,,{\pos(280,25)}听成了建材之父
-        // Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
-        // progress=19516,mode=1,fontsize=25,color=16777215,content=哟呵，没探店了？,pool=0,colorful=NoneType,
-        // progress=33599,mode=1,fontsize=25,color=16777215,content=中门对狙,pool=0,colorful=NoneType,
-        // progress=28052,mode=1,fontsize=25,color=16777215,content=摄像师——伯娘,pool=0,colorful=NoneType,
-        // progress=45419,mode=1,fontsize=25,color=16777215,content=手推木啊，好家伙，你搞个驴拉的都比你手推的好呀,pool=0,colorful=NoneType,
-        // progress=267710,mode=1,fontsize=25,color=16777215,content=400爷笑嘻了,pool=0,colorful=NoneType,
-        // Format:  Layer ,Start      ,End        ,Style ,Name ,MarginL ,MarginR ,MarginV ,Effect, Text
-        // Dialogue: 0     ,0:00:00.38 ,0:00:08.38 ,R2L   ,     ,20      ,20      ,2       ,,{\move(610,25,-50,25)}火钳刘明
-        // elemsList.take(5).forEach {
-        //     Timber.d(
-        //         "progress=${it.progress}," +
-        //                 "mode=${it.mode}," +
-        //                 "fontsize=${it.fontsize}," +
-        //                 "color=${it.color}," +
-        //                 "content=${it.content}," +
-        //                 "pool=${it.pool}," +
-        //                 "colorful=${it.colorful},"
-        //     )
-        //     val time = formatSecond(it.progress)
-        //     val len = "Dialogue: 0,00:00:00,00:00:00,R2L,,0,0,0,,{\\move(0,0,0,0)}".length * elemsList.size
-        //     buildString(len) {
-        //         append("Dialogue: ")
-        //         append('0')
-        //         appendBeforeComma(time.first)
-        //         appendBeforeComma(time.second)
-        //
-        //         append(it.content)
-        //     }
+    // Fix
+    // Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+    // Dialogue: 0,0:14:28.92,0:14:36.92,R2L,,20,20,2,,{\move(610,25,-50,25)}广告满分
+    // Dialogue: 0,0:00:27.52,0:00:31.52,Fix,,20,20,2,,{\pos(280,25)}听成了建材之父
+    // Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
+    // progress=19516,mode=1,fontsize=25,color=16777215,content=哟呵，没探店了？,pool=0,colorful=NoneType,
+    // progress=33599,mode=1,fontsize=25,color=16777215,content=中门对狙,pool=0,colorful=NoneType,
+    // progress=28052,mode=1,fontsize=25,color=16777215,content=摄像师——伯娘,pool=0,colorful=NoneType,
+    // progress=45419,mode=1,fontsize=25,color=16777215,content=手推木啊，好家伙，你搞个驴拉的都比你手推的好呀,pool=0,colorful=NoneType,
+    // progress=267710,mode=1,fontsize=25,color=16777215,content=400爷笑嘻了,pool=0,colorful=NoneType,
+    // Format:  Layer ,Start      ,End        ,Style ,Name ,MarginL ,MarginR ,MarginV ,Effect, Text
+    // Dialogue: 0     ,0:00:00.38 ,0:00:08.38 ,R2L   ,     ,20      ,20      ,2       ,,{\move(610,25,-50,25)}火钳刘明
+    // elemsList.take(5).forEach {
+    //     Timber.d(
+    //         "progress=${it.progress}," +
+    //                 "mode=${it.mode}," +
+    //                 "fontsize=${it.fontsize}," +
+    //                 "color=${it.color}," +
+    //                 "content=${it.content}," +
+    //                 "pool=${it.pool}," +
+    //                 "colorful=${it.colorful},"
+    //     )
+    //     val time = formatSecond(it.progress)
+    //     val len = "Dialogue: 0,00:00:00,00:00:00,R2L,,0,0,0,,{\\move(0,0,0,0)}".length * elemsList.size
+    //     buildString(len) {
+    //         append("Dialogue: ")
+    //         append('0')
+    //         appendBeforeComma(time.first)
+    //         appendBeforeComma(time.second)
+    //
+    //         append(it.content)
+    //     }
 
     // }
-
 
     fun StringBuilder.appendComma(): StringBuilder = append(',')
     fun StringBuilder.appendBeforeComma(str: String): StringBuilder = append(str).appendComma()
@@ -244,9 +245,11 @@ class DownloadManage @Inject constructor(
         Timber.tag("downloadUrl").d("video=$videoUrl,audio=$audioUrl")
         val video = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), VIDEO_M4S)
         val audio = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), AUDIO_M4S)
-        val requestVideo = createVideoRequest(videoUrl, video.absolutePath, cid, title, page.part, bvid, aid)
-        val requestAudio = createAudioRequest(audioUrl, audio.path, cid, title, page.part, bvid, aid)
-        fetchManage.add(listOf(requestVideo, requestAudio))
+        val requestVideo =
+            createVideoRequest(videoUrl, video.absolutePath, cid, title, page.part, bvid, aid)
+        val requestAudio =
+            createAudioRequest(audioUrl, audio.path, cid, title, page.part, bvid, aid)
+//        fetchManage.add(listOf(requestVideo, requestAudio))
         downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
@@ -305,34 +308,60 @@ class DownloadManage @Inject constructor(
     private fun buildSavePath(bvid: String, cid: Long, qn: Int, name: String): String =
         "savePath/$bvid/c_$cid/$qn/$name"
 
-    private fun createVideoRequest(url: String, file: String, cid: Long, title: String, pageTitle: String, bvid: String, aid: Long) =
-        fetchManage.createRequest(url, file, cid, TAG_VIDEO, title, pageTitle, bvid, aid)
+    private fun createVideoRequest(
+        url: String,
+        file: String,
+        cid: Long,
+        title: String,
+        pageTitle: String,
+        bvid: String,
+        aid: Long
+    ) {
+    }
 
-    private fun createAudioRequest(url: String, file: String, cid: Long, title: String, pageTitle: String, bvid: String, aid: Long) =
-        fetchManage.createRequest(url, file, cid, TAG_AUDIO, title, pageTitle, bvid, aid)
+    private fun createAudioRequest(
+        url: String,
+        file: String,
+        cid: Long,
+        title: String,
+        pageTitle: String,
+        bvid: String,
+        aid: Long
+    ) {
+    }
 
     fun findAllTask(result: (List<Download>) -> Unit) {
-        fetchManage.findAllTask(result)
-    }
-
-    fun deleteAll() {
-        fetchManage.deleteAll()
-    }
-
-    fun deleteFiles(ids: List<Int>, onSuccess: (List<Download>) -> Unit, onError: (Error) -> Unit) {
-        fetchManage.deleteFiles(ids, onSuccess, onError)
     }
 
     fun deleteFile(id: Int, onSuccess: (Download) -> Unit, onError: (Error) -> Unit) {
-        fetchManage.deleteFile(id, onSuccess, onError)
     }
 
-    fun deleteGroup(groupId: Int, onSuccess: (List<Download>) -> Unit, onError: (Error) -> Unit) {
-        fetchManage.deleteGroup(groupId, onSuccess, onError)
-    }
-
-    fun addTask(bvid: String, cid: Long, quality: Int?) {
-
+    fun addTask(bvid: String, pages: List<Page>, quality: Int) {
+        scope.launch {
+            pages.map {
+                videoRepository.getDashVideoStream(bvid, it.cid)
+            }.forEach { info ->
+                val videoList =
+                    info.dash.video.groupBy { it.id }[quality] ?: error("视频没有所选清晰度")
+                val video = videoList.maxBy { it.codecid }
+                val audio = info.dash.audio.maxBy { it.id }
+                okDownload.enqueueTask(
+                    "test_aid",
+                    "test_bvid",
+                    "test_cid",
+                    video.baseUrl,
+                    video.backupUrl,
+                    VIDEO_M4S
+                )
+                okDownload.enqueueTask(
+                    "test_aid",
+                    "test_bvid",
+                    "test_cid",
+                    audio.baseUrl,
+                    audio.backupUrl,
+                    AUDIO_M4S
+                )
+            }
+        }
     }
 }
-

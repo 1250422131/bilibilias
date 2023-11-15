@@ -2,17 +2,16 @@ package com.imcys.player.di
 
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.cronet.CronetDataSource
-import com.imcys.common.di.AsDispatchers
-import com.imcys.common.di.Dispatcher
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource
 import com.imcys.network.constants.BILIBILI_WEB_URL
+import com.imcys.network.di.BaseOkhttpClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.asExecutor
-import org.chromium.net.CronetEngine
+import okhttp3.CacheControl
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -21,9 +20,11 @@ class PlayModule {
     @Provides
     @Singleton
     @OptIn(UnstableApi::class)
-    fun provideCronetDataSource(
-        cronetEngine: CronetEngine,
-        @Dispatcher(AsDispatchers.IO) ioDispatcher: CoroutineDispatcher
-    ): CronetDataSource.Factory = CronetDataSource.Factory(cronetEngine, ioDispatcher.asExecutor())
-        .setDefaultRequestProperties(mapOf("Referrer" to BILIBILI_WEB_URL))
+    fun provideOkhttpDataSource(
+        @BaseOkhttpClient okhttpClient: OkHttpClient,
+    ): DataSource.Factory = OkHttpDataSource.Factory(okhttpClient)
+        .setDefaultRequestProperties(mapOf(HTTP_HEADER_REFERRER to BILIBILI_WEB_URL))
+        .setCacheControl(CacheControl.FORCE_CACHE)
 }
+
+const val HTTP_HEADER_REFERRER = "Referrer"

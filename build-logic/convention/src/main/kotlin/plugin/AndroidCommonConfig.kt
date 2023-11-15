@@ -38,14 +38,13 @@ internal fun Project.configureKotlin(
             jvmTarget.set(JvmTarget.fromTarget(AndroidConfigConventions.JAVA_VERSION.toString()))
         }
     }
-
 }
 
 internal fun CommonExtension<*, *, *, *, *>.configureAndroidCommon() {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 24
 
         vectorDrawables {
             useSupportLibrary = true

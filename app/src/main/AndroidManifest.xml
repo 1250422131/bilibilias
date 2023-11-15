@@ -23,8 +23,6 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
-    <uses-sdk tools:overrideLibrary="com.zj.banner" />
-
     <application
         android:name=".base.app.App"
         android:allowBackup="true"

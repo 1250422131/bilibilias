@@ -15,7 +15,6 @@ class DownloadListHolders @Inject constructor() {
      */
     var videoQuality = 0
 
-
     // var requireDownloadFileType by mutableStateOf(DownloadFileType.VideoAndAudio)
 
     // 下载工具

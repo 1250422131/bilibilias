@@ -13,24 +13,17 @@ import androidx.media3.datasource.DataSink
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.TransferListener
-import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
-import com.imcys.common.di.AsDispatchers
-import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.getActivity
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.asExecutor
-import org.chromium.net.CronetEngine
-import org.chromium.net.RequestFinishedInfo
 import timber.log.Timber
 import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
 import tv.danmaku.ijk.media.exo2.ExoSourceManager
@@ -42,18 +35,9 @@ import javax.inject.Inject
 class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoMediaSourceInterceptListener {
 
     @Inject
-    @Dispatcher(AsDispatchers.IO)
-    lateinit var ioDispatcher: CoroutineDispatcher
-
-    @Inject
-    lateinit var cronetEngine: CronetEngine
-
-    @Inject
-    lateinit var cronetDataSource: CronetDataSource.Factory
+    lateinit var dataSource: DataSource.Factory
 
     init {
-        // cronetEngine.startNetLogToFile(context.cacheDir.path + "/netLog.log", false)
-        cronetRequestListener()
         val orientationUtils = OrientationUtils(context.getActivity(), this)
         // fullscreenButton.setOnClickListener {
         //     // ------- ！！！如果不需要旋转屏幕，可以不调用！！！-------
@@ -61,20 +45,6 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
         //     orientationUtils.resolveByClick()
         // }
         initConfig()
-    }
-
-    private inner class RequestInfo : RequestFinishedInfo.Listener(ioDispatcher.asExecutor()) {
-        override fun onRequestFinished(requestInfo: RequestFinishedInfo) {
-            Timber.d("cronet header=${requestInfo.responseInfo?.allHeaders}")
-            val exception = requestInfo.exception
-            if (exception != null) {
-                Timber.e("视频流异常", exception.message)
-            }
-        }
-    }
-
-    private fun cronetRequestListener() {
-        // cronetEngine.addRequestFinishedListener(RequestInfo())
     }
 
     private fun initConfig() {
@@ -126,10 +96,9 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
         // todo 设置了这个 Decoder init failed: c2.android.av1.decoder, Format(1, null, null, video/av01, null, -1, null, [3840, 2160, -1.0, null], [-1, -1])
         val videoType = MimeTypes.getMediaMimeType(videoUrl.codecs)
         val audioType = MimeTypes.getMediaMimeType(audioUrl.codecs)
-        cronetDataSource.setTransferListener(bandwidthMeter)
 
-        val videoSource = createMediaSource(cronetDataSource, videoUrl.baseUrl)
-        val audioSource = createMediaSource(cronetDataSource, audioUrl.baseUrl)
+        val videoSource = createMediaSource(dataSource, videoUrl.baseUrl)
+        val audioSource = createMediaSource(dataSource, audioUrl.baseUrl)
         videoSource.maybeThrowSourceInfoRefreshError()
         val factory = DefaultDataSource.Factory(context)
         val subSource = SingleSampleMediaSource.Factory(factory).createMediaSource(subtitle, C.TIME_UNSET)
@@ -153,7 +122,7 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
         readTimeoutMillis: Int,
         mapHeadData: MutableMap<String, String>?,
         allowCrossProtocolRedirects: Boolean
-    ): DataSource.Factory = cronetDataSource
+    ): DataSource.Factory = dataSource
 
     override fun cacheWriteDataSinkFactory(CachePath: String?, url: String?): DataSink.Factory? = null
     override fun setUp(url: String?, cacheWithPlay: Boolean, title: String?): Boolean {

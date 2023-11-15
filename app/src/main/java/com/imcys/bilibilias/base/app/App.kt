@@ -3,6 +3,7 @@ package com.imcys.bilibilias.base.app
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import com.hjq.toast.Toaster
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -20,6 +21,7 @@ class App : Application() {
 
         initPlayManager()
         MMKV.initialize(this)
+        Toaster.init(this)
     }
 
     private fun initPlayManager() {
