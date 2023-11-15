@@ -26,5 +26,4 @@ class RoomConventionPlugin : Plugin<Project> {
             add("ksp", libs.findLibrary("room.compiler").get())
         }
     }
-
 }

@@ -68,7 +68,7 @@ import com.imcys.common.utils.noRippleClickable
 import com.imcys.designsystem.component.CenterRow
 import com.imcys.model.video.Page
 import com.imcys.player.sheet.SheetDirectLink
-import com.imcys.player.sheet.SheetDownloadVideo
+import com.imcys.player.sheet.SheetPages
 import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
 import com.shuyu.gsyvideoplayer.GSYVideoManager
@@ -88,20 +88,14 @@ internal fun PlayerRoute(
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
     val playerInfoUiState by viewModel.playerInfoUiState.collectAsStateWithLifecycle()
 
-    val downloadQuality by viewModel.downloadQuality.collectAsStateWithLifecycle()
-    val pageList by viewModel.pageList.collectAsStateWithLifecycle()
     PlayerScreen(
         state = state,
         onNavigateToDownloadAanmaku = onNavigateToDownloadAanmaku,
         selectedQuality = viewModel::selectedQuality,
         selectedPage = viewModel::selectedPage,
-        onVideoQualityChanged = viewModel::onVideoQualityChanged,
-        downloadQuality = downloadQuality,
         addToDownloadQueue = viewModel::addToDownloadQueue,
-        addAllToDownloadQueue = viewModel::addAllToDownloadQueue,
         playerInfoUiState = playerInfoUiState,
         playerUiState = playerUiState,
-        pageList = pageList
     )
 }
 
@@ -112,13 +106,9 @@ internal fun PlayerScreen(
     onNavigateToDownloadAanmaku: () -> Unit,
     selectedQuality: (Int) -> Unit,
     selectedPage: (Long, Long) -> Unit,
-    onVideoQualityChanged: (Int) -> Unit,
-    downloadQuality: Int?,
-    addToDownloadQueue: (Page) -> Unit,
-    addAllToDownloadQueue: (List<Page>) -> Unit,
+    addToDownloadQueue: (List<Page>, Int) -> Unit,
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
-    playerUiState: PlayerUiState = PlayerUiState.Loading,
-    pageList: List<Page>
+    playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
     var action by remember { mutableStateOf<Action?>(null) }
     val scope = rememberCoroutineScope()
@@ -147,20 +137,17 @@ internal fun PlayerScreen(
         sheetContent = {
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
-                    Action.DOWNLOAD_VIDEO -> SheetDownloadVideo(
-                        playerUiState.qualityDescription,
-                        onVideoQualityChanged,
-                        downloadQuality,
-                        addToDownloadQueue,
-                        addAllToDownloadQueue,
-                        pageList
+                    Action.DOWNLOAD_VIDEO -> SheetPages(
+                        qualityDescriptionList = playerUiState.qualityDescription,
+                        addToDownloadQueue = addToDownloadQueue,
+                        pages = playerUiState.pages
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()
                     Action.DIRECT_LINK -> SheetDirectLink(
                         video = playerUiState.video,
                         audio = playerUiState.audio,
-                        dolby = playerUiState.dolby
+                        dolby = playerUiState.dolby,
                     )
 
                     null -> Unit
@@ -195,10 +182,10 @@ internal fun PlayerScreen(
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Actions(
-                        like = playerInfoUiState.like,
-                        coin = playerInfoUiState.coin,
-                        favorite = playerInfoUiState.favorite,
-                        share = playerInfoUiState.share,
+                        like = playerInfoUiState.stat.like,
+                        coin = playerInfoUiState.stat.coin,
+                        favorite = playerInfoUiState.stat.favorite,
+                        share = playerInfoUiState.stat.share,
                         isLike = state.hasLike,
                         isCoins = state.hasCoins,
                         isCollection = state.hasCollection,
@@ -351,7 +338,11 @@ private fun Actions(
                 )
             },
             supportingContent = {
-                Text(favorite.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+                Text(
+                    favorite.digitalConversion(),
+                    fontWeight = FontWeight.ExtraLight,
+                    fontSize = 11.sp
+                )
             },
             modifier = Modifier
                 .clickable { }
@@ -368,7 +359,11 @@ private fun Actions(
                 )
             },
             supportingContent = {
-                Text(share.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
+                Text(
+                    share.digitalConversion(),
+                    fontWeight = FontWeight.ExtraLight,
+                    fontSize = 11.sp
+                )
             },
             modifier = Modifier
                 .clickable { }
@@ -444,7 +439,8 @@ private fun VideoWindows(
                 StandardGSYVideoPlayer.CURRENT_STATE_NORMAL -> {
                     Timber.tag(
                         "playerState"
-                    ).d("正常=${gsy.gsyVideoManager.lastState},${gsy.progress},${gsy.currentPosition}")
+                    )
+                        .d("正常=${gsy.gsyVideoManager.lastState},${gsy.progress},${gsy.currentPosition}")
                 }
 
                 StandardGSYVideoPlayer.CURRENT_STATE_PREPAREING -> {

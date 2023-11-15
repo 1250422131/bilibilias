@@ -1,12 +1,16 @@
 package com.imcys.network.di
 
 import android.content.Context
+import com.billbook.lib.downloader.Downloader
+import com.billbook.lib.downloader.NetworkInterceptor
+import com.billbook.lib.downloader.StorageInterceptor
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
 import com.imcys.network.constants.API_BILIBILI
+import com.imcys.network.constants.BILIBILI_WEB_URL
 import com.imcys.network.constants.BROWSER_USER_AGENT
 import com.squareup.wire.GrpcClient
 import dagger.Module
@@ -51,77 +55,132 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
 import okhttp3.Cache
 import okhttp3.ConnectionSpec
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.brotli.BrotliInterceptor
-import org.chromium.net.CronetEngine
+import okhttp3.internal.threadFactory
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class OkhttpClient
+annotation class BaseOkhttpClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ProjectOkhttpClient
 
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideCronetEngine(@ApplicationContext context: Context): CronetEngine =
-        CronetEngine.Builder(context)
-            .enableBrotli(true)
-            .enableHttp2(true)
-            .enableQuic(true)
-            .setStoragePath(context.cacheDir.path)
-            .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK_NO_HTTP, 1024 * 1024 * 1024L)
-            .setUserAgent(BROWSER_USER_AGENT)
-            .enableNetworkQualityEstimator(true)
+    @BaseOkhttpClient
+    fun provideBaseOkhttpClient(executorService: ExecutorService): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request()
+                if (request.header(HttpHeaders.UserAgent) == null) {
+                    val requestWithUserAgent = request.newBuilder()
+                        .header(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
+                        .build()
+                    chain.proceed(requestWithUserAgent)
+                } else {
+                    chain.proceed(request)
+                }
+            }
+            .addInterceptor(BrotliInterceptor)
+            .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
+            .pingInterval(1, TimeUnit.SECONDS)
+            .dispatcher(Dispatcher(executorService))
             .build()
 
     @Provides
     @Singleton
-    fun provideGrpcClient(okHttpClient: OkHttpClient): GrpcClient =
+    fun provideDownload(
+        @BaseOkhttpClient okHttpClient: OkHttpClient,
+        @ApplicationContext context: Context,
+        executorService: ExecutorService,
+    ): Downloader = Downloader.Builder()
+        .okHttpClientFactory {
+            okHttpClient.newBuilder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                    if (request.url.host != "bilibili.com") {
+                        val requestWithReferrer = request.newBuilder()
+                            .header(HttpHeaders.Referrer, BILIBILI_WEB_URL)
+                            .build()
+                        chain.proceed(requestWithReferrer)
+                    } else {
+                        chain.proceed(request)
+                    }
+                }
+                .build()
+        }
+        .executorService(executorService)
+        .addInterceptor(NetworkInterceptor(context))
+        .addInterceptor(StorageInterceptor())
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideGrpcClient(@BaseOkhttpClient okHttpClient: OkHttpClient): GrpcClient =
         GrpcClient.Builder()
-            .client(okHttpClient.newBuilder().protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE)).build())
+            .client(
+                okHttpClient.newBuilder()
+                    .protocols(emptyList())
+                    .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE))
+                    .build()
+            )
             .baseUrl(API_BILIBILI)
             .build()
 
     @Provides
     @Singleton
-    fun provideOkhttpClient(@ApplicationContext context: Context): OkHttpClient =
-        OkHttpClient.Builder()
-            .pingInterval(1, TimeUnit.SECONDS)
-            .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
-            .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
-            .addInterceptor { chain ->
-                if (chain.request().header(HttpHeaders.UserAgent) == null) {
-                    val requestWithUserAgent = chain.request().newBuilder()
-                        .header(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
-                        .build()
-                    chain.proceed(requestWithUserAgent)
-                } else {
-                    chain.proceed(chain.request())
-                }
-            }
-            .addInterceptor(MonitorInterceptor())
-            .addInterceptor(BrotliInterceptor)
-            .build()
+    fun provideExecutorService(): ExecutorService = ThreadPoolExecutor(
+        Runtime.getRuntime().availableProcessors(),
+        Int.MAX_VALUE,
+        120,
+        TimeUnit.SECONDS,
+        SynchronousQueue(),
+        threadFactory("BilibiliAS Dispatcher", false)
+    )
+
 
     @Provides
     @Singleton
-    @OkhttpClient
-    fun provideOkHttpEngine(okHttpClient: OkHttpClient): HttpClientEngine = OkHttp.create {
-        preconfigured = okHttpClient
-    }
+    @ProjectOkhttpClient
+    fun provideProjectOkhttpClient(
+        @ApplicationContext context: Context,
+        @BaseOkhttpClient okHttpClient: OkHttpClient
+    ): OkHttpClient = okHttpClient.newBuilder()
+        .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
+        .addInterceptor(MonitorInterceptor())
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideOkHttpEngine(@ProjectOkhttpClient okHttpClient: OkHttpClient): HttpClientEngine =
+        OkHttp.create {
+            preconfigured = okHttpClient
+        }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideHttpClient(
-        @OkhttpClient httpClientEngine: HttpClientEngine,
+        httpClientEngine: HttpClientEngine,
         json: Json,
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
@@ -137,7 +196,6 @@ class NetworkModule {
             sendCharset = Charsets.UTF_8
         }
         addDefaultResponseValidation()
-        // ContentEncoding()
         Logging { logger = loggerManager; level = LogLevel.ALL }
         install(HttpCookies) {
             storage = cookieManager
@@ -194,7 +252,10 @@ class NetworkModule {
                     is JsonObject -> {
                         realData = realData.jsonObject
                         json.parseToJsonElement(realData.toString())
-                        val element = json.decodeFromJsonElement(serializer(requestedType.reifiedType), realData)
+                        val element = json.decodeFromJsonElement(
+                            serializer(requestedType.reifiedType),
+                            realData
+                        )
                         val print = element.ofMap()?.print()
                         Timber.tag("TransformData").d("data=${print ?: "@null"}")
                         element
@@ -202,7 +263,8 @@ class NetworkModule {
 
                     is JsonArray -> {
                         realData = realData.jsonArray
-                        val type = requestedType.kotlinType ?: throw NoTypeException(requestedType.toString())
+                        val type = requestedType.kotlinType
+                            ?: throw NoTypeException(requestedType.toString())
                         val element = json.decodeFromJsonElement(serializer(type), realData)
                         element
                     }

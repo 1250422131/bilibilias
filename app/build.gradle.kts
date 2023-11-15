@@ -100,7 +100,6 @@ dependencies {
     /**
      * 下载
      */
-    implementation(libs.androidx.xfetch2)
     implementation(libs.compose.settings.ui.m3)
 
     /**

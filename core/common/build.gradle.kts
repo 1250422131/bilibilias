@@ -26,6 +26,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.kotlin.reflect)
+
+    api("com.github.getActivity:Toaster:12.6")
 }
 kotlin {
     sourceSets {

@@ -1,5 +1,6 @@
 package com.imcys.player.state
 
+import com.imcys.model.VideoDetails
 import com.imcys.model.video.Page
 
 sealed interface PlayInfoUiState {
@@ -13,10 +14,6 @@ sealed interface PlayInfoUiState {
         val pic: String,
         val desc: String,
         val pages: List<Page>,
-        val like: Int,
-        val coin: Int,
-        val view: Int,
-        val favorite: Int,
-        val share: Int,
+        val stat: VideoDetails.Stat,
     ) : PlayInfoUiState
 }

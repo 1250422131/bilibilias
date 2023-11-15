@@ -19,12 +19,12 @@ import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
+import com.imcys.network.utils.parameterList
 import com.imcys.network.utils.parameterMID
 import com.imcys.network.utils.parameterPageNum
 import com.imcys.network.utils.parameterPageSize
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
@@ -118,8 +118,6 @@ class VideoRepository @Inject constructor(
         return json.decodeFromString<BangumiPlayBean>(text.toString()).result
     }
 
-    private val _bangumi = MutableSharedFlow<Result<String>>(1)
-    val bangumi = _bangumi.asSharedFlow()
     suspend fun getEp(id: String): Bangumi = withContext(ioDispatcher) {
         val text = httpClient.get(BilibiliApi2.bangumiVideoDataPath) {
             parameter("ep_id", id)
@@ -130,8 +128,6 @@ class VideoRepository @Inject constructor(
 
     private val _dashVideo = MutableSharedFlow<Result<PlayerInfo>>(1)
     val dashVideo = _dashVideo.asSharedFlow()
-    lateinit var cachePlayerInfo: PlayerInfo
-        private set
 
     /**
      * fnval 默认值已经取到所有值
@@ -159,22 +155,15 @@ class VideoRepository @Inject constructor(
                 "fourk" to fourk,
                 "fnver" to 0
             )
-        cachePlayerInfo = if (useWbi) {
+        return if (useWbi) {
             withContext(ioDispatcher) {
                 val list = wbiKeyRepository.getUserNavToken(params)
                 httpClient.get(BilibiliApi2.VIDEO_PLAY_WBI) {
-                    toParameter(list)
+                    parameterList(list)
                 }.body()
             }
         } else {
             getVideoStreamAddress(params)
-        }
-        return cachePlayerInfo
-    }
-
-    fun HttpRequestBuilder.toParameter(parameters: List<Pair<String, Any>>) {
-        parameters.forEach {
-            url.parameters.append(it.first, it.second.toString())
         }
     }
 
@@ -188,7 +177,7 @@ class VideoRepository @Inject constructor(
     ): T = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi2.videoPlayPath) {
             headerRefBilibili()
-            toParameter(params)
+            parameterList(params)
         }.body()
     }
 

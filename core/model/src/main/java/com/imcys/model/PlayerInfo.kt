@@ -65,7 +65,7 @@ data class Dash(
         @SerialName("bandwidth")
         val bandwidth: Int = 0, // 40882
         @SerialName("base_url")
-        val baseUrl: String = "", // https://xy182x125x174x46xy.mcdn.bilivideo.cn:8082/v1/resource/1260927673-1-30216.m4s?agrr=0&build=0&buvid=&bvc=vod&bw=5203&cdnid=11153&deadline=1695274017&e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M%3D&f=u_0_0&gen=playurlv2&logo=80000000&mid=10993030&nbs=1&nettype=0&oi=1974978899&orderid=0%2C3&os=bcache&platform=pc&sign=bc00e9&traceid=trBGlREsNdjFPi_0_e_N&uipk=5&uparams=e%2Cuipk%2Cnbs%2Cdeadline%2Cgen%2Cos%2Coi%2Ctrid%2Cmid%2Cplatform&upsig=21e011b0b7becf4d99c918da87af07da
+        val baseUrl: String = "",
         @SerialName("codecid")
         val codecid: Int = 0, // 0
         @SerialName("codecs")
@@ -99,7 +99,8 @@ data class Dash(
     @Serializable
     data class Dolby(
         @SerialName("type")
-        val type: Int = 0 // 0
+        val type: Int = 0, // 0
+        val audio: List<Audio>? = null
     )
 
     @Serializable
@@ -115,7 +116,7 @@ data class Dash(
         @SerialName("codecs")
         val codecs: String = "", // avc1.64001F
         @SerialName("frame_rate")
-        val frameRate: String = "", // 23.810
+        val frameRate: Float = 0F, // 23.810
         @SerialName("height")
         val height: Int = 0, // 480
         @SerialName("id")

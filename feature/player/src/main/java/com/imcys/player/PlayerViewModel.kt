@@ -9,14 +9,18 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
 import com.imcys.model.video.Page
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
-import com.imcys.network.repository.SpaceRepository
 import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.space.QueryUserSubmittedVideoPagingSource
+import com.imcys.network.repository.space.SpaceRepository
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
@@ -27,7 +31,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
@@ -42,18 +45,21 @@ class PlayerViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val spaceRepository: SpaceRepository,
     val downloadListHolders: DownloadListHolders,
-    private val downloadManage: DownloadManage,
     private val savedStateHandle: SavedStateHandle,
+    private val downloadManage: DownloadManage
 ) : ViewModel() {
+    val flow = Pager(
+        PagingConfig(pageSize = 30)
+    ) {
+        QueryUserSubmittedVideoPagingSource(
+            spaceRepository,
+            videoRepository.cacheVideoView.owner.mid
+        )
+    }.flow.cachedIn(viewModelScope)
 
     private val aid = savedStateHandle.getStateFlow(A_ID, 0L)
     private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
     private val cid = savedStateHandle.getStateFlow(C_ID, 0L)
-
-    /**
-     * 视频清晰度
-     */
-    val downloadQuality = savedStateHandle.getStateFlow<Int?>(DOWNLOAD_QUALITY, null)
 
     private val info = combine(aid, bvid, cid, ::Triple)
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
@@ -74,11 +80,7 @@ class PlayerViewModel @Inject constructor(
                         aid = result.data.aid,
                         bvid = result.data.bvid,
                         cid = result.data.cid,
-                        like = result.data.stat.like,
-                        coin = result.data.stat.coin,
-                        favorite = result.data.stat.favorite,
-                        view = result.data.stat.view,
-                        share = result.data.stat.share,
+                        stat = result.data.stat
                     )
                 }
             }
@@ -101,25 +103,15 @@ class PlayerViewModel @Inject constructor(
 
     private fun PlayerInfo.mapToPlayerUiState(): PlayerUiState.Success {
         val pairs = acceptDescription.zip(acceptQuality).toImmutableList()
-        onVideoQualityChanged(acceptQuality.first())
         return PlayerUiState.Success(
             qualityDescription = pairs,
             video = dash.video.toImmutableList(),
             audio = dash.audio.toImmutableList(),
-            dolby = dash.dolby
+            dolby = dash.dolby,
+            duration = dash.duration,
+            pages = videoRepository.cacheVideoView.pages
         )
     }
-
-    val pageList = bvid.map {
-        videoRepository.getPlayerPageList(it)
-    }.asResult()
-        .map { result ->
-            when (result) {
-                is Result.Error -> emptyList()
-                Result.Loading -> emptyList()
-                is Result.Success -> result.data
-            }
-        }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     private val _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
@@ -131,80 +123,13 @@ class PlayerViewModel @Inject constructor(
     private val qualityGroup = sortedMapOf<Int, List<com.imcys.model.Dash.Video>>()
 
     /**
-     * 视频支持的格式
+     * 下载视频
      */
-    private val supportFormat = mutableListOf<com.imcys.model.SupportFormat>()
-
-    private val pages = mutableListOf<Page>()
-
-    init {
-        getMediaCodecInfo()
+    fun addToDownloadQueue(pages: List<Page>, quality: Int) {
         viewModelScope.launch {
-            videoRepository.videoDetails2.collectLatest { res ->
-                when (res) {
-                    is Result.Error -> TODO()
-                    Result.Loading -> TODO()
-                    is Result.Success -> {
-                        val details = res.data
-                        getDash(details)
-                        setSubSet()
-                        downloadDanmaku(details.cid, details.aid)
-                        val hasLike = videoRepository.hasLike(details.bvid)
-                        val hasCoins = videoRepository.hasCoins(details.bvid)
-                        val hasCollection = videoRepository.hasCollection(details.bvid)
-                        setVideoBasicInfo(details)
-                        _playerState.update {
-                            it.copy(
-                                hasLike = hasLike,
-                                hasCoins = hasCoins,
-                                hasCollection = hasCollection
-                            )
-                        }
-                    }
-                }
+            bvid.collect {
+                downloadManage.addTask(it, pages, quality)
             }
-        }
-    }
-
-    /**
-     * 选择下载清晰度
-     */
-    fun onVideoQualityChanged(quality: Int) {
-        savedStateHandle[DOWNLOAD_QUALITY] = quality
-    }
-
-    /**
-     * 下载所有视频
-     */
-    fun addAllToDownloadQueue(pages: List<Page>) {
-        pages.forEach {
-            addToDownloadQueue(it)
-        }
-    }
-
-    /**
-     * 下载单个视频
-     */
-    fun addToDownloadQueue(page: Page) {
-        combine(bvid, downloadQuality) { id, quality ->
-            downloadManage.addTask(id, page.cid, quality)
-        }
-    }
-
-    private fun setVideoBasicInfo(details: com.imcys.model.VideoDetails) {
-        _playerState.update {
-            it.copy(
-                title = details.title,
-                desc = details.descV2?.first()?.rawText ?: details.desc,
-                bvid = details.bvid,
-                aid = details.aid,
-                cid = details.cid,
-                pic = details.pic,
-                like = details.stat.like,
-                coins = details.stat.coin,
-                favorite = details.stat.favorite,
-                share = details.stat.share
-            )
         }
     }
 
@@ -257,47 +182,9 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private fun downloadDanmaku(cid: Long, aid: Long) {
-        downloadManage.downloadDanmaku(cid, aid)
-    }
-
-    private fun setSubSet() {
-    }
-
-    private suspend fun getDash(details: com.imcys.model.VideoDetails) {
-        val res = videoRepository.getDashVideoStream(details.bvid, details.cid)
-        val data = res
-        val videos = data.dash.video
-        setQualityGroup(videos)
-        selectedQuality(videos.画质最高队列())
-
-        supportFormat.clear()
-        supportFormat.addAll(data.supportFormats)
-
-        pages.clear()
-        pages.addAll(details.pages)
-        _playerState.update { state ->
-            state.copy(
-                audio = data.dash.audio.maxBy { it.id },
-                descriptionAndQuality = data.acceptDescription.zip(data.acceptQuality),
-                pages = details.pages,
-                cid = details.pages.first().cid
-            )
-        }
-    }
-
     private fun setQualityGroup(videos: List<com.imcys.model.Dash.Video>) {
         qualityGroup.clear()
         qualityGroup.putAll(videos.画质分组())
-    }
-
-    private fun selectedQuality(videoList: List<com.imcys.model.Dash.Video>) {
-        for (v in videoList) {
-            if (selectDecoder(v.codecs) != null) {
-                _playerState.update { state -> state.copy(video = v) }
-                break
-            }
-        }
     }
 }
 
@@ -329,7 +216,8 @@ data class PlayerState(
     val audio: com.imcys.model.Dash.Audio = com.imcys.model.Dash.Audio(),
 )
 
-fun List<com.imcys.model.Dash.Video>.画质分组(): Map<Int, List<com.imcys.model.Dash.Video>> = groupBy { it.id }
+fun List<com.imcys.model.Dash.Video>.画质分组(): Map<Int, List<com.imcys.model.Dash.Video>> =
+    groupBy { it.id }
 
 fun List<com.imcys.model.Dash.Video>.画质最高队列(): List<com.imcys.model.Dash.Video> =
     groupBy { it.id }

@@ -5,31 +5,21 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Build
 import android.widget.Toast
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,61 +42,39 @@ import com.imcys.player.getMimeType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SheetDirectLink(video: ImmutableList<Dash.Video>, audio: ImmutableList<Dash.Audio>, dolby: Dash.Dolby?) {
+internal fun SheetDirectLink(
+    video: ImmutableList<Dash.Video>,
+    audio: ImmutableList<Dash.Audio>,
+    dolby: Dash.Dolby?,
+) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        video.groupBy { it.id }.forEach { (k, v) ->
-            stickyHeader {
-                Text(
-                    text = qualityMapToText(k),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                )
-            }
-            items(v.sortedBy { it.codecid }, key = { it.baseUrl }) {
-                var expanded by remember { mutableStateOf(false) }
-                Card(onClick = { expanded = !expanded }) {
-                    Column(Modifier.padding(8.dp)) {
-                        Row {
-                            Text(
-                                text = "解码器: " + getMimeType(it.codecs),
-                                modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
-                                    .padding(4.dp),
-                                fontSize = 11.sp
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Icon(
-                                imageVector = if (expanded) {
-                                    Icons.Default.KeyboardArrowUp
-                                } else {
-                                    Icons.Default.KeyboardArrowDown
-                                },
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 16.dp)
-                            )
-                        }
-                        DirectLinkText(
-                            it.baseUrl,
-                            Modifier
-                                .padding(vertical = 4.dp)
-                        )
-                        if (expanded) {
-                            it.backupUrl.forEach { back ->
-                                DirectLinkText(
-                                    back,
-                                    Modifier
-                                        .animateItemPlacement(tween(300,))
-                                        .padding(vertical = 4.dp)
-                                )
-                            }
-                        }
+        items(video, key = { it.baseUrl }) { item ->
+            Card {
+                Column(Modifier.padding(8.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        TextHasBackground(qualityMapToText(item.id))
+                        TextHasBackground(getMimeType(item.codecs)?.replace("video/", "") ?: "")
+                        TextHasBackground("${item.width}×${item.height}")
                     }
+                    DirectLinkText(
+                        item.baseUrl,
+                        Modifier.padding(vertical = 4.dp)
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+fun TextHasBackground(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(4.dp))
+            .padding(4.dp),
+        fontSize = 11.sp
+    )
 }
 
 @Composable

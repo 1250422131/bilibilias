@@ -23,7 +23,8 @@ detektVerifyImplementation = "1.2.5"
 dfm = "0.9.25"
 espresso-core = "3.5.1"
 fastkv = "2.3.0"
-ffmpegKitFull = "6.0-2.LTS"
+ffmpegKitFull = "6.0-2"
+ffmpegCommand = "1.3.2"
 flexbox = "3.0.0"
 github-Banner = "2.6.5"
 gitlab-detektFormatting = "1.23.1"
@@ -50,13 +51,13 @@ androidxLifecycle = "2.7.0-beta01"
 lottie = "6.1.0"
 material = "1.10.0"
 mmkv = "1.3.1"
-monitor = "1.4.1"
+monitor = "1.4.3"
 mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 navigationCompose = "2.7.5"
 nlopez-detekt = "0.2.3"
-pagingCompose = "3.2.1"
-pagingRuntimeKtx = "3.2.1"
+androidxPaging = "3.2.1"
+androidxPagingCompose = "3.3.0-alpha02"
 preferenceKtx = "1.2.1"
 room = "2.6.0"
 rxFFmpeg = "4.9.0-lite"
@@ -87,6 +88,7 @@ material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", n
 
 cronet-embedded = { group = "org.chromium.net", name = "cronet-embedded", version.ref = "cronetEmbedded" }
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
+ffmpeg-ffmpegCommand = { group = "com.github.AnJoiner", name = "FFmpegCommand", version.ref = "ffmpegCommand" }
 
 grpc-okhttp = { group = "io.grpc", name = "grpc-okhttp", version.ref = "grpcProtobuf" }
 
@@ -119,8 +121,8 @@ junit4 = { group = "junit", name = "junit", version.ref = "junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
-monitor = { group = "com.github.leavesCZY.Monitor", name = "monitor", version.ref = "monitor" }
-monitor-no-op = { group = "com.github.leavesCZY.Monitor", name = "monitor-no-op", version.ref = "monitor" }
+monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
+monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
@@ -133,9 +135,9 @@ androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "li
 
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 appcenter-crashes = { group = "com.microsoft.appcenter", name = "appcenter-crashes", version.ref = "appcenter" }
 appcenter-analytics = { group = "com.microsoft.appcenter", name = "appcenter-analytics", version.ref = "appcenter" }
@@ -192,6 +194,10 @@ coil-kt-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "media3" }
+androidx-media3-database = { group = "androidx.media3", name = "media3-database", version.ref = "media3" }
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "media3" }
+androidx-media3-exoplayer-workmanager = { group = "androidx.media3", name = "media3-exoplayer-workmanager", version.ref = "media3" }
+androidx-media3-extractor = { group = "androidx.media3", name = "media3-extractor", version.ref = "media3" }
 androidx-media3-datasource-cronet = { group = "androidx.media3", name = "media3-datasource-cronet", version.ref = "media3" }
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "media3" }
@@ -200,8 +206,8 @@ androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.re
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "1.1.1" }
 
-androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingCompose" }
-androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPagingCompose" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "androidxPaging" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
@@ -233,6 +239,7 @@ zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.r
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+androidx-core = { group = "androidx.core", name = "core", version = "1.12.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

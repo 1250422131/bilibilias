@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,13 +31,10 @@ import com.imcys.model.video.Page
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-internal fun SheetDownloadVideo(
+internal fun SheetPages(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
-    onVideoQualityChanged: (Int) -> Unit,
-    downloadQuality: Int?,
-    addToDownloadQueue: (Page) -> Unit,
-    addAllToDownloadQueue: (List<Page>) -> Unit,
-    pageList: List<Page>,
+    addToDownloadQueue: (List<Page>, Int) -> Unit,
+    pages: List<Page>,
 ) {
     var openSetting by remember { mutableStateOf(false) }
     Column {
@@ -47,11 +44,13 @@ internal fun SheetDownloadVideo(
                 Icon(imageVector = Icons.Default.Settings, contentDescription = "设置")
             }
         }
+        // 清晰度选择
+        var quality by remember { mutableStateOf(qualityDescriptionList.first()) }
         LazyRow(Modifier.fillMaxWidth()) {
             items(qualityDescriptionList) { pair ->
                 TextButton(
-                    onClick = { onVideoQualityChanged(pair.second) },
-                    border = if (downloadQuality == pair.second) {
+                    onClick = { quality = pair },
+                    border = if (quality == pair) {
                         BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                     } else {
                         null
@@ -62,11 +61,17 @@ internal fun SheetDownloadVideo(
             }
         }
         Box {
-            LazyColumn(contentPadding = PaddingValues(8.dp, 4.dp)) {
-                items(pageList) { item ->
+            // 选集
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(8.dp, 4.dp)
+            ) {
+                items(pages) { item ->
                     var selected by remember { mutableStateOf(false) }
                     TextButton(
-                        onClick = { addToDownloadQueue(item);selected = true },
+                        onClick = {
+                            addToDownloadQueue(listOf(item), quality.second); selected = true
+                        },
                         border = if (selected) {
                             BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         } else {
@@ -74,7 +79,7 @@ internal fun SheetDownloadVideo(
                         }
                     ) {
                         Text(
-                            text = item.toString(),
+                            text = item.part,
                             modifier = Modifier
                                 .fillMaxWidth(),
                             maxLines = 1
@@ -83,9 +88,8 @@ internal fun SheetDownloadVideo(
                 }
             }
             Button(
-                onClick = { addAllToDownloadQueue(pageList) },
+                onClick = { addToDownloadQueue(pages, quality.second) },
                 Modifier
-                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             ) {
                 Text(text = "全部下载")
