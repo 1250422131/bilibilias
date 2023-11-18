@@ -37,3 +37,4 @@ include(":feature:setting")
 include(":feature:player")
 
 include(":lint")
+include(":core:okdownloader")

@@ -1,16 +1,13 @@
 package com.imcys.network.di
 
 import android.content.Context
-import com.billbook.lib.downloader.Downloader
-import com.billbook.lib.downloader.NetworkInterceptor
-import com.billbook.lib.downloader.StorageInterceptor
+import com.imcys.bilibilias.okdownloader.Downloader
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
 import com.imcys.network.constants.API_BILIBILI
-import com.imcys.network.constants.BILIBILI_WEB_URL
 import com.imcys.network.constants.BROWSER_USER_AGENT
 import com.squareup.wire.GrpcClient
 import dagger.Module
@@ -104,34 +101,17 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideDownload(
-        @BaseOkhttpClient okHttpClient: OkHttpClient,
-        @ApplicationContext context: Context,
-        executorService: ExecutorService,
-    ): Downloader = Downloader.Builder()
-        .okHttpClientFactory {
-            okHttpClient.newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .addInterceptor { chain ->
-                    val request = chain.request()
-                    if (request.url.host != "bilibili.com") {
-                        val requestWithReferrer = request.newBuilder()
-                            .header(HttpHeaders.Referrer, BILIBILI_WEB_URL)
-                            .build()
-                        chain.proceed(requestWithReferrer)
-                    } else {
-                        chain.proceed(request)
-                    }
-                }
-                .build()
-        }
-        .executorService(executorService)
-        .addInterceptor(NetworkInterceptor(context))
-        .addInterceptor(StorageInterceptor())
-        .build()
+    fun provideDownload(@BaseOkhttpClient okHttpClient: OkHttpClient): Downloader =
+        Downloader.Builder()
+            .okHttpClientFactory {
+                okHttpClient.newBuilder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .build()
+            }
+            .build()
 
     @Provides
     @Singleton

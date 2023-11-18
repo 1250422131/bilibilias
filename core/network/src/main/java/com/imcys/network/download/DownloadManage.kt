@@ -1,7 +1,7 @@
 package com.imcys.network.download
 
 import android.content.Context
-import com.billbook.lib.downloader.Download
+import com.imcys.bilibilias.okdownloader.Download
 import com.imcys.common.di.AppCoroutineScope
 import com.imcys.model.video.Page
 import com.imcys.network.repository.VideoRepository
@@ -351,7 +351,7 @@ class DownloadManage @Inject constructor(
                     "test_cid",
                     video.baseUrl,
                     video.backupUrl,
-                    VIDEO_M4S
+                    DownloadTag.VIDEO
                 )
                 okDownload.enqueueTask(
                     "test_aid",
@@ -359,7 +359,7 @@ class DownloadManage @Inject constructor(
                     "test_cid",
                     audio.baseUrl,
                     audio.backupUrl,
-                    AUDIO_M4S
+                    DownloadTag.AUDIO
                 )
             }
         }

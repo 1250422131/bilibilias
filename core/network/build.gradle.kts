@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
     implementation(project(":core:datastore"))
+    implementation(project(":core:okdownloader"))
     implementation(project(":common"))
 
     debugImplementation(libs.monitor)
@@ -33,9 +34,6 @@ dependencies {
     implementation(libs.wireGrpcClient)
 
     implementation("com.squareup.okhttp3:okhttp-brotli:4.11.0")
-
-    implementation("io.github.ydxlt:okdownloader:1.0.0")
-    implementation("io.github.ydxlt:okdownloader-android:1.0.0")
 
     implementation(libs.ffmpeg.kit.full)
     implementation(libs.ffmpeg.ffmpegCommand)
