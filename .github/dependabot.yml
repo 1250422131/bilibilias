@@ -14,7 +14,7 @@ updates:
 
 registries:
   maven-central:
-    type: maven-central
+    type: maven-repository
     url: "https://repo.maven.apache.org/maven2/"
   maven-google:
     type: maven-repository
