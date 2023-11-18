@@ -43,33 +43,38 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.M)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CheckPermissionDialog(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, expired: Boolean) {
+fun CheckPermissionDialog(
+    navigateToAuthMethod: () -> Unit,
+    navigateToHome: () -> Unit,
+    login: Boolean
+) {
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
 
-    val permissionState = rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE) { granted ->
-        if (!granted) {
-            context.getActivity().apply {
-                when {
-                    shouldShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                        showDialog = true
-                    }
+    val permissionState =
+        rememberPermissionState(Manifest.permission.WRITE_EXTERNAL_STORAGE) { granted ->
+            if (!granted) {
+                context.getActivity().apply {
+                    when {
+                        shouldShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
+                            showDialog = true
+                        }
 
-                    else -> {
-                        context.gotoApplicationSettings()
+                        else -> {
+                            context.gotoApplicationSettings()
+                        }
                     }
                 }
             }
         }
-    }
     LaunchedEffect(permissionState.status.isGranted) {
         if (context.hasPickMediaPermission()) {
-            if (expired) {
-                navigateToAuthMethod()
-            } else {
+            if (login) {
                 navigateToHome()
+            } else {
+                navigateToAuthMethod()
             }
         } else {
             showDialog = true

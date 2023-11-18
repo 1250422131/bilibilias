@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(cookiesData: CookiesData) : ViewModel() {
-    val expired = cookiesData.isExpired
+    val login = cookiesData.isLogin
 }

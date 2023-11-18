@@ -41,13 +41,13 @@ fun NavGraphBuilder.splashRoute(
     SplashRoute(
         navigateToAuthMethod,
         navigateToHome,
-        viewModel.expired
+        viewModel.login
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
-fun SplashRoute(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, expired: Boolean) {
+fun SplashRoute(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, login: Boolean) {
     var show by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(200)
@@ -84,5 +84,5 @@ fun SplashRoute(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, ex
             // )
         }
     }
-    Box(Modifier.height(600.dp)) { CheckPermissionDialog(navigateToAuthMethod, navigateToHome,expired) }
+    Box(Modifier.height(600.dp)) { CheckPermissionDialog(navigateToAuthMethod, navigateToHome, login) }
 }
