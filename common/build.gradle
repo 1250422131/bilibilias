@@ -212,7 +212,7 @@ dependencies {
     //日志
     api "io.ktor:ktor-client-logging:2.2.2"//Logging
     //json解析支持
-    api "io.ktor:ktor-client-content-negotiation:2.2.2"
+    api "io.ktor:ktor-client-content-negotiation:2.3.6"
     api "io.ktor:ktor-serialization-gson:2.2.2"
     api 'com.google.code.gson:gson:2.10'
 
