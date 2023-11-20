@@ -138,7 +138,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation "com.google.dagger:hilt-android:2.44"
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.48.1"
 
 
     ksp "com.github.xiaojinzi123.KComponent:kcomponent-compiler:1.0.0-rc4"

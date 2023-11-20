@@ -61,7 +61,7 @@ dependencies {
 
     // hilt库，实现控制反转
     api "com.google.dagger:hilt-android:2.44"
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    kapt "com.google.dagger:hilt-compiler:2.48.1"
 
     // 核心代码库
     api 'com.liulishuo.okdownload:okdownload:1.0.7'
