@@ -138,7 +138,7 @@ dependencies {
     api 'com.github.hyy920109:GuidePro:1.1.0'
 
     //微软分发
-    def appCenterSdkVersion = '5.0.0'
+    def appCenterSdkVersion = '5.0.2'
     api "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     //微软统计
     api "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
