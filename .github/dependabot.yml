@@ -6,11 +6,11 @@ updates:
       interval: daily
       time: "21:00"
     open-pull-requests-limit: 10
-    target-branch: master
+    target-branch: dev_compose
     registries:
       - maven-central
       - maven-google
-      - gralde-plugin
+      - gradle-plugin
 
 registries:
   maven-central:
@@ -19,6 +19,6 @@ registries:
   maven-google:
     type: maven-repository
     url: "https://dl.google.com/dl/android/maven2/"
-  gralde-plugin:
+  gradle-plugin:
     type: maven-repository
     url: "https://plugins.gradle.org/m2/"
