@@ -150,7 +150,7 @@ dependencies {
      * room
      * 本地化数据库
      */
-    api "androidx.room:room-runtime:2.4.3"
+    api "androidx.room:room-runtime:2.6.0"
     api "androidx.room:room-ktx:2.4.3"
     ksp "androidx.room:room-compiler:2.4.3"
 
