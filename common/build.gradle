@@ -101,7 +101,7 @@ dependencies {
      * 网络图片加载库
      * 专为compose打造
      */
-    api "io.coil-kt:coil-compose:2.2.2"
+    api "io.coil-kt:coil-compose:2.5.0"
 
     /**
      * rv框架
