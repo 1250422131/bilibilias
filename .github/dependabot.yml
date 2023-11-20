@@ -6,7 +6,7 @@ updates:
       interval: daily
       time: "21:00"
     open-pull-requests-limit: 10
-    target-branch: master
+    target-branch: release
     registries:
       - maven-central
       - maven-google
