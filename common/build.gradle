@@ -210,7 +210,7 @@ dependencies {
     api "io.ktor:ktor-client-android:2.2.2"
     api "io.ktor:ktor-client-okhttp:2.2.2"
     //日志
-    api "io.ktor:ktor-client-logging:2.2.2"//Logging
+    api "io.ktor:ktor-client-logging:2.3.6"//Logging
     //json解析支持
     api "io.ktor:ktor-client-content-negotiation:2.2.2"
     api "io.ktor:ktor-serialization-gson:2.2.2"
