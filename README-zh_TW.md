@@ -16,24 +16,24 @@
 **Languages:**
 - [English (United States)](./README-en_US.md)
 - [简体中文](./README.md)
-- 繁體中文(台灣)
+- 臺灣正體
 
 ## 簡介
 
-**BILIBILIAS** 是一款B站，哔哩哔哩視頻緩存的輔助工具，一鍵解析緩存。
+**BILIBILIAS** 是一款B站哔哩哔哩影片快取的輔助工具，一鍵解析快取。
 
-使用它來幫助你緩存視頻，目前我們也支持了相當多的功能，使用它幫助你完成工作。
+使用它來幫助你快取影片，目前我們也支持了相當多的功能，使用它幫助你完成工作。
 
-UP主可以下載一些剪輯素材，來做視頻。
+UP主可以下載一些剪輯素材，來製作影片。
 
 項目特殊性，隨時可能停止運維。
 
 ## 支持的功能
 
 - 完成的功能
-- [x] 掃碼登錄
-- [x] 緩存視頻/大陸支持播放的番劇
-- [x] 個人中心 -> 幫助緩存自己的視頻
+- [x] 掃QR碼登錄
+- [x] 快取影片/大陸支持播放的番劇
+- [x] 個人中心 -> 幫助快取自己的影片
 - [x] 批量下載
 - [x] 後臺下載功能
 - [x] 支持ffmpeg
@@ -55,7 +55,7 @@ UP主可以下載一些剪輯素材，來做視頻。
 
 [BRV：實現RV的動畫效果](https://github.com/liangjingkanji/BRV)
 
-[RxFFmpeg：支持視頻合併等操作](https://github.com/microshow/RxFFmpeg)
+[RxFFmpeg：支持影片合併等操作](https://github.com/microshow/RxFFmpeg)
 
 [KComponent：組件化路由庫](https://github.com/xiaojinzi123/KComponent)
 
