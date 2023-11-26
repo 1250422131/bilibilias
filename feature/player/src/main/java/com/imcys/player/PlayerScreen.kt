@@ -66,7 +66,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.common.utils.digitalConversion
 import com.imcys.common.utils.noRippleClickable
 import com.imcys.designsystem.component.CenterRow
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.player.sheet.SheetDirectLink
 import com.imcys.player.sheet.SheetPages
 import com.imcys.player.state.PlayInfoUiState
@@ -105,8 +105,8 @@ internal fun PlayerScreen(
     state: PlayerState,
     onNavigateToDownloadAanmaku: () -> Unit,
     selectedQuality: (Int) -> Unit,
-    selectedPage: (Long, Long) -> Unit,
-    addToDownloadQueue: (List<Page>, Int) -> Unit,
+    selectedPage: (String, Long) -> Unit,
+    addToDownloadQueue: (List<PageData>, Int) -> Unit,
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
@@ -140,7 +140,7 @@ internal fun PlayerScreen(
                     Action.DOWNLOAD_VIDEO -> SheetPages(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
-                        pages = playerUiState.pages
+                        pageData = playerUiState.pageData
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()
@@ -209,9 +209,9 @@ internal fun PlayerScreen(
                     contentPadding = PaddingValues(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(state.pages, key = { it.cid }) { item ->
+                    items(state.pageData, key = { it.cid }) { item ->
                         Card(
-                            onClick = { selectedPage(item.cid, state.aid) },
+                            onClick = { selectedPage(item.cid.toString(), state.aid) },
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
@@ -221,7 +221,7 @@ internal fun PlayerScreen(
                                     .width(w)
                                     .height(60.dp)
                                     .padding(4.dp),
-                                color = if (item.cid == state.cid) MaterialTheme.colorScheme.primary else Color.Unspecified,
+                                color = if (item.cid.toString() == state.cid) MaterialTheme.colorScheme.primary else Color.Unspecified,
                                 maxLines = 2,
                                 fontSize = 13.sp
                             )

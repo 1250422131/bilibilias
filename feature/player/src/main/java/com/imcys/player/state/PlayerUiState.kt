@@ -1,7 +1,7 @@
 package com.imcys.player.state
 
 import com.imcys.model.Dash
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface PlayerUiState {
@@ -13,6 +13,6 @@ sealed interface PlayerUiState {
         val audio: ImmutableList<Dash.Audio>,
         val dolby: Dash.Dolby?,
         val duration: Int,
-        val pages: List<Page>
+        val pageData: List<PageData>
     ) : PlayerUiState
 }

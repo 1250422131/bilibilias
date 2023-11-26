@@ -57,9 +57,9 @@ fun Context.gotoApplicationSettings() {
 }
 
 // 更新图库
-fun updatePhotoMedias(vararg files: File) {
+fun updatePhotoMedias(context: Context, vararg files: File) {
     files.forEach {
-        MediaScannerConnection.scanFile(TODO(), arrayOf(it.path), null) { path, uri ->
+        MediaScannerConnection.scanFile(context, arrayOf(it.path), null) { path, uri ->
             Timber.d("文件路径=$path")
         }
     }

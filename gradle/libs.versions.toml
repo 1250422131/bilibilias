@@ -47,11 +47,11 @@ okio = "3.6.0"
 ksp = "1.9.20-1.0.14"
 ktor = "2.3.6"
 kurePotlin = "0.7.0"
-androidxLifecycle = "2.7.0-beta01"
+androidxLifecycle = "2.7.0-rc01"
 lottie = "6.1.0"
 material = "1.10.0"
 mmkv = "1.3.1"
-monitor = "1.4.3"
+monitor = "1.4.4"
 mtjSdkCircle = "4.0.7.5"
 napier = "2.6.1"
 navigationCompose = "2.7.5"
@@ -61,17 +61,17 @@ androidxPagingCompose = "3.3.0-alpha02"
 preferenceKtx = "1.2.1"
 room = "2.6.0"
 rxFFmpeg = "4.9.0-lite"
+androidxStartupRuntime = "1.1.1"
 timber = "5.0.1"
 twitter-detekt = "0.0.26"
 work-runtime-ktx = "2.8.1"
-xfetch2 = "3.1.6"
-androidxActivityCompose = "1.8.0"
+androidxActivityCompose = "1.8.1"
 androidxComposeBom = "2023.10.01"
 protobuf = "3.24.4"
 protobufPlugin = "0.9.4"
 grpcProtobuf = "1.59.0"
 koin = "3.5.1"
-lint = "31.1.3"
+lint = "31.1.4"
 wire = "4.9.1"
 commonsCodec = "1.16.0"
 [libraries]
@@ -80,7 +80,7 @@ accompanist-navigation-material = { group = "com.google.accompanist", name = "ac
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
-androidx-xfetch2 = { group = "androidx.tonyodev.fetch2", name = "xfetch2", version.ref = "xfetch2" }
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidxStartupRuntime" }
 
 compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 

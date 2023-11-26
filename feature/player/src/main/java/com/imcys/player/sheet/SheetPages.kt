@@ -27,14 +27,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SheetPages(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
-    addToDownloadQueue: (List<Page>, Int) -> Unit,
-    pages: List<Page>,
+    addToDownloadQueue: (List<PageData>, Int) -> Unit,
+    pageData: List<PageData>,
 ) {
     var openSetting by remember { mutableStateOf(false) }
     Column {
@@ -66,7 +66,7 @@ internal fun SheetPages(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(8.dp, 4.dp)
             ) {
-                items(pages) { item ->
+                items(pageData) { item ->
                     var selected by remember { mutableStateOf(false) }
                     TextButton(
                         onClick = {
@@ -88,7 +88,7 @@ internal fun SheetPages(
                 }
             }
             Button(
-                onClick = { addToDownloadQueue(pages, quality.second) },
+                onClick = { addToDownloadQueue(pageData, quality.second) },
                 Modifier
                     .fillMaxWidth()
             ) {

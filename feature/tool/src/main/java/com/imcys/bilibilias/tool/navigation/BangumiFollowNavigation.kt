@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.tool.bangumiFollow
+package com.imcys.bilibilias.tool.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
@@ -6,6 +6,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.imcys.bilibilias.tool.bangumiFollow.BangumiFollowHeaders
+import com.imcys.bilibilias.tool.bangumiFollow.BangumiFollowScreen
+import com.imcys.bilibilias.tool.bangumiFollow.BangumiFollowViewModel
 
 const val ROUTE_BANGUMI_FOLLOW = "bangumi_follow"
 fun NavController.navigateToBangumiFollow() {

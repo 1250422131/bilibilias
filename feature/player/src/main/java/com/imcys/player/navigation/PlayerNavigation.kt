@@ -12,7 +12,7 @@ const val ROUTE_PLAYER = "player"
 const val BV_ID = "bvid"
 const val A_ID = "aid"
 const val C_ID = "cid"
-fun NavController.navigateToPlayer(aid: Long, bvid: String, cid: Long) {
+fun NavController.navigateToPlayer(aid: String, bvid: String, cid: String) {
     navigate("$ROUTE_PLAYER/$aid/$bvid/$cid") {
         launchSingleTop = true
     }
@@ -25,16 +25,13 @@ fun NavGraphBuilder.playerScreen(
     "$ROUTE_PLAYER/{$A_ID}/{$BV_ID}/{$C_ID}",
     arguments = listOf(
         navArgument(A_ID) {
-            type = NavType.LongType
-            defaultValue = 0L
+            type = NavType.StringType
         },
         navArgument(BV_ID) {
             type = NavType.StringType
-            defaultValue = ""
         },
         navArgument(C_ID) {
-            type = NavType.LongType
-            defaultValue = 0L
+            type = NavType.StringType
         }
     )
 ) {

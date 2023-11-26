@@ -4,7 +4,7 @@ import com.imcys.model.video.Author
 import com.imcys.model.video.DescV2
 import com.imcys.model.video.HonorReply
 import com.imcys.model.video.Owner
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.model.video.Rights
 import com.imcys.model.video.Staff
 import com.imcys.model.video.UserGarb
@@ -266,7 +266,7 @@ data class VideoDetails(
     @SerialName("owner")
     val owner: Owner = Owner(),
     @SerialName("pages")
-    val pages: List<Page> = listOf(),
+    val pageData: List<PageData> = listOf(),
     @SerialName("pic")
     val pic: String = "",
     @SerialName("pubdate")

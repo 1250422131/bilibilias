@@ -11,14 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 
 @Composable
-fun DanmakuScreen(pages: List<Page>, downloadDanmaku: (Long, Long) -> Unit, aid: Long) {
+fun DanmakuScreen(pageData: List<PageData>, downloadDanmaku: (String, Long) -> Unit, aid: Long) {
     Box {
         LazyColumn(Modifier.padding(bottom = ButtonDefaults.MinHeight)) {
-            items(pages) { item ->
-                Text(item.part, Modifier.clickable { downloadDanmaku(item.cid, aid) })
+            items(pageData) { item ->
+                Text(item.part, Modifier.clickable { downloadDanmaku(item.cid.toString(), aid) })
             }
         }
         Button(onClick = { /*TODO*/ }, Modifier.align(Alignment.BottomCenter)) {

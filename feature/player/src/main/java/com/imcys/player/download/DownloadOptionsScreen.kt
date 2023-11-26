@@ -1,7 +1,7 @@
 package com.imcys.player.download
 
 import androidx.compose.runtime.Composable
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadToolType
 import com.imcys.player.PlayerState
@@ -16,7 +16,7 @@ fun DownloadOptionsScreen(
     downloadListState: DownloadListState,
     setRequireDownloadFileType: (DownloadFileType) -> Unit,
     setAcceptDescription: (Int) -> Unit,
-    setPages: (Page) -> Unit,
+    setPages: (PageData) -> Unit,
 ) {}
 //     Box(Modifier.statusBarsPadding()) {
 //         Column(Modifier.padding(horizontal = 8.dp)) {

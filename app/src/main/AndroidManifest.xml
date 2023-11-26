@@ -24,7 +24,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".base.app.App"
+        android:name=".BiliAsApp"
         android:allowBackup="true"
         android:configChanges="locale"
         android:icon="@mipmap/ic_launcher"

@@ -2,7 +2,10 @@ package com.imcys.bilibilias.di
 
 import android.app.Application
 import com.imcys.common.appinitializer.AppInitializers
+import com.imcys.common.di.TimberAppInitializer
+import com.imcys.common.di.ToasterAppInitializer
 import com.imcys.datastore.di.FastKVConfigAppInitializer
+import com.imcys.datastore.di.MMKVAppInitializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +21,8 @@ class AppInitializersModule {
     @Provides
     fun provideAppInitializers(application: Application): Set<AppInitializers> = setOf(
         FastKVConfigAppInitializer(),
+        MMKVAppInitializer(application),
+        ToasterAppInitializer(application),
+        TimberAppInitializer()
     )
 }

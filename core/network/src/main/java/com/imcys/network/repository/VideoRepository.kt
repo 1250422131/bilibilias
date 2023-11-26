@@ -14,7 +14,7 @@ import com.imcys.model.VideoCollection
 import com.imcys.model.VideoDetails
 import com.imcys.model.VideoHasCoins
 import com.imcys.model.VideoHasLike
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
@@ -99,7 +99,7 @@ class VideoRepository @Inject constructor(
         Timber.d("合集内容=$text")
     }
 
-    suspend fun getPlayerPageList(bvid: String): List<Page> = withContext(ioDispatcher) {
+    suspend fun getPlayerPageList(bvid: String): List<PageData> = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi2.PLAYER_PAGE_LIST) {
             parameterBV(bvid)
         }.body()
@@ -134,14 +134,14 @@ class VideoRepository @Inject constructor(
      */
     suspend fun getDashVideoStream(
         bvid: String,
-        cid: Long,
+        cid: String,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1
     ): PlayerInfo = getDashVideoStream(bvid, cid, fnval, fourk, false)
 
     suspend fun getDashVideoStream(
         bvid: String,
-        cid: Long,
+        cid: String,
         fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
         fourk: Int = 1,
         useWbi: Boolean = false
@@ -184,7 +184,7 @@ class VideoRepository @Inject constructor(
     /**
      * oid = 视频cid
      */
-    suspend fun getDanmakuXml(cid: Long): Flow<Result<ByteArray>> = flow {
+    suspend fun getDanmakuXml(cid: String): Flow<Result<ByteArray>> = flow {
         val bytes = httpClient.get(BilibiliApi2.videoDanMuPath) {
             parameter("oid", cid)
         }

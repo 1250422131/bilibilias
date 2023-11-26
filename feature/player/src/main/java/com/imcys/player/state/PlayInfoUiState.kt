@@ -1,7 +1,7 @@
 package com.imcys.player.state
 
 import com.imcys.model.VideoDetails
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 
 sealed interface PlayInfoUiState {
     data object Loading : PlayInfoUiState
@@ -13,7 +13,7 @@ sealed interface PlayInfoUiState {
         val title: String,
         val pic: String,
         val desc: String,
-        val pages: List<Page>,
+        val pageData: List<PageData>,
         val stat: VideoDetails.Stat,
     ) : PlayInfoUiState
 }

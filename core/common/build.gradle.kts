@@ -28,11 +28,7 @@ dependencies {
     implementation(libs.kotlin.reflect)
 
     api("com.github.getActivity:Toaster:12.6")
-}
-kotlin {
-    sourceSets {
-        dependencies {
-            api(libs.kotlinx.collections.immutable)
-        }
-    }
+    implementation(libs.androidx.startup.runtime)
+
+    api(libs.kotlinx.collections.immutable)
 }

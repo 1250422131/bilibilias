@@ -9,13 +9,24 @@ import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-
+import java.io.OutputStream
 
 /**
  * 文件操作类
  */
 object FileUtils {
     private const val TAG = "FileUtils"
+
+    @Throws(IOException::class)
+    fun copy(source: InputStream, sink: OutputStream) {
+        var nread = 0L
+        val buf = ByteArray(8192)
+        var n: Int
+        while (source.read(buf).also { n = it } > 0) {
+            sink.write(buf, 0, n)
+            nread += n.toLong()
+        }
+    }
 
     /**
      * 检查是否存在某个文件

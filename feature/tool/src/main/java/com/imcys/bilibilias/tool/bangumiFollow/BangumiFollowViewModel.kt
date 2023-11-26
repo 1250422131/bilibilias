@@ -29,7 +29,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class BangumiFollowViewModel @Inject constructor(
     private val bangumiRepository: BangumiRepository,
-    @ApplicationContext context: Context
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     val selectableHeaders = mutableStateListOf<Pair<String, BangumiFollowHeaders>>()
     val selectedHeaders = mutableStateListOf<Pair<String, BangumiFollowHeaders>>()
@@ -92,7 +92,10 @@ class BangumiFollowViewModel @Inject constructor(
 
     private fun createExcel(context: Context) {
         Timber.d("createExcel=${bangumiList.size},${bangumiList.last()}")
-        val path = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "追番.xls").path
+        val path = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+            "追番.xls"
+        ).path
 
         Timber.d("path=$path")
         // 设置表头的字体大小和背景颜色
@@ -123,7 +126,7 @@ class BangumiFollowViewModel @Inject constructor(
         // 完成保存和写入
         workbook.write()
         workbook.close()
-        updatePhotoMedias(File(path))
+        updatePhotoMedias(context, File(path))
         Timber.d("createExcel=${bangumiList.size},${bangumiList.last()}")
     }
 
@@ -132,17 +135,82 @@ class BangumiFollowViewModel @Inject constructor(
         for ((row, follow) in bangumiList.withIndex()) {
             for ((column, header) in selectedHeaders.withIndex()) {
                 when (header.second) {
-                    BangumiFollowHeaders.Title -> sheet.addCell(column, row + 1, follow.title, cellFormat)
-                    BangumiFollowHeaders.Evaluate -> sheet.addCell(column, row + 1, follow.evaluate, cellFormat)
-                    BangumiFollowHeaders.SeasonID -> sheet.addCell(column, row + 1, follow.seasonId.toString(), cellFormat)
-                    BangumiFollowHeaders.Summary -> sheet.addCell(column, row + 1, follow.summary, cellFormat)
-                    BangumiFollowHeaders.Subtitle -> sheet.addCell(column, row + 1, follow.subtitle, cellFormat)
-                    BangumiFollowHeaders.Subtitle14 -> sheet.addCell(column, row + 1, follow.subtitle14, cellFormat)
-                    BangumiFollowHeaders.TotalCount -> sheet.addCell(column, row + 1, follow.totalCount.toString(), cellFormat)
-                    BangumiFollowHeaders.Progress -> sheet.addCell(column, row + 1, follow.progress, cellFormat)
-                    BangumiFollowHeaders.Cover -> sheet.addCell(column, row + 1, follow.cover, cellFormat)
-                    BangumiFollowHeaders.SeasonTitle -> sheet.addCell(column, row + 1, follow.seasonTitle, cellFormat)
-                    BangumiFollowHeaders.SeasonTypeName -> sheet.addCell(column, row + 1, follow.seasonTypeName, cellFormat)
+                    BangumiFollowHeaders.Title -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.title,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Evaluate -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.evaluate,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.SeasonID -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.seasonId.toString(),
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Summary -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.summary,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Subtitle -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.subtitle,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Subtitle14 -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.subtitle14,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.TotalCount -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.totalCount.toString(),
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Progress -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.progress,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.Cover -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.cover,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.SeasonTitle -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.seasonTitle,
+                        cellFormat
+                    )
+
+                    BangumiFollowHeaders.SeasonTypeName -> sheet.addCell(
+                        column,
+                        row + 1,
+                        follow.seasonTypeName,
+                        cellFormat
+                    )
                 }
             }
         }

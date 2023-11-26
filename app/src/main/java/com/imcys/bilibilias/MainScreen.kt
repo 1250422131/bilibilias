@@ -14,8 +14,10 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.imcys.bilibilias.tool.bangumiFollow.bangumiFollowRoute
-import com.imcys.bilibilias.tool.bangumiFollow.navigateToBangumiFollow
+import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
+import com.imcys.bilibilias.tool.navigation.mergeRoute
+import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
+import com.imcys.bilibilias.tool.navigation.navigateToMerge
 import com.imcys.bilibilias.tool.navigation.toolScreen
 import com.imcys.home.navigation.ROUTE_HOME
 import com.imcys.home.navigation.contributeScreen
@@ -46,17 +48,28 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     ) {
         homeScreen(
             navigationToDonation = navController::navigateToDonation,
-            navigateToContribute = navController::navigateToContribute)
+            navigateToContribute = navController::navigateToContribute
+        )
         donationScreen()
         contributeScreen()
-
+        // -----------------------------------------------------------------------------------------
         toolScreen(
             navigateToPlayer = navController::navigateToPlayer,
             navigateToSetting = navController::navigateToSettings,
-            navigateToExportBangumiFollowList = navController::navigateToBangumiFollow
+            navigateToExportBangumiFollowList = navController::navigateToBangumiFollow,
+            navigationToMerge = navController::navigateToMerge
         )
-        bangumiFollowRoute()
         settingsRoute()
+        bangumiFollowRoute()
+        mergeRoute()
+
+        playerScreen(
+            navigateToDownloadVideo = navController::navigateToDownloadOptions,
+            navigateToDownloadAanmaku = navController::navigateToDanmaku,
+        )
+        danmakuRoute(navController = navController, onBack = navController::navigateUp)
+        // -----------------------------------------------------------------------------------------
+
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
         // <editor-fold desc="下载选项">
         downloadOptionsRoute(
@@ -66,12 +79,6 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         // </editor-fold>
 
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
-
-        playerScreen(
-            navigateToDownloadVideo = navController::navigateToDownloadOptions,
-            navigateToDownloadAanmaku = navController::navigateToDanmaku,
-        )
-        danmakuRoute(navController = navController, onBack = navController::navigateUp)
     }
 }
 

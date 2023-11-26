@@ -3,7 +3,7 @@ package com.imcys.network.download
 import android.content.Context
 import com.imcys.bilibilias.okdownloader.Download
 import com.imcys.common.di.AppCoroutineScope
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.repository.VideoRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -21,12 +21,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 const val STATE_DOWNLOAD_WAIT = 0
 
-// 非正常结束
-const val STATE_DOWNLOAD_ERROR = -1
-private const val BILIBILI_DOWNLOAD_PATH =
-    "/storage/emulated/0/Android/data/tv.danmaku.bili/download"
-private const val INDEX_JSON = "index.json"
-private const val ENTRY_JSON = "entry.json"
+const val INDEX_JSON = "index.json"
+const val DANMAKU_XML = "danmaku.xml"
+const val ENTRY_JSON = "entry.json"
 const val VIDEO_M4S = "video.m4s"
 const val AUDIO_M4S = "audio.m4s"
 
@@ -42,7 +39,7 @@ class DownloadManage @Inject constructor(
     fun addTask(
         details: com.imcys.model.VideoDetails,
         dash: com.imcys.model.PlayerInfo,
-        page: Page,
+        pageData: PageData,
         downloadListHolders: DownloadListHolders
     ) {
         // when (downloadListHolders.requireDownloadFileType) {
@@ -62,13 +59,21 @@ class DownloadManage @Inject constructor(
     private fun videoAndAudio(
         dash: com.imcys.model.PlayerInfo,
         bvid: String,
-        page: Page,
+        pageData: PageData,
         downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
     ) {
         when (downloadListHolders.toolType) {
-            DownloadToolType.BUILTIN -> builtin(bvid, dash, page, downloadListHolders, aid, title)
+            DownloadToolType.BUILTIN -> builtin(
+                bvid,
+                dash,
+                pageData,
+                downloadListHolders,
+                aid,
+                title
+            )
+
             DownloadToolType.IDM -> startIDMDownload()
             DownloadToolType.ADM -> startADMDownload()
         }
@@ -77,7 +82,7 @@ class DownloadManage @Inject constructor(
     /**
      * download/bv123/c_111/danmaku.xml
      */
-    private fun downloadDanmaku(cid: Long, danmakuPath: String) {
+    private fun downloadDanmaku(cid: String, danmakuPath: String) {
         scope.launch {
             videoRepository.getDanmakuXml(cid).collect {
                 when (it) {
@@ -102,7 +107,7 @@ class DownloadManage @Inject constructor(
         }
     }
 
-    fun downloadDanmaku(cid: Long, aid: Long) {
+    fun downloadDanmaku(cid: String, aid: Long) {
         // scope.launchIO {
         //     videoRepository.getRealTimeDanmaku(cid = cid, aid = aid, useWbi = true).collect { res ->
         //         when (res) {
@@ -227,7 +232,7 @@ class DownloadManage @Inject constructor(
     private fun builtin(
         bvid: String,
         dash: com.imcys.model.PlayerInfo,
-        page: Page,
+        pageData: PageData,
         downloadListHolders: DownloadListHolders,
         aid: Long,
         title: String
@@ -235,8 +240,8 @@ class DownloadManage @Inject constructor(
         val qn = downloadListHolders.videoQuality
         val d = dash.dash
         buildIndexJson(d)
-        buildEntryJson(qn, bvid, page)
-        val cid = page.cid
+        buildEntryJson(qn, bvid, pageData)
+        val cid = pageData.cid.toString()
 
         val videoUrl: String =
             d.video.groupBy { it.id }[downloadListHolders.videoQuality]?.last()?.baseUrl
@@ -246,14 +251,14 @@ class DownloadManage @Inject constructor(
         val video = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), VIDEO_M4S)
         val audio = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), AUDIO_M4S)
         val requestVideo =
-            createVideoRequest(videoUrl, video.absolutePath, cid, title, page.part, bvid, aid)
+            createVideoRequest(videoUrl, video.absolutePath, cid, title, pageData.part, bvid, aid)
         val requestAudio =
-            createAudioRequest(audioUrl, audio.path, cid, title, page.part, bvid, aid)
+            createAudioRequest(audioUrl, audio.path, cid, title, pageData.part, bvid, aid)
 //        fetchManage.add(listOf(requestVideo, requestAudio))
         downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
-    private fun buildEntryJson(qn: Int, bvid: String, page: Page) {
+    private fun buildEntryJson(qn: Int, bvid: String, pageData: PageData) {
         val entryJson = """
                       {
                             "media_type": 2,
@@ -286,7 +291,7 @@ class DownloadManage @Inject constructor(
                             "owner_id": UP主UID,
                             "owner_name": "UP名称",
                             "owner_avatar": "UP头像",
-                            "page_data": ${json.encodeToString(page)}
+                            "page_data": ${json.encodeToString(pageData)}
                         }
         """.trimIndent()
     }
@@ -311,7 +316,7 @@ class DownloadManage @Inject constructor(
     private fun createVideoRequest(
         url: String,
         file: String,
-        cid: Long,
+        cid: String,
         title: String,
         pageTitle: String,
         bvid: String,
@@ -322,7 +327,7 @@ class DownloadManage @Inject constructor(
     private fun createAudioRequest(
         url: String,
         file: String,
-        cid: Long,
+        cid: String,
         title: String,
         pageTitle: String,
         bvid: String,
@@ -336,10 +341,10 @@ class DownloadManage @Inject constructor(
     fun deleteFile(id: Int, onSuccess: (Download) -> Unit, onError: (Error) -> Unit) {
     }
 
-    fun addTask(bvid: String, pages: List<Page>, quality: Int) {
+    fun addTask(bvid: String, pageData: List<PageData>, quality: Int) {
         scope.launch {
-            pages.map {
-                videoRepository.getDashVideoStream(bvid, it.cid)
+            pageData.map {
+                videoRepository.getDashVideoStream(bvid, it.cid.toString())
             }.forEach { info ->
                 val videoList =
                     info.dash.video.groupBy { it.id }[quality] ?: error("视频没有所选清晰度")
