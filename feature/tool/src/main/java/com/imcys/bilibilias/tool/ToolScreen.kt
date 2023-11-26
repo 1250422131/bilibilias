@@ -44,9 +44,10 @@ import coil.compose.AsyncImage
 
 @Composable
 internal fun ToolRoute(
-    onNavigateToPlayer: (Long, String, Long) -> Unit,
+    onNavigateToPlayer: (String, String, String) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToBangumiFollow: () -> Unit,
+    navigationToMerge: () -> Unit,
     viewModel: ToolViewModel = hiltViewModel()
 ) {
     val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
@@ -58,20 +59,22 @@ internal fun ToolRoute(
         searchQueryChanged = viewModel::onSearchQueryChanged,
         clearSearches = viewModel::clearSearches,
         searchQuery = searchQuery,
-        searchResultUiState = searchResultUiState
+        searchResultUiState = searchResultUiState,
+        navigationToMerge = navigationToMerge
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ToolScreen(
-    navigateToPlayer: (Long, String, Long) -> Unit,
+    navigateToPlayer: (String, String, String) -> Unit,
     navigateToSetting: () -> Unit,
     navigateToBangumiFollow: () -> Unit,
     searchQueryChanged: (String) -> Unit,
     clearSearches: () -> Unit,
     searchQuery: String,
     searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
+    navigationToMerge: () -> Unit,
 ) {
     Scaffold(
         Modifier.fillMaxSize(),
@@ -122,25 +125,33 @@ internal fun ToolScreen(
                         danmaku = searchResultUiState.danmaku,
                         onClick = {
                             navigateToPlayer(
-                                searchResultUiState.aid,
+                                searchResultUiState.aid.toString(),
                                 searchResultUiState.bvid,
-                                searchResultUiState.cid,
+                                searchResultUiState.cid.toString(),
                             )
                         },
                         modifier = Modifier.animateContentSize()
                     )
                 }
             }
-        }
 
-        LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
-            item("追番信息导出") {
-                ToolItem(
-                    imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
-                    title = "追番信息导出",
-                    containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
-                    onClick = navigateToBangumiFollow
-                )
+            LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
+                item("追番信息导出") {
+                    ToolItem(
+                        imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
+                        title = "追番信息导出",
+                        containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
+                        onClick = navigateToBangumiFollow
+                    )
+                }
+                item {
+                    ToolItem(
+                        imgUrl = "https://s1.ax1x.com/2023/02/05/pS6IsAJ.png",
+                        title = "合并音视频",
+                        containerColor = Color(android.graphics.Color.parseColor("#fb7299")),
+                        onClick = navigationToMerge
+                    )
+                }
             }
         }
     }

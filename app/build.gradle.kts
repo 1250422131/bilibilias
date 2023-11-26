@@ -27,14 +27,19 @@ android {
             applicationIdSuffix = ".debug"
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
+            buildConfigField("boolean", "LOG_DEBUG", "true")
         }
         val release by getting {
             isMinifyEnabled = true
             applicationIdSuffix = ".release"
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
+            buildConfigField("boolean", "LOG_DEBUG", "false")
         }
     }
 
@@ -81,7 +86,6 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.compose.material3)
 
-    implementation(libs.mmkv)
     implementation(libs.material)
 
     implementation(libs.androidx.lifecycle.viewModelCompose)
@@ -97,9 +101,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
 
-    /**
-     * 下载
-     */
     implementation(libs.compose.settings.ui.m3)
 
     /**
@@ -107,7 +108,6 @@ dependencies {
      */
     implementation(libs.ffmpeg.kit.full)
 
-    implementation(libs.timber)
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
     implementation(libs.coil.kt.gif)

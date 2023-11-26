@@ -99,14 +99,6 @@ class OkDownload @Inject constructor(
 
     override fun onSuccess(call: Download.Call, response: Download.Response) {
         if (!response.isSuccessful()) return
-        fFmpegMerge.submit(
-            MergeData(
-                "", "", "",
-                call.getExtras(EXTRAS_ID_C),
-                call.request.sourceFile().absolutePath,
-                call.getExtras(EXTRAS_TITLE)
-            )
-        )
     }
 
     private fun onRetryOrFailure(call: Download.Call, newUrl: String) {

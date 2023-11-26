@@ -36,5 +36,5 @@ dependencies {
     implementation(libs.coil.kt.compose)
     implementation(libs.kotlinx.datetime)
 
-    // androidTestImplementation(projects.core.testing)
+    api("com.github.razaghimahdi:Compose-Loading-Dots:1.2.3")
 }

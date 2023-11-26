@@ -17,4 +17,8 @@ dependencies {
      * 直接生成excel文件时采用
      */
     implementation(libs.jxl)
+
+    implementation(libs.ffmpeg.ffmpegCommand)
+
+    implementation(libs.androidFilePicker)
 }

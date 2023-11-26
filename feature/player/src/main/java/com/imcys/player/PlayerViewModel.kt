@@ -15,7 +15,7 @@ import androidx.paging.cachedIn
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.VideoRepository
@@ -59,7 +59,7 @@ class PlayerViewModel @Inject constructor(
 
     private val aid = savedStateHandle.getStateFlow(A_ID, 0L)
     private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
-    private val cid = savedStateHandle.getStateFlow(C_ID, 0L)
+    private val cid = savedStateHandle.getStateFlow(C_ID, "")
 
     private val info = combine(aid, bvid, cid, ::Triple)
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
@@ -76,7 +76,7 @@ class PlayerViewModel @Inject constructor(
                         title = result.data.title,
                         pic = result.data.pic,
                         desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
-                        pages = result.data.pages,
+                        pageData = result.data.pageData,
                         aid = result.data.aid,
                         bvid = result.data.bvid,
                         cid = result.data.cid,
@@ -109,7 +109,7 @@ class PlayerViewModel @Inject constructor(
             audio = dash.audio.toImmutableList(),
             dolby = dash.dolby,
             duration = dash.duration,
-            pages = videoRepository.cacheVideoView.pages
+            pageData = videoRepository.cacheVideoView.pageData
         )
     }
 
@@ -125,10 +125,10 @@ class PlayerViewModel @Inject constructor(
     /**
      * 下载视频
      */
-    fun addToDownloadQueue(pages: List<Page>, quality: Int) {
+    fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
         viewModelScope.launch {
             bvid.collect {
-                downloadManage.addTask(it, pages, quality)
+                downloadManage.addTask(it, pageData, quality)
             }
         }
     }
@@ -169,7 +169,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     // 选择视频子集
-    fun selectedPage(cid: Long, aid: Long) {
+    fun selectedPage(cid: String, aid: Long) {
         val bvid = _playerState.value.bvid
         viewModelScope.launch {
             val res = videoRepository.getDashVideoStream(bvid, cid, useWbi = true)
@@ -194,7 +194,7 @@ data class PlayerState(
     val desc: String = "",
     val bvid: String = "",
     val aid: Long = 0,
-    val cid: Long = 0,
+    val cid: String = "",
     val pic: String = "",
     val like: Int = 0,
     val coins: Int = 0,
@@ -208,7 +208,7 @@ data class PlayerState(
     val share: Int = 0,
 
     val descriptionAndQuality: List<Pair<String, Int>> = emptyList(),
-    val pages: List<Page> = emptyList(),
+    val pageData: List<PageData> = emptyList(),
 
     val currentQn: Int = 0,
 

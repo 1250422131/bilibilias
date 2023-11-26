@@ -30,6 +30,6 @@ fun NavGraphBuilder.danmakuRoute(
 }
 
 @Composable
-fun DanmakuRoute(state: PlayerState, downloadDanmaku: (Long, Long) -> Unit, aid: Long) {
-    DanmakuScreen(state.videoDetails.pages, downloadDanmaku, aid)
+fun DanmakuRoute(state: PlayerState, downloadDanmaku: (String, Long) -> Unit, aid: Long) {
+    DanmakuScreen(state.videoDetails.pageData, downloadDanmaku, aid)
 }

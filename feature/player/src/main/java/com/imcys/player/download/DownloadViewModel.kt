@@ -3,7 +3,7 @@ package com.imcys.player.download
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.offline.Download
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.download.DownloadToolType
@@ -36,7 +36,7 @@ class DownloadViewModel @Inject constructor(
             is com.imcys.common.utils.Result.Error -> TODO()
             com.imcys.common.utils.Result.Loading -> TODO()
             is com.imcys.common.utils.Result.Success -> _state.update {
-                it.copy(availablePages = res.data.pages, selectedPages = listOf(res.data.pages.first()))
+                it.copy(availablePageData = res.data.pageData, selectedPageData = listOf(res.data.pageData.first()))
             }
 
             null -> Timber.d("replayCache is null")
@@ -75,7 +75,7 @@ class DownloadViewModel @Inject constructor(
         // }
     }
 
-    fun downloadDanmaku(cid: Long, aid:Long) {
+    fun downloadDanmaku(cid: String, aid:Long) {
         downloadManage.downloadDanmaku(cid, aid)
     }
 
@@ -128,13 +128,13 @@ class DownloadViewModel @Inject constructor(
         }
     }
 
-    fun setPages(page: Page) {
+    fun setPages(pageData: PageData) {
         _state.update {
-            val pageList = it.selectedPages
-            if (page in pageList && pageList.size > 1) {
-                it.copy(selectedPages = pageList - page)
+            val pageList = it.selectedPageData
+            if (pageData in pageList && pageList.size > 1) {
+                it.copy(selectedPageData = pageList - pageData)
             } else {
-                it.copy(selectedPages = pageList + page)
+                it.copy(selectedPageData = pageList + pageData)
             }
         }
     }
@@ -158,9 +158,9 @@ data class DownloadListState(
     val requireDownloadFileType: DownloadFileType = DownloadFileType.VideoAndAudio,
 
     // 可选剧集
-    val availablePages: List<Page> = emptyList(),
+    val availablePageData: List<PageData> = emptyList(),
     // 已选剧集
-    val selectedPages: List<Page> = emptyList(),
+    val selectedPageData: List<PageData> = emptyList(),
 
     val availableQuality: List<Int> = emptyList(),
     val selectedQuality: Int = 0,

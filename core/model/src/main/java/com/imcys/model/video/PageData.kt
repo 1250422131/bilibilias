@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Page(
+data class PageData(
     @SerialName("cid")
     val cid: Long = 0,
     @SerialName("dimension")

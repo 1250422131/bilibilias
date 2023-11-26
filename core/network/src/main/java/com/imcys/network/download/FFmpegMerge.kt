@@ -1,114 +1,146 @@
 package com.imcys.network.download
 
-import android.content.Context
+import androidx.collection.CircularArray
 import com.coder.ffmpeg.call.IFFmpegCallBack
 import com.coder.ffmpeg.jni.FFmpegCommand
 import com.coder.ffmpeg.utils.CommandParams
-import com.coder.ffmpeg.utils.FFmpegUtils
-import com.imcys.bilibilias.okdownloader.Download
 import com.imcys.common.di.AppCoroutineScope
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FFmpegMerge @Inject constructor(
-    @ApplicationContext private val context: Context,
     @AppCoroutineScope private val scope: CoroutineScope,
 ) : IFFmpegCallBack {
-    private val workerQueue = Channel<MergeData>(Channel.UNLIMITED)
+    private val workerQueue = CircularArray<MergeData>()
+    private var listener: Listener? = null
 
-    init {
-        scope.launch {
-            while (isActive) {
-                while (!workerQueue.isEmpty) {
-                    for (data in workerQueue) {
-                        merge(data.videoFile, data.audioFile, data.targetFile)
-                    }
-                }
-            }
+    /**
+     * 当前合并音视频的信息
+     */
+    private var currentWork: MergeData? = null
+
+    /**
+     * 是否有任务在运行中
+     */
+    private var running = false
+    fun submit(data: MergeData) {
+        workerQueue.addLast(data)
+        if (!running) {
+            execute()
         }
     }
 
-    fun submit(data: MergeData) {
-        workerQueue.trySend(data)
+    private fun execute() {
+        if (workerQueue.isEmpty) return
+        running = true
+        val data = workerQueue.popFirst()
+        currentWork = data
+        merge(data.videoFile.absolutePath, data.audioFile.absolutePath, data.muxFile)
     }
 
-    private fun tryMerge(call: Download.Call) {
-        val asRequest = call.request
-//        val asRequestList = _completedDownload.filter { it.cId == asRequest.cId }
-//        if (asRequestList.size < 2) return
-//        val videoFile =
-//            asRequestList.find { it.tag == VIDEO_M4S }?.destFile()?.absolutePath
-//                ?: error("合并失败")
-//        val audioFile =
-//            asRequestList.find { it.tag == AUDIO_M4S }?.destFile()?.absolutePath
-//                ?: error("合并失败")
-//        merge(videoFile, audioFile, "")
+    /**
+     * ffmpeg -i sample_video_ffmpeg.mp4 -vf ass=output_subtitle.ass output_ass.mp4
+     */
+    private fun buildJMixAssCommand(
+        videoFile: String,
+        assFile: String,
+        muxFile: String
+    ): Array<String?> {
+        return CommandParams()
+            .append("-i")
+            .append(videoFile)
+            .append("-vf")
+            .append("ass=$assFile")
+            .append(muxFile)
+            .get()
     }
 
-    fun merge(videoFile: String, audioFile: String, title: String) {
-        // ffmpeg -i video.mp4 -i audio.wav -c copy output.mkv
-        val mergeCommand3 = CommandParams()
-            .append("-i")
-            .append(videoFile)
-            .append("-vcodec")
-            .append("copy")
-            .append("-i")
-            .append(audioFile)
-            .append("-acodec")
-            .append("copy")
-            .append("${context.filesDir}/text_111.mp4")
-            .get()
-        val m2 = CommandParams()
+    private fun buildMixCommand(
+        videoFile: String,
+        audioFile: String,
+        muxFile: String
+    ): Array<String?> {
+        return CommandParams()
             .append("-i")
             .append(videoFile)
             .append("-i")
             .append(audioFile)
-            .append("-c")
+            .append("-c:v")
             .append("copy")
-            .append(context.filesDir.path + "/test.mp4")
+            .append("-c:a")
+            .append("copy")
+            .append("$muxFile.mp4")
             .get()
-        val mergeCommand =
-            FFmpegUtils.mixAudioVideo(videoFile, audioFile, context.filesDir.path + "/test.mp4")
-        MainScope().launch(Dispatchers.IO) {
-            FFmpegCommand.runCmd(mergeCommand3, this@FFmpegMerge)
+    }
+
+    private fun merge(
+        videoFile: String,
+        audioFile: String,
+        mixFile: String,
+    ) {
+        val command = buildMixCommand(videoFile, audioFile, mixFile)
+        scope.launch {
+            FFmpegCommand.runCmd(command, this@FFmpegMerge)
         }
     }
 
     override fun onStart() {
         Timber.d("视频合并开始")
+        listener?.onStart(workerQueue.size())
     }
 
     override fun onCancel() {
         Timber.d("视频合并取消")
+        execute()
     }
 
     override fun onComplete() {
         Timber.d("视频合并完成")
+        listener?.onSuccess(currentWork?.muxFile, currentWork?.realName)
+        if (workerQueue.isEmpty) {
+            listener?.onComplete()
+            running = false
+            currentWork = null
+        }
+        execute()
     }
 
     override fun onError(errorCode: Int, errorMsg: String?) {
         Timber.d("视频合并错误=$errorCode,$errorMsg")
+        listener?.onError(errorCode, errorMsg)
+        execute()
     }
 
     override fun onProgress(progress: Int, pts: Long) {
         Timber.d("视频合并进度$progress,$pts")
+        listener?.onProgress(progress, pts)
+    }
+
+    fun setListener(listener: Listener) {
+        this.listener = listener
+    }
+
+    interface Listener {
+        fun onProgress(progress: Int, pts: Long)
+        fun onError(errorCode: Int, errorMsg: String?)
+        fun onComplete()
+
+        /**
+         * @param size 剩余任务数
+         */
+        fun onStart(size: Int)
+        fun onSuccess(fullPath: String?, realName: String?)
     }
 }
 
-class MergeData(
-    val videoFile: String,
-    val audioFile: String,
-    val targetFile: String,
-    val cID: String,
-    val path: String,
-    val title: String
+data class MergeData(
+    val videoFile: File,
+    val audioFile: File,
+    val muxFile: String,
+    val realName: String
 )

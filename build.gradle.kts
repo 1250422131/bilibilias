@@ -26,10 +26,6 @@ val reportMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMe
     output.set(rootProject.layout.buildDirectory.file("$rootDir/config/reports/merge.sarif"))
 }
 dependencies {
-    detektPlugins(libs.gitlab.detekt.formatting)
-    detektPlugins(libs.detekt.rules.compose)
-    detektPlugins(libs.detekt)
-    detektPlugins(libs.hbmartin.detekt.rules)
     detektPlugins(libs.rules.detekt)
 }
 allprojects {
@@ -65,15 +61,6 @@ allprojects {
     }
 }
 
-tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-    this.jvmTarget = "17"
-}
-tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
-    this.jvmTarget = "17"
-}
-tasks.register("clean", Delete::class) {
-    delete(rootProject.layout.buildDirectory)
-}
 tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
     rejectVersionIf {
         listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any { qualifier ->

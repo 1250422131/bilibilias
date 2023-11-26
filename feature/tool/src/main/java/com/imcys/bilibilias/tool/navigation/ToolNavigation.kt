@@ -15,10 +15,15 @@ fun NavController.navigateToTool() {
 }
 
 fun NavGraphBuilder.toolScreen(
-    navigateToPlayer: (Long, String, Long,)-> Unit,
+    navigateToPlayer: (String, String, String) -> Unit,
     navigateToSetting: () -> Unit,
     navigateToExportBangumiFollowList: () -> Unit,
+    navigationToMerge: () -> Unit,
 ) = composable(ROUTE_TOOL) {
-    ToolRoute(navigateToPlayer, navigateToSetting, navigateToExportBangumiFollowList)
+    ToolRoute(
+        onNavigateToPlayer = navigateToPlayer,
+        onNavigateToSettings = navigateToSetting,
+        onNavigateToBangumiFollow = navigateToExportBangumiFollowList,
+        navigationToMerge = navigationToMerge
+    )
 }
-

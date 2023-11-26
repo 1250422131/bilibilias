@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.common.utils.sharedHiltViewModel
-import com.imcys.model.video.Page
+import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadToolType
 import com.imcys.player.PlayerState
@@ -80,7 +80,7 @@ fun DownloadOptionsRoute(
     setRequireDownloadFileType: (DownloadFileType) -> Unit,
     downloadListState: DownloadListState,
     setAcceptDescription: (Int) -> Unit,
-    setPages: (Page) -> Unit,
+    setPages: (PageData) -> Unit,
 ) {
     DownloadOptionsScreen(
         state = state,
