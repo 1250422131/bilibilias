@@ -19,7 +19,7 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.protobuf) apply false
     // Run ./gradlew dependencyUpdates to check for dependency updates
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 val reportMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMergeTask::class) {
