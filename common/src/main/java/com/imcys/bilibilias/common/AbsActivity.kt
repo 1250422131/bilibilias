@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
@@ -13,7 +12,6 @@ import com.imcys.bilibilias.common.utils.asLogD
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
-import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -113,14 +111,6 @@ open class AbsActivity : AppCompatActivity() {
         activities.forEach {
             if (!it.isFinishing) it.finish()
         }
-    }
-
-    // 沉浸式状态栏
-    fun statusBarOnly(fragmentActivity: FragmentActivity) {
-        UltimateBarX.statusBarOnly(fragmentActivity)
-            .fitWindow(false)
-            .light(true)
-            .apply()
     }
 
     open fun updateTheme() {
