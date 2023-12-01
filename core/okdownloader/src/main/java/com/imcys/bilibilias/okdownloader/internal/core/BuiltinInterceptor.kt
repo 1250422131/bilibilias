@@ -23,7 +23,6 @@ import java.io.InterruptedIOException
 import java.net.MalformedURLException
 
 internal class RetryInterceptor(private val client: Downloader) : Interceptor {
-
     override fun intercept(chain: Interceptor.Chain): Download.Response {
         var retry = chain.request().retry ?: client.defaultMaxRetry
         var retryCount = 0
@@ -224,7 +223,8 @@ internal class ExchangeInterceptor(private val client: Downloader) : Interceptor
     }
 
     private fun getHttpResponse(chain: Interceptor.Chain, request: Download.Request): Response {
-        val httpRequest = Request.Builder().url(request.url)
+        val httpRequest = Request.Builder()
+            .url(request.url)
             .headers(Headers.headersOf(*request.headers()))
             .ofRangeStart(request.sourceFile().length())
             .get()

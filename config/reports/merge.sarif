@@ -1703,9 +1703,9 @@
     <error column="5" line="28" message="Function names should match the pattern: [a-z][a-zA-Z0-9]*" severity="warning" source="detekt.FunctionNaming"/>
     <error column="43" line="38" message="This expression contains a magic number. Consider defining it to a well named constant." severity="warning" source="detekt.MagicNumber"/>
   </file>
-  <file name="E:/Github-learning/bilibilias/common/src/main/java/com/imcys/bilibilias/common/base/api/BilibiliApi.kt">
+  <file name="E:/Github-learning/bilibilias/common/src/main/java/com/imcys/bilibilias/common/base/api/BilibiliApi2.kt">
     <error column="5" line="50" message="Property bangumiVideoDataPath is a `var`iable, please make it a val." severity="warning" source="detekt.AvoidVarsExceptWithDelegate"/>
-    <error column="5" line="50" message="The file E:\Github-learning\bilibilias\common\src\main\java\com\imcys\bilibilias\common\base\api\BilibiliApi.kt contains `var`iable." severity="warning" source="detekt.VariableDefinition"/>
+    <error column="5" line="50" message="The file E:\Github-learning\bilibilias\common\src\main\java\com\imcys\bilibilias\common\base\api\BilibiliApi2.kt contains `var`iable." severity="warning" source="detekt.VariableDefinition"/>
   </file>
   <file name="E:/Github-learning/bilibilias/common/src/main/java/com/imcys/bilibilias/common/base/app/BaseApplication.kt">
     <error column="9" line="73" message="Property dataKv is a `var`iable, please make it a val." severity="warning" source="detekt.AvoidVarsExceptWithDelegate"/>

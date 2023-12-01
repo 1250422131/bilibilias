@@ -1,6 +1,5 @@
 package com.imcys.network.repository
 
-
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.md5
@@ -17,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class WbiKeyRepository @Inject constructor(
-    private val httpClient: HttpClient,
+    private val client: HttpClient,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
@@ -30,17 +29,17 @@ class WbiKeyRepository @Inject constructor(
 
     private var token: String? = null
 
-    suspend fun getUserNavToken(params: List<Pair<String, Any>>): List<Pair<String, String>> =
+    suspend fun getUserNavToken(params: List<Parameter>): List<Parameter> =
         withContext(ioDispatcher) {
-            val userNav = httpClient.get(BilibiliApi2.Token).body<UserNav>()
+            val userNav = client.get(BilibiliApi2.Token).body<UserNav>()
             getParam(params, userNav.imgKey, userNav.subKey)
         }
 
     private fun getParam(
-        params: List<Pair<String, Any>>,
+        params: List<Parameter>,
         imgKey: String,
         subKey: String
-    ): List<Pair<String, String>> {
+    ): List<Parameter> {
         val token = token
         if (token != null) return sign(params, token)
 
@@ -58,19 +57,21 @@ class WbiKeyRepository @Inject constructor(
         return token!!
     }
 
-    private fun sign(params: List<Pair<String, Any>>, mixinKey: String): List<Pair<String, String>> {
-        val map = mutableListOf("wts" to (System.currentTimeMillis() / 1000).toString()).apply {
-            params.forEach { (k, v) ->
-                add(k to v.toString())
-            }
+    private fun sign(
+        params: List<Parameter>,
+        mixinKey: String
+    ): List<Parameter> {
+        val p = Parameter("wts", (System.currentTimeMillis() / 1000).toString())
+        val parameters = mutableListOf(p).apply {
+            addAll(params)
             sortBy { it.first }
         }
-        val param = map.joinToString("&") { (k, v) ->
+        val param = parameters.joinToString("&") { (k, v) ->
             k + "=" + v.encodeURLParameter()
         }
         val s = param + mixinKey
         val wbiSign = md5(s)
-        map.add("w_rid" to wbiSign)
-        return map
+        parameters.add(Parameter("w_rid", wbiSign))
+        return parameters.map { Parameter(it.first, it.second) }
     }
 }

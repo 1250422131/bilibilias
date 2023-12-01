@@ -41,7 +41,7 @@ class CookieManager
         }
         cache[cookie.name] = cookie
         cookiesData.timestamp = timestamp
-        close()
+        save()
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
@@ -55,6 +55,10 @@ class CookieManager
     }
 
     override fun close() {
+        save()
+    }
+
+    private fun save() {
         cookiesData.save(
             cbor.encodeToByteArray(
                 sterileMap,

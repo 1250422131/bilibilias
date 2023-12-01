@@ -32,15 +32,15 @@ class DownloadViewModel @Inject constructor(
     }
 
     private fun getPages() {
-        when (val res = videoRepository.videoDetails2.replayCache.lastOrNull()) {
-            is com.imcys.common.utils.Result.Error -> TODO()
-            com.imcys.common.utils.Result.Loading -> TODO()
-            is com.imcys.common.utils.Result.Success -> _state.update {
-                it.copy(availablePageData = res.data.pageData, selectedPageData = listOf(res.data.pageData.first()))
-            }
-
-            null -> Timber.d("replayCache is null")
-        }
+//        when (val res = videoRepository.videoDetails2.replayCache.lastOrNull()) {
+//            is com.imcys.common.utils.Result.Error -> TODO()
+//            com.imcys.common.utils.Result.Loading -> TODO()
+//            is com.imcys.common.utils.Result.Success -> _state.update {
+//                it.copy(availablePageData = res.data.pageData, selectedPageData = listOf(res.data.pageData.first()))
+//            }
+//
+//            null -> Timber.d("replayCache is null")
+//        }
     }
 
     /**
@@ -81,21 +81,12 @@ class DownloadViewModel @Inject constructor(
 
     private fun findAllTask() {
       viewModelScope.launch {
-            downloadManage.findAllTask { tasks ->
-                // _state.update { downloadListState ->
-                //     // val bvGroup = tasks.groupBy { it.bvid }
-                //     // downloadListState.copy(bvGroup = bvGroup)
-                // }
-            }
-        }
+            downloadManage.findAllTask()
+      }
     }
 
     fun deleteFileById(id: Int) {
-        downloadManage.deleteFile(id, { download ->
-            Timber.tag("deleteFile").d(download.toString())
-            // /storage/emulated/0/Android/data/com.imcys.bilibilias.debug/files/download/BV1ky4y1N7K2/c_1300196787/112/video.m4s
-        }, {
-        })
+        downloadManage.deleteFile()
         findAllTask()
     }
 
@@ -104,19 +95,7 @@ class DownloadViewModel @Inject constructor(
     }
 
     private fun setInitAcceptDescription() {
-        videoRepository.dashVideo.replayCache.forEach { res ->
-            when (res) {
-                is com.imcys.common.utils.Result.Error -> TODO()
-                com.imcys.common.utils.Result.Loading -> TODO()
-                is com.imcys.common.utils.Result.Success -> _state.update {
-                    it.copy(
-                        selectedDescription = res.data.acceptDescription.first(),
-                        availableAcceptDescription = res.data.acceptDescription,
-                        availableQuality = res.data.acceptQuality,
-                    )
-                }
-            }
-        }
+
     }
 
     fun setAcceptDescription(index: Int) {

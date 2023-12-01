@@ -1,6 +1,7 @@
 package com.imcys.player.sheet
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +38,8 @@ internal fun SheetPages(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
     pageData: List<PageData>,
+    admDownload: (String) -> Unit,
+    idmDownload: (String) -> Unit,
 ) {
     var openSetting by remember { mutableStateOf(false) }
     Column {
@@ -68,6 +73,13 @@ internal fun SheetPages(
             ) {
                 items(pageData) { item ->
                     var selected by remember { mutableStateOf(false) }
+                    var expanded by remember { mutableStateOf(false) }
+                    DropdownMenu(expanded, {
+                        expanded = false
+                    }) {
+                        DropdownMenuItem({ Text(text = "IDM")}, {})
+                        DropdownMenuItem({ Text(text = "ADM")}, {})
+                    }
                     TextButton(
                         onClick = {
                             addToDownloadQueue(listOf(item), quality.second); selected = true
@@ -76,7 +88,9 @@ internal fun SheetPages(
                             BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         } else {
                             null
-                        }
+                        },
+
+                        modifier = Modifier.combinedClickable(onLongClick = {}) { }
                     ) {
                         Text(
                             text = item.part,
@@ -87,13 +101,13 @@ internal fun SheetPages(
                     }
                 }
             }
-            Button(
-                onClick = { addToDownloadQueue(pageData, quality.second) },
-                Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(text = "全部下载")
-            }
+        }
+        Button(
+            onClick = { addToDownloadQueue(pageData, quality.second) },
+            Modifier
+                .fillMaxWidth()
+        ) {
+            Text(text = "全部下载")
         }
     }
 }

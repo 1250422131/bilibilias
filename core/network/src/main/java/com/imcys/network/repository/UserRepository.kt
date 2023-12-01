@@ -32,7 +32,7 @@ class UserRepository @Inject constructor(
 
 
     suspend fun getUserSpaceDetails(mid: Long): UserSpaceInformation = withContext(ioDispatcher) {
-        val params = wbiRepository.getUserNavToken(listOf("mid" to mid.toString()))
+        val params = wbiRepository.getUserNavToken(listOf(Parameter("mid" , mid.toString())))
         httpClient.get(BilibiliApi2.userSpaceDetails) {
             params.forEach { (k, v) ->
                 parameter(k, v)

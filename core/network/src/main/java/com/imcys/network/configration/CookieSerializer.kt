@@ -24,7 +24,7 @@ const val COOKIE_PATH = 5
 const val COOKIE_SECURE = 6
 const val COOKIE_HTTPONLY = 7
 
-object CookieSerializer : KSerializer<Cookie> {
+internal object CookieSerializer : KSerializer<Cookie> {
     @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): Cookie =
         decoder.decodeStructure(descriptor) {

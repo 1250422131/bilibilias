@@ -9,9 +9,6 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
@@ -19,7 +16,6 @@ import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.VideoRepository
-import com.imcys.network.repository.space.QueryUserSubmittedVideoPagingSource
 import com.imcys.network.repository.space.SpaceRepository
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
@@ -48,16 +44,8 @@ class PlayerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val downloadManage: DownloadManage
 ) : ViewModel() {
-    val flow = Pager(
-        PagingConfig(pageSize = 30)
-    ) {
-        QueryUserSubmittedVideoPagingSource(
-            spaceRepository,
-            videoRepository.cacheVideoView.owner.mid
-        )
-    }.flow.cachedIn(viewModelScope)
 
-    private val aid = savedStateHandle.getStateFlow(A_ID, 0L)
+    private val aid = savedStateHandle.getStateFlow(A_ID, "")
     private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
     private val cid = savedStateHandle.getStateFlow(C_ID, "")
 
@@ -65,7 +53,7 @@ class PlayerViewModel @Inject constructor(
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
     val playerInfoUiState = info.map { (a, b, c) ->
-        videoRepository.getVideoDetailsByBvid(b)
+        videoRepository.viewDetail(b)
     }.asResult()
         .map { result ->
             when (result) {
@@ -91,7 +79,7 @@ class PlayerViewModel @Inject constructor(
      *  播放器
      */
     val playerUiState = info.map { (a, b, c) ->
-        videoRepository.getDashVideoStream(b, c, useWbi = true)
+        videoRepository.getPlayerPlayUrl(b, c.toLong(),)
     }.asResult()
         .map { result ->
             when (result) {
@@ -109,7 +97,7 @@ class PlayerViewModel @Inject constructor(
             audio = dash.audio.toImmutableList(),
             dolby = dash.dolby,
             duration = dash.duration,
-            pageData = videoRepository.cacheVideoView.pageData
+            pageData = emptyList()
         )
     }
 
@@ -126,10 +114,9 @@ class PlayerViewModel @Inject constructor(
      * 下载视频
      */
     fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
+        // todo 或许可以只写 弹幕文件 和 entry.json
+        // 弹幕文件或许从pb接口尝试
         viewModelScope.launch {
-            bvid.collect {
-                downloadManage.addTask(it, pageData, quality)
-            }
         }
     }
 
@@ -172,7 +159,7 @@ class PlayerViewModel @Inject constructor(
     fun selectedPage(cid: String, aid: Long) {
         val bvid = _playerState.value.bvid
         viewModelScope.launch {
-            val res = videoRepository.getDashVideoStream(bvid, cid, useWbi = true)
+            val res = videoRepository.getPlayerPlayUrl(bvid, cid.toLong())
             setQualityGroup(res.dash.video)
             val qn = _playerState.value.currentQn
             selectedQuality(qn)
@@ -180,6 +167,14 @@ class PlayerViewModel @Inject constructor(
                 state.copy(cid = cid, audio = res.dash.audio.maxBy { it.id })
             }
         }
+    }
+
+    fun admDownload(url: String) {
+        downloadManage.admDownload(url)
+    }
+
+    fun idmDownload(url: String) {
+        downloadManage.idmDownload(url)
     }
 
     private fun setQualityGroup(videos: List<com.imcys.model.Dash.Video>) {

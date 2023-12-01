@@ -6,7 +6,7 @@ import com.imcys.bilibilias.okdownloader.EventListener
 import com.imcys.bilibilias.okdownloader.Interceptor
 import okhttp3.Call
 import java.util.ServiceLoader
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 internal interface InternalCall : Download.Call {
 
@@ -134,10 +134,10 @@ internal class DefaultDownloadCall(
             }
         }
 
-        fun executeOn(executorService: ExecutorService) {
+        fun executeOn(executor: Executor) {
             var success = false
             try {
-                executorService.execute(this)
+                executor.execute(this)
                 success = true
             } finally {
                 if (!success) {

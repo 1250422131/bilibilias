@@ -13,6 +13,4 @@ dependencies {
     implementation(libs.fastkv)
     implementation(libs.mmkv)
     implementation(project(mapOf("path" to ":core:model")))
-
-
 }

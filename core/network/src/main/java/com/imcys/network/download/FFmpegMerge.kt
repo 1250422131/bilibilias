@@ -14,33 +14,25 @@ import javax.inject.Singleton
 
 @Singleton
 class FFmpegMerge @Inject constructor(
-    @AppCoroutineScope private val scope: CoroutineScope,
+    @AppCoroutineScope private val scope: CoroutineScope
 ) : IFFmpegCallBack {
-    private val workerQueue = CircularArray<MergeData>()
+    private val readyWorker = CircularArray<MergeData>()
+    private val runningWorker = CircularArray<MergeData>()
+
     private var listener: Listener? = null
 
-    /**
-     * 当前合并音视频的信息
-     */
-    private var currentWork: MergeData? = null
-
-    /**
-     * 是否有任务在运行中
-     */
-    private var running = false
-    fun submit(data: MergeData) {
-        workerQueue.addLast(data)
-        if (!running) {
-            execute()
+    fun execute(data: MergeData) {
+        readyWorker.addLast(data)
+        if (runningWorker.isEmpty) {
+            promote()
         }
     }
 
-    private fun execute() {
-        if (workerQueue.isEmpty) return
-        running = true
-        val data = workerQueue.popFirst()
-        currentWork = data
-        merge(data.videoFile.absolutePath, data.audioFile.absolutePath, data.muxFile)
+    private fun promote() {
+        if (readyWorker.isEmpty) return
+        val data: MergeData = readyWorker.popFirst()
+        runningWorker.addLast(data)
+        merge(data.videoFile.absolutePath, data.audioFile.absolutePath, data.mixFile)
     }
 
     /**
@@ -91,29 +83,30 @@ class FFmpegMerge @Inject constructor(
 
     override fun onStart() {
         Timber.d("视频合并开始")
-        listener?.onStart(workerQueue.size())
+        val data: MergeData = runningWorker.first
+        listener?.onStart(data.realName)
     }
 
     override fun onCancel() {
         Timber.d("视频合并取消")
-        execute()
+        promote()
     }
 
     override fun onComplete() {
         Timber.d("视频合并完成")
-        listener?.onSuccess(currentWork?.muxFile, currentWork?.realName)
-        if (workerQueue.isEmpty) {
+        val data: MergeData = runningWorker.popFirst()
+        listener?.onSuccess(data.mixFile, data.realName, readyWorker.size())
+        if (readyWorker.isEmpty) {
             listener?.onComplete()
-            running = false
-            currentWork = null
         }
-        execute()
+        promote()
     }
 
     override fun onError(errorCode: Int, errorMsg: String?) {
         Timber.d("视频合并错误=$errorCode,$errorMsg")
-        listener?.onError(errorCode, errorMsg)
-        execute()
+        val data: MergeData = runningWorker.popFirst()
+        listener?.onError(errorCode, errorMsg, data.mixFile, data.realName)
+        promote()
     }
 
     override fun onProgress(progress: Int, pts: Long) {
@@ -127,20 +120,20 @@ class FFmpegMerge @Inject constructor(
 
     interface Listener {
         fun onProgress(progress: Int, pts: Long)
-        fun onError(errorCode: Int, errorMsg: String?)
+        fun onError(errorCode: Int, errorMsg: String?, mixFile: String, realName: String)
         fun onComplete()
 
         /**
-         * @param size 剩余任务数
+         * @param title 标题
          */
-        fun onStart(size: Int)
-        fun onSuccess(fullPath: String?, realName: String?)
+        fun onStart(title: String)
+        fun onSuccess(fullPath: String, realName: String, tasks: Int)
     }
 }
 
 data class MergeData(
     val videoFile: File,
     val audioFile: File,
-    val muxFile: String,
+    val mixFile: String,
     val realName: String
 )

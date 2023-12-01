@@ -100,4 +100,15 @@ object BilibiliApi2 {
     const val videoHasLike = "x/web-interface/archive/has/like"
     const val videoHasCoins = "x/web-interface/archive/coins"
     const val videoHasCollection = "x/v2/fav/video/favoured"
+
+    /**
+     * 获取视频超详细信息(web端)
+     */
+    const val VIEW_DETAIL_WBI = "x/web-interface/wbi/view/detail"
+    const val VIEW_DETAIL = "x/web-interface/view/detail"
+
+    /**
+     * 获取视频流地址_web端
+     */
+    const val PLAYER_PLAY_URL_WBI = "x/player/wbi/playurl"
 }

@@ -1,26 +1,27 @@
 package com.imcys.network.di
 
 import android.content.Context
+import com.imcys.bilibilias.okdownloader.DownloadPool
 import com.imcys.bilibilias.okdownloader.Downloader
+import com.imcys.common.di.AsDispatchers
+import com.imcys.common.utils.asNonTerminatingExecutorService
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
-import com.imcys.network.constants.API_BILIBILI
-import com.imcys.network.constants.BROWSER_USER_AGENT
+import com.imcys.network.constant.API_BILIBILI
+import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.squareup.wire.GrpcClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.Charsets
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.addDefaultResponseValidation
@@ -39,7 +40,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.charsets.Charset
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.asExecutor
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -56,12 +58,9 @@ import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.brotli.BrotliInterceptor
-import okhttp3.internal.threadFactory
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -80,7 +79,9 @@ class NetworkModule {
     @Provides
     @Singleton
     @BaseOkhttpClient
-    fun provideBaseOkhttpClient(executorService: ExecutorService): OkHttpClient =
+    fun provideBaseOkhttpClient(
+        executorService: ExecutorService
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request()
@@ -101,17 +102,21 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideDownload(@BaseOkhttpClient okHttpClient: OkHttpClient): Downloader =
+    fun provideDownload(
+        @BaseOkhttpClient okHttpClient: OkHttpClient,
+        executorService: ExecutorService
+    ): Downloader =
         Downloader.Builder()
-            .okHttpClientFactory {
-                okHttpClient.newBuilder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .retryOnConnectionFailure(true)
-                    .build()
-            }
+            .okHttpClientFactory { okHttpClient }
+            .downloadPool(DownloadPool(executorService))
             .build()
+
+    @Provides
+    @Singleton
+    fun provideExecutorService(
+        @com.imcys.common.di.Dispatcher(AsDispatchers.IO) ioDispatch: CoroutineDispatcher
+    ): ExecutorService =
+        ioDispatch.asExecutor().asNonTerminatingExecutorService()
 
     @Provides
     @Singleton
@@ -128,25 +133,13 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideExecutorService(): ExecutorService = ThreadPoolExecutor(
-        Runtime.getRuntime().availableProcessors(),
-        Int.MAX_VALUE,
-        120,
-        TimeUnit.SECONDS,
-        SynchronousQueue(),
-        threadFactory("BilibiliAS Dispatcher", false)
-    )
-
-
-    @Provides
-    @Singleton
     @ProjectOkhttpClient
     fun provideProjectOkhttpClient(
         @ApplicationContext context: Context,
         @BaseOkhttpClient okHttpClient: OkHttpClient
     ): OkHttpClient = okHttpClient.newBuilder()
         .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
-        .addInterceptor(MonitorInterceptor())
+//        .addInterceptor(MonitorInterceptor())
         .build()
 
     @Provides
@@ -171,12 +164,11 @@ class NetworkModule {
             url(API_BILIBILI)
         }
         BrowserUserAgent()
-        Charsets {
-            register(Charset.defaultCharset(), 1f)
-            sendCharset = Charsets.UTF_8
-        }
         addDefaultResponseValidation()
-        Logging { logger = loggerManager; level = LogLevel.ALL }
+        Logging {
+            logger = loggerManager
+            level = LogLevel.NONE
+        }
         install(HttpCookies) {
             storage = cookieManager
         }
@@ -238,6 +230,7 @@ class NetworkModule {
                         )
                         val print = element.ofMap()?.print()
                         Timber.tag("TransformData").d("data=${print ?: "@null"}")
+                        Timber.tag("TransformData").d("realData=${realData.size}")
                         element
                     }
 

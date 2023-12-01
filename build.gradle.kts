@@ -15,9 +15,10 @@ plugins {
     alias(libs.plugins.kotlin) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.detekt)
     alias(libs.plugins.protobuf) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.detekt)
     // Run ./gradlew dependencyUpdates to check for dependency updates
     id("com.github.ben-manes.versions") version "0.50.0"
 }
@@ -33,7 +34,7 @@ allprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     detekt {
-        toolVersion = "1.23.3"
+        toolVersion = "1.23.4"
         config.setFrom(file("$rootDir/config/detekt.yml"))
         baseline = file("$rootDir/config/reports/baseline.xml")
         parallel = true
@@ -65,6 +66,27 @@ tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
     rejectVersionIf {
         listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any { qualifier ->
             candidate.version.contains(qualifier, ignoreCase = true)
+        }
+    }
+}
+subprojects {
+    // ./gradlew assembleRelease -PcomposeCompilerReports=true
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            if (project.findProperty("composeCompilerReports") == "true") {
+                freeCompilerArgs += arrayOf(
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                            project.layout.buildDirectory + "/compose_compiler"
+                )
+            }
+            if (project.findProperty("composeCompilerMetrics") == "true") {
+                freeCompilerArgs += arrayOf(
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                            project.layout.buildDirectory + "/compose_compiler"
+                )
+            }
         }
     }
 }

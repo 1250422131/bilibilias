@@ -1,81 +1,146 @@
 package com.imcys.network.download
 
 import android.content.Context
-import com.imcys.bilibilias.okdownloader.Download
+import android.content.Intent
+import android.net.Uri
+import com.hjq.toast.Toaster
 import com.imcys.common.di.AppCoroutineScope
+import com.imcys.common.di.AsDispatchers
+import com.imcys.common.di.Dispatcher
+import com.imcys.common.utils.AppFilePathUtils
+import com.imcys.model.PlayerInfo
+import com.imcys.model.VideoDetails
 import com.imcys.model.video.PageData
+import com.imcys.network.constant.BILIBILI_WEB_URL
+import com.imcys.network.constant.BROWSER_USER_AGENT
+import com.imcys.network.constant.REFERER
+import com.imcys.network.constant.USER_AGENT
 import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.danmaku.IDanmakuDataSources
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okio.FileSystem
-import okio.Path.Companion.toOkioPath
-import okio.buffer
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.milliseconds
 
-const val STATE_DOWNLOAD_WAIT = 0
-
-const val INDEX_JSON = "index.json"
 const val DANMAKU_XML = "danmaku.xml"
 const val ENTRY_JSON = "entry.json"
 const val VIDEO_M4S = "video.m4s"
 const val AUDIO_M4S = "audio.m4s"
+const val DEFAULT_DANMAKU_SIZE = 72
+
+const val ADM_PACK_NAME = "com.dv.adm"
+const val ADM_EDITOR = "$ADM_PACK_NAME.AEditor"
+const val ADM_PRO_PACK_NAME = "$ADM_PACK_NAME.pay"
+const val ADM_PRO_EDITOR = "$ADM_PRO_PACK_NAME.AEditor"
+
+const val IDM_PACK_NAME = "idm.internet.download.manager"
+const val IDM_DOWNLOADER = "$IDM_PACK_NAME.Downloader"
+const val IDM_PLUS_PACK_NAME = "$IDM_PACK_NAME.plus"
 
 @Singleton
 class DownloadManage @Inject constructor(
     private val videoRepository: VideoRepository,
-    @ApplicationContext private val context: Context,
-    @AppCoroutineScope private val scope: CoroutineScope,
+    private val danmakuRepository: IDanmakuDataSources,
     private val json: Json,
     private val okDownload: OkDownload,
+    @ApplicationContext private val context: Context,
+    @AppCoroutineScope private val scope: CoroutineScope,
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
-
-    fun addTask(
-        details: com.imcys.model.VideoDetails,
-        dash: com.imcys.model.PlayerInfo,
-        pageData: PageData,
-        downloadListHolders: DownloadListHolders
-    ) {
-        // when (downloadListHolders.requireDownloadFileType) {
-        //     DownloadFileType.VideoAndAudio -> videoAndAudio(
-        //         dash,
-        //         details.bvid,
-        //         page,
-        //         downloadListHolders,
-        //         details.aid,
-        //         details.title
-        //     )
-        //
-        //     DownloadFileType.OnlyAudio -> TODO()
-        // }
+    // todo 等待实现
+    fun launchThirdPartyDownload(downloader: ThirdPartyDownloader) {
+        when (downloader) {
+            ThirdPartyDownloader.ADM -> TODO()
+            ThirdPartyDownloader.ADMPro -> TODO()
+            ThirdPartyDownloader.IDM -> TODO()
+            ThirdPartyDownloader.IDMPlus -> TODO()
+            ThirdPartyDownloader.NONE -> TODO()
+        }
     }
 
-    private fun videoAndAudio(
-        dash: com.imcys.model.PlayerInfo,
-        bvid: String,
-        pageData: PageData,
-        downloadListHolders: DownloadListHolders,
-        aid: Long,
-        title: String
-    ) {
-        when (downloadListHolders.toolType) {
-            DownloadToolType.BUILTIN -> builtin(
-                bvid,
-                dash,
-                pageData,
-                downloadListHolders,
-                aid,
-                title
-            )
+    fun checkThirdPartyDownloader(): ThirdPartyDownloader {
+        return if (checkInstall(ADM_PRO_PACK_NAME)) {
+            ThirdPartyDownloader.ADMPro
+        } else if (checkInstall(ADM_PACK_NAME)) {
+            ThirdPartyDownloader.ADM
+        } else if (checkInstall(IDM_PLUS_PACK_NAME)) {
+            ThirdPartyDownloader.IDMPlus
+        } else if (checkInstall(IDM_PACK_NAME)) {
+            ThirdPartyDownloader.IDM
+        } else {
+            ThirdPartyDownloader.NONE
+        }
+    }
 
-            DownloadToolType.IDM -> startIDMDownload()
-            DownloadToolType.ADM -> startADMDownload()
+    fun checkInstall(pkgName: String): Boolean {
+        return AppFilePathUtils.isInstallApp(context, pkgName)
+    }
+
+    fun admDownload(url: String) {
+        val result = checkThirdPartyDownloader()
+        if (result is ThirdPartyDownloader.NONE) {
+            Toaster.show("看起来你还没有安装下载器")
+            return
+        }
+        val intent = getIntent(url)
+        when (result) {
+            is ThirdPartyDownloader.ADM -> {
+                Toaster.show("正在拉起ADM")
+                intent.setClassName(result.pkgName, result.clsName)
+                context.startActivity(intent)
+            }
+
+            is ThirdPartyDownloader.ADMPro -> {
+                Toaster.show("正在拉起ADM")
+                intent.setClassName(result.pkgName, result.clsName)
+                context.startActivity(intent)
+            }
+
+            else -> Unit
+        }
+    }
+
+    // todo fix toast 移动到界面上去
+    fun idmDownload(url: String) {
+        val result = checkThirdPartyDownloader()
+        if (result is ThirdPartyDownloader.NONE) {
+            Toaster.show("看起来你还没有安装下载器")
+            return
+        }
+        val intent = getIntent(url)
+        when (result) {
+            is ThirdPartyDownloader.IDM -> {
+                Toaster.show("正在拉起IDM")
+                intent.setClassName(result.pkgName, result.clsName)
+                context.startActivity(intent)
+            }
+
+            is ThirdPartyDownloader.IDMPlus -> {
+                Toaster.show("正在拉起IDM")
+                intent.setClassName(result.pkgName, result.clsName)
+                context.startActivity(intent)
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun getIntent(url: String): Intent {
+        return Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            putExtra(REFERER, BILIBILI_WEB_URL)
+            putExtra(USER_AGENT, BROWSER_USER_AGENT)
+
+            data = Uri.parse(url)
         }
     }
 
@@ -84,26 +149,26 @@ class DownloadManage @Inject constructor(
      */
     private fun downloadDanmaku(cid: String, danmakuPath: String) {
         scope.launch {
-            videoRepository.getDanmakuXml(cid).collect {
-                when (it) {
-                    is com.imcys.common.utils.Result.Error -> Timber.tag("下载弹幕异常")
-                        .d(it.exception)
-
-                    com.imcys.common.utils.Result.Loading -> {}
-                    is com.imcys.common.utils.Result.Success -> {
-                        val file = File(
-                            (context.getExternalFilesDir("download/$danmakuPath")),
-                            "danmaku.xml"
-                        )
-                        FileSystem.SYSTEM.sink(file.toOkioPath()).use { fileSink ->
-                            fileSink.buffer().use { bufferedSink ->
-                                bufferedSink.write(it.data)
-                                // android.os.FileUtils.copy()
-                            }
-                        }
-                    }
-                }
-            }
+//            videoRepository.getDanmakuXml(cid).collect {
+//                when (it) {
+//                    is com.imcys.common.utils.Result.Error -> Timber.tag("下载弹幕异常")
+//                        .d(it.exception)
+//
+//                    com.imcys.common.utils.Result.Loading -> {}
+//                    is com.imcys.common.utils.Result.Success -> {
+//                        val file = File(
+//                            (context.getExternalFilesDir("download/$danmakuPath")),
+//                            "danmaku.xml"
+//                        )
+//                        FileSystem.SYSTEM.sink(file.toOkioPath()).use { fileSink ->
+//                            fileSink.buffer().use { bufferedSink ->
+//                                bufferedSink.write(it.data)
+//                                // android.os.FileUtils.copy()
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
@@ -119,119 +184,9 @@ class DownloadManage @Inject constructor(
         // }
     }
 
-    // fun buildAss(elemsList: List<Dm.DanmakuElem>) {
-    // Fix
-    // Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-    // Dialogue: 0,0:14:28.92,0:14:36.92,R2L,,20,20,2,,{\move(610,25,-50,25)}广告满分
-    // Dialogue: 0,0:00:27.52,0:00:31.52,Fix,,20,20,2,,{\pos(280,25)}听成了建材之父
-    // Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
-    // progress=19516,mode=1,fontsize=25,color=16777215,content=哟呵，没探店了？,pool=0,colorful=NoneType,
-    // progress=33599,mode=1,fontsize=25,color=16777215,content=中门对狙,pool=0,colorful=NoneType,
-    // progress=28052,mode=1,fontsize=25,color=16777215,content=摄像师——伯娘,pool=0,colorful=NoneType,
-    // progress=45419,mode=1,fontsize=25,color=16777215,content=手推木啊，好家伙，你搞个驴拉的都比你手推的好呀,pool=0,colorful=NoneType,
-    // progress=267710,mode=1,fontsize=25,color=16777215,content=400爷笑嘻了,pool=0,colorful=NoneType,
-    // Format:  Layer ,Start      ,End        ,Style ,Name ,MarginL ,MarginR ,MarginV ,Effect, Text
-    // Dialogue: 0     ,0:00:00.38 ,0:00:08.38 ,R2L   ,     ,20      ,20      ,2       ,,{\move(610,25,-50,25)}火钳刘明
-    // elemsList.take(5).forEach {
-    //     Timber.d(
-    //         "progress=${it.progress}," +
-    //                 "mode=${it.mode}," +
-    //                 "fontsize=${it.fontsize}," +
-    //                 "color=${it.color}," +
-    //                 "content=${it.content}," +
-    //                 "pool=${it.pool}," +
-    //                 "colorful=${it.colorful},"
-    //     )
-    //     val time = formatSecond(it.progress)
-    //     val len = "Dialogue: 0,00:00:00,00:00:00,R2L,,0,0,0,,{\\move(0,0,0,0)}".length * elemsList.size
-    //     buildString(len) {
-    //         append("Dialogue: ")
-    //         append('0')
-    //         appendBeforeComma(time.first)
-    //         appendBeforeComma(time.second)
-    //
-    //         append(it.content)
-    //     }
-
-    // }
-
-    fun StringBuilder.appendComma(): StringBuilder = append(',')
-    fun StringBuilder.appendBeforeComma(str: String): StringBuilder = append(str).appendComma()
-
-    fun formatSecond(milliseconds: Int): Pair<String, String> {
-        val duration = milliseconds.milliseconds
-        // val period = duration.toDateTimePeriod()
-
-        // val hours = period.hours
-        // val minutes = period.minutes
-        // val seconds = period.seconds
-        //
-        // val startTime = String.format(null, "%02d:%02d:%02d", hours, minutes, seconds)
-        // val endTime = String.format(null, "%02d:%02d:%02d", hours, minutes, (seconds + 8) % 60)
-        return "startTime" to "endTime"
-    }
-
-    fun buildHeadersInfo(
-        title: String,
-        playResX: String,
-        playResY: String,
-    ): String =
-        """
-        [Script Info]
-        ; Script generated by BILIBILIAS Danmaku Converter
-        Title: $title
-        ScriptType: v4.00+
-        PlayResX:$playResX
-        PlayResY:$playResY
-        ScaledBorderAndShadow: no
-        """.trimIndent()
-
-    fun getFontStyleInfo(): String {
-        return """
-        [V4+ Styles]
-        Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-        Style: Small,Microsoft YaHei,36,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        Style: Medium,Microsoft YaHei,52,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        Style: Large,Microsoft YaHei,64,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        Style: Larger,Microsoft YaHei,72,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        Style: ExtraLarge,Microsoft YaHei,90,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        """.trimIndent()
-    }
-
-    fun getFormat(): String {
-        return """
-        [Events]
-        Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-        """.trimIndent()
-    }
-
-    fun generateASS() {
-        """
-        [Script Info]
-        Title: {{title}}
-        Original Script: 根据 {{ori}} 的弹幕信息，由 https://github.com/tiansh/us-danmaku 生成
-        ScriptType: v4.00+
-        Collisions: Normal
-        PlayResX: {{playResX}}
-        PlayResY: {{playResY}}
-        Timer: 10.0000
-
-        [V4+ Styles]
-        Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-        Style: Fix,{{font}},25,&H{{alpha}}FFFFFF,&H{{alpha}}FFFFFF,&H{{alpha}}000000,&H{{alpha}}000000,1,0,0,0,100,100,0,0,1,2,0,2,20,20,2,0
-        Style: R2L,{{font}},25,&H{{alpha}}FFFFFF,&H{{alpha}}FFFFFF,&H{{alpha}}000000,&H{{alpha}}000000,1,0,0,0,100,100,0,0,1,2,0,2,20,20,2,0
-
-        [Events]
-        Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-        """.trimIndent()
-    }
-
-    private fun startADMDownload() {}
-
-    private fun startIDMDownload() {}
     private fun builtin(
         bvid: String,
-        dash: com.imcys.model.PlayerInfo,
+        dash: PlayerInfo,
         pageData: PageData,
         downloadListHolders: DownloadListHolders,
         aid: Long,
@@ -239,22 +194,9 @@ class DownloadManage @Inject constructor(
     ) {
         val qn = downloadListHolders.videoQuality
         val d = dash.dash
-        buildIndexJson(d)
         buildEntryJson(qn, bvid, pageData)
         val cid = pageData.cid.toString()
 
-        val videoUrl: String =
-            d.video.groupBy { it.id }[downloadListHolders.videoQuality]?.last()?.baseUrl
-                ?: d.video.groupBy { it.id }.firstNotNullOf { (_, v) -> v.last().backupUrl.last() }
-        val audioUrl = d.audio.maxBy { it.id }.baseUrl
-        Timber.tag("downloadUrl").d("video=$videoUrl,audio=$audioUrl")
-        val video = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), VIDEO_M4S)
-        val audio = File(context.getExternalFilesDir("download/$bvid/c_$cid/$qn"), AUDIO_M4S)
-        val requestVideo =
-            createVideoRequest(videoUrl, video.absolutePath, cid, title, pageData.part, bvid, aid)
-        val requestAudio =
-            createAudioRequest(audioUrl, audio.path, cid, title, pageData.part, bvid, aid)
-//        fetchManage.add(listOf(requestVideo, requestAudio))
         downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
@@ -296,77 +238,83 @@ class DownloadManage @Inject constructor(
         """.trimIndent()
     }
 
-    private fun buildIndexJson(d: com.imcys.model.Dash) {
-        val indexJson = """
-                {
-                "video":[${json.encodeToString(d.video.maxBy { it.codecid })}],
-                "audio":[${json.encodeToString(d.audio.maxBy { it.id })}]
-                }
-        """.trimIndent()
+    fun findAllTask() {
     }
 
-    /**
-     * {BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}
-     * download/bvid/cid/画质/video.m4s
-     * download/bv123/c_111/120/video.m4s
-     */
-    private fun buildSavePath(bvid: String, cid: Long, qn: Int, name: String): String =
-        "savePath/$bvid/c_$cid/$qn/$name"
-
-    private fun createVideoRequest(
-        url: String,
-        file: String,
-        cid: String,
-        title: String,
-        pageTitle: String,
-        bvid: String,
-        aid: Long
-    ) {
-    }
-
-    private fun createAudioRequest(
-        url: String,
-        file: String,
-        cid: String,
-        title: String,
-        pageTitle: String,
-        bvid: String,
-        aid: Long
-    ) {
-    }
-
-    fun findAllTask(result: (List<Download>) -> Unit) {
-    }
-
-    fun deleteFile(id: Int, onSuccess: (Download) -> Unit, onError: (Error) -> Unit) {
+    fun deleteFile() {
     }
 
     fun addTask(bvid: String, pageData: List<PageData>, quality: Int) {
         scope.launch {
-            pageData.map {
-                videoRepository.getDashVideoStream(bvid, it.cid.toString())
-            }.forEach { info ->
-                val videoList =
-                    info.dash.video.groupBy { it.id }[quality] ?: error("视频没有所选清晰度")
-                val video = videoList.maxBy { it.codecid }
-                val audio = info.dash.audio.maxBy { it.id }
-                okDownload.enqueueTask(
-                    "test_aid",
-                    "test_bvid",
-                    "test_cid",
-                    video.baseUrl,
-                    video.backupUrl,
-                    DownloadTag.VIDEO
-                )
-                okDownload.enqueueTask(
-                    "test_aid",
-                    "test_bvid",
-                    "test_cid",
-                    audio.baseUrl,
-                    audio.backupUrl,
-                    DownloadTag.AUDIO
-                )
+            for (data in pageData) {
+                val cid = data.cid.toString()
+                val videoDetailsDeferred = async { videoRepository.viewDetail(bvid) }
+                val playerInfoDeferred = async { videoRepository.getPlayerPlayUrl(bvid, cid.toLong()) }
+                val detail = videoDetailsDeferred.await()
+                val info = playerInfoDeferred.await()
+                addToQueue(info, detail, quality)
+                downloadDanmuku(detail.aid, detail.cid, info.dash.duration)
             }
         }
+    }
+
+    private fun addToQueue(info: PlayerInfo, detail: VideoDetails, quality: Int) {
+        val videoList =
+            info.dash.video.groupBy { it.id }[quality]
+                ?: info.dash.video.groupBy { it.id }.maxBy { it.key }.value
+        val video = videoList.maxBy { it.codecid }
+        val audio = info.dash.audio.maxBy { it.id }
+
+        val cid = detail.cid.toString()
+        val path = videoSavePath(
+            detail.aid,
+            cid,
+            quality
+        )
+
+        okDownload.enqueueTask(
+            path,
+            cid,
+            video.baseUrl,
+            video.backupUrl,
+            DownloadTag.VIDEO,
+        )
+        okDownload.enqueueTask(
+            path,
+            cid,
+            audio.baseUrl,
+            audio.backupUrl,
+            DownloadTag.AUDIO,
+        )
+    }
+
+    private suspend fun downloadDanmuku(aid: Long, cid: Long, duration: Int): Unit = withContext(ioDispatcher) {
+        val reply =
+            danmakuRepository.protoWbi(cid,1)
+        val sb = StringBuilder(reply.elems.size * DEFAULT_DANMAKU_SIZE)
+        sb.append("<i>")
+            .append("<chatserver>chat.bilibili.com</chatserver>")
+            .append("<chatid>$cid</chatid>")
+            .append("<mission>0</mission>")
+            .append("<maxlimit>6000</maxlimit>")
+            .append("<state>0</state>")
+            .append("<real_name>0</real_name>")
+            .append("<source>k-v</source>")
+        for (elem in reply.elems) {
+            sb.append(
+                "<d p=\"${elem.progress},${elem.mode},${elem.fontsize},${elem.color},${elem.ctime},${elem.pool},${elem.midHash},${elem.id},10\">${elem.content}</d>"
+            )
+        }
+        val content = sb.append("</i>").toString()
+        val path = dmSavePath(aid, cid.toString())
+        File(path, DANMAKU_XML).writeText(content)
+    }
+
+    private fun videoSavePath(aid: Long, cid: String, quality: Int): String {
+        return "${dmSavePath(aid, cid)}${File.separator}$quality"
+    }
+
+    private fun dmSavePath(aid: Long, cid: String): String {
+        return "${context.downloadDir}${File.separator}$aid${File.separator}c_$cid"
     }
 }

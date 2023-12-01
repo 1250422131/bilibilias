@@ -4,7 +4,6 @@ import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.model.SpaceChannelVideo
 import com.imcys.model.space.SpaceArcSearch
-import com.imcys.network.constant.PS
 import com.imcys.network.repository.WbiKeyRepository
 import com.imcys.network.utils.parameterList
 import com.imcys.network.utils.parameterMID
@@ -43,14 +42,15 @@ class SpaceRepository @Inject constructor(
      */
     suspend fun querySpaceArc(mid: Long, pn: Int): SpaceArcSearch = withContext(ioDispatcher) {
         val token = wbiKeyRepository.getUserNavToken(
-            listOf(
-                "mid" to mid,
-                "pn" to pn,
-                "ps" to PS,
-
-                "tid" to 0,
-                "order" to "pubdate"
-            )
+            emptyList()
+//            listOf(
+//                "mid" to mid,
+//                "pn" to pn,
+//                "ps" to PS,
+//
+//                "tid" to 0,
+//                "order" to "pubdate"
+//            )
         )
         httpClient.get(SPACE_WBI_ARC_SEARCH) {
             parameterList(token)

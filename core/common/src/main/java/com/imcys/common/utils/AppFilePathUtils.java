@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.common.utils.file;
+package com.imcys.common.utils;
 
 /**
  * @author:imcys
@@ -36,7 +36,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 
 public class AppFilePathUtils {
@@ -78,8 +77,8 @@ public class AppFilePathUtils {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             //递归删除目录中的子目录下
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
                 if (!success) {
                     return false;
                 }
@@ -97,11 +96,11 @@ public class AppFilePathUtils {
      * @return true：安装，false：未安装
      */
     public static boolean isInstallApp(Context context, String appPackageName) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        final PackageManager packageManager = context.getPackageManager();
+        final List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
         for (int i = 0; i < pinfo.size(); i++) {
-            String pn = pinfo.get(i).packageName.toLowerCase(Locale.ENGLISH);
-            if (pn.equals(appPackageName)) {
+            String pn = pinfo.get(i).packageName;
+            if (pn.equalsIgnoreCase(appPackageName)) {
                 return true;
             }
         }

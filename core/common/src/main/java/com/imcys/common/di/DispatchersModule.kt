@@ -6,6 +6,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Dispatcher(val asDispatcher: AsDispatchers)
+
+enum class AsDispatchers {
+    Default,
+    IO,
+}
 
 @Module
 @InstallIn(SingletonComponent::class)

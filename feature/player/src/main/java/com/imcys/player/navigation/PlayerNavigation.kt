@@ -36,7 +36,6 @@ fun NavGraphBuilder.playerScreen(
     )
 ) {
     PlayerRoute(
-        navigateToDownloadVideo,
         navigateToDownloadAanmaku
     )
 }
