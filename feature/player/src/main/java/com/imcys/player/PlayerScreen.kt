@@ -76,11 +76,8 @@ import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-private val tag = Timber.tag("PlayerScreen")
-
 @Composable
 internal fun PlayerRoute(
-    onNavigateToDownloadOption: () -> Unit,
     onNavigateToDownloadAanmaku: () -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
@@ -89,6 +86,8 @@ internal fun PlayerRoute(
     val playerInfoUiState by viewModel.playerInfoUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
+        admDownload = viewModel::admDownload,
+        idmDownload = viewModel::idmDownload,
         state = state,
         onNavigateToDownloadAanmaku = onNavigateToDownloadAanmaku,
         selectedQuality = viewModel::selectedQuality,
@@ -102,6 +101,8 @@ internal fun PlayerRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlayerScreen(
+    admDownload: (String) -> Unit,
+    idmDownload: (String) -> Unit,
     state: PlayerState,
     onNavigateToDownloadAanmaku: () -> Unit,
     selectedQuality: (Int) -> Unit,
@@ -140,7 +141,9 @@ internal fun PlayerScreen(
                     Action.DOWNLOAD_VIDEO -> SheetPages(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
-                        pageData = playerUiState.pageData
+                        pageData = playerUiState.pageData,
+                        admDownload = admDownload,
+                        idmDownload = idmDownload
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()

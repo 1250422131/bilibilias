@@ -1,9 +1,8 @@
 package com.imcys.network.repository
 
+import androidx.collection.ArraySet
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
-import com.imcys.common.utils.Result
-import com.imcys.common.utils.asResult
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.model.Bangumi
@@ -16,6 +15,7 @@ import com.imcys.model.VideoHasCoins
 import com.imcys.model.VideoHasLike
 import com.imcys.model.video.PageData
 import com.imcys.network.api.BilibiliApi2
+import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
@@ -28,15 +28,11 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
-import io.ktor.utils.io.core.readBytes
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import timber.log.Timber
@@ -45,11 +41,13 @@ import javax.inject.Singleton
 
 @Singleton
 class VideoRepository @Inject constructor(
-    private val httpClient: HttpClient,
+    private val client: HttpClient,
     private val wbiKeyRepository: WbiKeyRepository,
     private val json: Json,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
-) {
+) : IVideoDataSources {
+    private val detailCache = ArraySet<VideoDetails>()
+
     /**
      * https://github.com/SocialSisterYi/bilibili-API-collect/pull/437/commits/4403e7ba7ed6853fa00a11371868b917e26b162a
      * ### 查询用户创建的合集
@@ -64,7 +62,7 @@ class VideoRepository @Inject constructor(
      */
     suspend fun queryCollections(mid: Long, pageNum: Int, pageSize: Int = 20): SeasonsSeriesList =
         withContext(ioDispatcher) {
-            httpClient.get("x/polymer/space/seasons_series_list") {
+            client.get("x/polymer/space/seasons_series_list") {
                 parameterMID(mid)
                 parameterPageNum(pageNum)
                 parameterPageSize(pageSize)
@@ -89,7 +87,7 @@ class VideoRepository @Inject constructor(
         pageSize: Int = 30,
         reverse: Boolean = false
     ) = withContext(ioDispatcher) {
-        val text = httpClient.get("x/polymer/space/seasons_archives_list") {
+        val text = client.get("x/polymer/space/seasons_archives_list") {
             parameterMID(mid)
             parameter("season_id", seasonId)
             parameter("sort_reverse", reverse)
@@ -100,13 +98,13 @@ class VideoRepository @Inject constructor(
     }
 
     suspend fun getPlayerPageList(bvid: String): List<PageData> = withContext(ioDispatcher) {
-        httpClient.get(BilibiliApi2.PLAYER_PAGE_LIST) {
+        client.get(BilibiliApi2.PLAYER_PAGE_LIST) {
             parameterBV(bvid)
         }.body()
     }
 
     suspend fun get番剧视频流(epID: String, cid: Long): BangumiPlayBean.Result {
-        val text = httpClient.safeGetText(BilibiliApi2.bangumiPlayPath) {
+        val text = client.safeGetText(BilibiliApi2.bangumiPlayPath) {
             headerRefBilibili()
             parameter("ep_id", epID)
             parameter("cid", cid)
@@ -119,168 +117,21 @@ class VideoRepository @Inject constructor(
     }
 
     suspend fun getEp(id: String): Bangumi = withContext(ioDispatcher) {
-        val text = httpClient.get(BilibiliApi2.bangumiVideoDataPath) {
+        val text = client.get(BilibiliApi2.bangumiVideoDataPath) {
             parameter("ep_id", id)
         }.bodyAsText()
         Timber.tag(TAG).d(text.ofMap()?.print())
         json.decodeFromString(text)
     }
 
-    private val _dashVideo = MutableSharedFlow<Result<PlayerInfo>>(1)
+    private val _dashVideo = MutableSharedFlow<PlayerInfo>(1)
     val dashVideo = _dashVideo.asSharedFlow()
-
-    /**
-     * fnval 默认值已经取到所有值
-     */
-    suspend fun getDashVideoStream(
-        bvid: String,
-        cid: String,
-        fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
-        fourk: Int = 1
-    ): PlayerInfo = getDashVideoStream(bvid, cid, fnval, fourk, false)
-
-    suspend fun getDashVideoStream(
-        bvid: String,
-        cid: String,
-        fnval: Int = 16 or 64 or 128 or 256 or 512 or 1024 or 2048,
-        fourk: Int = 1,
-        useWbi: Boolean = false
-    ): PlayerInfo {
-        val params: List<Pair<String, Any>> =
-            listOf(
-                "bvid" to bvid,
-                "cid" to cid,
-                "qn" to 0,
-                "fnval" to fnval,
-                "fourk" to fourk,
-                "fnver" to 0
-            )
-        return if (useWbi) {
-            withContext(ioDispatcher) {
-                val list = wbiKeyRepository.getUserNavToken(params)
-                httpClient.get(BilibiliApi2.VIDEO_PLAY_WBI) {
-                    parameterList(list)
-                }.body()
-            }
-        } else {
-            getVideoStreamAddress(params)
-        }
-    }
-
-    /**
-     * @param fnval 视频流格式标识 mp4值恒为1
-     * @param fourk 是否允许 4K 视频 1080p为0 4k为1
-     * @param fnver 恒为0
-     */
-    private suspend inline fun <reified T> getVideoStreamAddress(
-        params: List<Pair<String, Any>>
-    ): T = withContext(ioDispatcher) {
-        httpClient.get(BilibiliApi2.videoPlayPath) {
-            headerRefBilibili()
-            parameterList(params)
-        }.body()
-    }
-
-    /**
-     * oid = 视频cid
-     */
-    suspend fun getDanmakuXml(cid: String): Flow<Result<ByteArray>> = flow {
-        val bytes = httpClient.get(BilibiliApi2.videoDanMuPath) {
-            parameter("oid", cid)
-        }
-            .bodyAsChannel()
-            .readRemaining()
-            .readBytes()
-        emit(bytes)
-    }.asResult()
-
-    /**
-     * https://api.bilibili.com/x/v2/dm/wbi/web/seg.so?
-     * type=1&
-     * oid=1283745701&
-     * pid=619092919&
-     * segment_index=1&
-     * pull_mode=1&
-     * ps=0&
-     * pe=120000&
-     * web_location=1315873&
-     * w_rid=03838b4362dc45b1ab4784e6cd1a6f18&
-     * wts=1697211774
-     */
-    // fun getRealTimeDanmaku(cid: Long, segmentIndex: Int, type: Int = 1): Flow<Result<Dm.DmSegMobileReply>> {
-    //     // av810872(cid=1176840)
-    //     val result = flow {
-    //         val text = httpClient.get(BilibiliApi2.thisVideoDanmakuPath) {
-    //             parameter("oid", cid)
-    //             parameter("segment_index", segmentIndex)
-    //             parameter("type", type)
-    //         }.bodyAsChannel()
-    //
-    //         val parseFrom = Dm.DmSegMobileReply.parseFrom(text.toInputStream())
-    //         emit(parseFrom)
-    //     }.asResult()
-    //     return result
-    // }
-
-    // suspend fun getRealTimeDanmaku(
-    //     cid: Long,
-    //     aid: Long,
-    //     segmentIndex: Int = 1,
-    //     type: Int = 1,
-    //     useWbi: Boolean = true
-    // ): Flow<Result<Dm.DmSegMobileReply>> {
-    //     return if (useWbi) {
-    //         flow {
-    //             val navToken = wbiKeyRepository.getUserNavToken(
-    //                 listOf(
-    //                     "oid" to cid,
-    //                     "segment_index" to segmentIndex,
-    //                     "type" to type,
-    //                     "pid" to aid,
-    //                 )
-    //             )
-    //             val channel = httpClient.get(BilibiliApi2.thisVideoDanmakuWbiPath) {
-    //                 navToken.forEach {
-    //                     parameter(it.first, it.second)
-    //                 }
-    //             }.bodyAsChannel()
-    //             val parseFrom = Dm.DmSegMobileReply.parseFrom(channel.toInputStream())
-    //             emit(parseFrom)
-    //         }.asResult()
-    //     } else {
-    //         getRealTimeDanmaku(cid, segmentIndex, type)
-    //     }
-    // }
-
-    private val _videoDetails2 = MutableSharedFlow<Result<VideoDetails>>(1)
-    val videoDetails2 = _videoDetails2.asSharedFlow()
-    lateinit var cacheVideoView: VideoDetails
-        private set
-
-    /**
-     * aid=39330059
-     *
-     * bvid=BV1Bt411z799
-     */
-    suspend fun getVideoDetailsByBvid(bvid: String): VideoDetails = withContext(ioDispatcher) {
-        cacheVideoView = httpClient.get(BilibiliApi2.getVideoDataPath) {
-            parameterBV(bvid)
-        }.body()
-        cacheVideoView
-    }
-
-    suspend fun getVideoDetailsByAid(avid: String): VideoDetails = withContext(ioDispatcher) {
-        cacheVideoView = httpClient.get(BilibiliApi2.getVideoDataPath) {
-            parameter("aid", avid)
-        }.body()
-        cacheVideoView
-    }
 
     /**
      * 点赞
      */
     suspend fun hasLike(bvid: String): Boolean = withContext(ioDispatcher) {
-        val hasLike = httpClient.get(BilibiliApi2.videoHasLike) {
+        val hasLike = client.get(BilibiliApi2.videoHasLike) {
             parameterBV(bvid)
         }.body<VideoHasLike>()
         hasLike.like
@@ -290,7 +141,7 @@ class VideoRepository @Inject constructor(
      * 投币
      */
     suspend fun hasCoins(bvid: String): Boolean = withContext(ioDispatcher) {
-        val hasCoins = httpClient.get(BilibiliApi2.videoHasCoins) {
+        val hasCoins = client.get(BilibiliApi2.videoHasCoins) {
             parameterBV(bvid)
         }.body<VideoHasCoins>()
         hasCoins.coins
@@ -304,18 +155,67 @@ class VideoRepository @Inject constructor(
      * aid=BV1Bb411H7Dv
      */
     suspend fun hasCollection(bvid: String): Boolean = withContext(ioDispatcher) {
-        val collection = httpClient.get(BilibiliApi2.videoHasCollection) {
+        val collection = client.get(BilibiliApi2.videoHasCollection) {
             parameter("aid", bvid)
         }.body<VideoCollection>()
         collection.isFavoured
     }
 
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
-        httpClient.get(url)
+        client.get(url)
             .body<HttpResponse>()
             .request
             .url
             .toString()
+    }
+
+    override suspend fun viewDetail(bvid: String): VideoDetails = withContext(ioDispatcher) {
+        val detail = detailCache.find { it.bvid == bvid }
+        if (detail == null) {
+            val param = wbiKeyRepository.getUserNavToken(
+                listOf(Parameter("bvid", bvid))
+            )
+            val body = client.get(BilibiliApi2.VIEW_DETAIL) {
+//                parameterList(param)
+                parameter("bvid", bvid)
+            }.body<VideoDetails>()
+            detailCache.add(body)
+            Timber.tag("bugggg").d(body.toString())
+            body
+        } else {
+            detail
+        }
+    }
+
+    override suspend fun viewDetail(aid: Long): VideoDetails = withContext(ioDispatcher) {
+        val detail = detailCache.find { it.aid == aid }
+        if (detail == null) {
+            val param = wbiKeyRepository.getUserNavToken(
+                listOf(Parameter("aid", aid.toString()))
+            )
+            val body = client.get(BilibiliApi2.VIEW_DETAIL) {
+                parameterList(param)
+            }.body<VideoDetails>()
+            detailCache.add(body)
+            body
+        } else {
+            detail
+        }
+    }
+
+    override suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo = withContext(ioDispatcher) {
+        val param = wbiKeyRepository.getUserNavToken(
+            listOf(
+                Parameter("bvid", bvid),
+                Parameter("cid", cid.toString()),
+                Parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString()),
+                Parameter("fourk", "1"),
+                Parameter("platform", "pc")
+            )
+        )
+        client.get(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
+            parameterList(param)
+        }.body()
     }
 }
 

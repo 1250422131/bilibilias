@@ -4,7 +4,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
-import com.imcys.network.constants.BILIBILI_WEB_URL
+import com.imcys.network.constant.BILIBILI_WEB_URL
 import com.imcys.network.di.BaseOkhttpClient
 import dagger.Module
 import dagger.Provides

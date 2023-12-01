@@ -21,11 +21,8 @@ fun interface Interceptor {
 
     interface Chain {
         fun request(): Download.Request
-
         fun call(): Download.Call
-
         fun callback(): Download.Callback
-
         @Throws(DownloadException::class)
         fun proceed(request: Download.Request): Download.Response
     }

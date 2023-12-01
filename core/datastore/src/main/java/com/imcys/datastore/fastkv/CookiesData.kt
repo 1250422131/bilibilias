@@ -1,6 +1,7 @@
 package com.imcys.datastore.fastkv
 
 import android.content.Context
+import android.util.ArrayMap
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -14,17 +15,25 @@ import javax.inject.Inject
 class CookiesData @Inject constructor(
     @ApplicationContext context: Context
 ) : FastKVOwner("cookies", context) {
+    private val cookiesData = ArrayMap<String, String>(5)
     var cookieByteArray by array()
         private set
+
+    private var login by boolean()
 
     var timestamp: Long by long(0)
     val expires: Boolean = timestamp < System.currentTimeMillis()
 
-    val isLogin: Boolean = timestamp > System.currentTimeMillis()
+    val isLogin: Boolean = login
 
     fun save(data: ByteArray) {
         cookieByteArray = data
+        login = true
         kv.commit()
+    }
+
+    fun logout() {
+        login = false
     }
 
     var sessionData by string()
@@ -42,9 +51,6 @@ class CookiesData @Inject constructor(
     var refreshToken by string("")
 
     fun clearCookieData() {
-        sessionData = ""
-        csrf = ""
-        userID = ""
-        timestamp = 0
+        logout()
     }
 }

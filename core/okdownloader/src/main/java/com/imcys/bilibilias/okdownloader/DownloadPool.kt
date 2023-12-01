@@ -6,12 +6,12 @@ import java.util.ArrayDeque
 import java.util.Collections
 import java.util.Deque
 import java.util.PriorityQueue
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executor
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 class DownloadPool(
-    private val executorService: ExecutorService = ThreadPoolExecutor(
+    private val executorService: Executor = ThreadPoolExecutor(
         CPU_COUNT,
         CPU_COUNT * 2,
         5,

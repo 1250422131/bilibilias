@@ -23,18 +23,18 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.encoding)
+    implementation(libs.ktor.client.resources)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
 
     implementation(libs.androidx.paging.runtime.ktx)
-    implementation(libs.androidx.media3.datasource.okhttp)
-
-    implementation(libs.grpc.okhttp)
 
     implementation(libs.wireGrpcClient)
 
-    implementation("com.squareup.okhttp3:okhttp-brotli:4.11.0")
+    implementation(libs.okhttp.brotli)
 
     implementation(libs.ffmpeg.kit.full)
     implementation(libs.ffmpeg.ffmpegCommand)
+
+    implementation(libs.kotlinx.serialization.json)
 }

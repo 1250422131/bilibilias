@@ -16,6 +16,34 @@ import androidx.core.content.ContextCompat
 import timber.log.Timber
 import java.io.File
 
+fun Context.launchApp(pkgName: String): Intent {
+    val launcherActivity: String = getLauncherActivity(pkgName)
+    val intent = Intent(Intent.ACTION_MAIN)
+    intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    intent.setClassName(pkgName, launcherActivity)
+    return intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+}
+
+fun Context.getLauncherActivity(): String {
+    return getLauncherActivity(applicationContext.packageName)
+}
+
+/**
+ * 返回当前 Activity 的名称
+ *
+ * @param pkg 包名
+ */
+fun Context.getLauncherActivity(pkg: String): String {
+    if (pkg.isBlank()) return ""
+    val intent = Intent(Intent.ACTION_MAIN, null)
+    intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    intent.setPackage(pkg)
+    val info = packageManager.queryIntentActivities(intent, 0)
+    return if (info.isEmpty()) {
+        ""
+    } else info[0].activityInfo.name
+}
+
 fun Context.startActivity(clazz: Class<out Activity>, bundle: Bundle = Bundle()) {
     val intent = Intent(this, clazz).apply {
         putExtras(bundle)

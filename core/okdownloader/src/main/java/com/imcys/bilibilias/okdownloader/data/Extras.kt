@@ -65,3 +65,22 @@ open class Extras(protected val data: Map<String, String>) {
         val emptyExtras = Extras(emptyMap())
     }
 }
+
+interface Extras1<T> {
+    val data: T
+    fun copy(): T
+    override fun toString(): String
+}
+
+class Extras2 : Extras1<MutableList<String>> {
+    override val data: MutableList<String> = mutableListOf()
+    override fun copy(): MutableList<String> {
+        return mutableListOf<String>().apply {
+            addAll(data)
+        }
+    }
+
+    override fun toString(): String {
+        return data.toString()
+    }
+}

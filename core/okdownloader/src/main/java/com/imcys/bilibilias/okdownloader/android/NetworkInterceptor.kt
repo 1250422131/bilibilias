@@ -12,28 +12,28 @@ class NetworkInterceptor(private val context: Context) : Interceptor {
         if (!NetworkMonitor.getInstance(context).isNetworkAvailable()) {
             throw DownloadException(ErrorCode.NET_DISCONNECT, "Network not available")
         }
-        if (request is DownloadRequest) {
-            when {
-                (request.network and DownloadRequest.NETWORK_DATA) != DownloadRequest.NETWORK_DATA &&
-                    NetworkMonitor.getInstance(context).isMobileConnected() -> {
-                    throw DownloadException(
-                        ErrorCode.NETWORK_NOT_ALLOWED,
-                        "Expect network ${request.network}, but active network is ${
-                            NetworkMonitor.getInstance(context).getActiveNetworkType()
-                        }"
-                    )
-                }
-                (request.network and DownloadRequest.NETWORK_WIFI) != DownloadRequest.NETWORK_WIFI &&
-                    NetworkMonitor.getInstance(context).isWifiConnected() -> {
-                    throw DownloadException(
-                        ErrorCode.NETWORK_NOT_ALLOWED,
-                        "Expect network ${request.network}, but active network is ${
-                            NetworkMonitor.getInstance(context).getActiveNetworkType()
-                        }"
-                    )
-                }
-            }
-        }
+//        if (request is Download.Request) {
+//            when {
+//                (request.network and DownloadRequest.NETWORK_DATA) != DownloadRequest.NETWORK_DATA &&
+//                    NetworkMonitor.getInstance(context).isMobileConnected() -> {
+//                    throw DownloadException(
+//                        ErrorCode.NETWORK_NOT_ALLOWED,
+//                        "Expect network ${request.network}, but active network is ${
+//                            NetworkMonitor.getInstance(context).getActiveNetworkType()
+//                        }"
+//                    )
+//                }
+//                (request.network and DownloadRequest.NETWORK_WIFI) != DownloadRequest.NETWORK_WIFI &&
+//                    NetworkMonitor.getInstance(context).isWifiConnected() -> {
+//                    throw DownloadException(
+//                        ErrorCode.NETWORK_NOT_ALLOWED,
+//                        "Expect network ${request.network}, but active network is ${
+//                            NetworkMonitor.getInstance(context).getActiveNetworkType()
+//                        }"
+//                    )
+//                }
+//            }
+//        }
         return chain.proceed(chain.request())
     }
 }

@@ -2,7 +2,7 @@ package com.imcys.network.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.imcys.common.di.AsDispatchers.IO
+import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.model.Collections
 import com.imcys.network.api.BilibiliApi2
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class FavoritesRepository @Inject constructor(
     private val httpClient: HttpClient,
-    @Dispatcher(IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) : PagingSource<Int, Int>() {
 
     /**

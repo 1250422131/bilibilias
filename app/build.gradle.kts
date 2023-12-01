@@ -25,6 +25,7 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
+            isMinifyEnabled = false
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
             buildConfigField("boolean", "LOG_DEBUG", "true")

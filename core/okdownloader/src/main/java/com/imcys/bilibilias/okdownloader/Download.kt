@@ -1,30 +1,26 @@
 package com.imcys.bilibilias.okdownloader
 
-import com.imcys.bilibilias.okdownloader.data.Extras
 import com.imcys.bilibilias.okdownloader.internal.util.requireNotNullOrEmpty
 import java.io.File
 
-
-
 interface Download {
 
-    open class Request protected constructor(
-        @get:JvmName("url") val url: String,
-        @get:JvmName("path") val path: String,
-        @get:JvmName("md5") val md5: String?,
-        @get:JvmName("tag") val tag: String?,
-        @get:JvmName("size") val size: Long?,
-        @get:JvmName("retry") val retry: Int?,
-        @get:JvmName("priority") val priority: Priority,
-        @get:JvmName("extras") val extras: Extras,
-        @get:JvmName("headers") val headers: Map<String, String>,
+    class Request private constructor(
+        val url: String,
+        val path: String,
+        val md5: String?,
+        val tag: String?,
+        val size: Long?,
+        val retry: Int?,
+        val priority: Priority,
+        val headers: Map<String, String>,
+        val groupId: Long = DEFAULT_GROUP_ID
     ) {
-        var groupId: Long = DEFAULT_GROUP_ID
-        open fun newBuilder(): Builder = Builder(this)
+        fun newBuilder(): Builder = Builder(this)
 
-        open fun sourceFile(): File = File("$path.tmp")
+        fun sourceFile(): File = File("$path.tmp")
 
-        open fun destFile(): File = File(path)
+        fun destFile(): File = File(path)
         fun headers(): Array<String> {
             val header = mutableListOf<String>()
             headers.forEach { (name, value) ->
@@ -35,19 +31,19 @@ interface Download {
         }
 
         override fun toString(): String {
-            return "Request(url='$url', path='$path', md5=$md5, tag=$tag, size=$size, retry=$retry, priority=$priority, extras=$extras)"
+            return "Request(url='$url', path='$path', md5=$md5, tag=$tag, size=$size, retry=$retry, priority=$priority)"
         }
 
-        open class Builder {
-            protected var url: String? = null
-            protected var path: String? = null
-            protected var md5: String? = null
-            protected var tag: String? = null
-            protected var size: Long? = null
-            protected var retry: Int? = null
-            protected var priority: Priority = Priority.MIDDLE
-            protected var extras: Extras = Extras.emptyExtras
-            protected var headers = mutableMapOf<String, String>()
+        class Builder {
+            private var url: String? = null
+            private var path: String? = null
+            private var md5: String? = null
+            private var tag: String? = null
+            private var size: Long? = null
+            private var retry: Int = DEFAULT_RETRY
+            private var groupId: Long = DEFAULT_GROUP_ID
+            private var priority: Priority = Priority.MIDDLE
+            private var headers = mutableMapOf<String, String>()
 
             constructor()
 
@@ -58,51 +54,51 @@ interface Download {
                 this.tag = request.tag
                 this.size = request.size
                 this.priority = request.priority
-                this.extras = request.extras
+                this.groupId = request.groupId
                 this.headers = request.headers.toMutableMap()
             }
 
-            open fun url(url: String): Builder = apply {
+            fun url(url: String): Builder = apply {
                 this.url = url
             }
 
-            open fun md5(md5: String): Builder = apply {
+            fun md5(md5: String): Builder = apply {
                 this.md5 = md5
             }
 
-            open fun tag(tag: String): Builder = apply {
+            fun tag(tag: String): Builder = apply {
                 this.tag = tag
             }
 
-            open fun size(size: Long): Builder = apply {
+            fun size(size: Long): Builder = apply {
                 this.size = size
             }
 
-            open fun into(path: String): Builder = apply {
+            fun into(path: String): Builder = apply {
                 this.path = path
             }
 
-            open fun into(file: File): Builder = apply {
+            fun into(file: File): Builder = apply {
                 this.path = file.absolutePath
             }
 
-            open fun retry(retry: Int): Builder = apply {
+            fun retry(retry: Int): Builder = apply {
                 this.retry = retry
             }
 
-            open fun priority(priority: Priority): Builder = apply {
+            fun priority(priority: Priority): Builder = apply {
                 this.priority = priority
             }
 
-            open fun extras(extras: Extras): Builder = apply {
-                this.extras = extras
-            }
-
-            open fun header(name: String, value: String): Builder = apply {
+            fun header(name: String, value: String): Builder = apply {
                 this.headers[name] = value
             }
 
-            open fun build(): Request {
+            fun groupId(group: Long): Builder = apply {
+                groupId = group
+            }
+
+            fun build(): Request {
                 return Request(
                     url = requireNotNullOrEmpty(url) { "Missing url!" },
                     path = requireNotNullOrEmpty(path) { "Missing path!" },
@@ -111,7 +107,6 @@ interface Download {
                     retry = retry,
                     tag = tag,
                     priority = priority,
-                    extras = Extras.emptyExtras,
                     headers = headers
                 )
             }
@@ -119,12 +114,12 @@ interface Download {
     }
 
     class Response internal constructor(
-        @get:JvmName("code") val code: Int,
-        @get:JvmName("message") val message: String?,
-        @get:JvmName("output") val output: File?,
-        @get:JvmName("retryCount") val retryCount: Int,
-        @get:JvmName("downloadLength") val downloadLength: Long,
-        @get:JvmName("totalSize") val totalSize: Long,
+        val code: Int,
+        val message: String?,
+        val output: File?,
+        val retryCount: Int,
+        val downloadLength: Long,
+        val totalSize: Long,
     ) {
         fun isSuccessful(): Boolean = this.code in ErrorCode.SUCCESS..ErrorCode.EXISTS_SUCCESS
 

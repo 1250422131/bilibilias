@@ -34,7 +34,6 @@ internal fun Project.configureKotlin(
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            // JVM 17 not support sealed class, so use JVM 11 yet.
             jvmTarget.set(JvmTarget.fromTarget(AndroidConfigConventions.JAVA_VERSION.toString()))
         }
     }

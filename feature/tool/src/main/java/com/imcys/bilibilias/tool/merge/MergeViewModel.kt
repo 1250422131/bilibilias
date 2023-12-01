@@ -56,7 +56,7 @@ class MergeViewModel @Inject constructor(
             _mergeUiState.update { MergeUiState.Merging(progress) }
         }
 
-        override fun onError(errorCode: Int, errorMsg: String?) {
+        override fun onError(errorCode: Int, errorMsg: String?, mixFile: String, realName: String) {
             _mergeUiState.update { MergeUiState.Error(errorMsg) }
         }
 
@@ -64,21 +64,21 @@ class MergeViewModel @Inject constructor(
             _mergeUiState.update { MergeUiState.Complete }
         }
 
-        override fun onStart(size: Int) {
-            _mergeUiState.update { MergeUiState.Start(size) }
+        override fun onStart(title: String) {
+            _mergeUiState.update { MergeUiState.Start(title) }
         }
 
-        override fun onSuccess(fullPath: String?, realName: String?) {
-            if (fullPath != null) {
-                _mergeUiState.update {
-                    MergeUiState.Success(fullPath)
-                }
-                Timber.d(fullPath)
-                if (realName != null) {
-                    moveToMediaStore(fullPath, realName)
-                }
+        override fun onSuccess(fullPath: String, realName: String, tasks: Int) {
+            _mergeUiState.update {
+                MergeUiState.Success(realName)
             }
+            Timber.d(fullPath)
+            moveToMediaStore(fullPath, realName)
         }
+    }
+
+    init {
+        fFmpegMerge.setListener(listener)
     }
 
     private fun moveToMediaStore(fullPath: String, realName: String) {
@@ -114,8 +114,7 @@ class MergeViewModel @Inject constructor(
     }
 
     private fun sendMixData(vFile: File, aFile: File, file: String, title: String) {
-        fFmpegMerge.submit(MergeData(vFile, aFile, file, title))
-        fFmpegMerge.setListener(listener)
+        fFmpegMerge.execute(MergeData(vFile, aFile, file, title))
     }
 
     fun scanFile() {
