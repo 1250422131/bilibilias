@@ -1,7 +1,6 @@
 package com.imcys.network.api
 
 object BilibiliApi2 {
-
     // <editor-fold desc="登录">
     const val loginApi = "https://passport.bilibili.com/"
 
@@ -116,4 +115,9 @@ object BilibiliApi2 {
      * 获取视频流地址_web端
      */
     const val PLAYER_PLAY_URL_WBI = "x/player/wbi/playurl"
+
+    /**
+     * wbi 签名
+     */
+    const val WBI_SIGNATURE = "x/web-interface/nav"
 }

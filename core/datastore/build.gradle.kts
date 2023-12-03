@@ -10,7 +10,8 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(libs.fastkv)
+    implementation(project(":core:model"))
     implementation(libs.mmkv)
-    implementation(project(mapOf("path" to ":core:model")))
+    implementation(libs.fastkv)
+    implementation(libs.androidx.datastore)
 }

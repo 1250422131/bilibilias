@@ -185,7 +185,6 @@ class VideoRepository @Inject constructor(
 
     override suspend fun detail(aid: Long): VideoDetails = withContext(ioDispatcher) {
         val detail = detailCache.find { it.aid == aid }
-
         if (detail == null) {
             val bv = VideoUtils.av2bv(aid)
             val detail1 = detail(bv)

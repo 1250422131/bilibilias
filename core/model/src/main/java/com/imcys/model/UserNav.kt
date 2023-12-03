@@ -125,7 +125,7 @@ data class UserNav(
     @SerialName("email_verified")
     val emailVerified: Int = 0, // 1
     @SerialName("face")
-    val face: String = "", // https://i0.hdslb.com/bfs/face/aebb2639a0d47f2ce1fec0631f412eaf53d4a0be.jpg
+    val face: String = "",
     @SerialName("face_nft")
     val faceNft: Int = 0, // 0
     @SerialName("face_nft_type")
@@ -157,7 +157,7 @@ data class UserNav(
     @SerialName("scores")
     val scores: Int = 0, // 0
     @SerialName("shop_url")
-    val shopUrl: String = "", // https://gf.bilibili.com?msource=main_station
+    val shopUrl: String = "",
     @SerialName("uname")
     val uname: String = "", // 社会易姐QwQ
     @SerialName("vip")
@@ -220,11 +220,11 @@ data class UserNav(
         @SerialName("expire")
         val expire: Int = 0, // 0
         @SerialName("image")
-        val image: String = "", // https://i0.hdslb.com/bfs/garb/item/4f8f3f1f2d47f0dad84f66aa57acd4409ea46361.png
+        val image: String = "",
         @SerialName("image_enhance")
-        val imageEnhance: String = "", // https://i0.hdslb.com/bfs/garb/item/fe0b83b53e2342b16646f6e7a9370d8a867decdb.webp
+        val imageEnhance: String = "",
         @SerialName("image_enhance_frame")
-        val imageEnhanceFrame: String = "", // https://i0.hdslb.com/bfs/garb/item/127c507ec8448be30cf5f79500ecc6ef2fd32f2c.png
+        val imageEnhanceFrame: String = "",
         @SerialName("name")
         val name: String = "", // 初音未来13周年
         @SerialName("pid")
@@ -271,11 +271,11 @@ data class UserNav(
             @SerialName("img_label_uri_hans")
             val imgLabelUriHans: String = "",
             @SerialName("img_label_uri_hans_static")
-            val imgLabelUriHansStatic: String = "", // https://i0.hdslb.com/bfs/vip/8d4f8bfc713826a5412a0a27eaaac4d6b9ede1d9.png
+            val imgLabelUriHansStatic: String = "",
             @SerialName("img_label_uri_hant")
             val imgLabelUriHant: String = "",
             @SerialName("img_label_uri_hant_static")
-            val imgLabelUriHantStatic: String = "", // https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/VEW8fCC0hg.png
+            val imgLabelUriHantStatic: String = "",
             @SerialName("label_theme")
             val labelTheme: String = "", // annual_vip
             @SerialName("path")
@@ -300,11 +300,11 @@ data class UserNav(
         @SerialName("img_label_uri_hans")
         val imgLabelUriHans: String = "",
         @SerialName("img_label_uri_hans_static")
-        val imgLabelUriHansStatic: String = "", // https://i0.hdslb.com/bfs/vip/8d4f8bfc713826a5412a0a27eaaac4d6b9ede1d9.png
+        val imgLabelUriHansStatic: String = "",
         @SerialName("img_label_uri_hant")
         val imgLabelUriHant: String = "",
         @SerialName("img_label_uri_hant_static")
-        val imgLabelUriHantStatic: String = "", // https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/VEW8fCC0hg.png
+        val imgLabelUriHantStatic: String = "",
         @SerialName("label_theme")
         val labelTheme: String = "", // annual_vip
         @SerialName("path")
@@ -332,9 +332,9 @@ data class UserNav(
     @Serializable
     data class WbiImg(
         @SerialName("img_url")
-        val imgUrl: String = "", // https://i0.hdslb.com/bfs/wbi/653657f524a547ac981ded72ea172057.png
+        val imgUrl: String = "",
         @SerialName("sub_url")
-        val subUrl: String = "" // https://i0.hdslb.com/bfs/wbi/6e4909c702f846728e64f6007736a338.png
+        val subUrl: String = ""
     )
 
     @Transient

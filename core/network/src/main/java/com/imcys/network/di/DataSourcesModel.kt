@@ -1,9 +1,11 @@
 package com.imcys.network.di
 
 import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.WbiKeyRepository
 import com.imcys.network.repository.danmaku.DanmakuRepository
 import com.imcys.network.repository.danmaku.IDanmakuDataSources
 import com.imcys.network.repository.video.IVideoDataSources
+import com.imcys.network.repository.wbi.IWbiSignatureDataSources
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,6 @@ interface DataSourcesModel {
 
     @Binds
     fun bindIVideoDataSources(videoRepository: VideoRepository): IVideoDataSources
+    @Binds
+    fun bindIWbiSignatureDataSources(wbiKeyRepository: WbiKeyRepository): IWbiSignatureDataSources
 }
