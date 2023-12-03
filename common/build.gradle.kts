@@ -92,9 +92,6 @@ dependencies {
     // kotlinx
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    api(libs.kotlinx.collections.immutable)
-
-    api(libs.kotlinx.datetime)
 
     /**
      * RxFFmpeg

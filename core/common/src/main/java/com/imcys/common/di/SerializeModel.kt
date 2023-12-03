@@ -7,11 +7,12 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.protobuf.ProtoBuf
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class JsonModel {
+class SerializeModel {
     @Provides
     @Singleton
     fun provideJson(): Json = Json {
@@ -26,4 +27,8 @@ class JsonModel {
     @Provides
     @Singleton
     fun provideCbor(): Cbor = Cbor
+    @OptIn(ExperimentalSerializationApi::class)
+    @Provides
+    @Singleton
+    fun provideProto(): ProtoBuf = ProtoBuf
 }

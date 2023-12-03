@@ -7,11 +7,14 @@ import com.imcys.common.di.AsDispatchers
 import com.imcys.common.utils.asNonTerminatingExecutorService
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
+import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
 import com.imcys.network.constant.API_BILIBILI
 import com.imcys.network.constant.BROWSER_USER_AGENT
+import com.imcys.network.repository.Parameter
+import com.imcys.network.utils.SignatureUtils
 import com.squareup.wire.GrpcClient
 import dagger.Module
 import dagger.Provides
@@ -38,7 +41,10 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
+import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.kotlinx.protobuf.protobuf
+import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
@@ -71,6 +77,8 @@ annotation class BaseOkhttpClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class ProjectOkhttpClient
+
+internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -138,15 +146,14 @@ class NetworkModule {
         @BaseOkhttpClient okHttpClient: OkHttpClient
     ): OkHttpClient = okHttpClient.newBuilder()
         .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
-//        .addInterceptor(MonitorInterceptor())
+        .addInterceptor(MonitorInterceptor())
         .build()
 
     @Provides
     @Singleton
     fun provideOkHttpEngine(@ProjectOkhttpClient okHttpClient: OkHttpClient): HttpClientEngine =
         OkHttp.create {
-            addInterceptor(MonitorInterceptor())
-//            preconfigured = okHttpClient
+            preconfigured = okHttpClient
         }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -158,7 +165,8 @@ class NetworkModule {
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
         cacheManager: CacheManager,
-        loggerManager: LoggerManager
+        loggerManager: LoggerManager,
+        wbiKeyStorage: WbiKeyStorage
     ): HttpClient = HttpClient(httpClientEngine) {
         defaultRequest {
             url(API_BILIBILI)
@@ -176,7 +184,7 @@ class NetworkModule {
 
         install(ContentNegotiation) {
             json(json)
-//            protobuf()
+            protobuf()
         }
 
         install(HttpRequestRetry) {
@@ -192,11 +200,25 @@ class NetworkModule {
         }
     }.apply {
         plugin(HttpSend).intercept { request ->
-            val originalCall = execute(request)
-            if (originalCall.response.status.value !in 100..399) {
+            if (request.attributes.getOrNull(requireWbi) == true) {
+                val params = request.url.parameters
+                val signatureParams = mutableListOf<Parameter>()
+                for ((k, v) in params.entries()) {
+                    signatureParams.add(Parameter(k, v.joinToString()))
+                }
+                val signature = SignatureUtils.signature(
+                    signatureParams, wbiKeyStorage.mixKey ?: ""
+                )
+                val newParameter = ParametersBuilderImpl()
+                for ((n, v) in signature) {
+                    newParameter.append(n, v)
+                }
+
+                request.url.encodedParameters = newParameter
+                Timber.d("param=${newParameter.build()}")
                 execute(request)
             } else {
-                originalCall
+                execute(request)
             }
         }
     }

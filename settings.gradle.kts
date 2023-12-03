@@ -38,3 +38,4 @@ include(":feature:player")
 
 include(":lint")
 include(":core:okdownloader")
+include(":core:datastore-proto")

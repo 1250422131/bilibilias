@@ -5,6 +5,7 @@ import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.md5
 import com.imcys.model.UserNav
 import com.imcys.network.api.BilibiliApi2
+import com.imcys.network.repository.wbi.IWbiSignatureDataSources
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -18,7 +19,11 @@ import javax.inject.Singleton
 class WbiKeyRepository @Inject constructor(
     private val client: HttpClient,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
-) {
+) : IWbiSignatureDataSources {
+    override suspend fun getSignature(): String = withContext(ioDispatcher) {
+        val userNav = client.get(BilibiliApi2.WBI_SIGNATURE).body<UserNav>()
+        getMixinKey(userNav.imgKey, userNav.subKey)
+    }
 
     private val mixinKeyEncTab = intArrayOf(
         46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
@@ -29,6 +34,9 @@ class WbiKeyRepository @Inject constructor(
 
     private var token: String? = null
 
+    /**
+     * Navigation bar user information
+     */
     suspend fun getUserNavToken(params: List<Parameter>): List<Parameter> =
         withContext(ioDispatcher) {
             val userNav = client.get(BilibiliApi2.Token).body<UserNav>()

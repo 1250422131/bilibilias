@@ -2,7 +2,7 @@
 androidxComposeCompiler = "1.5.4"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 accompanist = "0.32.0"
-androidGradlePlugin = "8.1.4"
+androidGradlePlugin = "8.2.0"
 androidFilePicker = "0.8.2"
 androidx-junit = "1.1.5"
 appcenter = "5.0.2"
@@ -10,6 +10,7 @@ appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 coil = "2.5.0"
 composeSettingsUiM3 = "1.0.2"
+datastore = "1.0.0"
 materialDialogsCore = "0.9.0"
 constraintlayout = "2.1.4"
 coreKtx = "1.12.0"
@@ -31,7 +32,7 @@ kotlin = "1.9.20"
 ksp = "1.9.20-1.0.14"
 kotlinxCoroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
-kotlinxDatetime = "0.4.1"
+kotlinxDatetime = "0.5.0"
 kotlinxSerialization = "1.6.2"
 kotlinxSerializationPlugin = "1.9.10"
 media3 = "1.2.0"
@@ -68,6 +69,7 @@ accompanist-navigation-material = { group = "com.google.accompanist", name = "ac
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidxStartupRuntime" }
 
 compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
