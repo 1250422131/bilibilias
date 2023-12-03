@@ -53,7 +53,7 @@ class PlayerViewModel @Inject constructor(
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
     val playerInfoUiState = info.map { (a, b, c) ->
-        videoRepository.viewDetail(b)
+        videoRepository.detail(b)
     }.asResult()
         .map { result ->
             when (result) {

@@ -2,9 +2,8 @@ package com.imcys.network.repository.danmaku
 
 import com.imcys.network.repository.Parameter
 import com.imcys.network.repository.WebInterface
-import io.ktor.resources.Resource
 
-@Resource("x/v1/dm/list.so")
+//@Resource("x/v1/dm/list.so")
 class DanmakuXml(val cid: Long)
 
 /**
@@ -26,12 +25,12 @@ class DanmakuXml(val cid: Long)
  * segment_index 长度为 6
  * (30*60 + 4) / (6*60) + 1
  */
-@Resource("x/v2/dm")
+//@Resource("x/v2/dm")
 class DanmakuProto {
-    @Resource("web/seg.so")
+//    @Resource("web/seg.so")
     class Web(val cid: Long, val index: Int, val type: Int = 1)
 
-    @Resource("wbi/web/seg.so")
+//    @Resource("wbi/web/seg.so")
     class WbiWeb(val cid: Long, val index: Int, val type: Int = 1) : WebInterface {
         override fun buildParameter(): List<Parameter> {
             return listOf(

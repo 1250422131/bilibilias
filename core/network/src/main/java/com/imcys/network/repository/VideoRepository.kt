@@ -3,6 +3,7 @@ package com.imcys.network.repository
 import androidx.collection.ArraySet
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
+import com.imcys.common.utils.VideoUtils
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.model.Bangumi
@@ -169,54 +170,47 @@ class VideoRepository @Inject constructor(
             .toString()
     }
 
-    override suspend fun viewDetail(bvid: String): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun detail(bvid: String): VideoDetails = withContext(ioDispatcher) {
         val detail = detailCache.find { it.bvid == bvid }
         if (detail == null) {
-            val param = wbiKeyRepository.getUserNavToken(
-                listOf(Parameter("bvid", bvid))
-            )
             val body = client.get(BilibiliApi2.VIEW_DETAIL) {
-//                parameterList(param)
                 parameter("bvid", bvid)
             }.body<VideoDetails>()
             detailCache.add(body)
-            Timber.tag("bugggg").d(body.toString())
             body
         } else {
             detail
         }
     }
 
-    override suspend fun viewDetail(aid: Long): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun detail(aid: Long): VideoDetails = withContext(ioDispatcher) {
         val detail = detailCache.find { it.aid == aid }
+
         if (detail == null) {
-            val param = wbiKeyRepository.getUserNavToken(
-                listOf(Parameter("aid", aid.toString()))
-            )
-            val body = client.get(BilibiliApi2.VIEW_DETAIL) {
-                parameterList(param)
-            }.body<VideoDetails>()
-            detailCache.add(body)
-            body
+            val bv = VideoUtils.av2bv(aid)
+            val detail1 = detail(bv)
+            detailCache.add(detail1)
+            detail1
         } else {
             detail
         }
     }
 
-    override suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo = withContext(ioDispatcher) {
-        val param = wbiKeyRepository.getUserNavToken(
-            listOf(
-                Parameter("bvid", bvid),
-                Parameter("cid", cid.toString()),
-                Parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString()),
-                Parameter("fourk", "1"),
-                Parameter("platform", "pc")
+    override suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo =
+        withContext(ioDispatcher) {
+            val param = wbiKeyRepository.getUserNavToken(
+                listOf(
+                    Parameter("bvid", bvid),
+                    Parameter("cid", cid.toString()),
+                    Parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString()),
+                    Parameter("fourk", "1"),
+                    Parameter("platform", "pc")
+                )
             )
-        )
-        client.get(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
-            parameterList(param)
-        }.body()
-    }
+            client.get(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
+                parameterList(param)
+            }.body()
+        }
 }
 
 private const val TAG = "VideoRepository"

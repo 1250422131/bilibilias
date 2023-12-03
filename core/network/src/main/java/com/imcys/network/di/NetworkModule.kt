@@ -18,6 +18,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
@@ -38,17 +39,14 @@ import io.ktor.client.plugins.plugin
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.serializer
@@ -64,6 +62,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.reflect.typeOf
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -146,7 +145,8 @@ class NetworkModule {
     @Singleton
     fun provideOkHttpEngine(@ProjectOkhttpClient okHttpClient: OkHttpClient): HttpClientEngine =
         OkHttp.create {
-            preconfigured = okHttpClient
+            addInterceptor(MonitorInterceptor())
+//            preconfigured = okHttpClient
         }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -176,7 +176,7 @@ class NetworkModule {
 
         install(ContentNegotiation) {
             json(json)
-            protobuf()
+//            protobuf()
         }
 
         install(HttpRequestRetry) {
@@ -204,10 +204,10 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
-        transformResponseBody { response, content, requestedType ->
+        transformResponseBody { response, _, requestedType ->
             try {
                 Timber.tag("TransformData").d("type=$requestedType")
-                if (requestedType.type == ByteReadChannel::class) return@transformResponseBody null
+                if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
                 /**
                  * 实验性使用
                  */
@@ -223,22 +223,14 @@ class NetworkModule {
                 when (realData) {
                     is JsonObject -> {
                         realData = realData.jsonObject
-                        json.parseToJsonElement(realData.toString())
+                        val deserializer = serializer(requestedType.kotlinType!!)
+                        Timber.tag("TransformData").d(deserializer.descriptor.toString())
                         val element = json.decodeFromJsonElement(
-                            serializer(requestedType.reifiedType),
+                            deserializer,
                             realData
                         )
-                        val print = element.ofMap()?.print()
-                        Timber.tag("TransformData").d("data=${print ?: "@null"}")
-                        Timber.tag("TransformData").d("realData=${realData.size}")
-                        element
-                    }
-
-                    is JsonArray -> {
-                        realData = realData.jsonArray
-                        val type = requestedType.kotlinType
-                            ?: throw NoTypeException(requestedType.toString())
-                        val element = json.decodeFromJsonElement(serializer(type), realData)
+                        val print = element?.ofMap()?.print()
+                        Timber.tag("TransformData").d("data=${element ?: "@null"}")
                         element
                     }
 

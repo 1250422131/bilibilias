@@ -3,6 +3,7 @@ buildscript {
         classpath(libs.wireGradlePlugin)
     }
     repositories {
+        mavenCentral()
         maven("https://maven.aliyun.com/repository/public")
         maven("https://maven.aliyun.com/repository/gradle-plugin")
         google()
@@ -17,7 +18,6 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.jvm)
     alias(libs.plugins.detekt)
     // Run ./gradlew dependencyUpdates to check for dependency updates
     id("com.github.ben-manes.versions") version "0.50.0"
