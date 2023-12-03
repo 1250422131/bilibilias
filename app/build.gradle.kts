@@ -3,11 +3,8 @@ plugins {
     alias(libs.plugins.bilibili.android.application)
     alias(libs.plugins.bilibili.android.compose)
     alias(libs.plugins.bilibili.android.hilt)
-    alias(libs.plugins.kotlin.serialization)
 }
-ksp {
-    arg("ModuleName", project.name)
-}
+
 android {
     namespace = "com.imcys.bilibilias"
 

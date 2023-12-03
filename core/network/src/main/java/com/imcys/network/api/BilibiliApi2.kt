@@ -104,8 +104,13 @@ object BilibiliApi2 {
     /**
      * 获取视频超详细信息(web端)
      */
-    const val VIEW_DETAIL_WBI = "x/web-interface/wbi/view/detail"
-    const val VIEW_DETAIL = "x/web-interface/view/detail"
+    const val VIEW_ULTRA_DETAIL_WBI = "x/web-interface/wbi/view/detail"
+    const val VIEW_ULTRA_DETAIL = "x/web-interface/view/detail"
+
+    /**
+     * 获取视频详细信息(web端)
+     */
+    const val VIEW_DETAIL = "x/web-interface/view"
 
     /**
      * 获取视频流地址_web端

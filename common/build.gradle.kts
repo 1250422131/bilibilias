@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.bilibili.android.compose)
     alias(libs.plugins.bilibili.android.hilt)
     alias(libs.plugins.bilibili.android.room)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 ksp {

@@ -4,8 +4,8 @@ import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
 
 interface IVideoDataSources {
-    suspend fun viewDetail(bvid: String): VideoDetails
-    suspend fun viewDetail(aid: Long): VideoDetails
+    suspend fun detail(bvid: String): VideoDetails
+    suspend fun detail(aid: Long): VideoDetails
     suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo
 
     companion object {

@@ -10,7 +10,6 @@ object AsVideoUtils {
     fun isShortLink(text: String) = RegexUtils.shortLink.containsMatchIn(text)
     fun isAV(text: String) = RegexUtils.avRegex.containsMatchIn(text)
 
-    // 是可以解析的
     fun isResolvable(text: String): Boolean = isEp(text) || isBV(text) || isAV(text) || isShortLink(text)
     fun getEpid(text: String): String? {
         if (isEp(text)) {
