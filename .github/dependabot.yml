@@ -23,7 +23,7 @@ updates:
 
 registries:
   jitpack:
-    type: jitpack-io
+    type: maven-repository
     url: "https://jitpack.io"
   maven-central:
     type: maven-repository
