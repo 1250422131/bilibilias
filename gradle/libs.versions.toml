@@ -1,6 +1,6 @@
 [versions]
 android = "8.2.0"
-androidFilePicker = "0.8.2"
+androidFilePicker = "0.75"
 androidx-junit = "1.1.5"
 appcenter = "5.0.3"
 appcompat = "1.6.1"
