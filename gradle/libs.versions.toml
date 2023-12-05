@@ -61,7 +61,7 @@ protobuf = "3.24.4"
 protobufPlugin = "0.9.4"
 koin = "3.5.1"
 lint = "31.2.0"
-wire = "4.9.1"
+wire = "4.9.3"
 commonsCodec = "1.16.0"
 [libraries]
 accompanist-insets-ui = { group = "com.google.accompanist", name = "accompanist-insets-ui", version.ref = "accompanist" }
