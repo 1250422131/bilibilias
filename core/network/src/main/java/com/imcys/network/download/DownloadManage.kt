@@ -248,7 +248,7 @@ class DownloadManage @Inject constructor(
         scope.launch {
             for (data in pageData) {
                 val cid = data.cid.toString()
-                val videoDetailsDeferred = async { videoRepository.detail(bvid) }
+                val videoDetailsDeferred = async { videoRepository.getDetail(bvid) }
                 val playerInfoDeferred = async { videoRepository.getPlayerPlayUrl(bvid, cid.toLong()) }
                 val detail = videoDetailsDeferred.await()
                 val info = playerInfoDeferred.await()

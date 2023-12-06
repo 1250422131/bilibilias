@@ -16,7 +16,6 @@ import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.VideoRepository
-import com.imcys.network.repository.space.SpaceRepository
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
@@ -39,7 +38,6 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val spaceRepository: SpaceRepository,
     val downloadListHolders: DownloadListHolders,
     private val savedStateHandle: SavedStateHandle,
     private val downloadManage: DownloadManage
@@ -53,7 +51,7 @@ class PlayerViewModel @Inject constructor(
         .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
     val playerInfoUiState = info.map { (a, b, c) ->
-        videoRepository.detail(b)
+        videoRepository.getDetail(b)
     }.asResult()
         .map { result ->
             when (result) {

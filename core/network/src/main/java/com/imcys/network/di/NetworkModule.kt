@@ -8,6 +8,7 @@ import com.imcys.common.utils.asNonTerminatingExecutorService
 import com.imcys.common.utils.ofMap
 import com.imcys.common.utils.print
 import com.imcys.datastore.fastkv.WbiKeyStorage
+import com.imcys.model.Box
 import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
@@ -39,22 +40,18 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Cache
 import okhttp3.ConnectionSpec
@@ -78,7 +75,7 @@ annotation class BaseOkhttpClient
 @Retention(AnnotationRetention.BINARY)
 annotation class ProjectOkhttpClient
 
-internal val requireWbi = AttributeKey<Boolean>("requireWbi")
+val requireWbi = AttributeKey<Boolean>("requireWbi")
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -223,41 +220,23 @@ class NetworkModule {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
-        transformResponseBody { response, _, requestedType ->
+        transformResponseBody { response, content, requestedType ->
             try {
                 Timber.tag("TransformData").d("type=$requestedType")
                 if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
-                /**
-                 * 实验性使用
-                 */
-                // json.decodeFromStream(serializer(requestedType.reifiedType), response.readBytes().inputStream())
-                val rep = response.bodyAsText()
-                val res = json.parseToJsonElement(rep).jsonObject
-                val code = res["code"]?.jsonPrimitive?.intOrNull
-                if (code != SUCCESS) {
-                    val message = res["message"]?.jsonPrimitive?.contentOrNull
-                    throw ApiIOException(message)
-                }
-                var realData = res["data"] ?: throw NullResponseDataIOException()
-                when (realData) {
-                    is JsonObject -> {
-                        realData = realData.jsonObject
-                        val deserializer = serializer(requestedType.kotlinType!!)
-                        Timber.tag("TransformData").d(deserializer.descriptor.toString())
-                        val element = json.decodeFromJsonElement(
-                            deserializer,
-                            realData
-                        )
-                        val print = element?.ofMap()?.print()
-                        Timber.tag("TransformData").d("data=${element ?: "@null"}")
-                        element
-                    }
+                val box = json.decodeFromStream(
+                    Box.serializer(serializer(requestedType.kotlinType!!)),
+                    content.toInputStream()
+                )
 
-                    else -> null
-                }
+                if (box.code != SUCCESS) throw ApiIOException(box.message)
+                val print = box.ofMap()?.print()
+                Timber.tag("TransformData").d("data=${print ?: "@null"}")
+                box.data
             } catch (e: Exception) {
                 Timber.tag("TransformDataException").e(e)
                 null
