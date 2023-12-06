@@ -1,11 +1,12 @@
 package plugin
 
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginManager
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-
 @Suppress("unused")
 class AndroidLibraryConventionPlugin : Plugin<Project> {
 
@@ -15,6 +16,9 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             applyAndroid<LibraryExtension> {
                 configureKotlin(this)
                 configureAndroid()
+            }
+            extensions.configure<LibraryAndroidComponentsExtension> {
+                disableUnnecessaryAndroidTests(project)
             }
             applyDependencies()
         }
