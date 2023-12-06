@@ -120,4 +120,9 @@ object BilibiliApi2 {
      * wbi 签名
      */
     const val WBI_SIGNATURE = "x/web-interface/nav"
+
+    /**
+     * 查询用户投稿视频明细
+     */
+    const val WBI_SPACE_ARC_SEARCH = "x/space/wbi/arc/search"
 }

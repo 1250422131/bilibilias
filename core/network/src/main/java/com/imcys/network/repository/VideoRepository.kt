@@ -10,7 +10,6 @@ import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
 import com.imcys.model.PlayerInfo
 import com.imcys.model.SeasonsSeriesList
-import com.imcys.model.VideoCollection
 import com.imcys.model.VideoDetails
 import com.imcys.model.VideoHasCoins
 import com.imcys.model.VideoHasLike
@@ -148,20 +147,6 @@ class VideoRepository @Inject constructor(
         hasCoins.coins
     }
 
-    /**
-     * 收藏
-     *
-     * aid=46281123
-     *
-     * aid=BV1Bb411H7Dv
-     */
-    suspend fun hasCollection(bvid: String): Boolean = withContext(ioDispatcher) {
-        val collection = client.get(BilibiliApi2.videoHasCollection) {
-            parameter("aid", bvid)
-        }.body<VideoCollection>()
-        collection.isFavoured
-    }
-
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
         client.get(url)
             .body<HttpResponse>()
@@ -170,11 +155,11 @@ class VideoRepository @Inject constructor(
             .toString()
     }
 
-    override suspend fun detail(bvid: String): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun getDetail(bvid: String): VideoDetails = withContext(ioDispatcher) {
         val detail = detailCache.find { it.bvid == bvid }
         if (detail == null) {
             val body = client.get(BilibiliApi2.VIEW_DETAIL) {
-                parameter("bvid", bvid)
+                parameterBV(bvid)
             }.body<VideoDetails>()
             detailCache.add(body)
             body
@@ -183,11 +168,11 @@ class VideoRepository @Inject constructor(
         }
     }
 
-    override suspend fun detail(aid: Long): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun getDetail(aid: Long): VideoDetails = withContext(ioDispatcher) {
         val detail = detailCache.find { it.aid == aid }
         if (detail == null) {
             val bv = VideoUtils.av2bv(aid)
-            val detail1 = detail(bv)
+            val detail1 = getDetail(bv)
             detailCache.add(detail1)
             detail1
         } else {

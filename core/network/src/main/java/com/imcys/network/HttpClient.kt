@@ -2,18 +2,26 @@ package com.imcys.network
 
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
+import com.imcys.network.di.requireWbi
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.SerializationException
 import timber.log.Timber
+
+internal suspend inline fun HttpClient.wbiGet(
+    urlString: String,
+    block: HttpRequestBuilder.() -> Unit = {}
+): HttpResponse = get { attributes.put(requireWbi, true);url(urlString); block() }
 
 internal suspend inline fun <reified T> HttpClient.safeGet(
     url: String,

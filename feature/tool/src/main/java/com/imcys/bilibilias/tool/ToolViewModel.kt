@@ -109,10 +109,10 @@ class ToolViewModel
     private suspend fun handleShortLink(url: String) = videoRepository.shortLink(url)
 
     private suspend fun handleAV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.detail(id.toLong()))
+        flowOf(videoRepository.getDetail(id.toLong()))
 
     private suspend fun handleBV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.detail(id))
+        flowOf(videoRepository.getDetail(id))
 
     fun Flow<VideoDetails>.mapToUserSearchResult(): Flow<SearchResultUiState> =
         this.asResult()
