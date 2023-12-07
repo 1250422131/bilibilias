@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:design-system"))
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
@@ -26,14 +26,13 @@ dependencies {
     debugApi(libs.androidx.compose.ui.tooling)
 
     // implementation(projects.core.analytics)
-    implementation(project(":core:design-system"))
     // implementation(projects.core.domain)
-    implementation(project(":core:model"))
+    implementation(projects.core.model)
     implementation(libs.androidx.activity.compose)
     // implementation(libs.androidx.browser)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
 
-    api("com.github.razaghimahdi:Compose-Loading-Dots:1.2.3")
+//    api(libs.compose.Loading.Dots)
 }

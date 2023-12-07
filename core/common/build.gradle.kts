@@ -29,7 +29,7 @@ dependencies {
 
     implementation(libs.kotlin.reflect)
 
-    api("com.github.getActivity:Toaster:12.6")
+    api(libs.toaster)
     implementation(libs.androidx.startup.runtime)
 
     api(libs.kotlinx.collections.immutable)

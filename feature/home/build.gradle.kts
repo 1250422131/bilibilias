@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:network"))
-    implementation(project(":core:datastore"))
+    implementation(projects.core.network)
+    implementation(projects.core.datastore)
 
     implementation(libs.zhujiang.banner)
 }
