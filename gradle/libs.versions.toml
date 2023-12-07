@@ -34,8 +34,7 @@ ksp = "1.9.21-1.0.15"
 kotlinxCoroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
 kotlinxDatetime = "0.5.0"
-kotlinxSerialization = "1.6.0"
-kotlinxSerializationPlgin = "1.9.0"
+kotlinxSerialization = "1.6.2"
 media3 = "1.2.0"
 okhttp = "4.12.0"
 okio = "3.6.0"
@@ -234,7 +233,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerializationPlgin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 
 bilibili-android-application = { id = "bilibili.android.app", version = "unspecified" }
