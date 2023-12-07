@@ -9,8 +9,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:datastore"))
-    implementation(project(":core:common"))
+    implementation(projects.core.datastore)
+    implementation(projects.core.common)
+
     implementation(libs.compose.settings.ui.m3)
     implementation(libs.androidFilePicker)
 }

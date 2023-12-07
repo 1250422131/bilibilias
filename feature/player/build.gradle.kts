@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:network"))
-    implementation(project(":core:common"))
+    implementation(projects.core.network)
+    implementation(projects.core.common)
     /**
      * gsy 播放器
      */

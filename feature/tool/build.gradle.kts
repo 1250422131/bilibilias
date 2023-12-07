@@ -9,9 +9,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:network"))
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
+    implementation(projects.core.network)
+    implementation(projects.core.model)
+    implementation(projects.core.common)
     /**
      * jxl库
      * 直接生成excel文件时采用

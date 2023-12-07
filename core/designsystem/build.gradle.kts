@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.imcys.design.system"
+    namespace = "com.imcys.designsystem"
 }
 
 dependencies {

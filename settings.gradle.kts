@@ -1,6 +1,6 @@
-includeBuild("build-logic")
 pluginManagement {
     repositories {
+        includeBuild("build-logic")
         gradlePluginPortal()
         google()
         mavenCentral()
@@ -18,12 +18,13 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "BILIBILIAS"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":common")
 
 include(":core:common")
 include(":core:ui")
-include(":core:design-system")
+include(":core:designsystem")
 include(":core:network")
 include(":core:model")
 include(":core:database")
@@ -39,3 +40,4 @@ include(":feature:player")
 include(":lint")
 include(":core:okdownloader")
 include(":core:datastore-proto")
+include(":feature:userspace")

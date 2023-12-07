@@ -14,7 +14,7 @@ android {
         versionName = AndroidConfigConventions.BilibiliAS.VERSION_NAME
 
         ndk {
-            abiFilters += listOf( "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,19 +62,20 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:design-system"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:model"))
-    implementation(project(":core:network"))
-    implementation(project(":core:datastore"))
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.ui)
+    implementation(projects.core.model)
+    implementation(projects.core.network)
+    implementation(projects.core.datastore)
 
-    implementation(project(":feature:authentication"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:tool"))
-    implementation(project(":feature:user"))
-    implementation(project(":feature:setting"))
-    implementation(project(":feature:player"))
+    implementation(projects.feature.authentication)
+    implementation(projects.feature.home)
+    implementation(projects.feature.tool)
+    implementation(projects.feature.user)
+    implementation(projects.feature.setting)
+    implementation(projects.feature.player)
+    implementation(projects.feature.userspace)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)

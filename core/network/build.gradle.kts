@@ -9,11 +9,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:okdownloader"))
-    implementation(project(":common"))
+    implementation(projects.core.model)
+    implementation(projects.core.common)
+    implementation(projects.core.datastore)
+    implementation(projects.core.okdownloader)
+    implementation(projects.common)
 
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
@@ -26,7 +26,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.serialization.kotlinx.protobuf)
 
-    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.runtime)
 
     implementation(libs.wireGrpcClient)
 
