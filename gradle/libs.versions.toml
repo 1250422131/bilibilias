@@ -9,6 +9,7 @@ appcenter = "5.0.3"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 coil = "2.5.0"
+composeLoadingDots = "1.2.3"
 composeSettingsUiM3 = "1.0.2"
 datastore = "1.0.0"
 materialDialogsCore = "0.9.0"
@@ -53,6 +54,7 @@ room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
 androidxStartupRuntime = "1.1.1"
 timber = "5.0.1"
+toaster = "12.6"
 twitter-detekt = "0.0.26"
 work-runtime-ktx = "2.9.0"
 androidxActivityCompose = "1.8.1"
@@ -71,6 +73,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidxStartupRuntime" }
 
+compose-Loading-Dots = { module = "com.github.razaghimahdi:Compose-Loading-Dots", version.ref = "composeLoadingDots" }
 compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
@@ -92,6 +95,7 @@ rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.r
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 wireRuntime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 wireGrpcClient = { group = "com.squareup.wire", name = "wire-grpc-client", version.ref = "wire" }
 wireGradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
@@ -189,7 +193,7 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-transformer = { group = "androidx.media3", name = "media3-transformer", version = "media3" }
 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPagingCompose" }
-androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "androidxPaging" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "androidxPaging" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
