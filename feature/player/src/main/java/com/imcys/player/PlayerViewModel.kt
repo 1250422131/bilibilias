@@ -15,7 +15,7 @@ import com.imcys.model.PlayerInfo
 import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
-import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
+    private val videoRepository: IVideoDataSources,
     val downloadListHolders: DownloadListHolders,
     private val savedStateHandle: SavedStateHandle,
     private val downloadManage: DownloadManage
@@ -63,10 +63,11 @@ class PlayerViewModel @Inject constructor(
                         pic = result.data.pic,
                         desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
                         pageData = result.data.pageData,
-                        aid = result.data.aid,
+                        aid = result.data.aid.toLong(),
                         bvid = result.data.bvid,
                         cid = result.data.cid,
-                        stat = result.data.stat
+                        stat = result.data.stat,
+                        owner = result.data.owner
                     )
                 }
             }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -51,6 +52,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.imcys.common.utils.digitalConversion
 import com.imcys.common.utils.noRippleClickable
 import com.imcys.designsystem.component.CenterRow
@@ -78,7 +81,8 @@ import timber.log.Timber
 
 @Composable
 internal fun PlayerRoute(
-    onNavigateToDownloadAanmaku: () -> Unit,
+    navigateToDownloadAanmaku: () -> Unit,
+    navigateToUserSpace: (Long) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
     val state by viewModel.playerState.collectAsStateWithLifecycle()
@@ -89,7 +93,8 @@ internal fun PlayerRoute(
         admDownload = viewModel::admDownload,
         idmDownload = viewModel::idmDownload,
         state = state,
-        onNavigateToDownloadAanmaku = onNavigateToDownloadAanmaku,
+        onNavigateToDownloadAanmaku = navigateToDownloadAanmaku,
+        navigateToUserSpace = navigateToUserSpace,
         selectedQuality = viewModel::selectedQuality,
         selectedPage = viewModel::selectedPage,
         addToDownloadQueue = viewModel::addToDownloadQueue,
@@ -105,6 +110,7 @@ internal fun PlayerScreen(
     idmDownload: (String) -> Unit,
     state: PlayerState,
     onNavigateToDownloadAanmaku: () -> Unit,
+    navigateToUserSpace: (Long) -> Unit,
     selectedQuality: (Int) -> Unit,
     selectedPage: (String, Long) -> Unit,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
@@ -179,6 +185,25 @@ internal fun PlayerScreen(
                 PlayInfoUiState.Loading -> Unit
 
                 is PlayInfoUiState.Success -> {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(54.dp)
+                            .clickable { navigateToUserSpace(playerInfoUiState.owner.mid) },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            model = playerInfoUiState.owner.face,
+                            contentDescription = "头像",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                        )
+                        Text(
+                            text = playerInfoUiState.owner.name, Modifier.padding(8.dp),
+                            fontSize = 11.sp
+                        )
+                    }
                     Introduction(
                         title = playerInfoUiState.title,
                         desc = playerInfoUiState.desc,

@@ -2,7 +2,6 @@ package com.imcys.model
 
 import com.imcys.model.video.Author
 import com.imcys.model.video.DescV2
-import com.imcys.model.video.HonorReply
 import com.imcys.model.video.Owner
 import com.imcys.model.video.PageData
 import com.imcys.model.video.Rights
@@ -230,13 +229,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoDetails(
     @SerialName("aid")
-    val aid: Long = 0,
+    val aid: LongAsString = 0L,
     @SerialName("bvid")
     val bvid: String = "",
     @SerialName("cid")
     val cid: Long = 0,
-    @SerialName("copyright")
-    val copyright: Int = 0,
     @SerialName("ctime")
     val ctime: Int = 0,
     @SerialName("desc")
@@ -249,20 +246,6 @@ data class VideoDetails(
     val duration: Int = 0,
     @SerialName("dynamic")
     val `dynamic`: String = "",
-    @SerialName("honor_reply")
-    val honorReply: HonorReply = HonorReply(),
-    @SerialName("is_chargeable_season")
-    val isChargeableSeason: Boolean = false,
-    @SerialName("is_season_display")
-    val isSeasonDisplay: Boolean = false,
-    @SerialName("is_story")
-    val isStory: Boolean = false,
-    @SerialName("like_icon")
-    val likeIcon: String = "",
-    @SerialName("mission_id")
-    val missionId: Int = 0,
-    @SerialName("no_cache")
-    val noCache: Boolean = false,
     @SerialName("owner")
     val owner: Owner = Owner(),
     @SerialName("pages")
@@ -279,18 +262,10 @@ data class VideoDetails(
     val staff: List<Staff> = listOf(),
     @SerialName("stat")
     val stat: Stat = Stat(),
-    @SerialName("state")
-    val state: Int = 0,
     @SerialName("subtitle")
     val subtitle: Subtitle = Subtitle(),
-    @SerialName("teenage_mode")
-    val teenageMode: Int = 0,
-    @SerialName("tid")
-    val tid: Int = 0,
     @SerialName("title")
     val title: String = "",
-    @SerialName("tname")
-    val tname: String = "",
     @SerialName("user_garb")
     val userGarb: UserGarb = UserGarb(),
     @SerialName("videos")
@@ -299,25 +274,17 @@ data class VideoDetails(
     @Serializable
     data class Stat(
         @SerialName("aid")
-        val aid: Int = 0,
-        @SerialName("argue_msg")
-        val argueMsg: String = "",
+        val aid: Long = 0,
         @SerialName("coin")
         val coin: Int = 0,
         @SerialName("danmaku")
         val danmaku: Int = 0,
-        @SerialName("dislike")
-        val dislike: Int = 0,
         @SerialName("evaluation")
         val evaluation: String = "",
         @SerialName("favorite")
         val favorite: Int = 0,
-        @SerialName("his_rank")
-        val hisRank: Int = 0,
         @SerialName("like")
         val like: Int = 0,
-        @SerialName("now_rank")
-        val nowRank: Int = 0,
         @SerialName("reply")
         val reply: Int = 0,
         @SerialName("share")

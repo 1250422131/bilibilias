@@ -1,6 +1,7 @@
 package com.imcys.player.state
 
 import com.imcys.model.VideoDetails
+import com.imcys.model.video.Owner
 import com.imcys.model.video.PageData
 
 sealed interface PlayInfoUiState {
@@ -15,5 +16,6 @@ sealed interface PlayInfoUiState {
         val desc: String,
         val pageData: List<PageData>,
         val stat: VideoDetails.Stat,
+        val owner: Owner,
     ) : PlayInfoUiState
 }

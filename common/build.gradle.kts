@@ -139,4 +139,5 @@ dependencies {
     implementation(libs.material)
 
     implementation(libs.okio)
+    implementation(libs.android.startup)
 }

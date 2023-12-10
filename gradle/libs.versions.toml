@@ -1,5 +1,6 @@
 [versions]
-androidxComposeCompiler = "1.5.3"
+androidStartup = "1.1.0"
+androidxComposeCompiler = "1.5.6"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 accompanist = "0.32.0"
 androidGradlePlugin = "8.2.0"
@@ -29,7 +30,7 @@ hiltNavigationCompose = "1.1.0"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
-kotlin = "1.9.10"
+kotlin = "1.9.21"
 ksp = "1.9.21-1.0.15"
 kotlinxCoroutines = "1.7.3"
 kotlinxCollectionsImmutable = "0.3.6"
@@ -69,6 +70,7 @@ accompanist-navigation-material = { group = "com.google.accompanist", name = "ac
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
+android-startup = { module = "io.github.idisfkj:android-startup", version.ref = "androidStartup" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidxStartupRuntime" }
 

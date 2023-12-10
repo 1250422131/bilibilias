@@ -20,6 +20,4 @@ data class PageData(
     val part: String = "",
     @SerialName("vid")
     val vid: String = "",
-    @SerialName("weblink")
-    val weblink: String = ""
 )
