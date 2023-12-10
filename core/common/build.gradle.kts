@@ -12,6 +12,7 @@ android {
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(projects.core.crash)
 
     api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.serialization.cbor)
@@ -33,4 +34,5 @@ dependencies {
     implementation(libs.androidx.startup.runtime)
 
     api(libs.kotlinx.collections.immutable)
+
 }
