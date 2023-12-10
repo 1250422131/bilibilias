@@ -19,8 +19,8 @@ fun NavController.navigateToPlayer(aid: String, bvid: String, cid: String) {
 }
 
 fun NavGraphBuilder.playerScreen(
-    navigateToDownloadVideo: () -> Unit,
-    navigateToDownloadAanmaku: () -> Unit
+    navigateToDownloadAanmaku: () -> Unit,
+    navigateToUserSpace: (Long) -> Unit,
 ) = composable(
     "$ROUTE_PLAYER/{$A_ID}/{$BV_ID}/{$C_ID}",
     arguments = listOf(
@@ -36,6 +36,7 @@ fun NavGraphBuilder.playerScreen(
     )
 ) {
     PlayerRoute(
-        navigateToDownloadAanmaku
+        navigateToDownloadAanmaku,
+        navigateToUserSpace
     )
 }

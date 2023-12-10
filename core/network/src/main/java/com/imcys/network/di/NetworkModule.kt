@@ -224,23 +224,18 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
-        transformResponseBody { response, content, requestedType ->
-            try {
-                Timber.tag("TransformData").d("type=$requestedType")
-                if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
-                val box = json.decodeFromStream(
-                    Box.serializer(serializer(requestedType.kotlinType!!)),
-                    content.toInputStream()
-                )
+        transformResponseBody { _, content, requestedType ->
+            Timber.tag("TransformData").d("type=$requestedType")
+            if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
+            val box = json.decodeFromStream(
+                Box.serializer(serializer(requestedType.kotlinType!!)),
+                content.toInputStream()
+            )
 
-                if (box.code != SUCCESS) throw ApiIOException(box.message)
-                val print = box.ofMap()?.print()
-                Timber.tag("TransformData").d("data=${print ?: "@null"}")
-                box.data
-            } catch (e: Exception) {
-                Timber.tag("TransformDataException").e(e)
-                null
-            }
+            if (box.code != SUCCESS) throw ApiIOException(box.message)
+            val print = box.ofMap()?.print()
+            Timber.tag("TransformData").d("data=${print ?: "@null"}")
+            box.data
         }
     }
 

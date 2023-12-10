@@ -14,6 +14,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.imcys.space.navigation.navigateToUserSpace
+import com.imcys.space.navigation.userSpaceRoute
 import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
 import com.imcys.bilibilias.tool.navigation.mergeRoute
 import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
@@ -29,7 +31,6 @@ import com.imcys.player.download.danmaku.danmakuRoute
 import com.imcys.player.download.danmaku.navigateToDanmaku
 import com.imcys.player.download.downloadOptionsRoute
 import com.imcys.player.download.downloadRoute
-import com.imcys.player.download.navigateToDownloadOptions
 import com.imcys.player.navigation.navigateToPlayer
 import com.imcys.player.navigation.playerScreen
 import com.imcys.setting.navigation.navigateToSettings
@@ -64,10 +65,11 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         mergeRoute()
 
         playerScreen(
-            navigateToDownloadVideo = navController::navigateToDownloadOptions,
             navigateToDownloadAanmaku = navController::navigateToDanmaku,
+            navigateToUserSpace =  navController::navigateToUserSpace
         )
         danmakuRoute(navController = navController, onBack = navController::navigateUp)
+        userSpaceRoute()
         // -----------------------------------------------------------------------------------------
 
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)

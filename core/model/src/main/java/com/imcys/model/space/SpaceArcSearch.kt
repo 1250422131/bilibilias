@@ -1,7 +1,9 @@
 package com.imcys.model.space
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class SpaceArcSearch(
@@ -23,22 +25,10 @@ data class SpaceArcSearch(
             val author: String = "",
             @SerialName("bvid")
             val bvid: String = "",
-            @SerialName("comment")
-            val comment: Int = 0,
-            @SerialName("copyright")
-            val copyright: String = "",
             @SerialName("created")
             val created: Long = 0,
             @SerialName("description")
             val description: String = "",
-            @SerialName("hide_click")
-            val hideClick: Boolean = false,
-            @SerialName("is_pay")
-            val isPay: Int = 0,
-            @SerialName("is_steins_gate")
-            val isSteinsGate: Int = 0,
-            @SerialName("is_union_video")
-            val isUnionVideo: Int = 0,
             @SerialName("length")
             val length: String = "",
             @SerialName("mid")
@@ -47,26 +37,21 @@ data class SpaceArcSearch(
             val pic: String = "",
             @SerialName("play")
             val play: Int = 0,
-            @SerialName("review")
-            val review: Int = 0,
-            @SerialName("subtitle")
-            val subtitle: String = "",
             @SerialName("title")
             val title: String = "",
-            @SerialName("typeid")
-            val typeid: Int = 0,
             @SerialName("video_review")
             val videoReview: Int = 0
         )
     }
 
     @Serializable
-    data class Page(
-        @SerialName("count")
+    @OptIn(ExperimentalSerializationApi::class)
+    data class Page constructor(
+        @JsonNames("count")
         val count: Int = 0,
-        @SerialName("pn")
+        @JsonNames("pn")
         val pn: Int = 0,
-        @SerialName("ps")
+        @JsonNames("ps")
         val ps: Int = 0
     )
 }
