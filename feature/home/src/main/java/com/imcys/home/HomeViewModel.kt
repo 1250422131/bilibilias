@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             loginRepository.logout()
-            cookiesData.clearCookieData()
+            cookiesData.clear()
         }
     }
 }

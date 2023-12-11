@@ -1,7 +1,7 @@
 package com.imcys.network.configration
 
 import androidx.collection.ArrayMap
-import com.imcys.datastore.fastkv.CookiesData
+import com.imcys.datastore.fastkv.ICookieStore
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url
@@ -9,6 +9,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,15 +18,16 @@ import javax.inject.Singleton
 @OptIn(ExperimentalSerializationApi::class)
 class CookieManager
 @Inject constructor(
-    private val cookiesData: CookiesData,
-    private val cbor: Cbor
+    private val cookiesData: ICookieStore,
+    private val cbor: Cbor,
+    private val protoBuf: ProtoBuf
 ) : CookiesStorage {
     private val cache = ArrayMap<String, Cookie>(5)
     private val sterileMap = MapSerializer(String.serializer(), CookieSerializer)
 
     init {
-        if (cookiesData.isLogin) {
-            cookiesData.cookieByteArray?.let { bytes ->
+        if (cookiesData.valid) {
+            cookiesData.get()?.let { bytes ->
                 cbor.decodeFromByteArray(sterileMap, bytes).map { (k, v) ->
                     cache.put(k, v)
                 }
@@ -40,7 +42,7 @@ class CookieManager
             return
         }
         cache[cookie.name] = cookie
-        cookiesData.timestamp = timestamp
+        cookiesData.setTimestamp(timestamp)
         save()
     }
 
@@ -59,7 +61,7 @@ class CookieManager
     }
 
     private fun save() {
-        cookiesData.save(
+        cookiesData.set(
             cbor.encodeToByteArray(
                 sterileMap,
                 cache
