@@ -34,5 +34,5 @@ dependencies {
     implementation(libs.androidx.startup.runtime)
 
     api(libs.kotlinx.collections.immutable)
-
+    api(libs.devAppX)
 }
