@@ -13,6 +13,7 @@ coil = "2.5.0"
 composeLoadingDots = "1.2.3"
 composeSettingsUiM3 = "1.0.2"
 datastore = "1.0.0"
+devAppX = "2.4.3"
 materialDialogsCore = "0.9.0"
 constraintlayout = "2.1.4"
 coreKtx = "1.12.0"
@@ -80,6 +81,7 @@ compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings
 
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
 
+devAppX = { module = "io.github.afkt:DevAppX", version.ref = "devAppX" }
 material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogsCore" }
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
