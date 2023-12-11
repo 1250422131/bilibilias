@@ -8,6 +8,6 @@ import javax.inject.Singleton
 @Singleton
 class LoggerManager @Inject constructor() : Logger {
     override fun log(message: String) {
-        Timber.tag("bilibili-as").d(message)
+        Timber.tag("bili-as").d(message)
     }
 }

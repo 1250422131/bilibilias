@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.ui.splash
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +30,6 @@ import kotlinx.coroutines.delay
 
 const val ROUTE_SPLASH = "splash"
 
-@RequiresApi(Build.VERSION_CODES.M)
 fun NavGraphBuilder.splashRoute(
     navigateToAuthMethod: () -> Unit,
     navigateToHome: () -> Unit,
@@ -45,7 +42,6 @@ fun NavGraphBuilder.splashRoute(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
 @Composable
 fun SplashRoute(navigateToAuthMethod: () -> Unit, navigateToHome: () -> Unit, login: Boolean) {
     var show by remember { mutableStateOf(false) }
