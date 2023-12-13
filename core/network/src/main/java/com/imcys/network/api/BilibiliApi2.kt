@@ -35,8 +35,6 @@ object BilibiliApi2 {
     // post aid bvid like:1,2 csrf:j_xx
     const val likeVideoPath = "x/web-interface/archive/like"
 
-    // 获取视频详细信息 get bvid avid
-    const val getVideoDataPath = "x/web-interface/view"
     const val bangumiPlayPath = "pgc/player/web/playurl"
 
     // 对视频进行点赞

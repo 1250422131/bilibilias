@@ -33,6 +33,7 @@ include(":core:datastore")
 include(":core:crash")
 include(":core:okdownloader")
 include(":core:datastore-proto")
+include(":core:domain")
 
 include(":feature:authentication")
 include(":feature:home")
@@ -43,3 +44,4 @@ include(":feature:player")
 include(":feature:userspace")
 
 include(":lint")
+
