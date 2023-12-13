@@ -10,8 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WbiKeyStorage
-@Inject constructor(@ApplicationContext context: Context) : FastKVOwner("cookies", context) {
+class WbiKeyStorage @Inject constructor(
+    @ApplicationContext context: Context
+) : FastKVOwner("cookies", context) {
 
     private var recordLocalDate: String? by string()
 
@@ -28,9 +29,7 @@ class WbiKeyStorage
         this.mixKey = mixKey
     }
 
-    /**
-     * 是否需要更新
-     */
+    /** 是否需要更新 */
     fun shouldNeedUpdate(): Boolean {
         if (recordLocalDate.isNullOrBlank()) {
             return true
