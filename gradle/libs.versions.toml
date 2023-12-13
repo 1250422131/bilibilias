@@ -2,7 +2,7 @@
 android = "8.2.0"
 androidFilePicker = "1.0.0"
 androidx-junit = "1.1.5"
-appcenter = "5.0.3"
+appcenter = "5.0.4"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 banner = "2.2.2"
