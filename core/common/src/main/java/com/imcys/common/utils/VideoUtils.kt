@@ -8,6 +8,7 @@ import java.math.BigInteger
  *
  * @author BakaJzon
  */
+@Deprecated("新工具", ReplaceWith("com.imcys.common.utils.ConvertUtil"))
 object VideoUtils {
 
     @Deprecated(
