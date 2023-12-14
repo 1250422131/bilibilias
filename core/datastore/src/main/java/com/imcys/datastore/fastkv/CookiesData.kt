@@ -55,7 +55,7 @@ class CookiesData @Inject constructor(
         private set
 
     var refreshToken by string("")
-    override fun setTimestamp(timestamp: Long) {
+    override fun setTime(timestamp: Long) {
         this.timestamp = timestamp
     }
 

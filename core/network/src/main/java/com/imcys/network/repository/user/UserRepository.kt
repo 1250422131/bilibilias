@@ -2,6 +2,7 @@ package com.imcys.network.repository.user
 
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
+import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.UserCardBean
 import com.imcys.model.UserSpaceInformation
 import com.imcys.model.space.SpaceArcSearch
@@ -25,11 +26,10 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
     private val client: HttpClient,
     private val wbiRepository: WbiKeyRepository,
-    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
-):IUserDataSources {
-    /**
-     * 查询用户投稿视频明细
-     */
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val wbiKeyStorage: WbiKeyStorage
+) : IUserDataSources {
+    /** 查询用户投稿视频明细 */
     override suspend fun getSpaceArcSearch(mid: Long, pageNumber: Int): SpaceArcSearch =
         withContext(ioDispatcher) {
             client.wbiGet(BilibiliApi2.WBI_SPACE_ARC_SEARCH) {
@@ -39,9 +39,7 @@ class UserRepository @Inject constructor(
             }.body<SpaceArcSearch>()
         }
 
-    /**
-     * todo 也许可以返回文本，来进行解析
-     */
+    /** todo 也许可以返回文本，来进行解析 */
     suspend fun get用户名片信息(mid: Long): UserCardBean = withContext(ioDispatcher) {
         client.get(BilibiliApi2.getUserCardPath) {
             parameterMID(mid)

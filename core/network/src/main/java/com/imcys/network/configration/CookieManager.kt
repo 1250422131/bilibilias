@@ -42,7 +42,7 @@ class CookieManager
             return
         }
         cache[cookie.name] = cookie
-        cookiesData.setTimestamp(timestamp)
+        cookiesData.setTime(timestamp)
         save()
     }
 

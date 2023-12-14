@@ -5,10 +5,13 @@ import androidx.compose.runtime.Stable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MimeTypes
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.imcys.common.utils.MediaUtils.getMimeType
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
@@ -39,7 +42,7 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     val downloadListHolders: DownloadListHolders,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val downloadManage: DownloadManage
 ) : ViewModel() {
 
@@ -74,11 +77,9 @@ class PlayerViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
 
-    /**
-     *  播放器
-     */
+    /** 播放器 */
     val playerUiState = info.map { (a, b, c) ->
-        videoRepository.getPlayerPlayUrl(b, c.toLong(),)
+        videoRepository.getPlayerPlayUrl(b, c.toLong())
     }.asResult()
         .map { result ->
             when (result) {
@@ -103,15 +104,10 @@ class PlayerViewModel @Inject constructor(
     private val _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
 
-    /**
-     * key 是视频清晰度
-     * 126,120,112,80,64,32,16
-     */
+    /** key 是视频清晰度 126,120,112,80,64,32,16 */
     private val qualityGroup = sortedMapOf<Int, List<com.imcys.model.Dash.Video>>()
 
-    /**
-     * 下载视频
-     */
+    /** 下载视频 */
     fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
         // todo 或许可以只写 弹幕文件 和 entry.json
         // 弹幕文件或许从pb接口尝试
@@ -223,7 +219,14 @@ fun List<com.imcys.model.Dash.Video>.画质最高队列(): List<com.imcys.model.
 fun getDecoderInfo(mimeType: String) = MediaCodecUtil.getDecoderInfo(mimeType, false, false)
 
 @OptIn(UnstableApi::class)
-fun getMimeType(codec: String) = MimeTypes.getMediaMimeType(codec)
+fun createMediaSource(
+    dataSourceFactory: DataSource.Factory,
+    url: String,
+) = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
+    MediaItem.Builder()
+        .setUri(url)
+        .build()
+)
 
 private const val DOWNLOAD_QUALITY = "download_quality"
 private const val DOWNLOAD_PAGES = "download_pages"

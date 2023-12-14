@@ -35,4 +35,6 @@ dependencies {
 
     api(libs.kotlinx.collections.immutable)
     api(libs.devAppX)
+
+    api(libs.androidx.media3.common)
 }

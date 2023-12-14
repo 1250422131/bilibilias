@@ -10,6 +10,7 @@ import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.AppFilePathUtils
 import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
+import com.imcys.model.download.Entry
 import com.imcys.model.video.PageData
 import com.imcys.network.constant.BILIBILI_WEB_URL
 import com.imcys.network.constant.BROWSER_USER_AGENT
@@ -21,13 +22,17 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 const val DANMAKU_XML = "danmaku.xml"
 const val ENTRY_JSON = "entry.json"
@@ -53,7 +58,7 @@ class DownloadManage @Inject constructor(
     @ApplicationContext private val context: Context,
     @AppCoroutineScope private val scope: CoroutineScope,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
-) {
+) : IDownloadManage {
     // todo 等待实现
     fun launchThirdPartyDownload(downloader: ThirdPartyDownloader) {
         when (downloader) {
@@ -62,6 +67,7 @@ class DownloadManage @Inject constructor(
             ThirdPartyDownloader.IDM -> TODO()
             ThirdPartyDownloader.IDMPlus -> TODO()
             ThirdPartyDownloader.NONE -> TODO()
+            else -> {}
         }
     }
 
@@ -144,9 +150,7 @@ class DownloadManage @Inject constructor(
         }
     }
 
-    /**
-     * download/bv123/c_111/danmaku.xml
-     */
+    /** download/bv123/c_111/danmaku.xml */
     private fun downloadDanmaku(cid: String, danmakuPath: String) {
         scope.launch {
 //            videoRepository.getDanmakuXml(cid).collect {
@@ -249,7 +253,8 @@ class DownloadManage @Inject constructor(
             for (data in pageData) {
                 val cid = data.cid.toString()
                 val videoDetailsDeferred = async { videoRepository.getDetail(bvid) }
-                val playerInfoDeferred = async { videoRepository.getPlayerPlayUrl(bvid, cid.toLong()) }
+                val playerInfoDeferred =
+                    async { videoRepository.getPlayerPlayUrl(bvid, cid.toLong()) }
                 val detail = videoDetailsDeferred.await()
                 val info = playerInfoDeferred.await()
                 addToQueue(info, detail, quality)
@@ -265,7 +270,7 @@ class DownloadManage @Inject constructor(
         val video = videoList.maxBy { it.codecid }
         val audio = info.dash.audio.maxBy { it.id }
 
-        val cid = detail.cid.toString()
+        val cid = detail.cid
         val path = videoSavePath(
             detail.aid,
             cid,
@@ -288,33 +293,79 @@ class DownloadManage @Inject constructor(
         )
     }
 
-    private suspend fun downloadDanmuku(aid: Long, cid: Long, duration: Int): Unit = withContext(ioDispatcher) {
-        val reply =
-            danmakuRepository.protoWbi(cid,1)
-        val sb = StringBuilder(reply.elems.size * DEFAULT_DANMAKU_SIZE)
-        sb.append("<i>")
-            .append("<chatserver>chat.bilibili.com</chatserver>")
-            .append("<chatid>$cid</chatid>")
-            .append("<mission>0</mission>")
-            .append("<maxlimit>6000</maxlimit>")
-            .append("<state>0</state>")
-            .append("<real_name>0</real_name>")
-            .append("<source>k-v</source>")
-        for (elem in reply.elems) {
-            sb.append(
-                "<d p=\"${elem.progress},${elem.mode},${elem.fontsize},${elem.color},${elem.ctime},${elem.pool},${elem.midHash},${elem.id},10\">${elem.content}</d>"
-            )
+    private suspend fun downloadDanmuku(aid: Long, cid: Long, duration: Int): Unit =
+        withContext(ioDispatcher) {
+            val reply =
+                danmakuRepository.protoWbi(cid, 1)
+            val sb = StringBuilder(reply.elems.size * DEFAULT_DANMAKU_SIZE)
+            sb.append("<i>")
+                .append("<chatserver>chat.bilibili.com</chatserver>")
+                .append("<chatid>$cid</chatid>")
+                .append("<mission>0</mission>")
+                .append("<maxlimit>6000</maxlimit>")
+                .append("<state>0</state>")
+                .append("<real_name>0</real_name>")
+                .append("<source>k-v</source>")
+            for (elem in reply.elems) {
+                sb.append(
+                    "<d p=\"${elem.progress},${elem.mode},${elem.fontsize},${elem.color},${elem.ctime},${elem.pool},${elem.midHash},${elem.id},10\">${elem.content}</d>"
+                )
+            }
+            val content = sb.append("</i>").toString()
+            val path = dmSavePath(aid, cid)
+            File(path, DANMAKU_XML).writeText(content)
         }
-        val content = sb.append("</i>").toString()
-        val path = dmSavePath(aid, cid.toString())
-        File(path, DANMAKU_XML).writeText(content)
-    }
 
-    private fun videoSavePath(aid: Long, cid: String, quality: Int): String {
+    private fun videoSavePath(aid: Long, cid: Long, quality: Int): String {
         return "${dmSavePath(aid, cid)}${File.separator}$quality"
     }
 
-    private fun dmSavePath(aid: Long, cid: String): String {
+    private fun dmSavePath(aid: Long, cid: Long): String {
         return "${context.downloadDir}${File.separator}$aid${File.separator}c_$cid"
+    }
+
+    override fun getAllTask(path: String): Map<Entry, MutableList<File>> {
+        val scan = scan(path)
+        return decodeEntry(scan)
+    }
+
+    override fun downloadDanmaku(cid: Long, second: Int) {
+        val i = (second / 6 * 60) + 1
+
+        scope.launch {
+            for (index in 1..i) {
+                danmakuRepository.protoWbi(cid, i)
+                delay(1.seconds)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun decodeEntry(scanResult: ArrayDeque<MutableList<File>>): Map<Entry, MutableList<File>> {
+        val decodeResult = scanResult
+            .filter { it.size <= 4 }
+            .associateBy {
+                val entryFile = it.removeFirst()
+                val entry = json.decodeFromStream(Entry.serializer(), entryFile.inputStream())
+                entry
+            }
+        return decodeResult
+    }
+
+    private fun scan(path: String): ArrayDeque<MutableList<File>> {
+        val scannedFiles = ArrayDeque<MutableList<File>>(32)
+        File(path)
+            .walkTopDown()
+            .forEach { file ->
+                if (file.name == ENTRY_JSON) {
+                    scannedFiles.addLast(mutableListOf(file))
+                }
+                if (file.name == VIDEO_M4S || file.name == AUDIO_M4S || file.name == DANMAKU_XML) {
+                    scannedFiles.last {
+                        it.add(file)
+                    }
+                }
+            }
+        return scannedFiles
     }
 }

@@ -454,13 +454,6 @@ private fun VideoWindows(
             .fillMaxWidth()
             .height(200.dp),
         update = { gsy ->
-            val tree = Timber.tag("videoWindows")
-
-            // getFormat(gsy, tree)
-            getFormat2(gsy)
-            // MimeTypes.VIDEO_DOLBY_VISION
-            // MediaCodecVideoRenderer.getDecoderInfos()
-
             gsy.setMediaSource(video, audio)
             gsy.setUp(video.baseUrl, title, pic)
             when (gsy.currentState) {

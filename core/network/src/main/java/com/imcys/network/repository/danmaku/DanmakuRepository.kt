@@ -3,8 +3,8 @@ package com.imcys.network.repository.danmaku
 import com.imcys.bilibilias.dm.DmSegMobileReply
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
-import com.imcys.network.repository.WbiKeyRepository
-import com.imcys.network.utils.parameterList
+import com.imcys.datastore.fastkv.WbiKeyStorage
+import com.imcys.network.wbiGet
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -18,11 +18,11 @@ import javax.inject.Singleton
 @Singleton
 class DanmakuRepository @Inject constructor(
     private val client: HttpClient,
-    private val wbiKeyRepository: WbiKeyRepository,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val wbiKeyStorage: WbiKeyStorage
 ) : IDanmakuDataSources {
     override suspend fun xml(cid: Long): ByteArray = withContext(ioDispatcher) {
-        client.get("DanmakuXml(cid)") {
+        client.get("x/v1/dm/list.so") {
             parameter("oid", cid)
         }
             .bodyAsChannel()
@@ -30,6 +30,7 @@ class DanmakuRepository @Inject constructor(
             .readBytes()
     }
 
+    @Deprecated("网页端接口大多需要wbi")
     override suspend fun proto(cid: Long, index: Int, type: Int): DmSegMobileReply =
         withContext(ioDispatcher) {
             val bytes = client.get("DanmakuProto.Web(cid, type, index)") {
@@ -44,10 +45,10 @@ class DanmakuRepository @Inject constructor(
 
     override suspend fun protoWbi(cid: Long, index: Int, type: Int): DmSegMobileReply =
         withContext(ioDispatcher) {
-            val wbiWeb = DanmakuProto.WbiWeb(cid, type, index)
-            val parameter = wbiKeyRepository.getUserNavToken(wbiWeb.buildParameter())
-            val bytes = client.get("wbiWeb") {
-                parameterList(parameter)
+            val bytes = client.wbiGet("x/v2/dm/wbi/web/seg.so") {
+                parameter("oid", cid)
+                parameter("type", type)
+                parameter("segment_index", index)
             }.bodyAsChannel()
                 .readRemaining()
                 .readBytes()

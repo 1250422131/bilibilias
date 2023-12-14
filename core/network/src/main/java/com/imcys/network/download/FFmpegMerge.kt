@@ -23,13 +23,13 @@ class FFmpegMerge @Inject constructor(
 
     fun execute(data: MergeData) {
         readyWorker.addLast(data)
-        if (runningWorker.isEmpty) {
+        if (runningWorker.isEmpty()) {
             promote()
         }
     }
 
     private fun promote() {
-        if (readyWorker.isEmpty) return
+        if (readyWorker.isEmpty()) return
         val data: MergeData = readyWorker.popFirst()
         runningWorker.addLast(data)
         merge(data.videoFile.absolutePath, data.audioFile.absolutePath, data.mixFile)
@@ -96,7 +96,7 @@ class FFmpegMerge @Inject constructor(
         Timber.d("视频合并完成")
         val data: MergeData = runningWorker.popFirst()
         listener?.onSuccess(data.mixFile, data.realName, readyWorker.size())
-        if (readyWorker.isEmpty) {
+        if (readyWorker.isEmpty()) {
             listener?.onComplete()
         }
         promote()

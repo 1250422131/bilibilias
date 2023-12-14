@@ -18,10 +18,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -43,21 +46,27 @@ import coil.compose.AsyncImage
 import com.imcys.model.space.SpaceArcSearch
 
 @Composable
-internal fun UserSpaceRoute(viewModel: UserSpaceViewModel = hiltViewModel()) {
+internal fun UserSpaceRoute(
+    navigateToCollectionDownload: (String) -> Unit,
+    viewModel: UserSpaceViewModel = hiltViewModel()
+) {
     val spaceArcSearchItems = viewModel.spaceArcSearchPagingSource.collectAsLazyPagingItems()
-    UserSpaceScreen(spaceArcSearchItems)
+    UserSpaceScreen(spaceArcSearchItems, navigateToCollectionDownload)
 }
 
 @Composable
-internal fun UserSpaceScreen(spaceArcSearchItems: LazyPagingItems<SpaceArcSearch.Lists.Vlist>) {
-    val items = remember { mutableStateListOf<String>() }
+internal fun UserSpaceScreen(
+    spaceArcSearchItems: LazyPagingItems<SpaceArcSearch.Lists.Vlist>,
+    navigateToCollectionDownload: (String) -> Unit
+) {
+    val items = rememberMutableStateListOf<String>()
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("已选择: ${items.size} 项") },
                 actions = {
                     TextButton(
-                        onClick = { /*TODO 导航到下一页*/ },
+                        onClick = { navigateToCollectionDownload(items.joinToString(",")) },
                         enabled = items.isNotEmpty()
                     ) {
                         Text(text = "确定")
@@ -153,4 +162,24 @@ val smallFontSize = 11.sp
 @Composable
 fun CommonTitle(text: String) {
     Text(text = text, fontSize = smallFontSize, maxLines = 2, overflow = TextOverflow.Ellipsis)
+}
+
+@Composable
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+    return rememberSaveable(
+        saver = listSaver(
+            save = { stateList ->
+                if (stateList.isNotEmpty()) {
+                    val first = stateList.first()
+                    if (!canBeSaved(first)) {
+                        throw IllegalStateException("${first::class} cannot be saved. By default only types which can be stored in the Bundle class can be saved.")
+                    }
+                }
+                stateList.toList()
+            },
+            restore = { it.toMutableStateList() }
+        )
+    ) {
+        elements.toList().toMutableStateList()
+    }
 }
