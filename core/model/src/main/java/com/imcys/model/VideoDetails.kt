@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 
 /**
  * ![获取视频详细信息(web端)](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md#%E8%8E%B7%E5%8F%96%E8%A7%86%E9%A2%91%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AFweb%E7%AB%AF)
+ *
  * ```
  * {
  *   "code": 0,
@@ -229,7 +230,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoDetails(
     @SerialName("aid")
-    val aid: LongAsString = 0L,
+    val aid: Long = 0L,
     @SerialName("bvid")
     val bvid: String = "",
     @SerialName("cid")

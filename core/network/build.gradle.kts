@@ -6,6 +6,9 @@ plugins {
 
 android {
     namespace = "com.imcys.network"
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -36,4 +39,8 @@ dependencies {
     implementation(libs.ffmpeg.ffmpegCommand)
 
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.coil.kt)
+    implementation(libs.coil.kt.svg)
+    implementation(libs.coil.kt.gif)
 }

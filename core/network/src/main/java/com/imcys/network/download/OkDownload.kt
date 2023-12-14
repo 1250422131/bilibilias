@@ -2,10 +2,10 @@ package com.imcys.network.download
 
 import android.content.Context
 import androidx.collection.ArrayMap
+import androidx.collection.LongSparseArray
 import com.imcys.bilibilias.okdownloader.Download
 import com.imcys.bilibilias.okdownloader.Downloader
 import com.imcys.network.constant.BILIBILI_WEB_URL
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.ktor.http.HttpHeaders
 import java.io.File
 import javax.inject.Inject
@@ -19,16 +19,15 @@ enum class DownloadTag(val tagName: String) {
 
 @Singleton
 class OkDownload @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val downloader: Downloader
 ) : Download.Callback {
-    private val retryVideo = ArrayMap<String, MutableList<String>>(0)
-    private val retryAudio = ArrayMap<String, MutableList<String>>(0)
+    private val retryVideo = LongSparseArray<MutableList<String>>(0)
+    private val retryAudio = LongSparseArray<MutableList<String>>(0)
     private val groupProgress = ArrayMap<Long, Long>(0)
 
     fun enqueueTask(
         path: String,
-        cId: String,
+        cId: Long,
         baseUrl: String,
         backupUrl: List<String>,
         tag: DownloadTag
@@ -40,14 +39,14 @@ class OkDownload @Inject constructor(
 
     override fun onRetrying(call: Download.Call) {
         val groupId = call.request.groupId
-        tryGetNewUrl(call.request.tag!!, groupId.toString())?.let {
+        tryGetNewUrl(call.request.tag!!, groupId)?.let {
             onRetryOrFailure(call, it)
         }
     }
 
     override fun onFailure(call: Download.Call, response: Download.Response) {
         val groupId = call.request.groupId
-        tryGetNewUrl(call.request.tag!!, groupId.toString())?.let {
+        tryGetNewUrl(call.request.tag!!, groupId)?.let {
             onRetryOrFailure(call, it)
         }
         if (response.retryCount == call.request.retry) {
@@ -74,13 +73,13 @@ class OkDownload @Inject constructor(
     }
 
     private fun remove(tag: String?, groupId: Long) {
-        tags(tag).remove(groupId.toString())
+        tags(tag).remove(groupId)
     }
 
     private fun request(
         baseUrl: String,
         path: String,
-        cId: String,
+        cId: Long,
         tag: DownloadTag,
         backupUrl: List<String>
     ): Download.Request {
@@ -91,14 +90,14 @@ class OkDownload @Inject constructor(
             .priority(Download.Priority.MIDDLE)
             .tag(tag.tagName)
             .retry(backupUrl.size)
-            .groupId(cId.toLong())
+            .groupId(cId)
             .build()
     }
 
-    private fun addRetryList(tag: DownloadTag, cId: String, backupUrl: List<String>) {
+    private fun addRetryList(tag: DownloadTag, cId: Long, backupUrl: List<String>) {
         when (tag) {
-            DownloadTag.VIDEO -> retryVideo[cId] = backupUrl.toMutableList()
-            DownloadTag.AUDIO -> retryAudio[cId] = backupUrl.toMutableList()
+            DownloadTag.VIDEO -> retryVideo.put(cId,backupUrl.toMutableList())
+            DownloadTag.AUDIO -> retryAudio.put(cId, backupUrl.toMutableList())
         }
     }
 
@@ -108,7 +107,7 @@ class OkDownload @Inject constructor(
     }
 
     // 通过 tag 查询
-    private fun tags(tag: String?): MutableMap<String, MutableList<String>> {
+    private fun tags(tag: String?): LongSparseArray<MutableList<String>> {
         check(tag == VIDEO_M4S || tag == AUDIO_M4S) { "tag 必须为 VIDEO_M4S or AUDIO_M4S" }
         return if (tag == VIDEO_M4S) {
             retryVideo
@@ -117,7 +116,7 @@ class OkDownload @Inject constructor(
         }
     }
 
-    private fun tryGetNewUrl(tagName: String, groupId: String): String? {
+    private fun tryGetNewUrl(tagName: String, groupId: Long): String? {
         val tags = tags(tagName)
         return tags[groupId]?.removeFirstOrNull()
     }

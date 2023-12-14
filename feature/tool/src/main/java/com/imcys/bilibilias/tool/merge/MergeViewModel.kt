@@ -17,7 +17,7 @@ import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.model.download.Entry
 import com.imcys.network.download.AUDIO_M4S
 import com.imcys.network.download.DANMAKU_XML
-import com.imcys.network.download.ENTRY_JSON
+import com.imcys.network.download.DownloadManage
 import com.imcys.network.download.FFmpegMerge
 import com.imcys.network.download.MergeData
 import com.imcys.network.download.VIDEO_M4S
@@ -29,9 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -43,7 +41,8 @@ class MergeViewModel @Inject constructor(
     private val xmlToAss: IDanmakuParse,
     private val assBuild: ASSBuild,
     @ApplicationContext private val context: Context,
-    @Dispatcher(AsDispatchers.IO) private val ioDispatchers: CoroutineDispatcher
+    @Dispatcher(AsDispatchers.IO) private val ioDispatchers: CoroutineDispatcher,
+    private val downloadManage: DownloadManage
 ) : ViewModel() {
     private val _scanResultUiState = MutableStateFlow<ScanResultUiState>(ScanResultUiState.Empty)
     val scanResultUiState = _scanResultUiState.asStateFlow()
@@ -118,21 +117,7 @@ class MergeViewModel @Inject constructor(
     }
 
     fun scanFile() {
-        val scannedFiles = ArrayDeque<MutableList<File>>(32)
-        File(BILI_FULL_PATH)
-            .walkTopDown()
-            .forEach { file ->
-                if (file.name == ENTRY_JSON) {
-                    scannedFiles.addLast(mutableListOf(file))
-                }
-                if (file.name == VIDEO_M4S || file.name == AUDIO_M4S || file.name == DANMAKU_XML) {
-                    scannedFiles.last {
-                        it.add(file)
-                    }
-                }
-            }
-        // 解析文件
-        parsingFile(scannedFiles)
+        parsingFile(BILI_FULL_PATH)
     }
 
     private fun parseDanmaku(danmaku: File?, width: Int, height: Int, title: String) {
@@ -151,15 +136,10 @@ class MergeViewModel @Inject constructor(
         return contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun parsingFile(scannedFiles: ArrayDeque<MutableList<File>>) {
+    private fun parsingFile(path: String) {
         saveData.clear()
         _scanResultUiState.update { ScanResultUiState.Loading }
-        val parseResult = scannedFiles.filter { it.size <= 4 }.associateBy {
-            val entryFile = it.removeFirst()
-            val entry = json.decodeFromStream<Entry>(entryFile.inputStream())
-            entry
-        }
+        val parseResult = downloadManage.getAllTask(path)
         if (parseResult.isEmpty()) {
             _scanResultUiState.update {
                 ScanResultUiState.Empty

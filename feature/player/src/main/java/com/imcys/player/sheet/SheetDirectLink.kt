@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.common.utils.MediaUtils
 import com.imcys.model.Dash
 import com.imcys.player.QUALITY_1080P
 import com.imcys.player.QUALITY_1080P_60
@@ -38,7 +39,6 @@ import com.imcys.player.QUALITY_720P_60
 import com.imcys.player.QUALITY_8K
 import com.imcys.player.QUALITY_DOLBY
 import com.imcys.player.QUALITY_HDR
-import com.imcys.player.getMimeType
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -53,7 +53,7 @@ internal fun SheetDirectLink(
                 Column(Modifier.padding(8.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         TextHasBackground(qualityMapToText(item.id))
-                        TextHasBackground(getMimeType(item.codecs)?.replace("video/", "") ?: "")
+                        TextHasBackground(MediaUtils.getMimeType(item.codecs)?.replace("video/", "") ?: "")
                         TextHasBackground("${item.width}×${item.height}")
                     }
                     DirectLinkText(

@@ -2,8 +2,11 @@ package com.imcys.network.repository.video
 
 import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
+import com.imcys.model.video.ViewDetailAndPlayUrl
 
 interface IVideoDataSources {
+    @Deprecated("")
+    suspend fun getViewDetailAndPlayUrl(bvid: String): ViewDetailAndPlayUrl
     suspend fun getDetail(bvid: String): VideoDetails
     suspend fun getDetail(aid: Long): VideoDetails
     suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo

@@ -14,8 +14,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.imcys.space.navigation.navigateToUserSpace
-import com.imcys.space.navigation.userSpaceRoute
 import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
 import com.imcys.bilibilias.tool.navigation.mergeRoute
 import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
@@ -35,6 +33,10 @@ import com.imcys.player.navigation.navigateToPlayer
 import com.imcys.player.navigation.playerScreen
 import com.imcys.setting.navigation.navigateToSettings
 import com.imcys.setting.navigation.settingsRoute
+import com.imcys.space.navigation.collectionDownloadRoute
+import com.imcys.space.navigation.navigateToCollectionDownload
+import com.imcys.space.navigation.navigateToUserSpace
+import com.imcys.space.navigation.userSpaceRoute
 import com.imcys.user.navigation.userRoute
 
 const val ROUTE_MAIN_SCREEN = "main_screen"
@@ -69,7 +71,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
             navigateToUserSpace =  navController::navigateToUserSpace
         )
         danmakuRoute(navController = navController, onBack = navController::navigateUp)
-        userSpaceRoute()
+        userSpaceRoute(navigateToCollectionDownload =  navController::navigateToCollectionDownload)
+        collectionDownloadRoute()
         // -----------------------------------------------------------------------------------------
 
         downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)

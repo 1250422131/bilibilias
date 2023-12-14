@@ -13,30 +13,16 @@ import kotlinx.serialization.Serializable
 data class PlayerInfo(
     @SerialName("accept_description")
     val acceptDescription: List<String> = listOf(),
-    @SerialName("accept_format")
-    val acceptFormat: String = "", // flv480,mp4
     @SerialName("accept_quality")
     val acceptQuality: List<Int> = listOf(),
     @SerialName("dash")
     val dash: Dash = Dash(),
     @SerialName("format")
     val format: String = "", // flv480
-    @SerialName("from")
-    val from: String = "", // local
-    @SerialName("last_play_cid")
-    val lastPlayCid: Int = 0, // 0
-    @SerialName("last_play_time")
-    val lastPlayTime: Int = 0, // 0
     @SerialName("message")
     val message: String = "",
     @SerialName("quality")
     val quality: Int = 0, // 32
-    @SerialName("result")
-    val result: String = "", // suee
-    @SerialName("seek_param")
-    val seekParam: String = "", // start
-    @SerialName("seek_type")
-    val seekType: String = "", // offset
     @SerialName("support_formats")
     val supportFormats: List<SupportFormat> = listOf(),
     @SerialName("timelength")
@@ -86,15 +72,7 @@ data class Dash(
         val startWithSap: Int = 0, // 0
         @SerialName("width")
         val width: Int = 0 // 0
-    ) {
-        @Serializable
-        data class SegmentBase(
-            @SerialName("index_range")
-            val indexRange: String = "", // 944-1107
-            @SerialName("initialization")
-            val initialization: String = "" // 0-943
-        )
-    }
+    )
 
     @Serializable
     data class Dolby(
@@ -131,13 +109,12 @@ data class Dash(
         val startWithSap: Int = 0, // 1
         @SerialName("width")
         val width: Int = 0 // 688
-    ) {
-        @Serializable
-        data class SegmentBase(
-            @SerialName("index_range")
-            val indexRange: String = "", // 1007-1170
-            @SerialName("initialization")
-            val initialization: String = "" // 0-1006
-        )
-    }
+    )
 }
+@Serializable
+data class SegmentBase(
+    @SerialName("index_range")
+    val indexRange: String = "", // 1007-1170
+    @SerialName("initialization")
+    val initialization: String = "" // 0-1006
+)
