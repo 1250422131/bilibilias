@@ -21,8 +21,8 @@ class AppInitializersModule {
     @Provides
     fun provideAppInitializers(application: Application): Set<AppInitializers> = setOf(
         FastKVConfigAppInitializer(),
-        MMKVAppInitializer(application),
-        ToasterAppInitializer(application),
+        MMKVAppInitializer(),
+        ToasterAppInitializer(),
         TimberAppInitializer()
     )
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class AppInitializersProvider @Inject constructor(application: Application) {
+class AppInitializersProvider @Inject constructor(private val application: Application) {
     private val initializers: Set<AppInitializers> by lazy {
         EntryPointAccessors.fromApplication(application, AppInitializerEntryPoint::class.java)
             .getAppInitializers()
@@ -25,13 +25,13 @@ class AppInitializersProvider @Inject constructor(application: Application) {
 
         parallelList.parallelStream().forEach {
             MainScope().launch(Dispatchers.IO) {
-                it.init()
+                it.init(application)
             }
         }
 
         Timber.d("结束执行 并行", "AppInitializersProvider")
         seriesList.forEach {
-            it.init()
+            it.init(application)
         }
     }
 }
