@@ -10,8 +10,8 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
+        maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
         maven("https://androidx.dev/storage/compose-compiler/repository/")

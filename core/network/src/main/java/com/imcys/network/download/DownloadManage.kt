@@ -16,12 +16,11 @@ import com.imcys.network.constant.BILIBILI_WEB_URL
 import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.imcys.network.constant.REFERER
 import com.imcys.network.constant.USER_AGENT
-import com.imcys.network.repository.VideoRepository
 import com.imcys.network.repository.danmaku.IDanmakuDataSources
+import com.imcys.network.repository.video.IVideoDataSources
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,16 +47,16 @@ const val ADM_PRO_EDITOR = "$ADM_PRO_PACK_NAME.AEditor"
 const val IDM_PACK_NAME = "idm.internet.download.manager"
 const val IDM_DOWNLOADER = "$IDM_PACK_NAME.Downloader"
 const val IDM_PLUS_PACK_NAME = "$IDM_PACK_NAME.plus"
-
+// todo 移动到 datastore
 @Singleton
 class DownloadManage @Inject constructor(
-    private val videoRepository: VideoRepository,
+    private val videoRepository: IVideoDataSources,
     private val danmakuRepository: IDanmakuDataSources,
     private val json: Json,
     private val okDownload: OkDownload,
     @ApplicationContext private val context: Context,
     @AppCoroutineScope private val scope: CoroutineScope,
-    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IDownloadManage {
     // todo 等待实现
     fun launchThirdPartyDownload(downloader: ThirdPartyDownloader) {
@@ -150,32 +149,6 @@ class DownloadManage @Inject constructor(
         }
     }
 
-    /** download/bv123/c_111/danmaku.xml */
-    private fun downloadDanmaku(cid: String, danmakuPath: String) {
-        scope.launch {
-//            videoRepository.getDanmakuXml(cid).collect {
-//                when (it) {
-//                    is com.imcys.common.utils.Result.Error -> Timber.tag("下载弹幕异常")
-//                        .d(it.exception)
-//
-//                    com.imcys.common.utils.Result.Loading -> {}
-//                    is com.imcys.common.utils.Result.Success -> {
-//                        val file = File(
-//                            (context.getExternalFilesDir("download/$danmakuPath")),
-//                            "danmaku.xml"
-//                        )
-//                        FileSystem.SYSTEM.sink(file.toOkioPath()).use { fileSink ->
-//                            fileSink.buffer().use { bufferedSink ->
-//                                bufferedSink.write(it.data)
-//                                // android.os.FileUtils.copy()
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-        }
-    }
-
     fun downloadDanmaku(cid: String, aid: Long) {
         // scope.launchIO {
         //     videoRepository.getRealTimeDanmaku(cid = cid, aid = aid, useWbi = true).collect { res ->
@@ -186,22 +159,6 @@ class DownloadManage @Inject constructor(
         //         }
         //     }
         // }
-    }
-
-    private fun builtin(
-        bvid: String,
-        dash: PlayerInfo,
-        pageData: PageData,
-        downloadListHolders: DownloadListHolders,
-        aid: Long,
-        title: String
-    ) {
-        val qn = downloadListHolders.videoQuality
-        val d = dash.dash
-        buildEntryJson(qn, bvid, pageData)
-        val cid = pageData.cid.toString()
-
-        downloadDanmaku(cid, "$bvid/c_$cid")
     }
 
     private fun buildEntryJson(qn: Int, bvid: String, pageData: PageData) {
@@ -248,21 +205,6 @@ class DownloadManage @Inject constructor(
     fun deleteFile() {
     }
 
-    fun addTask(bvid: String, pageData: List<PageData>, quality: Int) {
-        scope.launch {
-            for (data in pageData) {
-                val cid = data.cid.toString()
-                val videoDetailsDeferred = async { videoRepository.getDetail(bvid) }
-                val playerInfoDeferred =
-                    async { videoRepository.getPlayerPlayUrl(bvid, cid.toLong()) }
-                val detail = videoDetailsDeferred.await()
-                val info = playerInfoDeferred.await()
-                addToQueue(info, detail, quality)
-                downloadDanmuku(detail.aid, detail.cid, info.dash.duration)
-            }
-        }
-    }
-
     private fun addToQueue(info: PlayerInfo, detail: VideoDetails, quality: Int) {
         val videoList =
             info.dash.video.groupBy { it.id }[quality]
@@ -295,8 +237,7 @@ class DownloadManage @Inject constructor(
 
     private suspend fun downloadDanmuku(aid: Long, cid: Long, duration: Int): Unit =
         withContext(ioDispatcher) {
-            val reply =
-                danmakuRepository.protoWbi(cid, 1)
+            val reply = danmakuRepository.protoWbi(cid, 1)
             val sb = StringBuilder(reply.elems.size * DEFAULT_DANMAKU_SIZE)
             sb.append("<i>")
                 .append("<chatserver>chat.bilibili.com</chatserver>")
@@ -367,5 +308,9 @@ class DownloadManage @Inject constructor(
                 }
             }
         return scannedFiles
+    }
+
+    fun addTask(bvid: String, quality: Int) {
+
     }
 }
