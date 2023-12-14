@@ -44,4 +44,9 @@ class CollectionDownloadViewModel @Inject constructor(
         videoQuality[bvid] = quality
     }
 
+    fun startDownload() {
+        videoQuality.entries.forEach { (bvid, quality) ->
+            downloadManage.addTask(bvid,quality)
+        }
+    }
 }

@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network)
     implementation(projects.core.datastore)
+    implementation(projects.core.crash)
 
     implementation(projects.feature.authentication)
     implementation(projects.feature.home)
@@ -102,9 +103,7 @@ dependencies {
 
     implementation(libs.compose.settings.ui.m3)
 
-    /**
-     * ffmpeg
-     */
+    /** ffmpeg */
     implementation(libs.ffmpeg.kit.full)
 
     implementation(libs.coil.kt)
