@@ -1,5 +1,6 @@
 package com.imcys.datastore.di
 
+import android.content.Context
 import com.imcys.common.appinitializer.AppInitializerStartType
 import com.imcys.common.appinitializer.AppInitializers
 import io.fastkv.FastKVConfig
@@ -7,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
 class FastKVConfigAppInitializer : AppInitializers {
-    override fun init() {
+    override fun init(context: Context) {
         FastKVConfig.setExecutor(Dispatchers.IO.asExecutor())
     }
 

@@ -1,10 +1,12 @@
 package com.imcys.common.appinitializer
 
+import android.content.Context
+
 interface AppInitializers {
     /**
      * 初始化代码
      */
-    fun init()
+    fun init(context:Context)
 
     /**
      * @return 初始化类型
