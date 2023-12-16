@@ -77,6 +77,7 @@ dependencies {
     implementation(projects.feature.setting)
     implementation(projects.feature.player)
     implementation(projects.feature.userspace)
+    implementation(projects.feature.merge)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)

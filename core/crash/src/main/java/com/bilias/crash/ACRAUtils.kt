@@ -1,7 +1,6 @@
 ﻿package com.bilias.crash
 
 import android.app.Application
-import android.content.Context
 import org.acra.ACRA
 import org.acra.config.dialog
 import org.acra.config.httpSender
@@ -21,9 +20,9 @@ object ACRAUtils {
     }
 
     context(Application)
-    fun init(context: Context) {
+    fun init() {
         initAcra {
-            buildConfigClass = BuildConfig::class.java
+            buildConfigClass = com.bilias.crash.BuildConfig::class.java
             reportFormat = StringFormat.JSON
             toast {
                 text = "应用崩溃了"
@@ -69,9 +68,19 @@ object ACRAUtils {
             scheduler {
 
             }
-            limiter { }
-            dialog { enabled = false }
-            notification { enabled = false }
+            limiter {
+
+            }
+            dialog {
+                enabled = false
+                text = "dialog"
+            }
+            notification {
+                enabled = false
+                title = "title"
+                text = "text"
+                channelName = "channelName"
+            }
         }
     }
 }

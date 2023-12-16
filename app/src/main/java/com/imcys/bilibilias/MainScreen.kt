@@ -15,9 +15,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
-import com.imcys.bilibilias.tool.navigation.mergeRoute
+import com.imcys.bilias.feature.merge.navigation.mergeRoute
 import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
-import com.imcys.bilibilias.tool.navigation.navigateToMerge
+import com.imcys.bilias.feature.merge.navigation.navigateToMerge
 import com.imcys.bilibilias.tool.navigation.toolScreen
 import com.imcys.home.navigation.ROUTE_HOME
 import com.imcys.home.navigation.contributeScreen

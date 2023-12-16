@@ -18,7 +18,5 @@ dependencies {
      */
     implementation(libs.jxl)
 
-    implementation(libs.ffmpeg.ffmpegCommand)
-
     implementation(libs.androidFilePicker)
 }
