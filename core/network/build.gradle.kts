@@ -35,9 +35,6 @@ dependencies {
 
     implementation(libs.okhttp.brotli)
 
-    implementation(libs.ffmpeg.kit.full)
-    implementation(libs.ffmpeg.ffmpegCommand)
-
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.coil.kt)

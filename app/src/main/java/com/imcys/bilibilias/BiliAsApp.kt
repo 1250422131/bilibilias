@@ -18,6 +18,6 @@ class BiliAsApp : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        ACRAUtils.init(base)
+        ACRAUtils.init()
     }
 }
