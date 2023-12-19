@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -35,10 +34,7 @@ import coil.compose.AsyncImage
 import com.hjq.toast.Toaster
 import com.imcys.model.download.Entry
 import java.util.Locale
-
-const val BASE_PATH = "/storage/emulated/0/Android/data/"
-const val BILI_PATH = "tv.danmaku.bili/download"
-const val BILI_FULL_PATH = BASE_PATH + BILI_PATH
+import kotlin.reflect.KFunction2
 
 @Composable
 internal fun MergeRoute() {
@@ -46,14 +42,16 @@ internal fun MergeRoute() {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     MergeScreen(
         uiState = uiState,
-        mixVideoAudio = viewModel::mixVideoAudio
+        mixVideoAudio = viewModel::mixVideoAudio,
+        selectResource = viewModel::selectResource
     )
 }
 
 @Composable
 internal fun MergeScreen(
     uiState: UiState,
-    mixVideoAudio: (List<Entry>, Context) -> Unit
+    mixVideoAudio: (Context) -> Unit,
+    selectResource: KFunction2<Entry, Boolean, Unit>
 ) {
     val selectedList = remember { mutableStateListOf<Entry>() }
     Scaffold(
@@ -63,7 +61,7 @@ internal fun MergeScreen(
                 actions = {
                     val context = LocalContext.current
                     TextButton(
-                        onClick = { mixVideoAudio(selectedList, context) },
+                        onClick = { mixVideoAudio(context) },
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                     ) {
                         Text(text = "合并")
@@ -115,14 +113,18 @@ internal fun MergeScreen(
                 uiState.entries,
                 { it.avid + it.pageData.cid }
             ) { item ->
-                ViewListItem(item, selectedList)
+                ViewListItem(item, selectedList, selectResource)
             }
         }
     }
 }
 
 @Composable
-private fun ViewListItem(entry: Entry, selectedList: SnapshotStateList<Entry>) {
+private fun ViewListItem(
+    entry: Entry,
+    selectedList: List<Entry>,
+    selectResource: KFunction2<Entry, Boolean, Unit>,
+) {
     ListItem(
         headlineContent = {
             Text(text = entry.ownerName, maxLines = 1, fontSize = 11.sp)
@@ -139,20 +141,13 @@ private fun ViewListItem(entry: Entry, selectedList: SnapshotStateList<Entry>) {
         trailingContent = {
             RadioButton(
                 selected = isSelected(selectedList, entry),
-                onClick = { changeSelected(selectedList, entry) }
+                onClick = { selectResource(entry,false) }
             )
         }
     )
 }
 
 private fun isSelected(entries: List<Entry>, entry: Entry) = entry in entries
-private fun changeSelected(entries: MutableList<Entry>, entry: Entry) {
-    if (isSelected(entries, entry)) {
-        entries.remove(entry)
-    } else {
-        entries.add(entry)
-    }
-}
 
 fun getMimeType(uri: Uri, context: Context): String? {
     val mimeType: String? = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {

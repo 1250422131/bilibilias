@@ -34,5 +34,5 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
 
-//    api(libs.compose.Loading.Dots)
+    api(libs.bottomsheetdialog.compose)
 }

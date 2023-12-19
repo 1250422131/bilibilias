@@ -81,7 +81,7 @@ annotation class BaseOkhttpClient
 @Retention(AnnotationRetention.BINARY)
 annotation class ProjectOkhttpClient
 
-val requireWbi = AttributeKey<Boolean>("requireWbi")
+internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 
 @Module
 @InstallIn(SingletonComponent::class)

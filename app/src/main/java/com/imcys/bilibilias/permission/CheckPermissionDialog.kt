@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.permission
 
 import android.Manifest
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,13 +38,12 @@ import com.imcys.common.utils.shouldShowRationale
 import com.imcys.ui.BottomSheetDialog
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.M)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CheckPermissionDialog(
     navigateToAuthMethod: () -> Unit,
     navigateToHome: () -> Unit,
-    login: Boolean
+    valid: Boolean
 ) {
     val context = LocalContext.current
 
@@ -71,7 +68,7 @@ fun CheckPermissionDialog(
         }
     LaunchedEffect(permissionState.status.isGranted) {
         if (context.hasPickMediaPermission()) {
-            if (login) {
+            if (valid) {
                 navigateToHome()
             } else {
                 navigateToAuthMethod()
@@ -131,8 +128,8 @@ fun CheckPermissionDialog(
             }
             Button(
                 onClick = {
-                    context.gotoApplicationSettings()
                     context.getActivity().finish()
+                    context.gotoApplicationSettings()
                 },
                 Modifier
                     .height(60.dp)

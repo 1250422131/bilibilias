@@ -93,12 +93,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    /**
-     * RxFFmpeg
-     * 支持视频合并等操作
-     */
-    api(libs.rxFFmpeg)
-
     // 百度统计
     api(libs.mtj.sdk.circle)
 
@@ -127,7 +121,6 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.accompanist.systemuicontroller)
 
     implementation(libs.androidx.paging.compose)
 
