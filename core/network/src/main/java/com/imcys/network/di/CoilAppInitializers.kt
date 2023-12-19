@@ -19,5 +19,4 @@ class CoilAppInitializers @Inject constructor() : AppInitializers {
 
 
     override fun widget(): Int = 0
-
 }

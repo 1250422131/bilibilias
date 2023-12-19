@@ -62,6 +62,7 @@ import kotlinx.serialization.serializer
 import okhttp3.Cache
 import okhttp3.ConnectionSpec
 import okhttp3.Dispatcher
+import okhttp3.EventListener
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
 import okhttp3.brotli.BrotliInterceptor
@@ -111,7 +112,8 @@ class NetworkModule {
     @Singleton
     @BaseOkhttpClient
     fun provideBaseOkhttpClient(
-        executorService: ExecutorService
+        executorService: ExecutorService,
+        networkListenerFactory: EventListener.Factory
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -122,6 +124,7 @@ class NetworkModule {
                     .build()
                 chain.proceed(requestWithUserAgent)
             }
+            .eventListenerFactory(networkListenerFactory)
             .addInterceptor(BrotliInterceptor)
             .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
             .pingInterval(1, TimeUnit.SECONDS)

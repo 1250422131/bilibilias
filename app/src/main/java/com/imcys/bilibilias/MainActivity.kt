@@ -93,32 +93,27 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             BILIBILIASTheme {
-                Screen()
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val bottomBarState by remember {
+                    derivedStateOf { navBackStackEntry?.destination?.route in itemsRoutes }
+                }
+                Scaffold(
+                    Modifier.fillMaxSize(),
+                    bottomBar = {
+                        AnimatedVisibility(
+                            visible = bottomBarState,
+                            enter = slideInVertically(initialOffsetY = { it }),
+                            exit = slideOutVertically(targetOffsetY = { it }),
+                        ) {
+                            AsBottomBar(navController)
+                        }
+                    }
+                ) {
+                    MainScreen(navController, modifier = Modifier.padding(it))
+                }
             }
         }
-    }
-}
-
-@Composable
-fun Screen() {
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val bottomBarState by remember {
-        derivedStateOf { navBackStackEntry?.destination?.route in itemsRoutes }
-    }
-    Scaffold(
-        Modifier.fillMaxSize(),
-        bottomBar = {
-            AnimatedVisibility(
-                visible = bottomBarState,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
-            ) {
-                AsBottomBar(navController)
-            }
-        }
-    ) {
-        MainScreen(navController, modifier = Modifier.padding(it))
     }
 }
 
@@ -168,8 +163,10 @@ fun AsBottomBar(navController: NavController) {
     }
 }
 
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: String) =
-    this?.hierarchy?.any { it.route == destination } == true
+private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: String):Boolean =
+    this?.hierarchy?.any {
+        it.route?.contains(destination, true) ?: false
+    } ?: false
 
 private val items: ImmutableList<Screen> = persistentListOf(
     Screen.Home,

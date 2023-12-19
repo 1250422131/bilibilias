@@ -9,7 +9,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.google.accompanist.navigation.material.bottomSheet
 import com.imcys.common.utils.sharedHiltViewModel
 import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
@@ -50,7 +49,7 @@ fun NavController.navigateToDownloadOptions() {
 fun NavGraphBuilder.downloadOptionsRoute(
     onBack: () -> Unit,
     navController: NavHostController,
-) = bottomSheet(
+) = composable(
     ROUTE_DOWNLOAD_OPTIONS,
 ) { backStackEntry ->
     val playerViewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
