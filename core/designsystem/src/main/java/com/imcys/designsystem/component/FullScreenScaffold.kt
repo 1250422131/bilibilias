@@ -8,13 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.systemuicontroller.SystemUiController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun FullScreenScaffold(
@@ -28,11 +25,6 @@ fun FullScreenScaffold(
     contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-    val isUseDarkModeIcons = shouldUseDarkIcons()
-    SideEffect {
-        transparentSystemBars(systemUiController, isUseDarkModeIcons)
-    }
     Scaffold(
         modifier = modifier,
         topBar = topBar,
@@ -61,12 +53,4 @@ fun shouldUseDarkIcons(bgColor: Color = Color.Transparent): Boolean {
         // 颜色亮度
         return bgColor.luminance() >= 0.5
     }
-}
-
-fun transparentSystemBars(systemUiController: SystemUiController, useDarkIcons: Boolean) {
-    systemUiController.setSystemBarsColor(
-        color = Color.Transparent,
-        darkIcons = useDarkIcons,
-        isNavigationBarContrastEnforced = false,
-    )
 }

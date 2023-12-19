@@ -11,15 +11,16 @@ import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.model.download.Entry
-import com.imcys.network.download.AUDIO_M4S
-import com.imcys.network.download.DANMAKU_XML
 import com.imcys.network.download.DownloadManage
-import com.imcys.network.download.VIDEO_M4S
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -29,14 +30,17 @@ import javax.inject.Inject
 class MergeViewModel @Inject constructor(
     private val ffmpegMerge: FFmpegMerge,
     private val xmlToAss: IDanmakuParse,
-    private val assBuild: ASSBuild,
     @Dispatcher(AsDispatchers.IO) private val ioDispatchers: CoroutineDispatcher,
     private val downloadManage: DownloadManage
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val entryList = mutableMapOf<Entry, MutableList<File>>()
+    private val _selectedResourceUiState = MutableStateFlow(mutableMapOf<Entry, Boolean>())
+    val selectedResourceUiState = _selectedResourceUiState.asStateFlow()
+
+    private val resource = mutableListOf<Entry>()
+
     private val listener = object : FFmpegMerge.Listener {
         override fun onProgress(progress: Int, pts: Long) {
             _uiState.update {
@@ -46,7 +50,7 @@ class MergeViewModel @Inject constructor(
 
         override fun onError(errorCode: Int, errorMsg: String?, mixFile: String, realName: String) {
             _uiState.update {
-                it.copy(errorMessage = "$realName 合并错误", complete = false, startMix = false)
+                it.copy(errorMessage = "$realName 合并错误")
             }
         }
 
@@ -68,6 +72,15 @@ class MergeViewModel @Inject constructor(
             }
         }
     }
+    val newUiState: StateFlow<NewUiState> =
+        downloadManage.getAllTaskFlow(BILI_FULL_PATH)
+            .map {
+                if (it.isEmpty()) {
+                    NewUiState.Empty
+                } else {
+                    NewUiState.Success(it.toImmutableList())
+                }
+            }.stateIn(viewModelScope, SharingStarted.Eagerly, NewUiState.Loading)
 
     init {
         viewModelScope.launch(ioDispatchers) {
@@ -76,13 +89,17 @@ class MergeViewModel @Inject constructor(
         ffmpegMerge.setListener(listener)
     }
 
-    fun mixVideoAudio(entries: List<Entry>, context: Context) {
-        for (entry in entries) {
-            val list = entryList[entry] ?: continue
-            val danmaku = list.find { it.name == DANMAKU_XML }
+    fun selectResource(e: Entry, selected: Boolean) {
+        _selectedResourceUiState.value[e] = !selected
+        newUiState.value
+    }
 
-            val vFile = list.find { it.name == VIDEO_M4S }
-            val aFile = list.find { it.name == AUDIO_M4S }
+    fun mixVideoAudio(context: Context) {
+        for (entry in resource) {
+            val danmaku = entry.dFile
+
+            val vFile = entry.vFile
+            val aFile = entry.aFile
             if (vFile == null || aFile == null) return
 
             val tempFile = File(context.mixDir, entry.title)
@@ -96,15 +113,22 @@ class MergeViewModel @Inject constructor(
     }
 
     private fun startScanner() {
-        entryList.clear()
         val result = downloadManage.getAllTask(BILI_FULL_PATH)
-        _uiState.update { it.copy(entries = result.keys.toImmutableList()) }
-        entryList.putAll(result)
+        _uiState.update { it.copy(entries = result.toImmutableList()) }
+        for (entry in result) {
+            _selectedResourceUiState.update {
+                it[entry] = false
+                it
+            }
+        }
     }
 
     private fun parseDanmaku(danmaku: File?, width: Int, height: Int, title: String) {
         danmaku ?: return
         val danmakus = xmlToAss.parse(danmaku)
-        val s = assBuild.loadDanmaku(danmakus, title, width, height)
     }
 }
+
+const val BASE_PATH = "/storage/emulated/0/Android/data/"
+const val BILI_PATH = "tv.danmaku.bili/download"
+const val BILI_FULL_PATH = BASE_PATH + BILI_PATH

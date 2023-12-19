@@ -10,9 +10,10 @@ androidx-junit = "1.1.5"
 appcenter = "5.0.3"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
+bottomsheetdialogCompose = "1.3.1"
 coil = "2.5.0"
-composeLoadingDots = "1.2.3"
 composeSettingsUiM3 = "1.0.3"
+coreSplashscreen = "1.0.1"
 datastore = "1.0.0"
 devAppX = "2.4.3"
 leakcanaryAndroid = "2.12"
@@ -43,24 +44,23 @@ media3 = "1.2.0"
 okhttp = "4.12.0"
 okio = "3.7.0"
 ktor = "2.3.7"
-androidxLifecycle = "2.7.0-rc01"
+androidxLifecycle = "2.7.0-rc02"
 lottie = "6.1.0"
-material = "1.10.0"
+material = "1.11.0"
 mmkv = "1.3.2"
 monitor = "1.4.4"
 mtjSdkCircle = "4.0.7.5"
-navigationCompose = "2.7.5"
+navigationCompose = "2.7.6"
 androidxPaging = "3.2.1"
 androidxPagingCompose = "3.3.0-alpha02"
 preferenceKtx = "1.2.1"
 room = "2.6.1"
-rxFFmpeg = "4.9.0-lite"
 androidxStartupRuntime = "1.1.1"
 timber = "5.0.1"
 toaster = "12.6"
 twitter-detekt = "0.0.26"
 work-runtime-ktx = "2.9.0"
-androidxActivityCompose = "1.8.1"
+androidxActivityCompose = "1.8.2"
 androidxComposeBom = "2023.10.01"
 protobuf = "3.24.4"
 protobufPlugin = "0.9.4"
@@ -68,11 +68,10 @@ koin = "3.5.1"
 lint = "31.2.0"
 wire = "4.9.3"
 commonsCodec = "1.16.0"
-annotationJvm = "1.7.0"
+annotationJvm = "1.7.1"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 
 acra-scheduler = { group = "ch.acra", name = "acra-advanced-scheduler", version.ref = "acra" }
 acra-dialog = { group = "ch.acra", name = "acra-dialog", version.ref = "acra" }
@@ -84,10 +83,11 @@ acra-notification = { group = "ch.acra", name = "acra-notification", version.ref
 acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 
 android-startup = { group = "io.github.idisfkj", name = "android-startup", version.ref = "androidStartup" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartupRuntime" }
 
-compose-Loading-Dots = { group = "com.github.razaghimahdi", name = "Compose-Loading-Dots", version.ref = "composeLoadingDots" }
+bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
@@ -188,8 +188,6 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 
 mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
-
-rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
 
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }

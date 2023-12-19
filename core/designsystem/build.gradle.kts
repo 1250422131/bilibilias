@@ -23,7 +23,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.kt.compose)
 
-    implementation(libs.accompanist.systemuicontroller)
-
     implementation(libs.material.dialogs.core)
 }

@@ -22,6 +22,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -47,6 +50,7 @@ const val ADM_PRO_EDITOR = "$ADM_PRO_PACK_NAME.AEditor"
 const val IDM_PACK_NAME = "idm.internet.download.manager"
 const val IDM_DOWNLOADER = "$IDM_PACK_NAME.Downloader"
 const val IDM_PLUS_PACK_NAME = "$IDM_PACK_NAME.plus"
+
 // todo 移动到 datastore
 @Singleton
 class DownloadManage @Inject constructor(
@@ -265,11 +269,14 @@ class DownloadManage @Inject constructor(
         return "${context.downloadDir}${File.separator}$aid${File.separator}c_$cid"
     }
 
-    override fun getAllTask(path: String): Map<Entry, MutableList<File>> {
+    override fun getAllTask(path: String): List<Entry> {
         val scan = scan(path)
         return decodeEntry(scan)
     }
-
+    fun getAllTaskFlow(path: String): Flow<List<Entry>> {
+        val scan = scan(path)
+        return flowOf(decodeEntry(scan))
+    }
     override fun downloadDanmaku(cid: Long, second: Int) {
         val i = (second / 6 * 60) + 1
 
@@ -282,13 +289,18 @@ class DownloadManage @Inject constructor(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun decodeEntry(scanResult: ArrayDeque<MutableList<File>>): Map<Entry, MutableList<File>> {
+    fun decodeEntry(scanResult: ArrayDeque<MutableList<File>>): List<Entry> {
         val decodeResult = scanResult
             .filter { it.size <= 4 }
-            .associateBy {
-                val entryFile = it.removeFirst()
+//            .filterNot { it.size > 4 }
+            .map { files ->
+                val entryFile = files.removeFirst()
                 val entry = json.decodeFromStream(Entry.serializer(), entryFile.inputStream())
-                entry
+                entry.copy(
+                    vFile = files.find { it.name == VIDEO_M4S },
+                    aFile = files.find { it.name == AUDIO_M4S },
+                    dFile = files.find { it.name == DANMAKU_XML },
+                )
             }
         return decodeResult
     }

@@ -94,13 +94,13 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
 
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.navigation.material)
     implementation(libs.androidx.navigation.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.compose.settings.ui.m3)
 
@@ -111,4 +111,6 @@ dependencies {
     implementation(libs.coil.kt.compose)
     implementation(libs.coil.kt.gif)
     debugImplementation(libs.leakcanary.android)
+
+
 }

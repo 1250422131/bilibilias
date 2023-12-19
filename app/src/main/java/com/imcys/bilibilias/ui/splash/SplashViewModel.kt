@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(cookiesData: ICookieStore) : ViewModel() {
-    val login = cookiesData.valid
+    val valid = cookiesData.valid
 }

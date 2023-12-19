@@ -28,12 +28,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imcys.common.utils.getActivity
 import com.imcys.common.utils.openUri
 import com.zj.banner.BannerPager
-import com.zj.banner.model.BaseBannerBean
 
 @Composable
 internal fun HomeScreen(
@@ -91,12 +89,16 @@ private fun Contribute(navigateToContribute: () -> Unit) {
         ListItem(
             leadingContent = {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_home_trophy), contentDescription = null,
+                    painter = painterResource(id = R.drawable.ic_home_trophy),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             },
             headlineContent = {
-                Text(stringResource(R.string.app_fragment_home_salute_text), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.app_fragment_home_salute_text),
+                    fontWeight = FontWeight.Bold
+                )
             },
             supportingContent = {
                 Text(stringResource(R.string.app_fragment_home_salute_doc))
@@ -117,12 +119,16 @@ private fun Donation(navigationToDonation: () -> Unit) {
         ListItem(
             leadingContent = {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_home_red_envelopes), contentDescription = null,
+                    painter = painterResource(id = R.drawable.ic_home_red_envelopes),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             },
             headlineContent = {
-                Text(stringResource(R.string.app_fragment_home_donate_text), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.app_fragment_home_donate_text),
+                    fontWeight = FontWeight.Bold
+                )
             },
             supportingContent = {
                 Text(stringResource(R.string.app_fragment_home_donate_doc))
@@ -144,12 +150,16 @@ private fun Logout(logoutLogin: () -> Unit) {
         ListItem(
             leadingContent = {
                 Image(
-                    painter = painterResource(id = R.drawable.home_logout), contentDescription = null,
+                    painter = painterResource(id = R.drawable.home_logout),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             },
             headlineContent = {
-                Text(stringResource(R.string.app_fragment_home_logout), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.app_fragment_home_logout),
+                    fontWeight = FontWeight.Bold
+                )
             },
             supportingContent = {
                 Text(stringResource(R.string.app_fragment_home_logout_text))
@@ -159,15 +169,17 @@ private fun Logout(logoutLogin: () -> Unit) {
         )
     }
     val context = LocalContext.current
-    LogoutDialog(show = show, onDismiss = { show = false }, positiveButtonText = {
-        logoutLogin()
-        context.getActivity().finish()
-    })
+    LogoutDialog(
+        show = show,
+        onDismiss = { show = false },
+        positiveButtonText = {
+            logoutLogin()
+            context.getActivity().finish()
+        }
+    )
 }
 
-/**
- * 社区反馈问题
- */
+/** 社区反馈问题 */
 @Composable
 private fun FeedbackProblem() {
     val context = LocalContext.current
@@ -182,12 +194,16 @@ private fun FeedbackProblem() {
         ListItem(
             leadingContent = {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_home_rabbit), contentDescription = null,
+                    painter = painterResource(id = R.drawable.ic_home_rabbit),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             },
             headlineContent = {
-                Text(stringResource(R.string.app_fragment_home_feedback), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.app_fragment_home_feedback),
+                    fontWeight = FontWeight.Bold
+                )
             },
             supportingContent = {
                 Text(stringResource(R.string.app_fragment_home_feedback_doc))
@@ -212,12 +228,16 @@ private fun UpdateContent() {
         ListItem(
             leadingContent = {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_tip_info), contentDescription = null,
+                    painter = painterResource(id = R.drawable.ic_tip_info),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary)
                 )
             },
             headlineContent = {
-                Text(stringResource(R.string.app_fragment_home_update_content), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.app_fragment_home_update_content),
+                    fontWeight = FontWeight.Bold
+                )
             },
             supportingContent = {
                 Text(stringResource(R.string.new_version_doc))
@@ -252,14 +272,4 @@ fun LogoutDialog(
             }
         )
     }
-}
-
-data class BannerBean(
-    override val data: String
-) : BaseBannerBean()
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLogoutDialog() {
-    LogoutDialog(true, { }, {})
 }

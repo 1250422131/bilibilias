@@ -14,17 +14,23 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
+import com.imcys.authentication.login.navigation.loginAuthRoute
+import com.imcys.authentication.login.navigation.navigateToLoginAuth
+import com.imcys.authentication.method.navigation.authMethodRoute
+import com.imcys.authentication.method.navigation.navigateToAuthMethod
 import com.imcys.bilias.feature.merge.navigation.mergeRoute
-import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
 import com.imcys.bilias.feature.merge.navigation.navigateToMerge
+import com.imcys.bilibilias.tool.navigation.bangumiFollowRoute
+import com.imcys.bilibilias.tool.navigation.navigateToBangumiFollow
 import com.imcys.bilibilias.tool.navigation.toolScreen
-import com.imcys.home.navigation.ROUTE_HOME
+import com.imcys.bilibilias.ui.splash.navigation.ROUTE_SPLASH
+import com.imcys.bilibilias.ui.splash.navigation.splashRoute
 import com.imcys.home.navigation.contributeScreen
 import com.imcys.home.navigation.donationScreen
 import com.imcys.home.navigation.homeScreen
 import com.imcys.home.navigation.navigateToContribute
 import com.imcys.home.navigation.navigateToDonation
+import com.imcys.home.navigation.navigateToHome
 import com.imcys.player.download.danmaku.danmakuRoute
 import com.imcys.player.download.danmaku.navigateToDanmaku
 import com.imcys.player.download.downloadOptionsRoute
@@ -46,9 +52,19 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
     BILIBILIASAnimatedNavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = ROUTE_HOME,
+        startDestination = ROUTE_SPLASH,
         route = ROUTE_MAIN_SCREEN,
     ) {
+        // 启动页
+        splashRoute(
+            navigateToAuthMethod = navController::navigateToAuthMethod,
+            navigateToHome = navController::navigateToHome
+        )
+        // region 登录认证
+        authMethodRoute(navigateToLoginAuth = navController::navigateToLoginAuth)
+        loginAuthRoute(navigateToHome = navController::navigateToHome)
+        // endregion
+
         homeScreen(
             navigationToDonation = navController::navigateToDonation,
             navigateToContribute = navController::navigateToContribute

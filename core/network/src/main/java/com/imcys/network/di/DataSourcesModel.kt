@@ -8,6 +8,8 @@ import com.imcys.network.repository.user.IUserDataSources
 import com.imcys.network.repository.user.UserRepository
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.network.repository.wbi.IWbiSignatureDataSources
+import com.imcys.network.utils.ConnectivityManagerNetworkMonitor
+import com.imcys.network.utils.INetworkMonitor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,4 +29,7 @@ interface DataSourcesModel {
 
     @Binds
     fun bindIUserDataSources(userRepository: UserRepository): IUserDataSources
+
+    @Binds
+    fun bindNetworkMonitor(networkMonitor: ConnectivityManagerNetworkMonitor): INetworkMonitor
 }
