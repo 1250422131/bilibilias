@@ -1,6 +1,5 @@
 package com.imcys.network.di
 
-import com.imcys.bilibilias.okdownloader.android.NetworkMonitor
 import com.imcys.network.repository.VideoRepository
 import com.imcys.network.repository.WbiKeyRepository
 import com.imcys.network.repository.danmaku.DanmakuRepository
@@ -9,6 +8,7 @@ import com.imcys.network.repository.user.IUserDataSources
 import com.imcys.network.repository.user.UserRepository
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.network.repository.wbi.IWbiSignatureDataSources
+import com.imcys.network.utils.ConnectivityManagerNetworkMonitor
 import com.imcys.network.utils.INetworkMonitor
 import dagger.Binds
 import dagger.Module
@@ -31,5 +31,5 @@ interface DataSourcesModel {
     fun bindIUserDataSources(userRepository: UserRepository): IUserDataSources
 
     @Binds
-    fun bindINetworkMonitor(networkMonitor: NetworkMonitor): INetworkMonitor
+    fun bindINetworkMonitor(connectivityManagerNetworkMonitor: ConnectivityManagerNetworkMonitor): INetworkMonitor
 }
