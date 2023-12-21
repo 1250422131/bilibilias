@@ -1,37 +1,19 @@
-﻿@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.protobuf)
+    id("com.squareup.wire")
 }
 
 android {
     namespace = "com.bilias.datastore.proto"
 }
-protobuf {
-    protoc {
-        artifact = libs.protobuf.protoc.get().toString()
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                register("java") {
-                    option("lite")
-                }
-                register("kotlin") {
-                    option("lite")
-                }
-            }
+wire {
+    kotlin {
+        sourcePath {
+            srcDirs("src/main/proto")
         }
     }
 }
-//androidComponents.beforeVariants {
-//    android.sourceSets.register(it.name) {
-//        val buildDir = layout.buildDirectory.get().asFile
-//        java.srcDir(buildDir.resolve("generated/source/proto/${it.name}/java"))
-//        kotlin.srcDir(buildDir.resolve("generated/source/proto/${it.name}/kotlin"))
-//    }
-//}
-
 dependencies {
-    implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.wireRuntime)
 }
