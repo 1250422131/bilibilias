@@ -19,55 +19,38 @@ plugins {
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt)
-    // Run ./gradlew dependencyUpdates to check for dependency updates
-    id("com.github.ben-manes.versions") version "0.50.0"
 }
-
+detekt {
+    toolVersion = "1.23.4"
+    config.setFrom(file("$rootDir/config/detekt.yml"))
+    baseline = file("$rootDir/config/reports/baseline.xml")
+    parallel = true
+    basePath = rootDir.absolutePath
+    autoCorrect = true
+}
 val reportMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMergeTask::class) {
     output.set(rootProject.layout.buildDirectory.file("$rootDir/config/reports/merge.sarif"))
 }
 dependencies {
-    detektPlugins(libs.rules.detekt)
+    detektPlugins(libs.twitter.detekt)
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.4")
 }
-allprojects {
-    group = "io.gitlab.arturbosch.detekt"
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-
-    detekt {
-        toolVersion = "1.23.4"
-        config.setFrom(file("$rootDir/config/detekt.yml"))
-        baseline = file("$rootDir/config/reports/baseline.xml")
-        parallel = true
-        basePath = rootDir.absolutePath
-        autoCorrect = true
-        allRules = true
-    }
-
-    tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-            html.outputLocation.set(file("$rootDir/config/reports/detekt.html"))
-            md.required.set(true)
-            md.outputLocation.set(file("$rootDir/config/reports/detekt.md"))
-            sarif.required.set(true)
-        }
-    }
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-        finalizedBy(reportMerge)
-    }
-
-    reportMerge {
-        input.from(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().map { it.sarifReportFile })
+tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        html.outputLocation.set(file("$rootDir/config/reports/detekt.html"))
+        md.required.set(true)
+        md.outputLocation.set(file("$rootDir/config/reports/detekt.md"))
+        sarif.required.set(true)
     }
 }
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    finalizedBy(reportMerge)
+}
 
-tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
-    rejectVersionIf {
-        listOf("alpha", "beta", "rc", "cr", "m", "eap", "pr", "dev").any { qualifier ->
-            candidate.version.contains(qualifier, ignoreCase = true)
-        }
-    }
+reportMerge {
+    input.from(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().map { it.sarifReportFile })
 }
 subprojects {
     // ./gradlew assembleRelease -PcomposeCompilerReports=true

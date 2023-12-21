@@ -1,4 +1,4 @@
-﻿package com.imcys.network.utils
+package com.imcys.network.utils
 
 import com.imcys.common.utils.md5
 import com.imcys.network.repository.Parameter
@@ -8,7 +8,7 @@ import io.ktor.http.encodeURLParameter
  * 签名算法
  */
 object SignatureUtils {
-     fun signature(
+    fun signature(
         params: List<Parameter>,
         mixinKey: String
     ): List<Parameter> {

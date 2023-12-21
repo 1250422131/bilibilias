@@ -9,7 +9,7 @@ import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.common.utils.digitalConversion
 import com.imcys.model.VideoDetails
-import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.video.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

@@ -25,18 +25,28 @@ import com.imcys.authentication.R
 import com.imcys.designsystem.component.HyperlinkText
 import com.imcys.designsystem.component.SingleLineText
 
+@Composable
+internal fun AuthMethodRoute(onNavigateToLoginAuth: () -> Unit, modifier: Modifier = Modifier) {
+    AuthMethodScreen(onNavigateToLoginAuth, modifier)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthMethodScreen(onNavigateToLoginAuth: () -> Unit, modifier: Modifier = Modifier) {
-    Scaffold(modifier, topBar = {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = stringResource(R.string.app_dialog_login_bottomsheet_title),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+internal fun AuthMethodScreen(onNavigateToLoginAuth: () -> Unit, modifier: Modifier = Modifier) {
+    Scaffold(
+        modifier,
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_dialog_login_bottomsheet_title),
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             )
-        })
-    }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(Modifier.padding(innerPadding), horizontalAlignment = Alignment.CenterHorizontally) {
             AuthMethod(onNavigateToLoginAuth)
             // region 登录前的说明事项
