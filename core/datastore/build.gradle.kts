@@ -5,10 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.imcys.datastore"
+    namespace = "com.bilias.core.datastore"
 }
 
 dependencies {
+    api(projects.core.datastoreProto)
     implementation(projects.core.common)
     implementation(projects.core.model)
 
