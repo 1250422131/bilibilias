@@ -1,11 +1,11 @@
-package com.imcys.network.repository
+package com.imcys.network.repository.wbi
 
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.md5
 import com.imcys.model.UserNav
 import com.imcys.network.api.BilibiliApi2
-import com.imcys.network.repository.wbi.IWbiSignatureDataSources
+import com.imcys.network.repository.Parameter
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

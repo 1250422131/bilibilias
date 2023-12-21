@@ -7,7 +7,7 @@ import com.imcys.model.video.PageData
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.download.DownloadToolType
-import com.imcys.network.repository.VideoRepository
+import com.imcys.network.repository.video.VideoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.datastore.fastkv.CookiesData
 import com.imcys.datastore.fastkv.WbiKeyStorage
-import com.imcys.network.repository.LoginRepository
+import com.imcys.network.repository.auth.IAuthDataSources
 import com.imcys.network.repository.wbi.IWbiSignatureDataSources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val loginRepository: LoginRepository,
+    private val authRepository: IAuthDataSources,
     private val cookiesData: CookiesData,
     private val wbiKeyStorage: WbiKeyStorage,
     private val wbiKeyRepository: IWbiSignatureDataSources
@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            loginRepository.logout()
+            authRepository.退出登录()
             cookiesData.clear()
         }
     }

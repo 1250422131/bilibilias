@@ -1,5 +1,5 @@
-﻿package com.imcys.network.repository.wbi
+package com.imcys.network.repository.wbi
 
 interface IWbiSignatureDataSources {
-  suspend  fun getSignature(): String
+    suspend fun getSignature(): String
 }

@@ -1,4 +1,4 @@
-package com.imcys.network.repository
+package com.imcys.network.repository.auth
 
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
@@ -12,7 +12,6 @@ import com.imcys.network.utils.parameterCSRF
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
@@ -41,30 +40,17 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Singleton
-class LoginRepository @Inject constructor(
+class AuthRepository @Inject constructor(
     private val httpClient: HttpClient,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val cookiesData: CookiesData
-) {
-    suspend fun getQRCode(): AuthQrCode = withContext(ioDispatcher) {
-        val authQrCode = httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
-        authQrCode.copy(
-            authQrCode.qrcodeKey,
-            "https://pan.misakamoe.com/qrcode/?url=${authQrCode.url.encodeURLParameter()}"
-        )
-    }
-
-    suspend fun pollLogin(key: String): LoginResponse = withContext(ioDispatcher) {
-        httpClient.get(BilibiliApi2.getLoginStatePath) {
-            parameter("qrcode_key", key)
-        }.body()
-    }
+) : IAuthDataSources {
 
     /**
-     * curl -L -X POST 'https://passport.bilibili.com/login/exit/v2' \
-     * -H 'Cookie: DedeUserID=xxx; bili_jct=xxx; SESSDATA=xxx' \
-     * -H 'Content-Type: application/x-www-form-urlencoded' \
-     * --data-urlencode 'biliCSRF=xxxxxx'
+     * curl -L -X POST 'https://passport.bilibili.com/login/exit/v2' \ -H
+     * 'Cookie: DedeUserID=xxx; bili_jct=xxx; SESSDATA=xxx' \ -H 'Content-Type:
+     * application/x-www-form-urlencoded' \ --data-urlencode 'biliCSRF=xxxxxx'
+     *
      * ```
      * val formBody = FormBody.Builder()
      *   .add("biliCSRF", "xxxxxx")
@@ -78,22 +64,12 @@ class LoginRepository @Inject constructor(
      * ```
      */
     suspend fun logout(): Unit = withContext(ioDispatcher) {
-        httpClient.post(BilibiliApi2.exitLogin) {
-            header(
-                "Cookie",
-                "DedeUserID=${cookiesData.userID};" +
-                        "bili_jct=${cookiesData.csrf};" +
-                        "SESSDATA=${cookiesData.sessionData}"
-            )
-            contentType(ContentType.Application.FormUrlEncoded)
-            parameter("biliCSRF", cookiesData.csrf)
-        }
     }
 
     /**
-     * curl -G 'https://passport.bilibili.com/x/passport-login/web/cookie/info' \
-     * 	--data-urlencode 'csrf=xxx' \
-     * 	-b 'SESSDATA=xxx'
+     * curl -G 'https://passport.bilibili.com/x/passport-login/web/cookie/info'
+     * \ --data-urlencode 'csrf=xxx' \ -b 'SESSDATA=xxx'
+     *
      * ```
      * val request = Request.Builder()
      *   .url("https://passport.bilibili.com/x/passport-login/web/cookie/info?csrf=xxx")
@@ -110,7 +86,6 @@ class LoginRepository @Inject constructor(
 
     suspend fun getRefreshCsrf(correspondPath: String): String = withContext(ioDispatcher) {
         val html = httpClient.get(BilibiliApi2.CORRESPOND + correspondPath).bodyAsText()
-        Timber.tag(TAG).d(html)
         if (html.isEmpty()) return@withContext ""
         val target = "<div id=\"1-name\">"
         val index = html.indexOf(target) + target.length
@@ -119,7 +94,9 @@ class LoginRepository @Inject constructor(
             val c = html[i]
             if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9') {
                 str += c
-            } else break
+            } else {
+                break
+            }
         }
 
         str
@@ -187,7 +164,7 @@ class LoginRepository @Inject constructor(
         nzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40
         JNrRuoEUXpabUzGB8QIDAQAB
         -----END PUBLIC KEY-----
-    """.trimIndent()
+        """.trimIndent()
         return try {
             val publicKey = KeyFactory.getInstance("RSA").generatePublic(
                 X509EncodedKeySpec(
@@ -204,10 +181,16 @@ class LoginRepository @Inject constructor(
                 init(
                     Cipher.ENCRYPT_MODE,
                     publicKey,
-                    OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT)
+                    OAEPParameterSpec(
+                        "SHA-256",
+                        "MGF1",
+                        MGF1ParameterSpec.SHA256,
+                        PSource.PSpecified.DEFAULT
+                    )
                 )
             }
-            cipher.doFinal("refresh_$timestamp".toByteArray()).joinToString("") { "%02x".format(it) }
+            cipher.doFinal("refresh_$timestamp".toByteArray())
+                .joinToString("") { "%02x".format(it) }
         } catch (e: NoSuchAlgorithmException) {
             Timber.e(e)
             ""
@@ -231,6 +214,38 @@ class LoginRepository @Inject constructor(
             ""
         }
     }
-}
 
-private const val TAG = "LoginRepository"
+    override suspend fun 获取二维码(): AuthQrCode = withContext(ioDispatcher) {
+        val authQrCode = httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
+        authQrCode.copy(
+            authQrCode.qrcodeKey,
+            "https://pan.misakamoe.com/qrcode/?url=${authQrCode.url.encodeURLParameter()}"
+        )
+    }
+
+    override suspend fun 轮询登录接口(key: String): LoginResponse = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi2.getLoginStatePath) {
+            parameter("qrcode_key", key)
+        }.body()
+    }
+
+    override suspend fun 退出登录() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun 检查Cookie是否需要刷新() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun 获取refresh_csrf() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun 刷新Cookie() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun 确认更新Cookie() {
+        TODO("Not yet implemented")
+    }
+}

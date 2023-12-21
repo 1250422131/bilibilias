@@ -8,7 +8,7 @@ import com.imcys.model.UserSpaceInformation
 import com.imcys.model.space.SpaceArcSearch
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.repository.Parameter
-import com.imcys.network.repository.WbiKeyRepository
+import com.imcys.network.repository.wbi.WbiKeyRepository
 import com.imcys.network.utils.parameterMID
 import com.imcys.network.utils.parameterPN
 import com.imcys.network.utils.parameterPS

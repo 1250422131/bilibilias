@@ -1,7 +1,7 @@
 [versions]
 acra = "5.11.3"
 androidStartup = "1.1.0"
-androidxComposeCompiler = "1.5.6"
+androidxComposeCompiler = "1.5.7"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 accompanist = "0.32.0"
 androidGradlePlugin = "8.2.0"
@@ -106,7 +106,7 @@ gsyVideoPlayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYV
 gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
-rules-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
+twitter-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
