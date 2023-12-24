@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,12 +37,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 import com.hjq.toast.Toaster
 import com.imcys.authentication.AuthViewModel
 import com.imcys.authentication.LoginAuthState
 import com.imcys.authentication.R
 import com.imcys.designsystem.component.AsButton
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
@@ -59,7 +59,7 @@ internal fun LoginAuthRoute(
     LoginAuthScreen(
         onNavigateToHome = onNavigateToHome,
         viewModel::getQRCode,
-        loginAuthState = loginAuthState,
+        authState = loginAuthState,
         modifier = modifier
     )
 }
@@ -69,12 +69,12 @@ internal fun LoginAuthRoute(
 internal fun LoginAuthScreen(
     onNavigateToHome: () -> Unit,
     刷新二维码: () -> Unit,
-    loginAuthState: LoginAuthState,
+    authState: LoginAuthState,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     SideEffect {
-        if (loginAuthState.isSuccess) {
+        if (authState.isSuccess) {
             onNavigateToHome()
         }
     }
@@ -91,8 +91,8 @@ internal fun LoginAuthScreen(
             )
         },
         snackbarHost = {
-            LaunchedEffect(loginAuthState.snackBarMessage) {
-                loginAuthState.snackBarMessage?.let { snackbarHostState.showSnackbar(it) }
+            LaunchedEffect(authState.snackBarMessage) {
+                authState.snackBarMessage?.let { snackbarHostState.showSnackbar(it) }
             }
             SnackbarHost(snackbarHostState) { data ->
                 Snackbar { Text(data.visuals.message) }
@@ -106,9 +106,9 @@ internal fun LoginAuthScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val context = LocalContext.current
-            SubcomposeAsyncImage(
-                model = loginAuthState.qrCodeUrl,
-                loading = { CircularProgressIndicator() },
+            val qrCodePainter = rememberQrCodePainter(authState.qrCodeUrl)
+            AsyncImage(
+                model = qrCodePainter,
                 onSuccess = {
                     saveQRCode(it.result.drawable.toBitmap(), context)
                 },
@@ -119,10 +119,9 @@ internal fun LoginAuthScreen(
                     .clickable(onClick = 刷新二维码)
             )
             Text(
-                text = loginAuthState.qrCodeMessage,
+                text = authState.qrCodeMessage,
                 Modifier.padding(top = 12.dp),
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
             )
             // region 跳转扫码
             AsButton(
