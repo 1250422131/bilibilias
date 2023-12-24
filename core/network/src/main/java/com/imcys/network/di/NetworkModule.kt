@@ -9,8 +9,8 @@ import com.imcys.bilibilias.okdownloader.DownloadPool
 import com.imcys.bilibilias.okdownloader.Downloader
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.utils.asNonTerminatingExecutorService
-import com.imcys.common.utils.ofMap
-import com.imcys.common.utils.print
+import com.imcys.common.logger.ofMap
+import com.imcys.common.logger.print
 import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.Box
 import com.imcys.network.BuildConfig

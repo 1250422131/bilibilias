@@ -1,4 +1,4 @@
-package com.imcys.common.utils
+package com.imcys.common.logger
 
 import kotlin.reflect.KProperty
 

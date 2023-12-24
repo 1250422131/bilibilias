@@ -2,8 +2,8 @@ package com.imcys.bilibilias.di
 
 import android.app.Application
 import com.imcys.common.appinitializer.AppInitializers
-import com.imcys.common.di.TimberAppInitializer
-import com.imcys.common.di.ToasterAppInitializer
+import com.imcys.common.appinitializer.init.TimberAppInitializer
+import com.imcys.common.appinitializer.init.ToasterAppInitializer
 import com.imcys.datastore.di.FastKVConfigAppInitializer
 import com.imcys.datastore.di.MMKVAppInitializer
 import dagger.Module
