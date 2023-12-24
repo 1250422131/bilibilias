@@ -1,4 +1,4 @@
-package com.imcys.common.di
+package com.imcys.common.appinitializer.init
 
 import android.app.Application
 import android.content.Context

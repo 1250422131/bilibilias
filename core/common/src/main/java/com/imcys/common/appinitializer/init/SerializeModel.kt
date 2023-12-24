@@ -1,4 +1,4 @@
-package com.imcys.common.di
+package com.imcys.common.appinitializer.init
 
 import dagger.Module
 import dagger.Provides

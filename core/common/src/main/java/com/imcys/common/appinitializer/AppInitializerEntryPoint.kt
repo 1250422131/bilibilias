@@ -1,6 +1,5 @@
-package com.imcys.common.di
+package com.imcys.common.appinitializer
 
-import com.imcys.common.appinitializer.AppInitializers
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

@@ -1,7 +1,6 @@
 package com.imcys.common.appinitializer
 
 import android.app.Application
-import com.imcys.common.di.AppInitializerEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
