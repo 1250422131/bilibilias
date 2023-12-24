@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.imcys.common.utils.sharedHiltViewModel
 import com.imcys.player.PlayerState
 import com.imcys.player.PlayerViewModel
@@ -18,10 +17,8 @@ fun NavController.navigateToDanmaku() {
     navigate(ROUTE_DANMAKU)
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class)
 fun NavGraphBuilder.danmakuRoute(
-    navController: NavHostController,
-    onBack: () -> Unit
+    navController: NavHostController
 ) = composable(ROUTE_DANMAKU) { backStackEntry ->
     val viewModel: PlayerViewModel = backStackEntry.sharedHiltViewModel(navController)
     val downloadViewModel: DownloadViewModel = backStackEntry.sharedHiltViewModel(navController)
