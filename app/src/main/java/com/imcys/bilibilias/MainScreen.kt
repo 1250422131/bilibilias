@@ -14,6 +14,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.bilias.feature.download.navigation.downloadRoute
 import com.imcys.authentication.login.navigation.loginAuthRoute
 import com.imcys.authentication.login.navigation.navigateToLoginAuth
 import com.imcys.authentication.method.navigation.authMethodRoute
@@ -33,8 +34,6 @@ import com.imcys.home.navigation.navigateToDonation
 import com.imcys.home.navigation.navigateToHome
 import com.imcys.player.download.danmaku.danmakuRoute
 import com.imcys.player.download.danmaku.navigateToDanmaku
-import com.imcys.player.download.downloadOptionsRoute
-import com.imcys.player.download.downloadRoute
 import com.imcys.player.navigation.navigateToPlayer
 import com.imcys.player.navigation.playerScreen
 import com.imcys.setting.navigation.navigateToSettings
@@ -56,21 +55,25 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         route = ROUTE_MAIN_SCREEN,
     ) {
         // 启动页
+        // -----------------------------------------------------------------------------------------
         splashRoute(
             navigateToAuthMethod = navController::navigateToAuthMethod,
             navigateToHome = navController::navigateToHome
         )
         // region 登录认证
+        // -----------------------------------------------------------------------------------------
         authMethodRoute(navigateToLoginAuth = navController::navigateToLoginAuth)
         loginAuthRoute(navigateToHome = navController::navigateToHome)
         // endregion
 
+        // -----------------------------------------------------------------------------------------
         homeScreen(
             navigationToDonation = navController::navigateToDonation,
             navigateToContribute = navController::navigateToContribute
         )
         donationScreen()
         contributeScreen()
+
         // -----------------------------------------------------------------------------------------
         toolScreen(
             navigateToPlayer = navController::navigateToPlayer,
@@ -84,21 +87,16 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
 
         playerScreen(
             navigateToDownloadAanmaku = navController::navigateToDanmaku,
-            navigateToUserSpace =  navController::navigateToUserSpace
+            navigateToUserSpace = navController::navigateToUserSpace
         )
-        danmakuRoute(navController = navController, onBack = navController::navigateUp)
-        userSpaceRoute(navigateToCollectionDownload =  navController::navigateToCollectionDownload)
+        danmakuRoute(navController = navController)
+        userSpaceRoute(navigateToCollectionDownload = navController::navigateToCollectionDownload)
         collectionDownloadRoute()
+
         // -----------------------------------------------------------------------------------------
+        downloadRoute()
 
-        downloadRoute(onNavigateTo = {}, onBack = navController::navigateUp)
-        // <editor-fold desc="下载选项">
-        downloadOptionsRoute(
-            onBack = navController::navigateUp,
-            navController = navController,
-        )
-        // </editor-fold>
-
+        // -----------------------------------------------------------------------------------------
         userRoute(onNavigateTo = {}, onBack = navController::navigateUp)
     }
 }

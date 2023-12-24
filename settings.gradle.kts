@@ -46,3 +46,4 @@ include(":feature:userspace")
 include(":lint")
 
 include(":feature:merge")
+include(":feature:download")

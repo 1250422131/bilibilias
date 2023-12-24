@@ -71,6 +71,7 @@ wire = "4.9.3"
 commonsCodec = "1.16.0"
 annotationJvm = "1.7.1"
 zxingAndroidEmbedded = "4.3.0"
+kotlin1920-RC2 = "1.9.20-RC2"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -265,3 +266,4 @@ bilibili-android-room = { id = "bilibili.android.room", version = "unspecified" 
 bilibili-android-koin = { id = "bilibili.android.koin", version = "unspecified" }
 bilibili-android-feature = { id = "bilibili.android.feature", version = "unspecified" }
 bilibiliAs-android-lint = { id = "bilibiliAs.android.lint", version = "unspecified" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin1920-RC2" }
