@@ -54,6 +54,7 @@ navigationCompose = "2.7.6"
 androidxPaging = "3.2.1"
 androidxPagingCompose = "3.3.0-alpha02"
 preferenceKtx = "1.2.1"
+qrose = "1.0.0-beta3"
 room = "2.6.1"
 androidxStartupRuntime = "1.1.1"
 timber = "5.0.1"
@@ -69,6 +70,7 @@ lint = "31.2.0"
 wire = "4.9.3"
 commonsCodec = "1.16.0"
 annotationJvm = "1.7.1"
+zxingAndroidEmbedded = "4.3.0"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -106,6 +108,7 @@ gsyVideoPlayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYV
 gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
+qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 twitter-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -242,6 +245,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 androidx-core = { group = "androidx.core", name = "core", version = "1.12.0" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
