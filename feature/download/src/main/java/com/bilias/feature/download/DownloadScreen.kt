@@ -1,6 +1,10 @@
 package com.bilias.feature.download
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 internal fun DownloadRoute() {
@@ -9,5 +13,9 @@ internal fun DownloadRoute() {
 
 @Composable
 internal fun DownloadScreen() {
-    TODO("Not yet implemented")
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            ListItem(headlineContent = { /*TODO*/ })
+        }
+    }
 }

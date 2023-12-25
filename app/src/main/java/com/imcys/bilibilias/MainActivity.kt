@@ -85,7 +85,8 @@ class MainActivity : ComponentActivity() {
                     statusBarStyle = SystemBarStyle.auto(
                         android.graphics.Color.TRANSPARENT,
                         android.graphics.Color.TRANSPARENT,
-                    ), navigationBarStyle = SystemBarStyle.auto(
+                    ),
+                    navigationBarStyle = SystemBarStyle.auto(
                         lightScrim,
                         darkScrim
                     )
@@ -163,7 +164,7 @@ fun AsBottomBar(navController: NavController) {
     }
 }
 
-private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: String):Boolean =
+private fun NavDestination?.isTopLevelDestinationInHierarchy(destination: String): Boolean =
     this?.hierarchy?.any {
         it.route?.contains(destination, true) ?: false
     } ?: false

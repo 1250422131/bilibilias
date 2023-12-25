@@ -16,11 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -72,15 +68,6 @@ class MergeViewModel @Inject constructor(
             }
         }
     }
-    val newUiState: StateFlow<NewUiState> =
-        downloadManage.getAllTaskFlow(BILI_FULL_PATH)
-            .map {
-                if (it.isEmpty()) {
-                    NewUiState.Empty
-                } else {
-                    NewUiState.Success(it.toImmutableList())
-                }
-            }.stateIn(viewModelScope, SharingStarted.Eagerly, NewUiState.Loading)
 
     init {
         viewModelScope.launch(ioDispatchers) {
@@ -91,7 +78,6 @@ class MergeViewModel @Inject constructor(
 
     fun selectResource(e: Entry, selected: Boolean) {
         _selectedResourceUiState.value[e] = !selected
-        newUiState.value
     }
 
     fun mixVideoAudio(context: Context) {

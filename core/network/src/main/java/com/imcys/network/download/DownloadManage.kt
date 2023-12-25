@@ -22,9 +22,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -63,6 +60,7 @@ class DownloadManage @Inject constructor(
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
 ) : IDownloadManage {
     // todo 等待实现
+    // region 移动到更上层
     fun launchThirdPartyDownload(downloader: ThirdPartyDownloader) {
         when (downloader) {
             ThirdPartyDownloader.ADM -> TODO()
@@ -153,17 +151,8 @@ class DownloadManage @Inject constructor(
         }
     }
 
-    fun downloadDanmaku(cid: String, aid: Long) {
-        // scope.launchIO {
-        //     videoRepository.getRealTimeDanmaku(cid = cid, aid = aid, useWbi = true).collect { res ->
-        //         when (res) {
-        //             is com.imcys.common.utils.Result.Error -> TODO()
-        //             com.imcys.common.utils.Result.Loading -> {}
-        //             is com.imcys.common.utils.Result.Success -> buildAss(res.data.elemsList)
-        //         }
-        //     }
-        // }
-    }
+    // endregion
+    fun downloadDanmaku() {}
 
     private fun buildEntryJson(qn: Int, bvid: String, pageData: PageData) {
         val entryJson = """
@@ -273,10 +262,7 @@ class DownloadManage @Inject constructor(
         val scan = scan(path)
         return decodeEntry(scan)
     }
-    fun getAllTaskFlow(path: String): Flow<List<Entry>> {
-        val scan = scan(path)
-        return flowOf(decodeEntry(scan))
-    }
+
     override fun downloadDanmaku(cid: Long, second: Int) {
         val i = (second / 6 * 60) + 1
 
@@ -323,6 +309,5 @@ class DownloadManage @Inject constructor(
     }
 
     fun addTask(bvid: String, quality: Int) {
-
     }
 }

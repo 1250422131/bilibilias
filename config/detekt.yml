@@ -133,7 +133,7 @@ complexity:
     active: true
     functionThreshold: 6
     constructorThreshold: 7
-    ignoreDefaultParameters: false
+    ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotatedParameter: []
   MethodOverloading:
@@ -615,7 +615,7 @@ style:
       - '1'
       - '2'
     ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: false
+    ignorePropertyDeclaration: true
     ignoreLocalVariableDeclaration: false
     ignoreConstantDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
