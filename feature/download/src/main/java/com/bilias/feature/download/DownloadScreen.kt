@@ -2,20 +2,26 @@ package com.bilias.feature.download
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ListItem
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.imcys.ui.VideoItem
 
 @Composable
 internal fun DownloadRoute() {
-    DownloadScreen()
+    val viewModel: DownloadViewModel = hiltViewModel()
+    val taskState by viewModel.taskState.collectAsStateWithLifecycle()
+    DownloadScreen(taskState)
 }
 
 @Composable
-internal fun DownloadScreen() {
+internal fun DownloadScreen(taskState: TaskState) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            ListItem(headlineContent = { /*TODO*/ })
+        items(taskState.taskList) { task ->
+            VideoItem(url = task.cover, title = task.title)
         }
     }
 }
