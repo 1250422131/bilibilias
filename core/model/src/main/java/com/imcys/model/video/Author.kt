@@ -11,4 +11,3 @@ data class Author(
     @SerialName("sign") val sign: String = "",
     @SerialName("rank") val rank: Int = 0,
 )
-    

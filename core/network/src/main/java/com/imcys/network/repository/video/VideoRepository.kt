@@ -10,9 +10,10 @@ import com.imcys.model.BangumiPlayBean
 import com.imcys.model.PlayerInfo
 import com.imcys.model.SeasonsSeriesList
 import com.imcys.model.VideoDetails
-import com.imcys.model.VideoHasCoins
-import com.imcys.model.VideoHasLike
+import com.imcys.model.video.ArchiveCoins
+import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.PageData
+import com.imcys.model.video.VideoFavoured
 import com.imcys.model.video.ViewDetailAndPlayUrl
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
@@ -110,20 +111,27 @@ class VideoRepository @Inject constructor(
         json.decodeFromString(text)
     }
 
-    /** 点赞 */
-    suspend fun hasLike(bvid: String): Boolean = withContext(ioDispatcher) {
-        val hasLike = client.get(BilibiliApi2.videoHasLike) {
+    /**
+     * 点赞
+     */
+    override suspend fun hasLike(bvid: String): ArchiveHasLike = withContext(ioDispatcher) {
+        val archiveText = client.get(BilibiliApi2.ARCHIVE_HAS_LIKE) {
             parameterBV(bvid)
-        }.body<VideoHasLike>()
-        hasLike.like
+        }.bodyAsText()
+        val hasLike = json.decodeFromString<ArchiveHasLike>(archiveText)
+        hasLike
     }
 
-    /** 投币 */
-    suspend fun hasCoins(bvid: String): Boolean = withContext(ioDispatcher) {
-        val hasCoins = client.get(BilibiliApi2.videoHasCoins) {
+    override suspend fun hasCoin(bvid: String): ArchiveCoins = withContext(ioDispatcher) {
+        client.get(BilibiliApi2.ARCHIVE_COINS) {
             parameterBV(bvid)
-        }.body<VideoHasCoins>()
-        hasCoins.coins
+        }.body<ArchiveCoins>()
+    }
+
+    override suspend fun hasFavoured(bvid: String): VideoFavoured = withContext(ioDispatcher) {
+        client.get(BilibiliApi2.VIDEO_FAVOURED) {
+            parameter("aid", bvid)
+        }.body<VideoFavoured>()
     }
 
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
@@ -150,16 +158,9 @@ class VideoRepository @Inject constructor(
     }
 
     override suspend fun getDetail(bvid: String): VideoDetails = withContext(ioDispatcher) {
-        val detail = cacheViewDetail.find { it.bvid == bvid }
-        if (detail == null) {
-            val body = client.get(BilibiliApi2.VIEW_DETAIL) {
-                parameterBV(bvid)
-            }.body<VideoDetails>()
-            cacheViewDetail.add(body)
-            body
-        } else {
-            detail
-        }
+        client.get(BilibiliApi2.VIEW_DETAIL) {
+            parameterBV(bvid)
+        }.body<VideoDetails>()
     }
 
     override suspend fun getDetail(aid: Long): VideoDetails = withContext(ioDispatcher) {

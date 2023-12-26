@@ -37,7 +37,7 @@ data class Entry(
     @SerialName("owner_avatar")
     val ownerAvatar: String = "",
     @SerialName("owner_id")
-    val ownerId: Int = 0,
+    val ownerId: Long = 0,
     @SerialName("owner_name")
     val ownerName: String = "",
     @SerialName("page_data")

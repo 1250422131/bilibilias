@@ -19,7 +19,6 @@ plugins {
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.detekt)
-    alias(libs.plugins.kotlinAndroid) apply false
 }
 detekt {
     toolVersion = "1.23.4"
