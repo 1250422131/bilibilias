@@ -6,7 +6,7 @@ interface AppInitializers {
     /**
      * 初始化代码
      */
-    fun init(context:Context)
+    fun init(context: Context)
 
     /**
      * @return 初始化类型

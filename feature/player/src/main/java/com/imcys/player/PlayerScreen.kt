@@ -3,7 +3,6 @@ package com.imcys.player
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,10 +52,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -66,9 +62,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.imcys.common.utils.digitalConversion
 import com.imcys.common.utils.noRippleClickable
-import com.imcys.designsystem.component.CenterRow
 import com.imcys.model.video.PageData
 import com.imcys.player.sheet.SheetDirectLink
 import com.imcys.player.sheet.SheetPages
@@ -87,7 +81,7 @@ internal fun PlayerRoute(
 ) {
     val state by viewModel.playerState.collectAsStateWithLifecycle()
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
-    val playerInfoUiState by viewModel.playerInfoUiState.collectAsStateWithLifecycle()
+    val videoInfoUiState by viewModel.videoInfoUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
         admDownload = viewModel::admDownload,
@@ -98,7 +92,7 @@ internal fun PlayerRoute(
         selectedQuality = viewModel::selectedQuality,
         selectedPage = viewModel::selectedPage,
         addToDownloadQueue = viewModel::addToDownloadQueue,
-        playerInfoUiState = playerInfoUiState,
+        playerInfoUiState = videoInfoUiState,
         playerUiState = playerUiState,
     )
 }
@@ -179,44 +173,31 @@ internal fun PlayerScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // 视频简介
             when (playerInfoUiState) {
                 PlayInfoUiState.LoadFailed,
                 PlayInfoUiState.Loading -> Unit
 
                 is PlayInfoUiState.Success -> {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(54.dp)
-                            .clickable { navigateToUserSpace(playerInfoUiState.owner.mid) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = playerInfoUiState.owner.face,
-                            contentDescription = "头像",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape),
-                        )
-                        Text(
-                            text = playerInfoUiState.owner.name, Modifier.padding(8.dp),
-                            fontSize = 11.sp
-                        )
-                    }
-                    Introduction(
+                    UpInfoContainer(
+                        navigateToUserSpace = navigateToUserSpace,
+                        ownerName = playerInfoUiState.owner.name,
+                        ownerAvatar = playerInfoUiState.owner.face,
+                        ownerId = playerInfoUiState.owner.mid,
+                        modifier = Modifier
+                    )
+                    VideoDesc(
                         title = playerInfoUiState.title,
                         desc = playerInfoUiState.desc,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
-                    Actions(
-                        like = playerInfoUiState.stat.like,
-                        coin = playerInfoUiState.stat.coin,
-                        favorite = playerInfoUiState.stat.favorite,
-                        share = playerInfoUiState.stat.share,
-                        isLike = state.hasLike,
-                        isCoins = state.hasCoins,
-                        isCollection = state.hasCollection,
+                    ToolBar(
+                        like = playerInfoUiState.toolBarReport.like,
+                        coin = playerInfoUiState.toolBarReport.coin,
+                        favorite = playerInfoUiState.toolBarReport.favorite,
+                        share = playerInfoUiState.toolBarReport.share,
+                        isLike = playerInfoUiState.toolBarReport.isLike,
+                        isCoins = playerInfoUiState.toolBarReport.isCoin,
+                        isFavoured = playerInfoUiState.toolBarReport.isFavoured,
                         modifier = Modifier,
                     )
                 }
@@ -257,10 +238,10 @@ internal fun PlayerScreen(
                     }
                 }
                 IconButton(onClick = { /*TODO*/ }, Modifier.align(Alignment.CenterEnd)) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.chevron_right),
-                        contentDescription = "打开选集"
-                    )
+                    // Icon(
+                    //     painter = painterResource(id = R.drawable.chevron_right),
+                    //     contentDescription = "打开选集"
+                    // )
                 }
             }
             Row {
@@ -303,105 +284,64 @@ internal fun PlayerScreen(
 }
 
 @Composable
-private fun Actions(
-    like: Int,
-    coin: Int,
-    favorite: Int,
-    share: Int,
-    isLike: Boolean,
-    isCoins: Boolean,
-    isCollection: Boolean,
+fun UpInfoContainer(
+    ownerName: String,
+    ownerAvatar: String,
+    ownerId: Long,
+    navigateToUserSpace: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ListItem(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { navigateToUserSpace(ownerId) },
+        leadingContent = {
+            Avatar(
+                ownerAvatar,
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(4.dp)
+            )
+        },
+        headlineContent = {
+            Text(
+                text = ownerName,
+                modifier = Modifier,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    )
+}
+
+@Composable
+fun Avatar(url: String, modifier: Modifier = Modifier) {
+    AsyncImage(
+        model = url,
+        contentDescription = "头像",
+        modifier = modifier
+            .clip(CircleShape),
+    )
+}
+
+@Composable
+fun VerticalChunk(
+    top: @Composable () -> Unit,
+    bottom: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    CenterRow(
-        modifier
-            .fillMaxWidth()
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ListItem(
-            headlineContent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_as_video_like),
-                    contentDescription = "点赞按钮",
-                    Modifier
-                        .padding(8.dp)
-                        .size(24.dp),
-                    colorFilter = if (isLike) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
-                )
-            },
-            supportingContent = {
-                Text(like.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
-            },
-            modifier = Modifier
-                .clickable { }
-                .weight(1f)
-        )
-        ListItem(
-            headlineContent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_as_video_throw),
-                    contentDescription = "投币按钮",
-                    Modifier
-                        .padding(8.dp)
-                        .size(24.dp),
-                    colorFilter = if (isCoins) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
-                )
-            },
-            supportingContent = {
-                Text(coin.digitalConversion(), fontWeight = FontWeight.ExtraLight, fontSize = 11.sp)
-            },
-            modifier = Modifier
-                .clickable { }
-                .weight(1f)
-        )
-
-        ListItem(
-            headlineContent = {
-                Image(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "收藏按钮",
-                    Modifier
-                        .padding(8.dp)
-                        .size(24.dp),
-                    colorFilter = if (isCollection) ColorFilter.tint(MaterialTheme.colorScheme.primary) else null
-                )
-            },
-            supportingContent = {
-                Text(
-                    favorite.digitalConversion(),
-                    fontWeight = FontWeight.ExtraLight,
-                    fontSize = 11.sp
-                )
-            },
-            modifier = Modifier
-                .clickable { }
-                .weight(1f)
-        )
-        ListItem(
-            headlineContent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_as_video_fasong),
-                    contentDescription = "分享按钮",
-                    Modifier
-                        .padding(8.dp)
-                        .size(22.dp),
-                )
-            },
-            supportingContent = {
-                Text(
-                    share.digitalConversion(),
-                    fontWeight = FontWeight.ExtraLight,
-                    fontSize = 11.sp
-                )
-            },
-            modifier = Modifier
-                .clickable { }
-                .weight(1f)
-        )
+        top()
+        bottom()
     }
 }
 
 @Composable
-private fun Introduction(title: String, desc: String, modifier: Modifier = Modifier) {
+private fun VideoDesc(title: String, desc: String, modifier: Modifier = Modifier) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     Column(modifier) {
         Row(

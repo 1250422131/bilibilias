@@ -9,8 +9,6 @@ import com.imcys.bilibilias.okdownloader.DownloadPool
 import com.imcys.bilibilias.okdownloader.Downloader
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.utils.asNonTerminatingExecutorService
-import com.imcys.common.logger.ofMap
-import com.imcys.common.logger.print
 import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.Box
 import com.imcys.network.BuildConfig
@@ -60,7 +58,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Cache
-import okhttp3.ConnectionSpec
 import okhttp3.Dispatcher
 import okhttp3.EventListener
 import okhttp3.OkHttpClient
@@ -90,16 +87,14 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideImageLoader(
-        @BaseOkhttpClient okHttpCallFactory: OkHttpClient,
-        @ApplicationContext application: Context,
+        @BaseOkhttpClient okHttpClient: OkHttpClient,
+        @ApplicationContext application: Context
     ): ImageLoader = ImageLoader.Builder(application)
-        .callFactory(okHttpCallFactory)
+        .okHttpClient { okHttpClient }
         .components {
             add(SvgDecoder.Factory())
             add(GifDecoder.Factory())
         }
-        // Assume most content images are versioned urls
-        // but some problematic images are fetching each time
         .respectCacheHeaders(false)
         .apply {
             if (BuildConfig.DEBUG) {
@@ -126,7 +121,6 @@ class NetworkModule {
             }
             .eventListenerFactory(networkListenerFactory)
             .addInterceptor(BrotliInterceptor)
-            .connectionSpecs(listOf(ConnectionSpec.RESTRICTED_TLS))
             .pingInterval(1, TimeUnit.SECONDS)
             .dispatcher(Dispatcher(executorService))
             .build()
@@ -155,7 +149,6 @@ class NetworkModule {
         GrpcClient.Builder()
             .client(
                 okHttpClient.newBuilder()
-                    .protocols(emptyList())
                     .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE))
                     .build()
             )
@@ -235,7 +228,8 @@ class NetworkModule {
             signatureParams.add(Parameter(k, v.joinToString()))
         }
         val signature = SignatureUtils.signature(
-            signatureParams, wbiKeyStorage.mixKey ?: ""
+            signatureParams,
+            wbiKeyStorage.mixKey ?: ""
         )
         val newParameter = ParametersBuilderImpl()
         for ((n, v) in signature) {
@@ -254,7 +248,6 @@ class NetworkModule {
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { _, content, requestedType ->
-            Timber.tag("TransformData").d("type=$requestedType")
             if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
             val box = json.decodeFromStream(
                 Box.serializer(serializer(requestedType.kotlinType!!)),
@@ -262,8 +255,6 @@ class NetworkModule {
             )
 
             if (box.code != SUCCESS) throw ApiIOException(box.message)
-            val print = box.ofMap()?.print()
-            Timber.tag("TransformData").d("data=${print ?: "@null"}")
             box.data
         }
     }
