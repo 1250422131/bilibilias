@@ -1,5 +1,7 @@
 package com.imcys.network.di
 
+import com.imcys.network.download.DownloadManage
+import com.imcys.network.download.IDownloadManage
 import com.imcys.network.repository.auth.AuthRepository
 import com.imcys.network.repository.auth.IAuthDataSources
 import com.imcys.network.repository.danmaku.DanmakuRepository
@@ -37,4 +39,7 @@ interface DataSourcesModel {
 
     @Binds
     fun bindINetworkMonitor(connectivityManagerNetworkMonitor: ConnectivityManagerNetworkMonitor): INetworkMonitor
+
+    @Binds
+    fun bindIDownloadManage(downloadManage: DownloadManage): IDownloadManage
 }

@@ -1,17 +1,10 @@
-package com.imcys.model
+package com.imcys.model.video
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * code : 0
- * message : 0
- * ttl : 1
- * data : {"count":1,"favoured":true}
- */
-
 @Serializable
-data class VideoCollection(
+data class VideoFavoured(
     @SerialName("favoured")
     val isFavoured: Boolean = false
 )

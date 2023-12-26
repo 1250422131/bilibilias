@@ -32,16 +32,16 @@
 
         <variable
             name="ArchiveHasLikeBean"
-            type="com.imcys.model.VideoHasLike" />
+            type="com.imcys.model.video.ArchiveHasLike" />
 
 
         <variable
             name="ArchiveCoinsBean"
-            type="com.imcys.model.VideoHasCoins" />
+            type="com.imcys.model.video.ArchiveCoins" />
 
         <variable
             name="ArchiveFavouredBean"
-            type="com.imcys.model.VideoCollection" />
+            type="com.imcys.model.video.VideoFavoured" />
     </data>
 
     <androidx.compose.ui.platform.ComposeView

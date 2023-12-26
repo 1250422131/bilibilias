@@ -11,6 +11,8 @@ android {
 dependencies {
     implementation(projects.core.network)
     implementation(projects.core.common)
+
+    implementation(projects.core.domain)
     /**
      * gsy 播放器
      */

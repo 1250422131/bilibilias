@@ -94,9 +94,9 @@ object BilibiliApi2 {
     /**
      * 视频点赞&投币&收藏&分享
      */
-    const val videoHasLike = "x/web-interface/archive/has/like"
-    const val videoHasCoins = "x/web-interface/archive/coins"
-    const val videoHasCollection = "x/v2/fav/video/favoured"
+    const val ARCHIVE_HAS_LIKE = "x/web-interface/archive/has/like"
+    const val ARCHIVE_COINS = "x/web-interface/archive/coins"
+    const val VIDEO_FAVOURED = "x/v2/fav/video/favoured"
 
     /**
      * 获取视频超详细信息(web端)
