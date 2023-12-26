@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network)
+    implementation(project(":core:common"))
 }

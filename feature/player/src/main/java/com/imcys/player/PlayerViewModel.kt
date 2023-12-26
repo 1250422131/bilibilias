@@ -11,12 +11,12 @@ import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.bilias.core.domain.GetToolbarReportUseCase
 import com.imcys.common.utils.MediaUtils.getMimeType
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
 import com.imcys.model.video.PageData
-import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.player.navigation.A_ID
@@ -26,12 +26,14 @@ import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,50 +43,29 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
-    val downloadListHolders: DownloadListHolders,
     savedStateHandle: SavedStateHandle,
-    private val downloadManage: DownloadManage
+    private val downloadManage: DownloadManage,
+    getToolbarReportUseCase: GetToolbarReportUseCase,
 ) : ViewModel() {
 
     private val aid = savedStateHandle.getStateFlow(A_ID, "")
     private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
     private val cid = savedStateHandle.getStateFlow(C_ID, "")
 
-    private val info = combine(aid, bvid, cid, ::Triple)
-        .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+    val videoInfoUiState =
+        bvid.flatMapLatest { videoInfoUiState(it, videoRepository, getToolbarReportUseCase) }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
 
-    val playerInfoUiState = info.map { (a, b, c) ->
-        videoRepository.getDetail(b)
+    /**
+     * 播放器
+     */
+    val playerUiState = flow {
+        emit(videoRepository.getPlayerPlayUrl(bvid.value, cid.value.toLong()))
     }.asResult()
         .map { result ->
             when (result) {
-                is Result.Error -> PlayInfoUiState.LoadFailed
-                Result.Loading -> PlayInfoUiState.Loading
-                is Result.Success -> {
-                    PlayInfoUiState.Success(
-                        title = result.data.title,
-                        pic = result.data.pic,
-                        desc = result.data.descV2?.firstOrNull()?.rawText ?: result.data.desc,
-                        pageData = result.data.pageData,
-                        aid = result.data.aid.toLong(),
-                        bvid = result.data.bvid,
-                        cid = result.data.cid,
-                        stat = result.data.stat,
-                        owner = result.data.owner
-                    )
-                }
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
-
-    /** 播放器 */
-    val playerUiState = info.map { (a, b, c) ->
-        videoRepository.getPlayerPlayUrl(b, c.toLong())
-    }.asResult()
-        .map { result ->
-            when (result) {
-                is Result.Error -> PlayerUiState.LoadFailed
-                Result.Loading -> PlayerUiState.Loading
+                is Result.Error   -> PlayerUiState.LoadFailed
+                Result.Loading    -> PlayerUiState.Loading
                 is Result.Success -> result.data.mapToPlayerUiState()
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, PlayerUiState.Loading)
@@ -104,10 +85,14 @@ class PlayerViewModel @Inject constructor(
     private val _playerState = MutableStateFlow(PlayerState())
     val playerState = _playerState.asStateFlow()
 
-    /** key 是视频清晰度 126,120,112,80,64,32,16 */
+    /**
+     * key 是视频清晰度 126,120,112,80,64,32,16
+     */
     private val qualityGroup = sortedMapOf<Int, List<com.imcys.model.Dash.Video>>()
 
-    /** 下载视频 */
+    /**
+     * 下载视频
+     */
     fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
         // todo 或许可以只写 弹幕文件 和 entry.json
         // 弹幕文件或许从pb接口尝试
@@ -178,6 +163,50 @@ class PlayerViewModel @Inject constructor(
     }
 }
 
+private fun videoInfoUiState(
+    bvId: String,
+    videoRepository: IVideoDataSources,
+    getToolbarReportUseCase: GetToolbarReportUseCase,
+): Flow<PlayInfoUiState> {
+    val details = flow { emit(videoRepository.getDetail(bvId)) }
+    val reportUseCase = getToolbarReportUseCase(bvId)
+    return combine(
+        details,
+        reportUseCase,
+        ::Pair,
+    ).asResult()
+        .map { result ->
+            when (result) {
+                is Result.Error   -> PlayInfoUiState.LoadFailed
+                Result.Loading    -> PlayInfoUiState.Loading
+                is Result.Success -> {
+                    val (detail, report) = result.data
+                    val stat = detail.stat
+                    PlayInfoUiState.Success(
+                        aid = detail.aid,
+                        bvid = detail.bvid,
+                        cid = detail.cid,
+                        title = detail.title,
+                        pic = detail.pic,
+                        desc = detail.descV2?.firstOrNull()?.rawText ?: detail.desc,
+                        pageData = detail.pageData,
+                        owner = detail.owner,
+                        toolBarReport = report.copy(
+                            like = stat.like,
+                            coin = stat.coin,
+                            favorite = stat.favorite,
+                            danmaku = stat.danmaku,
+                            evaluation = stat.evaluation,
+                            reply = stat.reply,
+                            share = stat.share,
+                            view = stat.view,
+                        )
+                    )
+                }
+            }
+        }
+}
+
 @Stable
 data class PlayerState(
     val title: String = "",
@@ -227,9 +256,6 @@ fun createMediaSource(
         .setUri(url)
         .build()
 )
-
-private const val DOWNLOAD_QUALITY = "download_quality"
-private const val DOWNLOAD_PAGES = "download_pages"
 
 const val QUALITY_8K = 127
 const val QUALITY_DOLBY = 126

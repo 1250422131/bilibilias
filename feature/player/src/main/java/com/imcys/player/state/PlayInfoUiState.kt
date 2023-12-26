@@ -1,8 +1,8 @@
 package com.imcys.player.state
 
-import com.imcys.model.VideoDetails
 import com.imcys.model.video.Owner
 import com.imcys.model.video.PageData
+import com.imcys.model.video.ToolBarReport
 
 sealed interface PlayInfoUiState {
     data object Loading : PlayInfoUiState
@@ -15,7 +15,7 @@ sealed interface PlayInfoUiState {
         val pic: String,
         val desc: String,
         val pageData: List<PageData>,
-        val stat: VideoDetails.Stat,
         val owner: Owner,
+        val toolBarReport: ToolBarReport = ToolBarReport()
     ) : PlayInfoUiState
 }
