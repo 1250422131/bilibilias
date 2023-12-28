@@ -1,5 +1,6 @@
 package com.imcys.model
 
+import com.imcys.model.video.Stat
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -27,10 +28,4 @@ data class Archive(
     val title: String = "",
     @SerialName("ugc_pay")
     val ugcPay: Int = 0
-) {
-    @Serializable
-    data class Stat(
-        @SerialName("view")
-        val view: Int = 0
-    )
-}
+)

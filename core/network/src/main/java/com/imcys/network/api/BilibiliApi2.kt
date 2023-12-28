@@ -123,4 +123,7 @@ object BilibiliApi2 {
      * 查询用户投稿视频明细
      */
     const val WBI_SPACE_ARC_SEARCH = "x/space/wbi/arc/search"
+
+    const val SPACE_CHANNEL_LIST = "x/space/channel/list"
+    const val SPACE_CHANNEL_VIDEO = "x/space/channel/video"
 }

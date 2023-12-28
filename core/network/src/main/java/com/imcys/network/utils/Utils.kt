@@ -29,6 +29,8 @@ internal fun HttpRequestBuilder.parameterPageSize(size: Int): Unit =
 
 internal fun HttpRequestBuilder.parameterMID(mid: Long): Unit =
     url.parameters.append("mid", mid.toString())
+internal fun HttpRequestBuilder.parameterCID(cId: Long): Unit =
+    url.parameters.append("cid", cId.toString())
 
 internal fun HttpRequestBuilder.parameterCSRF(csrf: String): Unit =
     url.parameters.append("csrf", csrf)

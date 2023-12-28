@@ -27,3 +27,4 @@ data class ToolBarReport(
     val isCoin: Boolean = false,
     val isFavoured: Boolean = false
 )
+

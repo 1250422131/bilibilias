@@ -17,7 +17,7 @@ class GetUserSubmittedVideoPagingSource constructor(
             return LoadResult.Page(
                 data = vlist,
                 prevKey = null,
-                nextKey = if (vlist.isEmpty()) null else querySpaceArc.page.pn + 1
+                nextKey = if (vlist.isEmpty()) null else querySpaceArc.page.pageNumber + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

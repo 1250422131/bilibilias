@@ -1,9 +1,8 @@
 package com.imcys.model.space
 
-import kotlinx.serialization.ExperimentalSerializationApi
+import com.imcys.model.Page
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonNames
 
 @Serializable
 data class SpaceArcSearch(
@@ -43,15 +42,4 @@ data class SpaceArcSearch(
             val videoReview: Int = 0
         )
     }
-
-    @Serializable
-    @OptIn(ExperimentalSerializationApi::class)
-    data class Page constructor(
-        @JsonNames("count")
-        val count: Int = 0,
-        @JsonNames("pn")
-        val pn: Int = 0,
-        @JsonNames("ps")
-        val ps: Int = 0
-    )
 }
