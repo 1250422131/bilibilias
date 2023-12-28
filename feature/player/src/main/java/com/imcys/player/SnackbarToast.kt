@@ -79,7 +79,8 @@ fun Snackbar(message: String, showText: Boolean = false) {
                 )
                 if (showText) {
                     Text(
-                        text = it.visuals.message, modifier = Modifier
+                        text = it.visuals.message,
+                        modifier = Modifier
                             .align(
                                 Alignment.CenterHorizontally
                             )
