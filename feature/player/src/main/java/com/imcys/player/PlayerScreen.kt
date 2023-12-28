@@ -87,7 +87,7 @@ internal fun PlayerRoute(
         admDownload = viewModel::admDownload,
         idmDownload = viewModel::idmDownload,
         state = state,
-        onNavigateToDownloadAanmaku = navigateToDownloadAanmaku,
+        navigateToDownloadAanmaku = navigateToDownloadAanmaku,
         navigateToUserSpace = navigateToUserSpace,
         selectedQuality = viewModel::selectedQuality,
         selectedPage = viewModel::selectedPage,
@@ -103,7 +103,7 @@ internal fun PlayerScreen(
     admDownload: (String) -> Unit,
     idmDownload: (String) -> Unit,
     state: PlayerState,
-    onNavigateToDownloadAanmaku: () -> Unit,
+    navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
     selectedQuality: (Int) -> Unit,
     selectedPage: (String, Long) -> Unit,
@@ -259,7 +259,7 @@ internal fun PlayerScreen(
                 }
                 Button(
                     onClick = {
-                        onNavigateToDownloadAanmaku()
+                        navigateToDownloadAanmaku()
                     },
                     Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
