@@ -1,5 +1,7 @@
 package com.imcys.model
 
+import com.imcys.model.video.Rights
+import com.imcys.model.video.Stat
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1436,19 +1438,6 @@ data class Bangumi(
                 @SerialName("text")
                 val text: String = ""
             )
-
-            @Serializable
-            data class Rights(
-                @SerialName("allow_demand")
-                val allowDemand: Int = 0,
-                @SerialName("allow_dm")
-                val allowDm: Int = 0,
-                @SerialName("allow_download")
-                val allowDownload: Int = 0,
-                @SerialName("area_limit")
-                val areaLimit: Int = 0
-            )
-
             @Serializable
             data class Skip(
                 @SerialName("ed")
@@ -1583,40 +1572,6 @@ data class Bangumi(
         )
 
         @Serializable
-        data class Rights(
-            @SerialName("allow_bp")
-            val allowBp: Int = 0,
-            @SerialName("allow_bp_rank")
-            val allowBpRank: Int = 0,
-            @SerialName("allow_download")
-            val allowDownload: Int = 0,
-            @SerialName("allow_review")
-            val allowReview: Int = 0,
-            @SerialName("area_limit")
-            val areaLimit: Int = 0,
-            @SerialName("ban_area_show")
-            val banAreaShow: Int = 0,
-            @SerialName("can_watch")
-            val canWatch: Int = 0,
-            @SerialName("copyright")
-            val copyright: String = "",
-            @SerialName("forbid_pre")
-            val forbidPre: Int = 0,
-            @SerialName("freya_white")
-            val freyaWhite: Int = 0,
-            @SerialName("is_cover_show")
-            val isCoverShow: Int = 0,
-            @SerialName("is_preview")
-            val isPreview: Int = 0,
-            @SerialName("only_vip_download")
-            val onlyVipDownload: Int = 0,
-            @SerialName("resource")
-            val resource: String = "",
-            @SerialName("watch_platform")
-            val watchPlatform: Int = 0
-        )
-
-        @Serializable
         data class Season(
             @SerialName("badge")
             val badge: String = "",
@@ -1674,18 +1629,6 @@ data class Bangumi(
                 @SerialName("index_show")
                 val indexShow: String = ""
             )
-
-            @Serializable
-            data class Stat(
-                @SerialName("favorites")
-                val favorites: Int = 0,
-                @SerialName("series_follow")
-                val seriesFollow: Int = 0,
-                @SerialName("views")
-                val views: Int = 0,
-                @SerialName("vt")
-                val vt: Int = 0
-            )
         }
 
         @Serializable
@@ -1703,31 +1646,6 @@ data class Bangumi(
             @SerialName("wide_screen")
             val wideScreen: Int = 0
         )
-
-        @Serializable
-        data class Stat(
-            @SerialName("coins")
-            val coins: Int = 0,
-            @SerialName("danmakus")
-            val danmakus: Int = 0,
-            @SerialName("favorite")
-            val favorite: Int = 0,
-            @SerialName("favorites")
-            val favorites: Int = 0,
-            @SerialName("follow_text")
-            val followText: String = "",
-            @SerialName("likes")
-            val likes: Int = 0,
-            @SerialName("reply")
-            val reply: Int = 0,
-            @SerialName("share")
-            val share: Int = 0,
-            @SerialName("views")
-            val views: Int = 0,
-            @SerialName("vt")
-            val vt: Int = 0
-        )
-
         @Serializable
         data class UpInfo(
             @SerialName("avatar")

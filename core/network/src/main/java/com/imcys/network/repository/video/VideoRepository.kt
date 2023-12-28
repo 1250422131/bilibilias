@@ -8,20 +8,21 @@ import com.imcys.common.utils.VideoUtils
 import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
 import com.imcys.model.PlayerInfo
-import com.imcys.model.SeasonsSeriesList
 import com.imcys.model.VideoDetails
+import com.imcys.model.space.SpaceChannelList
+import com.imcys.model.space.SpaceChannelVideo
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
-import com.imcys.model.video.PageData
 import com.imcys.model.video.VideoFavoured
 import com.imcys.model.video.ViewDetailAndPlayUrl
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
+import com.imcys.network.utils.parameterCID
 import com.imcys.network.utils.parameterMID
-import com.imcys.network.utils.parameterPageNum
-import com.imcys.network.utils.parameterPageSize
+import com.imcys.network.utils.parameterPN
+import com.imcys.network.utils.parameterPS
 import com.imcys.network.wbiGet
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -33,7 +34,6 @@ import io.ktor.client.statement.request
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,52 +45,6 @@ class VideoRepository @Inject constructor(
 ) : IVideoDataSources {
     private val cacheViewDetail = ArraySet<VideoDetails>()
     private val cachePlayerPlayUrl = ArrayMap<String, PlayerInfo>()
-
-    /**
-     * https://github.com/SocialSisterYi/bilibili-API-collect/pull/437/commits/4403e7ba7ed6853fa00a11371868b917e26b162a
-     *
-     * ### 查询用户创建的合集
-     * https://api.bilibili.com/x/polymer/space/seasons_series_list | 参数名 | 类型
-     * | 内容 | 必要性 | 备注 | |-----------|-----|---------|-----|---------| | mid |
-     * num | 目标用户mid | 必要 | | | page_num | num | 页数 | 必要 | | | page_size | num
-     * | 每页项数 | 必要 | 定义域1-20 |
-     */
-    suspend fun queryCollections(mid: Long, pageNum: Int, pageSize: Int = 20): SeasonsSeriesList =
-        withContext(ioDispatcher) {
-            client.get("x/polymer/space/seasons_series_list") {
-                parameterMID(mid)
-                parameterPageNum(pageNum)
-                parameterPageSize(pageSize)
-            }.body()
-        }
-
-    /**
-     * 获取合集内容 https://api.bilibili.com/x/polymer/space/seasons_archives_list?
-     * mid=8047632& season_id=413472& sort_reverse=false&
-     * page_num=1& page_size=30 mid是up uid, season_id是合集的id
-     */
-    suspend fun getCollectionContent(
-        mid: Long,
-        seasonId: Long,
-        pageNum: Int,
-        pageSize: Int = 30,
-        reverse: Boolean = false
-    ) = withContext(ioDispatcher) {
-        val text = client.get("x/polymer/space/seasons_archives_list") {
-            parameterMID(mid)
-            parameter("season_id", seasonId)
-            parameter("sort_reverse", reverse)
-            parameterPageNum(pageNum)
-            parameterPageSize(pageSize)
-        }.bodyAsText()
-        Timber.d("合集内容=$text")
-    }
-
-    suspend fun getPlayerPageList(bvid: String): List<PageData> = withContext(ioDispatcher) {
-        client.get(BilibiliApi2.PLAYER_PAGE_LIST) {
-            parameterBV(bvid)
-        }.body()
-    }
 
     suspend fun get番剧视频流(epID: String, cid: Long): BangumiPlayBean.Result {
         val text = client.safeGetText(BilibiliApi2.bangumiPlayPath) {
@@ -134,6 +88,22 @@ class VideoRepository @Inject constructor(
         }.body<VideoFavoured>()
     }
 
+    override suspend fun channelList(mId: Long): SpaceChannelList = withContext(ioDispatcher) {
+        client.get(BilibiliApi2.SPACE_CHANNEL_LIST) {
+            parameterMID(mId)
+        }.body<SpaceChannelList>()
+    }
+
+    override suspend fun channelVideo(mId: Long, cId: Long, pn: Int, ps: Int): SpaceChannelVideo =
+        withContext(ioDispatcher) {
+            client.get(BilibiliApi2.SPACE_CHANNEL_VIDEO) {
+                parameterMID(mId)
+                parameterCID(cId)
+                parameterPN(pn)
+                parameterPS(ps)
+            }.body<SpaceChannelVideo>()
+        }
+
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
         client.get(url)
             .body<HttpResponse>()
@@ -142,7 +112,7 @@ class VideoRepository @Inject constructor(
             .toString()
     }
 
-    @Deprecated("")
+    @Deprecated("domain 有相同 api")
     override suspend fun getViewDetailAndPlayUrl(bvid: String): ViewDetailAndPlayUrl {
         val detail = getDetail(bvid)
         val playerPlayUrl = getPlayerPlayUrl(bvid, detail.cid)

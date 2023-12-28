@@ -84,8 +84,6 @@ internal fun PlayerRoute(
     val videoInfoUiState by viewModel.videoInfoUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
-        admDownload = viewModel::admDownload,
-        idmDownload = viewModel::idmDownload,
         state = state,
         navigateToDownloadAanmaku = navigateToDownloadAanmaku,
         navigateToUserSpace = navigateToUserSpace,
@@ -100,14 +98,14 @@ internal fun PlayerRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlayerScreen(
-    admDownload: (String) -> Unit,
-    idmDownload: (String) -> Unit,
     state: PlayerState,
     navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
     selectedQuality: (Int) -> Unit,
     selectedPage: (String, Long) -> Unit,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
+
+
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
@@ -142,8 +140,6 @@ internal fun PlayerScreen(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
                         pageData = playerUiState.pageData,
-                        admDownload = admDownload,
-                        idmDownload = idmDownload
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()

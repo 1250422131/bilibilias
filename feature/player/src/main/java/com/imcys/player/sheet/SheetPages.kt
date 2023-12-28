@@ -38,8 +38,6 @@ internal fun SheetPages(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
     pageData: List<PageData>,
-    admDownload: (String) -> Unit,
-    idmDownload: (String) -> Unit,
 ) {
     var openSetting by remember { mutableStateOf(false) }
     Column {
@@ -77,8 +75,8 @@ internal fun SheetPages(
                     DropdownMenu(expanded, {
                         expanded = false
                     }) {
-                        DropdownMenuItem({ Text(text = "IDM")}, {})
-                        DropdownMenuItem({ Text(text = "ADM")}, {})
+                        DropdownMenuItem({ Text(text = "IDM") }, {})
+                        DropdownMenuItem({ Text(text = "ADM") }, {})
                     }
                     TextButton(
                         onClick = {

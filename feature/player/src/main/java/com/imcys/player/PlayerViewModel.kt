@@ -17,7 +17,6 @@ import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
 import com.imcys.model.video.PageData
-import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
@@ -44,7 +43,6 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     savedStateHandle: SavedStateHandle,
-    private val downloadManage: DownloadManage,
     getToolbarReportUseCase: GetToolbarReportUseCase,
 ) : ViewModel() {
 
@@ -147,14 +145,6 @@ class PlayerViewModel @Inject constructor(
                 state.copy(cid = cid, audio = res.dash.audio.maxBy { it.id })
             }
         }
-    }
-
-    fun admDownload(url: String) {
-        downloadManage.admDownload(url)
-    }
-
-    fun idmDownload(url: String) {
-        downloadManage.idmDownload(url)
     }
 
     private fun setQualityGroup(videos: List<com.imcys.model.Dash.Video>) {

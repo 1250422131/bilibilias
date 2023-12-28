@@ -1,5 +1,7 @@
 package com.imcys.model
 
+import com.imcys.model.video.Rights
+import com.imcys.model.video.Stat
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -236,23 +238,6 @@ data class BangumiFollowList(
         )
 
         @Serializable
-        data class Rights(
-            @SerialName("allow_bp")
-            val allowBp: Int? = 0,
-            @SerialName("allow_preview")
-            val allowPreview: Int? = 0,
-            @SerialName("allow_review")
-            val allowReview: Int? = 0,
-
-            @SerialName("is_rcmd")
-            val isRcmd: Int = 0,
-            @SerialName("is_selection")
-            val isSelection: Int = 0,
-            @SerialName("selection_style")
-            val selectionStyle: Int = 0
-        )
-
-        @Serializable
         data class Section(
             @SerialName("attr")
             val attr: Int? = 0,
@@ -288,28 +273,6 @@ data class BangumiFollowList(
             val seriesOrd: Int = 0,
             @SerialName("title")
             val title: String = ""
-        )
-
-        @Serializable
-        data class Stat(
-            @SerialName("coin")
-            val coin: Int = 0,
-            @SerialName("danmaku")
-            val danmaku: Int = 0,
-            @SerialName("favorite")
-            val favorite: Int = 0,
-            @SerialName("follow")
-            val follow: Int = 0,
-            @SerialName("likes")
-            val likes: Int = 0,
-            @SerialName("reply")
-            val reply: Int = 0,
-            @SerialName("series_follow")
-            val seriesFollow: Int = 0,
-            @SerialName("series_view")
-            val seriesView: Int = 0,
-            @SerialName("view")
-            val view: Int = 0
         )
     }
 }
