@@ -52,6 +52,7 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 reportMerge {
     input.from(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().map { it.sarifReportFile })
 }
+
 subprojects {
     // ./gradlew assembleRelease -PcomposeCompilerReports=true
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

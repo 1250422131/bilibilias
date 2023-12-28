@@ -47,15 +47,6 @@ android {
     }
     packaging {
         resources {
-            // excludes += "META-INF/DEPENDENCIES"
-            // excludes += "META-INF/LICENSE"
-            // excludes += "META-INF/LICENSE.txt"
-            // excludes += "META-INF/license.txt"
-            // excludes += "META-INF/NOTICE"
-            // excludes += "META-INF/NOTICE.txt"
-            // excludes += "META-INF/notice.txt"
-            // excludes += "META-INF/ASL2.0"
-            // excludes += "META-INF/*.kotlin_module"
             excludes += "META-INF/versions/9/previous-compilation-data.bin"
         }
     }
@@ -79,6 +70,8 @@ dependencies {
     implementation(projects.feature.userspace)
     implementation(projects.feature.merge)
     implementation(projects.feature.download)
+
+    implementation(project(":XXPermissions:library"))
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
@@ -105,7 +98,9 @@ dependencies {
 
     implementation(libs.compose.settings.ui.m3)
 
-    /** ffmpeg */
+    /**
+     * ffmpeg
+     */
     implementation(libs.ffmpeg.kit.full)
 
     implementation(libs.coil.kt)
