@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.router
+package com.imcys.bilibilias.router
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -38,7 +37,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.imcys.bilibilias.base.router.Screen
+import com.imcys.bilibilias.back.BackHandlerWithLifecycle
+import com.imcys.bilibilias.router.Screen
 import com.imcys.designsystem.theme.BILIBILIASTheme
 import com.imcys.network.utils.INetworkMonitor
 import dagger.hilt.android.AndroidEntryPoint
@@ -113,6 +113,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainScreen(navController, modifier = Modifier.padding(it))
                 }
+                BackHandlerWithLifecycle {
+                    finish()
+                }
             }
         }
     }
@@ -121,7 +124,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AsBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    NavigationBar(tonalElevation = 0.dp, containerColor = MaterialTheme.colorScheme.onBackground) {
+    NavigationBar {
         items.forEach { screen ->
             val selected =
                 navBackStackEntry?.destination?.isTopLevelDestinationInHierarchy(screen.route)
