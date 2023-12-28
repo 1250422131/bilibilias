@@ -71,6 +71,7 @@ wire = "4.9.3"
 commonsCodec = "1.16.0"
 annotationJvm = "1.7.1"
 zxingAndroidEmbedded = "4.3.0"
+fragment = "1.6.2"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -84,6 +85,7 @@ acra-http = { group = "ch.acra", name = "acra-http", version.ref = "acra" }
 acra-notification = { group = "ch.acra", name = "acra-notification", version.ref = "acra" }
 acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
 android-startup = { group = "io.github.idisfkj", name = "android-startup", version.ref = "androidStartup" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }

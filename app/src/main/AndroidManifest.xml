@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- if you want to load images from the internet -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 允许访问网络状态的权限 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"
-        tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_VIDEO" />
-
-
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".BiliAsApp"
@@ -37,7 +16,9 @@
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
-
+        <meta-data
+            android:name="ScopedStorage"
+            android:value="true" />
         <meta-data
             android:name="BaiduMobAd_STAT_ID"
             android:value="0f9d51ff82" /> <!-- 渠道商编号 -->

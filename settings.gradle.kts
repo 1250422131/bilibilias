@@ -42,8 +42,9 @@ include(":feature:user")
 include(":feature:setting")
 include(":feature:player")
 include(":feature:userspace")
+include(":feature:merge")
+include(":feature:download")
 
 include(":lint")
 
-include(":feature:merge")
-include(":feature:download")
+include(":XXPermissions:library")
