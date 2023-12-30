@@ -183,18 +183,6 @@ data class UserCardBean(
         )
 
         @Serializable
-        data class Official(
-            @SerialName("desc")
-            val desc: String = "",
-            @SerialName("role")
-            val role: Int = 0, // 2
-            @SerialName("title")
-            val title: String = "", // bilibili创始人（站长）
-            @SerialName("type")
-            val type: Int = 0 // 0
-        )
-
-        @Serializable
         data class OfficialVerify(
             @SerialName("desc")
             val desc: String = "", // bilibili创始人（站长）
@@ -244,25 +232,7 @@ data class UserCardBean(
             val vipStatus: Int = 0, // 1
             @SerialName("vipType")
             val vipType: Int = 0 // 2
-        ) {
-            @Serializable
-            data class Label(
-                @SerialName("bg_color")
-                val bgColor: String = "", // #FB7299
-                @SerialName("bg_style")
-                val bgStyle: Int = 0, // 1
-                @SerialName("border_color")
-                val borderColor: String = "",
-                @SerialName("label_theme")
-                val labelTheme: String = "", // ten_annual_vip
-                @SerialName("path")
-                val path: String = "",
-                @SerialName("text")
-                val text: String = "", // 十年大会员
-                @SerialName("text_color")
-                val textColor: String = "" // #FFFFFF
-            )
-        }
+        )
     }
 
     @Serializable

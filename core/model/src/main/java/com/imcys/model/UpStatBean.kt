@@ -1,5 +1,6 @@
 package com.imcys.model
 
+import com.imcys.model.video.Archive
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,17 +30,11 @@ data class UpStatBean(
     @SerialName("article")
     val article: Article = Article(),
     @SerialName("likes")
-    val likes: Int = 0 // 20295095
+    val likes: Int = 0
 ) {
-    @Serializable
-    data class Archive(
-        @SerialName("view")
-        val view: Int = 0 // 213567370
-    )
-
     @Serializable
     data class Article(
         @SerialName("view")
-        val view: Int = 0 // 3230808
+        val view: Int = 0
     )
 }

@@ -3,6 +3,7 @@
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 data class SpaceChannelList(
     @SerialName("count")
     val count: Int,
@@ -12,7 +13,7 @@ data class SpaceChannelList(
     @Serializable
     data class InnerList(
         @SerialName("cid")
-        val cid: Long,
+        val channelId: Long,
         @SerialName("count")
         val count: Int,
         @SerialName("cover")
@@ -20,10 +21,12 @@ data class SpaceChannelList(
         @SerialName("intro")
         val intro: String,
         @SerialName("mid")
-        val mid: Int,
+        val mid: Long,
         @SerialName("mtime")
         val mtime: Int,
         @SerialName("name")
-        val name: String
+        val name: String,
+        @SerialName("is_live_playback")
+        val isLivePlayback: Boolean = false
     )
 }

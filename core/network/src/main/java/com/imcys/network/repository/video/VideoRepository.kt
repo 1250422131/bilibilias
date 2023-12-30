@@ -21,8 +21,6 @@ import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
 import com.imcys.network.utils.parameterCID
 import com.imcys.network.utils.parameterMID
-import com.imcys.network.utils.parameterPN
-import com.imcys.network.utils.parameterPS
 import com.imcys.network.wbiGet
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -94,13 +92,13 @@ class VideoRepository @Inject constructor(
         }.body<SpaceChannelList>()
     }
 
-    override suspend fun channelVideo(mId: Long, cId: Long, pn: Int, ps: Int): SpaceChannelVideo =
+    override suspend fun channelVideo(mId: Long, channelId: Long, pn: Int, ps: Int): SpaceChannelVideo =
         withContext(ioDispatcher) {
             client.get(BilibiliApi2.SPACE_CHANNEL_VIDEO) {
                 parameterMID(mId)
-                parameterCID(cId)
-                parameterPN(pn)
-                parameterPS(ps)
+                parameterCID(channelId)
+                // parameterPN(pn)
+                // parameterPS(ps)
             }.body<SpaceChannelVideo>()
         }
 

@@ -31,13 +31,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.model.video.PageData
+import com.imcys.player.state.PlayInfoUiState
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-internal fun SheetPages(
+internal fun SheetPage(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
     pageData: List<PageData>,
+    archives: PlayInfoUiState,
 ) {
     var openSetting by remember { mutableStateOf(false) }
     Column {
@@ -69,33 +71,35 @@ internal fun SheetPages(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(8.dp, 4.dp)
             ) {
-                items(pageData) { item ->
-                    var selected by remember { mutableStateOf(false) }
-                    var expanded by remember { mutableStateOf(false) }
-                    DropdownMenu(expanded, {
-                        expanded = false
-                    }) {
-                        DropdownMenuItem({ Text(text = "IDM") }, {})
-                        DropdownMenuItem({ Text(text = "ADM") }, {})
-                    }
-                    TextButton(
-                        onClick = {
-                            addToDownloadQueue(listOf(item), quality.second); selected = true
-                        },
-                        border = if (selected) {
-                            BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
-                        } else {
-                            null
-                        },
+                if (archives is PlayInfoUiState.Success) {
+                    items(archives.archives) { item ->
+                        var selected by remember { mutableStateOf(false) }
+                        var expanded by remember { mutableStateOf(false) }
+                        DropdownMenu(expanded, {
+                            expanded = false
+                        }) {
+                            DropdownMenuItem({ Text(text = "IDM") }, {})
+                            DropdownMenuItem({ Text(text = "ADM") }, {})
+                        }
+                        TextButton(
+                            onClick = {
+                                // addToDownloadQueue(listOf(item), quality.second); selected = true
+                            },
+                            border = if (selected) {
+                                BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+                            } else {
+                                null
+                            },
 
-                        modifier = Modifier.combinedClickable(onLongClick = {}) { }
-                    ) {
-                        Text(
-                            text = item.part,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            maxLines = 1
-                        )
+                            modifier = Modifier.combinedClickable(onLongClick = {}) { }
+                        ) {
+                            Text(
+                                text = item.title,
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
