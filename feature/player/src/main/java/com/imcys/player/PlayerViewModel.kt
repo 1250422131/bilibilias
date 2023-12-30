@@ -12,11 +12,14 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bilias.core.domain.GetToolbarReportUseCase
+import com.bilias.core.domain.GetVideoInChannelList
 import com.imcys.common.utils.MediaUtils.getMimeType
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
 import com.imcys.model.video.PageData
+import com.imcys.model.video.Stat
+import com.imcys.model.video.ToolBarReport
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
@@ -44,6 +47,7 @@ class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     savedStateHandle: SavedStateHandle,
     getToolbarReportUseCase: GetToolbarReportUseCase,
+    getVideoInChannelList: GetVideoInChannelList
 ) : ViewModel() {
 
     private val aid = savedStateHandle.getStateFlow(A_ID, "")
@@ -51,7 +55,14 @@ class PlayerViewModel @Inject constructor(
     private val cid = savedStateHandle.getStateFlow(C_ID, "")
 
     val videoInfoUiState =
-        bvid.flatMapLatest { videoInfoUiState(it, videoRepository, getToolbarReportUseCase) }
+        bvid.flatMapLatest {
+            videoInfoUiState(
+                it,
+                videoRepository,
+                getToolbarReportUseCase,
+                getVideoInChannelList
+            )
+        }
             .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
 
     /**
@@ -157,21 +168,24 @@ private fun videoInfoUiState(
     bvId: String,
     videoRepository: IVideoDataSources,
     getToolbarReportUseCase: GetToolbarReportUseCase,
+    getVideoInChannelList: GetVideoInChannelList,
 ): Flow<PlayInfoUiState> {
     val details = flow { emit(videoRepository.getDetail(bvId)) }
+    val archives = details.flatMapLatest { getVideoInChannelList(it.owner.mid, it.cid) }
+
     val reportUseCase = getToolbarReportUseCase(bvId)
     return combine(
         details,
         reportUseCase,
-        ::Pair,
+        archives,
+        ::Triple,
     ).asResult()
         .map { result ->
             when (result) {
                 is Result.Error   -> PlayInfoUiState.LoadFailed
                 Result.Loading    -> PlayInfoUiState.Loading
                 is Result.Success -> {
-                    val (detail, report) = result.data
-                    val stat = detail.stat
+                    val (detail, report, archives) = result.data
                     PlayInfoUiState.Success(
                         aid = detail.aid,
                         bvid = detail.bvid,
@@ -179,23 +193,26 @@ private fun videoInfoUiState(
                         title = detail.title,
                         pic = detail.pic,
                         desc = detail.descV2?.firstOrNull()?.rawText ?: detail.desc,
-                        pageData = detail.pageData,
+                        pageData = detail.pageData.toImmutableList(),
                         owner = detail.owner,
-                        toolBarReport = report.copy(
-                            like = stat.like,
-                            coin = stat.coin,
-                            favorite = stat.favorite,
-                            danmaku = stat.danmaku,
-                            evaluation = stat.evaluation,
-                            reply = stat.reply,
-                            share = stat.share,
-                            view = stat.view,
-                        )
+                        toolBarReport = mapToToolBarReport(detail.stat, report),
+                        archives = archives.toImmutableList()
                     )
                 }
             }
         }
 }
+
+private fun mapToToolBarReport(stat: Stat, report: ToolBarReport) = report.copy(
+    like = stat.like,
+    coin = stat.coin,
+    favorite = stat.favorite,
+    danmaku = stat.danmaku,
+    evaluation = stat.evaluation,
+    reply = stat.reply,
+    share = stat.share,
+    view = stat.view,
+)
 
 @Stable
 data class PlayerState(

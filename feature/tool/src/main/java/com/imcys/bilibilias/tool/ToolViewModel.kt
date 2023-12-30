@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.tool
 
-
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -97,8 +96,8 @@ class ToolViewModel
                         pic = result.data.result.cover,
                         title = result.data.result.title,
                         desc = result.data.result.evaluate,
-                        view = result.data.result.stat.views.digitalConversion(),
-                        danmaku = result.data.result.stat.danmakus.digitalConversion(),
+                        view = result.data.result.stat.view.digitalConversion(),
+                        danmaku = result.data.result.stat.danmaku.digitalConversion(),
                         aid = result.data.result.episodes.first().aid,
                         bvid = result.data.result.episodes.first().bvid,
                         cid = result.data.result.episodes.first().cid,

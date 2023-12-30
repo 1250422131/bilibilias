@@ -2,7 +2,6 @@ package com.imcys.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 /**
  * ![用户基本信息类](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md)
@@ -361,18 +360,6 @@ data class UserSpaceInformation(
     )
 
     @Serializable
-    data class Official(
-        @SerialName("desc")
-        val desc: String = "",
-        @SerialName("role")
-        val role: Int = 0, // 2
-        @SerialName("title")
-        val title: String = "", // bilibili创始人（站长）
-        @SerialName("type")
-        val type: Int = 0 // 0
-    )
-
-    @Serializable
     data class Pendant(
         @SerialName("expire")
         val expire: Int = 0, // 0
@@ -448,36 +435,5 @@ data class UserSpaceInformation(
         val type: Int = 0, // 2
         @SerialName("vip_pay_type")
         val vipPayType: Int = 0 // 0
-    ) {
-        @Serializable
-        data class Label(
-            @SerialName("bg_color")
-            val bgColor: String = "", // #FB7299
-            @SerialName("bg_style")
-            val bgStyle: Int = 0, // 1
-            @SerialName("border_color")
-            val borderColor: String = "",
-            @SerialName("img_label_uri_hans")
-            val imgLabelUriHans: String = "", // https://i0.hdslb.com/bfs/activity-plat/static/20220608/e369244d0b14644f5e1a06431e22a4d5/wltavwHAkL.gif
-            @SerialName("img_label_uri_hans_static")
-            val imgLabelUriHansStatic: String = "", // https://i0.hdslb.com/bfs/vip/802418ff03911645648b63aa193ba67997b5a0bc.png
-            @SerialName("img_label_uri_hant")
-            val imgLabelUriHant: String = "",
-            @SerialName("img_label_uri_hant_static")
-            val imgLabelUriHantStatic: String = "", // https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/8u7iRTPE7N.png
-            @SerialName("label_theme")
-            val labelTheme: String = "", // ten_annual_vip
-            @SerialName("path")
-            val path: String = "",
-            @SerialName("text")
-            val text: String = "", // 十年大会员
-            @SerialName("text_color")
-            val textColor: String = "", // #FFFFFF
-            @SerialName("use_img_label")
-            val useImgLabel: Boolean = false // true
-        )
-    }
-
-    @Transient
-    val isVip = vip.status == 1
+    )
 }

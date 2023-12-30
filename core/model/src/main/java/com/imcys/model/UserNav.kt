@@ -196,18 +196,6 @@ data class UserNav(
     )
 
     @Serializable
-    data class Official(
-        @SerialName("desc")
-        val desc: String = "",
-        @SerialName("role")
-        val role: Int = 0, // 0
-        @SerialName("title")
-        val title: String = "",
-        @SerialName("type")
-        val type: Int = 0 // -1
-    )
-
-    @Serializable
     data class OfficialVerify(
         @SerialName("desc")
         val desc: String = "",
@@ -259,35 +247,7 @@ data class UserNav(
         val type: Int = 0, // 2
         @SerialName("vip_pay_type")
         val vipPayType: Int = 0 // 0
-    ) {
-        @Serializable
-        data class Label(
-            @SerialName("bg_color")
-            val bgColor: String = "", // #FB7299
-            @SerialName("bg_style")
-            val bgStyle: Int = 0, // 1
-            @SerialName("border_color")
-            val borderColor: String = "",
-            @SerialName("img_label_uri_hans")
-            val imgLabelUriHans: String = "",
-            @SerialName("img_label_uri_hans_static")
-            val imgLabelUriHansStatic: String = "",
-            @SerialName("img_label_uri_hant")
-            val imgLabelUriHant: String = "",
-            @SerialName("img_label_uri_hant_static")
-            val imgLabelUriHantStatic: String = "",
-            @SerialName("label_theme")
-            val labelTheme: String = "", // annual_vip
-            @SerialName("path")
-            val path: String = "",
-            @SerialName("text")
-            val text: String = "", // 年度大会员
-            @SerialName("text_color")
-            val textColor: String = "", // #FFFFFF
-            @SerialName("use_img_label")
-            val useImgLabel: Boolean = false // true
-        )
-    }
+    )
 
     @Serializable
     data class VipLabel(

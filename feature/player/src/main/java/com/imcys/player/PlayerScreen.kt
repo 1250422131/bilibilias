@@ -38,7 +38,6 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -65,7 +64,7 @@ import coil.compose.AsyncImage
 import com.imcys.common.utils.noRippleClickable
 import com.imcys.model.video.PageData
 import com.imcys.player.sheet.SheetDirectLink
-import com.imcys.player.sheet.SheetPages
+import com.imcys.player.sheet.SheetPage
 import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
 import com.shuyu.gsyvideoplayer.GSYVideoManager
@@ -87,8 +86,6 @@ internal fun PlayerRoute(
         state = state,
         navigateToDownloadAanmaku = navigateToDownloadAanmaku,
         navigateToUserSpace = navigateToUserSpace,
-        selectedQuality = viewModel::selectedQuality,
-        selectedPage = viewModel::selectedPage,
         addToDownloadQueue = viewModel::addToDownloadQueue,
         playerInfoUiState = videoInfoUiState,
         playerUiState = playerUiState,
@@ -101,11 +98,7 @@ internal fun PlayerScreen(
     state: PlayerState,
     navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
-    selectedQuality: (Int) -> Unit,
-    selectedPage: (String, Long) -> Unit,
     addToDownloadQueue: (List<PageData>, Int) -> Unit,
-
-
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
@@ -136,10 +129,11 @@ internal fun PlayerScreen(
         sheetContent = {
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
-                    Action.DOWNLOAD_VIDEO -> SheetPages(
+                    Action.DOWNLOAD_VIDEO -> SheetPage(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
                         pageData = playerUiState.pageData,
+                        playerInfoUiState
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()
@@ -199,14 +193,6 @@ internal fun PlayerScreen(
                 }
             }
 
-            LazyRow(Modifier.fillMaxWidth()) {
-                items(state.descriptionAndQuality) { pair ->
-                    // todo 缺少个边框 bro
-                    TextButton(onClick = { selectedQuality(pair.second) }) {
-                        Text(text = pair.first)
-                    }
-                }
-            }
             Box(Modifier.fillMaxWidth()) {
                 val w = LocalConfiguration.current.screenWidthDp.dp / 3
                 LazyRow(
@@ -216,7 +202,7 @@ internal fun PlayerScreen(
                 ) {
                     items(state.pageData, key = { it.cid }) { item ->
                         Card(
-                            onClick = { selectedPage(item.cid.toString(), state.aid) },
+                            onClick = { },
                             shape = RoundedCornerShape(4.dp)
                         ) {
                             Text(
