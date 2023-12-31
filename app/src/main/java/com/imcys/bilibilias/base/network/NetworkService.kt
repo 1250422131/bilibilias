@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.base.network
 
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -138,6 +139,18 @@ class NetworkService @Inject constructor(
 
     suspend fun n27(): MyUserData = withContext(ioDispatcher) {
         n38()
+    }
+
+    suspend fun biliUserLogin(qrcodeKey: String): LoginStateBean = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcodeKey).body()
+    }
+
+    suspend fun getLoginQRData(): LoginQrcodeBean = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi.getLoginQRPath).body()
+    }
+
+    suspend fun getMyUserData(): MyUserData = withContext(ioDispatcher) {
+        httpClient.get(BilibiliApi.getMyUserData).body()
     }
 
     suspend fun n38(): MyUserData = withContext(ioDispatcher) {

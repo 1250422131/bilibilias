@@ -6,8 +6,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -15,27 +18,38 @@ import com.google.gson.Gson
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.SET_COOKIE
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
+import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import okhttp3.internal.wait
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class LoginQRModel {
+@HiltViewModel
+class LoginQRModel @Inject constructor(
+    private val networkService: NetworkService
+) : ViewModel() {
+
+    private val TAG = this.javaClass.name
 
     var binding: DialogLoginQrBottomsheetBinding? = null
     var loginTip = ""
@@ -50,6 +64,27 @@ class LoginQRModel {
     fun finishLogin(view: View, qrcode_key: String) {
         val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
+
+        viewModelScope.launchIO {
+            val loginStateBean = networkService.biliUserLogin(qrcode_key)
+            Log.i(TAG, "finishLogin: " + loginStateBean.message)
+
+            bottomSheetDialog?.cancel()
+
+            launchUI {
+
+                if (loginStateBean.data.code != 0) {
+                    // 展示登录结果
+                    val loginQRModel = binding?.loginQRModel
+                    loginQRModel?.loginTip = loginStateBean.data.message
+                    binding?.loginQRModel = loginQRModel
+                }
+                // 将登录完成事件返回给Fragment
+                responseResult(loginStateBean.data.code, loginStateBean)
+            }
+
+        }
+
 
         // 登录完成
         HttpUtils.get(
@@ -94,12 +129,11 @@ class LoginQRModel {
      * @param loginQrcodeDataBean DataBean
      */
     fun reloadLoginQR(loginQrcodeDataBean: LoginQrcodeBean.DataBean) {
-        HttpUtils.get(
-            BilibiliApi.getLoginQRPath,
-            LoginQrcodeBean::class.java,
-        ) {
-            loginQrcodeDataBean.url = URLEncoder.encode(it.data.url, "UTF-8")
-            loginQrcodeDataBean.qrcode_key = it.data.qrcode_key
+        viewModelScope.launchUI {
+            val loginQRData = networkService.getLoginQRData()
+                .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
+
+            loginQrcodeDataBean.qrcode_key = loginQRData.data.qrcode_key
             binding?.dataBean = loginQrcodeDataBean
         }
     }

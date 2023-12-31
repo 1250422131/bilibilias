@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @create: 2022-10-26 17:30
  * @Description: 登陆状态数据
  */
+@kotlinx.serialization.Serializable
 public class LoginStateBean implements Serializable {
 
     /**
@@ -52,7 +53,7 @@ public class LoginStateBean implements Serializable {
     public void setData(DataBean data) {
         this.data = data;
     }
-
+    @kotlinx.serialization.Serializable
     public static class DataBean implements Serializable {
         /**
          * url :

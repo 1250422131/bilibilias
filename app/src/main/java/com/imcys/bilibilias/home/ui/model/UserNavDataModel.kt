@@ -2,7 +2,6 @@ package com.imcys.bilibilias.home.ui.model
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-
 data class UserNavDataModel(
     @SerializedName("code")
     val code: Int, // 0

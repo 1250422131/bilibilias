@@ -54,6 +54,11 @@ android {
 }
 kotlin {
     jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
 // https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
