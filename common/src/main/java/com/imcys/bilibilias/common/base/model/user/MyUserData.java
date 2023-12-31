@@ -8,6 +8,7 @@ import java.io.Serializable;
  * @create: 2022-10-30 08:12
  * @Description: 我的个人信息类
  */
+@kotlinx.serialization.Serializable
 public class MyUserData implements Serializable {
 
     /**
@@ -63,7 +64,7 @@ public class MyUserData implements Serializable {
     public void setData(DataBean data) {
         this.data = data;
     }
-
+    @kotlinx.serialization.Serializable
     public static class DataBean implements Serializable {
         private long mid;
         private String uname;

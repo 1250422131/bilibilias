@@ -26,11 +26,13 @@ import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
 import javax.inject.Inject
 import kotlin.math.ceil
 
+@AndroidEntryPoint
 class UserFragment : BaseFragment() {
 
     private lateinit var userWorksAd: UserWorksAdapter

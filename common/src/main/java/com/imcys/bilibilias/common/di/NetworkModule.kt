@@ -78,7 +78,7 @@ class NetworkModule {
         }
         BrowserUserAgent()
         install(ContentNegotiation) {
-            json(json)
+//            json(json)
             gson()
         }
         install(HttpRequestRetry) {

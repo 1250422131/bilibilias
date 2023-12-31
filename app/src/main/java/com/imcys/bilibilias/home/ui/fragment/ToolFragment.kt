@@ -48,6 +48,7 @@ import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -60,6 +61,7 @@ import javax.inject.Inject
 @RouterAnno(
     hostAndPath = ARouterAddress.ToolFragment,
 )
+@AndroidEntryPoint
 class ToolFragment : BaseFragment() {
 
     lateinit var fragmentToolBinding: FragmentToolBinding
@@ -73,9 +75,9 @@ class ToolFragment : BaseFragment() {
         super.onResume()
         // 这里仍然是在判断是否有被引导过了
         val guideVersion =
-            (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
+            (activity as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
-            (context as HomeActivity).asSharedPreferences.edit()
+            (activity as HomeActivity).asSharedPreferences.edit()
                 .putString("AppGuideVersion", App.AppGuideVersion).apply()
             loadToolGuide()
         }
@@ -83,7 +85,7 @@ class ToolFragment : BaseFragment() {
     }
 
     private fun loadToolGuide() {
-        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
+        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(activity))
         HighlightPro.with(this)
             .setHighlightParameter {
                 tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_tool)

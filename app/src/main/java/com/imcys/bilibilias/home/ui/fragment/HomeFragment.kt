@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -36,6 +37,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
@@ -54,6 +56,7 @@ import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -70,6 +73,7 @@ import kotlin.system.exitProcess
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeFragment,
 )
+@AndroidEntryPoint
 class HomeFragment : BaseFragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
@@ -111,11 +115,11 @@ class HomeFragment : BaseFragment() {
         super.onResume()
         // 判断用户是否没有被引导
         val guideVersion =
-            (context as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
+            (requireActivity() as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
         if (guideVersion != App.AppGuideVersion) {
             loadHomeGuide()
         }
-        StatService.onPageStart(context, "HomeFragment")
+        StatService.onPageStart(requireActivity(), "HomeFragment")
     }
 
     /**
@@ -124,7 +128,7 @@ class HomeFragment : BaseFragment() {
     private fun loadHomeGuide() {
         HighlightPro.with(this)
             .setHighlightParameter {
-                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(context))
+                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(requireActivity()))
                 tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_home)
                 HighlightParameter.Builder()
                     .setTipsView(tipAppBinding.root)
@@ -208,7 +212,7 @@ class HomeFragment : BaseFragment() {
                         oldHomeBannerDataBean.textList,
                         oldHomeBannerDataBean,
                     ),
-                ).setIndicator(CircleIndicator(context))
+                ).setIndicator(CircleIndicator(requireContext()))
             }
         }
     }
@@ -217,7 +221,7 @@ class HomeFragment : BaseFragment() {
      * 加载APP数据
      */
     private fun loadAppData() {
-        AppCenter.start((context as Activity).application, App.appSecret, Distribute::class.java)
+        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
         launchIO {
             val oldUpdateDataBean =
@@ -345,11 +349,15 @@ class HomeFragment : BaseFragment() {
      * 加载登陆对话框
      */
     internal fun loadLogin() {
-        HttpUtils.get(BilibiliApi.getLoginQRPath, LoginQrcodeBean::class.java) {
-            it.data.url = URLEncoder.encode(it.data.url, "UTF-8")
+        launchUI {
+
+            //自己会切换IO
+            val loginQRData = networkService.getLoginQRData()
+                .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
+
             loginQRDialog = DialogUtils.loginQRDialog(
-                context as Activity,
-                it,
+                requireActivity(),
+                loginQRData,
             ) { code: Int, _: LoginStateBean ->
                 // 登陆成功
                 if (code == 0) {
@@ -359,6 +367,7 @@ class HomeFragment : BaseFragment() {
             }.apply {
                 show()
             }
+
         }
     }
 
@@ -402,21 +411,15 @@ class HomeFragment : BaseFragment() {
      * 检查用户是否登陆
      */
     private fun detectUserLogin() {
-        launchIO {
-            val myUserData =
-                HttpUtils.addHeader(COOKIE, BaseApplication.dataKv.decodeString(COOKIES, "")!!)
-                    .asyncGet(
-                        BilibiliApi.getMyUserData,
-                        MyUserData::class.java,
-                    )
+        launchUI {
 
-            launchUI {
-                if (myUserData.code != 0) {
-                    DialogUtils.loginDialog(requireContext())
-                        .show()
-                } else {
-                    BaseApplication.myUserData = myUserData.data
-                }
+            val myUserData = networkService.getMyUserData()
+
+            if (myUserData.code != 0) {
+                DialogUtils.loginDialog(requireActivity())
+                    .show()
+            } else {
+                BaseApplication.myUserData = myUserData.data
             }
         }
     }

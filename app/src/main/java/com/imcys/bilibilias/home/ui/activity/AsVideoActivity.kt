@@ -251,37 +251,35 @@ class AsVideoActivity : BaseActivity() {
 
         val bvId = intent.getStringExtra("bvId")
 
-        launchIO {
-            val videoBaseBean = networkService.n12(bvid)
+        launchUI {
+            val videoBaseBean = networkService.n12(bvId.toString())
 
-            launchUI {
-                // 设置数据
-                videoDataBean = videoBaseBean
-                // 这里需要显示视频数据
-                showVideoData()
-                // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
-                setBaseData(videoBaseBean)
-                // 加载用户卡片
-                loadUserCardData(videoBaseBean.data.owner.mid)
-                // 加载弹幕信息
-                loadDanmakuFlameMaster()
-                // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-                videoBaseBean.data.redirect_url?.apply {
-                    // 通过正则表达式检查该视频是不是番剧
-                    val epRegex = Regex("""(?<=ep)(\d*)""")
-                    if (epRegex.containsMatchIn(this)) {
-                        // 加载番剧视频列表
-                        epid = epRegex.find(this)?.value?.toLong()!!
-                        loadBangumiVideoList()
-                    }
-                } ?: apply {
-                    // 加载视频播放信息
-                    loadVideoPlay("video")
-                    loadVideoList() // 加载正常列表
+            // 设置数据
+            videoDataBean = videoBaseBean
+            // 这里需要显示视频数据
+            showVideoData()
+            // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
+            setBaseData(videoBaseBean)
+            // 加载用户卡片
+            loadUserCardData(videoBaseBean.data.owner.mid)
+            // 加载弹幕信息
+            loadDanmakuFlameMaster()
+            // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
+            videoBaseBean.data.redirect_url?.apply {
+                // 通过正则表达式检查该视频是不是番剧
+                val epRegex = Regex("""(?<=ep)(\d*)""")
+                if (epRegex.containsMatchIn(this)) {
+                    // 加载番剧视频列表
+                    epid = epRegex.find(this)?.value?.toLong()!!
+                    loadBangumiVideoList()
                 }
-                // 检查三连情况
-                archiveHasLikeTriple()
+            } ?: apply {
+                // 加载视频播放信息
+                loadVideoPlay("video")
+                loadVideoList() // 加载正常列表
             }
+            // 检查三连情况
+            archiveHasLikeTriple()
         }
     }
 

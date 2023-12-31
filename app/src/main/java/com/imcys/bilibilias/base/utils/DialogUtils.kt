@@ -130,7 +130,10 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
         binding.dataBean = loginQrcodeBean.data
-        binding.loginQRModel = LoginQRModel()
+        binding.loginQRModel =
+            ViewModelProvider(
+                context as HomeActivity,
+            )[LoginQRModel::class.java]
         binding.loginQRModel?.responseResult = responseResult
         // 传导binding过去
         binding.loginQRModel?.binding = binding
@@ -535,7 +538,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -602,7 +605,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -776,7 +779,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
-        networkService:NetworkService
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
         var selectDefinition = 80
@@ -974,7 +977,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
-        networkService:NetworkService
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         var selectDefinition = 80
@@ -1168,7 +1171,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
@@ -1253,7 +1256,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
@@ -1345,7 +1348,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         data class VideoData(
             val videoPlayBean: VideoPlayBean,
@@ -1392,7 +1395,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService:NetworkService
+        networkService: NetworkService
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
