@@ -1,8 +1,5 @@
 package com.imcys.bilibilias.common.base.model.user
 
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
-
 /**
  * bilibilias云端账户登录结果
  * @property code Int
@@ -11,8 +8,6 @@ import java.io.Serializable
  */
 
 data class AsUserLoginModel(
-    @SerializedName("code")
-    val code: Int, // 0
-    @SerializedName("msg")
-    val msg: String, // 登录成功
-) : Serializable
+    val code: Int,
+    val msg: String,
+)
