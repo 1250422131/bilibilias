@@ -9,8 +9,6 @@ import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
 import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
-import com.imcys.model.space.SpaceChannelList
-import com.imcys.model.space.SpaceChannelVideo
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.VideoFavoured
@@ -19,8 +17,6 @@ import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
 import com.imcys.network.utils.parameterBV
-import com.imcys.network.utils.parameterCID
-import com.imcys.network.utils.parameterMID
 import com.imcys.network.wbiGet
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -85,22 +81,6 @@ class VideoRepository @Inject constructor(
             parameter("aid", bvid)
         }.body<VideoFavoured>()
     }
-
-    override suspend fun channelList(mId: Long): SpaceChannelList = withContext(ioDispatcher) {
-        client.get(BilibiliApi2.SPACE_CHANNEL_LIST) {
-            parameterMID(mId)
-        }.body<SpaceChannelList>()
-    }
-
-    override suspend fun channelVideo(mId: Long, channelId: Long, pn: Int, ps: Int): SpaceChannelVideo =
-        withContext(ioDispatcher) {
-            client.get(BilibiliApi2.SPACE_CHANNEL_VIDEO) {
-                parameterMID(mId)
-                parameterCID(channelId)
-                // parameterPN(pn)
-                // parameterPS(ps)
-            }.body<SpaceChannelVideo>()
-        }
 
     suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
         client.get(url)
