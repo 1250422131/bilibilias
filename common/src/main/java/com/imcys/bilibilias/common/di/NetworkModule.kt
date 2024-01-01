@@ -35,26 +35,12 @@ class NetworkModule {
     fun provideOkhttpClient(): OkHttpClient = OkHttpClient.Builder()
         .pingInterval(1, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-            val req = chain.request()
-            if (req.header(HttpHeaders.AcceptEncoding) != null) {
-                val request = req.newBuilder()
-                    .removeHeader(HttpHeaders.AcceptEncoding)
-                    .build()
-                chain.proceed(request)
-            } else {
-                chain.proceed(req)
-            }
-        }
-        .addInterceptor { chain ->
-            val req = chain.request()
-            if (req.header(HttpHeaders.UserAgent) == null) {
-                val request = req.newBuilder()
-                    .header(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
-                    .build()
-                chain.proceed(request)
-            } else {
-                chain.proceed(req)
-            }
+            val request = chain.request().newBuilder()
+                .removeHeader(HttpHeaders.AcceptEncoding)
+                .removeHeader(HttpHeaders.UserAgent)
+                .addHeader(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
+                .build()
+            chain.proceed(request)
         }
         .addInterceptor(MonitorInterceptor())
         .addInterceptor(BrotliInterceptor)
@@ -76,7 +62,6 @@ class NetworkModule {
         defaultRequest {
             url(BILIBILI_URL)
         }
-        BrowserUserAgent()
         install(ContentNegotiation) {
 //            json(json)
             gson()

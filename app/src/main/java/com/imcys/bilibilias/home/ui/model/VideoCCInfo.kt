@@ -1,8 +1,7 @@
 package com.imcys.bilibilias.home.ui.model
 
-import kotlinx.serialization.Serializable
-
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 
 @Serializable
@@ -25,7 +24,7 @@ data class VideoCCInfo(
     val type: String = "",
     @SerialName("version")
     val version: String = ""
-) : java.io.Serializable {
+) {
     @Serializable
     data class Body(
         @SerialName("content")
@@ -40,5 +39,5 @@ data class VideoCCInfo(
         val sid: Int = 0,
         @SerialName("to")
         val to: Double = 0.0
-    ) : java.io.Serializable
+    )
 }
