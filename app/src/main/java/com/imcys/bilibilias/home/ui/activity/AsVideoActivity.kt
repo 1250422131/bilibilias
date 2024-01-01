@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -49,6 +50,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.loader.IllegalDataException
@@ -75,6 +77,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
+
+    private val TAG = this.javaClass.name
 
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
@@ -125,10 +129,10 @@ class AsVideoActivity : BaseActivity() {
      * 加载用户信息，为了确保会员视频及时通知用户
      */
     private fun loadUserData() {
-        launchIO {
-            userBaseBean = withContext(lifecycleScope.coroutineContext) { getUserData() }
+        launchUI {
+            userBaseBean = withContext(Dispatchers.IO) { getUserData() }
             // 加载视频首要信息
-            launchUI { initVideoData() }
+            initVideoData()
         }
     }
 
@@ -167,39 +171,37 @@ class AsVideoActivity : BaseActivity() {
 
         when (type) {
             "video" -> {
-                launchIO {
+                launchUI {
                     // 获取播放信息
-
                     val videoPlayBean = networkService.n9(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
-                    launchUI {
-                        // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
-                        if (videoPlayBean.code != 0) {
-                            // 弹出通知弹窗
-                            AsDialog.init(this@AsVideoActivity).build {
-                                title = "视频文件特殊"
-                                config = {
-                                    content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
-                                    positiveButtonText = "知道啦"
-                                    positiveButton = {
-                                        it.cancel()
-                                    }
+                    // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
+                    if (videoPlayBean.code != 0) {
+                        // 弹出通知弹窗
+                        AsDialog.init(this@AsVideoActivity).build {
+                            title = "视频文件特殊"
+                            config = {
+                                content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
+                                positiveButtonText = "知道啦"
+                                positiveButton = {
+                                    it.cancel()
                                 }
-                            }.show()
-                        } else {
-                            val dashVideoPlayBean = networkService.n10(bvid, cid)
-                            if (dashVideoPlayBean.code != 0) {
-                                setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                             }
+                        }.show()
+                    } else {
+                        val dashVideoPlayBean = networkService.n10(bvid, cid)
+                        if (dashVideoPlayBean.code != 0) {
+                            setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
+                        }
 
-                            dashVideoPlayBean.data.dash.video[0].also {
-                                if (it.width < it.height) {
-                                    // 竖屏
-                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                        height = windowManager.defaultDisplay.height / 4 * 3
-                                    }
+                        dashVideoPlayBean.data.dash.video[0].also {
+                            if (it.width < it.height) {
+                                // 竖屏
+                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                    height = windowManager.defaultDisplay.height / 4 * 3
                                 }
+                            }
 
 //                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
 //                                // 计算折叠程度（0为完全展开，1为完全折叠）
@@ -213,14 +215,13 @@ class AsVideoActivity : BaseActivity() {
 //                                }
 //
 //                            }
-                            }
-                            // 真正调用饺子播放器设置视频数据
-                            setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
-
-                        binding.asVideoCd.visibility = View.VISIBLE
-                        binding.asVideoBangumiCd.visibility = View.GONE
+                        // 真正调用饺子播放器设置视频数据
+                        setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
+
+                    binding.asVideoCd.visibility = View.VISIBLE
+                    binding.asVideoBangumiCd.visibility = View.GONE
                 }
             }
 
@@ -435,7 +436,10 @@ class AsVideoActivity : BaseActivity() {
             loadVideoPlay("bangumi")
         }
     }
-@Inject lateinit var tokenUtils: TokenUtils
+
+    @Inject
+    lateinit var tokenUtils: TokenUtils
+
     /**
      * 获取用户基础信息
      * @return UserBaseBean
@@ -503,23 +507,14 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-        HttpUtils.addHeader(COOKIE, asUser.cookie)
-            .get(
-                "${BilibiliApi.videoDanMuPath}?oid=$cid",
-                object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                    }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        BaseApplication.handler.post {
-                            // 储存弹幕
-                            saveDanmaku(response.body!!.bytes())
-                            // 初始化弹幕配置
-                            initDanmaku()
-                        }
-                    }
-                },
-            )
+        launchUI {
+            // 储存弹幕
+            Log.i(TAG, "loadDanmakuFlameMaster: ${networkService.getDanmuBytes(cid).size}")
+            saveDanmaku(networkService.getDanmuBytes(cid))
+            // 初始化弹幕配置
+            initDanmaku()
+        }
     }
 
     /**
@@ -545,15 +540,12 @@ class AsVideoActivity : BaseActivity() {
      * @param mid Long
      */
     private fun loadUserCardData(mid: Long) {
-        launchIO {
-
+        launchUI {
             val userCardBean = networkService.n14(mid)
-            launchUI {
-                // 显示用户卡片
-                showUserCard()
-                // 将数据交给viewModel
-                binding.userCardBean = userCardBean
-            }
+            // 显示用户卡片
+            showUserCard()
+            // 将数据交给viewModel
+            binding.userCardBean = userCardBean
         }
     }
 

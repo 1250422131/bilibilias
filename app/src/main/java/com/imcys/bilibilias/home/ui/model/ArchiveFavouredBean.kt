@@ -24,4 +24,4 @@ data class ArchiveFavouredBean(
     val count: Int,
     @SerialName("favoured")
     var isFavoured: Boolean
-)
+):java.io.Serializable

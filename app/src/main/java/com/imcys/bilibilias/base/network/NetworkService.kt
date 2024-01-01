@@ -39,6 +39,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
+import io.ktor.client.statement.readBytes
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -53,7 +54,7 @@ class NetworkService @Inject constructor(
     private val ioDispatcher = Dispatchers.IO
     suspend fun n1(cid: Long, qn: Int): DashBangumiPlayBean = withContext(ioDispatcher) {
         httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
-            header(HttpHeaders.Referrer, BILIBILI_URL)
+            refererBILIHarder()
         }.body()
     }
 
@@ -80,7 +81,7 @@ class NetworkService @Inject constructor(
         fnval: Int = 4048,
     ): T = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi.videoPlayPath) {
-            header(HttpHeaders.Referrer, BILIBILI_URL)
+            refererBILIHarder()
             parameterBVID(bvid)
             parameterCID(cid)
             parameter("qn", qn)
@@ -89,13 +90,23 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    fun HttpRequestBuilder.parameterBVID(bvid: String): Unit = url.parameters.append("bvid", bvid)
-    fun HttpRequestBuilder.parameterCID(cid: String): Unit = url.parameters.append("cid", cid)
-    fun HttpRequestBuilder.parameterUpMID(upMid: String): Unit =
+    private fun HttpRequestBuilder.parameterBVID(bvid: String): Unit =
+        url.parameters.append("bvid", bvid)
+
+    private fun HttpRequestBuilder.parameterCID(cid: String): Unit =
+        url.parameters.append("cid", cid)
+
+    private fun HttpRequestBuilder.parameterUpMID(upMid: String): Unit =
         url.parameters.append("up_mid", upMid)
 
-    fun HttpRequestBuilder.parameterMID(mid: String): Unit = url.parameters.append("mid", mid)
-    fun HttpRequestBuilder.parameterEpID(epid: String): Unit = url.parameters.append("ep_id", epid)
+    private fun HttpRequestBuilder.refererBILIHarder(): Unit =
+        header(HttpHeaders.Referrer, BILIBILI_URL)
+
+    private fun HttpRequestBuilder.parameterMID(mid: String): Unit =
+        url.parameters.append("mid", mid)
+
+    private fun HttpRequestBuilder.parameterEpID(epid: String): Unit =
+        url.parameters.append("ep_id", epid)
 
     // ---------------------------------------------------------------------------------------------
     suspend fun n3(bvid: String, cid: Long, qn: Int): VideoPlayBean = withContext(ioDispatcher) {
@@ -109,13 +120,13 @@ class NetworkService @Inject constructor(
     // ---------------------------------------------------------------------------------------------
     suspend fun n4(cid: Long, qn: Int): BangumiPlayBean = withContext(ioDispatcher) {
         httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=0&fourk=1") {
-            header(HttpHeaders.Referrer, BILIBILI_URL)
+            refererBILIHarder()
         }.body()
     }
 
     suspend fun n16(epid: Long): BangumiPlayBean = withContext(ioDispatcher) {
         httpClient.get("${ROAM_API}pgc/player/web/playurl?ep_id=$epid&qn=64&fnval=0&fourk=1") {
-            header(HttpHeaders.Referrer, BILIBILI_URL)
+            refererBILIHarder()
         }.body()
     }
 
@@ -151,6 +162,12 @@ class NetworkService @Inject constructor(
 
     suspend fun getMyUserData(): MyUserData = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi.getMyUserData).body()
+    }
+
+    suspend fun getDanmuBytes(cid: Long) = withContext(ioDispatcher) {
+        httpClient.get("${BilibiliApi.videoDanMuPath}?oid=$cid") {
+            refererBILIHarder()
+        }.readBytes()
     }
 
     suspend fun n38(): MyUserData = withContext(ioDispatcher) {
