@@ -11,7 +11,7 @@ class BangumiPageAdapter(
     private val selectedResult: (position: Int, itemBinding: ViewHolder) -> Unit,
 ) : RecyclerView.Adapter<BangumiPageAdapter.ViewHolder>() {
     class ViewHolder(view: ItemDlBangumiPageBinding) : RecyclerView.ViewHolder(view.root) {
-        var episodesBean: BangumiSeasonBean.ResultBean.EpisodesBean = view.episodesBean
+        var episodesBean: BangumiSeasonBean.ResultBean.EpisodesBean? = view.episodesBean
         private val itemCollectionButton = view.itemCollectionButton
         fun bind(
             episodesBean: BangumiSeasonBean.ResultBean.EpisodesBean,
