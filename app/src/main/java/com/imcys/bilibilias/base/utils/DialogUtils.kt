@@ -2069,7 +2069,7 @@ object DialogUtils {
                         range.forEachIndexed { index, episodesBean ->
                             if (episodesBean.cid == bangumiSeasonBean.result.episodes[position].cid) {
                                 tage = false
-                                itemBinding.episodesBean?.selected = 0
+                                itemBinding.episodesBean.selected = 0
                                 dialogCollectionRv.adapter?.notifyItemChanged(index)
                                 videoPageMutableList.removeAt(index)
                                 return@also
@@ -2078,7 +2078,7 @@ object DialogUtils {
                     }
 
                     if (tage) {
-                        itemBinding.episodesBean?.selected = 1
+                        itemBinding.episodesBean.selected = 1
                         videoPageMutableList.add(bangumiSeasonBean.result.episodes[position])
                     }
 

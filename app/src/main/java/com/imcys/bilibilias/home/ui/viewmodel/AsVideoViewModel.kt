@@ -74,7 +74,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         viewModelScope.launchIO {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-
                 val dashVideoPlayBean = networkService.n29(context.bvid, context.cid)
                 // 这里再检验一次，是否为404内容
                 loadDialog.cancel()
@@ -96,8 +95,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -125,8 +124,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         viewModelScope.launchIO {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-
-                val dashVideoPlayBean = networkService.n30(context.bvid,context.cid)
+                val dashVideoPlayBean = networkService.n30(context.bvid, context.cid)
 
                 loadDialog.cancel()
                 launchUI {
@@ -147,8 +145,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                             title = "止步于此"
                             content =
                                 "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                        "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                        "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
                             positiveButtonText = "知道了"
                             positiveButton = {
                                 it.cancel()
@@ -363,9 +361,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val context = view.context
 
         viewModelScope.launchIO {
-
             val likeVideoBean = networkService.n31(bvid)
-
 
             if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
                 launchUI {
@@ -398,8 +394,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val context = view.context
 
         viewModelScope.launchIO {
-
-            val likeVideoBean =networkService.n32(bvid)
+            val likeVideoBean = networkService.n32(bvid)
 
             launchUI {
                 when (likeVideoBean.code) {
@@ -432,7 +427,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchIO {
             networkService.n33(bvid)
 
-            launchUI() {
+            launchUI {
                 (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
                 context.binding.asVideoThrowBt.isSelected = true
             }
@@ -447,9 +442,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val context = view.context
         (context as AsVideoActivity).binding.apply {
             viewModelScope.launchIO {
-
-                val userCreateCollectionBean =  networkService.n34()
-
+                val userCreateCollectionBean = networkService.n34()
 
                 launchUI {
                     if (userCreateCollectionBean.code == 0) {
@@ -508,9 +501,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      */
     private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
         viewModelScope.launch(Dispatchers.Default) {
-
-            val collectionResultBean =networkService.n35(avid.toString(),addMediaIds)
-
+            val collectionResultBean = networkService.n35(avid.toString(), addMediaIds)
 
             if (collectionResultBean.code == 0) {
                 context.binding.archiveFavouredBean?.isFavoured = true

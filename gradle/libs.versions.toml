@@ -16,11 +16,9 @@ dfm = "0.9.25"
 espresso-core = "3.5.1"
 flexbox = "3.0.0"
 github-GuidePro = "1.4.0"
-gitlab-detektFormatting = "1.23.1"
 glide = "4.16.0"
 grpcProtobuf = "1.60.0"
 grpcKotlinStub = "1.4.1"
-gson = "2.10.1"
 hbmartinDetektRules = "0.1.4"
 hilt = "2.50"
 jiaozivideoplayer = "7.7.2.3300"
@@ -110,7 +108,6 @@ dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
 
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -132,7 +129,6 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
-ktor-serialization-gson = { group = "io.ktor", name = "ktor-serialization-gson", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 ktx = { group = "com.liulishuo.okdownload", name = "ktx", version.ref = "okdownload" }

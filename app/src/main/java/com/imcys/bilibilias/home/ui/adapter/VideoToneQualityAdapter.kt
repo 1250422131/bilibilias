@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,10 +10,9 @@ import com.imcys.bilibilias.databinding.ItemToneQualityBinding
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 
 class VideoToneQualityAdapter(
-    private val videoAudioBeans: MutableList<DashVideoPlayBean.DataBean.DashBean.AudioBean>,
+    private val videoAudioBeans: List<DashVideoPlayBean.DataBean.DashBean.AudioBean>,
     val selectedResult: (audio: DashVideoPlayBean.DataBean.DashBean.AudioBean) -> Unit,
-) :
-    RecyclerView.Adapter<ViewHolder>() {
+) : RecyclerView.Adapter<ViewHolder>() {
     private var selectedItem = 0
     lateinit var selectedBinding: ItemToneQualityBinding
 
@@ -22,15 +20,16 @@ class VideoToneQualityAdapter(
         val binding =
             DataBindingUtil.inflate<ItemToneQualityBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_tone_quality, parent, false
+                R.layout.item_tone_quality,
+                parent,
+                false
             )
 
         return ViewHolder(binding.root)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         DataBindingUtil.getBinding<ItemToneQualityBinding>(holder.itemView)?.apply {
-
             audioBean = videoAudioBeans[position]
 
             if (position == 0 && selectedItem == 0) {
@@ -41,13 +40,10 @@ class VideoToneQualityAdapter(
             itemToneQualityButton.text =
                 AsVideoNumUtils.getQualityName(videoAudioBeans[position].id)
 
-
             itemToneQualityButton.setOnClickListener {
                 if (position != selectedItem) {
-
                     selectedBinding.audioBean?.selected = 0
                     this@VideoToneQualityAdapter.notifyItemChanged(selectedItem)
-
 
                     selectedBinding = this
                     selectedItem = position
@@ -58,12 +54,8 @@ class VideoToneQualityAdapter(
                     selectedResult(videoAudioBeans[position])
                 }
             }
-
         }
-
     }
-
-
     override fun getItemCount(): Int {
         return videoAudioBeans.size
     }
