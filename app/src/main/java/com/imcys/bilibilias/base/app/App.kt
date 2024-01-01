@@ -10,7 +10,6 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
-import org.xutils.x
 
 @HiltAndroidApp
 class App : BaseApplication() {
@@ -18,9 +17,6 @@ class App : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        // xUtils初始化
-        x.Ext.init(this)
-        x.Ext.setDebug(false) // 是否输出debug日志, 开启debug会影响性能.
         RxFFmpegInvoke.getInstance().setDebug(false)
 
         // BRV初始化

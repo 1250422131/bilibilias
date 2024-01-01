@@ -16,7 +16,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,7 +37,7 @@ android {
         jvmTarget = "17"
     }
     dataBinding {
-        isEnabled = true
+        enable = true
     }
 }
 
