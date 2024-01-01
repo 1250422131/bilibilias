@@ -6,9 +6,12 @@ import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.UserCardBean
 import com.imcys.model.UserSpaceInformation
 import com.imcys.model.space.SpaceArcSearch
+import com.imcys.model.space.SpaceChannelList
+import com.imcys.model.space.SpaceChannelVideo
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.repository.Parameter
 import com.imcys.network.repository.wbi.WbiKeyRepository
+import com.imcys.network.utils.parameterCID
 import com.imcys.network.utils.parameterMID
 import com.imcys.network.utils.parameterPN
 import com.imcys.network.utils.parameterPS
@@ -29,7 +32,9 @@ class UserRepository @Inject constructor(
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val wbiKeyStorage: WbiKeyStorage
 ) : IUserDataSources {
-    /** 查询用户投稿视频明细 */
+    /**
+     * 查询用户投稿视频明细
+     */
     override suspend fun getSpaceArcSearch(mid: Long, pageNumber: Int): SpaceArcSearch =
         withContext(ioDispatcher) {
             client.wbiGet(BilibiliApi2.WBI_SPACE_ARC_SEARCH) {
@@ -39,7 +44,30 @@ class UserRepository @Inject constructor(
             }.body<SpaceArcSearch>()
         }
 
-    /** todo 也许可以返回文本，来进行解析 */
+    override suspend fun channelList(mId: Long): SpaceChannelList = withContext(ioDispatcher) {
+        client.get(BilibiliApi2.SPACE_CHANNEL_LIST) {
+            parameterMID(mId)
+        }.body<SpaceChannelList>()
+    }
+
+    override suspend fun channelVideo(
+        mId: Long,
+        channelId: Long,
+        pn: Int,
+        ps: Int
+    ): SpaceChannelVideo =
+        withContext(ioDispatcher) {
+            client.get(BilibiliApi2.SPACE_CHANNEL_VIDEO) {
+                parameterMID(mId)
+                parameterCID(channelId)
+                parameterPN(pn)
+                parameterPS(ps)
+            }.body<SpaceChannelVideo>()
+        }
+
+    /**
+     * todo 也许可以返回文本，来进行解析
+     */
     suspend fun get用户名片信息(mid: Long): UserCardBean = withContext(ioDispatcher) {
         client.get(BilibiliApi2.getUserCardPath) {
             parameterMID(mid)

@@ -2,8 +2,6 @@ package com.imcys.network.repository.video
 
 import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
-import com.imcys.model.space.SpaceChannelList
-import com.imcys.model.space.SpaceChannelVideo
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.VideoFavoured
@@ -18,8 +16,6 @@ interface IVideoDataSources {
     suspend fun hasLike(bvid: String): ArchiveHasLike
     suspend fun hasCoin(bvid: String): ArchiveCoins
     suspend fun hasFavoured(bvid: String): VideoFavoured
-    suspend fun channelList(mId: Long): SpaceChannelList
-    suspend fun channelVideo(mId: Long, channelId: Long, pn: Int, ps: Int = 100): SpaceChannelVideo
 
     companion object {
         const val REQUIRED_DASH = 16
