@@ -8,8 +8,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
         mavenCentral()
-        maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
         google()
     }

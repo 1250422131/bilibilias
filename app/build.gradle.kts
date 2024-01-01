@@ -30,11 +30,7 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
-        flavorDimensions(project.name)
+        flavorDimensions += project.name
     }
 
     buildTypes {

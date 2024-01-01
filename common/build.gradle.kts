@@ -24,7 +24,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -208,7 +207,7 @@ dependencies {
      * xutils
      * 下载文件支持
      */
-    api(libs.xutils)
+//    api(libs.xutils)
 
     /**
      * DanmakuFlameMaster
@@ -222,12 +221,9 @@ dependencies {
     // lottie动画库
     api(libs.lottie)
 
-    // implementation "androidx.palette:palette:1.0.0"
-
     api(libs.banner)
 
     api(libs.glide)
-    // implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
@@ -247,8 +243,6 @@ dependencies {
     api(libs.napier)
     api(libs.ktor.client.logging)
     api(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization.gson)
-    api(libs.gson)
     api(libs.ktor.serialization.kotlinx.json)
 
     api(libs.constraintlayout)

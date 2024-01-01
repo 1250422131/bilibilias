@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Handler
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.BuildConfig
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.imcys.bilibilias.common.base.model.user.MyUserData
@@ -48,7 +47,7 @@ open class BaseApplication : Application() {
     private fun initKComponent() {
         Component.init(
             application = this,
-            isDebug = BuildConfig.DEBUG,
+            isDebug = false,
             config = Config.Builder()
                 .build(),
         )
@@ -94,11 +93,6 @@ open class BaseApplication : Application() {
         // ——————————————————全局线程处理器——————————————————
         lateinit var handler: Handler
             private set
-        // —————————————————————————————————————————————————
-
-        // ——————————————————B站视频模板——————————————————
-
-        // ——————————————————部分内置需要的上下文——————————————————
 
         private var instance: BaseApplication? = null
 
@@ -107,7 +101,6 @@ open class BaseApplication : Application() {
             return instance!!.applicationContext
         }
 
-        var mid: Long = 0
         lateinit var myUserData: MyUserData.DataBean
         // —————————————————————————————————————————————————
     }

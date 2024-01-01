@@ -35,7 +35,6 @@ class CollectionActivity : BaseActivity() {
 
     @Inject
     lateinit var collectionDataAd: CollectionDataAdapter
-    private lateinit var userCreateCollectionBean: UserCreateCollectionBean
     private lateinit var createCollectionList: UserCreateCollectionBean.DataBean.ListBean
 
     @Inject
@@ -82,7 +81,6 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         launchIO {
-
             val userCreateCollectionBean = networkService.n17()
 
             launchUI {
@@ -102,26 +100,25 @@ class CollectionActivity : BaseActivity() {
                 // 设置监听器
                 binding.apply {
                     // 这里监听选择的是哪个收藏夹
-                    collectionTabLayout.addOnTabSelectedListener(object :
-                        TabLayout.OnTabSelectedListener {
-                        override fun onTabSelected(tab: TabLayout.Tab?) {
-                            userCreateCollectionBean.data.list.forEach { it1 ->
-                                if (it1.title == tab?.text) {
-                                    // 更新数据
-                                    pn = 0
-                                    collectionDataMutableList.clear()
-                                    createCollectionList = it1
-                                    loadCollectionData(it1)
+                    collectionTabLayout.addOnTabSelectedListener(
+                        object : TabLayout.OnTabSelectedListener {
+                            override fun onTabSelected(tab: TabLayout.Tab?) {
+                                userCreateCollectionBean.data.list.forEach { it1 ->
+                                    if (it1.title == tab?.text) {
+                                        // 更新数据
+                                        pn = 0
+                                        collectionDataMutableList.clear()
+                                        createCollectionList = it1
+                                        loadCollectionData(it1)
+                                    }
                                 }
                             }
-                        }
 
-                        override fun onTabUnselected(tab: TabLayout.Tab?) {
-                        }
+                            override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
 
-                        override fun onTabReselected(tab: TabLayout.Tab?) {
+                            override fun onTabReselected(tab: TabLayout.Tab?) = Unit
                         }
-                    })
+                    )
                 }
             }
         }
@@ -129,6 +126,7 @@ class CollectionActivity : BaseActivity() {
 
     /**
      * 加载收藏夹具体视频内容
+     *
      * @param listBean ListBean
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
