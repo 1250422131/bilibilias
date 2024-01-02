@@ -7,14 +7,12 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -28,7 +26,6 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
@@ -37,7 +34,6 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -57,13 +53,11 @@ import master.flame.danmaku.danmaku.loader.IllegalDataException
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
+import master.flame.danmaku.danmaku.model.GlobalFlagValues
 import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.model.android.Danmakus
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -74,6 +68,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.zip.Inflater
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
@@ -259,7 +254,7 @@ class AsVideoActivity : BaseActivity() {
             videoDataBean = videoBaseBean
             // 这里需要显示视频数据
             showVideoData()
-            // TODO 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
+            // 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
             setBaseData(videoBaseBean)
             // 加载用户卡片
             loadUserCardData(videoBaseBean.data.owner.mid)
@@ -512,7 +507,6 @@ class AsVideoActivity : BaseActivity() {
 
         launchUI {
             // 储存弹幕
-            Log.i(TAG, "loadDanmakuFlameMaster: ${networkService.getDanmuBytes(cid).size}")
             saveDanmaku(networkService.getDanmuBytes(cid))
             // 初始化弹幕配置
             initDanmaku()
@@ -719,6 +713,7 @@ class AsVideoActivity : BaseActivity() {
      */
 
     private fun setDanmakuContextCongif() {
+
         // 设置弹幕的最大显示行数
         val maxLinesPair = HashMap<Int, Int>()
         // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
@@ -726,6 +721,7 @@ class AsVideoActivity : BaseActivity() {
         val overlappingEnablePair = HashMap<Int, Boolean>()
         overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
         overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
+
 
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
             .setDuplicateMergingEnabled(false)
@@ -751,6 +747,7 @@ class AsVideoActivity : BaseActivity() {
 
             override fun danmakuShown(danmaku: BaseDanmaku?) {
                 // 弹幕展示的时候回调
+
             }
 
             override fun drawingFinished() {
