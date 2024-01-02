@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
-import com.imcys.common.utils.LifecycleEventEffect
+import com.imcys.ui.LifecycleEventEffect
 
 @Composable
 internal fun BackHandlerWithLifecycle(

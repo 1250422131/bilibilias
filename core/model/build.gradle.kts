@@ -1,6 +1,6 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
+    alias(libs.plugins.bilibiliAs.android.library)
     alias(libs.plugins.kotlin.serialization)
     id("com.squareup.wire")
 }

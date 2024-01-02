@@ -1,8 +1,7 @@
 dependencyResolutionManagement {
     repositories {
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
-        maven("https://maven.aliyun.com/repository/central")
-        maven("https://maven.aliyun.com/repository/public")
         google()
         gradlePluginPortal()
     }

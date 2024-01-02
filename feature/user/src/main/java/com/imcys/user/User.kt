@@ -67,7 +67,6 @@ fun User(userViewModel: UserViewModel) {
 
 @Composable
 fun UserTool(userViewModel: UserViewModel = hiltViewModel()) {
-    System.identityHashCode("user2=$userViewModel")
     Row(
         Modifier
             .fillMaxWidth()

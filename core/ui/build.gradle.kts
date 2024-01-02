@@ -1,7 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.compose)
+    alias(libs.plugins.bilibiliAs.android.library)
+    alias(libs.plugins.bilibiliAs.android.library.compose)
 }
 
 android {
@@ -32,7 +32,6 @@ dependencies {
     // implementation(libs.androidx.browser)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.kt)
-    implementation(libs.coil.kt.compose)
 
     api(libs.bottomsheetdialog.compose)
 }

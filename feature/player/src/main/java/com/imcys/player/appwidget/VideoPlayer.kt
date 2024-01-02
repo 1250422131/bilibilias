@@ -39,7 +39,7 @@ import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.R
-import com.imcys.common.utils.LifecycleEventEffect
+import com.imcys.ui.LifecycleEventEffect
 import com.imcys.common.utils.getActivity
 import com.imcys.player.appwidget.controller.VideoPlayerControllerConfig
 import com.imcys.player.appwidget.controller.applyToExoPlayerView

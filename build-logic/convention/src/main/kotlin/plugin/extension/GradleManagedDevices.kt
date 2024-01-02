@@ -1,4 +1,4 @@
-package plugin
+package plugin.extension
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.ManagedVirtualDevice

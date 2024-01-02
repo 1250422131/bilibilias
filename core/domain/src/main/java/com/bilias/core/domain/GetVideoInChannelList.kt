@@ -1,5 +1,6 @@
 package com.bilias.core.domain
 
+import com.imcys.model.video.Archive
 import com.imcys.network.repository.user.IUserDataSources
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNot
@@ -24,5 +25,16 @@ class GetVideoInChannelList @Inject constructor(private val userRepository: IUse
         it.list.archives
     }.map { archives ->
         archives.filter { it.cid == cId }
+    }
+
+    suspend fun test(): List<Archive> {
+        val seasonsSeriesList = userRepository.seasonsSeriesList(2379178, 1)
+        val itemsLists = seasonsSeriesList.itemsLists
+        for ((index, series) in itemsLists.seriesList.withIndex()) {
+            if (622179498 in series.recentAids) {
+                return itemsLists.seriesList[index].archives
+            }
+        }
+        return emptyList()
     }
 }

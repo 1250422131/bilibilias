@@ -39,9 +39,7 @@ fun Context.getLauncherActivity(pkg: String): String {
     intent.addCategory(Intent.CATEGORY_LAUNCHER)
     intent.setPackage(pkg)
     val info = packageManager.queryIntentActivities(intent, 0)
-    return if (info.isEmpty()) {
-        ""
-    } else info[0].activityInfo.name
+    return if (info.isEmpty()) "" else info[0].activityInfo.name
 }
 
 fun Context.startActivity(clazz: Class<out Activity>, bundle: Bundle = Bundle()) {

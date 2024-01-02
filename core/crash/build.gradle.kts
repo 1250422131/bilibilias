@@ -1,6 +1,6 @@
 ﻿@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
+    alias(libs.plugins.bilibiliAs.android.library)
 }
 
 android {
@@ -19,5 +19,5 @@ dependencies {
     implementation(libs.acra.notification)
     implementation(libs.acra.toast)
     implementation(libs.acra.limiter)
-    implementation(libs.acra.scheduler)
+//    implementation(libs.acra.scheduler)
 }

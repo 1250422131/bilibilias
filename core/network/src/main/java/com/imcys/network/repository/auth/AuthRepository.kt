@@ -17,7 +17,6 @@ import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.http.encodeURLParameter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -216,11 +215,7 @@ class AuthRepository @Inject constructor(
     }
 
     override suspend fun 获取二维码(): AuthQrCode = withContext(ioDispatcher) {
-        val authQrCode = httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
-        authQrCode.copy(
-            authQrCode.qrcodeKey,
-            "https://pan.misakamoe.com/qrcode/?url=${authQrCode.url.encodeURLParameter()}"
-        )
+       httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
     }
 
     override suspend fun 轮询登录接口(key: String): LoginResponse = withContext(ioDispatcher) {

@@ -1,7 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.feature)
-    alias(libs.plugins.bilibili.android.compose)
+    alias(libs.plugins.bilibiliAs.android.feature)
+    alias(libs.plugins.bilibiliAs.android.library.compose)
 }
 
 android {
@@ -9,9 +9,10 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.designsystem)
     implementation(projects.core.network)
     implementation(projects.core.common)
-
+    implementation(projects.core.model)
     implementation(projects.core.domain)
     /**
      * gsy 播放器

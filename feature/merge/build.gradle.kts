@@ -1,7 +1,7 @@
-﻿@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+﻿@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.feature)
-    alias(libs.plugins.bilibili.android.compose)
+    alias(libs.plugins.bilibiliAs.android.feature)
+    alias(libs.plugins.bilibiliAs.android.library.compose)
 }
 
 android {
@@ -10,6 +10,9 @@ android {
 
 dependencies {
     implementation(projects.core.network)
+    implementation(projects.core.common)
+    implementation(projects.core.model)
+
     implementation(libs.ffmpeg.ffmpegCommand)
     implementation(libs.ffmpeg.kit.full)
 }

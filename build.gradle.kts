@@ -3,9 +3,9 @@ buildscript {
         classpath(libs.wireGradlePlugin)
     }
     repositories {
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
-        maven("https://maven.aliyun.com/repository/public")
-        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
         google()
     }
 }
@@ -16,8 +16,8 @@ plugins {
     alias(libs.plugins.kotlin) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.room) apply false
     alias(libs.plugins.detekt)
 }
 detekt {

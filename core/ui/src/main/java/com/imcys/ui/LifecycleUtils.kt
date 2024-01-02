@@ -1,4 +1,4 @@
-package com.imcys.common.utils
+package com.imcys.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect

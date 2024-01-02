@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-sdk tools:overrideLibrary="com.zj.banner,com.arthenica.ffmpegkit" />
     <application
         android:name=".BiliAsApp"
         android:allowBackup="true"
