@@ -351,7 +351,7 @@ class NetworkService @Inject constructor(
             .asyncGet("${BiliBiliAsApi.serviceTestApi}BiliBiliCookie")
     }
 
-    suspend fun n39(asCookie: String?, data: UserBiliBiliCookieModel.Data): ResponseResult<Any> =
+    suspend fun n39(asCookie: String?, data: UserBiliBiliCookieModel.Data): ResponseResult =
         withContext(ioDispatcher) {
             ktHttpUtils.addHeader(COOKIE, asCookie!!).asyncDeleteJson(
                 "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",

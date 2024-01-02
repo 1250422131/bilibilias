@@ -75,12 +75,15 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         compose = true
     }
 
+    dataBinding {
+        enable = true
+    }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
+        kotlinCompilerExtensionVersion = "1.5.8-dev-k1.9.22-42b6ec2b037"
     }
 
     packaging {
