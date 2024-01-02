@@ -19,9 +19,11 @@ import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.CollectionResultBean
 import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
@@ -169,6 +171,16 @@ class NetworkService @Inject constructor(
             refererBILIHarder()
         }.readBytes()
     }
+
+    suspend fun getOldToolItem(): OldToolItemBean = withContext(ioDispatcher) {
+        httpClient.get("${BiliBiliAsApi.appFunction}?type=oldToolItem").body()
+    }
+
+    suspend fun getUserCollection(id: Long, pn: Int): CollectionDataBean =
+        withContext(ioDispatcher) {
+            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=${id}&pn=${pn}&ps=20")
+                .body()
+        }
 
     suspend fun n38(): MyUserData = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi.getMyUserData).body()

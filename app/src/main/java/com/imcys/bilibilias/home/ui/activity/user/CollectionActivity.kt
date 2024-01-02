@@ -80,46 +80,44 @@ class CollectionActivity : BaseActivity() {
     }
 
     private fun loadCollectionList() {
-        launchIO {
+        launchUI {
             val userCreateCollectionBean = networkService.n17()
 
-            launchUI {
-                userCreateCollectionBean.data.list.forEach { it1 ->
-                    binding.apply {
-                        val tab = collectionTabLayout.newTab()
-                        tab.text = it1.title
-                        collectionTabLayout.addTab(tab)
-                    }
-                }
-
-                // 让监听器可以知道有多少内容加载
-                createCollectionList = userCreateCollectionBean.data.list[0]
-                // 加载第一个收藏夹
-                loadCollectionData(userCreateCollectionBean.data.list[0])
-
-                // 设置监听器
+            userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {
-                    // 这里监听选择的是哪个收藏夹
-                    collectionTabLayout.addOnTabSelectedListener(
-                        object : TabLayout.OnTabSelectedListener {
-                            override fun onTabSelected(tab: TabLayout.Tab?) {
-                                userCreateCollectionBean.data.list.forEach { it1 ->
-                                    if (it1.title == tab?.text) {
-                                        // 更新数据
-                                        pn = 0
-                                        collectionDataMutableList.clear()
-                                        createCollectionList = it1
-                                        loadCollectionData(it1)
-                                    }
+                    val tab = collectionTabLayout.newTab()
+                    tab.text = it1.title
+                    collectionTabLayout.addTab(tab)
+                }
+            }
+
+            // 让监听器可以知道有多少内容加载
+            createCollectionList = userCreateCollectionBean.data.list[0]
+            // 加载第一个收藏夹
+            loadCollectionData(userCreateCollectionBean.data.list[0])
+
+            // 设置监听器
+            binding.apply {
+                // 这里监听选择的是哪个收藏夹
+                collectionTabLayout.addOnTabSelectedListener(
+                    object : TabLayout.OnTabSelectedListener {
+                        override fun onTabSelected(tab: TabLayout.Tab?) {
+                            userCreateCollectionBean.data.list.forEach { it1 ->
+                                if (it1.title == tab?.text) {
+                                    // 更新数据
+                                    pn = 0
+                                    collectionDataMutableList.clear()
+                                    createCollectionList = it1
+                                    loadCollectionData(it1)
                                 }
                             }
-
-                            override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
-
-                            override fun onTabReselected(tab: TabLayout.Tab?) = Unit
                         }
-                    )
-                }
+
+                        override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+
+                        override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+                    }
+                )
             }
         }
     }
@@ -130,14 +128,12 @@ class CollectionActivity : BaseActivity() {
      * @param listBean ListBean
      */
     private fun loadCollectionData(listBean: UserCreateCollectionBean.DataBean.ListBean) {
-        HttpUtils.addHeader(COOKIE, asUser.cookie)
-            .get(
-                "${BilibiliApi.userCollectionDataPath}?media_id=${listBean.id}&pn=${++pn}&ps=20",
-                CollectionDataBean::class.java,
-            ) {
-                collectionDataMutableList.addAll(it.data.medias)
-                collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
-            }
+
+        launchUI {
+            val userCollection = networkService.getUserCollection(listBean.id, ++pn)
+            collectionDataMutableList.addAll(userCollection.data.medias)
+            collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
+        }
     }
 
     override fun onResume() {

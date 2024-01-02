@@ -266,18 +266,20 @@ class AsVideoActivity : BaseActivity() {
             // 加载弹幕信息
             loadDanmakuFlameMaster()
             // 加载视频列表信息，这里判断下是不是番剧，由于正常来说，普通视频是没有redirect_url的
-            videoBaseBean.data.redirect_url?.apply {
-                // 通过正则表达式检查该视频是不是番剧
-                val epRegex = Regex("""(?<=ep)(\d*)""")
-                if (epRegex.containsMatchIn(this)) {
-                    // 加载番剧视频列表
-                    epid = epRegex.find(this)?.value?.toLong()!!
-                    loadBangumiVideoList()
+            videoBaseBean.data.redirect_url.apply {
+                if (this != "") {
+                    // 通过正则表达式检查该视频是不是番剧
+                    val epRegex = Regex("""(?<=ep)(\d*)""")
+                    if (epRegex.containsMatchIn(this)) {
+                        // 加载番剧视频列表
+                        epid = epRegex.find(this)?.value?.toLong()!!
+                        loadBangumiVideoList()
+                    }
+                } else {
+                    // 加载视频播放信息
+                    loadVideoPlay("video")
+                    loadVideoList() // 加载正常列表
                 }
-            } ?: apply {
-                // 加载视频播放信息
-                loadVideoPlay("video")
-                loadVideoList() // 加载正常列表
             }
             // 检查三连情况
             archiveHasLikeTriple()
@@ -557,8 +559,8 @@ class AsVideoActivity : BaseActivity() {
             asVideoUserCardLy.visibility = View.VISIBLE
 
             // 判断是否会员，会员情况下展示会员主题色，反之黑色
-            val nameColor = if (userBaseBean.data?.vip?.nickname_color != "") {
-                Color.parseColor(userBaseBean.data?.vip?.nickname_color!!)
+            val nameColor = if (userBaseBean.data.vip.nickname_color != "") {
+                Color.parseColor(userBaseBean.data.vip.nickname_color)
             } else {
                 // 低版本兼容
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

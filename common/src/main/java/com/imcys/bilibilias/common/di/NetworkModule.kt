@@ -19,7 +19,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.http.HttpHeaders
-import io.ktor.serialization.gson.gson
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
@@ -63,8 +62,7 @@ class NetworkModule {
             url(BILIBILI_URL)
         }
         install(ContentNegotiation) {
-//            json(json)
-            gson()
+            json(json)
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 5)
