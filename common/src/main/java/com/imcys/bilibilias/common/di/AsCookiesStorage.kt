@@ -24,8 +24,11 @@ class AsCookiesStorage @Inject constructor(
     private val cookies = mutableListOf<Cookie>()
 
     init {
-        cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies).map { it.toCookie() }
-            .forEach { cookies.add(it) }
+        if (UserInfoRepository.asCookies.isNotEmpty()) {
+            cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies)
+                .map { it.toCookie() }
+                .forEach { cookies.add(it) }
+        }
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> {

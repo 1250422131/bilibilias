@@ -26,6 +26,7 @@ import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -56,6 +57,7 @@ import java.io.IOException
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 import javax.inject.Inject
+import javax.inject.Singleton
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -69,6 +71,7 @@ const val STATE_DOWNLOAD_PAUSE = 3
 const val STATE_DOWNLOAD_ERROR = -1
 
 // 定义一个下载队列类
+@Singleton
 class DownloadQueue @Inject constructor() :
     CoroutineScope by MainScope() {
 

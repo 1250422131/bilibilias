@@ -10,4 +10,4 @@ import kotlinx.serialization.Serializable
  * multiply : 2
  */
 @Serializable
-data class ArchiveCoinsBean(var multiply: Int)
+data class ArchiveCoinsBean(var multiply: Int):java.io.Serializable
