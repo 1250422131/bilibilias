@@ -13,4 +13,4 @@ data class ResBean<T>(
     val message: String = "",
     @SerialName("ttl")
     val ttl: Int = 0
-)
+):java.io.Serializable

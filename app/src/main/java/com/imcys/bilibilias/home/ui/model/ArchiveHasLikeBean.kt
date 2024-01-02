@@ -15,4 +15,4 @@ data class ArchiveHasLikeBean(
     val message: String,
     val ttl: Int,
     var data: Int
-)
+):java.io.Serializable

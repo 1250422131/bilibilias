@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

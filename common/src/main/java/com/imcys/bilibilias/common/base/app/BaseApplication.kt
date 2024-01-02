@@ -55,7 +55,6 @@ open class BaseApplication : Application() {
         ModuleManager.registerArr(
             "app",
             "common",
-            "tool_livestream",
             "tool_log_export",
         )
     }
