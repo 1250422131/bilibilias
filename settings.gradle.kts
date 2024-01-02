@@ -12,7 +12,6 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
-        maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
         maven("https://androidx.dev/storage/compose-compiler/repository/")
         google()
@@ -48,3 +47,4 @@ include(":feature:download")
 include(":lint")
 
 include(":XXPermissions:library")
+include(":core:testing")

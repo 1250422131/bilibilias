@@ -32,17 +32,14 @@ class AuthViewModel @Inject constructor(
 
     fun getQRCode() {
         viewModelScope.launch(Dispatchers.IO) {
-            val (qrcodeKey, url) = authRepository.获取二维码()
-            _loginAuthState.update { it.copy(qrCodeUrl = url) }
-            tryLogin(qrcodeKey)
+            val qrCode = authRepository.获取二维码()
+            _loginAuthState.update { it.copy(qrCodeUrl = qrCode.url) }
+            tryLogin(qrCode.qrcodeKey)
         }
     }
 
     /**
-     * 0：扫码登录成功
-     * 86038：二维码已失效
-     * 86090：二维码已扫码未确认
-     * 86101：未扫码
+     * 0：扫码登录成功 86038：二维码已失效 86090：二维码已扫码未确认 86101：未扫码
      */
     private suspend fun tryLogin(key: String) {
         withTimeout(3.minutes) {

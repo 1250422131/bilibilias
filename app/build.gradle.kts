@@ -1,8 +1,9 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.application)
-    alias(libs.plugins.bilibili.android.compose)
-    alias(libs.plugins.bilibili.android.hilt)
+    alias(libs.plugins.bilibiliAs.android.application.compose)
+    alias(libs.plugins.bilibiliAs.android.application)
+    alias(libs.plugins.bilibiliAs.android.hilt)
+    id("jacoco")
 }
 
 android {
@@ -104,9 +105,6 @@ dependencies {
     implementation(libs.ffmpeg.kit.full)
 
     implementation(libs.coil.kt)
-    implementation(libs.coil.kt.compose)
     implementation(libs.coil.kt.gif)
     debugImplementation(libs.leakcanary.android)
-
-
 }

@@ -1,9 +1,9 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.compose)
-    alias(libs.plugins.bilibili.android.hilt)
-    alias(libs.plugins.bilibili.android.room)
+    alias(libs.plugins.bilibiliAs.android.library)
+    alias(libs.plugins.bilibiliAs.android.library.compose)
+    alias(libs.plugins.bilibiliAs.android.hilt)
+    alias(libs.plugins.bilibiliAs.android.room)
 }
 
 ksp {

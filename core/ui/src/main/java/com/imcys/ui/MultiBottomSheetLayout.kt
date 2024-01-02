@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -22,9 +23,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MultiBottomSheetLayout(
-    sheetModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     sheetElevation: Dp = 0.dp,
     sheetShape: Shape = MaterialTheme.shapes.large,
     mainContent: @Composable (sheetScreen: (MultiBottomSheet.Intent) -> Unit) -> Unit,
@@ -62,7 +64,7 @@ fun MultiBottomSheetLayout(
         sheetShape = sheetShape,
         // 可以通过外部传入【Modifier.padding(top = xx.dp)】
         // 来设置BottomSheet弹出来的视图【距离】『屏幕顶部的距离』
-        modifier = sheetModifier,
+        modifier = modifier,
         sheetContent = {
             currentBottomSheet?.let { currentSheetIntent ->
                 BottomSheetWithTopClose(

@@ -17,6 +17,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
@@ -24,37 +25,45 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("androidApplicationCompose") {
+            id = "bilibiliAs.android.application.compose"
+            implementationClass = "plugin.AndroidApplicationComposeConventionPlugin"
+        }
+        register("androidApplication") {
+            id = "bilibiliAs.android.application"
+            implementationClass = "plugin.AndroidApplicationConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = "bilibiliAs.android.library.compose"
+            implementationClass = "plugin.AndroidLibraryComposeConventionPlugin"
+        }
         register("androidLibrary") {
-            id = "bilibili.android.library"
+            id = "bilibiliAs.android.library"
             implementationClass = "plugin.AndroidLibraryConventionPlugin"
         }
-        register("androidApp") {
-            id = "bilibili.android.app"
-            implementationClass = "plugin.AndroidAppConventionPlugin"
+        register("androidFeature") {
+            id = "bilibiliAs.android.feature"
+            implementationClass = "plugin.AndroidFeatureConventionPlugin"
+        }
+        register("androidTest") {
+            id = "bilibiliAs.android.test"
+            implementationClass = "plugin.AndroidTestConventionPlugin"
         }
         register("androidHilt") {
-            id = "bilibili.android.hilt"
-            implementationClass = "plugin.HiltConventionPlugin"
-        }
-        register("androidCompose") {
-            id = "bilibili.android.compose"
-            implementationClass = "plugin.ComposeConventionPlugin"
+            id = "bilibiliAs.android.hilt"
+            implementationClass = "plugin.AndroidHiltConventionPlugin"
         }
         register("androidRoom") {
-            id = "bilibili.android.room"
-            implementationClass = "plugin.RoomConventionPlugin"
-        }
-        register("androidKoin") {
-            id = "bilibili.android.koin"
-            implementationClass = "plugin.KoinConventionPlugin"
-        }
-        register("androidFeature") {
-            id = "bilibili.android.feature"
-            implementationClass = "plugin.AndroidFeatureConventionPlugin"
+            id = "bilibiliAs.android.room"
+            implementationClass = "plugin.AndroidRoomConventionPlugin"
         }
         register("androidLint") {
             id = "bilibiliAs.android.lint"
             implementationClass = "plugin.AndroidLintConventionPlugin"
+        }
+        register("jvmLibrary") {
+            id = "bilibiliAs.jvm.library"
+            implementationClass = "plugin.JvmLibraryConventionPlugin"
         }
     }
 }

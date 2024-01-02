@@ -1,11 +1,12 @@
 [versions]
+androidxTestRules = "1.5.0"
 acra = "5.11.3"
 androidStartup = "1.1.0"
 androidxComposeCompiler = "1.5.7"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 accompanist = "0.32.0"
 androidGradlePlugin = "8.2.0"
-androidFilePicker = "0.8.2"
+androidFilePicker = "1.0.0"
 androidx-junit = "1.1.5"
 appcenter = "5.0.3"
 appcompat = "1.6.1"
@@ -63,8 +64,6 @@ twitter-detekt = "0.0.26"
 work-runtime-ktx = "2.9.0"
 androidxActivityCompose = "1.8.2"
 androidxComposeBom = "2023.10.01"
-protobuf = "3.24.4"
-protobufPlugin = "0.9.4"
 koin = "3.5.3"
 lint = "31.2.0"
 wire = "4.9.3"
@@ -75,6 +74,7 @@ fragment = "1.6.2"
 [libraries]
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+accompanist-testharness = { group = "com.google.accompanist", name = "accompanist-testharness", version.ref = "accompanist" }
 
 acra-scheduler = { group = "ch.acra", name = "acra-advanced-scheduler", version.ref = "acra" }
 acra-dialog = { group = "ch.acra", name = "acra-dialog", version.ref = "acra" }
@@ -97,14 +97,10 @@ compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
 
 devAppX = { group = "io.github.afkt", name = "DevAppX", version.ref = "devAppX" }
-leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
 material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogsCore" }
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 ffmpeg-ffmpegCommand = { group = "com.github.AnJoiner", name = "FFmpegCommand", version.ref = "ffmpegCommand" }
-
-protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
-protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 
 gsyVideoPlayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYVideoPlayer-exo2", version.ref = "gsyVideoPlayer" }
 gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
@@ -113,19 +109,21 @@ kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", vers
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 twitter-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
-toaster = { group = "com.github.getActivity", name = "Toaster", version.ref = "toaster" }
 wireRuntime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 wireGrpcClient = { group = "com.squareup.wire", name = "wire-grpc-client", version.ref = "wire" }
 wireGradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
 
 fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
+toaster = { group = "com.github.getActivity", name = "Toaster", version.ref = "toaster" }
 
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -161,6 +159,7 @@ flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref 
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
@@ -174,6 +173,7 @@ lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.re
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
@@ -240,6 +240,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.ref = "github-Banner" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -247,7 +248,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 androidx-core = { group = "androidx.core", name = "core", version = "1.12.0" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
-zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -257,13 +258,18 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+room = { id = "androidx.room", version.ref = "room" }
 
-bilibili-android-application = { id = "bilibili.android.app", version = "unspecified" }
-bilibili-android-library = { id = "bilibili.android.library", version = "unspecified" }
-bilibili-android-hilt = { id = "bilibili.android.hilt", version = "unspecified" }
-bilibili-android-compose = { id = "bilibili.android.compose", version = "unspecified" }
-bilibili-android-room = { id = "bilibili.android.room", version = "unspecified" }
-bilibili-android-koin = { id = "bilibili.android.koin", version = "unspecified" }
-bilibili-android-feature = { id = "bilibili.android.feature", version = "unspecified" }
+bilibiliAs-android-application = { id = "bilibiliAs.android.application", version = "unspecified" }
+bilibiliAs-android-application-compose = { id = "bilibiliAs.android.application.compose", version = "unspecified" }
+# bilibiliAs-android-application-flavors = { id = "bilibiliAs.android.application.flavors", version = "unspecified" }
+# bilibiliAs-android-application-jacoco = { id = "bilibiliAs.android.application.jacoco", version = "unspecified" }
+bilibiliAs-android-feature = { id = "bilibiliAs.android.feature", version = "unspecified" }
+bilibiliAs-android-hilt = { id = "bilibiliAs.android.hilt", version = "unspecified" }
+bilibiliAs-android-library = { id = "bilibiliAs.android.library", version = "unspecified" }
+bilibiliAs-android-library-compose = { id = "bilibiliAs.android.library.compose", version = "unspecified" }
+bilibiliAs-android-library-jacoco = { id = "bilibiliAs.android.library.jacoco", version = "unspecified" }
 bilibiliAs-android-lint = { id = "bilibiliAs.android.lint", version = "unspecified" }
+bilibiliAs-android-room = { id = "bilibiliAs.android.room", version = "unspecified" }
+bilibiliAs-android-test = { id = "bilibiliAs.android.test", version = "unspecified" }
+bilibiliAs-jvm-library = { id = "bilibiliAs.jvm.library", version = "unspecified" }

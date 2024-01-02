@@ -1,8 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.compose)
-    alias(libs.plugins.bilibili.android.hilt)
+    alias(libs.plugins.bilibiliAs.android.library)
+    alias(libs.plugins.bilibiliAs.android.hilt)
 }
 
 android {
@@ -20,13 +19,6 @@ dependencies {
     api(libs.kotlinx.datetime)
 
     api(libs.timber)
-
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.foundation)
-
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.kotlin.reflect)
 

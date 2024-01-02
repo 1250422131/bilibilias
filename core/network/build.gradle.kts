@@ -1,7 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibili.android.library)
-    alias(libs.plugins.bilibili.android.hilt)
+    alias(libs.plugins.bilibiliAs.android.library)
+    alias(libs.plugins.bilibiliAs.android.hilt)
 }
 
 android {
@@ -40,4 +40,6 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.svg)
     implementation(libs.coil.kt.gif)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 }

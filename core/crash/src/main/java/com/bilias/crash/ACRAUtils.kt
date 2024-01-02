@@ -7,7 +7,6 @@ import org.acra.config.httpSender
 import org.acra.config.limiter
 import org.acra.config.mailSender
 import org.acra.config.notification
-import org.acra.config.scheduler
 import org.acra.config.toast
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
@@ -63,8 +62,6 @@ object ACRAUtils {
 //                subject = getString(R.string.mail_subject)
                 // defaults to empty
 //                body = getString(R.string.mail_body)
-            }
-            scheduler {
             }
             limiter {
             }
