@@ -23,6 +23,8 @@ import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.CollectionResultBean
 import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.home.ui.model.DonateViewBean
+import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
@@ -181,6 +183,10 @@ class NetworkService @Inject constructor(
             httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=${id}&pn=${pn}&ps=20")
                 .body()
         }
+
+    suspend fun getDonateData(): OldDonateBean = withContext(ioDispatcher) {
+        httpClient.get("${BiliBiliAsApi.appFunction}?type=Donate").body()
+    }
 
     suspend fun n38(): MyUserData = withContext(ioDispatcher) {
         httpClient.get(BilibiliApi.getMyUserData).body()
@@ -345,7 +351,7 @@ class NetworkService @Inject constructor(
             .asyncGet("${BiliBiliAsApi.serviceTestApi}BiliBiliCookie")
     }
 
-    suspend fun n39(asCookie: String?, data: UserBiliBiliCookieModel.Data): ResponseResult =
+    suspend fun n39(asCookie: String?, data: UserBiliBiliCookieModel.Data): ResponseResult<Any> =
         withContext(ioDispatcher) {
             ktHttpUtils.addHeader(COOKIE, asCookie!!).asyncDeleteJson(
                 "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",

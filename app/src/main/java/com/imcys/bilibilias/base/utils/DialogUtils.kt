@@ -57,6 +57,8 @@ import kotlinx.coroutines.flow.*
 object DialogUtils {
 
     private val TAG = DialogUtils::class.java.simpleName
+    lateinit var downloadQueue: DownloadQueue
+
     const val DASH_TYPE = 1
     const val MP4_TYPE = 2
     const val ADM_DOWNLOAD = 3
@@ -1483,7 +1485,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1591,7 +1593,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1714,7 +1716,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1836,7 +1838,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,

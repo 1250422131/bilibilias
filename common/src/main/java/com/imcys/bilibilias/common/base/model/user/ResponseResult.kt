@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.common.base.model.user
 
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import kotlinx.serialization.Serializable
+
 
 /**
  * 响应类
@@ -9,9 +9,9 @@ import java.io.Serializable
  * @property msg String
  * @constructor
  */
-open class ResponseResult(
-    @SerializedName("code")
+@Serializable
+open class ResponseResult<T>(
     open val code: Int, // 0
-    @SerializedName("msg")
     open val msg: String, // 登录成功
-) : Serializable
+    open val data: T
+)
