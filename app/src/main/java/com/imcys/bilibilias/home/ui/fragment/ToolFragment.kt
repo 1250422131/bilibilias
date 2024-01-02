@@ -297,103 +297,102 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadToolItem() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
-        launchIO {
+        launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = getOldToolItemBean()
-            launchUI {
-                oldToolItemBean.data.forEach {
-                    when (it.tool_code) {
-                        // 视频解析
-                        1 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
-                                },
-                            )
-                        }
-                        // 设置
-                        2 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    val intent = Intent(context, SettingActivity::class.java)
-                                    requireActivity().startActivity(intent)
-                                },
-                            )
-                        }
-                        // web解析
-                        3 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    val intent = Intent(context, WebAsActivity::class.java)
-                                    requireActivity().startActivity(intent)
-                                },
-                            )
-                        }
-                        // 导出日志
-                        4 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    LogExportActivity.actionStart(requireContext())
-                                },
-                            )
-                        }
-                        // 独立合并
-                        5 -> {
-                            toolItemMutableList.add(
-                                ToolItemBean(
-                                    it.title,
-                                    it.img_url,
-                                    it.color,
-                                ) {
-                                    MergeVideoActivity.actionStart(requireContext())
-                                },
-                            )
-                        }
+            val oldToolItemBean = networkService.getOldToolItem()
+            oldToolItemBean.data.forEach {
+                when (it.tool_code) {
+                    // 视频解析
+                    1 -> {
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                asVideoId(fragmentToolBinding.fragmentToolEditText.text.toString())
+                            },
+                        )
+                    }
+                    // 设置
+                    2 -> {
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                val intent = Intent(context, SettingActivity::class.java)
+                                requireActivity().startActivity(intent)
+                            },
+                        )
+                    }
+                    // web解析
+                    3 -> {
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                val intent = Intent(context, WebAsActivity::class.java)
+                                requireActivity().startActivity(intent)
+                            },
+                        )
+                    }
+                    // 导出日志
+                    4 -> {
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                LogExportActivity.actionStart(requireContext())
+                            },
+                        )
+                    }
+                    // 独立合并
+                    5 -> {
+                        toolItemMutableList.add(
+                            ToolItemBean(
+                                it.title,
+                                it.img_url,
+                                it.color,
+                            ) {
+                                MergeVideoActivity.actionStart(requireContext())
+                            },
+                        )
                     }
                 }
+            }
 
-                // 展示item
-                fragmentToolBinding.apply {
-                    fragmentToolRecyclerView.adapter = ToolItemAdapter()
+            // 展示item
+            fragmentToolBinding.apply {
+                fragmentToolRecyclerView.adapter = ToolItemAdapter()
 
-                    mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
-                    mAdapter.submitList(toolItemMutableList)
+                mAdapter = ((mRecyclerView.adapter) as ToolItemAdapter)
+                mAdapter.submitList(toolItemMutableList)
 
-                    fragmentToolRecyclerView.layoutManager =
-                        GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
-                            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                                override fun getSpanSize(position: Int): Int {
-                                    return when ((mAdapter.currentList)[position].type) {
-                                        1 -> 3
-                                        2 -> 3
-                                        else -> 1
-                                    }
+                fragmentToolRecyclerView.layoutManager =
+                    GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false).apply {
+                        spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when ((mAdapter.currentList)[position].type) {
+                                    1 -> 3
+                                    2 -> 3
+                                    else -> 1
                                 }
                             }
                         }
-                }
+                    }
             }
         }
     }
 
     private suspend fun getOldToolItemBean(): OldToolItemBean {
-        return withContext(lifecycleScope.coroutineContext) {
+        return withContext(Dispatchers.IO) {
+
             HttpUtils.asyncGet(
                 "${BiliBiliAsApi.appFunction}?type=oldToolItem",
                 OldToolItemBean::class.java,
