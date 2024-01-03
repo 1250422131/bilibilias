@@ -12,7 +12,8 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bilias.core.domain.GetToolbarReportUseCase
-import com.bilias.core.domain.GetVideoInChannelList
+import com.bilias.core.domain.GetVideoInChannel
+import com.bilias.core.domain.GetVideoInSeries
 import com.imcys.common.utils.MediaUtils.getMimeType
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
@@ -47,7 +48,8 @@ class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     savedStateHandle: SavedStateHandle,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInChannelList: GetVideoInChannelList
+    getVideoInChannel: GetVideoInChannel,
+    getVideoInSeries: GetVideoInSeries,
 ) : ViewModel() {
 
     private val aid = savedStateHandle.getStateFlow(A_ID, "")
@@ -60,7 +62,8 @@ class PlayerViewModel @Inject constructor(
                 it,
                 videoRepository,
                 getToolbarReportUseCase,
-                getVideoInChannelList
+                getVideoInChannel,
+                getVideoInSeries
             )
         }
             .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
@@ -73,8 +76,8 @@ class PlayerViewModel @Inject constructor(
     }.asResult()
         .map { result ->
             when (result) {
-                is Result.Error   -> PlayerUiState.LoadFailed
-                Result.Loading    -> PlayerUiState.Loading
+                is Result.Error -> PlayerUiState.LoadFailed
+                Result.Loading -> PlayerUiState.Loading
                 is Result.Success -> result.data.mapToPlayerUiState()
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, PlayerUiState.Loading)
@@ -168,24 +171,26 @@ private fun videoInfoUiState(
     bvId: String,
     videoRepository: IVideoDataSources,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInChannelList: GetVideoInChannelList,
+    getVideoInChannel: GetVideoInChannel,
+    getVideoInSeries: GetVideoInSeries,
 ): Flow<PlayInfoUiState> {
     val details = flow { emit(videoRepository.getDetail(bvId)) }
-    val archives = details.flatMapLatest { getVideoInChannelList(it.owner.mid, it.cid) }
+    val series = details.flatMapLatest { getVideoInSeries(it.owner.mid, it.aid) }
 
     val reportUseCase = getToolbarReportUseCase(bvId)
     return combine(
         details,
         reportUseCase,
-        archives,
+        series,
         ::Triple,
     ).asResult()
         .map { result ->
             when (result) {
-                is Result.Error   -> PlayInfoUiState.LoadFailed
-                Result.Loading    -> PlayInfoUiState.Loading
+                is Result.Error -> PlayInfoUiState.LoadFailed
+                Result.Loading -> PlayInfoUiState.Loading
                 is Result.Success -> {
-                    val (detail, report, archives) = result.data
+                    // https://api.bilibili.com/x/polymer/space/seasons_series_list?page_num=1&page_size=20
+                    val (detail, report, series) = result.data
                     PlayInfoUiState.Success(
                         aid = detail.aid,
                         bvid = detail.bvid,
@@ -196,7 +201,8 @@ private fun videoInfoUiState(
                         pageData = detail.pageData.toImmutableList(),
                         owner = detail.owner,
                         toolBarReport = mapToToolBarReport(detail.stat, report),
-                        archives = archives.toImmutableList()
+                        // todo 需要修改
+                        archives = series
                     )
                 }
             }
