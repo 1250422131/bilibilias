@@ -1,6 +1,6 @@
 package com.imcys.player.state
 
-import com.imcys.model.video.Archive
+import com.imcys.model.space.SeasonsSeriesList
 import com.imcys.model.video.Owner
 import com.imcys.model.video.PageData
 import com.imcys.model.video.ToolBarReport
@@ -19,6 +19,6 @@ sealed interface PlayInfoUiState {
         val pageData: ImmutableList<PageData>,
         val owner: Owner,
         val toolBarReport: ToolBarReport,
-        val archives: ImmutableList<Archive>
+        val archives: SeasonsSeriesList.ItemsLists.Series
     ) : PlayInfoUiState
 }

@@ -43,4 +43,7 @@ dependencies {
 
     implementation(libs.ffmpeg.kit.full)
     implementation(libs.ffmpeg.ffmpegCommand)
+
+    testImplementation(projects.core.testing)
+    androidTestImplementation(projects.core.testing)
 }
