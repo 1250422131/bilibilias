@@ -149,7 +149,7 @@ srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", vers
 
 uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
 
-xutils = { group = "org.xutils", name = "xutils", version.ref = "xutils" }
+#xutils = { group = "org.xutils", name = "xutils", version.ref = "xutils" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
