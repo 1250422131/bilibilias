@@ -30,7 +30,7 @@ class BangumiFollowAdapter @Inject constructor() :
             oldItem: BangumiFollowList.DataBean.ListBean,
             newItem: BangumiFollowList.DataBean.ListBean,
         ): Boolean {
-            return oldItem.first_ep == oldItem.first_ep
+            return oldItem.first_ep == newItem.first_ep
         }
     }) {
     @Inject

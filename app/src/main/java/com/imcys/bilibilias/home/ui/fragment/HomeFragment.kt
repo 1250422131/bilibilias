@@ -42,6 +42,7 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -49,6 +50,7 @@ import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
 import com.microsoft.appcenter.AppCenter
@@ -57,6 +59,10 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -198,22 +204,17 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        launchIO {
-            val oldHomeBannerDataBean =
-                HttpUtils.asyncGet(
-                    "${BiliBiliAsApi.updateDataPath}?type=banner",
-                    OldHomeBannerDataBean::class.java,
-                )
+        launchUI {
 
-            launchUI {
-                // 新增BannerLifecycleObserver
-                fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                    OldHomeBeanAdapter(
-                        oldHomeBannerDataBean.textList,
-                        oldHomeBannerDataBean,
-                    ),
-                ).setIndicator(CircleIndicator(requireContext()))
-            }
+            val oldHomeBannerDataBean = networkService.getOldHomeBannerData()
+
+            // 新增BannerLifecycleObserver
+            fragmentHomeBinding.fragmentHomeBanner.setAdapter(
+                OldHomeBeanAdapter(
+                    oldHomeBannerDataBean.textList,
+                    oldHomeBannerDataBean,
+                ),
+            ).setIndicator(CircleIndicator(requireContext()))
         }
     }
 

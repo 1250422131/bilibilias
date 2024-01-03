@@ -55,6 +55,7 @@ class NetworkModule {
     ): HttpClient = HttpClient(
         OkHttp.create { preconfigured = okHttpClient }
     ) {
+
         install(HttpCookies) {
             storage = asCookiesStorage
         }
@@ -64,6 +65,7 @@ class NetworkModule {
         install(ContentNegotiation) {
             json(json)
         }
+
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 5)
             exponentialDelay()
