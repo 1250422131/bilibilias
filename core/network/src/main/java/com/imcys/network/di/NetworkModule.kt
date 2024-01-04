@@ -4,6 +4,7 @@ import android.content.Context
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.SvgDecoder
+import coil.disk.DiskCache
 import coil.util.DebugLogger
 import com.imcys.bilibilias.okdownloader.DownloadPool
 import com.imcys.bilibilias.okdownloader.Downloader
@@ -12,9 +13,9 @@ import com.imcys.common.utils.asNonTerminatingExecutorService
 import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.Box
 import com.imcys.network.BuildConfig
-import com.imcys.network.configration.CacheManager
 import com.imcys.network.configration.CookieManager
 import com.imcys.network.configration.LoggerManager
+import com.imcys.network.configration.PersistentCache
 import com.imcys.network.constant.API_BILIBILI
 import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.imcys.network.repository.Parameter
@@ -95,6 +96,11 @@ class NetworkModule {
             add(SvgDecoder.Factory())
             add(GifDecoder.Factory())
         }
+        .diskCache {
+            DiskCache.Builder()
+                .directory(File(application.cacheDir,"coil_cache"))
+                .build()
+        }
         .respectCacheHeaders(false)
         .apply {
             if (BuildConfig.DEBUG) {
@@ -162,7 +168,7 @@ class NetworkModule {
         @ApplicationContext context: Context,
         @BaseOkhttpClient okHttpClient: OkHttpClient
     ): OkHttpClient = okHttpClient.newBuilder()
-        .cache(Cache(File(context.cacheDir.path), 1024 * 1024 * 50))
+        .cache(Cache(File(context.cacheDir.path, "okhttp_cache"), 1024 * 1024 * 50))
         .addInterceptor(MonitorInterceptor())
         .build()
 
@@ -181,7 +187,7 @@ class NetworkModule {
         json: Json,
         transform: ClientPlugin<Unit>,
         cookieManager: CookieManager,
-        cacheManager: CacheManager,
+        persistentCache: PersistentCache,
         loggerManager: LoggerManager,
         wbiKeyStorage: WbiKeyStorage
     ): HttpClient {
@@ -209,7 +215,7 @@ class NetworkModule {
                 exponentialDelay()
             }
             install(HttpCache) {
-                publicStorage(cacheManager)
+                publicStorage(persistentCache)
             }
         }
         client.plugin(HttpSend).intercept { request ->

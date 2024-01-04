@@ -1,4 +1,4 @@
-﻿package com.imcys.common.utils
+package com.imcys.common.utils
 
 object ConvertUtil {
     private const val Table = "FcwAPNKTMug3GV5Lj7EJnHpWsx4tb8haYeviqBz6rkCy12mUSDQX9RdoZf"
@@ -24,10 +24,10 @@ object ConvertUtil {
         return tmp and MASK xor XOR
     }
 
-    fun Av2Bv(avNum: Long): String {
+    fun Av2Bv(avId: Long): String {
         val bv = charArrayOf('B', 'V', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0')
         var bvIdx = 11
-        var tmp = MAX_AID or avNum xor XOR
+        var tmp = MAX_AID or avId xor XOR
         while (tmp != 0L) {
             val tableIdx = (tmp % 58).toInt()
             val cc = Table[tableIdx]

@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.room) apply false
+    id("de.mannodermaus.android-junit5") version "1.10.0.0" apply false
     alias(libs.plugins.detekt)
 }
 detekt {
