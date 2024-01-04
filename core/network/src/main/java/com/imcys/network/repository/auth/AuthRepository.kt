@@ -1,7 +1,5 @@
 package com.imcys.network.repository.auth
 
-import com.imcys.common.di.AsDispatchers
-import com.imcys.common.di.Dispatcher
 import com.imcys.datastore.fastkv.CookiesData
 import com.imcys.model.login.AuthQrCode
 import com.imcys.model.login.CookieState
@@ -17,8 +15,6 @@ import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
@@ -41,7 +37,6 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @Singleton
 class AuthRepository @Inject constructor(
     private val httpClient: HttpClient,
-    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val cookiesData: CookiesData
 ) : IAuthDataSources {
 
@@ -62,8 +57,7 @@ class AuthRepository @Inject constructor(
      *   .build()
      * ```
      */
-    suspend fun logout(): Unit = withContext(ioDispatcher) {
-    }
+    suspend fun logout() = Unit
 
     /**
      * curl -G 'https://passport.bilibili.com/x/passport-login/web/cookie/info'
@@ -76,16 +70,15 @@ class AuthRepository @Inject constructor(
      *   .build()
      * ```
      */
-    suspend fun checkCookieNeedRefresh(): CookieState = withContext(ioDispatcher) {
+    suspend fun checkCookieNeedRefresh(): CookieState =
         httpClient.get(BilibiliApi2.CHECK_COOKIE_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
             parameterCSRF(cookiesData.csrf)
         }.body()
-    }
 
-    suspend fun getRefreshCsrf(correspondPath: String): String = withContext(ioDispatcher) {
+    suspend fun getRefreshCsrf(correspondPath: String): String {
         val html = httpClient.get(BilibiliApi2.CORRESPOND + correspondPath).bodyAsText()
-        if (html.isEmpty()) return@withContext ""
+        if (html.isEmpty()) return ""
         val target = "<div id=\"1-name\">"
         val index = html.indexOf(target) + target.length
         var str = ""
@@ -98,7 +91,7 @@ class AuthRepository @Inject constructor(
             }
         }
 
-        str
+        return str
     }
 
     /**
@@ -118,7 +111,7 @@ class AuthRepository @Inject constructor(
      *   .build()
      * ```
      */
-    suspend fun refreshCookie(refreshCsrf: String): String = withContext(ioDispatcher) {
+    suspend fun refreshCookie(refreshCsrf: String): String {
         val oldRefreshToken = cookiesData.refreshToken
         val newRefreshToken = httpClient.post(BilibiliApi2.COOKIE_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
@@ -128,7 +121,7 @@ class AuthRepository @Inject constructor(
             parameter("refresh_token", oldRefreshToken)
         }.body<NewRefreshToken>()
         cookiesData.refreshToken = newRefreshToken.refreshToken
-        oldRefreshToken
+        return oldRefreshToken
     }
 
     /**
@@ -146,7 +139,7 @@ class AuthRepository @Inject constructor(
      *   .build()
      * ```
      */
-    suspend fun confirmRefresh(oldRefreshToken: String): Unit = withContext(ioDispatcher) {
+    suspend fun confirmRefresh(oldRefreshToken: String) {
         httpClient.post(BilibiliApi2.CONFIRM_REFRESH) {
             contentType(ContentType.Application.FormUrlEncoded)
             parameterCSRF(cookiesData.csrf)
@@ -214,15 +207,13 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun 获取二维码(): AuthQrCode = withContext(ioDispatcher) {
-       httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
-    }
+    override suspend fun 获取二维码(): AuthQrCode =
+        httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
 
-    override suspend fun 轮询登录接口(key: String): LoginResponse = withContext(ioDispatcher) {
+    override suspend fun 轮询登录接口(key: String): LoginResponse =
         httpClient.get(BilibiliApi2.getLoginStatePath) {
             parameter("qrcode_key", key)
         }.body()
-    }
 
     override suspend fun 退出登录() {
         TODO("Not yet implemented")
