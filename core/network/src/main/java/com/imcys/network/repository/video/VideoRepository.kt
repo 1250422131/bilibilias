@@ -2,8 +2,6 @@
 
 import androidx.collection.ArrayMap
 import androidx.collection.ArraySet
-import com.imcys.common.di.AsDispatchers
-import com.imcys.common.di.Dispatcher
 import com.imcys.common.utils.VideoUtils
 import com.imcys.model.Bangumi
 import com.imcys.model.BangumiPlayBean
@@ -25,8 +23,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,8 +30,7 @@ import javax.inject.Singleton
 @Singleton
 class VideoRepository @Inject constructor(
     private val client: HttpClient,
-    private val json: Json,
-    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    private val json: Json
 ) : IVideoDataSources {
     private val cacheViewDetail = ArraySet<VideoDetails>()
     private val cachePlayerPlayUrl = ArrayMap<String, PlayerInfo>()
@@ -52,43 +47,39 @@ class VideoRepository @Inject constructor(
         return json.decodeFromString<BangumiPlayBean>(text.toString()).result
     }
 
-    suspend fun getEp(id: String): Bangumi = withContext(ioDispatcher) {
+    suspend fun getEp(id: String): Bangumi {
         val text = client.get(BilibiliApi2.bangumiVideoDataPath) {
             parameter("ep_id", id)
         }.bodyAsText()
-        json.decodeFromString(text)
+        return json.decodeFromString(text)
     }
 
     /**
      * 点赞
      */
-    override suspend fun hasLike(bvid: String): ArchiveHasLike = withContext(ioDispatcher) {
+    override suspend fun hasLike(bvid: String): ArchiveHasLike {
         val archiveText = client.get(BilibiliApi2.ARCHIVE_HAS_LIKE) {
             parameterBV(bvid)
         }.bodyAsText()
-        val hasLike = json.decodeFromString<ArchiveHasLike>(archiveText)
-        hasLike
+        return json.decodeFromString<ArchiveHasLike>(archiveText)
     }
 
-    override suspend fun hasCoin(bvid: String): ArchiveCoins = withContext(ioDispatcher) {
+    override suspend fun hasCoin(bvid: String): ArchiveCoins =
         client.get(BilibiliApi2.ARCHIVE_COINS) {
             parameterBV(bvid)
         }.body<ArchiveCoins>()
-    }
 
-    override suspend fun hasFavoured(bvid: String): VideoFavoured = withContext(ioDispatcher) {
+    override suspend fun hasFavoured(bvid: String): VideoFavoured =
         client.get(BilibiliApi2.VIDEO_FAVOURED) {
             parameter("aid", bvid)
         }.body<VideoFavoured>()
-    }
 
-    suspend fun shortLink(url: String): String = withContext(ioDispatcher) {
+    suspend fun shortLink(url: String): String =
         client.get(url)
             .body<HttpResponse>()
             .request
             .url
             .toString()
-    }
 
     @Deprecated("domain 有相同 api")
     override suspend fun getViewDetailAndPlayUrl(bvid: String): ViewDetailAndPlayUrl {
@@ -105,15 +96,14 @@ class VideoRepository @Inject constructor(
         )
     }
 
-    override suspend fun getDetail(bvid: String): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun getDetail(bvid: String): VideoDetails =
         client.get(BilibiliApi2.VIEW_DETAIL) {
             parameterBV(bvid)
         }.body<VideoDetails>()
-    }
 
-    override suspend fun getDetail(aid: Long): VideoDetails = withContext(ioDispatcher) {
+    override suspend fun getDetail(aid: Long): VideoDetails {
         val detail = cacheViewDetail.find { it.aid == aid }
-        if (detail == null) {
+        return if (detail == null) {
             val bv = VideoUtils.av2bv(aid)
             val detail1 = getDetail(bv)
             cacheViewDetail.add(detail1)
@@ -125,15 +115,13 @@ class VideoRepository @Inject constructor(
 
     override suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo {
         return cachePlayerPlayUrl.getOrElse("$bvid-$cid") {
-            withContext(ioDispatcher) {
-                client.wbiGet(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
-                    parameter("bvid", bvid)
-                    parameter("cid", cid)
-                    parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString())
-                    parameter("fourk", "1")
-                    parameter("platform", "pc")
-                }.body<PlayerInfo>()
-            }
+            client.wbiGet(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
+                parameter("bvid", bvid)
+                parameter("cid", cid)
+                parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString())
+                parameter("fourk", "1")
+                parameter("platform", "pc")
+            }.body<PlayerInfo>()
         }
     }
 }
