@@ -29,4 +29,5 @@ dependencies {
     api(libs.devAppX)
 
     api(libs.androidx.media3.common)
+    implementation(projects.core.testing)
 }

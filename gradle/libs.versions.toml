@@ -1,11 +1,12 @@
 [versions]
+androidxTestCore = "1.5.0"
 androidxTestRules = "1.5.0"
 acra = "5.11.3"
 androidStartup = "1.1.0"
 androidxComposeCompiler = "1.5.7"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 accompanist = "0.32.0"
-androidGradlePlugin = "8.2.0"
+androidGradlePlugin = "8.2.1"
 androidFilePicker = "1.0.0"
 androidx-junit = "1.1.5"
 appcenter = "5.0.3"
@@ -54,13 +55,17 @@ mtjSdkCircle = "4.0.7.5"
 navigationCompose = "2.7.6"
 androidxPaging = "3.2.1"
 androidxPagingCompose = "3.3.0-alpha02"
+orchestrator = "1.4.2"
 preferenceKtx = "1.2.1"
 qrose = "1.0.0-beta3"
 room = "2.6.1"
 androidxStartupRuntime = "1.1.1"
+runner = "1.5.2"
 timber = "5.0.1"
 toaster = "12.6"
 twitter-detekt = "0.0.26"
+uiautomator = "2.3.0-beta01"
+uiTestJunit4 = "1.5.4"
 work-runtime-ktx = "2.9.0"
 androidxActivityCompose = "1.8.2"
 androidxComposeBom = "2023.10.01"
@@ -85,13 +90,25 @@ acra-http = { group = "ch.acra", name = "acra-http", version.ref = "acra" }
 acra-notification = { group = "ch.acra", name = "acra-notification", version.ref = "acra" }
 acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 
-androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 android-startup = { group = "io.github.idisfkj", name = "android-startup", version.ref = "androidStartup" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartupRuntime" }
 
-bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
+androidx-test-core = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
+androidx-junit = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidx-junit" }
+androidx-orchestrator = { group = "androidx.test", name = "orchestrator", version.ref = "orchestrator" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "androidxTestCore" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "uiTestJunit4" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+
+bottomsheetdialog-compose = { group = "com.holix.android", name = "bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings-ui-m3", version.ref = "composeSettingsUiM3" }
 
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
@@ -106,7 +123,8 @@ gsyVideoPlayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYV
 gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyVideoPlayer" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
-qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
+
 twitter-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
@@ -119,11 +137,6 @@ wireGradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", v
 
 fastkv = { group = "io.github.billywei01", name = "fastkv", version.ref = "fastkv" }
 toaster = { group = "com.github.getActivity", name = "Toaster", version.ref = "toaster" }
-
-androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
-junit4 = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -240,7 +253,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.ref = "github-Banner" }
-zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
