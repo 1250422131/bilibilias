@@ -34,6 +34,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -72,38 +73,51 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val context = view.context
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        viewModelScope.launchIO {
+        viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                val dashVideoPlayBean = networkService.n29(context.bvid, context.cid)
+                //并发
+                val dashVideoPlayDeferred = async { networkService.n29(context.bvid, context.cid) }
+                val dashBangumiPlayDeferred =
+                    async { networkService.getDashBangumiPlay(context.cid, 64) }
+
+                // 等待两个请求的结果
+                val dashVideoPlayBean = dashVideoPlayDeferred.await()
+                val dashBangumiPlay = dashBangumiPlayDeferred.await()
+
                 // 这里再检验一次，是否为404内容
+                if (dashVideoPlayBean.code == 0) {
+                    DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        videoPageListData,
+                        dashVideoPlayBean,
+                        networkService
+                    ).show()
+                } else if (dashBangumiPlay.code == 0) {
+                    DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        videoPageListData,
+                        dashBangumiPlay.toDashVideoPlayBean(),
+                        networkService
+                    ).show()
+                }
+
                 loadDialog.cancel()
-                launchUI {
-                    if (dashVideoPlayBean.code == 0) {
-                        DialogUtils.downloadVideoDialog(
-                            context,
-                            videoBaseBean,
-                            videoPageListData,
-                            dashVideoPlayBean,
-                            networkService
-                        ).show()
-                    }
-                }
             } else {
-                launchUI {
-                    AsDialog.init(context).build {
-                        config = {
-                            title = "止步于此"
-                            content =
-                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                            positiveButtonText = "知道了"
-                            positiveButton = {
-                                it.cancel()
-                            }
+                AsDialog.init(context).build {
+                    config = {
+                        title = "止步于此"
+                        content =
+                            "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                    "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                    "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                        positiveButtonText = "知道了"
+                        positiveButton = {
+                            it.cancel()
                         }
-                    }.show()
-                }
+                    }
+                }.show()
             }
         }
     }
@@ -122,40 +136,73 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
-        viewModelScope.launchIO {
+        viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                val dashVideoPlayBean = networkService.n30(context.bvid, context.cid)
+                //并发
+                val dashVideoPlayDeferred = async { networkService.n29(context.bvid, context.cid) }
+                val dashBangumiPlayDeferred =
+                    async { networkService.getDashBangumiPlay(context.cid, 64) }
+
+                // 等待两个请求的结果
+                val dashVideoPlayBean = dashVideoPlayDeferred.await()
+                val dashBangumiPlay = dashBangumiPlayDeferred.await()
+
+                // 这里再检验一次，是否为404内容
+                if (dashVideoPlayBean.code == 0) {
+                    DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        bangumiSeasonBean,
+                        dashVideoPlayBean,
+                        networkService
+                    ).show()
+                } else if (dashBangumiPlay.code == 0) {
+                    DialogUtils.downloadVideoDialog(
+                        context,
+                        videoBaseBean,
+                        bangumiSeasonBean,
+                        dashBangumiPlay.toDashVideoPlayBean(),
+                        networkService
+                    ).show()
+                }
 
                 loadDialog.cancel()
-                launchUI {
-                    if (dashVideoPlayBean.code == 0) {
-                        DialogUtils.downloadVideoDialog(
-                            context,
-                            videoBaseBean,
-                            bangumiSeasonBean,
-                            dashVideoPlayBean,
-                            networkService
-                        ).show()
-                    }
-                }
             } else {
-                launchUI {
-                    AsDialog.init(context).build {
-                        config = {
-                            title = "止步于此"
-                            content =
-                                "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                            positiveButtonText = "知道了"
-                            positiveButton = {
-                                it.cancel()
-                            }
+                AsDialog.init(context).build {
+                    config = {
+                        title = "止步于此"
+                        content =
+                            "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
+                                    "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
+                                    "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
+                        positiveButtonText = "知道了"
+                        positiveButton = {
+                            it.cancel()
                         }
-                    }.show()
-                }
+                    }
+                }.show()
             }
         }
+    }
+
+
+    /**
+     * 显示下载对话框
+     */
+    private fun showDownloadDialog(
+        context: Context,
+        videoBaseBean: VideoBaseBean,
+        videoPageListData: VideoPageListData,
+        dashVideoPlayBean: DashVideoPlayBean,
+        networkService: NetworkService
+    ) {
+        DialogUtils.downloadVideoDialog(
+            context,
+            videoBaseBean,
+            videoPageListData,
+            dashVideoPlayBean,
+            networkService
+        ).show()
     }
 
     fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {

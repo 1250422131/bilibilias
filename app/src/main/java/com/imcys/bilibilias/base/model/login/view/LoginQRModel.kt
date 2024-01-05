@@ -1,11 +1,13 @@
 package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -14,28 +16,21 @@ import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.google.gson.Gson
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.SET_COOKIE
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.lifecycle.HiltViewModel
-import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.Response
-import okhttp3.internal.wait
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -44,9 +39,11 @@ import java.net.URLEncoder
 import java.util.regex.Pattern
 import javax.inject.Inject
 
+
 @HiltViewModel
 class LoginQRModel @Inject constructor(
-    private val networkService: NetworkService
+    private val networkService: NetworkService,
+    private val asCookiesStorage: AsCookiesStorage
 ) : ViewModel() {
 
     private val TAG = this.javaClass.name
@@ -65,62 +62,25 @@ class LoginQRModel @Inject constructor(
         val bottomSheetDialog = view.context?.let { DialogUtils.loadDialog(it) }
         bottomSheetDialog?.show()
 
-        viewModelScope.launchIO {
+        viewModelScope.launchUI {
             val loginStateBean = networkService.biliUserLogin(qrcode_key)
             Log.i(TAG, "finishLogin: " + loginStateBean.message)
 
             bottomSheetDialog?.cancel()
 
-            launchUI {
-
-                if (loginStateBean.data.code != 0) {
-                    // 展示登录结果
-                    val loginQRModel = binding?.loginQRModel
-                    loginQRModel?.loginTip = loginStateBean.data.message
-                    binding?.loginQRModel = loginQRModel
-                }
-                // 将登录完成事件返回给Fragment
-                responseResult(loginStateBean.data.code, loginStateBean)
+            if (loginStateBean.data.code != 0) {
+                // 展示登录结果
+                val loginQRModel = binding?.loginQRModel
+                loginQRModel?.loginTip = loginStateBean.data.message
+                binding?.loginQRModel = loginQRModel
+            }else{
+                asCookiesStorage.saveCookies()
             }
+            // 将登录完成事件返回给Fragment
+            responseResult(loginStateBean.data.code, loginStateBean)
 
         }
 
-
-        // 登录完成
-        HttpUtils.get(
-            BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcode_key,
-            object : Callback {
-
-                override fun onFailure(call: Call, e: IOException) {
-                    bottomSheetDialog?.cancel()
-                }
-
-                // ————————————————————————————————————————————————
-                @SuppressLint("CommitPrefEdits")
-                override fun onResponse(call: Call, response: Response) {
-                    // 数据解析
-                    val loginStateBean: LoginStateBean =
-                        Gson().fromJson(response.body?.string(), LoginStateBean::class.java)
-                    // ————————————————————————————————————————————————
-                    // 关闭加载弹窗
-                    bottomSheetDialog?.cancel()
-                    // 更新UI线程
-                    BaseApplication.handler.post {
-                        // 登录成功则去储存cookie
-                        if (loginStateBean.data.code == 0) {
-                            loginSuccessOp(loginStateBean, response)
-                        } else {
-                            // 展示登录结果
-                            val loginQRModel = binding?.loginQRModel
-                            loginQRModel?.loginTip = loginStateBean.data.message
-                            binding?.loginQRModel = loginQRModel
-                        }
-                        // 将登录完成事件返回给Fragment
-                        responseResult(loginStateBean.data.code, loginStateBean)
-                    }
-                }
-            },
-        )
     }
 
     /**
@@ -133,8 +93,7 @@ class LoginQRModel @Inject constructor(
             val loginQRData = networkService.getLoginQRData()
                 .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
 
-            loginQrcodeDataBean.qrcode_key = loginQRData.data.qrcode_key
-            binding?.dataBean = loginQrcodeDataBean
+            binding?.dataBean = loginQRData.data
         }
     }
 

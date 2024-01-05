@@ -26,8 +26,10 @@ import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.DonateViewBean
 import com.imcys.bilibilias.home.ui.model.OldDonateBean
+import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldToolItemBean
+import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
@@ -78,6 +80,12 @@ class NetworkService @Inject constructor(
 
     suspend fun n29(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
         videoPlayPath(bvid, cid.toString(), 64)
+    }
+
+    suspend fun getDashBangumiPlay(cid: Long, qn: Int): DashBangumiPlayBean = runCatchingOnWithContextIo {
+        httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
+            refererBILIHarder()
+        }.body()
     }
 
     suspend fun n30(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
@@ -155,11 +163,11 @@ class NetworkService @Inject constructor(
 
     // ---------------------------------------------------------------------------------------------
     suspend fun n6(): MyUserData = runCatchingOnWithContextIo {
-        n38()
+        httpClient.get(BilibiliApi.getMyUserData).body()
     }
 
     suspend fun n27(): MyUserData = runCatchingOnWithContextIo {
-        n38()
+        httpClient.get(BilibiliApi.getMyUserData).body()
     }
 
     suspend fun biliUserLogin(qrcodeKey: String): LoginStateBean = runCatchingOnWithContextIo {
@@ -204,6 +212,16 @@ class NetworkService @Inject constructor(
                 .body()
 
         }
+
+    suspend fun getUpdateData(): OldUpdateDataBean = runCatchingOnWithContextIo {
+        httpClient.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}")
+            .body()
+    }
+
+
+    suspend fun getOldHomeAd(): OldHomeAdBean = runCatchingOnWithContextIo {
+        httpClient.get("${BiliBiliAsApi.appFunction}?type=oldHomeAd").body()
+    }
 
     suspend fun n38(): MyUserData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getMyUserData).body()
