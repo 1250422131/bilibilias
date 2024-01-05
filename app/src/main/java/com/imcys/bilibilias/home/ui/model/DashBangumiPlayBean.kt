@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.home.ui.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * 番剧dash下载类
@@ -55,4 +57,25 @@ data class DashBangumiPlayBean(
             val quality: Int = 0,
         )
     }
+
 }
+
+
+fun DashBangumiPlayBean.toDashVideoPlayBean(): DashVideoPlayBean {
+    val json = Json{
+        prettyPrint = true
+        isLenient = true
+        ignoreUnknownKeys = true
+    }
+    val bangumiPlayResultStr = json.encodeToString(this.result)
+
+    val dashVideoPlayBeanDataBean =
+        json.decodeFromString<DashVideoPlayBean.DataBean>(bangumiPlayResultStr)
+
+    return DashVideoPlayBean().copy(
+        code = code,
+        message = message,
+        data = dashVideoPlayBeanDataBean
+    )
+}
+

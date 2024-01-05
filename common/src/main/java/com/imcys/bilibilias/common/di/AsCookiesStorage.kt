@@ -42,6 +42,11 @@ class AsCookiesStorage @Inject constructor(
         cookies.add(cookie)
     }
 
+    fun saveCookies(){
+        UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
+    }
+
+
     override fun close() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
     }
