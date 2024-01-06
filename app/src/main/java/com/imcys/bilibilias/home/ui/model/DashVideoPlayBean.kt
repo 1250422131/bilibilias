@@ -23,7 +23,7 @@ data class DashVideoPlayBean(
         val message: String = "",
         val timelength: Int = 0,
         val dash: DashBean = DashBean(),
-        val accept_description: List<String> = emptyList(),
+        val accept_description: MutableList<String> = mutableListOf(),
         val accept_quality: List<Int> = emptyList(),
         val support_formats: List<SupportFormatsBean> = emptyList(),
     ) {
