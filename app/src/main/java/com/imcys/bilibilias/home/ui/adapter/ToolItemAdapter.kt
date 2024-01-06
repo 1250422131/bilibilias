@@ -80,24 +80,12 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 val clickEvent: () -> Unit = getItem(position).clickEvent
                 binding?.root?.setOnClickListener {
 
-                    val videoPic = androidx.core.util.Pair<View, String>(
-                        binding.itemToolVideoCardPic,
-                        "videoPic"
-                    )
-
                     val i = Intent(holder.itemView.context, AsVideoActivity::class.java)
-
-                    val optionsCompat: ActivityOptionsCompat =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            holder.itemView.context as HomeActivity,
-                            videoPic
-                        )
-
 
 
                     i.putExtra("bvId", getItem(position).videoBaseBean?.data?.bvid)
 
-                    holder.itemView.context.startActivity(i, optionsCompat.toBundle())
+                    holder.itemView.context.startActivity(i)
 
                     clickEvent()
                 }

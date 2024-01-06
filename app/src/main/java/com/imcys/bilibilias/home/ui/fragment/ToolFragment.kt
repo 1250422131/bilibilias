@@ -390,15 +390,7 @@ class ToolFragment : BaseFragment() {
         }
     }
 
-    private suspend fun getOldToolItemBean(): OldToolItemBean {
-        return withContext(Dispatchers.IO) {
 
-            HttpUtils.asyncGet(
-                "${BiliBiliAsApi.appFunction}?type=oldToolItem",
-                OldToolItemBean::class.java,
-            )
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

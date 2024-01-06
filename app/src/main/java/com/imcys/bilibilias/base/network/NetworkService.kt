@@ -30,6 +30,7 @@ import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
+import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
@@ -82,15 +83,19 @@ class NetworkService @Inject constructor(
         videoPlayPath(bvid, cid.toString(), 64)
     }
 
-    suspend fun getDashBangumiPlay(cid: Long, qn: Int): DashBangumiPlayBean = runCatchingOnWithContextIo {
-        httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
-            refererBILIHarder()
-        }.body()
-    }
+    suspend fun getDashBangumiPlay(cid: Long, qn: Int): DashBangumiPlayBean =
+        runCatchingOnWithContextIo {
+            httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
+                refererBILIHarder()
+            }.body()
+        }
 
-    suspend fun n30(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
-        videoPlayPath(bvid, cid.toString(), 64)
-    }
+    suspend fun getPlayHistory(max: Long, viewAt: Long, type: String): PlayHistoryBean =
+        runCatchingOnWithContextIo {
+            httpClient.get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive")
+                .body()
+        }
+
 
     private suspend inline fun <reified T> videoPlayPath(
         bvid: String,

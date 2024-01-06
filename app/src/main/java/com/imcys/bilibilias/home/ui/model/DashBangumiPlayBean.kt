@@ -62,7 +62,7 @@ data class DashBangumiPlayBean(
 
 
 fun DashBangumiPlayBean.toDashVideoPlayBean(): DashVideoPlayBean {
-    val json = Json{
+    val json = Json {
         prettyPrint = true
         isLenient = true
         ignoreUnknownKeys = true
@@ -71,6 +71,12 @@ fun DashBangumiPlayBean.toDashVideoPlayBean(): DashVideoPlayBean {
 
     val dashVideoPlayBeanDataBean =
         json.decodeFromString<DashVideoPlayBean.DataBean>(bangumiPlayResultStr)
+
+
+    result.support_formats.forEach {
+        dashVideoPlayBeanDataBean.accept_description.add(it.description)
+    }
+
 
     return DashVideoPlayBean().copy(
         code = code,
