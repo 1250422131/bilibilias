@@ -32,8 +32,8 @@ class AsCookiesStorage @Inject constructor(
     }
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
-        val cookie = cookies.find { it.name == "SESSDATA" } ?: return emptyList()
-        return listOf(cookie)
+//        val cookie = cookies.find { it.name == "SESSDATA" } ?: return emptyList()
+        return cookies
     }
 
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {

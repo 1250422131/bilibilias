@@ -16,7 +16,7 @@ open class BaseFragment : Fragment(){
         lifecycleScope.launch(Dispatchers.IO, start, block)
     }
 
-    private fun launchUI(
+     fun launchUI(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
