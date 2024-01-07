@@ -333,6 +333,9 @@ class HomeFragment : BaseFragment() {
     internal fun loadLogin() {
         launchUI {
 
+            //解除风控
+            networkService.getBILIHome()
+
             //自己会切换IO
             val loginQRData = networkService.getLoginQRData()
                 .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }

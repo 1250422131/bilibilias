@@ -18,16 +18,16 @@ import javax.inject.Singleton
 @OptIn(ExperimentalSerializationApi::class)
 @Singleton
 class AsCookiesStorage @Inject constructor(
-    private val json: Json,
-    private val cbor: Cbor
+        private val json: Json,
+        private val cbor: Cbor
 ) : CookiesStorage {
     private val cookies = mutableListOf<Cookie>()
 
     init {
         if (UserInfoRepository.asCookies.isNotEmpty()) {
             cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies)
-                .map { it.toCookie() }
-                .forEach { cookies.add(it) }
+                    .map { it.toCookie() }
+                    .forEach { cookies.add(it) }
         }
     }
 
@@ -42,10 +42,13 @@ class AsCookiesStorage @Inject constructor(
         cookies.add(cookie)
     }
 
-    fun saveCookies(){
+    fun saveCookies() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
     }
 
+    fun getCookieValue(key: String): String? {
+        return cookies.find { it.name == key }?.value
+    }
 
     override fun close() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })

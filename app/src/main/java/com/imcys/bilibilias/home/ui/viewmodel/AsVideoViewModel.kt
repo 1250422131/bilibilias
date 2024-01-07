@@ -407,24 +407,22 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
     fun likeVideo(view: View, bvid: String) {
         val context = view.context
 
-        viewModelScope.launchIO {
-            val likeVideoBean = networkService.n31(bvid)
+        viewModelScope.launchUI {
+            val likeVideoBean = networkService.videoLike(bvid)
 
             if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-                launchUI {
-                    when (likeVideoBean.code) {
-                        0 -> {
-                            context.binding.archiveHasLikeBean?.data = 1
-                            context.binding.asVideoLikeBt.isSelected = true
-                        }
+                when (likeVideoBean.code) {
+                    0 -> {
+                        context.binding.archiveHasLikeBean?.data = 1
+                        context.binding.asVideoLikeBt.isSelected = true
+                    }
 
-                        65006 -> {
-                            cancelLikeVideo(view, bvid)
-                        }
+                    65006 -> {
+                        cancelLikeVideo(view, bvid)
+                    }
 
-                        else -> {
-                            asToast(context, likeVideoBean.message)
-                        }
+                    else -> {
+                        asToast(context, likeVideoBean.message)
                     }
                 }
             } else {
