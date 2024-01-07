@@ -26,5 +26,5 @@ fun asLogV(context: Context, content: String) = Log.v(context::class.java.simple
 
 fun asLoW(context: Context, content: String) = Log.w(context::class.java.simpleName, content)
 
-fun asToast(context: Context, content: String) =
+ fun asToast(context: Context, content: String) =
     Toast.makeText(context, content, Toast.LENGTH_SHORT).show()

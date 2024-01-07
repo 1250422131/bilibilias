@@ -52,7 +52,7 @@ fun String.extract(startString: String, endString: String): String {
  * @param type String
  * @return String
  */
-fun String.toAsDownloadSavePath(
+ fun String.toAsDownloadSavePath(
     context: Context,
     avid: String = "",
     bvid: String = "",

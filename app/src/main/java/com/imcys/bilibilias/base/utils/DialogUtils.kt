@@ -124,6 +124,7 @@ object DialogUtils {
         loginQrcodeBean: LoginQrcodeBean,
         responseResult: (Int, LoginStateBean) -> Unit,
     ): BottomSheetDialog {
+
         val binding: DialogLoginQrBottomsheetBinding =
             DialogLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
 

@@ -61,7 +61,7 @@ data class DashBangumiPlayBean(
 }
 
 
-fun DashBangumiPlayBean.toDashVideoPlayBean(): DashVideoPlayBean {
+ fun DashBangumiPlayBean.toDashVideoPlayBean(): DashVideoPlayBean {
     val json = Json {
         prettyPrint = true
         isLenient = true
