@@ -11,7 +11,7 @@ plugins {
     kotlin("kapt")
 }
 apply {
-    from("/../config.gradle")
+    from("../config.gradle")
 }
 
 ksp {
