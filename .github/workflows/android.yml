@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ "dev_imcys" ]
+    branches: [ "develop_imcys" ]
   pull_request:
-    branches: [ "dev_imcys" ]
+    branches: [ "develop_imcys" ]
 
 jobs:
   build:
