@@ -10,11 +10,11 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        mavenCentral()
         maven("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/")
+        mavenCentral()
+        google()
         maven("https://jitpack.io")
         maven("https://androidx.dev/storage/compose-compiler/repository/")
-        google()
     }
 }
 rootProject.name = "BILIBILIAS"
