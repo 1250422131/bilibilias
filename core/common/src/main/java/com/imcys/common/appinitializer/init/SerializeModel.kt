@@ -5,12 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.LongAsStringSerializer
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.plus
 import kotlinx.serialization.protobuf.ProtoBuf
 import javax.inject.Singleton
 
@@ -22,6 +18,8 @@ class SerializeModel {
     fun provideJson(): Json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
+        // 使用默认值覆盖 null
+        coerceInputValues = true
     }
 
     @OptIn(ExperimentalSerializationApi::class)
