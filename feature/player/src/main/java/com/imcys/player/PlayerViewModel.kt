@@ -95,11 +95,6 @@ class PlayerViewModel @Inject constructor(
     val playerState = _playerState.asStateFlow()
 
     /**
-     * key 是视频清晰度 126,120,112,80,64,32,16
-     */
-    private val qualityGroup = sortedMapOf<Int, List<com.imcys.model.Dash.Video>>()
-
-    /**
      * 下载视频
      */
     fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
@@ -171,25 +166,7 @@ private fun mapToToolBarReport(stat: Stat, report: ToolBarReport) = report.copy(
 data class PlayerState(
     val title: String = "",
     val desc: String = "",
-    val bvid: String = "",
-    val aid: Long = 0,
-    val cid: String = "",
     val pic: String = "",
-    val like: Int = 0,
-    val coins: Int = 0,
-    val favorite: Int = 0,
-    @Deprecated("")
-    val videoDetails: com.imcys.model.VideoDetails = com.imcys.model.VideoDetails(),
-
-    val hasLike: Boolean = false,
-    val hasCoins: Boolean = false,
-    val hasCollection: Boolean = false,
-    val share: Int = 0,
-
-    val descriptionAndQuality: List<Pair<String, Int>> = emptyList(),
-    val pageData: List<PageData> = emptyList(),
-
-    val currentQn: Int = 0,
 
     val video: com.imcys.model.Dash.Video = com.imcys.model.Dash.Video(),
     val audio: com.imcys.model.Dash.Audio = com.imcys.model.Dash.Audio(),
