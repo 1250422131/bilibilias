@@ -6,11 +6,34 @@ on:
       - opened
   push:
     branches: [ "develop_imcys", "develop"]
-  workflow_dispatch:
 
 jobs:
   build:
-    name: Build
+    name: Generate App Bundle
     runs-on: ubuntu-latest
     steps:
-        - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+    - uses: actions/checkout@v3
+    - name: set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+    - name: run: chmod +x gradlew
+    - name: Bundle 'release' with Gradle
+      run: ./gradlew bundleRelease
+    - name: Sign AAB
+      id: sign_aab
+      uses: r0adkll/sign-android-release@v1
+      with:
+        releaseDirectory: app/build/outputs/bundle/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEYSTORE }}
+        alias: ${{ secrets.SIGNING_ALIAS }}
+        keyStorePassword: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+        keyPassword: ${{ secrets.SIGNING_ALIAS_PASSWORD }}  
+    - run: echo "Build status report=${{ job.status }}."
+    - name: Upload App Bundle
+      uses: actions/upload-artifact@v1
+      with:
+        name: aab
+        path: ${{steps.sign_aab.outputs.signedReleaseFile}}
