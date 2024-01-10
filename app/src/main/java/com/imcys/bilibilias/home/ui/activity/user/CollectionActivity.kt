@@ -133,6 +133,8 @@ class CollectionActivity : BaseActivity() {
             val userCollection = networkService.getUserCollection(listBean.id, ++pn)
             collectionDataMutableList.addAll(userCollection.data.medias)
             collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
+
+            binding.collectionRecyclerView.scrollToPosition(1)
         }
     }
 
