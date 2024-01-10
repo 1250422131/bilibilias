@@ -41,5 +41,3 @@ jobs:
       # Run Build Project
       - name: Build gradle project
         run: ./gradlew build
-        name: aab
-        path: ${{steps.sign_aab.outputs.signedReleaseFile}}
