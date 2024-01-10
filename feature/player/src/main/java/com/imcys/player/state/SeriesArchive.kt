@@ -21,7 +21,3 @@ internal fun SeasonsSeriesList.ItemsLists.SeasonsSeries.mapToSeriesArchive(): Im
         )
     }.toImmutableList()
 }
-
-//internal fun VideoDetails.mapToSeriesArchive(): ImmutableList<SeriesArchive> {
-//    return persistentListOf(SeriesArchive(aid, bvid, cid, title))
-//}

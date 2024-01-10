@@ -8,13 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
-import androidx.media3.exoplayer.mediacodec.MediaCodecInfo
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bilias.core.domain.GetToolbarReportUseCase
-import com.bilias.core.domain.GetVideoInChannel
 import com.bilias.core.domain.GetVideoInSeries
-import com.imcys.common.utils.MediaUtils.getMimeType
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
@@ -27,20 +24,22 @@ import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
 import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
+import com.imcys.player.state.SeriesArchive
+import com.imcys.player.state.mapToSeriesArchive
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,7 +47,6 @@ class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     savedStateHandle: SavedStateHandle,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInChannel: GetVideoInChannel,
     getVideoInSeries: GetVideoInSeries,
 ) : ViewModel() {
 
@@ -62,7 +60,6 @@ class PlayerViewModel @Inject constructor(
                 it,
                 videoRepository,
                 getToolbarReportUseCase,
-                getVideoInChannel,
                 getVideoInSeries
             )
         }
@@ -111,71 +108,16 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch {
         }
     }
-
-    // 选择视频清晰度
-    // todo 还需要查看手机支持的编码器，以选择合适的 url？
-    @OptIn(UnstableApi::class)
-    fun selectedQuality(quality: Int) {
-        val videoList = qualityGroup[quality]?.sortedBy { it.codecid }
-        if (videoList == null) {
-            Timber.d("清晰度为空$qualityGroup")
-            _playerState.update { state ->
-                val v = qualityGroup.maxBy { it.key }.value.minBy { it.codecid }
-                state.copy(video = v, currentQn = v.id)
-            }
-        } else {
-            for (v in videoList) {
-                if (selectDecoder(v.codecs) != null) {
-                    _playerState.update { state -> state.copy(video = v, currentQn = quality) }
-                    break
-                }
-            }
-        }
-    }
-
-    // 选择解码器
-    @OptIn(UnstableApi::class)
-    fun selectDecoder(codec: String): MediaCodecInfo? {
-        val mimeType = getMimeType(codec)
-        if (mimeType != null) {
-            val decoderInfo = getDecoderInfo(mimeType)
-            if (decoderInfo != null) {
-                Timber.d("解码器信息=$decoderInfo,硬解=${!decoderInfo.name.startsWith("OMX.google")}")
-                return decoderInfo
-            }
-        }
-        return null
-    }
-
-    // 选择视频子集
-    fun selectedPage(cid: String, aid: Long) {
-        val bvid = _playerState.value.bvid
-        viewModelScope.launch {
-            val res = videoRepository.getPlayerPlayUrl(bvid, cid.toLong())
-            setQualityGroup(res.dash.video)
-            val qn = _playerState.value.currentQn
-            selectedQuality(qn)
-            _playerState.update { state ->
-                state.copy(cid = cid, audio = res.dash.audio.maxBy { it.id })
-            }
-        }
-    }
-
-    private fun setQualityGroup(videos: List<com.imcys.model.Dash.Video>) {
-        qualityGroup.clear()
-        qualityGroup.putAll(videos.画质分组())
-    }
 }
 
 private fun videoInfoUiState(
     bvId: String,
     videoRepository: IVideoDataSources,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInChannel: GetVideoInChannel,
     getVideoInSeries: GetVideoInSeries,
 ): Flow<PlayInfoUiState> {
     val details = flow { emit(videoRepository.getDetail(bvId)) }
-    val series = details.flatMapLatest { getVideoInSeries(it.owner.mid, it.aid) }
+    val series = details.flatMapConcat { getVideoInSeries(it.owner.mid, it.aid) }
 
     val reportUseCase = getToolbarReportUseCase(bvId)
     return combine(
@@ -189,7 +131,6 @@ private fun videoInfoUiState(
                 is Result.Error -> PlayInfoUiState.LoadFailed
                 Result.Loading -> PlayInfoUiState.Loading
                 is Result.Success -> {
-                    // https://api.bilibili.com/x/polymer/space/seasons_series_list?page_num=1&page_size=20
                     val (detail, report, series) = result.data
                     PlayInfoUiState.Success(
                         aid = detail.aid,
@@ -201,8 +142,14 @@ private fun videoInfoUiState(
                         pageData = detail.pageData.toImmutableList(),
                         owner = detail.owner,
                         toolBarReport = mapToToolBarReport(detail.stat, report),
-                        // todo 需要修改
-                        archives = series
+                        archives = series?.mapToSeriesArchive() ?: persistentListOf(
+                            SeriesArchive(
+                                detail.aid,
+                                detail.bvid,
+                                detail.cid,
+                                detail.title,
+                            )
+                        )
                     )
                 }
             }
