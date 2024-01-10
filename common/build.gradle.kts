@@ -93,14 +93,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    // 百度统计
-    api(libs.mtj.sdk.circle)
-
-    // 微软
-    api(libs.appcenter.distribute)
-    api(libs.appcenter.analytics)
-    api(libs.appcenter.crashes)
-
     /**
      * DanmakuFlameMaster
      * 烈焰弹幕使
@@ -115,8 +107,7 @@ dependencies {
 
     api(libs.constraintlayout)
 
-    api(libs.androidx.preference.ktx)
-    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.hilt.work)
 
     implementation(libs.androidx.activity.compose)

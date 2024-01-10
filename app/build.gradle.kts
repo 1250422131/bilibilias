@@ -79,7 +79,7 @@ dependencies {
 
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.material)
