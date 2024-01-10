@@ -1,6 +1,9 @@
 name: Push
 
 on:
+  pull_request:
+    types:
+      - opened
   push:
     branches: [ "develop_imcys", "develop"]
   workflow_dispatch:
