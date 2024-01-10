@@ -11,8 +11,7 @@ data class SeasonsSeriesList(
     val itemsLists: ItemsLists = ItemsLists()
 ) {
     @Serializable
-    data class ItemsLists
-    constructor(
+    data class ItemsLists(
         @SerialName("page")
         val page: Page = Page(),
         @SerialName("series_list")
