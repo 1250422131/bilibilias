@@ -22,21 +22,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imcys.model.video.PageData
 import com.imcys.player.state.PlayInfoUiState
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun SheetPage(
     qualityDescriptionList: ImmutableList<Pair<String, Int>>,
-    addToDownloadQueue: (List<PageData>, Int) -> Unit,
-    pageData: List<PageData>,
+    addToDownloadQueue: (List<String>, Int) -> Unit,
     archives: PlayInfoUiState,
 ) {
     Column {
         // 清晰度选择
         var quality by remember { mutableStateOf(qualityDescriptionList.first()) }
-        LazyRow(Modifier.fillMaxWidth()) {
+        LazyRow {
             items(qualityDescriptionList) { pair ->
                 TextButton(
                     onClick = { quality = pair },
@@ -83,7 +81,7 @@ internal fun SheetPage(
             }
         }
         Button(
-            onClick = { addToDownloadQueue(pageData, quality.second) },
+            onClick = { addToDownloadQueue(emptyList(), quality.second) },
             Modifier
                 .fillMaxWidth()
         ) {

@@ -42,4 +42,11 @@ dependencies {
     implementation(libs.coil.kt.gif)
 
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.ktor.client.mock)
+
+    testImplementation("com.google.dagger:hilt-android-testing:2.50")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.50")
+
+    kspTest("com.google.dagger:hilt-android-compiler:2.50")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.50")
 }

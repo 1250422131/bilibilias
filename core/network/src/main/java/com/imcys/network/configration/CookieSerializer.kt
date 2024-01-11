@@ -103,7 +103,12 @@ internal object CookieSerializer : KSerializer<Cookie> {
             encodeStringElement(descriptor, COOKIE_NAME, value.name)
             encodeStringElement(descriptor, COOKIE_VALUE, value.value)
 
-            encodeIntElement(descriptor, COOKIE_MAXAGE, value.maxAge)
+            encodeNullableSerializableElement(
+                descriptor,
+                COOKIE_MAXAGE,
+                Int.serializer(),
+                value.maxAge
+            )
             encodeLongElement(descriptor, COOKIE_EXPIRES, value.expires?.timestamp ?: 0)
 
             encodeNullableSerializableElement(

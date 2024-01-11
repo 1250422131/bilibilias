@@ -10,7 +10,6 @@ import com.imcys.model.VideoDetails
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.VideoFavoured
-import com.imcys.model.video.ViewDetailAndPlayUrl
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.safeGetText
 import com.imcys.network.utils.headerRefBilibili
@@ -80,21 +79,6 @@ class VideoRepository @Inject constructor(
             .request
             .url
             .toString()
-
-    @Deprecated("domain 有相同 api")
-    override suspend fun getViewDetailAndPlayUrl(bvid: String): ViewDetailAndPlayUrl {
-        val detail = getDetail(bvid)
-        val playerPlayUrl = getPlayerPlayUrl(bvid, detail.cid)
-        return ViewDetailAndPlayUrl(
-            detail.aid,
-            detail.bvid,
-            detail.cid,
-            detail.title,
-            playerPlayUrl.dash,
-            detail,
-            playerPlayUrl
-        )
-    }
 
     override suspend fun getDetail(bvid: String): VideoDetails =
         client.get(BilibiliApi2.VIEW_DETAIL) {

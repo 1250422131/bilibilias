@@ -13,6 +13,7 @@ dependencies {
     api(kotlin("test"))
     api(libs.androidx.compose.ui.test)
     api(projects.core.model)
+    implementation(projects.core.network)
 
     debugApi(libs.androidx.compose.ui.testManifest)
 

@@ -46,17 +46,15 @@ mockitoKotlin = "5.2.1"
 mockk = "1.13.9"
 okhttp = "4.12.0"
 okio = "3.7.0"
-ktor = "2.3.7"
+ktor = "3.0.0-beta-1"
 androidxLifecycle = "2.7.0-rc02"
 lottie = "6.3.0"
 material = "1.11.0"
 mmkv = "1.3.2"
 monitor = "1.4.5"
-mtjSdkCircle = "4.0.7.5"
 navigationCompose = "2.7.6"
 androidxPaging = "3.2.1"
 androidxPagingCompose = "3.3.0-alpha02"
-preference = "1.2.1"
 qrose = "1.0.0-beta3"
 room = "2.6.1"
 androidxStartupRuntime = "1.1.1"
@@ -198,6 +196,7 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
 ktor-serialization-kotlinx-protobuf = { group = "io.ktor", name = "ktor-serialization-kotlinx-protobuf", version.ref = "ktor" }

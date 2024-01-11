@@ -15,7 +15,6 @@ import com.bilias.core.domain.GetVideoInSeries
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
-import com.imcys.model.video.PageData
 import com.imcys.model.video.Stat
 import com.imcys.model.video.ToolBarReport
 import com.imcys.network.repository.video.IVideoDataSources
@@ -97,7 +96,7 @@ class PlayerViewModel @Inject constructor(
     /**
      * 下载视频
      */
-    fun addToDownloadQueue(pageData: List<PageData>, quality: Int) {
+    fun addToDownloadQueue(bvList: List<String>, quality: Int) {
         // todo 或许可以只写 弹幕文件 和 entry.json
         // 弹幕文件或许从pb接口尝试
         viewModelScope.launch {

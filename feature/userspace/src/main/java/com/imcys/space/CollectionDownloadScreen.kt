@@ -1,22 +1,13 @@
 ﻿package com.imcys.space
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -39,69 +30,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 internal fun CollectionDownloadRoute() {
     val viewModel: CollectionDownloadViewModel = hiltViewModel()
-    val state by viewModel.collectionState.collectAsStateWithLifecycle()
-    CollectionDownloadScreen(state, viewModel::changeQuality)
-}
-
-/** todo 顶部写一个全局 编码格式 选择器 */
-fun codecs(codec: String): String {
-    return if (codec.startsWith("av01"))
-        "AV1"
-    else if (codec.startsWith("avc1"))
-        "AVC"
-    else if (codec.startsWith("hev1"))
-        "HEVC"
-    else "UNKNOWN"
-}
-
-@Composable
-fun CollectionDownloadScreen(state: ItemState, changeQuality: (String, Int) -> Unit) {
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        LazyColumn(
-            modifier = Modifier.weight(1f, false),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(state.items) { view ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Column(Modifier.padding(4.dp)) {
-                        Text(text = view.videoDetails.title)
-                        Row {
-                            var selectedOptionText by remember {
-                                mutableStateOf(view.playerPlayUrl.supportFormats.first().newDescription)
-                            }
-                            SimpleDropdownMenu(
-                                items = view.playerPlayUrl.supportFormats,
-                                value = selectedOptionText,
-                                onValueChange = {
-                                    selectedOptionText = it
-                                },
-                                onClick = {
-                                    selectedOptionText = it.newDescription
-                                    changeQuality(view.videoDetails.bvid, it.quality)
-                                },
-                            ) {
-                                Text(text = it.newDescription)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Button(
-            onClick = { /*开工了*/ },
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 1.dp)
-        ) {
-            Text(text = "？？？")
-        }
-    }
 }
 
 @Composable
