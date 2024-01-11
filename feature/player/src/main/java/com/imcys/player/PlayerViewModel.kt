@@ -1,7 +1,6 @@
 package com.imcys.player
 
 import androidx.annotation.OptIn
-import androidx.compose.runtime.Stable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,9 +28,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
@@ -89,9 +86,6 @@ class PlayerViewModel @Inject constructor(
             pageData = emptyList()
         )
     }
-
-    private val _playerState = MutableStateFlow(PlayerState())
-    val playerState = _playerState.asStateFlow()
 
     /**
      * 下载视频
@@ -159,16 +153,6 @@ private fun mapToToolBarReport(stat: Stat, report: ToolBarReport) = report.copy(
     reply = stat.reply,
     share = stat.share,
     view = stat.view,
-)
-
-@Stable
-data class PlayerState(
-    val title: String = "",
-    val desc: String = "",
-    val pic: String = "",
-
-    val video: com.imcys.model.Dash.Video = com.imcys.model.Dash.Video(),
-    val audio: com.imcys.model.Dash.Audio = com.imcys.model.Dash.Audio(),
 )
 
 fun List<com.imcys.model.Dash.Video>.画质分组(): Map<Int, List<com.imcys.model.Dash.Video>> =

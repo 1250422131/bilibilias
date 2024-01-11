@@ -45,10 +45,6 @@ gradlePlugin {
             id = "bilibiliAs.android.feature"
             implementationClass = "plugin.AndroidFeatureConventionPlugin"
         }
-        register("androidTest") {
-            id = "bilibiliAs.android.test"
-            implementationClass = "plugin.AndroidTestConventionPlugin"
-        }
         register("androidHilt") {
             id = "bilibiliAs.android.hilt"
             implementationClass = "plugin.AndroidHiltConventionPlugin"

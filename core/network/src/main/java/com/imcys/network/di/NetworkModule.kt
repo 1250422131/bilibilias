@@ -180,6 +180,7 @@ class NetworkModule {
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
+    @Suppress("LongParameterList")
     fun provideHttpClient(
         httpClientEngine: HttpClientEngine,
         json: Json,
