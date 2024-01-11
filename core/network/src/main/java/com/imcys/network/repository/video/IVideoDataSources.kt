@@ -5,11 +5,8 @@ import com.imcys.model.VideoDetails
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.VideoFavoured
-import com.imcys.model.video.ViewDetailAndPlayUrl
 
 interface IVideoDataSources {
-    @Deprecated("")
-    suspend fun getViewDetailAndPlayUrl(bvid: String): ViewDetailAndPlayUrl
     suspend fun getDetail(bvid: String): VideoDetails
     suspend fun getDetail(aid: Long): VideoDetails
     suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo

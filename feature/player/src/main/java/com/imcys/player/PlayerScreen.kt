@@ -57,7 +57,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.imcys.model.video.PageData
 import com.imcys.player.sheet.SheetDirectLink
 import com.imcys.player.sheet.SheetPage
 import com.imcys.player.state.PlayInfoUiState
@@ -73,12 +72,10 @@ internal fun PlayerRoute(
     navigateToUserSpace: (Long) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
-    val state by viewModel.playerState.collectAsStateWithLifecycle()
     val playerUiState by viewModel.playerUiState.collectAsStateWithLifecycle()
     val videoInfoUiState by viewModel.videoInfoUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
-        state = state,
         navigateToDownloadAanmaku = navigateToDownloadAanmaku,
         navigateToUserSpace = navigateToUserSpace,
         addToDownloadQueue = viewModel::addToDownloadQueue,
@@ -90,10 +87,9 @@ internal fun PlayerRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlayerScreen(
-    state: PlayerState,
     navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
-    addToDownloadQueue: (List<PageData>, Int) -> Unit,
+    addToDownloadQueue: (List<String>, Int) -> Unit,
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
@@ -114,12 +110,12 @@ internal fun PlayerScreen(
 
     BottomSheetScaffold(
         topBar = {
-            VideoWindows(
-                video = state.video,
-                audio = state.audio,
-                title = state.title,
-                pic = state.pic,
-            )
+//            VideoWindows(
+//                video = state.video,
+//                audio = state.audio,
+//                title = state.title,
+//                pic = state.pic,
+//            )
         },
         sheetContent = {
             if (playerUiState is PlayerUiState.Success) {
@@ -127,7 +123,6 @@ internal fun PlayerScreen(
                     Action.DOWNLOAD_VIDEO -> SheetPage(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
-                        pageData = playerUiState.pageData,
                         playerInfoUiState
                     )
 

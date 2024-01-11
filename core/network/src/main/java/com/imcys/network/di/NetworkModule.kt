@@ -73,12 +73,10 @@ import javax.inject.Singleton
 import kotlin.reflect.typeOf
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class BaseOkhttpClient
+internal annotation class BaseOkhttpClient
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ProjectOkhttpClient
+internal annotation class ProjectOkhttpClient
 
 internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 
@@ -98,7 +96,7 @@ class NetworkModule {
         }
         .diskCache {
             DiskCache.Builder()
-                .directory(File(application.cacheDir,"coil_cache"))
+                .directory(File(application.cacheDir, "coil_cache"))
                 .build()
         }
         .respectCacheHeaders(false)
@@ -174,7 +172,7 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpEngine(@ProjectOkhttpClient okHttpClient: OkHttpClient): HttpClientEngine =
+    fun provideHttpClientEngine(@ProjectOkhttpClient okHttpClient: OkHttpClient): HttpClientEngine =
         OkHttp.create {
             preconfigured = okHttpClient
         }
