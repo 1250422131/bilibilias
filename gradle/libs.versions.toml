@@ -280,5 +280,4 @@ bilibiliAs-android-library-compose = { id = "bilibiliAs.android.library.compose"
 bilibiliAs-android-library-jacoco = { id = "bilibiliAs.android.library.jacoco", version = "unspecified" }
 bilibiliAs-android-lint = { id = "bilibiliAs.android.lint", version = "unspecified" }
 bilibiliAs-android-room = { id = "bilibiliAs.android.room", version = "unspecified" }
-bilibiliAs-android-test = { id = "bilibiliAs.android.test", version = "unspecified" }
 bilibiliAs-jvm-library = { id = "bilibiliAs.jvm.library", version = "unspecified" }
