@@ -34,9 +34,10 @@ object WBIUtils {
         params: List<Parameter>,
         mixinKey: String
     ): List<Parameter> {
-//        val p = Parameter("wts", (System.currentTimeMillis() / 1000).toString())
+        val p = Parameter("wts", (System.currentTimeMillis() / 1000).toString())
         val parameters = mutableListOf(Parameter("wts", "1702204169"))
         parameters += params
+        parameters += p
         parameters.sortBy { it.first }
         val param = parameters.joinToString("&") { (k, v) ->
             k + "=" + v.encodeURLParameter()
