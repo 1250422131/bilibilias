@@ -19,7 +19,7 @@ import com.imcys.network.configration.PersistentCache
 import com.imcys.network.constant.API_BILIBILI
 import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.imcys.network.repository.Parameter
-import com.imcys.network.utils.SignatureUtils
+import com.imcys.network.utils.WBIUtils
 import com.squareup.wire.GrpcClient
 import dagger.Module
 import dagger.Provides
@@ -37,7 +37,6 @@ import io.ktor.client.plugins.addDefaultResponseValidation
 import io.ktor.client.plugins.api.ClientPlugin
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.compression.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
@@ -73,7 +72,7 @@ import javax.inject.Singleton
 import kotlin.reflect.typeOf
 
 @Qualifier
-internal annotation class BaseOkhttpClient
+annotation class BaseOkhttpClient
 
 @Qualifier
 internal annotation class ProjectOkhttpClient
@@ -82,7 +81,7 @@ internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
     @Provides
     @Singleton
     fun provideImageLoader(
@@ -115,7 +114,7 @@ class NetworkModule {
         networkListenerFactory: EventListener.Factory
     ): OkHttpClient =
         OkHttpClient.Builder()
-            .addInterceptor { chain ->
+            .addNetworkInterceptor { chain ->
                 val request = chain.request()
                 val requestWithUserAgent = request.newBuilder()
                     .removeHeader(HttpHeaders.UserAgent)
@@ -232,7 +231,7 @@ class NetworkModule {
         for ((k, v) in params.entries()) {
             signatureParams.add(Parameter(k, v.joinToString()))
         }
-        val signature = SignatureUtils.signature(
+        val signature = WBIUtils.encWbi(
             signatureParams,
             wbiKeyStorage.mixKey ?: ""
         )
@@ -242,7 +241,7 @@ class NetworkModule {
         }
 
         request.url.encodedParameters = newParameter
-        Timber.d("param=${newParameter.build()}")
+        Timber.d("param=${newParameter.build()}, mixKey=${wbiKeyStorage.mixKey}")
         execute(request)
     } else {
         execute(request)
@@ -264,9 +263,7 @@ class NetworkModule {
         }
     }
 
-    companion object {
-        private const val SUCCESS = 0
-    }
+    private const val SUCCESS = 0
 
     /**
      * 权限类 代码 含义 -1 应用程序不存在或已被封禁 -2 Access Key 错误 -3 API 校验密匙错误 -4 调用方对该

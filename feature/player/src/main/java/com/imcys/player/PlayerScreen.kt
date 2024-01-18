@@ -58,7 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.imcys.player.sheet.SheetDirectLink
-import com.imcys.player.sheet.SheetPage
+import com.imcys.player.sheet.SheetSeries
 import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
 import com.shuyu.gsyvideoplayer.GSYVideoManager
@@ -109,18 +109,10 @@ internal fun PlayerScreen(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState)
 
     BottomSheetScaffold(
-        topBar = {
-//            VideoWindows(
-//                video = state.video,
-//                audio = state.audio,
-//                title = state.title,
-//                pic = state.pic,
-//            )
-        },
         sheetContent = {
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
-                    Action.DOWNLOAD_VIDEO -> SheetPage(
+                    Action.DOWNLOAD_VIDEO -> SheetSeries(
                         qualityDescriptionList = playerUiState.qualityDescription,
                         addToDownloadQueue = addToDownloadQueue,
                         playerInfoUiState

@@ -11,7 +11,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.annotation.jvm)
+    implementation(libs.androidx.annotation)
     implementation(libs.acra.http)
     implementation(libs.acra.mail)
     implementation(libs.acra.core)

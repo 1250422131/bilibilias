@@ -29,13 +29,13 @@ dependencies {
     androidTestApi(libs.test.core.ktx)
     testApi(libs.test.core.ktx)
 
-    androidTestApi(libs.androidx.runner)
+    implementation(libs.androidx.runner)
     androidTestApi(libs.androidx.rules)
 
     androidTestApi(libs.androidx.junit.ktx)
     androidTestApi(libs.androidx.truth)
 
-    androidTestApi(libs.androidx.espresso.core)
+    implementation(libs.androidx.espresso.core)
     androidTestApi(libs.androidx.espresso.contrib)
     androidTestApi(libs.androidx.espresso.intents)
     androidTestApi(libs.androidx.espresso.accessibility)

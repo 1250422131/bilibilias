@@ -16,7 +16,7 @@
 
         <variable
             name="BangumiSeasonBean"
-            type="com.imcys.model.Bangumi" />
+            type="com.imcys.model.PgcViewSeason" />
 
         <variable
             name="VideoPlayBean"
@@ -28,7 +28,7 @@
 
         <variable
             name="BangumiPlayBean"
-            type="com.imcys.model.BangumiPlayBean" />
+            type="com.imcys.model.PgcPlayUrl" />
 
         <variable
             name="ArchiveHasLikeBean"

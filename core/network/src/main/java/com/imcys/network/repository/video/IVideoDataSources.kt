@@ -1,5 +1,7 @@
 package com.imcys.network.repository.video
 
+import com.imcys.model.PgcPlayUrl
+import com.imcys.model.PgcViewSeason
 import com.imcys.model.PlayerInfo
 import com.imcys.model.VideoDetails
 import com.imcys.model.video.ArchiveCoins
@@ -13,7 +15,9 @@ interface IVideoDataSources {
     suspend fun hasLike(bvid: String): ArchiveHasLike
     suspend fun hasCoin(bvid: String): ArchiveCoins
     suspend fun hasFavoured(bvid: String): VideoFavoured
-
+    suspend fun getPgcViewSeason(epId: String): PgcViewSeason
+    suspend fun getPgcPlayUrl(epID: Long, aId: Long, cId: Long): PgcPlayUrl
+    suspend fun shortLink(url: String): String
     companion object {
         const val REQUIRED_DASH = 16
         const val REQUIRED_HDR = 64

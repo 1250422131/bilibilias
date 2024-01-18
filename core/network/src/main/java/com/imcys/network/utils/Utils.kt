@@ -1,13 +1,15 @@
 package com.imcys.network.utils
 
 import com.imcys.network.constant.BILIBILI_WEB_URL
-import com.imcys.network.repository.Parameter
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMessageBuilder
 
 context (HttpRequestBuilder)
 internal fun parameterBV(bvid: String): Unit = url.parameters.append("bvid", bvid)
+
+internal fun HttpRequestBuilder.parameterEpId(epId: Any): Unit =
+    url.parameters.append("ep_id", epId.toString())
 
 internal fun HttpRequestBuilder.parameterPlatform(platform: String = "web"): Unit =
     url.parameters.append("platform", platform)
@@ -29,6 +31,7 @@ internal fun HttpRequestBuilder.parameterPageSize(size: Int): Unit =
 
 internal fun HttpRequestBuilder.parameterMID(mid: Long): Unit =
     url.parameters.append("mid", mid.toString())
+
 internal fun HttpRequestBuilder.parameterCID(cId: Long): Unit =
     url.parameters.append("cid", cId.toString())
 
@@ -37,10 +40,3 @@ internal fun HttpRequestBuilder.parameterCSRF(csrf: String): Unit =
 
 internal fun HttpMessageBuilder.headerRefBilibili(): Unit =
     headers.append(HttpHeaders.Referrer, BILIBILI_WEB_URL)
-
-context(HttpRequestBuilder)
-internal fun parameterList(parameters: List<Parameter>) {
-    parameters.forEach {
-        url.parameters.append(it.first, it.second)
-    }
-}
