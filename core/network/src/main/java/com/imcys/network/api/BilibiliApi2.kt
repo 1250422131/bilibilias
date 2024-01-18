@@ -35,7 +35,11 @@ object BilibiliApi2 {
     // post aid bvid like:1,2 csrf:j_xx
     const val likeVideoPath = "x/web-interface/archive/like"
 
-    const val bangumiPlayPath = "pgc/player/web/playurl"
+    // 番剧视频流
+    const val PGC_PLAY_URL = "pgc/player/web/v2/playurl"
+
+    // 获取剧集明细 season_id / ep_id
+    const val PGC_VIEW_SEASON = "pgc/view/web/season"
 
     // 对视频进行点赞
     const val videLikePath = "x/web-interface/archive/like"
@@ -58,9 +62,6 @@ object BilibiliApi2 {
 
     // 投币地址
     const val videoCoinAddPath = "x/web-interface/coin/add"
-
-    // 获取剧集明细 get season_id / ep_id
-    const val bangumiVideoDataPath = "pgc/view/web/season"
 
     // 获取用户基本信息
     const val userSpaceDetails = "x/space/wbi/acc/info"

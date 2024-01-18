@@ -44,6 +44,7 @@ media3 = "1.2.0"
 mockitoCore = "5.8.0"
 mockitoKotlin = "5.2.1"
 mockk = "1.13.9"
+napier = "2.7.1"
 okhttp = "4.12.0"
 okio = "3.7.0"
 ktor = "3.0.0-beta-1"
@@ -70,11 +71,10 @@ koin = "3.5.3"
 lint = "31.2.1"
 wire = "4.9.3"
 commonsCodec = "1.16.0"
-annotationJvm = "1.7.1"
+annotation = "1.7.1"
 zxingAndroidEmbedded = "4.3.0"
-fragment = "1.6.2"
 [libraries]
-androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 
 accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
@@ -97,7 +97,6 @@ androidx-espresso-web = { group = "androidx.test.espresso", name = "espresso-web
 androidx-espresso-idling-resource = { group = "androidx.test.espresso", name = "espresso-idling-resource", version.ref = "espresso" }
 androidx-espresso-idling-concurrent = { group = "androidx.test.espresso.idling", name = "idling-concurrent", version.ref = "espresso" }
 
-androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 android-startup = { group = "io.github.idisfkj", name = "android-startup", version.ref = "androidStartup" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
@@ -126,6 +125,7 @@ gsyVideoPlayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyV
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
 
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidx-test-core" }

@@ -19,6 +19,7 @@ dependencies {
     api(libs.kotlinx.datetime)
 
     api(libs.timber)
+    api(libs.napier)
 
     implementation(libs.kotlin.reflect)
 

@@ -9,7 +9,7 @@
 
         <variable
             name="EpisodesBean"
-            type="com.imcys.model.Bangumi" />
+            type="com.imcys.model.PgcViewSeason" />
 
     </data>
 

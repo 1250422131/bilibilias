@@ -16,6 +16,7 @@ import com.imcys.common.utils.asResult
 import com.imcys.model.PlayerInfo
 import com.imcys.model.video.Stat
 import com.imcys.model.video.ToolBarReport
+import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.video.IVideoDataSources
 import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
@@ -35,7 +36,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,6 +44,7 @@ class PlayerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getToolbarReportUseCase: GetToolbarReportUseCase,
     getVideoInSeries: GetVideoInSeries,
+    private val downloadManage: DownloadManage
 ) : ViewModel() {
 
     private val aid = savedStateHandle.getStateFlow(A_ID, "")
@@ -91,10 +92,7 @@ class PlayerViewModel @Inject constructor(
      * 下载视频
      */
     fun addToDownloadQueue(bvList: List<String>, quality: Int) {
-        // todo 或许可以只写 弹幕文件 和 entry.json
-        // 弹幕文件或许从pb接口尝试
-        viewModelScope.launch {
-        }
+        downloadManage.addTask(bvList, quality)
     }
 }
 
@@ -127,7 +125,6 @@ private fun videoInfoUiState(
                         title = detail.title,
                         pic = detail.pic,
                         desc = detail.descV2?.firstOrNull()?.rawText ?: detail.desc,
-                        pageData = detail.pageData.toImmutableList(),
                         owner = detail.owner,
                         toolBarReport = mapToToolBarReport(detail.stat, report),
                         archives = series?.mapToSeriesArchive() ?: persistentListOf(

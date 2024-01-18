@@ -5,7 +5,7 @@
 
         <variable
             name="EpisodesBean"
-            type="com.imcys.model.Bangumi" />
+            type="com.imcys.model.PgcViewSeason" />
     </data>
     <!--android:background="@{EpisodesBean.checkState == 1 ? @drawable/subsection_bg : @drawable/subsection_false_bg}"-->
     <!--android:text="@{EpisodesBean.badge+EpisodesBean.long_title}"-->

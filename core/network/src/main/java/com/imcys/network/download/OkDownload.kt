@@ -11,7 +11,10 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-val Context.downloadDir: File get() = File(this.filesDir.parent, "download")
+val Context.downloadDir: File
+    get() = File(this.filesDir.parent, "download").apply {
+        mkdirs()
+    }
 
 enum class DownloadTag(val tagName: String) {
     VIDEO(VIDEO_M4S), AUDIO(AUDIO_M4S)
@@ -96,7 +99,7 @@ class OkDownload @Inject constructor(
 
     private fun addRetryList(tag: DownloadTag, cId: Long, backupUrl: List<String>) {
         when (tag) {
-            DownloadTag.VIDEO -> retryVideo.put(cId,backupUrl.toMutableList())
+            DownloadTag.VIDEO -> retryVideo.put(cId, backupUrl.toMutableList())
             DownloadTag.AUDIO -> retryAudio.put(cId, backupUrl.toMutableList())
         }
     }
