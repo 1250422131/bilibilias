@@ -3,25 +3,16 @@ package com.imcys.player
 import android.content.Context
 import android.view.Surface
 import android.widget.ImageView
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSink
 import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.TransferListener
-import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
-import androidx.media3.exoplayer.source.SingleSampleMediaSource
-import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter
 import coil.load
-import com.imcys.common.utils.getActivity
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack
-import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -38,12 +29,6 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
     lateinit var dataSource: DataSource.Factory
 
     init {
-        val orientationUtils = OrientationUtils(context.getActivity(), this)
-        // fullscreenButton.setOnClickListener {
-        //     // ------- ！！！如果不需要旋转屏幕，可以不调用！！！-------
-        //     // 不需要屏幕旋转，还需要设置 setNeedOrientationUtils(false)
-        //     orientationUtils.resolveByClick()
-        // }
         initConfig()
     }
 
@@ -79,29 +64,12 @@ class AsGSYVideoPlayer(context: Context) : StandardGSYVideoPlayer(context), ExoM
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun setMediaSource(videoUrl: com.imcys.model.Dash.Video, audioUrl: com.imcys.model.Dash.Audio) {
-        // /data/data/com.imcys.bilibilias.debug/files/amv.ass
-        val uri = File(context.filesDir, "/amv.ass").toUri()
-
-        ConcatenatingMediaSource()
-        val subtitle =
-            MediaItem.SubtitleConfiguration.Builder(uri)
-                .setMimeType(MimeTypes.TEXT_SSA) // The correct MIME type (required).
-                .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                .setLanguage("")
-                .build()
-        val bandwidthMeter = DefaultBandwidthMeter.Builder(
-            context
-        ).setInitialBitrateEstimate(videoUrl.bandwidth.toLong()).build()
-
         // todo 设置了这个 Decoder init failed: c2.android.av1.decoder, Format(1, null, null, video/av01, null, -1, null, [3840, 2160, -1.0, null], [-1, -1])
         val videoType = MimeTypes.getMediaMimeType(videoUrl.codecs)
         val audioType = MimeTypes.getMediaMimeType(audioUrl.codecs)
 
         val videoSource = createMediaSource(dataSource, videoUrl.baseUrl)
         val audioSource = createMediaSource(dataSource, audioUrl.baseUrl)
-        videoSource.maybeThrowSourceInfoRefreshError()
-        val factory = DefaultDataSource.Factory(context)
-        val subSource = SingleSampleMediaSource.Factory(factory).createMediaSource(subtitle, C.TIME_UNSET)
 
         mergingMediaSource = MergingMediaSource(true, false, videoSource, audioSource)
         ExoSourceManager.setExoMediaSourceInterceptListener(this)
