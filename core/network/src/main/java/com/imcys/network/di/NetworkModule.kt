@@ -30,6 +30,7 @@ import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.Sender
@@ -50,6 +51,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.InternalAPI
 import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
@@ -193,6 +195,7 @@ object NetworkModule {
             defaultRequest {
                 url(API_BILIBILI)
             }
+            BrowserUserAgent()
             addDefaultResponseValidation()
             Logging {
                 logger = loggerManager
@@ -247,7 +250,7 @@ object NetworkModule {
         execute(request)
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
+    @OptIn(ExperimentalSerializationApi::class, InternalAPI::class)
     @Provides
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {

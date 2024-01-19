@@ -3,7 +3,7 @@ package com.imcys.bilibilias.tool
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imcys.common.utils.AsVideoUtils
+import com.imcys.common.utils.InputParsingUtils
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.common.utils.digitalConversion
@@ -20,8 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class ToolViewModel
-@Inject constructor(
+class ToolViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -32,19 +31,19 @@ class ToolViewModel
             if (it.length < SEARCH_QUERY_MIN_LENGTH) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                when (val type = searchType(it)) {
-                    is SearchType.AV -> handleAV(type.id).mapToUserSearchResult()
-                    is SearchType.BV -> handleBV(type.id).mapToUserSearchResult()
+                when (val type = InputParsingUtils.searchType(it)) {
+                    is InputParsingUtils.SearchType.AV -> handleAV(type.id).mapToUserSearchResult()
+                    is InputParsingUtils.SearchType.BV -> handleBV(type.id).mapToUserSearchResult()
 
-                    is SearchType.EP -> handleEP(type.id)
-                    is SearchType.ShortLink -> {
+                    is InputParsingUtils.SearchType.EP -> handleEP(type.id)
+                    is InputParsingUtils.SearchType.ShortLink -> {
                         val fullUrl = handleShortLink(type.url)
-                        val bvid = AsVideoUtils.getBvid(fullUrl)
+                        val bvid = InputParsingUtils.getBvid(fullUrl)
                         if (bvid == null) flowOf(SearchResultUiState.LoadFailed)
                         else handleBV(bvid).mapToUserSearchResult()
                     }
 
-                    SearchType.None -> flowOf(SearchResultUiState.LoadFailed)
+                    InputParsingUtils.SearchType.None -> flowOf(SearchResultUiState.LoadFailed)
                 }
             }
         }
@@ -60,27 +59,6 @@ class ToolViewModel
 
     fun clearSearches() {
         savedStateHandle[SEARCH_QUERY] = ""
-    }
-
-    @Suppress("ReturnCount")
-    private fun searchType(text: String): SearchType {
-        val bv = AsVideoUtils.getBvid(text)
-        if (bv != null) {
-            return SearchType.BV(bv)
-        }
-        val ep = AsVideoUtils.getEpid(text)
-        if (ep != null) {
-            return SearchType.EP(ep)
-        }
-        val aid = AsVideoUtils.getAid(text)
-        if (aid != null) {
-            return SearchType.AV(aid)
-        }
-        val link = AsVideoUtils.getShortLink(text)
-        if (link != null) {
-            return SearchType.ShortLink(link)
-        }
-        return SearchType.None
     }
 
     private suspend fun handleEP(id: String) =
@@ -133,5 +111,8 @@ class ToolViewModel
 
 private const val SEARCH_QUERY = "searchQuery"
 
-/** Minimum length where search query is considered as [SearchResultUiState.EmptyQuery] */
+/**
+ * Minimum length where search query is considered as
+ * [SearchResultUiState.EmptyQuery]
+ */
 private const val SEARCH_QUERY_MIN_LENGTH = 2

@@ -22,9 +22,12 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.request
+import io.ktor.utils.io.jvm.javaio.toInputStream
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -69,11 +72,12 @@ class VideoRepository @Inject constructor(
     /**
      * 点赞
      */
+    @OptIn(ExperimentalSerializationApi::class)
     override suspend fun hasLike(bvid: String): ArchiveHasLike {
-        val archiveText = client.get(BilibiliApi2.ARCHIVE_HAS_LIKE) {
+        val text = client.get(BilibiliApi2.ARCHIVE_HAS_LIKE) {
             parameterBV(bvid)
-        }.bodyAsText()
-        return json.decodeFromString<ArchiveHasLike>(archiveText)
+        }.bodyAsChannel()
+        return json.decodeFromStream(text.toInputStream())
     }
 
     override suspend fun hasCoin(bvid: String): ArchiveCoins =

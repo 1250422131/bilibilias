@@ -1,4 +1,4 @@
-﻿@Suppress("DSL_SCOPE_VIOLATION")
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibiliAs.android.library)
     alias(libs.plugins.bilibiliAs.android.hilt)
@@ -26,28 +26,26 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
 
-    androidTestApi(libs.test.core.ktx)
-    testApi(libs.test.core.ktx)
+    implementation(libs.test.core.ktx)
 
     implementation(libs.androidx.runner)
-    androidTestApi(libs.androidx.rules)
+    implementation(libs.androidx.rules)
 
-    androidTestApi(libs.androidx.junit.ktx)
-    androidTestApi(libs.androidx.truth)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.truth)
 
     implementation(libs.androidx.espresso.core)
-    androidTestApi(libs.androidx.espresso.contrib)
-    androidTestApi(libs.androidx.espresso.intents)
-    androidTestApi(libs.androidx.espresso.accessibility)
-    androidTestApi(libs.androidx.espresso.web)
-    androidTestApi(libs.androidx.espresso.idling.concurrent)
-    androidTestApi(libs.androidx.espresso.idling.resource)
+    implementation(libs.androidx.espresso.contrib)
+    implementation(libs.androidx.espresso.intents)
+    implementation(libs.androidx.espresso.accessibility)
+    implementation(libs.androidx.espresso.web)
+    implementation(libs.androidx.espresso.idling.concurrent)
+    implementation(libs.androidx.espresso.idling.resource)
 
-    androidTestApi(libs.androidx.uiautomator)
-    androidTestApi(libs.androidx.compose.ui.test)
+    implementation(libs.androidx.uiautomator)
+    implementation(libs.androidx.compose.ui.test)
 
-    testApi(libs.junit)
-    testApi(libs.mockito.core)
-    testApi(libs.mockito.kotlin)
-    testApi(libs.mockk)
+//    api(libs.junit)
+    api(libs.mockk.android)
+    api(libs.mockk.agent)
 }

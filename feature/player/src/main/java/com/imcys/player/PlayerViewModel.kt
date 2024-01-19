@@ -18,7 +18,6 @@ import com.imcys.model.video.Stat
 import com.imcys.model.video.ToolBarReport
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.video.IVideoDataSources
-import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
 import com.imcys.player.state.PlayInfoUiState
@@ -47,7 +46,6 @@ class PlayerViewModel @Inject constructor(
     private val downloadManage: DownloadManage
 ) : ViewModel() {
 
-    private val aid = savedStateHandle.getStateFlow(A_ID, "")
     private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
     private val cid = savedStateHandle.getStateFlow(C_ID, "")
 

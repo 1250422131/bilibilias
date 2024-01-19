@@ -35,9 +35,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configurePrintApksTask(this)
                 disableUnnecessaryAndroidTests(target)
             }
-            dependencies {
-                add("testImplementation", kotlin("test"))
-            }
         }
     }
 }
