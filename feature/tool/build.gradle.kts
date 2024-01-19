@@ -5,7 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "com.imcys.tool"
+    namespace = "com.imcys.biliAs.feature.tool"
+    packaging {
+        resources {
+            excludes += "META-INF/*"
+        }
+    }
 }
 
 dependencies {
@@ -19,4 +24,6 @@ dependencies {
     implementation(libs.jxl)
 
     implementation(libs.androidFilePicker)
+    testImplementation(projects.core.testing)
+    androidTestImplementation(projects.core.testing)
 }
