@@ -1,5 +1,5 @@
 [versions]
-android = "8.2.1"
+android = "8.2.2"
 androidFilePicker = "1.0.0"
 androidx-junit = "1.1.5"
 appcenter = "5.0.4"
