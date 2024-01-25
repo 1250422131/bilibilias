@@ -44,7 +44,7 @@ import coil.compose.AsyncImage
 
 @Composable
 internal fun ToolRoute(
-    onNavigateToPlayer: (String, String, String) -> Unit,
+    onNavigateToPlayer: (String, String, String, String) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToBangumiFollow: () -> Unit,
     navigationToMerge: () -> Unit,
@@ -67,7 +67,7 @@ internal fun ToolRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ToolScreen(
-    navigateToPlayer: (String, String, String) -> Unit,
+    navigateToPlayer: (String, String, String, String) -> Unit,
     navigateToSetting: () -> Unit,
     navigateToBangumiFollow: () -> Unit,
     searchQueryChanged: (String) -> Unit,
@@ -128,6 +128,7 @@ internal fun ToolScreen(
                                 searchResultUiState.aid.toString(),
                                 searchResultUiState.bvid,
                                 searchResultUiState.cid.toString(),
+                                searchResultUiState.epId
                             )
                         },
                         modifier = Modifier.animateContentSize()

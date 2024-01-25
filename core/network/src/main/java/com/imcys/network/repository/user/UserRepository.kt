@@ -1,6 +1,6 @@
 package com.imcys.network.repository.user
 
-import com.imcys.model.space.SeasonsArchivesList
+import com.imcys.model.space.SeasonsArchives
 import com.imcys.model.space.SeasonsSeriesList
 import com.imcys.model.space.SpaceArcSearch
 import com.imcys.model.space.SpaceChannelList
@@ -17,6 +17,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.plus
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,14 +67,19 @@ class UserRepository @Inject constructor(
     override suspend fun seasonsArchivesList(
         mId: Long,
         seasonId: Long,
-        pageNumber: Int,
-        sort: Boolean,
-        pageSize: Int
-    ): SeasonsArchivesList = client.get(BilibiliApi2.SPACE_SEASONS_ARCHIVES_LIST) {
-        parameterMID(mId)
-        parameter("sort_reverse", sort)
-        parameter("season_id", seasonId)
-        parameterPageNum(pageNumber)
-        parameterPageSize(pageSize)
-    }.body()
+        total: Int
+    ): ImmutableList<SeasonsArchives> {
+        val size = 30
+        var result = persistentListOf<SeasonsArchives>()
+        for (i in 1..total / size + 1) {
+            result += client.get(BilibiliApi2.SPACE_SEASONS_ARCHIVES_LIST) {
+                parameterMID(mId)
+                parameter("sort_reverse", false)
+                parameter("season_id", seasonId)
+                parameterPageNum(i)
+                parameterPageSize(size)
+            }.body<SeasonsArchives>()
+        }
+        return result
+    }
 }

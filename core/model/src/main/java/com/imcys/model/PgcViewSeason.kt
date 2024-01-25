@@ -25,8 +25,6 @@ data class PgcViewSeason(
     val cover: String = "",
     @SerialName("delivery_fragment_video")
     val deliveryFragmentVideo: Boolean = false,
-    @SerialName("enable_vt")
-    val enableVt: Boolean = false,
     @SerialName("episodes")
     val episodes: List<Episode> = listOf(),
     @SerialName("evaluate")
@@ -39,10 +37,6 @@ data class PgcViewSeason(
     val mediaId: Long = 0,
     @SerialName("new_ep")
     val newEp: NewEp = NewEp(),
-    @SerialName("payment")
-    val payment: Payment = Payment(),
-    @SerialName("play_strategy")
-    val playStrategy: PlayStrategy = PlayStrategy(),
     @SerialName("publish")
     val publish: Publish = Publish(),
     @SerialName("rating")
@@ -75,8 +69,6 @@ data class PgcViewSeason(
     val staff: String = "",
     @SerialName("stat")
     val stat: Stat = Stat(),
-    @SerialName("styles")
-    val styles: List<String> = listOf(),
     @SerialName("subtitle")
     val subtitle: String = "",
     @SerialName("title")
@@ -103,12 +95,6 @@ data class PgcViewSeason(
     data class Episode(
         @SerialName("aid")
         val aid: Long = 0,
-        @SerialName("badge")
-        val badge: String = "",
-        @SerialName("badge_info")
-        val badgeInfo: BadgeInfo = BadgeInfo(),
-        @SerialName("badge_type")
-        val badgeType: Int = 0,
         @SerialName("bvid")
         val bvid: String = "",
         @SerialName("cid")
@@ -119,16 +105,12 @@ data class PgcViewSeason(
         val dimension: Dimension = Dimension(),
         @SerialName("duration")
         val duration: Int = 0,
-        @SerialName("enable_vt")
-        val enableVt: Boolean = false,
         @SerialName("ep_id")
         val epId: Long = 0,
         @SerialName("from")
         val from: String = "",
         @SerialName("id")
         val id: Long = 0,
-        @SerialName("is_view_hide")
-        val isViewHide: Boolean = false,
         @SerialName("link")
         val link: String = "",
         @SerialName("long_title")
@@ -153,16 +135,6 @@ data class PgcViewSeason(
         val subtitle: String = "",
         @SerialName("title")
         val title: String = "",
-    )
-
-    @Serializable
-    data class BadgeInfo(
-        @SerialName("bg_color")
-        val bgColor: String = "",
-        @SerialName("bg_color_night")
-        val bgColorNight: String = "",
-        @SerialName("text")
-        val text: String = ""
     )
 
     @Serializable
@@ -249,16 +221,8 @@ data class PgcViewSeason(
 
     @Serializable
     data class Season(
-        @SerialName("badge")
-        val badge: String = "",
-        @SerialName("badge_info")
-        val badgeInfo: BadgeInfo = BadgeInfo(),
-        @SerialName("badge_type")
-        val badgeType: Int = 0,
         @SerialName("cover")
         val cover: String = "",
-        @SerialName("enable_vt")
-        val enableVt: Boolean = false,
         @SerialName("horizontal_cover_1610")
         val horizontalCover1610: String = "",
         @SerialName("horizontal_cover_169")
@@ -275,17 +239,7 @@ data class PgcViewSeason(
         val seasonType: Int = 0,
         @SerialName("stat")
         val stat: Stat = Stat()
-    ) {
-        @Serializable
-        data class NewEp(
-            @SerialName("cover")
-            val cover: String = "",
-            @SerialName("id")
-            val id: Int = 0,
-            @SerialName("index_show")
-            val indexShow: String = ""
-        )
-    }
+    )
 
     @Serializable
     data class Section(
@@ -326,19 +280,15 @@ data class PgcViewSeason(
         @SerialName("is_follow")
         val isFollow: Int = 0,
         @SerialName("mid")
-        val mid: Int = 0,
+        val mid: Long = 0,
         @SerialName("nickname_color")
         val nicknameColor: String = "",
-        @SerialName("pendant")
-        val pendant: Pendant = Pendant(),
         @SerialName("theme_type")
         val themeType: Int = 0,
         @SerialName("uname")
         val uname: String = "",
         @SerialName("verify_type")
         val verifyType: Int = 0,
-        @SerialName("vip_label")
-        val vipLabel: VipLabel = VipLabel(),
         @SerialName("vip_status")
         val vipStatus: Int = 0,
         @SerialName("vip_type")
@@ -352,20 +302,6 @@ data class PgcViewSeason(
             val name: String = "",
             @SerialName("pid")
             val pid: Int = 0
-        )
-
-        @Serializable
-        data class VipLabel(
-            @SerialName("bg_color")
-            val bgColor: String = "",
-            @SerialName("bg_style")
-            val bgStyle: Int = 0,
-            @SerialName("border_color")
-            val borderColor: String = "",
-            @SerialName("text")
-            val text: String = "",
-            @SerialName("text_color")
-            val textColor: String = ""
         )
     }
 

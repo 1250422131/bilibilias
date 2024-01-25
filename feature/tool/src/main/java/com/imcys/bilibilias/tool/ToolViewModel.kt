@@ -7,7 +7,7 @@ import com.imcys.common.utils.InputParsingUtils
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
 import com.imcys.common.utils.digitalConversion
-import com.imcys.model.VideoDetails
+import com.imcys.model.ViewDetail
 import com.imcys.network.repository.video.IVideoDataSources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -62,34 +62,39 @@ class ToolViewModel @Inject constructor(
     }
 
     private suspend fun handleEP(id: String) =
-        flowOf(videoRepository.getPgcViewSeason(id))
+        flowOf(videoRepository.获取剧集基本信息(id))
             .asResult()
             .map { result ->
                 when (result) {
                     is Result.Error -> SearchResultUiState.LoadFailed
                     Result.Loading -> SearchResultUiState.Loading
-                    is Result.Success -> SearchResultUiState.Success(
-                        pic = result.data.cover,
-                        title = result.data.title,
-                        desc = result.data.evaluate,
-                        view = result.data.stat.view.digitalConversion(),
-                        danmaku = result.data.stat.danmaku.digitalConversion(),
-                        aid = result.data.episodes.first().aid,
-                        bvid = result.data.episodes.first().bvid,
-                        cid = result.data.episodes.first().cid,
-                    )
+                    is Result.Success -> {
+                        val data = result.data
+                        val episode = data.episodes.find { it.id == id.toLong() }!!
+                        SearchResultUiState.Success(
+                            pic = data.cover,
+                            title = data.title,
+                            desc = data.evaluate,
+                            view = data.stat.view.digitalConversion(),
+                            danmaku = data.stat.danmaku.digitalConversion(),
+                            aid = episode.aid,
+                            bvid = episode.bvid,
+                            cid = episode.cid,
+                            epId = "EP$id"
+                        )
+                    }
                 }
             }
 
     private suspend fun handleShortLink(url: String) = videoRepository.shortLink(url)
 
-    private suspend fun handleAV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.getDetail(id.toLong()))
+    private suspend fun handleAV(id: String): Flow<ViewDetail> =
+        flowOf(videoRepository.getView(id.toLong()))
 
-    private suspend fun handleBV(id: String): Flow<VideoDetails> =
-        flowOf(videoRepository.getDetail(id))
+    private suspend fun handleBV(id: String): Flow<ViewDetail> =
+        flowOf(videoRepository.getView(id))
 
-    fun Flow<VideoDetails>.mapToUserSearchResult(): Flow<SearchResultUiState> =
+    fun Flow<ViewDetail>.mapToUserSearchResult(): Flow<SearchResultUiState> =
         this.asResult()
             .map { result ->
                 when (result) {
@@ -104,6 +109,7 @@ class ToolViewModel @Inject constructor(
                         aid = result.data.aid,
                         bvid = result.data.bvid,
                         cid = result.data.cid,
+                        epId = ""
                     )
                 }
             }

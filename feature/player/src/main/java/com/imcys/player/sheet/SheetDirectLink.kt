@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.common.utils.MediaUtils
-import com.imcys.model.Dash
 import com.imcys.player.QUALITY_1080P
 import com.imcys.player.QUALITY_1080P_60
 import com.imcys.player.QUALITY_1080P_PLUS
@@ -39,27 +38,33 @@ import com.imcys.player.QUALITY_720P_60
 import com.imcys.player.QUALITY_8K
 import com.imcys.player.QUALITY_DOLBY
 import com.imcys.player.QUALITY_HDR
+import com.imcys.player.state.PlayLinkInfo
+import com.imcys.player.state.Quality
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 
 @Composable
 internal fun SheetDirectLink(
-    video: ImmutableList<Dash.Video>,
-    audio: ImmutableList<Dash.Audio>,
-    dolby: Dash.Dolby?,
+    video: ImmutableMap<Quality, ImmutableList<PlayLinkInfo>>,
+    audio: ImmutableMap<Quality, ImmutableList<PlayLinkInfo>>,
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(video, key = { it.baseUrl }) { item ->
-            Card {
-                Column(Modifier.padding(8.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        TextHasBackground(qualityMapToText(item.id))
-                        TextHasBackground(MediaUtils.getMimeType(item.codecs)?.replace("video/", "") ?: "")
-                        TextHasBackground("${item.width}×${item.height}")
+        video.entries.forEach { (k, v) ->
+            items(v, key = {}) { item ->
+                Card {
+                    Column(Modifier.padding(8.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            TextBackground(qualityMapToText(item.id))
+                            TextBackground(
+                                MediaUtils.getMimeType(item.codecs)?.replace("video/", "") ?: ""
+                            )
+                            TextBackground("${item.width}×${item.height}")
+                        }
+                        DirectLinkText(
+                            item.baseUrl,
+                            Modifier.padding(vertical = 4.dp)
+                        )
                     }
-                    DirectLinkText(
-                        item.baseUrl,
-                        Modifier.padding(vertical = 4.dp)
-                    )
                 }
             }
         }
@@ -67,7 +72,7 @@ internal fun SheetDirectLink(
 }
 
 @Composable
-fun TextHasBackground(text: String, modifier: Modifier = Modifier) {
+fun TextBackground(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         modifier = modifier
@@ -95,7 +100,8 @@ private fun DirectLinkText(text: String, modifier: Modifier) {
 }
 
 fun textCopyThenPost(textCopied: String, context: Context) {
-    val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    val clipboardManager =
+        context.getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
     clipboardManager.setPrimaryClip(ClipData.newPlainText("", textCopied))
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
         Toast.makeText(context, "已复制", Toast.LENGTH_SHORT).show()

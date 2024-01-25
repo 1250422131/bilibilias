@@ -8,7 +8,7 @@
         <import type="android.graphics.Color" />
         <variable
             name="VideoBaseBean"
-            type="com.imcys.model.VideoDetails" />
+            type="com.imcys.model.ViewDetail" />
 
         <variable
             name="UserCardBean"

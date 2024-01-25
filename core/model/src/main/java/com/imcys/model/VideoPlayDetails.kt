@@ -37,7 +37,7 @@ import kotlinx.serialization.Serializable
  *     "video_codecid": 7,
  *     "seek_param": "start",
  *     "seek_type": "offset",
- *     "durl": [
+ *     "durls": [
  *       {
  *         "order": 1,
  *         "length": 283801,
@@ -108,7 +108,7 @@ data class VideoPlayDetails(
     val acceptFormat: String = "", // mp4,mp4
     @SerialName("accept_quality")
     val acceptQuality: List<Int> = listOf(),
-    @SerialName("durl")
+    @SerialName("durls")
     val durl: List<Durl> = listOf(),
     @SerialName("format")
     val format: String = "", // mp4
@@ -138,8 +138,6 @@ data class VideoPlayDetails(
 
 @Serializable
 data class Durl(
-    @SerialName("ahead")
-    val ahead: String = "",
     @SerialName("backup_url")
     val backupUrl: List<String> = listOf(),
     @SerialName("length")
@@ -147,9 +145,7 @@ data class Durl(
     @SerialName("order")
     val order: Int = 0, // 1
     @SerialName("size")
-    val size: Int = 0, // 12448260
+    val size: Long = 0, // 12448260
     @SerialName("url")
     val url: String = "",
-    @SerialName("vhead")
-    val vhead: String = ""
 )

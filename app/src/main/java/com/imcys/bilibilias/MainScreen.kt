@@ -32,8 +32,6 @@ import com.imcys.home.navigation.homeScreen
 import com.imcys.home.navigation.navigateToContribute
 import com.imcys.home.navigation.navigateToDonation
 import com.imcys.home.navigation.navigateToHome
-import com.imcys.player.download.danmaku.danmakuRoute
-import com.imcys.player.download.danmaku.navigateToDanmaku
 import com.imcys.player.navigation.navigateToPlayer
 import com.imcys.player.navigation.playerScreen
 import com.imcys.setting.navigation.navigateToSettings
@@ -86,10 +84,8 @@ fun MainScreen(navController: NavHostController, modifier: Modifier = Modifier) 
         mergeRoute()
 
         playerScreen(
-            navigateToDownloadAanmaku = navController::navigateToDanmaku,
             navigateToUserSpace = navController::navigateToUserSpace
         )
-        danmakuRoute(navController = navController)
         userSpaceRoute(navigateToCollectionDownload = navController::navigateToCollectionDownload)
         collectionDownloadRoute()
 

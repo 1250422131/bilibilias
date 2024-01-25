@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SeasonsArchivesList(
+data class SeasonsArchives(
     @SerialName("aids")
     val aids: List<Int>,
     @SerialName("archives")

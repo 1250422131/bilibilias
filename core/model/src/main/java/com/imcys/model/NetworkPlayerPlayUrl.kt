@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * todo dash部分类的字段或许是缺失的
  */
 @Serializable
-data class PlayerInfo(
+data class NetworkPlayerPlayUrl(
     @SerialName("accept_description")
     val acceptDescription: List<String> = listOf(),
     @SerialName("accept_quality")
@@ -19,8 +19,6 @@ data class PlayerInfo(
     val dash: Dash = Dash(),
     @SerialName("format")
     val format: String = "", // flv480
-    @SerialName("message")
-    val message: String = "",
     @SerialName("quality")
     val quality: Int = 0, // 32
     @SerialName("support_formats")
@@ -66,10 +64,6 @@ data class Dash(
         val mimeType: String = "", // audio/mp4
         @SerialName("sar")
         val sar: String = "",
-        @SerialName("segment_base")
-        val segmentBase: SegmentBase = SegmentBase(),
-        @SerialName("start_with_sap")
-        val startWithSap: Int = 0, // 0
         @SerialName("width")
         val width: Int = 0 // 0
     )
@@ -103,18 +97,7 @@ data class Dash(
         val mimeType: String = "", // video/mp4
         @SerialName("sar")
         val sar: String = "", // 1:1
-        @SerialName("segment_base")
-        val segmentBase: SegmentBase = SegmentBase(),
-        @SerialName("start_with_sap")
-        val startWithSap: Int = 0, // 1
         @SerialName("width")
         val width: Int = 0 // 688
     )
 }
-@Serializable
-data class SegmentBase(
-    @SerialName("index_range")
-    val indexRange: String = "", // 1007-1170
-    @SerialName("initialization")
-    val initialization: String = "" // 0-1006
-)

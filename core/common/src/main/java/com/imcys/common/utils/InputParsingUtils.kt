@@ -19,7 +19,9 @@ object InputParsingUtils {
      * 是否是番剧
      */
     fun isEp(text: String) = epRegex.containsMatchIn(text)
+    fun isEpStart(text: String) = text.startsWith("EP", true)
     fun isBV(text: String) = bvRegex.containsMatchIn(text)
+    fun isBVStart(text: String) = text.startsWith("BV", true) && text.length == 12
     fun isShortLink(text: String) = shortLink.containsMatchIn(text)
     fun isAV(text: String) = avRegex.containsMatchIn(text)
     fun searchType(text: String): SearchType {
@@ -78,10 +80,7 @@ object InputParsingUtils {
         data class BV(val id: String) : SearchType
         data class AV(val id: String) : SearchType
         data class EP(val id: String) : SearchType
+
         data class ShortLink(val url: String) : SearchType
     }
-}
-
-enum class ParseInputType(val id: String) {
-    AV(""), BV(""), EP(""),
 }

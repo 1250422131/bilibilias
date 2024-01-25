@@ -13,5 +13,5 @@ data class Box<T>(
     @SerialName("message")
     val message: String,
     @JsonNames("data", "result")
-    val data: T
+    val data: T?
 )

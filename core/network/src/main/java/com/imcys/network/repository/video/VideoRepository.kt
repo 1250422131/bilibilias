@@ -3,10 +3,10 @@ package com.imcys.network.repository.video
 import androidx.collection.ArrayMap
 import androidx.collection.ArraySet
 import com.imcys.common.utils.ConvertUtil
+import com.imcys.model.NetworkPlayerPlayUrl
 import com.imcys.model.PgcPlayUrl
 import com.imcys.model.PgcViewSeason
-import com.imcys.model.PlayerInfo
-import com.imcys.model.VideoDetails
+import com.imcys.model.ViewDetail
 import com.imcys.model.video.ArchiveCoins
 import com.imcys.model.video.ArchiveHasLike
 import com.imcys.model.video.VideoFavoured
@@ -36,8 +36,8 @@ class VideoRepository @Inject constructor(
     private val client: HttpClient,
     private val json: Json
 ) : IVideoDataSources {
-    private val cacheViewDetail = ArraySet<VideoDetails>()
-    private val cachePlayerPlayUrl = ArrayMap<String, PlayerInfo>()
+    private val cacheView = ArraySet<ViewDetail>()
+    private val cachePlayerPlayUrl = ArrayMap<String, NetworkPlayerPlayUrl>()
 
     /**
      * /pgc/player/web/v2/playurl? support_multi_audio=true&
@@ -45,7 +45,7 @@ class VideoRepository @Inject constructor(
      * fourk=1& gaia_source=& from_client=BROWSER& ep_id=809818&
      * session=5bafa0564461e25b2d751bd2eb1d8816& drm_tech_type=2
      */
-    override suspend fun getPgcPlayUrl(epID: Long, aId: Long, cId: Long): PgcPlayUrl {
+    override suspend fun 获取剧集播放地址(epID: Long, aId: Long, cId: Long): PgcPlayUrl {
         Napier.d { "获取番剧视频流 ep=$epID, aId=$aId, cId=$cId" }
         return client.get(BilibiliApi2.PGC_PLAY_URL) {
             headerRefBilibili()
@@ -62,7 +62,7 @@ class VideoRepository @Inject constructor(
         }.body()
     }
 
-    override suspend fun getPgcViewSeason(epId: String): PgcViewSeason {
+    override suspend fun 获取剧集基本信息(epId: String): PgcViewSeason {
         Napier.d { "获取剧集详情 epId=$epId" }
         return client.get(BilibiliApi2.PGC_VIEW_SEASON) {
             parameterEpId(epId)
@@ -97,43 +97,38 @@ class VideoRepository @Inject constructor(
             .url
             .toString()
 
-    override suspend fun getDetail(bvid: String): VideoDetails {
-        Napier.d { "获取播放详情 bv=$bvid" }
-        return client.get(BilibiliApi2.VIEW_DETAIL) {
-            parameterBV(bvid)
-        }.body<VideoDetails>()
-    }
-
-    override suspend fun getDetail(aid: Long): VideoDetails {
-        Napier.d { "获取播放详情 av=$aid" }
-        val detail = cacheViewDetail.find { it.aid == aid }
-        return if (detail == null) {
-            val bv = ConvertUtil.Av2Bv(aid)
-            val detail1 = getDetail(bv)
-            cacheViewDetail.add(detail1)
-            detail1
+    override suspend fun getView(bvId: String, refresh: Boolean): ViewDetail {
+        Napier.d { "获取播放详情 bv=$bvId" }
+        return if (refresh) {
+            view(bvId)
         } else {
-            detail
+            cacheView.find { it.bvid == bvId } ?: view(bvId)
         }
     }
 
-    /**
-     * /x/player/wbi/playurl? avid=798099135& bvid=BV1Uy4y1S7Eq&
-     * cid=265272502& qn=116& fnver=0& fnval=4048& fourk=1& gaia_source=&
-     * from_client=BROWSER& session=9db28d7eb6388c1b0f03a56661705fd6&
-     * voice_balance=1& web_location=1315873&
-     * w_rid=996ed7de5ee9d46270df3826f98c8cd1&wts=1705459810
-     */
-    override suspend fun getPlayerPlayUrl(bvid: String, cid: Long): PlayerInfo {
-        Napier.d { "获取播放链接 bv=$bvid, cid=$cid" }
-        return cachePlayerPlayUrl.getOrElse("$bvid-$cid") {
+    override suspend fun getView(aid: Long, refresh: Boolean): ViewDetail {
+        val bv = ConvertUtil.Av2Bv(aid)
+        Napier.d { "获取播放详情 av=$aid, bv=$bv" }
+        return getView(bv)
+    }
+
+    private suspend fun view(bvId: String): ViewDetail = client.get(BilibiliApi2.VIEW) {
+        parameterBV(bvId)
+    }.body<ViewDetail>().apply(cacheView::add)
+
+    override suspend fun 获取视频播放地址(aId: Long, bvId: String, cId: Long): NetworkPlayerPlayUrl {
+        Napier.d { "获取播放链接 bv=$bvId, cid=$cId" }
+        return cachePlayerPlayUrl.getOrElse("$bvId-$cId") {
             client.wbiGet(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
-                parameter("bvid", bvid)
-                parameter("cid", cid)
-                parameter("fnval", IVideoDataSources.REQUIRED_ALL.toString())
+                parameter("avid", aId)
+                parameterBV(bvId)
+                parameterCID(cId)
+                parameter("qn", 127)
+                parameter("fnver", 0)
+                parameter("fnval", 4048)
                 parameter("fourk", "1")
-                parameter("platform", "pc")
-            }.body<PlayerInfo>()
+                parameter("from_client", "BROWSER")
+            }.body<NetworkPlayerPlayUrl>()
         }
     }
 }

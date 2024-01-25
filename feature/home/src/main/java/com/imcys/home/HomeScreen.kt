@@ -32,6 +32,16 @@ import androidx.compose.ui.unit.dp
 import com.imcys.common.utils.getActivity
 import com.imcys.common.utils.openUri
 import com.zj.banner.BannerPager
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+private val items: ImmutableList<BannerBean> =
+    persistentListOf(
+        BannerBean("https://www.wanandroid.com/blogimgs/8a0131ac-05b7-4b6c-a8d0-f438678834ba.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/62c1bd68-b5f3-4a3c-a649-7ca8c7dfabe6.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png"),
+        BannerBean("https://www.wanandroid.com/blogimgs/90c6cc12-742e-4c9f-b318-b912f163b8d0.png"),
+    )
 
 @Composable
 internal fun HomeScreen(
@@ -50,14 +60,6 @@ internal fun HomeScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            val items = remember {
-                arrayListOf(
-                    BannerBean("https://www.wanandroid.com/blogimgs/8a0131ac-05b7-4b6c-a8d0-f438678834ba.png"),
-                    BannerBean("https://www.wanandroid.com/blogimgs/62c1bd68-b5f3-4a3c-a649-7ca8c7dfabe6.png"),
-                    BannerBean("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png"),
-                    BannerBean("https://www.wanandroid.com/blogimgs/90c6cc12-742e-4c9f-b318-b912f163b8d0.png"),
-                )
-            }
             BannerPager(
                 Modifier
                     .height(180.dp)
@@ -179,7 +181,9 @@ private fun Logout(logoutLogin: () -> Unit) {
     )
 }
 
-/** 社区反馈问题 */
+/**
+ * 社区反馈问题
+ */
 @Composable
 private fun FeedbackProblem() {
     val context = LocalContext.current

@@ -1,6 +1,5 @@
 package com.imcys.model.download
 
-import com.imcys.model.video.PageData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

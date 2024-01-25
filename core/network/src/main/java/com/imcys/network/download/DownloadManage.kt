@@ -8,10 +8,10 @@ import com.imcys.bilibilias.dm.DmSegMobileReply
 import com.imcys.common.di.AppCoroutineScope
 import com.imcys.common.utils.AppFilePathUtils
 import com.imcys.model.Dash
-import com.imcys.model.PlayerInfo
-import com.imcys.model.VideoDetails
+import com.imcys.model.NetworkPlayerPlayUrl
+import com.imcys.model.ViewDetail
 import com.imcys.model.download.Entry
-import com.imcys.model.video.PageData
+import com.imcys.model.video.Page
 import com.imcys.network.constant.BILIBILI_WEB_URL
 import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.imcys.network.constant.REFERER
@@ -151,8 +151,8 @@ class DownloadManage @Inject constructor(
 
     private fun buildEntryJson(
         qn: Int,
-        pageData: PageData,
-        detail: VideoDetails,
+        page: Page,
+        detail: ViewDetail,
         seasionId: Long? = null
     ) {
         val entryJson = """
@@ -187,7 +187,7 @@ class DownloadManage @Inject constructor(
                             "owner_id": ${detail.owner.mid},
                             "owner_name": "${detail.owner.name}",
                             "owner_avatar": "${detail.owner.face}",
-                            "page_data": ${json.encodeToString(pageData)}
+                            "page_data": ${json.encodeToString(page)}
                         }
         """.trimIndent()
     }
@@ -198,7 +198,7 @@ class DownloadManage @Inject constructor(
     fun deleteFile() {
     }
 
-    private fun addToQueue(info: PlayerInfo, detail: VideoDetails, quality: Int) {
+    private fun addToQueue(info: NetworkPlayerPlayUrl, detail: ViewDetail, quality: Int) {
         val video = getVideoStrategy(info, quality)
         val audio = getAudioStrategy(info)
 
@@ -219,7 +219,7 @@ class DownloadManage @Inject constructor(
     /**
      * 获取视频策略
      */
-    private fun getVideoStrategy(info: PlayerInfo, quality: Int): Dash.Video {
+    private fun getVideoStrategy(info: NetworkPlayerPlayUrl, quality: Int): Dash.Video {
         val videos = info.dash.video
         val videosGroup = videos.groupBy { it.id }
         val videoList =
@@ -230,7 +230,7 @@ class DownloadManage @Inject constructor(
     /**
      * 获取音频策略
      */
-    private fun getAudioStrategy(info: PlayerInfo): Dash.Audio {
+    private fun getAudioStrategy(info: NetworkPlayerPlayUrl): Dash.Audio {
         return info.dash.audio.maxBy { it.id }
     }
 
@@ -335,8 +335,8 @@ class DownloadManage @Inject constructor(
 
     fun addTask(bvid: String, quality: Int) {
         scope.launch {
-            val detail = videoRepository.getDetail(bvid)
-            val playUrl = videoRepository.getPlayerPlayUrl(detail.bvid, detail.cid)
+            val detail = videoRepository.getView(bvid, true)
+            val playUrl = videoRepository.获取视频播放地址(detail.aid, detail.bvid, detail.cid)
             addToQueue(playUrl, detail, quality)
         }
     }
