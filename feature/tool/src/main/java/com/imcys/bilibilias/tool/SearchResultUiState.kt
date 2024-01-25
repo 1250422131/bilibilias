@@ -14,5 +14,6 @@ sealed interface SearchResultUiState {
         val aid: Long = 0,
         val bvid: String = "",
         val cid: Long = 0,
+        val epId: String = ""
     ) : SearchResultUiState
 }

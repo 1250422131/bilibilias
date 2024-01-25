@@ -3,7 +3,7 @@ package com.imcys.player.download
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.offline.Download
-import com.imcys.model.video.PageData
+import com.imcys.model.video.Page
 import com.imcys.network.download.DownloadListHolders
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.download.DownloadToolType
@@ -53,7 +53,7 @@ class DownloadViewModel @Inject constructor(
      * "${BilibiliApi.videoPlayPath}?bvid=${videoDetails.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
      */
     fun downloadVideo(
-        details: com.imcys.model.VideoDetails,
+        details: com.imcys.model.ViewDetail,
         downloadListHolders: DownloadListHolders
     ) {
         Timber.tag("downloadInfo").d(downloadListHolders.toString())
@@ -107,13 +107,13 @@ class DownloadViewModel @Inject constructor(
         }
     }
 
-    fun setPages(pageData: PageData) {
+    fun setPages(page: Page) {
         _state.update {
             val pageList = it.selectedPageData
-            if (pageData in pageList && pageList.size > 1) {
-                it.copy(selectedPageData = pageList - pageData)
+            if (page in pageList && pageList.size > 1) {
+                it.copy(selectedPageData = pageList - page)
             } else {
-                it.copy(selectedPageData = pageList + pageData)
+                it.copy(selectedPageData = pageList + page)
             }
         }
     }
@@ -137,9 +137,9 @@ data class DownloadListState(
     val requireDownloadFileType: DownloadFileType = DownloadFileType.VideoAndAudio,
 
     // 可选剧集
-    val availablePageData: List<PageData> = emptyList(),
+    val availablePageData: List<Page> = emptyList(),
     // 已选剧集
-    val selectedPageData: List<PageData> = emptyList(),
+    val selectedPageData: List<Page> = emptyList(),
 
     val availableQuality: List<Int> = emptyList(),
     val selectedQuality: Int = 0,

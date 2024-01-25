@@ -16,6 +16,6 @@ sealed interface PlayInfoUiState {
         val desc: String,
         val owner: Owner,
         val toolBarReport: ToolBarReport,
-        val archives: ImmutableList<SeriesArchive>
+        val series: ImmutableList<SeriesVideo>
     ) : PlayInfoUiState
 }

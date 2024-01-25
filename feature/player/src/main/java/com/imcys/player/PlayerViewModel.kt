@@ -11,28 +11,33 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bilias.core.domain.GetToolbarReportUseCase
 import com.bilias.core.domain.GetVideoInSeries
+import com.imcys.common.utils.InputParsingUtils
+import com.imcys.common.utils.NTuple4
 import com.imcys.common.utils.Result
 import com.imcys.common.utils.asResult
-import com.imcys.model.PlayerInfo
+import com.imcys.model.NetworkPlayerPlayUrl
+import com.imcys.model.PgcPlayUrl
+import com.imcys.model.video.Owner
 import com.imcys.model.video.Stat
 import com.imcys.model.video.ToolBarReport
 import com.imcys.network.download.DownloadManage
 import com.imcys.network.repository.video.IVideoDataSources
+import com.imcys.player.navigation.A_ID
 import com.imcys.player.navigation.BV_ID
 import com.imcys.player.navigation.C_ID
+import com.imcys.player.navigation.EP_ID
 import com.imcys.player.state.PlayInfoUiState
 import com.imcys.player.state.PlayerUiState
-import com.imcys.player.state.SeriesArchive
-import com.imcys.player.state.mapToSeriesArchive
+import com.imcys.player.state.mapToPlayerUiState
+import com.imcys.player.state.mapToSeriesVideo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -46,45 +51,60 @@ class PlayerViewModel @Inject constructor(
     private val downloadManage: DownloadManage
 ) : ViewModel() {
 
-    private val bvid = savedStateHandle.getStateFlow(BV_ID, "")
-    private val cid = savedStateHandle.getStateFlow(C_ID, "")
+    private val avId = savedStateHandle.getStateFlow(A_ID, "")
+    private val bvId = savedStateHandle.getStateFlow(BV_ID, "")
+    private val cId = savedStateHandle.getStateFlow(C_ID, "")
+    private val epId = savedStateHandle.getStateFlow(EP_ID, "")
 
-    val videoInfoUiState =
-        bvid.flatMapLatest {
-            videoInfoUiState(
-                it,
-                videoRepository,
-                getToolbarReportUseCase,
-                getVideoInSeries
-            )
+    internal val videoInfoUiState =
+        combine(bvId, epId, ::Pair).flatMapLatest { (bv, ep) ->
+            if (InputParsingUtils.isEpStart(ep)) {
+                番剧InfoUiState(ep.drop(2), videoRepository)
+            } else if (InputParsingUtils.isBVStart(bv)) {
+                videoInfoUiState(
+                    bv,
+                    videoRepository,
+                    getToolbarReportUseCase,
+                    getVideoInSeries
+                )
+            } else {
+                flowOf(PlayInfoUiState.LoadFailed)
+            }
         }
             .stateIn(viewModelScope, SharingStarted.Eagerly, PlayInfoUiState.Loading)
 
     /**
      * 播放器
      */
-    val playerUiState = flow {
-        emit(videoRepository.getPlayerPlayUrl(bvid.value, cid.value.toLong()))
-    }.asResult()
-        .map { result ->
-            when (result) {
-                is Result.Error -> PlayerUiState.LoadFailed
-                Result.Loading -> PlayerUiState.Loading
-                is Result.Success -> result.data.mapToPlayerUiState()
+    internal val playerUiState =
+        combine(avId, bvId, cId, epId, ::NTuple4).flatMapLatest { (av, bv, cid, ep) ->
+            if (InputParsingUtils.isEpStart(ep)) {
+                flow {
+                    emit(
+                        videoRepository.获取剧集播放地址(
+                            ep.drop(2).toLong(),
+                            av.toLong(),
+                            cid.toLong()
+                        )
+                    )
+                }
+            } else {
+                flow { emit(videoRepository.获取视频播放地址(av.toLong(), bv, cid.toLong())) }
             }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, PlayerUiState.Loading)
-
-    private fun PlayerInfo.mapToPlayerUiState(): PlayerUiState.Success {
-        val pairs = acceptDescription.zip(acceptQuality).toImmutableList()
-        return PlayerUiState.Success(
-            qualityDescription = pairs,
-            video = dash.video.toImmutableList(),
-            audio = dash.audio.toImmutableList(),
-            dolby = dash.dolby,
-            duration = dash.duration,
-            pageData = emptyList()
-        )
-    }
+        }.asResult()
+            .map { result ->
+                when (result) {
+                    is Result.Error -> PlayerUiState.LoadFailed
+                    Result.Loading -> PlayerUiState.Loading
+                    is Result.Success -> {
+                        when (val data = result.data) {
+                            is NetworkPlayerPlayUrl -> data.mapToPlayerUiState()
+                            is PgcPlayUrl -> data.mapToPlayerUiState()
+                            else -> error("")
+                        }
+                    }
+                }
+            }.stateIn(viewModelScope, SharingStarted.Eagerly, PlayerUiState.Loading)
 
     /**
      * 下载视频
@@ -94,13 +114,57 @@ class PlayerViewModel @Inject constructor(
     }
 }
 
+private fun 番剧InfoUiState(
+    epId: String,
+    videoRepository: IVideoDataSources
+): Flow<PlayInfoUiState> {
+    return flow { this.emit(videoRepository.获取剧集基本信息(epId)) }.asResult()
+        .map { result ->
+            when (result) {
+                is Result.Error -> PlayInfoUiState.LoadFailed
+                Result.Loading -> PlayInfoUiState.Loading
+                is Result.Success -> {
+                    val data = result.data
+                    PlayInfoUiState.Success(
+                        aid = data.seasonId,
+                        bvid = data.actors,
+                        cid = 0,
+                        title = data.title,
+                        pic = data.cover,
+                        desc = data.evaluate,
+                        owner = Owner(
+                            face = data.upInfo.avatar,
+                            mid = data.upInfo.mid,
+                            name = data.upInfo.uname
+                        ),
+                        toolBarReport = ToolBarReport(
+                            like = data.stat.like,
+                            coin = data.stat.coin,
+                            favorite = data.stat.favorite,
+                            danmaku = data.stat.danmaku,
+                            evaluation = data.evaluate,
+                            reply = data.stat.reply,
+                            share = data.stat.share,
+                            view = data.stat.view,
+                            isLike = false,
+                            isCoin = false,
+                            isFavoured = false
+                        ),
+                        series = data.mapToSeriesVideo()
+                    )
+                }
+            }
+        }
+}
+
+// todo 需要处理视频不了的情况 BV11c411s71E
 private fun videoInfoUiState(
     bvId: String,
     videoRepository: IVideoDataSources,
     getToolbarReportUseCase: GetToolbarReportUseCase,
     getVideoInSeries: GetVideoInSeries,
 ): Flow<PlayInfoUiState> {
-    val details = flow { emit(videoRepository.getDetail(bvId)) }
+    val details = flow { emit(videoRepository.getView(bvId)) }
     val series = details.flatMapConcat { getVideoInSeries(it.owner.mid, it.aid) }
 
     val reportUseCase = getToolbarReportUseCase(bvId)
@@ -125,14 +189,7 @@ private fun videoInfoUiState(
                         desc = detail.descV2?.firstOrNull()?.rawText ?: detail.desc,
                         owner = detail.owner,
                         toolBarReport = mapToToolBarReport(detail.stat, report),
-                        archives = series?.mapToSeriesArchive() ?: persistentListOf(
-                            SeriesArchive(
-                                detail.aid,
-                                detail.bvid,
-                                detail.cid,
-                                detail.title,
-                            )
-                        )
+                        series = series?.mapToSeriesVideo() ?: detail.mapToSeriesVideo()
                     )
                 }
             }

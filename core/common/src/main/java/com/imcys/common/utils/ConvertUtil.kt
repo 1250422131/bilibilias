@@ -39,10 +39,6 @@ object ConvertUtil {
         return String(bv)
     }
 
-    fun Av2Bv(av: String): String {
-        return Av2Bv(av.drop(2).toLong())
-    }
-
     private fun swap(chars: CharArray) {
         swap(chars, 3, 9)
         swap(chars, 4, 7)

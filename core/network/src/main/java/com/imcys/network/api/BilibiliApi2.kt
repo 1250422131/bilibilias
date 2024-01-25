@@ -32,30 +32,11 @@ object BilibiliApi2 {
     // 获取用户卡片信息
     const val getUserCardPath = "x/web-interface/card"
 
-    // post aid bvid like:1,2 csrf:j_xx
-    const val likeVideoPath = "x/web-interface/archive/like"
-
     // 番剧视频流
     const val PGC_PLAY_URL = "pgc/player/web/v2/playurl"
 
     // 获取剧集明细 season_id / ep_id
     const val PGC_VIEW_SEASON = "pgc/view/web/season"
-
-    // 对视频进行点赞
-    const val videLikePath = "x/web-interface/archive/like"
-
-    const val videoPlayPath = "x/player/playurl"
-    const val VIDEO_PLAY_WBI = "x/player/wbi/playurl"
-
-    // 弹幕下载
-    const val videoDanMuPath = "x/v1/dm/list.so"
-
-    // 当前弹幕缓存
-    const val thisVideoDanmakuPath = "x/v2/dm/web/seg.so"
-    const val thisVideoDanmakuWbiPath = "x/v2/dm/wbi/web/seg.so"
-
-    // 查询视频分P列表
-    const val PLAYER_PAGE_LIST = "x/player/pagelist"
 
     // 修改视频收藏
     const val videoCollectionSetPath = "x/v3/fav/resource/deal"
@@ -108,7 +89,7 @@ object BilibiliApi2 {
     /**
      * 获取视频详细信息(web端)
      */
-    const val VIEW_DETAIL = "x/web-interface/view"
+    const val VIEW = "x/web-interface/view"
 
     /**
      * 获取视频流地址_web端

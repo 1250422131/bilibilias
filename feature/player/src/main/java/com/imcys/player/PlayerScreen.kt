@@ -24,13 +24,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -57,6 +54,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.imcys.designsystem.component.AsButton
 import com.imcys.player.sheet.SheetDirectLink
 import com.imcys.player.sheet.SheetSeries
 import com.imcys.player.state.PlayInfoUiState
@@ -68,7 +66,6 @@ import timber.log.Timber
 
 @Composable
 internal fun PlayerRoute(
-    navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
@@ -76,7 +73,6 @@ internal fun PlayerRoute(
     val videoInfoUiState by viewModel.videoInfoUiState.collectAsStateWithLifecycle()
 
     PlayerScreen(
-        navigateToDownloadAanmaku = navigateToDownloadAanmaku,
         navigateToUserSpace = navigateToUserSpace,
         addToDownloadQueue = viewModel::addToDownloadQueue,
         playerInfoUiState = videoInfoUiState,
@@ -87,7 +83,6 @@ internal fun PlayerRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlayerScreen(
-    navigateToDownloadAanmaku: () -> Unit,
     navigateToUserSpace: (Long) -> Unit,
     addToDownloadQueue: (List<String>, Int) -> Unit,
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
@@ -113,16 +108,16 @@ internal fun PlayerScreen(
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
                     Action.DOWNLOAD_VIDEO -> SheetSeries(
-                        qualityDescriptionList = playerUiState.qualityDescription,
+                        descriptionWithQuality = playerUiState.descriptionWithQuality,
                         addToDownloadQueue = addToDownloadQueue,
-                        playerInfoUiState
+                        playerInfoUiState,
+                        playerUiState.defaultQuality
                     )
 
                     Action.DOWNLOAD_SUBTITLES -> TODO()
                     Action.DIRECT_LINK -> SheetDirectLink(
                         video = playerUiState.video,
                         audio = playerUiState.audio,
-                        dolby = playerUiState.dolby,
                     )
 
                     null -> Unit
@@ -209,7 +204,7 @@ internal fun PlayerScreen(
                 }
             }
             Row {
-                Button(
+                AsButton(
                     onClick = {
                         action = Action.DOWNLOAD_VIDEO
                         scope.launch {
@@ -217,20 +212,16 @@ internal fun PlayerScreen(
                         }
                     },
                     Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Text(text = "缓存视频")
                 }
-                Button(
-                    onClick = {
-                        navigateToDownloadAanmaku()
-                    },
+                AsButton(
+                    onClick = {},
                     Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Text(text = "缓存字幕")
                 }
-                Button(
+                AsButton(
                     onClick = {
                         action = Action.DIRECT_LINK
                         scope.launch {
@@ -238,7 +229,6 @@ internal fun PlayerScreen(
                         }
                     },
                     Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
                 ) {
                     Text(text = "直链解析")
                 }

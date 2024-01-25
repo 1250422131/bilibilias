@@ -11,6 +11,7 @@ import com.imcys.model.video.Owner
 import com.imcys.model.video.ToolBarReport
 import com.imcys.player.state.PlayInfoUiState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,14 +23,14 @@ class SheetSeriesTest {
     fun sheetSeries() {
         composeTestRule.setContent {
             BILIBILIASTheme {
-                val qualityDesc = persistentListOf(
-                    "真彩 HDR" to 125,
-                    "超清 4K" to 120,
-                    "高清 1080P60" to 116,
-                    "高清 1080P" to 80,
-                    "高清 720P60" to 64,
-                    "清晰 480P" to 32,
-                    "流畅 360P" to 16,
+                val qualityDesc = persistentMapOf(
+                    125 to "真彩 HDR",
+                    120 to "超清 4K",
+                    116 to "高清 1080P60",
+                    80 to "高清 1080P",
+                    64 to "高清 720P60",
+                    32 to "清晰 480P",
+                    16 to "流畅 360P",
                 )
                 SheetSeries(
                     qualityDesc,
@@ -37,7 +38,8 @@ class SheetSeriesTest {
                     PlayInfoUiState.Success(
                         1, "2", 3, "这是一个标题", "", "", Owner(),
                         ToolBarReport(), persistentListOf()
-                    )
+                    ),
+                    0
                 )
             }
         }

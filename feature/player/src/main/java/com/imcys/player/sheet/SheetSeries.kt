@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -20,23 +20,27 @@ import androidx.compose.ui.unit.sp
 import com.imcys.designsystem.component.AsButton
 import com.imcys.designsystem.component.FormatTag
 import com.imcys.player.state.PlayInfoUiState
-import kotlinx.collections.immutable.ImmutableList
+import com.imcys.player.state.Quality
+import kotlinx.collections.immutable.ImmutableMap
 
 @Composable
 internal fun SheetSeries(
-    qualityDescriptionList: ImmutableList<Pair<String, Int>>,
+    descriptionWithQuality: ImmutableMap<Quality, String>,
     addToDownloadQueue: (List<String>, Int) -> Unit,
-    archives: PlayInfoUiState,
+    playInfoUiState: PlayInfoUiState,
+    defaultQuality: Int,
 ) {
     Column {
-        var quality by remember { mutableStateOf(qualityDescriptionList.first()) }
+        var selectedQuality by remember(defaultQuality) { mutableIntStateOf(defaultQuality) }
         LazyRow {
-            items(qualityDescriptionList) { pair ->
-                FormatTag(
-                    selected = quality == pair,
-                    onClick = { quality = pair }
-                ) {
-                    Text(text = pair.first, fontSize = 11.sp)
+            for ((quality, description) in descriptionWithQuality) {
+                item {
+                    FormatTag(
+                        selected = selectedQuality == quality,
+                        onClick = { selectedQuality = quality }
+                    ) {
+                        Text(text = description, fontSize = 11.sp)
+                    }
                 }
             }
         }
@@ -45,11 +49,11 @@ internal fun SheetSeries(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 60.dp)
             ) {
-                if (archives is PlayInfoUiState.Success) {
-                    items(archives.archives) { item ->
+                if (playInfoUiState is PlayInfoUiState.Success) {
+                    items(playInfoUiState.series) { item ->
                         AsButton(
                             onClick = {
-                                addToDownloadQueue(listOf(item.bvid), quality.second)
+                                addToDownloadQueue(listOf(item.bvid), selectedQuality)
                             },
                         ) {
                             Text(
@@ -62,13 +66,7 @@ internal fun SheetSeries(
                     }
                 }
             }
-//            AsButton(
-//                onClick = { addToDownloadQueue(listOf(item), quality.second) },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//            ) {
-//                Text(text = "全部下载")
-//            }
         }
     }
 }
+

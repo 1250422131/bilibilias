@@ -1,8 +1,10 @@
 ﻿package com.imcys.model.space
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class Meta(
     @SerialName("category")
@@ -28,7 +30,9 @@ data class Meta(
     @SerialName("raw_keywords")
     val rawKeywords: String = "",
     @SerialName("series_id")
-    val seriesId: Long = 0,
+    val id1: Long? = null,
+    @SerialName("season_id")
+    val id2: Long? = null,
     @SerialName("state")
     val state: Int = 0,
     @SerialName("total")

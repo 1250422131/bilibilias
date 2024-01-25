@@ -45,6 +45,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
@@ -56,6 +57,7 @@ import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.MissingFieldException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
@@ -250,16 +252,24 @@ object NetworkModule {
         execute(request)
     }
 
-    @OptIn(ExperimentalSerializationApi::class, InternalAPI::class)
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
-        transformResponseBody { _, content, requestedType ->
+        transformResponseBody { request, content, requestedType ->
             if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
-            val box = json.decodeFromStream(
-                Box.serializer(serializer(requestedType.kotlinType!!)),
-                content.toInputStream()
-            )
+
+            val box = try {
+                json.decodeFromStream(
+                    Box.serializer(serializer(requestedType.kotlinType!!)),
+                    content.toInputStream()
+                )
+            } catch (e: MissingFieldException) {
+                throw ApiIOException(
+                    "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
+                            "\n链接: ${request.request.url}"
+                )
+            }
 
             if (box.code != SUCCESS) throw ApiIOException(box.message)
             box.data

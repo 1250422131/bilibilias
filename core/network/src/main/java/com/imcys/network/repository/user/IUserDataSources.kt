@@ -1,10 +1,11 @@
 package com.imcys.network.repository.user
 
-import com.imcys.model.space.SeasonsArchivesList
+import com.imcys.model.space.SeasonsArchives
 import com.imcys.model.space.SeasonsSeriesList
 import com.imcys.model.space.SpaceArcSearch
 import com.imcys.model.space.SpaceChannelList
 import com.imcys.model.space.SpaceChannelVideo
+import kotlinx.collections.immutable.ImmutableList
 
 interface IUserDataSources {
     suspend fun getSpaceArcSearch(mId: Long, pageNumber: Int): SpaceArcSearch
@@ -25,8 +26,6 @@ interface IUserDataSources {
     suspend fun seasonsArchivesList(
         mId: Long,
         seasonId: Long,
-        pageNumber: Int,
-        sort: Boolean = false,
-        pageSize: Int = 30
-    ): SeasonsArchivesList
+        total: Int,
+    ): ImmutableList<SeasonsArchives>
 }

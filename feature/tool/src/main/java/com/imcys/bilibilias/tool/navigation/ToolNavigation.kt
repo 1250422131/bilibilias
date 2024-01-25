@@ -15,7 +15,7 @@ fun NavController.navigateToTool() {
 }
 
 fun NavGraphBuilder.toolScreen(
-    navigateToPlayer: (String, String, String) -> Unit,
+    navigateToPlayer: (String, String, String, String) -> Unit,
     navigateToSetting: () -> Unit,
     navigateToExportBangumiFollowList: () -> Unit,
     navigationToMerge: () -> Unit,
