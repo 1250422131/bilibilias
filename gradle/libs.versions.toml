@@ -6,7 +6,6 @@ androidx-test-core = "1.5.0"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidGradlePlugin = "8.2.2"
 accompanist = "0.34.0"
-androidGradlePlugin = "8.2.2"
 androidFilePicker = "1.0.0"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
@@ -19,8 +18,8 @@ devAppX = "2.4.4"
 espresso = "3.5.1"
 junit = "4.13.2"
 junitKtx = "1.1.5"
-leakcanaryAndroid = "2.13"
-materialDialogsCore = "0.9.0"
+leakcanary = "2.13"
+materialDialogs = "0.9.0"
 constraintlayout = "2.1.4"
 androidxCore = "1.12.0"
 detekt = "1.23.4"
@@ -115,7 +114,7 @@ commons-codec = { group = "commons-codec", name = "commons-codec", version.ref =
 
 devAppX = { group = "io.github.afkt", name = "DevAppX", version.ref = "devAppX" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogsCore" }
+material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogs" }
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 ffmpeg-ffmpegCommand = { group = "com.github.AnJoiner", name = "FFmpegCommand", version.ref = "ffmpegCommand" }
@@ -133,7 +132,7 @@ qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qro
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidx-test-core" }
 twitter-detekt = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "twitter-detekt" }
 
-leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
