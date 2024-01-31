@@ -114,7 +114,10 @@ class MainActivity : ComponentActivity() {
                     MainScreen(navController, modifier = Modifier.padding(it))
                 }
                 BackHandlerWithLifecycle {
-                    finish()
+                    val close = navController.popBackStack()
+                    if (!close) {
+                        finish()
+                    }
                 }
             }
         }
