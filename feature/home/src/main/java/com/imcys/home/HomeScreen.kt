@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -29,18 +30,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.imcys.common.utils.getActivity
 import com.imcys.common.utils.openUri
-import com.zj.banner.BannerPager
+import com.lt.compose_views.banner.Banner
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-private val items: ImmutableList<BannerBean> =
+private val items: ImmutableList<String> =
     persistentListOf(
-        BannerBean("https://www.wanandroid.com/blogimgs/8a0131ac-05b7-4b6c-a8d0-f438678834ba.png"),
-        BannerBean("https://www.wanandroid.com/blogimgs/62c1bd68-b5f3-4a3c-a649-7ca8c7dfabe6.png"),
-        BannerBean("https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png"),
-        BannerBean("https://www.wanandroid.com/blogimgs/90c6cc12-742e-4c9f-b318-b912f163b8d0.png"),
+        "https://www.wanandroid.com/blogimgs/8a0131ac-05b7-4b6c-a8d0-f438678834ba.png",
+        "https://www.wanandroid.com/blogimgs/62c1bd68-b5f3-4a3c-a649-7ca8c7dfabe6.png",
+        "https://www.wanandroid.com/blogimgs/50c115c2-cf6c-4802-aa7b-a4334de444cd.png",
+        "https://www.wanandroid.com/blogimgs/90c6cc12-742e-4c9f-b318-b912f163b8d0.png",
     )
 
 @Composable
@@ -60,12 +62,19 @@ internal fun HomeScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            BannerPager(
-                Modifier
-                    .height(180.dp)
-                    .fillMaxWidth(),
-                items = items
-            ) { item ->
+            Banner(items.size) {
+                Card(
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .height(180.dp)
+                        .fillMaxWidth()
+                ) {
+                    AsyncImage(
+                        model = items[index],
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
             UpdateContent()
 
