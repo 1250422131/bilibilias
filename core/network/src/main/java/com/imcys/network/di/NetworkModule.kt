@@ -52,7 +52,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.serialization.kotlinx.protobuf.protobuf
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.InternalAPI
 import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
