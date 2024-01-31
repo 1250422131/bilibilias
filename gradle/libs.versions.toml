@@ -12,6 +12,7 @@ asBottomDialog = "0.0.1beta10"
 bottomsheetdialogCompose = "1.4.1"
 coil = "2.5.0"
 composeSettingsUiM3 = "1.0.3"
+composeviews = "1.5.10.4"
 splashscreen = "1.0.1"
 datastore = "1.0.0"
 devAppX = "2.4.4"
@@ -28,7 +29,6 @@ fastkv = "2.4.3"
 ffmpegKitFull = "6.0-2"
 ffmpegCommand = "1.3.2"
 flexbox = "3.0.0"
-github-Banner = "2.6.5"
 gsyVideoPlayer = "8.5.0-release-jitpack"
 hilt = "2.50"
 hiltNavigationCompose = "1.1.0"
@@ -72,6 +72,7 @@ lint = "31.2.2"
 wire = "4.9.5"
 commonsCodec = "1.16.0"
 annotation = "1.7.1"
+voyager = "1.0.0"
 zxingAndroidEmbedded = "4.3.0"
 [libraries]
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
@@ -112,6 +113,7 @@ compose-settings-ui-m3 = { group = "com.github.alorma", name = "compose-settings
 
 commons-codec = { group = "commons-codec", name = "commons-codec", version.ref = "commonsCodec" }
 
+composeViews = { module = "io.github.ltttttttttttt:ComposeViews", version.ref = "composeviews" }
 devAppX = { group = "io.github.afkt", name = "DevAppX", version.ref = "devAppX" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material-dialogs-core = { group = "io.github.vanpra.compose-material-dialogs", name = "core", version.ref = "materialDialogs" }
@@ -251,7 +253,14 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
-zhujiang-banner = { group = "com.github.zhujiang521", name = "Banner", version.ref = "github-Banner" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+
 zxing-android-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 # Dependencies of the included build-logic
