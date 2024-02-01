@@ -6,14 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.imcys.bilias.feature.merge.danmaku.IDanmakuParse
 import com.imcys.bilias.feature.merge.mix.FFmpegMerge
 import com.imcys.bilias.feature.merge.mix.MergeData
-import com.imcys.bilias.feature.merge.move.mixDir
 import com.imcys.common.di.AsDispatchers
 import com.imcys.common.di.Dispatcher
-import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.model.download.Entry
 import com.imcys.network.download.DownloadManage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -81,17 +78,17 @@ class MergeViewModel @Inject constructor(
     }
 
     fun mixVideoAudio(context: Context) {
-        for (entry in resource) {
-            val danmaku = entry.dFile
-
-            val vFile = entry.vFile
-            val aFile = entry.aFile
-            if (vFile == null || aFile == null) return
-
-            val tempFile = File(context.mixDir, entry.title)
-            sendMixData(vFile, aFile, tempFile.absolutePath, entry.title)
-            updatePhotoMedias(context, tempFile)
-        }
+//        for (entry in resource) {
+//            val danmaku = entry.dFile
+//
+//            val vFile = entry.vFile
+//            val aFile = entry.aFile
+//            if (vFile == null || aFile == null) return
+//
+//            val tempFile = File(context.mixDir, entry.title)
+//            sendMixData(vFile, aFile, tempFile.absolutePath, entry.title)
+//            updatePhotoMedias(context, tempFile)
+//        }
     }
 
     private fun sendMixData(vFile: File, aFile: File, file: String, title: String) {
@@ -99,14 +96,14 @@ class MergeViewModel @Inject constructor(
     }
 
     private fun startScanner() {
-        val result = downloadManage.getAllTask(BILI_FULL_PATH)
-        _uiState.update { it.copy(entries = result.toImmutableList()) }
-        for (entry in result) {
-            _selectedResourceUiState.update {
-                it[entry] = false
-                it
-            }
-        }
+//        val result = downloadManage.getAllTask(BILI_FULL_PATH)
+//        _uiState.update { it.copy(entries = result.toImmutableList()) }
+//        for (entry in result) {
+//            _selectedResourceUiState.update {
+//                it[entry] = false
+//                it
+//            }
+//        }
     }
 
     private fun parseDanmaku(danmaku: File?, width: Int, height: Int, title: String) {

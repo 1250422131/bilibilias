@@ -2,8 +2,6 @@ package com.imcys.model.download
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import java.io.File
 
 @Serializable
 data class Entry(
@@ -67,12 +65,6 @@ data class Entry(
     val typeTag: String = "",
     @SerialName("video_quality")
     val videoQuality: Int = 0,
-    @Transient
-    val vFile: File? = null,
-    @Transient
-    val aFile: File? = null,
-    @Transient
-    val dFile: File? = null
 ) {
     @Serializable
     data class PageData(

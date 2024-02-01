@@ -10,8 +10,8 @@ import com.imcys.common.utils.AppFilePathUtils
 import com.imcys.model.Dash
 import com.imcys.model.NetworkPlayerPlayUrl
 import com.imcys.model.ViewDetail
+import com.imcys.model.download.CacheFile
 import com.imcys.model.download.Entry
-import com.imcys.model.video.Page
 import com.imcys.network.constant.BILIBILI_WEB_URL
 import com.imcys.network.constant.BROWSER_USER_AGENT
 import com.imcys.network.constant.REFERER
@@ -149,13 +149,12 @@ class DownloadManage @Inject constructor(
     // endregion
     fun downloadDanmaku() {}
 
-    private fun buildEntryJson(
+    private fun buildEntryJsonFileContent(
         qn: Int,
-        page: Page,
         detail: ViewDetail,
         seasionId: Long? = null
-    ) {
-        val entryJson = """
+    ): String {
+        return """
                       {
                             "media_type": 2,
                             "has_dash_audio": true,
@@ -176,7 +175,7 @@ class DownloadManage @Inject constructor(
                             "interrupt_transform_temp_file": false,
                             "quality_pithy_description": $qn,
                             "quality_superscript": "码率",
-                            "cache_version_code": 6340400,
+                            "cache_version_code": 7630200,
                             "preferred_audio_quality": 0,
                             "audio_quality": 0,
                             
@@ -187,7 +186,7 @@ class DownloadManage @Inject constructor(
                             "owner_id": ${detail.owner.mid},
                             "owner_name": "${detail.owner.name}",
                             "owner_avatar": "${detail.owner.face}",
-                            "page_data": ${json.encodeToString(page)}
+                            "page_data": ${json.encodeToString(detail.pages)}
                         }
         """.trimIndent()
     }
@@ -203,17 +202,20 @@ class DownloadManage @Inject constructor(
         val audio = getAudioStrategy(info)
 
         val cid = detail.cid
-        val path = videoSavePath(detail.aid, cid, quality)
+        val path = buildCacheFullPath(detail.aid, cid, quality)
         enqueueTasksTogether(path, cid, video, audio)
-        recordDownloadInfo()
-        downloadDanmuku(detail.aid, cid, detail.duration)
+        scope.launch {
+            recordDownloadInfo(quality, detail)
+            recordDMInfo(detail.aid, cid, detail.duration)
+        }
     }
 
     /**
      * 记录下载信息
      */
-    private fun recordDownloadInfo() {
-//        buildEntryJson()
+    private suspend fun recordDownloadInfo(quality: Int, detail: ViewDetail) {
+        File(buildCacheBasePath(detail.aid, detail.cid), ENTRY_JSON)
+            .writeText(buildEntryJsonFileContent(quality, detail))
     }
 
     /**
@@ -256,81 +258,95 @@ class DownloadManage @Inject constructor(
         )
     }
 
-    private fun downloadDanmuku(aid: Long, cid: Long, duration: Int) {
-        scope.launch {
-            val jobs = mutableListOf<DmSegMobileReply>()
+    private suspend fun recordDMInfo(aid: Long, cid: Long, duration: Int) {
+        suspend fun getAllDMSegment(): List<DmSegMobileReply> {
+            val segment = mutableListOf<DmSegMobileReply>()
             val index = duration / 360 + 1
             for (i in 1..index) {
                 val reply = danmakuRepository.protoWbi(aid, cid, i, 1)
-                jobs.add(reply)
+                segment.add(reply)
             }
-            val sb = StringBuilder(1000 * DEFAULT_DANMAKU_SIZE)
-            sb.appendLine("<i>")
-                .appendLine("<chatserver>chat.bilibili.com</chatserver>")
-                .appendLine("<chatid>$cid</chatid>")
-                .appendLine("<mission>0</mission>")
-                .appendLine("<maxlimit>6000</maxlimit>")
-                .appendLine("<state>0</state>")
-                .appendLine("<real_name>0</real_name>")
-                .appendLine("<source>k-v</source>")
-            for (job in jobs) {
-                for (elem in job.elems) {
-                    sb.appendLine(
-                        "<d p=\"${elem.progress},${elem.mode},${elem.fontsize},${elem.color},${elem.ctime},${elem.pool},${elem.midHash},${elem.id},10\">${elem.content}</d>"
-                    )
-                }
-            }
-
-            val content = sb.appendLine("</i>").toString()
-            val path = dmSavePath(aid, cid)
-            File(path, DANMAKU_XML).writeText(content)
+            return segment
         }
+
+        val allDMSegment = getAllDMSegment()
+
+        File(buildCacheBasePath(aid, cid), DANMAKU_XML).writeText(
+            buildDMXmlFileContent(
+                allDMSegment,
+                cid
+            )
+        )
     }
 
-    private fun videoSavePath(aid: Long, cid: Long, quality: Int): String {
-        return "${dmSavePath(aid, cid)}${File.separator}$quality"
+    private fun buildDMXmlFileContent(dmSegment: List<DmSegMobileReply>, cid: Long): String {
+        val sb = StringBuilder(dmSegment.sumOf { it.elems.size } * DEFAULT_DANMAKU_SIZE)
+        sb.appendLine("<i>")
+            .appendLine("<chatserver>chat.bilibili.com</chatserver>")
+            .appendLine("<chatid>$cid</chatid>")
+            .appendLine("<mission>0</mission>")
+            .appendLine("<maxlimit>6000</maxlimit>")
+            .appendLine("<state>0</state>")
+            .appendLine("<real_name>0</real_name>")
+            .appendLine("<source>k-v</source>")
+        for (segment in dmSegment) {
+            for (elem in segment.elems) {
+                sb.appendLine(
+                    "<d p=\"${elem.progress},${elem.mode},${elem.fontsize},${elem.color},${elem.ctime},${elem.pool},${elem.midHash},${elem.id},10\">${elem.content}</d>"
+                )
+            }
+        }
+        return sb.appendLine("</i>").toString()
     }
 
-    private fun dmSavePath(aid: Long, cid: Long): String {
+    private fun buildCacheFullPath(aid: Long, cid: Long, quality: Int): String {
+        return "${buildCacheBasePath(aid, cid)}${File.separator}$quality"
+    }
+
+    private fun buildCacheBasePath(aid: Long, cid: Long): String {
         return "${context.downloadDir}${File.separator}$aid${File.separator}c_$cid"
     }
 
-    override fun getAllTask(path: String): List<Entry> {
-        val scan = scan(path)
-        return decodeEntry(scan)
+    override fun getAllTask(path: String): List<CacheFile> {
+        val scan = TopDownAccess(path)
+        return decodeEntryFile(scan)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun decodeEntry(scanResult: ArrayDeque<MutableList<File>>): List<Entry> {
-        val decodeResult = scanResult
+    fun decodeEntryFile(result: ArrayDeque<MutableList<File>>): List<CacheFile> {
+        return result
             .filter { it.size <= 4 }
             .map { files ->
                 val entryFile = files.removeFirst()
                 val entry = json.decodeFromStream(Entry.serializer(), entryFile.inputStream())
-                entry.copy(
-                    vFile = files.find { it.name == VIDEO_M4S },
-                    aFile = files.find { it.name == AUDIO_M4S },
-                    dFile = files.find { it.name == DANMAKU_XML },
+                CacheFile(
+                    0, collectionName = entry.title, chapterName = entry.pageData.part,
+                    audio = files.find { it.name == AUDIO_M4S }!!,
+                    video = files.find { it.name == VIDEO_M4S }!!,
+                    danmaku = files.find { it.name == DANMAKU_XML }!!,
+                    bvId = entry.bvid,
+                    avId = entry.avid,
+                    chapters = emptyList(),
+                    cover = entry.cover
                 )
             }
-        return decodeResult
     }
 
-    private fun scan(path: String): ArrayDeque<MutableList<File>> {
-        val scannedFiles = ArrayDeque<MutableList<File>>(32)
+    private fun TopDownAccess(path: String): ArrayDeque<MutableList<File>> {
+        val result = ArrayDeque<MutableList<File>>(32)
         File(path)
             .walkTopDown()
             .forEach { file ->
                 if (file.name == ENTRY_JSON) {
-                    scannedFiles.addLast(mutableListOf(file))
+                    result.addLast(mutableListOf(file))
                 }
                 if (file.name == VIDEO_M4S || file.name == AUDIO_M4S || file.name == DANMAKU_XML) {
-                    scannedFiles.last {
+                    result.last {
                         it.add(file)
                     }
                 }
             }
-        return scannedFiles
+        return result
     }
 
     fun addTask(bvid: String, quality: Int) {
