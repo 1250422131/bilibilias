@@ -6,11 +6,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SeasonsArchives(
+data class ChannelCollectionDetail(
     @SerialName("aids")
-    val aids: List<Int>,
+    val aids: List<Int> = listOf(),
     @SerialName("archives")
-    val archives: List<Archive> = emptyList(),
+    val archives: List<Archive> = listOf(),
     @SerialName("meta")
     val meta: Meta = Meta(),
     @SerialName("page")

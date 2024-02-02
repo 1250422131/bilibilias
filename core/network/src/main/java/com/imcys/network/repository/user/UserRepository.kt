@@ -1,11 +1,14 @@
 package com.imcys.network.repository.user
 
-import com.imcys.model.space.SeasonsArchives
-import com.imcys.model.space.SeasonsSeriesList
+import com.imcys.model.space.ChannelCollectionDetail
+import com.imcys.model.space.ChannelSeriesDetail
+import com.imcys.model.space.ChannelsWithArchives
 import com.imcys.model.space.SpaceArcSearch
 import com.imcys.model.space.SpaceChannelList
 import com.imcys.model.space.SpaceChannelVideo
 import com.imcys.network.api.BilibiliApi2
+import com.imcys.network.utils.PAGE_SIZE_20
+import com.imcys.network.utils.PAGE_SIZE_30
 import com.imcys.network.utils.parameterCID
 import com.imcys.network.utils.parameterMID
 import com.imcys.network.utils.parameterPN
@@ -17,11 +20,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.plus
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class UserRepository @Inject constructor(
@@ -33,7 +34,7 @@ class UserRepository @Inject constructor(
     override suspend fun getSpaceArcSearch(mId: Long, pageNumber: Int): SpaceArcSearch =
         client.wbiGet(BilibiliApi2.WBI_SPACE_ARC_SEARCH) {
             parameterMID(mId)
-            parameterPS(30)
+            parameterPS(PAGE_SIZE_30)
             parameterPN(pageNumber)
         }.body<SpaceArcSearch>()
 
@@ -54,32 +55,32 @@ class UserRepository @Inject constructor(
         parameterPS(ps)
     }.body<SpaceChannelVideo>()
 
-    override suspend fun seasonsSeriesList(
+    override suspend fun getChannelsWithArchives(
         mId: Long,
-        pageNumber: Int,
-        pageSize: Int
-    ): SeasonsSeriesList = client.get(BilibiliApi2.SPACE_SEASONS_SERIES_LIST) {
+        pageNumber: Int
+    ): ChannelsWithArchives = client.wbiGet(BilibiliApi2.SPACE_SEASONS_SERIES_LIST) {
         parameterMID(mId)
         parameterPageNum(pageNumber)
-        parameterPageSize(20)
+        parameterPageSize(PAGE_SIZE_20)
     }.body()
 
-    override suspend fun seasonsArchivesList(
+    override suspend fun getChannelCollectionDetail(
         mId: Long,
         seasonId: Long,
-        total: Int
-    ): ImmutableList<SeasonsArchives> {
-        val size = 30
-        var result = persistentListOf<SeasonsArchives>()
-        for (i in 1..total / size + 1) {
-            result += client.get(BilibiliApi2.SPACE_SEASONS_ARCHIVES_LIST) {
-                parameterMID(mId)
-                parameter("sort_reverse", false)
-                parameter("season_id", seasonId)
-                parameterPageNum(i)
-                parameterPageSize(size)
-            }.body<SeasonsArchives>()
-        }
-        return result
+        pageNum: Int
+    ): ChannelCollectionDetail {
+        return client.get(BilibiliApi2.SPACE_SEASONS_ARCHIVES_LIST) {
+            parameterMID(mId)
+            parameter("sort_reverse", false)
+            parameter("season_id", seasonId)
+            parameterPageNum(pageNum)
+            parameterPageSize(PAGE_SIZE_30)
+        }.body()
+    }
+
+    override suspend fun getChannelSeriesDetail(seriesId: Long): ChannelSeriesDetail {
+        return client.get(BilibiliApi2.SERIES_SERIES) {
+            parameter("series_id", seriesId)
+        }.body()
     }
 }

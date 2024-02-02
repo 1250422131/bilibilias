@@ -9,8 +9,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.bilias.core.domain.GetChannelsWithArchivesUseCase
 import com.bilias.core.domain.GetToolbarReportUseCase
-import com.bilias.core.domain.GetVideoInSeries
 import com.imcys.common.utils.InputParsingUtils
 import com.imcys.common.utils.NTuple4
 import com.imcys.common.utils.Result
@@ -47,7 +47,7 @@ class PlayerViewModel @Inject constructor(
     private val videoRepository: IVideoDataSources,
     savedStateHandle: SavedStateHandle,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInSeries: GetVideoInSeries,
+    getChannelsWithArchivesUseCase: GetChannelsWithArchivesUseCase,
     private val downloadManage: DownloadManage
 ) : ViewModel() {
 
@@ -65,7 +65,7 @@ class PlayerViewModel @Inject constructor(
                     bv,
                     videoRepository,
                     getToolbarReportUseCase,
-                    getVideoInSeries
+                    getChannelsWithArchivesUseCase
                 )
             } else {
                 flowOf(PlayInfoUiState.LoadFailed)
@@ -162,10 +162,10 @@ private fun videoInfoUiState(
     bvId: String,
     videoRepository: IVideoDataSources,
     getToolbarReportUseCase: GetToolbarReportUseCase,
-    getVideoInSeries: GetVideoInSeries,
+    getChannelsWithArchivesUseCase: GetChannelsWithArchivesUseCase,
 ): Flow<PlayInfoUiState> {
     val details = flow { emit(videoRepository.getView(bvId)) }
-    val series = details.flatMapConcat { getVideoInSeries(it.owner.mid, it.aid) }
+    val series = details.flatMapConcat { getChannelsWithArchivesUseCase(it.owner.mid, it.aid) }
 
     val reportUseCase = getToolbarReportUseCase(bvId)
     return combine(
