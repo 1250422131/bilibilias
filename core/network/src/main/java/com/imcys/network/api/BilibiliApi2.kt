@@ -108,6 +108,7 @@ object BilibiliApi2 {
 
     const val SPACE_CHANNEL_LIST = "x/space/channel/list"
     const val SPACE_CHANNEL_VIDEO = "x/space/channel/video"
-    const val SPACE_SEASONS_SERIES_LIST = "/x/polymer/space/seasons_series_list"
-    const val SPACE_SEASONS_ARCHIVES_LIST = "x/polymer/space/seasons_archives_list"
+    const val SPACE_SEASONS_SERIES_LIST = "/x/polymer/web-space/seasons_series_list"
+    const val SPACE_SEASONS_ARCHIVES_LIST = "/x/polymer/web-space/seasons_archives_list"
+    const val SERIES_SERIES = "/x/series/series"
 }

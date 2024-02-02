@@ -2,7 +2,7 @@ package com.imcys.player.state
 
 import com.imcys.model.PgcViewSeason
 import com.imcys.model.ViewDetail
-import com.imcys.model.space.SeasonsArchives
+import com.imcys.model.space.ChannelsWithArchives
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -19,11 +19,9 @@ internal fun ViewDetail.mapToSeriesVideo(): ImmutableList<SeriesVideo> {
     }.toImmutableList()
 }
 
-internal fun ImmutableList<SeasonsArchives>.mapToSeriesVideo(): ImmutableList<SeriesVideo> {
-    return this.flatMap { series ->
-        series.archives.map {
-            SeriesVideo(it.aid, it.bvid, it.cid, it.title)
-        }
+internal fun ChannelsWithArchives.ItemsLists.ChannelItem.mapToSeriesVideo(): ImmutableList<SeriesVideo> {
+    return this.archives.map {
+        SeriesVideo(it.aid, it.bvid, it.cid, it.title)
     }.toImmutableList()
 }
 

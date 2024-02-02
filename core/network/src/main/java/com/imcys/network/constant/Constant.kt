@@ -13,5 +13,8 @@ internal const val HOST_BILIBILI = "api.bilibili.com"
 internal val REFERER = HttpHeaders.Referrer
 internal val USER_AGENT = HttpHeaders.UserAgent
 
-internal const val PS = 30
-internal const val PAGE_SIZE = 30
+internal const val COOKIE_MAIN = "SESSDATA"
+internal const val COOKIE_JCT_OR_CSRF = "bili_jct"
+internal const val COOKIE_DEDE_USER_ID = "DedeUserID"
+internal const val COOKIE_DEDE_USER_ID__CK_MD5 = "DedeUserID__ckMd5"
+internal const val COOKIE_SID = "sid"

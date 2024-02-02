@@ -9,6 +9,8 @@ import coil.util.DebugLogger
 import com.imcys.bilibilias.okdownloader.DownloadPool
 import com.imcys.bilibilias.okdownloader.Downloader
 import com.imcys.common.di.AsDispatchers
+import com.imcys.common.logger.ofMap
+import com.imcys.common.logger.print
 import com.imcys.common.utils.asNonTerminatingExecutorService
 import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.Box
@@ -56,7 +58,6 @@ import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asExecutor
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.MissingFieldException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
@@ -258,19 +259,20 @@ object NetworkModule {
         transformResponseBody { request, content, requestedType ->
             if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
 
-            val box = try {
-                json.decodeFromStream(
-                    Box.serializer(serializer(requestedType.kotlinType!!)),
-                    content.toInputStream()
-                )
-            } catch (e: MissingFieldException) {
+            val box = json.decodeFromStream(
+                Box.serializer(serializer(requestedType.kotlinType!!)),
+                content.toInputStream()
+            )
+
+            if (box.code != SUCCESS) {
                 throw ApiIOException(
-                    "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
-                            "\n链接: ${request.request.url}"
+                    box.code,
+                    box.message +
+                        "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
+                        "\n链接: ${request.request.url}",
+                    box.data?.ofMap()?.print()
                 )
             }
-
-            if (box.code != SUCCESS) throw ApiIOException(box.message)
             box.data
         }
     }
@@ -292,5 +294,5 @@ object NetworkModule {
      * -652 重复的用户 -658 Token 过期 -662 密码时间戳过期 -688 地理区域限制 -689 版权限制 -701 扣节操失败
      * -799 请求过于频繁，请稍后再试 -8888 对不起，服务器开小差了~ (ಥ﹏ಥ)
      */
-    internal class ApiIOException(errorMessage: String?) : Exception(errorMessage)
+    internal class ApiIOException(code: Int, errorMessage: String?, content:String?) : Exception(errorMessage)
 }
