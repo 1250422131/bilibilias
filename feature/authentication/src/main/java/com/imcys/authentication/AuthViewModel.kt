@@ -2,7 +2,7 @@ package com.imcys.authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imcys.datastore.fastkv.ICookieStore
+import com.imcys.datastore.fastkv.CookieStorage
 import com.imcys.network.repository.auth.IAuthDataSources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthDataSources,
-    private val cookiesData: ICookieStore
+    private val cookieStorage: CookieStorage
 ) : ViewModel() {
     private val _loginAuthState = MutableStateFlow(LoginAuthState())
     val loginAuthUiState = _loginAuthState.asStateFlow()
@@ -54,9 +54,7 @@ class AuthViewModel @Inject constructor(
                         snackBarMessage = if (response.isSuccess) "登录成功" else null
                     )
                 }
-                if (response.refreshToken.isNotBlank()) {
-                    cookiesData.refreshToken = response.refreshToken
-                }
+                cookieStorage.setRefreshToke(response.refreshToken)
                 ok = state.isSuccess
             }
         }

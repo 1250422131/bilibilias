@@ -47,19 +47,21 @@ internal object CookieSerializer : KSerializer<Cookie> {
                     COOKIE_MAXAGE -> maxAge = decodeIntElement(descriptor, COOKIE_MAXAGE)
 
                     COOKIE_EXPIRES -> expires = decodeLongElement(descriptor, COOKIE_EXPIRES)
-                    COOKIE_DOMAIN -> domain =
-                        decodeNullableSerializableElement(
-                            descriptor,
-                            COOKIE_DOMAIN,
-                            String.serializer()
-                        )
+                    COOKIE_DOMAIN ->
+                        domain =
+                            decodeNullableSerializableElement(
+                                descriptor,
+                                COOKIE_DOMAIN,
+                                String.serializer()
+                            )
 
-                    COOKIE_PATH -> path =
-                        decodeNullableSerializableElement(
-                            descriptor,
-                            COOKIE_PATH,
-                            String.serializer()
-                        )
+                    COOKIE_PATH ->
+                        path =
+                            decodeNullableSerializableElement(
+                                descriptor,
+                                COOKIE_PATH,
+                                String.serializer()
+                            )
 
                     COOKIE_SECURE -> secure = decodeBooleanElement(descriptor, COOKIE_SECURE)
                     COOKIE_HTTPONLY -> httpOnly = decodeBooleanElement(descriptor, COOKIE_HTTPONLY)

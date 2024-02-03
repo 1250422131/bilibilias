@@ -1,6 +1,6 @@
 package com.imcys.network.repository.auth
 
-import com.imcys.datastore.fastkv.CookiesData
+import com.imcys.datastore.fastkv.CookieStorage
 import com.imcys.model.login.AuthQrCode
 import com.imcys.model.login.CookieInfo
 import com.imcys.model.login.CookieRefresh
@@ -30,7 +30,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @Singleton
 class AuthRepository @Inject constructor(
     private val client: HttpClient,
-    private val cookiesData: CookiesData
+    private val cookieStorage: CookieStorage
 ) : IAuthDataSources {
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -79,7 +79,7 @@ class AuthRepository @Inject constructor(
         }.body()
 
     override suspend fun 退出登录() {
-        cookiesData.clear()
+        cookieStorage.clear()
     }
 
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
@@ -135,13 +135,13 @@ class AuthRepository @Inject constructor(
         val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
         if (!needRefresh) return
         val refreshCsrf = 获取RefreshCsrf(timestamp)
-        val oldToken = cookiesData.refreshToken
+        val oldToken = cookieStorage.refreshToken
         val (_, newRefreshToken, _) = 刷新Cookie(
-            csrf = cookiesData.biliJctOrCsrf,
+            csrf = cookieStorage.biliJctOrCsrf,
             refresh_csrf = refreshCsrf,
             refresh_token = oldToken
         )
-        确认更新Cookie(cookiesData.biliJctOrCsrf, oldToken)
-        cookiesData.setRefreshToke(newRefreshToken)
+        确认更新Cookie(cookieStorage.biliJctOrCsrf, oldToken)
+        cookieStorage.setRefreshToke(newRefreshToken)
     }
 }
