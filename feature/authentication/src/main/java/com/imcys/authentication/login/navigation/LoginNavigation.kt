@@ -16,5 +16,3 @@ fun NavController.navigateToLoginAuth() {
 fun NavGraphBuilder.loginAuthRoute(navigateToHome: () -> Unit) = composable(ROUTE_AUTH_LOGIN) {
     LoginAuthRoute(navigateToHome)
 }
-
-
