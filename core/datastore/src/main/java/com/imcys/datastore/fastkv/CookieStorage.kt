@@ -13,16 +13,20 @@ class CookieStorage @Inject constructor(
     @ApplicationContext context: Context,
     private val cbor: Cbor
 ) : FastKVOwner("cookies", context) {
-    private var cookieByteArray: ByteArray? by array()
+    private var cookieByteArray by array(byteArrayOf())
     private val cache = mutableListOf<Cookie>()
 
-    init {
-        cookieByteArray?.let {
-            cbor.decodeFromByteArray(ListSerializer(Cookie.serializer()), it).map(cache::add)
+    fun getCookie(): List<Cookie> {
+        if (!logging) return emptyList()
+        return if (cache.isEmpty()) {
+            cbor.decodeFromByteArray(ListSerializer(Cookie.serializer()), cookieByteArray)
+                .map(cache::add)
+            cache
+        } else {
+            cache
         }
     }
 
-    fun getCookie(): List<Cookie> = cache.toList()
     fun getCookie(name: String): Cookie? = cache.find { it.name == name }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -31,6 +35,7 @@ class CookieStorage @Inject constructor(
         cache += cookie
         cookieByteArray = cbor.encodeToByteArray(ListSerializer(Cookie.serializer()), cache)
         kv.commit()
+        logging = true
     }
 
     var logging: Boolean by boolean()
@@ -48,7 +53,7 @@ class CookieStorage @Inject constructor(
     }
 
     fun clear() {
-        cookieByteArray = null
+        cookieByteArray = byteArrayOf()
         logging = false
     }
 
