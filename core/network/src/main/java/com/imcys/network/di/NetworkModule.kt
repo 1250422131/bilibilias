@@ -12,6 +12,7 @@ import com.imcys.common.di.AsDispatchers
 import com.imcys.common.logger.ofMap
 import com.imcys.common.logger.print
 import com.imcys.common.utils.asNonTerminatingExecutorService
+import com.imcys.datastore.fastkv.CookieStorage
 import com.imcys.datastore.fastkv.WbiKeyStorage
 import com.imcys.model.Box
 import com.imcys.network.BuildConfig
@@ -255,29 +256,33 @@ object NetworkModule {
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideTransformData(json: Json): ClientPlugin<Unit> = createClientPlugin("TransformData") {
-        transformResponseBody { request, content, requestedType ->
-            if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
+    fun provideTransformData(json: Json, cookieStorage: CookieStorage): ClientPlugin<Unit> =
+        createClientPlugin("TransformData") {
+            transformResponseBody { request, content, requestedType ->
+                if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
 
-            val box = json.decodeFromStream(
-                Box.serializer(serializer(requestedType.kotlinType!!)),
-                content.toInputStream()
-            )
-
-            if (box.code != SUCCESS) {
-                throw ApiIOException(
-                    box.code,
-                    box.message +
-                        "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
-                        "\n链接: ${request.request.url}",
-                    box.data?.ofMap()?.print()
+                val box = json.decodeFromStream(
+                    Box.serializer(serializer(requestedType.kotlinType!!)),
+                    content.toInputStream()
                 )
+                if (box.code == ACCOUNT_NOT_LOGGED_IN) {
+                    cookieStorage.logging = false
+                }
+                if (box.code != SUCCESS) {
+                    throw ApiIOException(
+                        box.code,
+                        box.message +
+                                "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
+                                "\n链接: ${request.request.url}",
+                        box.data?.ofMap()?.print()
+                    )
+                }
+                box.data
             }
-            box.data
         }
-    }
 
     private const val SUCCESS = 0
+    private const val ACCOUNT_NOT_LOGGED_IN =-101
 
     /**
      * 权限类 代码 含义 -1 应用程序不存在或已被封禁 -2 Access Key 错误 -3 API 校验密匙错误 -4 调用方对该
@@ -294,5 +299,6 @@ object NetworkModule {
      * -652 重复的用户 -658 Token 过期 -662 密码时间戳过期 -688 地理区域限制 -689 版权限制 -701 扣节操失败
      * -799 请求过于频繁，请稍后再试 -8888 对不起，服务器开小差了~ (ಥ﹏ಥ)
      */
-    internal class ApiIOException(code: Int, errorMessage: String?, content:String?) : Exception(errorMessage)
+    internal class ApiIOException(code: Int, errorMessage: String?, content: String?) :
+        Exception(errorMessage)
 }

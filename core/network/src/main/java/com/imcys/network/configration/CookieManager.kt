@@ -1,59 +1,52 @@
 package com.imcys.network.configration
 
-import com.imcys.datastore.fastkv.ICookieStore
+import com.imcys.datastore.fastkv.CookieStorage
 import io.ktor.client.plugins.cookies.CookiesStorage
-import io.ktor.http.Cookie
+import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.cbor.Cbor
+import io.ktor.util.date.GMTDate
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.imcys.model.login.Cookie as AsCookie
+import io.ktor.http.Cookie as KtorCookie
 
 @Singleton
-@OptIn(ExperimentalSerializationApi::class)
 class CookieManager
 @Inject constructor(
-    private val cookiesData: ICookieStore,
-    private val cbor: Cbor
+    private val cookieStorage: CookieStorage
 ) : CookiesStorage {
-    private val cache = mutableListOf<Cookie>()
-    private val sterileMap = ListSerializer(CookieSerializer)
 
-    init {
-        if (cookiesData.valid) {
-            cookiesData.get()?.let { bytes ->
-                cbor.decodeFromByteArray(sterileMap, bytes).map {
-                    cache.add(it)
-                }
-            }
-        }
-    }
-
-    override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
+    override suspend fun addCookie(requestUrl: Url, cookie: KtorCookie) {
         Timber.d("addCookie: $cookie")
-        val timestamp = cookie.expires?.timestamp ?: 0
-        cache += cookie
-        cookiesData.setTime(timestamp)
-        save()
+        cookieStorage.setCookie(cookie.mapToAsCookie())
+        close()
     }
 
-    override suspend fun get(requestUrl: Url): List<Cookie> {
+    override suspend fun get(requestUrl: Url): List<KtorCookie> {
         Timber.d("getCookie: $requestUrl")
-        return cache
+        return cookieStorage.getCookie().map(AsCookie::mapToKtorCookie)
     }
 
-    override fun close() {
-        save()
-    }
-
-    private fun save() {
-        cookiesData.set(
-            cbor.encodeToByteArray(
-                sterileMap,
-                cache
-            )
-        )
-    }
+    override fun close() = Unit
 }
+
+internal fun AsCookie.mapToKtorCookie(): KtorCookie = KtorCookie(
+    name,
+    value,
+    CookieEncoding.RAW,
+    maxAge,
+    GMTDate(timestamp),
+    domain, path, secure, httpOnly
+)
+
+internal fun KtorCookie.mapToAsCookie(): AsCookie = AsCookie(
+    name,
+    value,
+    maxAge,
+    expires?.timestamp ?: 0,
+    domain,
+    path,
+    secure,
+    httpOnly
+)
