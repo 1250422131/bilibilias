@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import timber.log.Timber
 import java.io.File
 
 fun Context.launchApp(pkgName: String): Intent {
@@ -83,11 +82,13 @@ fun Context.gotoApplicationSettings() {
 }
 
 // 更新图库
-fun updatePhotoMedias(context: Context, vararg files: File) {
-    files.forEach {
-        MediaScannerConnection.scanFile(context, arrayOf(it.path), null) { path, uri ->
-            Timber.d("文件路径=$path")
-        }
+fun updatePhotoMedias(
+    context: Context,
+    vararg files: File,
+    callback: (String, Uri) -> Unit = { _, _ -> }
+) {
+    MediaScannerConnection.scanFile(context, files.map { it.path }.toTypedArray(), null) { path, uri ->
+        callback(path, uri)
     }
 }
 
