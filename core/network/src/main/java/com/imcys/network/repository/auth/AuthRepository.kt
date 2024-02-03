@@ -2,31 +2,24 @@ package com.imcys.network.repository.auth
 
 import com.imcys.datastore.fastkv.CookiesData
 import com.imcys.model.login.AuthQrCode
-import com.imcys.model.login.CookieState
+import com.imcys.model.login.CookieInfo
+import com.imcys.model.login.CookieRefresh
 import com.imcys.model.login.LoginResponse
-import com.imcys.model.login.NewRefreshToken
 import com.imcys.network.api.BilibiliApi2
 import com.imcys.network.utils.parameterCSRF
+import com.imcys.network.utils.parameterRefreshCsrf
+import com.imcys.network.utils.parameterRefreshToken
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import timber.log.Timber
-import java.security.InvalidAlgorithmParameterException
-import java.security.InvalidKeyException
 import java.security.KeyFactory
-import java.security.NoSuchAlgorithmException
-import java.security.spec.InvalidKeySpecException
 import java.security.spec.MGF1ParameterSpec
 import java.security.spec.X509EncodedKeySpec
-import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
-import javax.crypto.IllegalBlockSizeException
-import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.OAEPParameterSpec
 import javax.crypto.spec.PSource
 import javax.inject.Inject
@@ -36,119 +29,12 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Singleton
 class AuthRepository @Inject constructor(
-    private val httpClient: HttpClient,
+    private val client: HttpClient,
     private val cookiesData: CookiesData
 ) : IAuthDataSources {
 
-    /**
-     * curl -L -X POST 'https://passport.bilibili.com/login/exit/v2' \ -H
-     * 'Cookie: DedeUserID=xxx; bili_jct=xxx; SESSDATA=xxx' \ -H 'Content-Type:
-     * application/x-www-form-urlencoded' \ --data-urlencode 'biliCSRF=xxxxxx'
-     *
-     * ```
-     * val formBody = FormBody.Builder()
-     *   .add("biliCSRF", "xxxxxx")
-     *   .build()
-     * val request = Request.Builder()
-     *   .url("https://passport.bilibili.com/login/exit/v2")
-     *   .post(formBody)
-     *   .header("Cookie", "DedeUserID=xxx; bili_jct=xxx; SESSDATA=xxx")
-     *   .header("Content-Type", "application/x-www-form-urlencoded")
-     *   .build()
-     * ```
-     */
-    suspend fun logout() = Unit
-
-    /**
-     * curl -G 'https://passport.bilibili.com/x/passport-login/web/cookie/info'
-     * \ --data-urlencode 'csrf=xxx' \ -b 'SESSDATA=xxx'
-     *
-     * ```
-     * val request = Request.Builder()
-     *   .url("https://passport.bilibili.com/x/passport-login/web/cookie/info?csrf=xxx")
-     *   .header("Cookie", "SESSDATA=xxx")
-     *   .build()
-     * ```
-     */
-    suspend fun checkCookieNeedRefresh(): CookieState =
-        httpClient.get(BilibiliApi2.CHECK_COOKIE_REFRESH) {
-            contentType(ContentType.Application.FormUrlEncoded)
-            parameterCSRF(cookiesData.csrf)
-        }.body()
-
-    suspend fun getRefreshCsrf(correspondPath: String): String {
-        val html = httpClient.get(BilibiliApi2.CORRESPOND + correspondPath).bodyAsText()
-        if (html.isEmpty()) return ""
-        val target = "<div id=\"1-name\">"
-        val index = html.indexOf(target) + target.length
-        var str = ""
-        for (i in index..<html.length) {
-            val c = html[i]
-            if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9') {
-                str += c
-            } else {
-                break
-            }
-        }
-
-        return str
-    }
-
-    /**
-     * ```
-     * val formBody = FormBody.Builder()
-     *   .add("csrf", "f610640a37f51f6266f6b83cfc5eedbb")
-     *   .add("refresh_csrf", "b0cc8411ded2f9db2cff2edb3123acac")
-     *   .add("source", "main_web")
-     *   .add("refresh_token", "45240a041836905fe953e3b98b83d751")
-     *   .build()
-     *
-     * val request = Request.Builder()
-     *   .url("https://passport.bilibili.com/x/passport-login/web/cookie/refresh")
-     *   .post(formBody)
-     *   .header("Cookie", "SESSDATA=xxx")
-     *   .header("Content-Type", "application/x-www-form-urlencoded")
-     *   .build()
-     * ```
-     */
-    suspend fun refreshCookie(refreshCsrf: String): String {
-        val oldRefreshToken = cookiesData.refreshToken
-        val newRefreshToken = httpClient.post(BilibiliApi2.COOKIE_REFRESH) {
-            contentType(ContentType.Application.FormUrlEncoded)
-            parameterCSRF(cookiesData.csrf)
-            parameter("refresh_csrf", refreshCsrf)
-            parameter("source", "main_web")
-            parameter("refresh_token", oldRefreshToken)
-        }.body<NewRefreshToken>()
-        cookiesData.refreshToken = newRefreshToken.refreshToken
-        return oldRefreshToken
-    }
-
-    /**
-     * ```
-     * val formBody = FormBody.Builder()
-     *   .add("csrf", "1e9658858e6da76be64bd92cdc0fa324")
-     *   .add("refresh_token", "45240a041836905fe953e3b98b83d751")
-     *   .build()
-     *
-     * val request = Request.Builder()
-     *   .url("https://passport.bilibili.com/x/passport-login/web/confirm/refresh")
-     *   .post(formBody)
-     *   .header("Cookie", "SESSDATA=xxx")
-     *   .header("Content-Type", "application/x-www-form-urlencoded")
-     *   .build()
-     * ```
-     */
-    suspend fun confirmRefresh(oldRefreshToken: String) {
-        httpClient.post(BilibiliApi2.CONFIRM_REFRESH) {
-            contentType(ContentType.Application.FormUrlEncoded)
-            parameterCSRF(cookiesData.csrf)
-            parameter("refresh_token", oldRefreshToken)
-        }
-    }
-
     @OptIn(ExperimentalEncodingApi::class)
-    fun getCorrespondPath(timestamp: Long): String {
+    private fun getCorrespondPath(timestamp: Long): String {
         val publicKeyPEM = """
         -----BEGIN PUBLIC KEY-----
         MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg
@@ -157,81 +43,105 @@ class AuthRepository @Inject constructor(
         JNrRuoEUXpabUzGB8QIDAQAB
         -----END PUBLIC KEY-----
         """.trimIndent()
-        return try {
-            val publicKey = KeyFactory.getInstance("RSA").generatePublic(
-                X509EncodedKeySpec(
-                    Base64.decode(
-                        publicKeyPEM
-                            .replace("-----BEGIN PUBLIC KEY-----", "")
-                            .replace("-----END PUBLIC KEY-----", "")
-                            .replace("\n", "")
-                            .trim()
-                    )
+        val publicKey = KeyFactory.getInstance("RSA").generatePublic(
+            X509EncodedKeySpec(
+                Base64.decode(
+                    publicKeyPEM
+                        .replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+                        .replace("\n", "")
+                        .trim()
                 )
             )
-            val cipher = Cipher.getInstance("RSA/ECB/OAEPPadding").apply {
-                init(
-                    Cipher.ENCRYPT_MODE,
-                    publicKey,
-                    OAEPParameterSpec(
-                        "SHA-256",
-                        "MGF1",
-                        MGF1ParameterSpec.SHA256,
-                        PSource.PSpecified.DEFAULT
-                    )
+        )
+        val cipher = Cipher.getInstance("RSA/ECB/OAEPPadding").apply {
+            init(
+                Cipher.ENCRYPT_MODE,
+                publicKey,
+                OAEPParameterSpec(
+                    "SHA-256",
+                    "MGF1",
+                    MGF1ParameterSpec.SHA256,
+                    PSource.PSpecified.DEFAULT
                 )
-            }
-            cipher.doFinal("refresh_$timestamp".toByteArray())
-                .joinToString("") { "%02x".format(it) }
-        } catch (e: NoSuchAlgorithmException) {
-            Timber.e(e)
-            ""
-        } catch (e: NoSuchPaddingException) {
-            Timber.e(e)
-            ""
-        } catch (e: InvalidKeySpecException) {
-            Timber.e(e)
-            ""
-        } catch (e: InvalidAlgorithmParameterException) {
-            Timber.e(e)
-            ""
-        } catch (e: InvalidKeyException) {
-            Timber.e(e)
-            ""
-        } catch (e: BadPaddingException) {
-            Timber.e(e)
-            ""
-        } catch (e: IllegalBlockSizeException) {
-            Timber.e(e)
-            ""
+            )
         }
+        return cipher.doFinal("refresh_$timestamp".toByteArray())
+            .joinToString("") { "%02x".format(it) }
     }
 
     override suspend fun 获取二维码(): AuthQrCode =
-        httpClient.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
+        client.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
 
     override suspend fun 轮询登录接口(key: String): LoginResponse =
-        httpClient.get(BilibiliApi2.getLoginStatePath) {
+        client.get(BilibiliApi2.getLoginStatePath) {
             parameter("qrcode_key", key)
         }.body()
 
     override suspend fun 退出登录() {
-        TODO("Not yet implemented")
+        cookiesData.clear()
     }
 
-    override suspend fun 检查Cookie是否需要刷新() {
-        TODO("Not yet implemented")
+    override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
+        val info = client.get("https://passport.bilibili.com/x/passport-login/web/cookie/info")
+            .body<CookieInfo>()
+        Napier.d(tag = "cookie刷新第一步") { "刷新: ${info.refresh}\n时间戳: ${info.timestamp}" }
+        return info
     }
 
-    override suspend fun 获取refresh_csrf() {
-        TODO("Not yet implemented")
+    override suspend fun 获取RefreshCsrf(timestamp: Long): String {
+        val path = getCorrespondPath(timestamp)
+        val text =
+            client.get("https://www.bilibili.com/correspond/1/$path").bodyAsText()
+        val reCsrf = fromHtmlGetRefreshCsrfBy(text)
+        Napier.d(tag = "cookie刷新第二步") { "Correspond: $path\nRefreshCsrf: $reCsrf" }
+        return reCsrf
     }
 
-    override suspend fun 刷新Cookie() {
-        TODO("Not yet implemented")
+    private fun fromHtmlGetRefreshCsrfBy(html: String): String {
+        val regex = Regex("<div +id=\"1-name\">(.+?)</div>")
+        val refreshCsrf = regex.findAll(html).map { it.value }.firstOrNull() ?: ""
+        return refreshCsrf.drop("<div id=\"1-name\">".length).dropLast("</div>".length)
     }
 
-    override suspend fun 确认更新Cookie() {
-        TODO("Not yet implemented")
+    override suspend fun 刷新Cookie(
+        csrf: String,
+        refresh_csrf: String,
+        refresh_token: String
+    ): CookieRefresh {
+        val cookieRefresh =
+            client.post("https://passport.bilibili.com/x/passport-login/web/cookie/refresh") {
+                parameterCSRF(refresh_csrf)
+                parameterRefreshCsrf(refresh_csrf)
+                parameterRefreshToken(refresh_token)
+                parameter("source", "main_web")
+            }
+                .body<CookieRefresh>()
+        Napier.d(tag = "cookie刷新第三步") { "刷新Token: ${cookieRefresh.refreshToken}" }
+        return cookieRefresh
+    }
+
+    override suspend fun 确认更新Cookie(csrf: String, refreshToken: String) {
+        val text =
+            client.post("https://passport.bilibili.com/x/passport-login/web/confirm/refresh") {
+                parameterCSRF(csrf)
+                parameterRefreshToken(refreshToken)
+            }
+                .bodyAsText()
+        Napier.d(tag = "cookie刷新最后一步") { text }
+    }
+
+    suspend fun cookieRefreshChain() {
+        val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
+        if (!needRefresh) return
+        val refreshCsrf = 获取RefreshCsrf(timestamp)
+        val oldToken = cookiesData.refreshToken
+        val (_, newRefreshToken, _) = 刷新Cookie(
+            csrf = cookiesData.biliJctOrCsrf,
+            refresh_csrf = refreshCsrf,
+            refresh_token = oldToken
+        )
+        确认更新Cookie(cookiesData.biliJctOrCsrf, oldToken)
+        cookiesData.setRefreshToke(newRefreshToken)
     }
 }

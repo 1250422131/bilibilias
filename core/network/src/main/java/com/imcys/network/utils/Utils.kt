@@ -37,6 +37,10 @@ internal fun HttpRequestBuilder.parameterCID(cId: Long): Unit =
 
 internal fun HttpRequestBuilder.parameterCSRF(csrf: String): Unit =
     url.parameters.append("csrf", csrf)
+internal fun HttpRequestBuilder.parameterRefreshToken(token: String): Unit =
+    url.parameters.append("refresh_token", token)
+internal fun HttpRequestBuilder.parameterRefreshCsrf(csrf: String): Unit =
+    url.parameters.append("refresh_csrf", csrf)
 
 internal fun HttpMessageBuilder.headerRefBilibili(): Unit =
     headers.append(HttpHeaders.Referrer, BILIBILI_WEB_URL)
