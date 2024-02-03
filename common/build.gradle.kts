@@ -69,10 +69,10 @@ protobuf {
     }
     plugins {
         id("java") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.61.1"
         }
         id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:1.61.1"
         }
         id("grpckt") {
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
