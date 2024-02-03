@@ -1,11 +1,10 @@
-package com.imcys.model.login
-
+﻿package com.imcys.model.login
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NewRefreshToken(
+data class CookieRefresh(
     @SerialName("message")
     val message: String = "",
     @SerialName("refresh_token")

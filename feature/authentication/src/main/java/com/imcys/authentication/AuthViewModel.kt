@@ -54,8 +54,10 @@ class AuthViewModel @Inject constructor(
                         snackBarMessage = if (response.isSuccess) "登录成功" else null
                     )
                 }
+                if (response.refreshToken.isNotBlank()) {
+                    cookiesData.refreshToken = response.refreshToken
+                }
                 ok = state.isSuccess
-                // cookiesData.refreshToken = response.refreshToken
             }
         }
     }
