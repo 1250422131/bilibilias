@@ -70,30 +70,36 @@ class AuthRepository @Inject constructor(
             .joinToString("") { "%02x".format(it) }
     }
 
-    override suspend fun 获取二维码(): AuthQrCode =
-        client.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
+    override suspend fun 获取二维码(): AuthQrCode {
+        val response = client.get(BilibiliApi2.getLoginQRPath).body<AuthQrCode>()
+        Napier.d(tag = "二维码登录") { "$response" }
+        return response
+    }
 
-    override suspend fun 轮询登录接口(key: String): LoginResponse =
-        client.get(BilibiliApi2.getLoginStatePath) {
+    override suspend fun 轮询登录接口(key: String): LoginResponse {
+        val response = client.get(BilibiliApi2.getLoginStatePath) {
             parameter("qrcode_key", key)
-        }.body()
+        }.body<LoginResponse>()
+        Napier.d(tag = "轮询登录") { "$response" }
+        return response
+    }
 
     override suspend fun 退出登录() {
         cookieStorage.clear()
     }
 
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
-        val info = client.get("https://passport.bilibili.com/x/passport-login/web/cookie/info")
+        val response = client.get("https://passport.bilibili.com/x/passport-login/web/cookie/info")
             .body<CookieInfo>()
-        Napier.d(tag = "cookie刷新第一步") { "刷新: ${info.refresh}\n时间戳: ${info.timestamp}" }
-        return info
+        Napier.d(tag = "cookie刷新第一步") { "刷新: ${response.refresh}\n时间戳: ${response.timestamp}" }
+        return response
     }
 
     override suspend fun 获取RefreshCsrf(timestamp: Long): String {
         val path = getCorrespondPath(timestamp)
-        val text =
+        val html =
             client.get("https://www.bilibili.com/correspond/1/$path").bodyAsText()
-        val reCsrf = fromHtmlGetRefreshCsrfBy(text)
+        val reCsrf = fromHtmlGetRefreshCsrfBy(html)
         Napier.d(tag = "cookie刷新第二步") { "Correspond: $path\nRefreshCsrf: $reCsrf" }
         return reCsrf
     }
@@ -109,7 +115,7 @@ class AuthRepository @Inject constructor(
         refresh_csrf: String,
         refresh_token: String
     ): CookieRefresh {
-        val cookieRefresh =
+        val response =
             client.post("https://passport.bilibili.com/x/passport-login/web/cookie/refresh") {
                 parameterCSRF(refresh_csrf)
                 parameterRefreshCsrf(refresh_csrf)
@@ -117,8 +123,8 @@ class AuthRepository @Inject constructor(
                 parameter("source", "main_web")
             }
                 .body<CookieRefresh>()
-        Napier.d(tag = "cookie刷新第三步") { "刷新Token: ${cookieRefresh.refreshToken}" }
-        return cookieRefresh
+        Napier.d(tag = "cookie刷新第三步") { "刷新Token: ${response.refreshToken}" }
+        return response
     }
 
     override suspend fun 确认更新Cookie(csrf: String, refreshToken: String) {

@@ -18,6 +18,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthDataSources,
@@ -29,12 +30,11 @@ class AuthViewModel @Inject constructor(
     init {
         getQRCode()
     }
-
     fun getQRCode() {
         viewModelScope.launch(Dispatchers.IO) {
-            val qrCode = authRepository.获取二维码()
-            _loginAuthState.update { it.copy(qrCodeUrl = qrCode.url) }
-            tryLogin(qrCode.qrcodeKey)
+            val (key, url) = authRepository.获取二维码()
+            _loginAuthState.update { it.copy(qrCodeUrl = url + "main-fe-header") }
+            tryLogin(key)
         }
     }
 

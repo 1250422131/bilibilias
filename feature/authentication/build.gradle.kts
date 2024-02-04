@@ -15,6 +15,5 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.datastore)
 
-    implementation(libs.zxing.android.embedded)
     implementation(libs.qrose)
 }

@@ -3,9 +3,10 @@ package com.imcys.authentication.login
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.media.MediaScannerConnection
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Environment
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,14 +35,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.hjq.toast.Toaster
 import com.imcys.authentication.AuthViewModel
 import com.imcys.authentication.LoginAuthState
 import com.imcys.authentication.R
+import com.imcys.common.utils.getActivity
+import com.imcys.common.utils.updatePhotoMedias
 import com.imcys.designsystem.component.AsButton
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import timber.log.Timber
@@ -53,8 +54,8 @@ import java.io.IOException
 internal fun LoginAuthRoute(
     onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = hiltViewModel()
 ) {
+    val viewModel: AuthViewModel = hiltViewModel()
     val loginAuthState by viewModel.loginAuthUiState.collectAsStateWithLifecycle()
     LoginAuthScreen(
         onNavigateToHome = onNavigateToHome,
@@ -105,13 +106,9 @@ internal fun LoginAuthScreen(
                 .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val context = LocalContext.current
             val qrCodePainter = rememberQrCodePainter(authState.qrCodeUrl)
-            AsyncImage(
-                model = qrCodePainter,
-                onSuccess = {
-                    saveQRCode(it.result.drawable.toBitmap(), context)
-                },
+            Image(
+                qrCodePainter,
                 contentDescription = "二维码",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -124,12 +121,16 @@ internal fun LoginAuthScreen(
                 fontWeight = FontWeight.Bold,
             )
             // region 跳转扫码
+            val context = LocalContext.current
             AsButton(
-                onClick = { goToQRScan(context) },
+                onClick = {
+                    val bitmap = getWindowBitmapPath(context)
+                    saveQRCode(bitmap, context, true)
+                },
                 Modifier
                     .padding(horizontal = 25.dp, vertical = 10.dp)
                     .height(60.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(R.string.app_dialog_login_qr_bottomsheet_go),
@@ -142,27 +143,36 @@ internal fun LoginAuthScreen(
     }
 }
 
-private fun saveQRCode(bitmap: Bitmap, context: Context) {
+fun getWindowBitmapPath(context: Context): Bitmap {
+    val view = context.getActivity().window?.decorView?.rootView
+    val bitmap = Bitmap.createBitmap(
+        view?.width ?: 0,
+        view?.height?.div(2) ?: 0,
+        Bitmap.Config.ARGB_8888
+    )
+
+    view?.draw(Canvas(bitmap))
+    return bitmap
+}
+
+private fun saveQRCode(bitmap: Bitmap, context: Context, recycle: Boolean) {
     val bili =
         File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "bili")
     try {
-        val photo = File(bili, "BILIBILIAS-QR-Code.jpg")
+        val photo = File(bili, "BILIBILIAS-QR-Code.png")
         photo.outputStream().use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 75, out)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             out.flush()
         }
-        MediaScannerConnection.scanFile(
-            context,
-            arrayOf(photo.toString()),
-            null
-        ) { _, _ ->
-            Toaster.show(R.string.app_LoginQRModel_downloadLoginQR_asToast)
-        }
+        updatePhotoMedias(context, photo)
     } catch (e: FileNotFoundException) {
         Timber.d(e)
     } catch (e: IOException) {
         Timber.d(e)
     } finally {
+        if (recycle && !bitmap.isRecycled) {
+            bitmap.recycle()
+        }
         goToQRScan(context)
     }
 }
