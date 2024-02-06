@@ -64,7 +64,7 @@ open class AbsActivity : AppCompatActivity() {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
-        lifecycleScope.launch(Dispatchers.Main, start, block)
+        lifecycleScope.launch(Dispatchers.Main.immediate, start, block)
     }
 
     private fun setLanguage() {

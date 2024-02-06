@@ -25,7 +25,6 @@ import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.CollectionResultBean
 import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
-import com.imcys.bilibilias.home.ui.model.DonateViewBean
 import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
@@ -50,7 +49,6 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.statement.readBytes
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
@@ -59,9 +57,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
-import kotlin.reflect.full.createType
 
 @Singleton
 class NetworkService @Inject constructor(
