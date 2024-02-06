@@ -17,13 +17,13 @@ fun CoroutineScope.launchIO(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    return this.launch(Dispatchers.Main, start, block)
+    return this.launch(Dispatchers.Main.immediate, start, block)
 }
 
 fun launchUI(
     block: suspend CoroutineScope.() -> Unit,
 ): Job {
-    return CoroutineScope(Dispatchers.Main).launchUI { block.invoke(this) }
+    return CoroutineScope(Dispatchers.Main.immediate).launchUI { block.invoke(this) }
 }
 
 fun launchIO(

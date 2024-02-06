@@ -19,7 +19,6 @@ class AppModule {
         isLenient = true
         ignoreUnknownKeys = true
     }
-
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
