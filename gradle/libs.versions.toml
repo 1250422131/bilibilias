@@ -70,7 +70,7 @@ androidxComposeBom = "2024.02.00"
 koin = "3.5.3"
 lint = "31.2.2"
 wire = "4.9.6"
-commonsCodec = "1.16.0"
+commonsCodec = "1.16.1"
 annotation = "1.7.1"
 zxingAndroidEmbedded = "4.3.0"
 [libraries]
