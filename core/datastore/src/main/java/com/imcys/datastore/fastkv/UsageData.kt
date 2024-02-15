@@ -1,9 +1,8 @@
 package com.imcys.datastore.fastkv
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.content.*
+import dagger.hilt.android.qualifiers.*
+import javax.inject.*
 
 /**
  * APP使用信息
