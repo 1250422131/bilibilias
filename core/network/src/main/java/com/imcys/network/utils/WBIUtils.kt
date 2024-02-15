@@ -1,8 +1,8 @@
 package com.imcys.network.utils
 
-import com.imcys.common.utils.md5
-import com.imcys.network.repository.Parameter
-import io.ktor.http.encodeURLParameter
+import com.imcys.common.utils.*
+import com.imcys.network.repository.*
+import io.ktor.http.*
 
 /**
  * 签名算法
@@ -30,20 +30,17 @@ object WBIUtils {
         }.take(32).joinToString("")
     }
 
-    fun encWbi(
-        params: List<Parameter>,
-        mixinKey: String
-    ): List<Parameter> {
-        val p = Parameter("wts", (System.currentTimeMillis() / 1000).toString())
-        val parameters = mutableListOf(Parameter("wts", "1702204169"))
-        parameters += params
-        parameters += p
-        parameters.sortBy { it.first }
+    fun encWbi(params: List<Parameter>, mixinKey: String): List<Parameter> {
+        val parameters = mutableListOf(Parameter("wts", (System.currentTimeMillis() / 1000).toString())).apply {
+            addAll(params)
+            sortBy { it.first }
+        }
+
         val param = parameters.joinToString("&") { (k, v) ->
             k + "=" + v.encodeURLParameter()
         }
         val wbiSign = md5(param + mixinKey)
-        parameters.add(Parameter("w_rid", wbiSign))
+        parameters += Parameter("w_rid", wbiSign)
         return parameters.map { Parameter(it.first, it.second) }
     }
 }
