@@ -1,31 +1,27 @@
 package com.imcys.network.configration
 
-import com.imcys.datastore.fastkv.CookieStorage
-import io.ktor.client.plugins.cookies.CookiesStorage
-import io.ktor.http.CookieEncoding
-import io.ktor.http.Url
-import io.ktor.util.date.GMTDate
-import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.imcys.datastore.fastkv.*
+import io.ktor.client.plugins.cookies.*
+import io.ktor.http.*
+import io.ktor.util.date.*
+import timber.log.*
+import javax.inject.*
 import com.imcys.model.login.Cookie as AsCookie
 import io.ktor.http.Cookie as KtorCookie
 
 @Singleton
-class CookieManager
-@Inject constructor(
-    private val cookieStorage: CookieStorage
+class CookieManager @Inject constructor(
+    private val persistentCookie: PersistentCookie
 ) : CookiesStorage {
 
     override suspend fun addCookie(requestUrl: Url, cookie: KtorCookie) {
         Timber.d("addCookie: $cookie")
-        cookieStorage.setCookie(cookie.mapToAsCookie())
-        close()
+        persistentCookie.setCookie(cookie.mapToAsCookie())
     }
 
     override suspend fun get(requestUrl: Url): List<KtorCookie> {
         Timber.d("getCookie: $requestUrl")
-        return cookieStorage.getCookie().map(AsCookie::mapToKtorCookie)
+        return persistentCookie.getCookie().map(AsCookie::mapToKtorCookie)
     }
 
     override fun close() = Unit

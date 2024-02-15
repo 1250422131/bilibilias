@@ -1,30 +1,28 @@
 package com.imcys.datastore.fastkv
 
-import android.content.Context
-import com.imcys.model.login.Cookie
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.cbor.Cbor
-import javax.inject.Inject
+import android.content.*
+import com.imcys.model.login.*
+import dagger.hilt.android.qualifiers.*
+import kotlinx.serialization.*
+import kotlinx.serialization.builtins.*
+import kotlinx.serialization.cbor.*
+import javax.inject.*
 
 @OptIn(ExperimentalSerializationApi::class)
-class CookieStorage @Inject constructor(
+class PersistentCookie @Inject constructor(
     @ApplicationContext context: Context,
     private val cbor: Cbor
-) : FastKVOwner("cookies", context) {
+) : FastKVOwner("PersistentCookie", context) {
     private var cookieByteArray by array(byteArrayOf())
     private val cache = mutableListOf<Cookie>()
 
     fun getCookie(): List<Cookie> {
         if (!logging) return emptyList()
-        return if (cache.isEmpty()) {
+        if (cache.isEmpty()) {
             cbor.decodeFromByteArray(ListSerializer(Cookie.serializer()), cookieByteArray)
-                .map(cache::add)
-            cache
-        } else {
-            cache
+                .forEach(cache::add)
         }
+        return cache
     }
 
     fun getCookie(name: String): Cookie? = cache.find { it.name == name }
@@ -53,8 +51,7 @@ class CookieStorage @Inject constructor(
     }
 
     fun clear() {
-        cookieByteArray = byteArrayOf()
-        logging = false
+        kv.clear()
     }
 
     companion object {
