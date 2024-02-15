@@ -107,9 +107,6 @@ dependencies {
 
     api(libs.constraintlayout)
 
-    implementation(libs.androidx.work.runtime)
-    implementation(libs.androidx.hilt.work)
-
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
 

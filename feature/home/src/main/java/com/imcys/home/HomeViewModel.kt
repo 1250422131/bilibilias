@@ -24,7 +24,7 @@ class HomeViewModel @Inject constructor(
     private fun requestWbiKey() {
         viewModelScope.launch {
             wbiKeyStorage.updateLocalDate()
-            if (wbiKeyStorage.shouldNeedUpdate()) {
+            if (wbiKeyStorage.shouldUpdate()) {
                 val mixKey = wbiKeyRepository.getSignature()
                 wbiKeyStorage.save(mixKey)
                 wbiKeyStorage.updateLocalDate()

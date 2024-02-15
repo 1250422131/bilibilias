@@ -6,6 +6,14 @@ plugins {
 
 android {
     namespace = "com.bilias.core.datastore"
+    packaging {
+        resources {
+            excludes += "META-INF/*"
+        }
+    }
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 dependencies {
@@ -16,4 +24,6 @@ dependencies {
     implementation(libs.mmkv)
     implementation(libs.fastkv)
     implementation(libs.androidx.datastore)
+
+    androidTestImplementation(projects.core.testing)
 }
