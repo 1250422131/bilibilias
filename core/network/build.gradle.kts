@@ -49,4 +49,7 @@ dependencies {
 
     kspTest("com.google.dagger:hilt-android-compiler:2.50")
     kspAndroidTest("com.google.dagger:hilt-android-compiler:2.50")
+
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.work)
 }

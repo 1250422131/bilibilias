@@ -48,7 +48,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "META-INF/versions/9/previous-compilation-data.bin"
+            excludes += "META-INF/*******"
         }
     }
 }
@@ -77,9 +77,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
-    implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.material)
