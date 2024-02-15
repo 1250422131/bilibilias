@@ -1,14 +1,12 @@
 package com.imcys.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.imcys.datastore.fastkv.CookieStorage
-import com.imcys.datastore.fastkv.WbiKeyStorage
-import com.imcys.network.repository.auth.IAuthDataSources
-import com.imcys.network.repository.wbi.IWbiSignatureDataSources
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import androidx.lifecycle.*
+import com.imcys.datastore.fastkv.*
+import com.imcys.network.repository.auth.*
+import com.imcys.network.repository.wbi.*
+import dagger.hilt.android.lifecycle.*
+import kotlinx.coroutines.*
+import javax.inject.*
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -23,12 +21,8 @@ class HomeViewModel @Inject constructor(
 
     private fun requestWbiKey() {
         viewModelScope.launch {
-            wbiKeyStorage.updateLocalDate()
-            if (wbiKeyStorage.shouldUpdate()) {
-                val mixKey = wbiKeyRepository.getSignature()
-                wbiKeyStorage.save(mixKey)
-                wbiKeyStorage.updateLocalDate()
-            }
+            val mixKey = wbiKeyRepository.getSignature()
+            wbiKeyStorage.save(mixKey)
         }
     }
 
