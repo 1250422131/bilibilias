@@ -229,7 +229,7 @@ object NetworkModule {
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideTransformData(json: Json, cookieStorage: CookieStorage): ClientPlugin<Unit> =
+    fun provideTransformData(json: Json, persistentCookie: PersistentCookie): ClientPlugin<Unit> =
         createClientPlugin("TransformData") {
             transformResponseBody { request, content, requestedType ->
                 if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
@@ -239,7 +239,7 @@ object NetworkModule {
                     content.toInputStream()
                 )
                 if (box.code == ACCOUNT_NOT_LOGGED_IN) {
-                    cookieStorage.logging = false
+                    persistentCookie.logging = false
                 }
                 if (box.code != SUCCESS) {
                     throw ApiIOException(

@@ -1,54 +1,29 @@
 package com.imcys.authentication.login
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.net.Uri
-import android.os.Environment
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hjq.toast.Toaster
-import com.imcys.authentication.AuthViewModel
-import com.imcys.authentication.LoginAuthState
+import android.content.*
+import android.graphics.*
+import android.net.*
+import android.os.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
+import androidx.hilt.navigation.compose.*
+import androidx.lifecycle.compose.*
+import com.hjq.toast.*
+import com.imcys.authentication.*
 import com.imcys.authentication.R
-import com.imcys.common.utils.getActivity
-import com.imcys.common.utils.updatePhotoMedias
-import com.imcys.designsystem.component.AsButton
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
-import timber.log.Timber
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
+import com.imcys.common.utils.*
+import com.imcys.designsystem.component.*
+import io.github.alexzhirkevich.qrose.*
+import timber.log.*
+import java.io.*
 
 @Composable
 internal fun LoginAuthRoute(
@@ -69,7 +44,7 @@ internal fun LoginAuthRoute(
 @Composable
 internal fun LoginAuthScreen(
     onNavigateToHome: () -> Unit,
-    刷新二维码: () -> Unit,
+    getQrCode: () -> Unit,
     authState: LoginAuthState,
     modifier: Modifier = Modifier
 ) {
@@ -113,7 +88,7 @@ internal fun LoginAuthScreen(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(130.dp)
-                    .clickable(onClick = 刷新二维码)
+                    .clickable(onClick = getQrCode)
             )
             Text(
                 text = authState.qrCodeMessage,

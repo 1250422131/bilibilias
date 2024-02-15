@@ -1,36 +1,25 @@
 package com.imcys.network.repository.auth
 
-import com.imcys.datastore.fastkv.CookieStorage
-import com.imcys.model.login.AuthQrCode
-import com.imcys.model.login.CookieInfo
-import com.imcys.model.login.CookieRefresh
-import com.imcys.model.login.LoginResponse
-import com.imcys.network.api.BilibiliApi2
-import com.imcys.network.utils.parameterCSRF
-import com.imcys.network.utils.parameterRefreshCsrf
-import com.imcys.network.utils.parameterRefreshToken
-import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.client.request.post
-import io.ktor.client.statement.bodyAsText
-import java.security.KeyFactory
-import java.security.spec.MGF1ParameterSpec
-import java.security.spec.X509EncodedKeySpec
-import javax.crypto.Cipher
-import javax.crypto.spec.OAEPParameterSpec
-import javax.crypto.spec.PSource
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.imcys.datastore.fastkv.*
+import com.imcys.model.login.*
+import com.imcys.network.api.*
+import com.imcys.network.utils.*
+import io.github.aakira.napier.*
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import java.security.*
+import java.security.spec.*
+import javax.crypto.*
+import javax.crypto.spec.*
+import javax.inject.*
+import kotlin.io.encoding.*
 
 @Singleton
 class AuthRepository @Inject constructor(
     private val client: HttpClient,
-    private val cookieStorage: CookieStorage
+    private val persistentCookie: PersistentCookie
 ) : IAuthDataSources {
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -85,7 +74,7 @@ class AuthRepository @Inject constructor(
     }
 
     override suspend fun 退出登录() {
-        cookieStorage.clear()
+        persistentCookie.clear()
     }
 
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
@@ -141,13 +130,13 @@ class AuthRepository @Inject constructor(
         val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
         if (!needRefresh) return
         val refreshCsrf = 获取RefreshCsrf(timestamp)
-        val oldToken = cookieStorage.refreshToken
+        val oldToken = persistentCookie.refreshToken
         val (_, newRefreshToken, _) = 刷新Cookie(
-            csrf = cookieStorage.biliJctOrCsrf,
+            csrf = persistentCookie.biliJctOrCsrf,
             refresh_csrf = refreshCsrf,
             refresh_token = oldToken
         )
-        确认更新Cookie(cookieStorage.biliJctOrCsrf, oldToken)
-        cookieStorage.setRefreshToke(newRefreshToken)
+        确认更新Cookie(persistentCookie.biliJctOrCsrf, oldToken)
+        persistentCookie.setRefreshToke(newRefreshToken)
     }
 }
