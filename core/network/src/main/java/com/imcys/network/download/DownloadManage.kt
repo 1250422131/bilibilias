@@ -1,59 +1,43 @@
 package com.imcys.network.download
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import com.hjq.toast.Toaster
-import com.imcys.bilibilias.dm.DmSegMobileReply
-import com.imcys.common.di.AppCoroutineScope
-import com.imcys.common.utils.AppFilePathUtils
-import com.imcys.model.Dash
-import com.imcys.model.NetworkPlayerPlayUrl
-import com.imcys.model.ViewDetail
-import com.imcys.model.download.CacheFile
-import com.imcys.model.download.Entry
-import com.imcys.network.constant.BILIBILI_WEB_URL
-import com.imcys.network.constant.BROWSER_USER_AGENT
-import com.imcys.network.constant.REFERER
-import com.imcys.network.constant.USER_AGENT
-import com.imcys.network.repository.danmaku.IDanmakuDataSources
-import com.imcys.network.repository.video.IVideoDataSources
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import java.io.File
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.content.*
+import android.net.*
+import androidx.collection.*
+import com.hjq.toast.*
+import com.imcys.bilibilias.dm.*
+import com.imcys.bilibilias.okdownloader.*
+import com.imcys.common.di.*
+import com.imcys.common.utils.*
+import com.imcys.model.*
+import com.imcys.model.download.*
+import com.imcys.network.constant.*
+import com.imcys.network.repository.danmaku.*
+import com.imcys.network.repository.video.*
+import dagger.hilt.android.qualifiers.*
+import io.github.aakira.napier.*
+import io.ktor.http.*
+import kotlinx.coroutines.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
+import java.io.*
+import javax.inject.*
 
-const val DANMAKU_XML = "danmaku.xml"
-const val ENTRY_JSON = "entry.json"
-const val VIDEO_M4S = "video.m4s"
-const val AUDIO_M4S = "audio.m4s"
-const val DEFAULT_DANMAKU_SIZE = 72
+val Context.downloadDir: File
+    get() = File(this.filesDir.parent, "download").apply {
+        mkdirs()
+    }
 
-const val ADM_PACK_NAME = "com.dv.adm"
-const val ADM_EDITOR = "$ADM_PACK_NAME.AEditor"
-const val ADM_PRO_PACK_NAME = "$ADM_PACK_NAME.pay"
-const val ADM_PRO_EDITOR = "$ADM_PRO_PACK_NAME.AEditor"
-
-const val IDM_PACK_NAME = "idm.internet.download.manager"
-const val IDM_DOWNLOADER = "$IDM_PACK_NAME.Downloader"
-const val IDM_PLUS_PACK_NAME = "$IDM_PACK_NAME.plus"
-
-// todo 移动到 datastore
+private const val NO_PROGRESS = Int.MIN_VALUE
+private const val TAG = "DownloadManage"
 @Singleton
 class DownloadManage @Inject constructor(
     private val videoRepository: IVideoDataSources,
     private val danmakuRepository: IDanmakuDataSources,
     private val json: Json,
-    private val okDownload: OkDownload,
     @ApplicationContext private val context: Context,
     @AppCoroutineScope private val scope: CoroutineScope,
-) : IDownloadManage {
+    private val downloader: Downloader
+) : Download.Callback {
     // todo 等待实现
     // region 移动到更上层
     fun launchThirdPartyDownload(downloader: ThirdPartyDownloader) {
@@ -146,9 +130,6 @@ class DownloadManage @Inject constructor(
         }
     }
 
-    // endregion
-    fun downloadDanmaku() {}
-
     private fun buildEntryJsonFileContent(
         qn: Int,
         detail: ViewDetail,
@@ -191,24 +172,26 @@ class DownloadManage @Inject constructor(
         """.trimIndent()
     }
 
-    fun findAllTask() {
-    }
-
-    fun deleteFile() {
-    }
-
     private fun addToQueue(info: NetworkPlayerPlayUrl, detail: ViewDetail, quality: Int) {
         val video = getVideoStrategy(info, quality)
         val audio = getAudioStrategy(info)
 
         val cid = detail.cid
         val path = buildCacheFullPath(detail.aid, cid, quality)
-        enqueueTasksTogether(path, cid, video, audio)
+        val task = Task(
+            detail.aid,
+            detail.bvid,
+            detail.cid,
+            detail.title,
+            detail.pic,
+        )
+        enqueueTask(path, task, video, audio)
         scope.launch {
             recordDownloadInfo(quality, detail)
             recordDMInfo(detail.aid, cid, detail.duration)
         }
     }
+
 
     /**
      * 记录下载信息
@@ -236,22 +219,22 @@ class DownloadManage @Inject constructor(
         return info.dash.audio.maxBy { it.id }
     }
 
-    private fun enqueueTasksTogether(
+    private fun enqueueTask(
         path: String,
-        cid: Long,
+        task: Task,
         video: Dash.Video,
         audio: Dash.Audio
     ) {
-        okDownload.enqueueTask(
+        enqueueTask(
             path,
-            cid,
+            task,
             audio.baseUrl,
             audio.backupUrl,
             DownloadTag.AUDIO,
         )
-        okDownload.enqueueTask(
+        enqueueTask(
             path,
-            cid,
+            task,
             video.baseUrl,
             video.backupUrl,
             DownloadTag.VIDEO,
@@ -307,7 +290,7 @@ class DownloadManage @Inject constructor(
         return "${context.downloadDir}${File.separator}$aid${File.separator}c_$cid"
     }
 
-    override fun getAllTask(path: String): List<CacheFile> {
+    fun getAllTask(path: String): List<CacheFile> {
         val scan = TopDownAccess(path)
         return decodeEntryFile(scan)
     }
@@ -362,4 +345,108 @@ class DownloadManage @Inject constructor(
             addTask(it, quality)
         }
     }
+
+    private val retryVideo = LongSparseArray<MutableList<String>>(0)
+    private val retryAudio = LongSparseArray<MutableList<String>>(0)
+    private val groupProgress = ArrayMap<Task, Int>()
+    private var progressListener: ProgressListener? = null
+    fun setProgressListener(listener: ProgressListener) {
+        progressListener = listener
+    }
+
+    fun enqueueTask(
+        path: String,
+        task: Task,
+        baseUrl: String,
+        backupUrl: List<String>,
+        tag: DownloadTag
+    ) {
+        groupProgress[task] = NO_PROGRESS
+        addRetryList(tag, task.cId, backupUrl)
+        val request = request(baseUrl, path, task.cId, tag, backupUrl)
+        enqueue(request)
+    }
+
+    override fun onRetrying(call: Download.Call) {
+        val groupId = call.request.groupId
+        tryGetNewUrl(call.request.tag!!, groupId)?.let {
+            onRetryOrFailure(call, it)
+        }
+    }
+
+    override fun onFailure(call: Download.Call, response: Download.Response) {
+        val groupId = call.request.groupId
+        remove(call.request.tag, groupId)
+    }
+
+    override fun onLoading(call: Download.Call, current: Long, total: Long) {
+        val groupId = call.request.groupId
+        groupProgress.keys.find { it.cId == groupId }?.let {
+            groupProgress[it] = current.toInt()
+            progressListener?.set(groupProgress)
+        }
+        Napier.d(tag = TAG) { "groupId = $groupId, current = [${current}], total = [${total}]" }
+    }
+
+    override fun onSuccess(call: Download.Call, response: Download.Response) {
+        if (!response.isSuccessful()) return
+        val tag = call.request.tag
+        val groupId = call.request.groupId
+        remove(tag, groupId)
+    }
+
+    private fun remove(tag: String?, groupId: Long) {
+        tags(tag).remove(groupId)
+    }
+
+    private fun request(
+        baseUrl: String,
+        path: String,
+        cId: Long,
+        tag: DownloadTag,
+        backupUrl: List<String>
+    ): Download.Request {
+        return Download.Request.Builder()
+            .url(baseUrl)
+            .into(File(path, tag.tagName))
+            .header(HttpHeaders.Referrer, BILIBILI_WEB_URL)
+            .priority(Download.Priority.MIDDLE)
+            .tag(tag.tagName)
+            .retry(backupUrl.size)
+            .groupId(cId)
+            .build()
+    }
+
+    private fun addRetryList(tag: DownloadTag, cId: Long, backupUrl: List<String>) {
+        when (tag) {
+            DownloadTag.VIDEO -> retryVideo.put(cId, backupUrl.toMutableList())
+            DownloadTag.AUDIO -> retryAudio.put(cId, backupUrl.toMutableList())
+        }
+    }
+
+    // 通过 tag 查询
+    private fun tags(tag: String?): LongSparseArray<MutableList<String>> {
+        check(tag == VIDEO_M4S || tag == AUDIO_M4S) { "tag 必须为 VIDEO_M4S or AUDIO_M4S" }
+        return if (tag == VIDEO_M4S) {
+            retryVideo
+        } else {
+            retryAudio
+        }
+    }
+
+    private fun tryGetNewUrl(tagName: String, groupId: Long): String? {
+        val tags = tags(tagName)
+        return tags[groupId]?.removeFirstOrNull()
+    }
+
+    private fun onRetryOrFailure(call: Download.Call, newUrl: String) {
+        val newCall = downloader.newCall(call.request.newBuilder().url(newUrl).build())
+        newCall.enqueue(this)
+    }
+
+    private fun enqueue(request: Download.Request) {
+        val call = downloader.newCall(request)
+        call.enqueue(this)
+    }
+
 }

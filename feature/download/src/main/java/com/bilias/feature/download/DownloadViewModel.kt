@@ -1,18 +1,15 @@
 package com.bilias.feature.download
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
-import com.imcys.network.download.IDownloadManage
-import com.imcys.network.download.downloadDir
-import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import java.io.File
-import javax.inject.Inject
+import android.app.*
+import android.content.*
+import androidx.lifecycle.*
+import com.imcys.network.download.*
+import dagger.hilt.android.lifecycle.*
+import io.github.aakira.napier.*
+import kotlinx.collections.immutable.*
+import kotlinx.coroutines.flow.*
+import java.io.*
+import javax.inject.*
 
 // 国内包名
 const val PKGNAME_BILIBILI_INTERNAL = "tv.danmaku.bili"
@@ -42,13 +39,18 @@ val TYPE_CACHE_FILE_PATH_CONCEPT =
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
-    private val downloadManager: IDownloadManage,
+    private val downloadManager: DownloadManage,
     application: Application
 ) : AndroidViewModel(application) {
     private val _taskState = MutableStateFlow(TaskState())
     val taskState = _taskState.asStateFlow()
 
     init {
+        downloadManager.setProgressListener { map ->
+            _taskState.update {
+                it.copy(progress = map.toImmutableMap())
+            }
+        }
         taskList(getApplication())
     }
 
@@ -58,4 +60,5 @@ class DownloadViewModel @Inject constructor(
         Napier.d { "task$allTask" }
         _taskState.update { it.copy(taskList = allTask) }
     }
+
 }

@@ -1,29 +1,17 @@
 package com.bilias.feature.download
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.imcys.designsystem.component.AsTextButton
-import com.imcys.ui.VideoCover
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.hilt.navigation.compose.*
+import com.imcys.designsystem.component.*
 
 @Composable
 internal fun DownloadRoute() {
     val viewModel: DownloadViewModel = hiltViewModel()
-    val taskState by viewModel.taskState.collectAsStateWithLifecycle()
+    val taskState by viewModel.taskState.collectAsState()
     DownloadScreen(taskState)
 }
 
@@ -48,27 +36,35 @@ internal fun DownloadScreen(taskState: TaskState) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            items(taskState.taskList) { task ->
-                var selected by remember { mutableStateOf(false) }
-                ListItem(
-                    leadingContent = {
-                        VideoCover(url = task.cover)
-                    },
-                    headlineContent = {
-                        Text(text = task.collectionName)
-                    },
-                    trailingContent = {
-                        if (editable) {
-                            Checkbox(
-                                checked = selected,
-                                onCheckedChange = {
-                                    selected = it
-                                }
-                            )
-                        }
+            taskState.progress.forEach { (k, v) ->
+                item {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(text = k.toString())
+                        Text(text = v.toString())
                     }
-                )
+                }
             }
+//            items(taskState.taskList) { task ->
+//                var selected by remember { mutableStateOf(false) }
+//                ListItem(
+//                    leadingContent = {
+//                        VideoCover(url = task.cover)
+//                    },
+//                    headlineContent = {
+//                        Text(text = task.collectionName)
+//                    },
+//                    trailingContent = {
+//                        if (editable) {
+//                            Checkbox(
+//                                checked = selected,
+//                                onCheckedChange = {
+//                                    selected = it
+//                                }
+//                            )
+//                        }
+//                    }
+//                )
+//            }
         }
     }
 }
