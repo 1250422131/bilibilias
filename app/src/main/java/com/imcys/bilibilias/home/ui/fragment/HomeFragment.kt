@@ -49,6 +49,9 @@ import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -59,6 +62,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import javax.annotation.Detainted
 import javax.inject.Inject
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
@@ -86,6 +90,7 @@ class HomeFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+
         fragmentHomeBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_home,
@@ -150,13 +155,13 @@ class HomeFragment : BaseFragment() {
     private fun loadServiceData() {
         loadAppData()
         loadBannerData()
-        initHomeAd()
     }
 
     /**
      * 加载首页广告
      */
-    private fun initHomeAd() {
+    @Detainted
+     fun initHomeAd() {
         val userGoogleADSwitch =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("user_google_ad_switch", true)
@@ -211,7 +216,9 @@ class HomeFragment : BaseFragment() {
 
         launchUI {
 
-            val oldUpdateDataBean = networkService.getUpdateData()
+            val oldUpdateDataBean = withContext(Dispatchers.IO){
+                networkService.getUpdateData()
+            }
 
             if (oldUpdateDataBean.notice != "") {
                 loadNotice(oldUpdateDataBean.notice.toString())
@@ -374,7 +381,9 @@ class HomeFragment : BaseFragment() {
 
         launchUI {
 
-            val myUserData = networkService.n27()
+            val myUserData = withContext(Dispatchers.IO){
+                networkService.n27()
+            }
 
             if (myUserData.code == 0) {
                 // 提交
