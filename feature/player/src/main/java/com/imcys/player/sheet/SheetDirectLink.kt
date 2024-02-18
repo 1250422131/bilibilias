@@ -1,54 +1,33 @@
 package com.imcys.player.sheet
 
-import android.content.ClipData
-import android.content.Context
+import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
-import android.os.Build
-import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import android.os.*
+import android.widget.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.imcys.common.utils.MediaUtils
-import com.imcys.player.QUALITY_1080P
-import com.imcys.player.QUALITY_1080P_60
-import com.imcys.player.QUALITY_1080P_PLUS
-import com.imcys.player.QUALITY_240P
-import com.imcys.player.QUALITY_360P
-import com.imcys.player.QUALITY_480P
-import com.imcys.player.QUALITY_4K
-import com.imcys.player.QUALITY_720P
-import com.imcys.player.QUALITY_720P_60
-import com.imcys.player.QUALITY_8K
-import com.imcys.player.QUALITY_DOLBY
-import com.imcys.player.QUALITY_HDR
-import com.imcys.player.state.PlayLinkInfo
-import com.imcys.player.state.Quality
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.ImmutableMap
+import androidx.compose.ui.*
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.unit.*
+import com.imcys.common.utils.*
+import com.imcys.player.*
+import com.imcys.player.state.*
+import kotlinx.collections.immutable.*
 
 @Composable
 internal fun SheetDirectLink(
     video: ImmutableMap<Quality, ImmutableList<PlayLinkInfo>>,
     audio: ImmutableMap<Quality, ImmutableList<PlayLinkInfo>>,
 ) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         video.entries.forEach { (k, v) ->
             items(v, key = {}) { item ->
                 Card {

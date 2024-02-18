@@ -1,28 +1,21 @@
 package com.imcys.authentication.login
 
-import android.Manifest
-import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.*
+import android.content.*
+import android.content.pm.*
+import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.core.content.ContextCompat
-import androidx.core.content.contentValuesOf
-import io.github.aakira.napier.Napier
-import timber.log.Timber
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import android.net.*
+import android.os.*
+import android.provider.*
+import androidx.core.content.*
+import io.github.aakira.napier.*
+import timber.log.*
+import java.io.*
 
 object ImageSaveUtil {
     private const val TAG = "ImageSaveUtil"
+
     /**
      * 保存图片到公共目录 29 以下，需要提前申请文件读写权限 29及29以上的，不需要权限 保存的文件在 DCIM 目录下
      *
@@ -75,7 +68,7 @@ object ImageSaveUtil {
             )
             val uri = context.contentResolver.insert(contentUri, contentValues) ?: return null
             try {
-                os = context.contentResolver.openOutputStream(uri).use {
+                context.contentResolver.openOutputStream(uri)?.use {
                     bitmap.compress(format, quality, it)
                 }
                 // 告诉系统，文件准备好了，可以提供给外部了
@@ -118,7 +111,7 @@ object ImageSaveUtil {
             if (recycle && !bitmap.isRecycled) bitmap.recycle()
         } catch (e: IOException) {
             e.printStackTrace()
-            Napier.d(com.imcys.authentication.login.ImageSaveUtil.TAG,e) { "保存失败" }
+            Napier.d(e, TAG) { "保存失败" }
         }
         return true
     }
