@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
@@ -21,12 +22,12 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -42,10 +43,8 @@ import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Response
 import okio.BufferedSink
@@ -66,14 +65,16 @@ const val STATE_DOWNLOAD_WAIT = 0
 const val STATE_DOWNLOADING = 1
 const val STATE_DOWNLOAD_END = 2
 const val STATE_DOWNLOAD_PAUSE = 3
+const val STATE_MERGE = 4
+const val STATE_MERGE_END = 5
 
 // 非正常结束
 const val STATE_DOWNLOAD_ERROR = -1
+const val STATE_MERGE_ERROR = -1
 
 // 定义一个下载队列类
 @Singleton
-class DownloadQueue @Inject constructor() :
-    CoroutineScope by MainScope() {
+class DownloadQueue @Inject constructor() {
 
     private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
 
@@ -239,14 +240,10 @@ class DownloadQueue @Inject constructor() :
                         return
                     }
 
-                    currentTasks.remove(mTask)
-                    // 更新任务状态
-                    mTask.state = STATE_DOWNLOAD_END
-                    // 下载成功，调用任务的完成回调
-                    mTask.onComplete(true)
-                    // 更新
-                    updateAdapter()
 
+                    // 下载完成
+                    mTask.state = STATE_DOWNLOAD_END
+                    updateAdapter()
                     if (mTask.isGroupTask) {
                         // 在map中找到这个任务所属的一组任务
                         val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
@@ -255,15 +252,19 @@ class DownloadQueue @Inject constructor() :
                             groupTasks?.all { it.state == STATE_DOWNLOAD_END } ?: false
                         if (isGroupTasksCompleted) {
                             videoDataSubmit(mTask)
-                            videoMerge(mTask.downloadTaskDataBean.cid)
+                            videoMerge(mTask)
                         }
                     } else {
+                        currentTasks.remove(mTask)
+                        // 下载成功，调用任务的完成回调
+                        mTask.onComplete(true)
+
                         // FLV或者单独任务不需要合并操作，直接视为下载了。
                         saveFinishTask(mTask)
                         videoDataSubmit(mTask)
                         updatePhotoMedias(App.context, File(mTask.savePath))
+                        updateAdapter()
                     }
-
                     // 执行下一个任务
                     executeTask()
                 }
@@ -276,7 +277,7 @@ class DownloadQueue @Inject constructor() :
      * @param task Task
      */
     private fun saveFinishTask(task: DownloadTaskInfo) {
-        CoroutineScope(Dispatchers.Default).launchIO {
+        launchIO {
             var videoTitle = ""
             var videoPageTitle = ""
             var avid = 0L
@@ -339,7 +340,7 @@ class DownloadQueue @Inject constructor() :
     private fun videoDataSubmit(task: DownloadTaskInfo) {
         var aid: Long? = task.downloadTaskDataBean.bangumiSeasonBean?.cid
 
-        launch {
+        launchUI {
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
             val videoBaseBean = networkService.n5(task.downloadTaskDataBean.bvid)
@@ -408,7 +409,10 @@ class DownloadQueue @Inject constructor() :
      * 参数合并
      * @param cid Int
      */
-    private fun videoMerge(cid: Long) {
+    private fun videoMerge(mTask: DownloadTaskInfo) {
+
+        val cid = mTask.downloadTaskDataBean.cid
+
         val mergeState =
             PreferenceManager.getDefaultSharedPreferences(App.context).getBoolean(
                 "user_dl_finish_automatic_merge_switch",
@@ -420,38 +424,50 @@ class DownloadQueue @Inject constructor() :
                 false,
             )
 
+
         val taskMutableList = groupTasksMap[cid]
         val videoTask =
-            taskMutableList?.filter { it.fileType == 0 }
+            taskMutableList?.filter { it.fileType == 0 }?.lastOrNull()
         val audioTask =
-            taskMutableList?.filter { it.fileType == 1 }
+            taskMutableList?.filter { it.fileType == 1 }?.lastOrNull()
 
         if (mergeState) {
             // 耗时操作，这里直接开个新线程
             val videoPath =
-                videoTask!![0].savePath
+                videoTask!!.savePath
             val audioPath =
-                audioTask!![0].savePath
+                audioTask!!.savePath
             // 这里的延迟是为了有足够时间让下载检查下载完整
 
+            Log.d("AS", "准备合并")
+
             runFFmpegRxJavaVideoMerge(
-                videoTask[0],
+                videoTask,
                 videoPath,
                 audioPath,
             )
 
             // 旧的合并方案： MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
         } else if (importState) {
-            videoTask!![0].downloadTaskDataBean.bangumiSeasonBean?.apply {
+            videoTask!!.downloadTaskDataBean.bangumiSeasonBean?.apply {
                 // 分别添加下载完成了
-                saveFinishTask(videoTask[0], audioTask!![0])
+                saveFinishTask(videoTask, audioTask!!)
                 importVideo(cid)
+                // 移除任务
+                groupTasksMap[mTask.downloadTaskDataBean.cid]?.forEach { item ->
+                    currentTasks.remove(item)
+                }
+                // 更新任务状态
+                mTask.state = STATE_DOWNLOAD_END
+                // 下载成功，调用任务的完成回调
+                mTask.onComplete(true)
+                executeTask()
             }
         } else {
             // 这类代表虽然是dash下载，但是并不需要其他操作
-            saveFinishTask(videoTask!![0], audioTask!![0])
+            saveFinishTask(videoTask!!, audioTask!!)
             // 这类通知相册更新下文件
-            updatePhotoMedias(App.context, File(videoTask[0].savePath), File(audioTask[0].savePath))
+            updatePhotoMedias(App.context, File(videoTask.savePath), File(audioTask.savePath))
         }
     }
 
@@ -480,6 +496,15 @@ class DownloadQueue @Inject constructor() :
             .runCommandRxJava(commands)
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
+                    groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
+                        currentTasks.remove(item)
+                    }                    // 更新任务状态
+                    task.state = STATE_MERGE_ERROR
+                    // 下载成功，调用任务的完成回调
+                    task.onComplete(false)
+                    updateAdapter()
+                    // 移除任务
+
                 }
 
                 override fun onFinish() {
@@ -510,9 +535,26 @@ class DownloadQueue @Inject constructor() :
                         // 通知相册更新
                         updatePhotoMedias(App.context, File(videoPath), File(audioPath))
                     }
+                    // 移除任务
+                    groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
+                        currentTasks.remove(item)
+                    }
+                    // 更新任务状态
+                    task.state = STATE_DOWNLOAD_END
+                    // 下载成功，调用任务的完成回调
+                    task.onComplete(true)
+                    updateAdapter()
+                    // 继续下一个
+                    executeTask()
                 }
 
                 override fun onProgress(progress: Int, progressTime: Long) {
+                    // 更新任务状态
+                    Log.d("AS", "onProgress: 正在基恩${progress}")
+
+                    task.state = STATE_MERGE
+                    updateProgress(task, progress.toDouble())
+
                 }
 
                 override fun onCancel() {
@@ -780,7 +822,7 @@ class DownloadQueue @Inject constructor() :
         downloadTaskDataBean: DownloadTaskDataBean,
         videoBaseBean: VideoBaseBean,
     ) {
-        launch(Dispatchers.Default) {
+        launchIO {
             var videoEntry = videoEntry
             val appDataUri = PreferenceManager.getDefaultSharedPreferences(App.context)
                 .getString("AppDataUri", "")
@@ -851,7 +893,9 @@ class DownloadQueue @Inject constructor() :
                 decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
             decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-            bufferedSink.close()
+            withContext(Dispatchers.IO) {
+                bufferedSink.close()
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
@@ -932,19 +976,7 @@ class DownloadQueue @Inject constructor() :
         // 通知 RecyclerView 适配器数据发生了改变
 
         downloadTaskAdapter?.apply {
-            val newMutableList = mutableListOf<DownloadTaskInfo>().apply {
-                // 任务拷贝，防止传入RecyclerView后被动更改
-                currentTasks.forEach {
-                    // 实验性的，请选择copy，我只是在测试自己的库
-                    add(it.copy())
-                }
-
-                queue.forEach {
-                    add(it.copy())
-                }
-            }
-
-            submitList(newMutableList.toList())
+            submitList((currentTasks + queue).map { it.copy() })
         }
     }
 

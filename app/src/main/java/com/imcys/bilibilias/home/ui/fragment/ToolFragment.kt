@@ -64,8 +64,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
 
-    lateinit var fragmentToolBinding: FragmentToolBinding
-    lateinit var mRecyclerView: RecyclerView
+    private lateinit var fragmentToolBinding: FragmentToolBinding
+    private lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
     @Inject
     lateinit var networkService: NetworkService
@@ -125,6 +125,9 @@ class ToolFragment : BaseFragment() {
         // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 
+        // 加载工具item
+        loadToolItem()
+
         // 设置点击事件
         fragmentToolBinding.toolViewHolder =
             context?.let { ToolViewHolder(it, fragmentToolBinding) }
@@ -135,8 +138,6 @@ class ToolFragment : BaseFragment() {
         // 设置监听
         setEditListener()
 
-        // 加载工具item
-        loadToolItem()
     }
 
     /**
@@ -299,7 +300,10 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = networkService.getOldToolItem()
+            val oldToolItemBean = withContext(Dispatchers.IO){
+                networkService.getOldToolItem()
+            }
+
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
                     // 视频解析

@@ -13,7 +13,7 @@ data class CollectionDataBean(
     val data: DataBean = DataBean()
 ) {
     @Serializable
-    data class DataBean(val medias: List<MediasBean> = emptyList()) {
+    data class DataBean(val medias: List<MediasBean>? = emptyList()) {
         @Serializable
         data class MediasBean(
             val id: Long = 0,
