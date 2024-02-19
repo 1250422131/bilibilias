@@ -5,23 +5,38 @@ import io.ktor.client.plugins.cookies.*
 import io.ktor.http.*
 import io.ktor.util.date.*
 import timber.log.*
-import javax.inject.*
 import com.imcys.model.login.Cookie as AsCookie
 import io.ktor.http.Cookie as KtorCookie
 
-@Singleton
-class CookieManager @Inject constructor(
-    private val persistentCookie: PersistentCookie
-) : CookiesStorage {
+
+object CookieManager : CookiesStorage {
+    private val cache = mutableListOf<KtorCookie>()
+
+    init {
+        if (PersistentCookie.logging) {
+            PersistentCookie.getCookie().map(AsCookie::mapToKtorCookie).forEach(cache::add)
+        }
+    }
 
     override suspend fun addCookie(requestUrl: Url, cookie: KtorCookie) {
         Timber.d("addCookie: $cookie")
-        persistentCookie.setCookie(cookie.mapToAsCookie())
+        cache.findLast { it.name == cookie.name }?.let {
+            cache.remove(cookie)
+        }
+        cache += cookie
     }
 
     override suspend fun get(requestUrl: Url): List<KtorCookie> {
         Timber.d("getCookie: $requestUrl")
-        return persistentCookie.getCookie().map(AsCookie::mapToKtorCookie)
+        return cache
+    }
+
+    fun save() {
+        PersistentCookie.setCookie(cache.map(KtorCookie::mapToAsCookie))
+    }
+
+    fun getCookie(): List<AsCookie> {
+        return cache.map(KtorCookie::mapToAsCookie)
     }
 
     override fun close() = Unit

@@ -1,45 +1,38 @@
 package com.imcys.datastore.fastkv
 
-import android.content.*
 import com.imcys.model.login.*
-import dagger.hilt.android.qualifiers.*
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.cbor.*
-import javax.inject.*
 
 @OptIn(ExperimentalSerializationApi::class)
-class PersistentCookie @Inject constructor(
-    @ApplicationContext context: Context,
-    private val cbor: Cbor
-) : FastKVOwner("PersistentCookie", context) {
+object PersistentCookie : FastKVOwner("PersistentCookie") {
     private var cookieByteArray by array(byteArrayOf())
-    private val cache = mutableListOf<Cookie>()
+    private val cbor: Cbor = Cbor
+    private fun decode(): List<Cookie> {
+        return cbor.decodeFromByteArray(ListSerializer(Cookie.serializer()), cookieByteArray)
+    }
+
+    private fun encode(cookies: List<Cookie>) {
+        cookieByteArray = cbor.encodeToByteArray(ListSerializer(Cookie.serializer()), cookies)
+    }
 
     fun getCookie(): List<Cookie> {
         if (!logging) return emptyList()
-        if (cache.isEmpty()) {
-            cbor.decodeFromByteArray(ListSerializer(Cookie.serializer()), cookieByteArray)
-                .forEach(cache::add)
-        }
-        return cache
+        return decode()
     }
 
-    fun getCookie(name: String): Cookie? = cache.find { it.name == name }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    fun setCookie(cookie: Cookie) {
-        cache.removeAll { it.name == cookie.name }
-        cache += cookie
-        cookieByteArray = cbor.encodeToByteArray(ListSerializer(Cookie.serializer()), cache)
+    fun setCookie(cookies: List<Cookie>) {
+        encode(cookies)
         kv.commit()
         logging = true
     }
 
-    var logging: Boolean by boolean()
+    fun save() {
+        kv.commit()
+    }
 
-    val biliJctOrCsrf: String
-        get() = getCookie(SET_COOKIE_BILI_JCT)?.value ?: ""
+    var logging: Boolean by boolean()
 
     var refreshToken by string("")
         private set
@@ -51,14 +44,14 @@ class PersistentCookie @Inject constructor(
     }
 
     fun clear() {
+        logging = false
         kv.clear()
     }
 
-    companion object {
-        const val SET_COOKIE_SESSDATA = "SESSDATA"
-        const val SET_COOKIE_BILI_JCT = "bili_jct"
-        const val SET_COOKIE_DEDEUSERID = "DedeUserID"
-        const val SET_COOKIE_DEDEUSERID__CKMD5 = "DedeUserID__ckMd5"
-        const val SET_COOKIE_SID = "sid"
-    }
+
+    const val SET_COOKIE_SESSDATA = "SESSDATA"
+    const val SET_COOKIE_BILI_JCT = "bili_jct"
+    const val SET_COOKIE_DEDEUSERID = "DedeUserID"
+    const val SET_COOKIE_DEDEUSERID__CKMD5 = "DedeUserID__ckMd5"
+    const val SET_COOKIE_SID = "sid"
 }

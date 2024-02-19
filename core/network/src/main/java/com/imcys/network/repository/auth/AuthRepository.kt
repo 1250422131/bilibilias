@@ -3,23 +3,25 @@ package com.imcys.network.repository.auth
 import com.imcys.datastore.fastkv.*
 import com.imcys.model.login.*
 import com.imcys.network.api.*
+import com.imcys.network.configration.*
 import com.imcys.network.utils.*
 import io.github.aakira.napier.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.*
 import java.security.*
 import java.security.spec.*
 import javax.crypto.*
 import javax.crypto.spec.*
 import javax.inject.*
 import kotlin.io.encoding.*
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class AuthRepository @Inject constructor(
     private val client: HttpClient,
-    private val persistentCookie: PersistentCookie
 ) : IAuthDataSources {
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -74,7 +76,7 @@ class AuthRepository @Inject constructor(
     }
 
     override suspend fun 退出登录() {
-        persistentCookie.clear()
+        PersistentCookie.clear()
     }
 
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
@@ -88,27 +90,27 @@ class AuthRepository @Inject constructor(
         val path = getCorrespondPath(timestamp)
         val html =
             client.get("https://www.bilibili.com/correspond/1/$path").bodyAsText()
-        val reCsrf = fromHtmlGetRefreshCsrfBy(html)
-        Napier.d(tag = "cookie刷新第二步") { "Correspond: $path\nRefreshCsrf: $reCsrf" }
-        return reCsrf
+        val csrf = fromHtmlGetRefreshCsrf(html)
+        Napier.d(tag = "cookie刷新第二步") { "Correspond: $path\nRefreshCsrf: $csrf" }
+        return csrf
     }
 
-    private fun fromHtmlGetRefreshCsrfBy(html: String): String {
+    private fun fromHtmlGetRefreshCsrf(html: String): String {
         val regex = Regex("<div +id=\"1-name\">(.+?)</div>")
         val refreshCsrf = regex.findAll(html).map { it.value }.firstOrNull() ?: ""
         return refreshCsrf.drop("<div id=\"1-name\">".length).dropLast("</div>".length)
     }
 
     override suspend fun 刷新Cookie(
-        csrf: String,
-        refresh_csrf: String,
-        refresh_token: String
+        csrf: String?,
+        refreshCsrf: String,
+        refreshToken: String
     ): CookieRefresh {
         val response =
             client.post("https://passport.bilibili.com/x/passport-login/web/cookie/refresh") {
-                parameterCSRF(refresh_csrf)
-                parameterRefreshCsrf(refresh_csrf)
-                parameterRefreshToken(refresh_token)
+                parameterCSRF(csrf)
+                parameterRefreshCsrf(refreshCsrf)
+                parameterRefreshToken(refreshToken)
                 parameter("source", "main_web")
             }
                 .body<CookieRefresh>()
@@ -116,7 +118,7 @@ class AuthRepository @Inject constructor(
         return response
     }
 
-    override suspend fun 确认更新Cookie(csrf: String, refreshToken: String) {
+    override suspend fun 确认更新Cookie(csrf: String?, refreshToken: String) {
         val text =
             client.post("https://passport.bilibili.com/x/passport-login/web/confirm/refresh") {
                 parameterCSRF(csrf)
@@ -126,17 +128,35 @@ class AuthRepository @Inject constructor(
         Napier.d(tag = "cookie刷新最后一步") { text }
     }
 
-    suspend fun cookieRefreshChain() {
-        val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
-        if (!needRefresh) return
-        val refreshCsrf = 获取RefreshCsrf(timestamp)
-        val oldToken = persistentCookie.refreshToken
-        val (_, newRefreshToken, _) = 刷新Cookie(
-            csrf = persistentCookie.biliJctOrCsrf,
-            refresh_csrf = refreshCsrf,
-            refresh_token = oldToken
-        )
-        确认更新Cookie(persistentCookie.biliJctOrCsrf, oldToken)
-        persistentCookie.setRefreshToke(newRefreshToken)
-    }
+    override suspend fun cookieRefreshChain(): Unit =
+        withContext(Dispatchers.IO.limitedParallelism(1)) {
+            Napier.d { PersistentCookie.getCookie().toString() }
+
+            val jct =  CookieManager.getCookie().findLast { it.name == PersistentCookie.SET_COOKIE_BILI_JCT }?.value
+            val oldRefreshToken = PersistentCookie.refreshToken
+
+            val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
+
+//        if (!needRefresh) return
+            val job = launch {
+                val refreshCsrf = 获取RefreshCsrf(timestamp)
+                val (_, newRefreshToken, _) = 刷新Cookie(
+                    csrf = jct,
+                    refreshCsrf = refreshCsrf,
+                    refreshToken = oldRefreshToken
+                )
+                PersistentCookie.setRefreshToke(newRefreshToken)
+            }
+            job.join()
+            job.invokeOnCompletion {
+                launch {
+                    Napier.d { "最后一步${System.currentTimeMillis()}" }
+                    delay(10.seconds)
+                    Napier.d { "最后一步${System.currentTimeMillis()}" }
+                    val newJct =
+                        CookieManager.getCookie().findLast { it.name == PersistentCookie.SET_COOKIE_BILI_JCT }?.value
+                    确认更新Cookie(newJct, oldRefreshToken)
+                }
+            }
+        }
 }

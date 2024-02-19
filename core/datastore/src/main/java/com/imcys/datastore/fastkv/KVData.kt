@@ -1,11 +1,12 @@
 package com.imcys.datastore.fastkv
 
-import android.content.Context
-import android.content.SharedPreferences
-import io.fastkv.FastKV
-import io.fastkv.interfaces.FastEncoder
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import android.content.*
+import dev.*
+import io.fastkv.*
+import io.fastkv.interfaces.*
+import kotlinx.coroutines.flow.*
+import kotlin.properties.*
+import kotlin.reflect.*
 
 abstract class KVData {
     abstract val kv: FastKV
@@ -28,21 +29,21 @@ interface IFastKVOwner {
     fun clearAllKV(): SharedPreferences.Editor = kv.clear()
 }
 
-open class FastKVOwner(override val name: String, context: Context) : IFastKVOwner {
+open class FastKVOwner(override val name: String) : IFastKVOwner {
     override val kv: FastKV by lazy {
-        FastKV.Builder(context, name).build()
+        FastKV.Builder(DevUtils.getContext(), name).build()
     }
 }
 
 class FastKVProperty<V>(
-    private val get: (String) -> V,
-    private val put: Pair<String, V>.() -> Unit
+    private val decode: (String) -> V,
+    private val encode: Pair<String, V>.() -> Unit
 ) : ReadWriteProperty<IFastKVOwner, V> {
     override fun getValue(thisRef: IFastKVOwner, property: KProperty<*>): V =
-        get(property.name)
+        decode(property.name)
 
     override fun setValue(thisRef: IFastKVOwner, property: KProperty<*>, value: V) {
-        put((property.name) to value)
+        encode((property.name) to value)
     }
 }
 
@@ -78,3 +79,15 @@ fun FastKVOwner.stringSet(defValue: Set<String>? = null) =
 
 fun <T> FastKVOwner.obj(encoder: FastEncoder<T>) =
     FastKVProperty({ kv.getObject(it) }, { kv.putObject(first, second, encoder) })
+
+fun <V> FastKVProperty<V>.asStateFlow(init: () -> V) =
+    object : ReadOnlyProperty<IFastKVOwner, MutableStateFlow<V>> {
+        private val cache: MutableStateFlow<V> = MutableStateFlow(init())
+        override fun getValue(thisRef: IFastKVOwner, property: KProperty<*>): MutableStateFlow<V> {
+            cache.updateAndGet {
+                this@asStateFlow.getValue(thisRef, property)
+            }
+            return cache
+        }
+
+    }

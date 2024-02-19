@@ -9,7 +9,7 @@ import javax.inject.*
  */
 @Singleton
 class UsageData @Inject constructor(@ApplicationContext context: Context) :
-    FastKVOwner("common_storage", context) {
+    FastKVOwner("common_storage") {
     var launchCount by int()
 
     // 首次启动时间

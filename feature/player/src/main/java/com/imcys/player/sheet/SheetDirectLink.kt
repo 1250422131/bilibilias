@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.style.*
@@ -29,7 +29,7 @@ internal fun SheetDirectLink(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         video.entries.forEach { (k, v) ->
-            items(v, key = {}) { item ->
+            items(v) { item ->
                 Card {
                     Column(Modifier.padding(8.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {

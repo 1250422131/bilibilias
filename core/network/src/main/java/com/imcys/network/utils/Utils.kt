@@ -1,9 +1,8 @@
 package com.imcys.network.utils
 
-import com.imcys.network.constant.BILIBILI_WEB_URL
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMessageBuilder
+import com.imcys.network.constant.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 
 context (HttpRequestBuilder)
 internal fun parameterBV(bvid: String): Unit = url.parameters.append("bvid", bvid)
@@ -35,10 +34,12 @@ internal fun HttpRequestBuilder.parameterMID(mid: Long): Unit =
 internal fun HttpRequestBuilder.parameterCID(cId: Long): Unit =
     url.parameters.append("cid", cId.toString())
 
-internal fun HttpRequestBuilder.parameterCSRF(csrf: String): Unit =
-    url.parameters.append("csrf", csrf)
+internal fun HttpRequestBuilder.parameterCSRF(csrf: String?): Unit =
+    csrf?.let { url.parameters.append("csrf", it) } ?: Unit
+
 internal fun HttpRequestBuilder.parameterRefreshToken(token: String): Unit =
     url.parameters.append("refresh_token", token)
+
 internal fun HttpRequestBuilder.parameterRefreshCsrf(csrf: String): Unit =
     url.parameters.append("refresh_csrf", csrf)
 

@@ -1,20 +1,13 @@
 package com.imcys.authentication
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.imcys.datastore.fastkv.PersistentCookie
-import com.imcys.network.repository.auth.IAuthDataSources
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
-import javax.inject.Inject
+import androidx.lifecycle.*
+import com.imcys.datastore.fastkv.*
+import com.imcys.network.repository.auth.*
+import dagger.hilt.android.lifecycle.*
+import io.github.aakira.napier.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import javax.inject.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -22,20 +15,23 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthDataSources,
-    private val persistentCookie: PersistentCookie
 ) : ViewModel() {
     private val _loginAuthState = MutableStateFlow(LoginAuthState())
     val loginAuthUiState = _loginAuthState.asStateFlow()
+    private var job: Job? = null
 
     init {
         getQRCode()
     }
+
     fun getQRCode() {
-        viewModelScope.launch(Dispatchers.IO) {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
             val (key, url) = authRepository.获取二维码()
-            _loginAuthState.update { it.copy(qrCodeUrl = url + "main-fe-header") }
+            _loginAuthState.update { it.copy(qrCodeUrl = url) }
             tryLogin(key)
         }
+        PersistentCookie.save()
     }
 
     /**
@@ -47,15 +43,16 @@ class AuthViewModel @Inject constructor(
             while (isActive && !ok) {
                 delay(1.seconds)
                 val response = authRepository.轮询登录接口(key)
+                Napier.d { "是否登录 ${PersistentCookie.logging}, ${PersistentCookie.getCookie()}" }
                 val state = _loginAuthState.updateAndGet {
                     it.copy(
                         qrCodeMessage = response.message,
-                        isSuccess = response.isSuccess,
+                        isSuccess = PersistentCookie.logging,
                         snackBarMessage = if (response.isSuccess) "登录成功" else null
                     )
                 }
-                persistentCookie.setRefreshToke(response.refreshToken)
-                ok = state.isSuccess
+                PersistentCookie.setRefreshToke(response.refreshToken)
+                ok = PersistentCookie.logging
             }
         }
     }
