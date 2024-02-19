@@ -11,12 +11,12 @@ import javax.inject.*
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val authRepository: IAuthDataSources,
-    private val persistentCookie: PersistentCookie,
     private val wbiKeyStorage: WbiKeyStorage,
     private val wbiKeyRepository: IWbiSignatureDataSources
 ) : ViewModel() {
     init {
         requestWbiKey()
+        refreshCookie()
     }
 
     private fun requestWbiKey() {
@@ -26,10 +26,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun refreshCookie() {
+        viewModelScope.launch {
+            authRepository.cookieRefreshChain()
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             authRepository.退出登录()
-            persistentCookie.clear()
         }
     }
 }

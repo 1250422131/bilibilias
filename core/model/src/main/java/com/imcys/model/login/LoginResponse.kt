@@ -1,25 +1,9 @@
 package com.imcys.model.login
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 
 /**
  * ![二维码登录](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/login/login_action/QR.md)
- *
- * ```json
- * {
- *   "code": 0,
- *   "message": "0",
- *   "ttl": 1,
- *   "data": {
- *     "url": "",
- *     "refresh_token": "",
- *     "timestamp": 0,
- *     "code": 86101,
- *     "message": "未扫码"
- *   }
- * }
- * ```
  */
 @Serializable
 data class LoginResponse(

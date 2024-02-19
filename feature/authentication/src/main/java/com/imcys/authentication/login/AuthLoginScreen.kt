@@ -100,7 +100,7 @@ internal fun LoginAuthScreen(
             AsButton(
                 onClick = {
                     val bitmap = getWindowBitmapPath(context)
-                    saveQRCode(bitmap, context, true)
+                    saveQRCode(bitmap, context)
                 },
                 Modifier
                     .padding(horizontal = 25.dp, vertical = 10.dp)
@@ -130,7 +130,7 @@ fun getWindowBitmapPath(context: Context): Bitmap {
     return bitmap
 }
 
-private fun saveQRCode(bitmap: Bitmap, context: Context, recycle: Boolean) {
+private fun saveQRCode(bitmap: Bitmap, context: Context) {
     val bili =
         File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "bili")
     try {
@@ -145,9 +145,6 @@ private fun saveQRCode(bitmap: Bitmap, context: Context, recycle: Boolean) {
     } catch (e: IOException) {
         Timber.d(e)
     } finally {
-        if (recycle && !bitmap.isRecycled) {
-            bitmap.recycle()
-        }
         goToQRScan(context)
     }
 }

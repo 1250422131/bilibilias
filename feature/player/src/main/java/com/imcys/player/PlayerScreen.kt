@@ -5,7 +5,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.icons.*
 import androidx.compose.material.icons.filled.*
@@ -15,7 +14,6 @@ import androidx.compose.runtime.saveable.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
@@ -28,6 +26,7 @@ import com.imcys.player.sheet.*
 import com.imcys.player.state.*
 import com.shuyu.gsyvideoplayer.*
 import com.shuyu.gsyvideoplayer.video.*
+import io.github.aakira.napier.*
 import kotlinx.coroutines.*
 import timber.log.*
 
@@ -55,13 +54,13 @@ internal fun PlayerScreen(
     playerInfoUiState: PlayInfoUiState = PlayInfoUiState.Loading,
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
-    var action by remember { mutableStateOf<Action?>(null) }
+    var action by remember { mutableStateOf(Action.INIT) }
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberStandardBottomSheetState(
         SheetValue.Hidden,
         confirmValueChange = {
             if (it == SheetValue.Hidden) {
-                action = null
+                action = Action.INIT
             }
             true
         },
@@ -72,6 +71,8 @@ internal fun PlayerScreen(
 
     BottomSheetScaffold(
         sheetContent = {
+            Napier.d { "playerUiState = ${playerUiState is PlayerUiState.Success}" }
+            Napier.d { "playerUiState = $playerUiState" }
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
                     Action.DOWNLOAD_VIDEO -> SheetSeries(
@@ -87,14 +88,14 @@ internal fun PlayerScreen(
                         audio = playerUiState.audio,
                     )
 
-                    null -> {}
+                    Action.INIT -> Unit
                 }
             }
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState, Modifier.navigationBarsPadding())
         },
-        sheetPeekHeight = if (action == null) 0.dp else 300.dp,
+        sheetPeekHeight = if (action == Action.INIT) 0.dp else 300.dp,
         scaffoldState = bottomSheetScaffoldState,
         sheetDragHandle = null,
         sheetShape = RectangleShape,
@@ -132,40 +133,6 @@ internal fun PlayerScreen(
                         isFavoured = playerInfoUiState.toolBarReport.isFavoured,
                         modifier = Modifier,
                     )
-                }
-            }
-
-            Box(Modifier.fillMaxWidth()) {
-                val w = LocalConfiguration.current.screenWidthDp.dp / 3
-                LazyRow(
-                    Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-//                    items(state.pageData, key = { it.cid }) { item ->
-//                        Card(
-//                            onClick = { },
-//                            shape = RoundedCornerShape(4.dp)
-//                        ) {
-//                            Text(
-//                                item.part,
-//                                Modifier
-//                                    .align(Alignment.CenterHorizontally)
-//                                    .width(w)
-//                                    .height(60.dp)
-//                                    .padding(4.dp),
-//                                color = if (item.cid.toString() == state.cid) MaterialTheme.colorScheme.primary else Color.Unspecified,
-//                                maxLines = 2,
-//                                fontSize = 13.sp
-//                            )
-//                        }
-//                    }
-                }
-                IconButton(onClick = { /*TODO*/ }, Modifier.align(Alignment.CenterEnd)) {
-                    // Icon(
-                    //     painter = painterResource(id = R.drawable.chevron_right),
-                    //     contentDescription = "打开选集"
-                    // )
                 }
             }
             Row {

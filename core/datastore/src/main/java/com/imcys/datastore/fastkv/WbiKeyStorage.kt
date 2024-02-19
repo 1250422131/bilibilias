@@ -9,7 +9,7 @@ import javax.inject.*
 @Singleton
 class WbiKeyStorage @Inject constructor(
     @ApplicationContext context: Context
-) : FastKVOwner("wbi", context) {
+) : FastKVOwner("wbi") {
     // 上次修改时间
     private var lastModified: String by string("WbiKeyStorage-lastModified")
 

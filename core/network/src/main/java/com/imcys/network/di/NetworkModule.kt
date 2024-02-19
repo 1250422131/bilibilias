@@ -165,7 +165,6 @@ object NetworkModule {
         httpClientEngine: HttpClientEngine,
         json: Json,
         transform: ClientPlugin<Unit>,
-        cookieManager: CookieManager,
         persistentCache: PersistentCache,
         loggerManager: LoggerManager,
         wbiKeyStorage: WbiKeyStorage
@@ -181,7 +180,7 @@ object NetworkModule {
                 level = LogLevel.NONE
             }
             install(HttpCookies) {
-                storage = cookieManager
+                storage = CookieManager
             }
             install(transform)
 
@@ -229,7 +228,7 @@ object NetworkModule {
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideTransformData(json: Json, persistentCookie: PersistentCookie): ClientPlugin<Unit> =
+    fun provideTransformData(json: Json): ClientPlugin<Unit> =
         createClientPlugin("TransformData") {
             transformResponseBody { request, content, requestedType ->
                 if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
@@ -239,7 +238,7 @@ object NetworkModule {
                     content.toInputStream()
                 )
                 if (box.code == ACCOUNT_NOT_LOGGED_IN) {
-                    persistentCookie.logging = false
+                    PersistentCookie.logging = false
                 }
                 if (box.code != SUCCESS) {
                     throw ApiIOException(
