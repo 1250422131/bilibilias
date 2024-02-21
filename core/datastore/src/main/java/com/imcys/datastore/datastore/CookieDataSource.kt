@@ -1,43 +1,29 @@
 package com.imcys.datastore.datastore
 
-import androidx.datastore.core.DataStore
-import com.bilias.core.datastore.AsCookie
-import com.bilias.core.datastore.UserCookie
-import com.imcys.common.di.AppCoroutineScope
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import androidx.datastore.core.*
+import com.bilias.core.datastore.cookie.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import javax.inject.*
 
 class CookieDataSource @Inject constructor(
-    private val store: DataStore<UserCookie>,
-    @AppCoroutineScope private val scope: CoroutineScope
-) : ICookieDataSource {
-    private val cache = mutableMapOf<String, AsCookie>()
-
-    init {
-        scope.launch {
-            cache += store.data.first().store
+    private val store: DataStore<CookieStorage>,
+) {
+    val cookies = store.data.map { it.store }
+    val loginState = runBlocking {
+        store.data.map { it.loginState }.first()
+    }
+    suspend fun setCookie(cookie: Cookie) {
+        store.updateData {
+            val store = it.store.toMutableMap()
+            store[cookie.name] = cookie
+            it.copy(store)
         }
     }
 
-    override fun getAll(): ImmutableList<AsCookie> {
-        return cache.values.toImmutableList()
-    }
-
-    override fun get(name: String): AsCookie? {
-        return cache[name]
-    }
-
-    override fun set(name: String, value: AsCookie) {
-        cache[name] = value
-    }
-
-    override fun close() {
-        scope.launch {
-            store.updateData { UserCookie(cache) }
+    suspend fun setLoginState(state: Boolean) {
+        store.updateData {
+            it.copy(loginState = state)
         }
     }
 }

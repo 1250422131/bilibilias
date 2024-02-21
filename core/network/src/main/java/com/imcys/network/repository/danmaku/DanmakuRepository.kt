@@ -1,6 +1,6 @@
 package com.imcys.network.repository.danmaku
 
-import com.imcys.bilibilias.dm.DmSegMobileReply
+import com.imcys.bilibilias.dm.*
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter

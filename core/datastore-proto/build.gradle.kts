@@ -16,4 +16,5 @@ wire {
 }
 dependencies {
     implementation(libs.wireRuntime)
+    implementation(libs.wireGrpcClient)
 }

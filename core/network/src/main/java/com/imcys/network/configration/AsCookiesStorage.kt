@@ -1,42 +1,28 @@
 package com.imcys.network.configration
 
-import com.imcys.datastore.fastkv.*
+import com.imcys.datastore.datastore.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.http.*
 import io.ktor.util.date.*
+import kotlinx.coroutines.flow.*
 import timber.log.*
-import com.imcys.model.login.Cookie as AsCookie
+import javax.inject.*
+import com.bilias.core.datastore.cookie.Cookie as AsCookie
 import io.ktor.http.Cookie as KtorCookie
 
 
-object CookieManager : CookiesStorage {
-    private val cache = mutableListOf<KtorCookie>()
-
-    init {
-        if (PersistentCookie.logging) {
-            PersistentCookie.getCookie().map(AsCookie::mapToKtorCookie).forEach(cache::add)
-        }
-    }
-
+class AsCookiesStorage @Inject constructor(
+    private val cookieDataSource: CookieDataSource
+) : CookiesStorage {
     override suspend fun addCookie(requestUrl: Url, cookie: KtorCookie) {
         Timber.d("addCookie: $cookie")
-        cache.findLast { it.name == cookie.name }?.let {
-            cache.remove(cookie)
-        }
-        cache += cookie
+        cookieDataSource.setCookie(cookie.mapToAsCookie())
+        cookieDataSource.setLoginState(true)
     }
 
     override suspend fun get(requestUrl: Url): List<KtorCookie> {
         Timber.d("getCookie: $requestUrl")
-        return cache
-    }
-
-    fun save() {
-        PersistentCookie.setCookie(cache.map(KtorCookie::mapToAsCookie))
-    }
-
-    fun getCookie(): List<AsCookie> {
-        return cache.map(KtorCookie::mapToAsCookie)
+        return cookieDataSource.cookies.first().values.map(AsCookie::mapToKtorCookie)
     }
 
     override fun close() = Unit
@@ -44,7 +30,7 @@ object CookieManager : CookiesStorage {
 
 internal fun AsCookie.mapToKtorCookie(): KtorCookie = KtorCookie(
     name,
-    value,
+    value_,
     CookieEncoding.RAW,
     maxAge,
     GMTDate(timestamp),
@@ -54,10 +40,10 @@ internal fun AsCookie.mapToKtorCookie(): KtorCookie = KtorCookie(
 internal fun KtorCookie.mapToAsCookie(): AsCookie = AsCookie(
     name,
     value,
-    maxAge,
+    maxAge ?: 0,
     expires?.timestamp ?: 0,
-    domain,
-    path,
+    domain ?: "",
+    path ?: "",
     secure,
     httpOnly
 )

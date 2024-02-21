@@ -1,9 +1,9 @@
 package com.imcys.network.repository.auth
 
+import com.imcys.datastore.datastore.*
 import com.imcys.datastore.fastkv.*
 import com.imcys.model.login.*
 import com.imcys.network.api.*
-import com.imcys.network.configration.*
 import com.imcys.network.utils.*
 import io.github.aakira.napier.*
 import io.ktor.client.*
@@ -11,6 +11,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.security.*
 import java.security.spec.*
 import javax.crypto.*
@@ -22,6 +23,8 @@ import kotlin.time.Duration.Companion.seconds
 @Singleton
 class AuthRepository @Inject constructor(
     private val client: HttpClient,
+    private val cookieDataSource: CookieDataSource,
+    private val persistentCookie: PersistentCookie
 ) : IAuthDataSources {
 
     @OptIn(ExperimentalEncodingApi::class)
@@ -76,7 +79,7 @@ class AuthRepository @Inject constructor(
     }
 
     override suspend fun 退出登录() {
-        PersistentCookie.clear()
+        cookieDataSource.setLoginState(false)
     }
 
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
@@ -130,31 +133,24 @@ class AuthRepository @Inject constructor(
 
     override suspend fun cookieRefreshChain(): Unit =
         withContext(Dispatchers.IO.limitedParallelism(1)) {
-            Napier.d { PersistentCookie.getCookie().toString() }
-
-            val jct =  CookieManager.getCookie().findLast { it.name == PersistentCookie.SET_COOKIE_BILI_JCT }?.value
-            val oldRefreshToken = PersistentCookie.refreshToken
+            val jct = cookieDataSource.cookies.map { it["bili_jct"] }.first()?.value_
+            val oldRefreshToken = persistentCookie.refreshToken
 
             val (needRefresh, timestamp) = 检查Cookie是否需要刷新()
 
-//        if (!needRefresh) return
-            val job = launch {
+            if (!needRefresh) return@withContext
+            launch {
                 val refreshCsrf = 获取RefreshCsrf(timestamp)
                 val (_, newRefreshToken, _) = 刷新Cookie(
                     csrf = jct,
                     refreshCsrf = refreshCsrf,
                     refreshToken = oldRefreshToken
                 )
-                PersistentCookie.setRefreshToke(newRefreshToken)
-            }
-            job.join()
-            job.invokeOnCompletion {
+                persistentCookie.setRefreshToke(newRefreshToken)
+            }.invokeOnCompletion {
                 launch {
-                    Napier.d { "最后一步${System.currentTimeMillis()}" }
                     delay(10.seconds)
-                    Napier.d { "最后一步${System.currentTimeMillis()}" }
-                    val newJct =
-                        CookieManager.getCookie().findLast { it.name == PersistentCookie.SET_COOKIE_BILI_JCT }?.value
+                    val newJct = cookieDataSource.cookies.map { it["bili_jct"] }.first()?.value_
                     确认更新Cookie(newJct, oldRefreshToken)
                 }
             }

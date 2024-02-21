@@ -9,6 +9,7 @@ import com.imcys.bilibilias.okdownloader.*
 import com.imcys.common.di.*
 import com.imcys.common.logger.*
 import com.imcys.common.utils.*
+import com.imcys.datastore.datastore.*
 import com.imcys.datastore.fastkv.*
 import com.imcys.model.*
 import com.imcys.network.*
@@ -23,6 +24,7 @@ import dagger.hilt.android.qualifiers.*
 import dagger.hilt.components.*
 import github.leavesczy.monitor.*
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.*
@@ -167,7 +169,8 @@ object NetworkModule {
         transform: ClientPlugin<Unit>,
         persistentCache: PersistentCache,
         loggerManager: LoggerManager,
-        wbiKeyStorage: WbiKeyStorage
+        wbiKeyStorage: WbiKeyStorage,
+        cookiesStorage: AsCookiesStorage
     ): HttpClient {
         val client = HttpClient(httpClientEngine) {
             defaultRequest {
@@ -180,7 +183,7 @@ object NetworkModule {
                 level = LogLevel.NONE
             }
             install(HttpCookies) {
-                storage = CookieManager
+                storage = cookiesStorage
             }
             install(transform)
 
@@ -206,29 +209,32 @@ object NetworkModule {
     private suspend fun Sender.wbiIntercept(
         request: HttpRequestBuilder,
         wbiKeyStorage: WbiKeyStorage
-    ) = if (request.attributes.getOrNull(requireWbi) == true) {
-        val params = request.url.parameters
-        val signatureParams = mutableListOf<Parameter>()
-        for ((k, v) in params.entries()) {
-            signatureParams.add(Parameter(k, v.joinToString()))
-        }
-        val signature = WBIUtils.encWbi(signatureParams, wbiKeyStorage.mixKey)
-        val newParameter = ParametersBuilderImpl()
-        for ((n, v) in signature) {
-            newParameter.append(n, v)
-        }
+    ): HttpClientCall {
+        if (request.attributes.getOrNull(requireWbi) == true) {
+            val params = request.url.parameters
+            val signatureParams = mutableListOf<Parameter>()
+            for ((k, v) in params.entries()) {
+                signatureParams.add(Parameter(k, v.joinToString()))
+            }
+            val signature = WBIUtils.encWbi(signatureParams, wbiKeyStorage.mixKey)
+            val newParameter = ParametersBuilderImpl()
+            for ((n, v) in signature) {
+                newParameter.append(n, v)
+            }
 
-        request.url.encodedParameters = newParameter
-        Timber.d("param=${newParameter.build()}, mixKey=${wbiKeyStorage.mixKey}")
-        execute(request)
-    } else {
-        execute(request)
+            request.url.encodedParameters = newParameter
+            Timber.d("param=${newParameter.build()}, mixKey=${wbiKeyStorage.mixKey}")
+        }
+        return execute(request)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
-    fun provideTransformData(json: Json): ClientPlugin<Unit> =
+    fun provideTransformData(
+        json: Json,
+        cookieDataSource: CookieDataSource
+    ): ClientPlugin<Unit> =
         createClientPlugin("TransformData") {
             transformResponseBody { request, content, requestedType ->
                 if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
@@ -238,7 +244,7 @@ object NetworkModule {
                     content.toInputStream()
                 )
                 if (box.code == ACCOUNT_NOT_LOGGED_IN) {
-                    PersistentCookie.logging = false
+                    cookieDataSource.setLoginState(false)
                 }
                 if (box.code != SUCCESS) {
                     throw ApiIOException(
@@ -254,7 +260,7 @@ object NetworkModule {
         }
 
     private const val SUCCESS = 0
-    private const val ACCOUNT_NOT_LOGGED_IN =-101
+    private const val ACCOUNT_NOT_LOGGED_IN = -101
 
     /**
      * 权限类 代码 含义 -1 应用程序不存在或已被封禁 -2 Access Key 错误 -3 API 校验密匙错误 -4 调用方对该

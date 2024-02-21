@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import com.imcys.datastore.fastkv.*
 import com.imcys.network.repository.auth.*
 import dagger.hilt.android.lifecycle.*
-import io.github.aakira.napier.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.*
@@ -15,6 +14,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthDataSources,
+    private val persistentCookie: PersistentCookie
 ) : ViewModel() {
     private val _loginAuthState = MutableStateFlow(LoginAuthState())
     val loginAuthUiState = _loginAuthState.asStateFlow()
@@ -31,7 +31,6 @@ class AuthViewModel @Inject constructor(
             _loginAuthState.update { it.copy(qrCodeUrl = url) }
             tryLogin(key)
         }
-        PersistentCookie.save()
     }
 
     /**
@@ -43,16 +42,15 @@ class AuthViewModel @Inject constructor(
             while (isActive && !ok) {
                 delay(1.seconds)
                 val response = authRepository.轮询登录接口(key)
-                Napier.d { "是否登录 ${PersistentCookie.logging}, ${PersistentCookie.getCookie()}" }
                 val state = _loginAuthState.updateAndGet {
                     it.copy(
                         qrCodeMessage = response.message,
-                        isSuccess = PersistentCookie.logging,
+                        isSuccess = response.isSuccess,
                         snackBarMessage = if (response.isSuccess) "登录成功" else null
                     )
                 }
-                PersistentCookie.setRefreshToke(response.refreshToken)
-                ok = PersistentCookie.logging
+                persistentCookie.setRefreshToke(response.refreshToken)
+                ok = state.isSuccess
             }
         }
     }
