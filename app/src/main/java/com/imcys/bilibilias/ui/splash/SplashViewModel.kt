@@ -1,11 +1,11 @@
 package com.imcys.bilibilias.ui.splash
 
 import androidx.lifecycle.*
-import com.imcys.datastore.fastkv.*
+import com.imcys.datastore.datastore.*
 import dagger.hilt.android.lifecycle.*
 import javax.inject.*
 
 @HiltViewModel
-class SplashViewModel @Inject constructor() : ViewModel() {
-    val valid = PersistentCookie.logging
+class SplashViewModel @Inject constructor(cookieDataSource: CookieDataSource) : ViewModel() {
+    val valid = cookieDataSource.loginState
 }

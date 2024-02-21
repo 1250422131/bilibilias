@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.common)
     implementation(projects.core.datastore)
+    implementation(projects.core.datastoreProto)
     implementation(projects.core.okdownloader)
     implementation(projects.common)
 
