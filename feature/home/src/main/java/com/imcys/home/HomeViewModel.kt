@@ -16,19 +16,12 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         requestWbiKey()
-        refreshCookie()
     }
 
     private fun requestWbiKey() {
         viewModelScope.launch {
             val mixKey = wbiKeyRepository.getSignature()
             wbiKeyStorage.save(mixKey)
-        }
-    }
-
-    private fun refreshCookie() {
-        viewModelScope.launch {
-            authRepository.cookieRefreshChain()
         }
     }
 
