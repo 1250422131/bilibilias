@@ -1,24 +1,31 @@
 package com.imcys.bilibilias
 
-import android.app.Application
-import android.content.Context
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import com.bilias.crash.ACRAUtils
-import com.imcys.common.appinitializer.AppInitializersProvider
-import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
-import javax.inject.Provider
+import android.app.*
+import android.content.*
+import androidx.work.*
+import coil.*
+import com.bilias.crash.*
+import com.imcys.common.appinitializer.*
+import com.imcys.network.sync.initializers.*
+import com.imcys.network.sync.workers.*
+import dagger.hilt.android.*
+import kotlinx.coroutines.*
+import javax.inject.*
+
 @HiltAndroidApp
-class BiliAsApp : Application(), ImageLoaderFactory {
+class BiliAsApp : Application(), ImageLoaderFactory, Configuration.Provider {
     @Inject
     lateinit var imageLoader: Provider<ImageLoader>
+
+    @Inject
+    lateinit var hiltWorkerFactory: UpdateCookieWorkerFactory
 
     @Inject
     lateinit var mAppInitializer: AppInitializersProvider
     override fun onCreate() {
         super.onCreate()
         mAppInitializer.startInit()
+        Sync.initialize(this)
     }
 
     override fun attachBaseContext(base: Context) {
@@ -27,4 +34,10 @@ class BiliAsApp : Application(), ImageLoaderFactory {
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setExecutor(Dispatchers.IO.asExecutor())
+            .setWorkerFactory(hiltWorkerFactory)
+            .build()
+
 }

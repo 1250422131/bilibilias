@@ -85,7 +85,7 @@ class AuthRepository @Inject constructor(
     override suspend fun 检查Cookie是否需要刷新(): CookieInfo {
         val response = client.get("https://passport.bilibili.com/x/passport-login/web/cookie/info")
             .body<CookieInfo>()
-        Napier.d(tag = "cookie刷新第一步") { "刷新: ${response.refresh}\n时间戳: ${response.timestamp}" }
+        Napier.d(tag = "cookie刷新第一步") { "刷新: ${response.refresh}\t时间戳: ${response.timestamp}" }
         return response
     }
 
