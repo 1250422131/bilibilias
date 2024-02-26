@@ -50,6 +50,12 @@ class AsCookiesStorage @Inject constructor(
         return cookies.find { it.name == key }?.value
     }
 
+    fun getAllCookies(): String {
+        return cookies.joinToString(";") {
+            "${it.name}=${it.value}"
+        }
+    }
+
     override fun close() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
     }

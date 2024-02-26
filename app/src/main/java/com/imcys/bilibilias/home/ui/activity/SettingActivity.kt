@@ -3,10 +3,14 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
+import androidx.documentfile.provider.DocumentFile
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
+import com.imcys.bilibilias.common.base.utils.file.toFilePath
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -36,8 +40,7 @@ class SettingActivity : BaseActivity() {
         when (requestCode) {
             IMPORT_FILE_PATH_CODE -> {
                 if (resultData != null) {
-                    val takeFlags =
-                        resultData.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     this.contentResolver.takePersistableUriPermission(
                         resultData.data!!,
                         takeFlags
@@ -49,6 +52,15 @@ class SettingActivity : BaseActivity() {
                     putBoolean("user_dl_finish_automatic_import_switch", true)
                     apply()
                 }
+
+
+                resultData?.data?.also {
+                    val mDocumentFile = DocumentFile.fromTreeUri(this, it)
+                    if (!hasSubDirectory(mDocumentFile!!, "download")) {
+                        mDocumentFile.createDirectory("download")
+                    }
+                }
+
             }
         }
     }

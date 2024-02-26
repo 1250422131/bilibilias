@@ -239,10 +239,9 @@ class DownloadQueue @Inject constructor() {
 
                         return
                     }
-
-
                     // 下载完成
                     mTask.state = STATE_DOWNLOAD_END
+                    mTask.progress = 100.0
                     updateAdapter()
                     if (mTask.isGroupTask) {
                         // 在map中找到这个任务所属的一组任务
@@ -453,22 +452,31 @@ class DownloadQueue @Inject constructor() {
                 // 分别添加下载完成了
                 saveFinishTask(videoTask, audioTask!!)
                 importVideo(cid)
-                // 移除任务
-                groupTasksMap[mTask.downloadTaskDataBean.cid]?.forEach { item ->
-                    currentTasks.remove(item)
-                }
-                // 更新任务状态
-                mTask.state = STATE_DOWNLOAD_END
-                // 下载成功，调用任务的完成回调
-                mTask.onComplete(true)
-                executeTask()
             }
+            updateVideoMergeOrImportTask(videoTask, STATE_DOWNLOAD_END,true)
+            executeTask()
         } else {
             // 这类代表虽然是dash下载，但是并不需要其他操作
             saveFinishTask(videoTask!!, audioTask!!)
             // 这类通知相册更新下文件
             updatePhotoMedias(App.context, File(videoTask.savePath), File(audioTask.savePath))
+            // 移除任务
+            updateVideoMergeOrImportTask(mTask, STATE_DOWNLOAD_END,true)
+            executeTask()
         }
+    }
+
+    private fun updateVideoMergeOrImportTask(task: DownloadTaskInfo, state: Int, downloadState: Boolean) {
+        // 更新任务状态
+        task.state = state
+        // 下载成功，调用任务的完成回调
+        task.onComplete(downloadState)
+        // 移除任务
+        groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
+            currentTasks.remove(item)
+        }
+        // 更新
+        updateAdapter()
     }
 
     private fun runFFmpegRxJavaVideoMerge(
@@ -496,14 +504,8 @@ class DownloadQueue @Inject constructor() {
             .runCommandRxJava(commands)
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
-                    groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
-                        currentTasks.remove(item)
-                    }                    // 更新任务状态
-                    task.state = STATE_MERGE_ERROR
-                    // 下载成功，调用任务的完成回调
-                    task.onComplete(false)
-                    updateAdapter()
-                    // 移除任务
+                    updateVideoMergeOrImportTask(task,STATE_MERGE_ERROR,false)
+                    asToast(App.context, "合并错误")
 
                 }
 
@@ -535,15 +537,7 @@ class DownloadQueue @Inject constructor() {
                         // 通知相册更新
                         updatePhotoMedias(App.context, File(videoPath), File(audioPath))
                     }
-                    // 移除任务
-                    groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
-                        currentTasks.remove(item)
-                    }
-                    // 更新任务状态
-                    task.state = STATE_DOWNLOAD_END
-                    // 下载成功，调用任务的完成回调
-                    task.onComplete(true)
-                    updateAdapter()
+                    updateVideoMergeOrImportTask(task, STATE_DOWNLOAD_END,true)
                     // 继续下一个
                     executeTask()
                 }

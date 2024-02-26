@@ -196,7 +196,9 @@ class HomeFragment : BaseFragment() {
     private fun loadBannerData() {
         launchUI {
 
-            val oldHomeBannerDataBean = networkService.getOldHomeBannerData()
+            val oldHomeBannerDataBean = withContext(Dispatchers.IO){
+                networkService.getOldHomeBannerData()
+            }
 
             // 新增BannerLifecycleObserver
             fragmentHomeBinding.fragmentHomeBanner.setAdapter(

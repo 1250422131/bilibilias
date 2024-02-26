@@ -420,14 +420,7 @@ class NetworkService @Inject constructor(
     private suspend inline fun <reified T> runCatchingOnWithContextIo(
             noinline block: suspend CoroutineScope.() -> T
     ): T {
-        return runCatching {
-            withContext(ioDispatcher, block)
-        }.getOrElse {
-            val clazz = T::class
-            val constructors = clazz.constructors
-            val emptyConstructor = constructors.find { parameter -> parameter.parameters.isEmpty() }
-            emptyConstructor?.call() as T ?: throw it
-        }
+        return withContext(ioDispatcher, block)
     }
 
 
