@@ -108,16 +108,6 @@
                                     android:textColor="@color/color_text_hint"
                                     android:textSize="12sp" />
 
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:ellipsize="end"
-                                    android:maxLines="1"
-                                    android:text="@{`清晰度：`+TaskBean.downloadTaskDataBean.qn}"
-                                    android:textColor="@color/color_text_hint"
-                                    android:textSize="12sp" />
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"

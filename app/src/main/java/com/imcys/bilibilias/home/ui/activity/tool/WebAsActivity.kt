@@ -9,12 +9,17 @@ import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
 class WebAsActivity : BaseActivity() {
     private lateinit var webAsBinding: ActivityWebAsBinding
+    @Inject
+    lateinit var asCookiesStorage: AsCookiesStorage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 视图加载
@@ -47,7 +52,8 @@ class WebAsActivity : BaseActivity() {
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
             // 注入cookie
-            cookieManager.setCookie("https://bilibili.com", asUser.cookie)
+            println("Cookie检测${asCookiesStorage.getAllCookies()}")
+            cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
 
