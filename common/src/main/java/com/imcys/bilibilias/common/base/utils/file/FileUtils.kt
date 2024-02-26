@@ -65,8 +65,7 @@ object FileUtils {
         val file = File(sPath!!)
         // 路径为文件且不为空则进行删除
         if (file.isFile && file.exists()) {
-            file.delete()
-            flag = true
+            flag = file.delete()
         }
         return flag
     }

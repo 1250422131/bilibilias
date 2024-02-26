@@ -5,14 +5,11 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceChangeListener
@@ -26,18 +23,14 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
-import com.imcys.bilibilias.common.base.utils.file.toFilePath
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
-import me.rosuh.filepicker.bean.FileItemBeanImpl
-import me.rosuh.filepicker.config.AbstractFileFilter
-import me.rosuh.filepicker.config.FilePickerManager
-import java.io.File
+
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var userDownloadSaveSDPathSwitch: SwitchPreferenceCompat
     private lateinit var renameUserDownloadFileNameEditText: Preference
-    private lateinit var userDownloadSavePathEditText: Preference
+    lateinit var userDownloadSavePathEditText: Preference
     private lateinit var userDownloadFileNameEditText: Preference
     private lateinit var userDlFinishAutomaticMergeSwitch: SwitchPreferenceCompat
     private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
@@ -48,6 +41,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
 
+    private val TAG = this.javaClass.name
+
     private val saveImport = registerForActivityResult(
         ActivityResultContracts.OpenDocumentTree(),
     ) {
@@ -57,13 +52,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             apply()
         }
     }
-
-    private val saveSDFile =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                setSavePath()
-            }
-        }
 
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -192,7 +180,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingImportFileEvent() {
         userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
-           val mUri =  (context as SettingActivity).asSharedPreferences.getString("AppDataUri","");
+            val mUri = (context as SettingActivity).asSharedPreferences.getString("AppDataUri", "")
             // 判断是否有权限
             if (!Uri.parse(mUri).isUriAuthorized(requireContext())) {
                 // 申请权限
@@ -221,59 +209,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingGetSavePathEvent() {
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            // Android 11 (Api 30)或更高版本的写文件权限需要特殊申请，需要动态申请管理所有文件的权限
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    setSavePath()
-                    true
-                } else {
-                    saveSDFile.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
-                    false
-                }
-            } else {
-                // 小于安卓11
-                setSavePath()
-                false
-            }
+            fileUriUtils.startForRoot(
+                context as Activity,
+                SAVE_FILE_PATH_CODE,
+            )
+            true
         }
     }
 
-    private fun setSavePath() {
-        FilePickerManager
-            .from(this)
-            .maxSelectable(1)
-            .filter(object : AbstractFileFilter() {
-                override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {
-                    return ArrayList(
-                        listData.filter { item ->
-                            item.isDir
-                        },
-                    )
-                }
-            }).skipDirWhenSelect(false)
-            .forResult(SAVE_FILE_PATH_CODE)
-    }
-
-    @Deprecated("Deprecated in Java")
-    @SuppressLint("WrongConstant", "UseRequireInsteadOfGet")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        when (requestCode) {
-            SAVE_FILE_PATH_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    FilePickerManager.obtainData().forEach {
-                        sharedPreferences.edit {
-                            putString("user_download_save_path", it)
-                            apply()
-                            userDownloadSavePathEditText.summary = it
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * 初始化控件
@@ -287,12 +232,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
         appLanguageListPreference = findPreference("app_language")!!
 
         userDownloadSavePathEditText = findPreference("user_download_save_path")!!
-        sharedPreferences.apply {
-            val value = getString(
-                "user_download_save_path",
-                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
-            )
-            userDownloadSavePathEditText.summary = value
+
+        val value = sharedPreferences.getString(
+            "user_download_save_uri_path",
+            null,
+        )
+
+        if (value == null) {
+            userDownloadSavePathEditText.summary =
+                "手机根目录:Android/data/com.imcys.bilibilias/files/download"
+        } else {
+            val documentFile = DocumentFile.fromSingleUri(requireContext(), Uri.parse(value))
+
+            var filePath = documentFile!!.uri.path?.replace("/tree/primary:", "手机根目录:")
+            filePath = filePath?.replace(Regex("/tree/.*:"), "储存卡:")
+
+            userDownloadSavePathEditText.summary = filePath
         }
 
         renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
