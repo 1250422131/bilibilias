@@ -1,50 +1,36 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
-import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.annotation.*
+import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
-import android.os.Build
-import android.view.View
-import android.widget.Toast
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
-import com.imcys.asbottomdialog.bottomdialog.AsDialog
+import android.os.*
+import android.view.*
+import android.widget.*
+import androidx.lifecycle.*
+import androidx.preference.*
+import com.imcys.asbottomdialog.bottomdialog.*
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.extend.Result
-import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.base.network.*
+import com.imcys.bilibilias.base.utils.*
+import com.imcys.bilibilias.common.base.api.*
+import com.imcys.bilibilias.common.base.extend.*
+import com.imcys.bilibilias.common.base.utils.*
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.network.danmaku.DanmakuRepository
-import com.imcys.bilibilias.danmaku.change.CCJsonToAss
-import com.imcys.bilibilias.danmaku.change.DmXmlToAss
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
+import com.imcys.bilibilias.common.base.utils.http.*
+import com.imcys.bilibilias.common.network.danmaku.*
+import com.imcys.bilibilias.danmaku.change.*
+import com.imcys.bilibilias.home.ui.activity.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.microsoft.appcenter.analytics.Analytics
-import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
-import java.io.File
-import java.io.FileOutputStream
-import javax.inject.Inject
+import com.microsoft.appcenter.analytics.*
+import dagger.hilt.android.lifecycle.*
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import okio.*
+import java.io.*
+import javax.inject.*
 
 /**
  * 解析视频的ViewModel
@@ -76,9 +62,9 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 //并发
-                val dashVideoPlayDeferred = async { networkService.n29(context.bvid, context.cid) }
+                val dashVideoPlayDeferred = async { networkService.viewDash(context.bvid, context.cid) }
                 val dashBangumiPlayDeferred =
-                    async { networkService.getDashBangumiPlay(context.cid, 64) }
+                    async { networkService.pgcPlayUrl(context.cid, 64) }
 
                 // 等待两个请求的结果
                 val dashVideoPlayBean = dashVideoPlayDeferred.await()
@@ -139,9 +125,9 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 //并发
-                val dashVideoPlayDeferred = async { networkService.n29(context.bvid, context.cid) }
+                val dashVideoPlayDeferred = async { networkService.viewDash(context.bvid, context.cid) }
                 val dashBangumiPlayDeferred =
-                    async { networkService.getDashBangumiPlay(context.cid, 64) }
+                    async { networkService.pgcPlayUrl(context.cid, 64) }
 
                 // 等待两个请求的结果
                 val dashVideoPlayBean = dashVideoPlayDeferred.await()

@@ -1,36 +1,26 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.baidu.mobstat.StatService
+import android.os.*
+import android.view.*
+import android.widget.*
+import androidx.databinding.*
+import androidx.recyclerview.widget.*
+import com.baidu.mobstat.*
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.base.network.*
+import com.imcys.bilibilias.base.utils.*
+import com.imcys.bilibilias.common.base.*
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.databinding.FragmentUserBinding
-import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
-import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
-import com.imcys.bilibilias.home.ui.model.UpStatBeam
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.UserViewItemBean
-import com.imcys.bilibilias.home.ui.model.UserWorksBean
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import javax.inject.Inject
-import kotlin.math.ceil
+import com.imcys.bilibilias.common.base.extend.*
+import com.imcys.bilibilias.databinding.*
+import com.imcys.bilibilias.home.ui.adapter.*
+import com.imcys.bilibilias.home.ui.model.*
+import com.zackratos.ultimatebarx.ultimatebarx.*
+import dagger.hilt.android.*
+import kotlinx.coroutines.*
+import me.dkzwm.widget.srl.*
+import javax.inject.*
+import kotlin.math.*
 
 @AndroidEntryPoint
 class UserFragment : BaseFragment() {
@@ -120,7 +110,6 @@ class UserFragment : BaseFragment() {
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         launchIO {
-
             val userWorksBean = networkService.n20(userWorksBean.data.page.pn + 1)
 
             this@UserFragment.userWorksBean = userWorksBean
@@ -179,10 +168,10 @@ class UserFragment : BaseFragment() {
             val userBaseBean = async { getUserData() }
 
             // 用户卡片信息
-            val userCardBean = async { getUserCardBean() }
+            val userCardBean = getUserCardBean()
 
             // 获取up状态
-            val userUpStat = async { getUpStat() }
+            val userUpStat = async { networkService.getUpStat(userCardBean.data.card.mid) }
 
             if (userBaseBean.await().code == 0) {
                 userDataMutableList.add(
@@ -197,12 +186,12 @@ class UserFragment : BaseFragment() {
                 userDataRvAd.submitList(userDataMutableList + mutableListOf())
             }
 
-            if (userCardBean.await().code == 0 && userUpStat.await().code == 0) {
+            if (userUpStat.await().code == 0) {
                 userDataMutableList.add(
                     UserViewItemBean(
                         2,
                         upStatBeam = userUpStat.await(),
-                        userCardBean = userCardBean.await(),
+                        userCardBean = userCardBean,
                     ),
                 )
             }
@@ -224,15 +213,6 @@ class UserFragment : BaseFragment() {
         val paramsStr = tokenUtils.getParamStr(params)
 
         return networkService.n22(paramsStr)
-    }
-
-    /**
-     * 获取用户状态信息
-     * @return UpStatBeam
-     */
-    private suspend fun getUpStat(): UpStatBeam {
-
-        return networkService.n23()
     }
 
     /**
