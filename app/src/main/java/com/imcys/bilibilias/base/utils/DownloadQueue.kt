@@ -36,9 +36,11 @@ import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
+import com.liulishuo.okdownload.core.breakpoint.*
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import com.liulishuo.okdownload.core.listener.*
+import com.liulishuo.okdownload.core.listener.assist.*
 import com.microsoft.appcenter.analytics.Analytics
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
@@ -156,51 +158,9 @@ class DownloadQueue @Inject constructor() :
 
             mTask.call = okDownloadTask
 
-            okDownloadTask.enqueue(object : DownloadListener {
+            okDownloadTask.enqueue(object : DownloadListener2() {
                 override fun taskStart(task: DownloadTask) {
                 }
-
-                override fun connectTrialStart(
-                    task: DownloadTask,
-                    requestHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun connectTrialEnd(
-                    task: DownloadTask,
-                    responseCode: Int,
-                    responseHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun downloadFromBeginning(
-                    task: DownloadTask,
-                    info: BreakpointInfo,
-                    cause: ResumeFailedCause,
-                ) {
-                }
-
-                override fun downloadFromBreakpoint(task: DownloadTask, info: BreakpointInfo) {
-                }
-
-                override fun connectStart(
-                    task: DownloadTask,
-                    blockIndex: Int,
-                    requestHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun connectEnd(
-                    task: DownloadTask,
-                    blockIndex: Int,
-                    responseCode: Int,
-                    responseHeaderFields: MutableMap<String, MutableList<String>>,
-                ) {
-                }
-
-                override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
-                }
-
                 override fun fetchProgress(
                     task: DownloadTask,
                     blockIndex: Int,
@@ -214,9 +174,6 @@ class DownloadQueue @Inject constructor() :
                     mTask.fileSize = (totalOffset / 1048576).toDouble()
                     mTask.fileDlSize = (totalLength / 1048576).toDouble()
                     // 下载进度更新时的回调，可以在这里处理下载百分比
-                }
-
-                override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
                 }
 
                 override fun taskEnd(
