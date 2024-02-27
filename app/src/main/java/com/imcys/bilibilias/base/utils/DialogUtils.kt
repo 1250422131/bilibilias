@@ -1186,7 +1186,7 @@ object DialogUtils {
         launchIO {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = networkService.n1(it.cid, qn)
+                    val dashBangumiPlayBean = networkService.pgcPlayUrl(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1271,7 +1271,7 @@ object DialogUtils {
         launchIO {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean = networkService.n2(videoBaseBean.data.bvid, it.cid, qn)
+                    val dashVideoPlayBean = networkService.viewDash(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
@@ -1363,7 +1363,7 @@ object DialogUtils {
         launchIO {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
+                    val videoPlayBean = networkService.viewFlv(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1410,7 +1410,7 @@ object DialogUtils {
         launchIO {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = networkService.n4(it.cid, qn)
+                    val bangumiPlayBean = networkService.flvPgcPlayUrl(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
