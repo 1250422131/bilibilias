@@ -420,38 +420,36 @@ class DownloadQueue @Inject constructor() :
                 false,
             )
 
-        val taskMutableList = groupTasksMap[cid]
+        val taskMutableList = groupTasksMap[cid]!!
         val videoTask =
-            taskMutableList?.filter { it.fileType == 0 }
+            taskMutableList.single { it.fileType == 0 }
         val audioTask =
-            taskMutableList?.filter { it.fileType == 1 }
+            taskMutableList.single { it.fileType == 1 }
 
         if (mergeState) {
             // 耗时操作，这里直接开个新线程
-            val videoPath =
-                videoTask!![0].savePath
-            val audioPath =
-                audioTask!![0].savePath
+            val videoPath = videoTask.savePath
+            val audioPath = audioTask.savePath
             // 这里的延迟是为了有足够时间让下载检查下载完整
 
             runFFmpegRxJavaVideoMerge(
-                videoTask[0],
+                videoTask,
                 videoPath,
                 audioPath,
             )
 
             // 旧的合并方案： MediaExtractorUtils.combineTwoVideos(audioPath, 0,videoPath,mergeFile)
         } else if (importState) {
-            videoTask!![0].downloadTaskDataBean.bangumiSeasonBean?.apply {
+            videoTask.downloadTaskDataBean.bangumiSeasonBean?.apply {
                 // 分别添加下载完成了
-                saveFinishTask(videoTask[0], audioTask!![0])
+                saveFinishTask(videoTask, audioTask)
                 importVideo(cid)
             }
         } else {
             // 这类代表虽然是dash下载，但是并不需要其他操作
-            saveFinishTask(videoTask!![0], audioTask!![0])
+            saveFinishTask(videoTask, audioTask)
             // 这类通知相册更新下文件
-            updatePhotoMedias(App.context, File(videoTask[0].savePath), File(audioTask[0].savePath))
+            updatePhotoMedias(App.context, File(videoTask.savePath), File(audioTask.savePath))
         }
     }
 
