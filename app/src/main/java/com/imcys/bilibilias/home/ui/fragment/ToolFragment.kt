@@ -266,27 +266,25 @@ class ToolFragment : BaseFragment() {
 
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
-            launchIO {
+            launchUI {
 
                 val videoBaseBean = networkService.n26(bvid)
 
-                launchUI {
-                    (mAdapter).apply {
-                        // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
-                        // run函数将新准备的视频item合并进去，并返回。
-                        // 最终apply利用该段返回执行最外层apply的submitList方法
-                        currentList.filter { it.type == 0 }.run {
-                            mutableListOf(
-                                ToolItemBean(
-                                    type = 1,
-                                    videoBaseBean = videoBaseBean,
-                                    clickEvent = {
-                                    },
-                                ),
-                            ) + this
-                        }.apply {
-                            submitList(this)
-                        }
+                (mAdapter).apply {
+                    // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
+                    // run函数将新准备的视频item合并进去，并返回。
+                    // 最终apply利用该段返回执行最外层apply的submitList方法
+                    currentList.filter { it.type == 0 }.run {
+                        mutableListOf(
+                            ToolItemBean(
+                                type = 1,
+                                videoBaseBean = videoBaseBean,
+                                clickEvent = {
+                                },
+                            ),
+                        ) + this
+                    }.apply {
+                        submitList(this)
                     }
                 }
             }

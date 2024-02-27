@@ -62,7 +62,7 @@ class NetworkModule {
         }
 
         install(HttpTimeout) {
-            requestTimeoutMillis = 5000
+            requestTimeoutMillis = 10000
         }
 
         defaultRequest {

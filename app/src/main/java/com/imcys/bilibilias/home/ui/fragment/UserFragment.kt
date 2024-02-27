@@ -81,7 +81,7 @@ class UserFragment : BaseFragment() {
         fragmentUserBinding.fragmentUserWorksCsr.apply {
             setOnRefreshListener(object : RefreshingListenerAdapter() {
                 override fun onLoadingMore() {
-                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
                         val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
@@ -172,7 +172,7 @@ class UserFragment : BaseFragment() {
 
     private fun initUserData() {
         // 切到后台线程去
-        launchIO {
+        launchUI {
             userDataMutableList.clear()
 
             // 获取基础内容
@@ -193,9 +193,8 @@ class UserFragment : BaseFragment() {
                 )
             }
 
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            }
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+
 
             if (userCardBean.await().code == 0 && userUpStat.await().code == 0) {
                 userDataMutableList.add(
@@ -207,10 +206,9 @@ class UserFragment : BaseFragment() {
                 )
             }
 
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-                initUserTool()
-            }
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            initUserTool()
+
         }
     }
 
@@ -232,7 +230,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUpStat(): UpStatBeam {
 
-        return networkService.n23()
+        return networkService.getUpStateInfo()
     }
 
     /**

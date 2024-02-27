@@ -65,14 +65,14 @@ class NetworkService @Inject constructor(
         private val asCookiesStorage: AsCookiesStorage
 ) {
     private val ioDispatcher = Dispatchers.IO
-    suspend fun n1(cid: Long, qn: Int): DashBangumiPlayBean = runCatchingOnWithContextIo {
+    suspend fun getDashBangumiPlayInfo(cid: Long, qn: Int): DashBangumiPlayBean = runCatchingOnWithContextIo {
         httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
             refererBILIHarder()
         }.body()
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n2(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
+    suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
             runCatchingOnWithContextIo { videoPlayPath(bvid, cid.toString(), qn) }
 
     suspend fun n10(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
@@ -115,7 +115,8 @@ class NetworkService @Inject constructor(
 
     private fun HttpRequestBuilder.parameterBVID(bvid: String): Unit =
             url.parameters.append("bvid", bvid)
-
+    private fun HttpRequestBuilder.parameterAID(aid: String): Unit =
+        url.parameters.append("aid", aid)
     private fun HttpRequestBuilder.parameterCID(cid: String): Unit =
             url.parameters.append("cid", cid)
 
@@ -155,15 +156,19 @@ class NetworkService @Inject constructor(
 
     // ---------------------------------------------------------------------------------------------
     suspend fun n5(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
-        n12(bvid)
+        getVideoBaseInfoByBvid(bvid)
     }
 
-    suspend fun n12(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
+    suspend fun getVideoBaseInfoByBvid(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getVideoDataPath) { parameterBVID(bvid) }.body()
     }
 
+    suspend fun getVideoBaseInfoByAid(aid: String): VideoBaseBean = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.getVideoDataPath) { parameterAID(aid) }.body()
+    }
+
     suspend fun n26(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
-        n12(bvid)
+        getVideoBaseInfoByBvid(bvid)
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -329,7 +334,7 @@ class NetworkService @Inject constructor(
     }
 
     // ----------------------------------------------------------------------------------------------
-    suspend fun n23(): UpStatBeam = runCatchingOnWithContextIo {
+    suspend fun getUpStateInfo(): UpStatBeam = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userUpStat}?mid=${BaseApplication.asUser.mid}").body()
     }
 

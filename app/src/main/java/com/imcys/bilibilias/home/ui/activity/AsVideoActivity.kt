@@ -53,7 +53,6 @@ import master.flame.danmaku.danmaku.loader.IllegalDataException
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
-import master.flame.danmaku.danmaku.model.GlobalFlagValues
 import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.model.android.Danmakus
@@ -248,7 +247,14 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         launchUI {
-            val videoBaseBean = networkService.n12(bvId.toString())
+            var videoBaseBean = networkService.getVideoBaseInfoByBvid(bvId.toString())
+
+            if (videoBaseBean.code != 0) {
+                videoBaseBean = networkService.getVideoBaseInfoByAid(
+                    VideoNumConversion.toAvidOffline(bvId).toString()
+                )
+            }
+
 
             // 设置数据
             videoDataBean = videoBaseBean
