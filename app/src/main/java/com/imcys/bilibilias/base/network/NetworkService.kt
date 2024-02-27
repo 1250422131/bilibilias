@@ -1,24 +1,61 @@
 package com.imcys.bilibilias.base.network
 
-import com.imcys.bilibilias.base.model.login.*
-import com.imcys.bilibilias.base.model.user.*
-import com.imcys.bilibilias.common.base.api.*
-import com.imcys.bilibilias.common.base.app.*
-import com.imcys.bilibilias.common.base.constant.*
-import com.imcys.bilibilias.common.base.model.common.*
-import com.imcys.bilibilias.common.base.model.user.*
-import com.imcys.bilibilias.common.base.utils.http.*
-import com.imcys.bilibilias.common.di.*
-import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.*
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import kotlinx.coroutines.*
-import javax.inject.*
+import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.base.model.user.LikeVideoBean
+import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
+import com.imcys.bilibilias.common.base.model.user.AsUserLoginModel
+import com.imcys.bilibilias.common.base.model.user.BiLiCookieResponseModel
+import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.common.base.model.user.ResponseResult
+import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
+import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
+import com.imcys.bilibilias.home.ui.model.CollectionDataBean
+import com.imcys.bilibilias.home.ui.model.CollectionResultBean
+import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
+import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.home.ui.model.OldDonateBean
+import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
+import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.home.ui.model.OldToolItemBean
+import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
+import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
+import com.imcys.bilibilias.home.ui.model.UpStatBeam
+import com.imcys.bilibilias.home.ui.model.UserBaseBean
+import com.imcys.bilibilias.home.ui.model.UserCardBean
+import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import com.imcys.bilibilias.home.ui.model.UserNavDataModel
+import com.imcys.bilibilias.home.ui.model.UserWorksBean
+import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.imcys.bilibilias.home.ui.model.VideoCoinAddBean
+import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.parameter
+import io.ktor.client.statement.readBytes
+import io.ktor.http.HttpHeaders
+import io.ktor.http.parameters
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class NetworkService @Inject constructor(
@@ -188,14 +225,14 @@ class NetworkService @Inject constructor(
     }
 
     suspend fun n13(epid: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
-        n25(epid)
+        获取番剧详情(epid)
     }
 
     suspend fun n18(firstEp: Int): BangumiSeasonBean = runCatchingOnWithContextIo {
         n7(firstEp)
     }
 
-    suspend fun n25(epId: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
+    suspend fun 获取番剧详情(epId: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.bangumiVideoDataPath) {
             parameterEpID(epId.toString())
         }.body()
