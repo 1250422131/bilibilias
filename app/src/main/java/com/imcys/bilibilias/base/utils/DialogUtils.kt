@@ -1186,7 +1186,7 @@ object DialogUtils {
         launchIO {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = networkService.n1(it.cid, qn)
+                    val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1271,7 +1271,7 @@ object DialogUtils {
         launchIO {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean = networkService.n2(videoBaseBean.data.bvid, it.cid, qn)
+                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }

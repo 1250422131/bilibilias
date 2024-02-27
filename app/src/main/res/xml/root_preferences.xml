@@ -11,14 +11,14 @@
             app:useSimpleSummaryProvider="true" />
 
 
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            app:key="user_download_save_sd_path_switch"
-            app:summaryOff="@string/user_download_save_sd_path_switch_off"
-            app:summaryOn="@string/user_download_save_sd_path_switch_on"
-            app:title="@string/user_download_save_sd_path_switch_title">
+<!--        <SwitchPreferenceCompat-->
+<!--            android:defaultValue="false"-->
+<!--            app:key="user_download_save_sd_path_switch"-->
+<!--            app:summaryOff="@string/user_download_save_sd_path_switch_off"-->
+<!--            app:summaryOn="@string/user_download_save_sd_path_switch_on"-->
+<!--            app:title="@string/user_download_save_sd_path_switch_title">-->
 
-        </SwitchPreferenceCompat>
+<!--        </SwitchPreferenceCompat>-->
 
 
         <EditTextPreference

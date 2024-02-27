@@ -48,7 +48,7 @@ class PlayHistoryAdapter @Inject constructor() :
                 val bvid = if (getItem(position).history.bvid != "") {
                     getItem(position).history.bvid
                 } else {
-                    VideoNumConversion.toBvidOffline(getItem(position).history.oid.toLong())
+                    VideoNumConversion.toBvidOffline(getItem(position).history.oid)
                 }
                 AsVideoActivity.actionStart(holder.itemView.context, bvid)
             }

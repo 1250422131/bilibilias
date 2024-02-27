@@ -88,13 +88,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true,
                 positiveButtonClickListener = {
                     getDefaultSharedPreferences(requireContext()).edit().putString(
-                        "user_download_save_path",
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                        "user_download_save_uri_path",
+                        null,
                     )
                         .apply()
-                    asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                     userDownloadSavePathEditText.summary =
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+                        "手机根目录：Android/data/com.imcys.bilibilias/files/download"
                 },
                 negativeButtonClickListener = {
                 },
@@ -130,7 +129,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         bindingImportFileEvent()
 
-        bindingSaveSDPathSwitchEvent()
+        // SD卡也需要SAF授权，不再使用旧的方案
+        // bindingSaveSDPathSwitchEvent()
         bindingAppThemeListPreferenceEvent()
         bindingAppLanguageListPreferenceEvent()
     }
@@ -253,22 +253,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
         renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
         renameUserDownloadFileNameEditText =
             findPreference("rename_user_download_file_name_editText")!!
-        userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
-
-        val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
-            "user_download_save_sd_path_switch",
-            false,
-        )
-        // 禁止或者释放下载地址修改
-        userDownloadSavePathEditText.isEnabled = !sdPathState
-
-        val tip = "应安卓要求，这里的路径无法修改，储存位置为:\n${
-            AppFilePathUtils(
-                App.context,
-                "com.imcys.bilibilias",
-            ).sdCardDirectory
-        }/Android/data/com.imcys.bilibilias/files/download"
-
-        userDownloadSaveSDPathSwitch.summaryOn = tip
+        // 暂停SD卡方案
+        //        userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
+        //
+        //        val sdPathState = getDefaultSharedPreferences(requireContext()).getBoolean(
+        //            "user_download_save_sd_path_switch",
+        //            false,
+        //        )
+        //        // 禁止或者释放下载地址修改
+        //        userDownloadSavePathEditText.isEnabled = !sdPathState
+        //
+        //        val tip = "应安卓要求，这里的路径无法修改，储存位置为:\n${
+        //            AppFilePathUtils(
+        //                App.context,
+        //                "com.imcys.bilibilias",
+        //            ).sdCardDirectory
+        //        }/Android/data/com.imcys.bilibilias/files/download"
+        //
+        //        userDownloadSaveSDPathSwitch.summaryOn = tip
     }
 }

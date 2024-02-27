@@ -43,6 +43,7 @@
                     android:layout_weight="6"
                     android:imageUrl="@{VideoBaseBean.data.pic}"
                     android:transitionName="videoPic"
+                    android:scaleType="fitXY"
                     app:round="10dp" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat

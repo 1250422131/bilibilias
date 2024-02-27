@@ -112,7 +112,7 @@
                                 android:layout_height="60dp"
                                 android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:text="FLV"
+                                android:text="MP4(最高1080P)"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
