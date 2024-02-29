@@ -1183,7 +1183,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
@@ -1268,7 +1268,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
@@ -1360,7 +1360,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
                     val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
@@ -1407,7 +1407,7 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
                     val bangumiPlayBean = networkService.n4(it.cid, qn)
