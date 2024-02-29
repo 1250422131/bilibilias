@@ -116,8 +116,13 @@ class VideoRepository @Inject constructor(
         parameterBV(bvId)
     }.body<ViewDetail>().apply(cacheView::add)
 
-    override suspend fun 获取视频播放地址(aId: Long, bvId: String, cId: Long): NetworkPlayerPlayUrl {
+    override suspend fun 获取视频播放地址(
+        aId: Long,
+        bvId: String,
+        cId: Long
+    ): NetworkPlayerPlayUrl {
         Napier.d { "获取播放链接 bv=$bvId, cid=$cId" }
+
         return cachePlayerPlayUrl.getOrElse("$bvId-$cId") {
             client.wbiGet(BilibiliApi2.PLAYER_PLAY_URL_WBI) {
                 parameter("avid", aId)
