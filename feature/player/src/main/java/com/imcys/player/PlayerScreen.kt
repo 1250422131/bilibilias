@@ -1,34 +1,54 @@
 package com.imcys.player
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.*
-import androidx.compose.material.icons.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.*
-import androidx.compose.ui.*
-import androidx.compose.ui.draw.*
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.text.font.*
-import androidx.compose.ui.text.style.*
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.viewinterop.*
-import androidx.hilt.navigation.compose.*
-import androidx.lifecycle.compose.*
-import coil.compose.*
-import com.imcys.designsystem.component.*
-import com.imcys.player.sheet.*
-import com.imcys.player.state.*
-import com.shuyu.gsyvideoplayer.*
-import com.shuyu.gsyvideoplayer.video.*
-import io.github.aakira.napier.*
-import kotlinx.coroutines.*
-import timber.log.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.imcys.designsystem.component.AsButton
+import com.imcys.player.sheet.SheetDirectLink
+import com.imcys.player.sheet.SheetSeries
+import com.imcys.player.state.PlayInfoUiState
+import com.imcys.player.state.PlayerUiState
+import com.shuyu.gsyvideoplayer.GSYVideoManager
+import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
+import timber.log.Timber
 
 @Composable
 internal fun PlayerRoute(
@@ -46,7 +66,6 @@ internal fun PlayerRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlayerScreen(
     navigateToUserSpace: (Long) -> Unit,
@@ -55,24 +74,13 @@ internal fun PlayerScreen(
     playerUiState: PlayerUiState = PlayerUiState.Loading
 ) {
     var action by remember { mutableStateOf(Action.INIT) }
-    val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberStandardBottomSheetState(
-        SheetValue.Hidden,
-        confirmValueChange = {
-            if (it == SheetValue.Hidden) {
+//    MultiBottomSheetLayout(mainContent = {}, sheetContent = {})
+    if (action != Action.INIT) {
+        BottomSheetDialog(
+            onDismissRequest = {
                 action = Action.INIT
             }
-            true
-        },
-        skipHiddenState = false
-    )
-    val snackbarHostState = remember { SnackbarHostState() }
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState)
-
-    BottomSheetScaffold(
-        sheetContent = {
-            Napier.d { "playerUiState = ${playerUiState is PlayerUiState.Success}" }
-            Napier.d { "playerUiState = $playerUiState" }
+        ) {
             if (playerUiState is PlayerUiState.Success) {
                 when (action) {
                     Action.DOWNLOAD_VIDEO -> SheetSeries(
@@ -91,14 +99,10 @@ internal fun PlayerScreen(
                     Action.INIT -> Unit
                 }
             }
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState, Modifier.navigationBarsPadding())
-        },
-        sheetPeekHeight = if (action == Action.INIT) 0.dp else 300.dp,
-        scaffoldState = bottomSheetScaffoldState,
-        sheetDragHandle = null,
-        sheetShape = RectangleShape,
+        }
+    }
+
+    Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
         Column(
@@ -139,9 +143,6 @@ internal fun PlayerScreen(
                 AsButton(
                     onClick = {
                         action = Action.DOWNLOAD_VIDEO
-                        scope.launch {
-                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
-                        }
                     },
                     Modifier.weight(1f),
                 ) {
@@ -156,9 +157,6 @@ internal fun PlayerScreen(
                 AsButton(
                     onClick = {
                         action = Action.DIRECT_LINK
-                        scope.launch {
-                            bottomSheetScaffoldState.bottomSheetState.partialExpand()
-                        }
                     },
                     Modifier.weight(1f),
                 ) {
