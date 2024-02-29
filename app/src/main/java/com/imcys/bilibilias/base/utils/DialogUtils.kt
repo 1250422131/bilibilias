@@ -29,18 +29,19 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -56,6 +57,8 @@ import kotlinx.coroutines.flow.*
 object DialogUtils {
 
     private val TAG = DialogUtils::class.java.simpleName
+    lateinit var downloadQueue: DownloadQueue
+
     const val DASH_TYPE = 1
     const val MP4_TYPE = 2
     const val ADM_DOWNLOAD = 3
@@ -88,7 +91,7 @@ object DialogUtils {
 
             dialogLoginAs.setOnClickListener {
                 asToast(context, "云端账户即将出炉")
-                bottomSheetDialog.cancel()
+//                bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
 //                    }.show()
@@ -121,6 +124,7 @@ object DialogUtils {
         loginQrcodeBean: LoginQrcodeBean,
         responseResult: (Int, LoginStateBean) -> Unit,
     ): BottomSheetDialog {
+
         val binding: DialogLoginQrBottomsheetBinding =
             DialogLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
 
@@ -129,7 +133,10 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
         binding.dataBean = loginQrcodeBean.data
-        binding.loginQRModel = LoginQRModel()
+        binding.loginQRModel =
+            ViewModelProvider(
+                context as HomeActivity,
+            )[LoginQRModel::class.java]
         binding.loginQRModel?.responseResult = responseResult
         // 传导binding过去
         binding.loginQRModel?.binding = binding
@@ -534,6 +541,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -561,6 +569,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     videoPageMutableList,
+                    networkService
                 )
             }
 
@@ -572,6 +581,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     videoPageMutableList,
+                    networkService
                 )
             }
         }
@@ -598,6 +608,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -625,6 +636,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
 
@@ -636,6 +648,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
         }
@@ -682,14 +695,7 @@ object DialogUtils {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
@@ -705,6 +711,19 @@ object DialogUtils {
     }
 
     /**
+     * 设置动态高斯模糊效果
+     */
+    fun BottomSheetDialog.setDynamicGaussianBlurEffect(blurRadius: Int = 40) {
+        window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setBackgroundBlurRadius(40)
+            }
+        }
+    }
+
+    /**
      * 下载字幕文件
      */
     fun downloadCCAssDialog(
@@ -714,16 +733,7 @@ object DialogUtils {
     ): BottomSheetDialog {
         val binding = DialogDownloadCcAssBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
-            setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
-            }
+            setOnShowListener { setDynamicGaussianBlurEffect() }
         }
 
         // 设置布局
@@ -772,6 +782,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
         var selectDefinition = 80
@@ -787,14 +798,7 @@ object DialogUtils {
 
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
@@ -953,6 +957,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
                 bottomSheetDialog.cancel()
             }
@@ -975,6 +980,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         var selectDefinition = 80
@@ -1149,6 +1155,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
 
                 bottomSheetDialog.cancel()
@@ -1167,6 +1174,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
@@ -1175,19 +1183,13 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<DashBangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
-                        )
+                    val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1257,6 +1259,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
@@ -1265,20 +1268,14 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1",
-                            )
+                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1354,6 +1351,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val videoPlayBean: VideoPlayBean,
@@ -1362,15 +1360,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
-                            )
+                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1405,6 +1398,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
@@ -1413,15 +1407,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1",
-                        )
+                    val bangumiPlayBean = networkService.n4(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -1497,7 +1486,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1528,11 +1517,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1601,7 +1594,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1632,11 +1625,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1720,7 +1717,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1751,11 +1748,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1838,7 +1839,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1869,11 +1870,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
