@@ -98,7 +98,6 @@
 -keep class cn.jzvd.JzvdStd{*; }
 -keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
 -keep class com.imcys.bilibilias.base.view.AppAsJzvdStd{*; }
--keep class com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer{*; }
 
 -keep class cn.jzvd.JZUtils{*; }
 
@@ -137,6 +136,11 @@
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
+
+-keep class com.imcys.bilibilias.home.ui.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.base.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.common.base.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.tool_log_export.data.**{*;} # 自定义数据模型的bean目录
 
 -dontwarn io.microshow.rxffmpeg.**
 -keep class io.microshow.rxffmpeg.**{*;}

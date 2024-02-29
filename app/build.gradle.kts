@@ -1,5 +1,4 @@
 @Suppress("DSL_SCOPE_VIOLATION")
-// apply plugin: 'com.android.application'
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
@@ -19,9 +18,9 @@ android {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
         // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 32
+        targetSdk = 34
         versionCode = 203
-        versionName = "2.0.4-天权-Beta"
+        versionName = "2.0.4-玉衡-Beta"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
@@ -31,11 +30,7 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
-        flavorDimensions(project.name)
+        flavorDimensions += project.name
     }
 
     buildTypes {
@@ -80,12 +75,15 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         compose = true
     }
 
+    dataBinding {
+        enable = true
+    }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.8-dev-k1.9.22-42b6ec2b037"
     }
 
     packaging {
@@ -99,9 +97,16 @@ android {
         includeInBundle = true
     }
 }
-
+kapt {
+    correctErrorTypes = true
+}
 kotlin {
     jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
 dependencies {
@@ -116,7 +121,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     ksp(libs.kcomponent.compiler)
     implementation(libs.material)

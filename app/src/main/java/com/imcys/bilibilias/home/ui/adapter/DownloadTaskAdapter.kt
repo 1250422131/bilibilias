@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.utils.STATE_DOWNLOADING
+import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_END
+import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_ERROR
+import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_WAIT
+import com.imcys.bilibilias.base.utils.STATE_MERGE
 import com.imcys.bilibilias.databinding.ItemDownloadTaskBinding
 import javax.inject.Inject
 
@@ -33,16 +38,6 @@ class DownloadTaskAdapter @Inject constructor() :
                 return oldItem.progress == newItem.progress
             }
 
-            override fun getChangePayload(
-                oldItem: DownloadTaskInfo,
-                newItem: DownloadTaskInfo,
-            ): Any? {
-                if (oldItem.progress != newItem.progress) {
-                    newItem.payloadsType = 1
-                    oldItem.payloadsType = 1
-                }
-                return super.getChangePayload(oldItem, newItem)
-            }
         },
     ) {
 
@@ -63,17 +58,37 @@ class DownloadTaskAdapter @Inject constructor() :
         val binding = DataBindingUtil.getBinding<ItemDownloadTaskBinding>(holder.itemView)
         binding?.apply {
             taskBean = getItem(position)
+
+            val state = when (taskBean?.state ?: -100) {
+                STATE_DOWNLOAD_END -> "下载完成"
+                STATE_DOWNLOAD_WAIT -> "等待下载"
+                STATE_DOWNLOADING -> "正在下载"
+                STATE_MERGE -> "正在合并"
+                STATE_DOWNLOAD_ERROR -> "下载出错"
+                else -> "未知"
+            }
+
+            itemDownloadTaskState.text = state
+
             itemDlTaskDelete.setOnClickListener {
                 val dataBean = getItem(position)
-                AsDialog.init(holder.itemView.context)
-                    .setTitle("删除任务")
-                    .setContent("注意B站视频下载链接有效时长为1小时左右，这里就只提供取消这个任务的功能了。")
-                    .setPositiveButton("删除任务") {
-                        dataBean.call?.cancel()
-                        it.cancel()
-                    }.setNegativeButton("手滑了") {
-                        it.cancel()
-                    }.build().show()
+
+                AsDialog.init(holder.itemView.context).build {
+                    config = {
+                        title = "删除任务"
+                        content =
+                            "注意B站视频下载链接有效时长为1小时左右，这里就只提供取消这个任务的功能了。"
+                        positiveButtonText = "删除任务"
+                        positiveButton = {
+                            dataBean.call?.cancel()
+                            it.cancel()
+                        }
+                        negativeButtonText = "手滑了"
+                        negativeButton = {
+                            it.cancel()
+                        }
+                    }
+                }.show()
             }
         }
     }

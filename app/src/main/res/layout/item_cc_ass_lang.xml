@@ -5,7 +5,7 @@
 
         <variable
             name="Subtitle"
-            type="com.imcys.bilibilias.home.ui.model.VideoInfoV2.Subtitle.MSubtitle" />
+            type="com.imcys.bilibilias.common.network.danmaku.VideoInfoV2.Subtitle.MSubtitle" />
 
     </data>
 

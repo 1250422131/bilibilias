@@ -3,28 +3,35 @@ package com.imcys.bilibilias.home.ui.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
+import androidx.documentfile.provider.DocumentFile
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
+import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
+import com.liulishuo.okdownload.OkDownloadProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import kotlin.math.log
 
 class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
 
@@ -74,7 +81,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                     val newList = currentList.map { it.copy(showEdit = true) }
                     submitList(newList)
                 } else {
-                    val newList = currentList.map { it.copy( showEdit = false)}
+                    val newList = currentList.map { it.copy(showEdit = false) }
                     submitList(newList)
                 }
                 true
@@ -92,7 +99,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
 
             // 点击
             holder.itemView.setOnClickListener {
-                if (task.showEdit){
+                if (task.showEdit) {
                     task.selectState = !task.selectState
                     itemDlFinishTaskEditCheckBox.isChecked = task.selectState
                     return@setOnClickListener
@@ -164,13 +171,40 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
     ) {
         AsDialog.init(itemDlFinishTaskDelete.context)
             .setTitle("删除警告")
-            .setContent("确定删除这条纪录吗？")
-            .setPositiveButton("删除纪录") {
+            .setContent("确定删除这条记录吗？")
+            .setPositiveButton("删除记录") {
                 deleteTaskRecords(task.id)
                 it.cancel()
-            }.setNeutralButton("删除纪录和文件") {
+            }.setNeutralButton("删除记录和文件") {
                 deleteTaskRecords(task.id)
-                FileUtils.delete(task.savePath)
+                val sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+
+                val saveUriPath = sharedPreferences.getString(
+                    "user_download_save_uri_path",
+                    null,
+                )
+                if (saveUriPath != null) {
+                    // 走SAF
+                    var dlFileDocument = DocumentFile.fromTreeUri(
+                        OkDownloadProvider.context,
+                        Uri.parse(saveUriPath)
+                    )
+                   launchIO {
+                       // 无需等待
+                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
+                       val docList = mPath.split("/")
+                       docList.forEachIndexed { index, name ->
+                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+                           if (index == docList.size - 1) {
+                               dlFileDocument?.delete()
+                           }
+                       }
+                   }
+                } else {
+                   launchIO {  FileUtils.delete(task.savePath) }
+                }
+
                 it.cancel()
             }
             .setNegativeButton("点错了") {
@@ -180,7 +214,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
     }
 
     private fun deleteTaskRecords(taskId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+        launchIO {
             val newTasks = withContext(Dispatchers.Default) {
                 downloadFinishTaskRepository.deleteAndReturnList(
                     downloadFinishTaskRepository.findById(taskId),

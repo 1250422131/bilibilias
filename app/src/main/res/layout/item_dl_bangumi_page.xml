@@ -5,8 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-
         <variable
             name="EpisodesBean"
             type="com.imcys.bilibilias.home.ui.model.BangumiSeasonBean.ResultBean.EpisodesBean" />

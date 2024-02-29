@@ -9,6 +9,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemDlBangumiPageBinding
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 
+
 class BangumiPageAdapter(
     val datas: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
     val selectedResult: (position: Int, itemBinding: ItemDlBangumiPageBinding) -> Unit,

@@ -15,6 +15,6 @@ const val SET_COOKIE = "Set-Cookie"
 
 const val COOKIE = "cookie"
 
-const val COOKIES = "cookies"
+ const val COOKIES = "cookies"
 
 const val REFERER = "Referer"

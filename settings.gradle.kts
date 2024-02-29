@@ -1,29 +1,21 @@
 pluginManagement {
     repositories {
-        maven("https://jitpack.io")
-        maven("https://maven.aliyun.com/repository/public")
-        mavenCentral()
-
         gradlePluginPortal()
-        maven("https://maven.aliyun.com/repository/google")
-        maven("https://maven.aliyun.com/repository/jcenter")
         google()
-
     }
 }
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-
-        maven("https://jitpack.io")
-        maven("https://maven.aliyun.com/repository/public")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
         mavenCentral()
-
-        maven("https://maven.aliyun.com/repository/google")
-        maven("https://maven.aliyun.com/repository/jcenter")
-
+        maven("https://jitpack.io")
         google()
+        // 临时为Kotlin提供对应的compose-compiler支持，详细见仓库：
+        // https://github.com/jimgoog/ComposeAppUsingPrereleaseComposeCompiler#project-configuration
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "BILIBILIAS"
