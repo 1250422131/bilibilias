@@ -190,16 +190,19 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                         OkDownloadProvider.context,
                         Uri.parse(saveUriPath)
                     )
-                    val mPath = task.savePath.replace("/storage/emulated/0/", "")
-                    val docList = mPath.split("/")
-                    docList.forEachIndexed { index, name ->
-                        dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                        if (index == docList.size - 1) {
-                            dlFileDocument?.delete()
-                        }
-                    }
+                   launchIO {
+                       // 无需等待
+                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
+                       val docList = mPath.split("/")
+                       docList.forEachIndexed { index, name ->
+                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+                           if (index == docList.size - 1) {
+                               dlFileDocument?.delete()
+                           }
+                       }
+                   }
                 } else {
-                    FileUtils.delete(task.savePath)
+                   launchIO {  FileUtils.delete(task.savePath) }
                 }
 
                 it.cancel()

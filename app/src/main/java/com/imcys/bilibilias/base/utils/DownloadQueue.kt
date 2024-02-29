@@ -60,6 +60,10 @@ import java.util.zip.Inflater
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
+
+
+
 const val FLV_FILE = 1
 const val DASH_FILE = 0
 
@@ -238,6 +242,7 @@ class DownloadQueue @Inject constructor() {
                         updateAdapter()
                         // 执行下一个任务
                         executeTask()
+                        Log.d("TAG", "下载失败问题:${realCause.message} ")
 
                         return
                     }
@@ -458,9 +463,6 @@ class DownloadQueue @Inject constructor() {
             val audioPath =
                 audioTask!!.savePath
             // 这里的延迟是为了有足够时间让下载检查下载完整
-
-            Log.d("AS", "准备合并")
-
             runFFmpegRxJavaVideoMerge(
                 videoTask,
                 videoPath,
@@ -481,8 +483,6 @@ class DownloadQueue @Inject constructor() {
             moveFileToDlUriPath(videoTask!!.savePath)
             moveFileToDlUriPath(audioTask!!.savePath)
             saveFinishTask(videoTask, audioTask)
-            // 这类通知相册更新下文件
-            updatePhotoMedias(OkDownloadProvider.context, File(videoTask.savePath), File(audioTask.savePath))
             // 移除任务
             updateVideoMergeOrImportTask(mTask, STATE_DOWNLOAD_END, true)
             executeTask()
@@ -526,14 +526,13 @@ class DownloadQueue @Inject constructor() {
             videoPath + "_merge.mp4",
         )
         // context.getFileDir().getPath()
-
         RxFFmpegInvoke.getInstance()
             .runCommandRxJava(commands)
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
                     asToast(OkDownloadProvider.context, "合并错误")
-
+                    executeTask()
                 }
 
                 override fun onFinish() {
@@ -575,8 +574,6 @@ class DownloadQueue @Inject constructor() {
 
                 override fun onProgress(progress: Int, progressTime: Long) {
                     // 更新任务状态
-                    Log.d("AS", "onProgress: 正在基恩${progress}")
-
                     task.state = STATE_MERGE
                     updateProgress(task, progress.toDouble())
 
@@ -925,7 +922,7 @@ class DownloadQueue @Inject constructor() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
                     OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                        .toString() + "/导入模 板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
                     danmakuDocument?.uri,
                     OkDownloadProvider.context,
                 )
