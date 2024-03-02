@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,6 +78,8 @@ class HomeFragment : BaseFragment() {
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
+     val fragmentHomeViewModel by viewModels<FragmentHomeViewModel>()
+
     @Inject
     lateinit var networkService: NetworkService
 
@@ -101,8 +104,7 @@ class HomeFragment : BaseFragment() {
         // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel =
-                ViewModelProvider(this@HomeFragment)[FragmentHomeViewModel::class.java]
+            fragmentHomeViewModel = this@HomeFragment.fragmentHomeViewModel
         }
 
         initView()
@@ -214,7 +216,7 @@ class HomeFragment : BaseFragment() {
      * 加载APP数据
      */
     private fun loadAppData() {
-//        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
+        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
         launchUI {
 

@@ -1183,10 +1183,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = networkService.pgcPlayUrl(it.cid, qn)
+                    val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
@@ -1268,10 +1268,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean = networkService.viewDash(videoBaseBean.data.bvid, it.cid, qn)
+                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
@@ -1360,10 +1360,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean = networkService.viewFlv(videoBaseBean.data.bvid, it.cid, qn)
+                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1407,10 +1407,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        launchIO {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = networkService.flvPgcPlayUrl(it.cid, qn)
+                    val bangumiPlayBean = networkService.n4(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
