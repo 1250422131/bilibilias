@@ -131,7 +131,7 @@ class CollectionActivity : BaseActivity() {
 
         launchUI {
             val userCollection = networkService.getUserCollection(listBean.id, ++pn)
-            collectionDataMutableList.addAll(userCollection.data.medias)
+            userCollection.data.medias?.also { collectionDataMutableList.addAll(it) }
             collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
 
             binding.collectionRecyclerView.scrollToPosition(1)

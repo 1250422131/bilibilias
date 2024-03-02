@@ -227,7 +227,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Title -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.title ?: "", arial10format)
+                            addCell(selectIndex, row++, it.title, arial10format)
                         }
                     }
 
@@ -237,7 +237,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                it?.season_id?.toString() ?: "",
+                                it.season_id.toString(),
                                 arial10format,
                             )
                         }
@@ -246,14 +246,14 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Evaluate -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.evaluate ?: "", arial10format)
+                            addCell(selectIndex, row++, it.evaluate, arial10format)
                         }
                     }
 
                     Summary -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.summary ?: "", arial10format)
+                            addCell(selectIndex, row++, it.summary, arial10format)
                         }
                     }
 
@@ -263,7 +263,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                it?.total_count?.toString() ?: "",
+                                it.total_count.toString(),
                                 arial10format,
                             )
                         }
@@ -272,35 +272,35 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Progress -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.progress ?: "", arial10format)
+                            addCell(selectIndex, row++, it.progress, arial10format)
                         }
                     }
 
                     Cover -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.cover ?: "", arial10format)
+                            addCell(selectIndex, row++, it.cover, arial10format)
                         }
                     }
 
                     SeasonTitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.season_title ?: "", arial10format)
+                            addCell(selectIndex, row++, it.season_title, arial10format)
                         }
                     }
 
                     Subtitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.subtitle ?: "", arial10format)
+                            addCell(selectIndex, row++, it.subtitle, arial10format)
                         }
                     }
 
                     Subtitle14 -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.subtitle_14 ?: "", arial10format)
+                            addCell(selectIndex, row++, it.subtitle_14, arial10format)
                         }
                     }
 
@@ -310,7 +310,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                listBean?.season_type_name ?: "",
+                                listBean.season_type_name,
                                 arial10format,
                             )
                         }
