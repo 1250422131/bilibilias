@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
@@ -23,10 +25,13 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
+import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
+import com.imcys.bilibilias.common.base.utils.file.toFilePath
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import me.rosuh.filepicker.bean.FileItemBeanImpl
 import me.rosuh.filepicker.config.AbstractFileFilter
 import me.rosuh.filepicker.config.FilePickerManager
+import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -187,8 +192,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @SuppressLint("UseRequireInsteadOfGet")
     private fun bindingImportFileEvent() {
         userDlFinishAutomaticImportSwitch.setOnPreferenceClickListener {
+           val mUri =  (context as SettingActivity).asSharedPreferences.getString("AppDataUri","");
             // 判断是否有权限
-            if (!fileUriUtils.isGrant(context)) {
+            if (!Uri.parse(mUri).isUriAuthorized(requireContext())) {
                 // 申请权限
                 DialogUtils.dialog(
                     context!!,

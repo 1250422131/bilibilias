@@ -12,6 +12,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
@@ -59,6 +60,11 @@ class NetworkModule {
         install(HttpCookies) {
             storage = asCookiesStorage
         }
+
+        install(HttpTimeout) {
+            requestTimeoutMillis = 5000
+        }
+
         defaultRequest {
             url(BILIBILI_URL)
         }

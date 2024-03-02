@@ -25,6 +25,8 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -32,6 +34,7 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -40,7 +43,7 @@ import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.ToolItemBean
+import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
@@ -48,6 +51,7 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -59,8 +63,9 @@ import javax.inject.Inject
 )
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
-    lateinit var fragmentToolBinding: FragmentToolBinding
-    lateinit var mRecyclerView: RecyclerView
+
+    private lateinit var fragmentToolBinding: FragmentToolBinding
+    private lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
     @Inject
     lateinit var networkService: NetworkService
@@ -120,6 +125,9 @@ class ToolFragment : BaseFragment() {
         // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 
+        // 加载工具item
+        loadToolItem()
+
         // 设置点击事件
         fragmentToolBinding.toolViewHolder =
             context?.let { ToolViewHolder(it, fragmentToolBinding) }
@@ -130,8 +138,6 @@ class ToolFragment : BaseFragment() {
         // 设置监听
         setEditListener()
 
-        // 加载工具item
-        loadToolItem()
     }
 
     /**
@@ -248,7 +254,7 @@ class ToolFragment : BaseFragment() {
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
 
-            val bangumiSeasonBean = networkService.获取番剧详情(epId)
+            val bangumiSeasonBean = networkService.n25(epId)
 
             if (bangumiSeasonBean.code == 0) {
                 bangumiSeasonBean.result.episodes.forEach { it1 ->
@@ -294,7 +300,10 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = networkService.getOldToolItem()
+            val oldToolItemBean = withContext(Dispatchers.IO){
+                networkService.getOldToolItem()
+            }
+
             oldToolItemBean.data.forEach {
                 when (it.tool_code) {
                     // 视频解析
