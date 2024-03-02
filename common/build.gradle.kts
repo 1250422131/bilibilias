@@ -115,7 +115,7 @@ dependencies {
     api(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // 核心代码库
+    // 文件下载
     api(libs.okdownload)
 
     // 提供kotlin extension，可以不引入
@@ -197,17 +197,6 @@ dependencies {
     api(libs.room.runtime)
     api(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    /**
-     * 文件选择器
-     */
-    api(libs.androidFilePicker)
-
-    /**
-     * xutils
-     * 下载文件支持
-     */
-//    api(libs.xutils)
 
     /**
      * DanmakuFlameMaster

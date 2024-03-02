@@ -1,53 +1,72 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.annotation.*
-import android.content.*
-import android.content.pm.*
-import android.graphics.*
-import android.os.*
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Build
-import android.view.*
-import androidx.activity.*
-import androidx.core.view.*
-import androidx.databinding.*
-import androidx.recyclerview.widget.*
-import cn.jzvd.*
-import com.baidu.mobstat.*
-import com.imcys.asbottomdialog.bottomdialog.*
+import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.viewModels
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import cn.jzvd.JZDataSource
+import cn.jzvd.Jzvd
+import cn.jzvd.JzvdStd
+import com.baidu.mobstat.StatService
+import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.*
-import com.imcys.bilibilias.base.network.*
-import com.imcys.bilibilias.base.utils.*
-import com.imcys.bilibilias.base.view.*
-import com.imcys.bilibilias.common.base.api.*
+import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.view.AppAsJzvdStd
+import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.*
-import com.imcys.bilibilias.common.base.extend.*
-import com.imcys.bilibilias.common.base.utils.*
-import com.imcys.bilibilias.common.base.view.*
-import com.imcys.bilibilias.common.network.base.*
-import com.imcys.bilibilias.danmaku.*
-import com.imcys.bilibilias.databinding.*
-import com.imcys.bilibilias.home.ui.adapter.*
+import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.COOKIE
+import com.imcys.bilibilias.common.base.constant.REFERER
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.view.JzbdStdInfo
+import com.imcys.bilibilias.common.network.base.ResBean
+import com.imcys.bilibilias.danmaku.BiliDanmukuParser
+import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
+import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.*
-import dagger.hilt.android.*
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import kotlinx.coroutines.*
-import master.flame.danmaku.controller.*
-import master.flame.danmaku.danmaku.loader.*
-import master.flame.danmaku.danmaku.loader.android.*
-import master.flame.danmaku.danmaku.model.*
-import master.flame.danmaku.danmaku.model.android.*
-import master.flame.danmaku.danmaku.parser.*
-import okio.*
-import java.io.*
+import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import master.flame.danmaku.controller.IDanmakuView
+import master.flame.danmaku.danmaku.loader.IllegalDataException
+import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
+import master.flame.danmaku.danmaku.model.BaseDanmaku
+import master.flame.danmaku.danmaku.model.DanmakuTimer
+import master.flame.danmaku.danmaku.model.IDisplayer
+import master.flame.danmaku.danmaku.model.android.DanmakuContext
+import master.flame.danmaku.danmaku.model.android.Danmakus
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
-import java.util.zip.*
-import javax.inject.*
-import kotlin.collections.set
+import java.io.InputStream
+import java.util.zip.Inflater
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -96,6 +115,10 @@ class AsVideoActivity : BaseActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//
+//    }
     /**
      * 加载用户信息，为了确保会员视频及时通知用户
      */
@@ -144,7 +167,7 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 launchUI {
                     // 获取播放信息
-                    val videoPlayBean = networkService.viewFlv(bvid, cid, 64)
+                    val videoPlayBean = networkService.n9(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
@@ -161,7 +184,7 @@ class AsVideoActivity : BaseActivity() {
                             }
                         }.show()
                     } else {
-                        val dashVideoPlayBean = networkService.viewDash(bvid, cid, 64)
+                        val dashVideoPlayBean = networkService.n10(bvid, cid)
                         if (dashVideoPlayBean.code != 0) {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
@@ -199,7 +222,7 @@ class AsVideoActivity : BaseActivity() {
             "bangumi" -> {
                 launchIO {
 
-                    val bangumiPlayBean = networkService.flvPgcPlayUrl(epid, 64)
+                    val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
                         // 设置布局视频播放数据
@@ -224,7 +247,14 @@ class AsVideoActivity : BaseActivity() {
         val bvId = intent.getStringExtra("bvId")
 
         launchUI {
-            val videoBaseBean = networkService.n12(bvId.toString())
+            var videoBaseBean = networkService.getVideoBaseInfoByBvid(bvId.toString())
+
+            if (videoBaseBean.code != 0) {
+                videoBaseBean = networkService.getVideoBaseInfoByAid(
+                    VideoNumConversion.toAvidOffline(bvId).toString()
+                )
+            }
+
 
             // 设置数据
             videoDataBean = videoBaseBean

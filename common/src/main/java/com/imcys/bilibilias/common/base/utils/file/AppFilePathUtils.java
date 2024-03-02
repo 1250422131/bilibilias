@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -172,7 +173,6 @@ public class AppFilePathUtils {
      * @param uri          被覆盖文件/文件夹
      * @return
      */
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public static boolean copySafFile(String oldPath$Name, Uri uri, Context context) {
 
         File oldFile = new File(oldPath$Name);
@@ -195,16 +195,25 @@ public class AppFilePathUtils {
                 //InputStream is = contentResolver.openInputStream(uri);
                 //FileOutputStream fos = new FileOutputStream(oldFile);
 
-                OutputStream fos1 = contentResolver.openOutputStream(uri);
-                FileInputStream is1 = new FileInputStream(oldFile);
+                OutputStream outputStream = contentResolver.openOutputStream(uri);
+                FileInputStream inputStream = new FileInputStream(oldFile);
 
 
-                FileUtils.copy(is1, fos1);
-                File file = oldFile;
-                fos1.close();
-                is1.close();
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    if (outputStream != null) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                }
+
+                inputStream.close();
+                if (outputStream != null) {
+                    outputStream.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("--Method--", "copySafFile: }"+e.getMessage());
             }
 
 

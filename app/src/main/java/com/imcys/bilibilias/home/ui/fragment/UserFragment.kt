@@ -1,26 +1,36 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.os.*
-import android.view.*
-import android.widget.*
-import androidx.databinding.*
-import androidx.recyclerview.widget.*
-import com.baidu.mobstat.*
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.network.*
-import com.imcys.bilibilias.base.utils.*
-import com.imcys.bilibilias.common.base.*
+import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.extend.*
-import com.imcys.bilibilias.databinding.*
-import com.imcys.bilibilias.home.ui.adapter.*
-import com.imcys.bilibilias.home.ui.model.*
-import com.zackratos.ultimatebarx.ultimatebarx.*
-import dagger.hilt.android.*
-import kotlinx.coroutines.*
-import me.dkzwm.widget.srl.*
-import javax.inject.*
-import kotlin.math.*
+import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
+import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
+import com.imcys.bilibilias.home.ui.model.UpStatBeam
+import com.imcys.bilibilias.home.ui.model.UserBaseBean
+import com.imcys.bilibilias.home.ui.model.UserCardBean
+import com.imcys.bilibilias.home.ui.model.UserViewItemBean
+import com.imcys.bilibilias.home.ui.model.UserWorksBean
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import javax.inject.Inject
+import kotlin.math.ceil
 
 @AndroidEntryPoint
 class UserFragment : BaseFragment() {
@@ -71,7 +81,7 @@ class UserFragment : BaseFragment() {
         fragmentUserBinding.fragmentUserWorksCsr.apply {
             setOnRefreshListener(object : RefreshingListenerAdapter() {
                 override fun onLoadingMore() {
-                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn + 1) {
+                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
                         val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
@@ -110,6 +120,7 @@ class UserFragment : BaseFragment() {
     private fun loadUserWorks() {
         val oldMutableList = userWorksBean.data.list.vlist
         launchIO {
+
             val userWorksBean = networkService.n20(userWorksBean.data.page.pn + 1)
 
             this@UserFragment.userWorksBean = userWorksBean
@@ -161,17 +172,17 @@ class UserFragment : BaseFragment() {
 
     private fun initUserData() {
         // 切到后台线程去
-        launchIO {
+        launchUI {
             userDataMutableList.clear()
 
             // 获取基础内容
             val userBaseBean = async { getUserData() }
 
             // 用户卡片信息
-            val userCardBean = getUserCardBean()
+            val userCardBean = async { getUserCardBean() }
 
             // 获取up状态
-            val userUpStat = async { networkService.getUpStat(userCardBean.data.card.mid) }
+            val userUpStat = async { getUpStat() }
 
             if (userBaseBean.await().code == 0) {
                 userDataMutableList.add(
@@ -182,24 +193,22 @@ class UserFragment : BaseFragment() {
                 )
             }
 
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            }
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
 
-            if (userUpStat.await().code == 0) {
+
+            if (userCardBean.await().code == 0 && userUpStat.await().code == 0) {
                 userDataMutableList.add(
                     UserViewItemBean(
                         2,
                         upStatBeam = userUpStat.await(),
-                        userCardBean = userCardBean,
+                        userCardBean = userCardBean.await(),
                     ),
                 )
             }
 
-            launchUI {
-                userDataRvAd.submitList(userDataMutableList + mutableListOf())
-                initUserTool()
-            }
+            userDataRvAd.submitList(userDataMutableList + mutableListOf())
+            initUserTool()
+
         }
     }
 
@@ -213,6 +222,15 @@ class UserFragment : BaseFragment() {
         val paramsStr = tokenUtils.getParamStr(params)
 
         return networkService.n22(paramsStr)
+    }
+
+    /**
+     * 获取用户状态信息
+     * @return UpStatBeam
+     */
+    private suspend fun getUpStat(): UpStatBeam {
+
+        return networkService.getUpStateInfo()
     }
 
     /**
