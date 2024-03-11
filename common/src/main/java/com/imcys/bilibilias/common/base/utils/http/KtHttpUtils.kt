@@ -46,6 +46,14 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         return mBean
     }
 
+     inline fun < reified T> asyncGet(
+    ): String {
+
+
+
+        return T::class.java.simpleName
+    }
+
     suspend inline fun <reified T> asyncPost(url: String): T {
         checkUrl(url)
 

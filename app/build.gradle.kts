@@ -20,7 +20,7 @@ android {
         // noinspecton ExpiredTargetSdkVersion
         targetSdk = 34
         versionCode = 203
-        versionName = "2.0.4-玉衡-Beta"
+        versionName = "2.0.4-开阳-Alpha"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
@@ -83,7 +83,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8-dev-k1.9.22-42b6ec2b037"
+        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
 
     packaging {

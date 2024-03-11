@@ -33,6 +33,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
@@ -251,7 +252,7 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                    VideoNumConversion.toAvidOffline(bvId).toString()
+                        NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
 
@@ -618,7 +619,7 @@ class AsVideoActivity : BaseActivity() {
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Long) {
             val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
+            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
             context.startActivity(intent)
         }
     }

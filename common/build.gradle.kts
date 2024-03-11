@@ -1,4 +1,4 @@
-import com.google.protobuf.gradle.id
+//import com.google.protobuf.gradle.id
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {

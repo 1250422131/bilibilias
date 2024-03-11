@@ -93,8 +93,6 @@ class FragmentHomeViewModel @Inject constructor() : ViewModel() {
 
                     BaseApplication.dataKv.apply {
                         encode("mid", 0)
-                        encode(COOKIES, "")
-                        encode("bili_jct", "")
                     }
 
                     asToast(view.context, "清除完成，请关闭后台重新进入")
