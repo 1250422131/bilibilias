@@ -24,6 +24,7 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
+import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
@@ -303,7 +304,7 @@ class DownloadQueue @Inject constructor() {
                 videoPageTitle = part
                 avid = this.cid
                 cid = this.cid
-                videoBvid = VideoNumConversion.toBvidOffline(avid)
+                videoBvid = NewVideoNumConversionUtils.av2bv(avid)
             }
 
             val sharedPreferences =
@@ -626,7 +627,7 @@ class DownloadQueue @Inject constructor() {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
             }
         } ?: downloadTaskDataBean.videoPageDataData?.apply {
-            bvid = VideoNumConversion.toBvidOffline(this.cid)
+            bvid = NewVideoNumConversionUtils.av2bv(this.cid)
             type = VIDEO_TYPE
             downloadTaskDataBean.dashVideoPlayBean?.data?.support_formats?.forEach {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
@@ -1089,45 +1090,46 @@ class DownloadQueue @Inject constructor() {
 
 
     private fun moveFileToDlUriPath(oldPath: String) {
-        val sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-        val saveUriPath = sharedPreferences.getString(
-            "user_download_save_uri_path",
-            null,
-        )
+        launchIO {
+            val sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+            val saveUriPath = sharedPreferences.getString(
+                    "user_download_save_uri_path",
+                    null,
+            )
 
-        if (saveUriPath != null) {
-            var dlFileDocument = DocumentFile.fromTreeUri(
-                OkDownloadProvider.context,
-                Uri.parse(saveUriPath)
-            )!!
+            if (saveUriPath != null) {
+                var dlFileDocument = DocumentFile.fromTreeUri(
+                        OkDownloadProvider.context,
+                        Uri.parse(saveUriPath)
+                )!!
 
-            val docList = oldPath.replace(
-                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
-                ""
-            ).split("/")
-            docList.forEachIndexed { index, name ->
-                // 是不是最后尾部
-                if (index != docList.size - 1) {
-                    dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
-                        dlFileDocument.createDirectory(name)!!
+                val docList = oldPath.replace(
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        ""
+                ).split("/")
+                docList.forEachIndexed { index, name ->
+                    // 是不是最后尾部
+                    if (index != docList.size - 1) {
+                        dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
+                            dlFileDocument.createDirectory(name)!!
+                        } else {
+                            dlFileDocument.findFile(name)!!
+                        }
                     } else {
-                        dlFileDocument.findFile(name)!!
+                        dlFileDocument =
+                                dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
+                        AppFilePathUtils.copySafFile(
+                                oldPath,
+                                dlFileDocument.uri,
+                                OkDownloadProvider.context
+                        )
                     }
-                } else {
-                    dlFileDocument =
-                        dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
-                    AppFilePathUtils.copySafFile(
-                        oldPath,
-                        dlFileDocument.uri,
-                        OkDownloadProvider.context
-                    )
                 }
+
+                FileUtils.deleteFile(oldPath)
             }
-
-            FileUtils.deleteFile(oldPath)
         }
-
     }
 
 }

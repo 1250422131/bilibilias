@@ -216,7 +216,7 @@ class HomeFragment : BaseFragment() {
      * 加载APP数据
      */
     private fun loadAppData() {
-        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
+//        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
         launchUI {
 

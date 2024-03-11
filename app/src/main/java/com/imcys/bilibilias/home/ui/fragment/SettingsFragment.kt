@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
@@ -192,12 +194,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "拒绝授权",
                     true,
                     positiveButtonClickListener = {
-                        // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+//                         saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
                         fileUriUtils.startFor(
                             "/storage/emulated/0/Android/data/tv.danmaku.bili",
                             context as Activity,
                             IMPORT_FILE_PATH_CODE,
                         )
+
+
+
                     },
                     negativeButtonClickListener = {
                     },
@@ -211,10 +216,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun bindingGetSavePathEvent() {
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            fileUriUtils.startForRoot(
-                context as Activity,
-                SAVE_FILE_PATH_CODE,
-            )
+//            fileUriUtils.startForRoot(
+//                context as Activity,
+//                SAVE_FILE_PATH_CODE,
+//            )
+            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
+                requireActivity().startActivityForResult(it,SAVE_FILE_PATH_CODE)
+            }
             true
         }
     }

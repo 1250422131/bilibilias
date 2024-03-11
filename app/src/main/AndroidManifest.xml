@@ -20,7 +20,6 @@
     <uses-permission android:name="android.permission.WRITE_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_IMAGES" />
 
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission

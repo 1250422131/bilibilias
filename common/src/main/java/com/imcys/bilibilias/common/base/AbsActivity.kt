@@ -108,12 +108,12 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 // 统计接入
-                AppCenter.start(
-                    application,
-                    BaseApplication.appSecret,
-                    Analytics::class.java,
-                    Crashes::class.java,
-                )
+//                AppCenter.start(
+//                    application,
+//                    BaseApplication.appSecret,
+//                    Analytics::class.java,
+//                    Crashes::class.java,
+//                )
             }
         }
     }
