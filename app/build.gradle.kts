@@ -82,6 +82,10 @@ android {
         enable = true
     }
 
+    viewBinding {
+        enable = true
+    }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
@@ -113,6 +117,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
+    implementation(libs.androidx.activity)
 
     ksp(libs.deeprecopy.compiler)
 

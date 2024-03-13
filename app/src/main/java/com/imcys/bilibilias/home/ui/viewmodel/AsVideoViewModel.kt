@@ -10,11 +10,6 @@ import androidx.lifecycle.*
 import androidx.preference.*
 import com.imcys.asbottomdialog.bottomdialog.*
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.network.*
-import com.imcys.bilibilias.base.utils.*
-import com.imcys.bilibilias.common.base.api.*
-import com.imcys.bilibilias.common.base.extend.*
-import com.imcys.bilibilias.common.base.utils.*
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -23,12 +18,12 @@ import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.*
 import com.imcys.bilibilias.common.network.danmaku.*
 import com.imcys.bilibilias.danmaku.change.*
 import com.imcys.bilibilias.home.ui.activity.*
+import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.*
 import dagger.hilt.android.lifecycle.*
@@ -55,6 +50,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
     @Inject
     lateinit var networkService: NetworkService
 
+
+    fun toUserPage(view: View, mid: String) {
+        UserInfoActivity.actionStart(view.context, mid.toLong())
+    }
+
     /**
      * 缓存视频
      * @param videoBaseBean VideoBaseBean
@@ -71,7 +71,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 //并发
-                val dashVideoPlayDeferred = async { networkService.viewDash(context.bvid, context.cid,64) }
+                val dashVideoPlayDeferred =
+                    async { networkService.viewDash(context.bvid, context.cid, 64) }
                 val dashBangumiPlayDeferred =
                     async { networkService.pgcPlayUrl(context.cid, 64) }
 
@@ -134,7 +135,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
                 //并发
-                val dashVideoPlayDeferred = async { networkService.viewDash(context.bvid, context.cid,94) }
+                val dashVideoPlayDeferred =
+                    async { networkService.viewDash(context.bvid, context.cid, 94) }
                 val dashBangumiPlayDeferred =
                     async { networkService.pgcPlayUrl(context.cid, 64) }
 

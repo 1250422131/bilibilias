@@ -371,7 +371,7 @@ class NetworkService @Inject constructor(
     }
     // ---------------------------------------------------------------------------------------------
     /**
-     * [n20] [n21]
+     * [n20] [getUserWorks]
      */
     suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
@@ -385,7 +385,7 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun n21(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
+    suspend fun getUserWorks(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
     }
 
