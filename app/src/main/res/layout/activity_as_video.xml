@@ -270,7 +270,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
                     android:orientation="horizontal"
-
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view)->AsVideoViewModel.toUserPage(view,UserCardBean.data.card.mid)}"
                     android:visibility="visible">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView

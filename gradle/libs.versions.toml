@@ -54,6 +54,7 @@ work-runtime-ktx = "2.9.0"
 xutils = "3.9.0"
 activity-compose = "1.8.2"
 compose-bom = "2024.02.02"
+activity = "1.8.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
@@ -162,6 +163,7 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 [plugins]
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
 android-application = { id = "com.android.application", version.ref = "android" }

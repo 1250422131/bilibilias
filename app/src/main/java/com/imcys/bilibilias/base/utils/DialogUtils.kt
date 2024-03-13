@@ -338,6 +338,27 @@ object DialogUtils {
     }
 
     /**
+     * 加载等待弹窗
+     * @param context Context
+     * @return BottomSheetDialog
+     */
+    @SuppressLint("InflateParams")
+    fun loadProgressDialog(context: Context): BottomSheetDialog {
+        // 先获取View实例
+        val view: View = LayoutInflater.from(context)
+            .inflate(R.layout.dialog_load_progress_bottomsheet, null, false)
+
+        // 设置布局背景
+        val bottomSheetDialog = initBottomSheetDialog(context, view)
+        // 用户行为val mDialogBehavior =
+        initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        // 自定义方案
+        // mDialogBehavior.peekHeight = 600
+
+        return bottomSheetDialog
+    }
+
+    /**
      * 加载视频下载类型选择器弹窗
      * @param context Context
      * @param finished Function2<[@kotlin.ParameterName] Int, [@kotlin.ParameterName] String, Unit>

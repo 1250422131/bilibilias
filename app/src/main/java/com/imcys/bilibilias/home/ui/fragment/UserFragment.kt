@@ -18,6 +18,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.home.ui.activity.user.UserVideoDownloadActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
@@ -66,7 +67,12 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
+        this.arguments?.apply {
+            mid = getLong("mid")
+        }
+
         initView()
+
 
         return fragmentUserBinding.root
     }
@@ -78,6 +84,18 @@ class UserFragment : BaseFragment() {
         initUserWorks()
 
         initSmoothRefreshLayout()
+
+        initUserVideoDownloadButton()
+
+
+    }
+
+    private fun initUserVideoDownloadButton() {
+        // 批量视频下载按钮
+        fragmentUserBinding.uvDownloadImage.setOnClickListener {
+            UserVideoDownloadActivity.actionStart(requireContext(), mid)
+        }
+
     }
 
     private fun initSmoothRefreshLayout() {
@@ -88,7 +106,7 @@ class UserFragment : BaseFragment() {
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
                             val params = mutableMapOf<String, String>()
-                            params["mid"] = asUser.mid.toString()
+                            params["mid"] = mid.toString()
                             params["pn"] = (userWorksBean.data.page.pn + 1).toString()
                             params["ps"] = "20"
                             val paramsStr = tokenUtils.getParamStr(params)
@@ -119,30 +137,16 @@ class UserFragment : BaseFragment() {
         userDataRvAd.submitList(userDataMutableList + mutableListOf())
     }
 
-    private fun loadUserWorks() {
-        val oldMutableList = userWorksBean.data.list.vlist
-        launchIO {
-
-            val userWorksBean = networkService.n20(userWorksBean.data.page.pn + 1)
-
-            this@UserFragment.userWorksBean = userWorksBean
-
-            launchUI {
-                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
-            }
-        }
-    }
-
     private fun initUserWorks() {
         launchIO {
             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
             val params = mutableMapOf<String, String>()
-            params["mid"] = asUser.mid.toString()
+            params["mid"] = mid.toString()
             params["qn"] = "1"
             params["ps"] = "20"
             val paramsStr = tokenUtils.getParamStr(params)
 
-            val userWorksBean = networkService.n21(paramsStr)
+            val userWorksBean = networkService.getUserWorkData(paramsStr)
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
@@ -210,7 +214,10 @@ class UserFragment : BaseFragment() {
             }
 
             userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            initUserTool()
+
+            if (userBaseBean.await().data.mid == asUser.mid) {
+                initUserTool()
+            }
 
         }
     }
@@ -221,7 +228,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUserCardBean(): UserCardBean {
         val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
+        params["mid"] = mid.toString()
         val paramsStr = tokenUtils.getParamStr(params)
 
         return networkService.n22(paramsStr)
@@ -242,7 +249,7 @@ class UserFragment : BaseFragment() {
      */
     private suspend fun getUserData(): UserBaseBean {
         val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
+        params["mid"] = mid.toString()
         val paramsStr = tokenUtils.getParamStr(params)
 
         return networkService.n24(paramsStr)
@@ -262,7 +269,7 @@ class UserFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // 保留当前页面的用户信息
-        outState.putLong("mid", asUser.mid)
+        outState.putLong("mid", mid)
     }
 
     companion object {
