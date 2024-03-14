@@ -34,7 +34,6 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -544,7 +543,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadUserCardData(mid: Long) {
         launchUI {
-            val userCardBean = networkService.n14(mid)
+            val userCardBean = networkService.getUserCardData(mid)
             // 显示用户卡片
             showUserCard()
             // 将数据交给viewModel
