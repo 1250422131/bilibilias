@@ -66,7 +66,11 @@ class ToolFragment : BaseFragment() {
 
     private lateinit var fragmentToolBinding: FragmentToolBinding
     private lateinit var mRecyclerView: RecyclerView
+    private var isInitialized = false
+    private var sharedIntent: Intent? = null
+
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
+
     @Inject
     lateinit var networkService: NetworkService
 
@@ -135,8 +139,10 @@ class ToolFragment : BaseFragment() {
         // 绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
+
         // 设置监听
         setEditListener()
+
 
     }
 
@@ -149,18 +155,24 @@ class ToolFragment : BaseFragment() {
     internal fun parseShare(intent: Intent?) {
         val action = intent?.action
         val type = intent?.type
-        lifecycleScope.launchWhenResumed {
+
+        // 下面这段代表是从浏览器解析过来的
+        val asUrl = intent?.extras?.getString("asUrl")
+        if (asUrl != null) {
+            asVideoId(asUrl)
+        }
+
+
+        if (isInitialized) {
             if (Intent.ACTION_SEND == action && type != null) {
                 if ("text/plain" == type) {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
             }
-            // 下面这段代表是从浏览器解析过来的
-            val asUrl = intent?.extras?.getString("asUrl")
-            if (asUrl != null) {
-                asVideoId(asUrl)
-            }
+        } else {
+            sharedIntent = intent
         }
+
     }
 
     /**
@@ -203,6 +215,10 @@ class ToolFragment : BaseFragment() {
         } else if (AsVideoNumUtils.getBvid(inputString) != "") {
             getVideoCardData(AsVideoNumUtils.getBvid(inputString))
             return
+        } else if ("""[space.bilibili.com/]?(\d+).*""".toRegex().containsMatchIn(inputString)) {
+            loadUserCardData("""[space.bilibili.com/]?(\d+).*""".toRegex()
+                .find(inputString)?.groups?.get(1)?.value ?: asUser.mid.toString())
+            return
         }
 
 //        val liveRegex = Regex("""(?<=live.bilibili.com/)(\d+)""")
@@ -218,8 +234,40 @@ class ToolFragment : BaseFragment() {
                 submitList(this)
             }
         }
-        Toast.makeText(context, getString(R.string.app_ToolFragment_asVideoId2), Toast.LENGTH_SHORT)
-            .show()
+        launchUI {
+            Toast.makeText(
+                context,
+                getString(R.string.app_ToolFragment_asVideoId2),
+                Toast.LENGTH_SHORT
+            )
+                .show()
+        }
+    }
+
+    private fun loadUserCardData(inputString: String) {
+
+        launchUI {
+            val userCardBean = networkService.getUserCardData(inputString.toLong())
+            (mAdapter).apply {
+                // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
+                // run函数将新准备的视频item合并进去，并返回。
+                // 最终apply利用该段返回执行最外层apply的submitList方法
+                currentList.filter { it.type == 0 }.run {
+                    mutableListOf(
+                        ToolItemBean(
+                            type = 3,
+                            userCardBean = userCardBean.data.card,
+                            clickEvent = {
+
+                            },
+                        ),
+                    ) + this
+                }.apply {
+                    submitList(this)
+                }
+            }
+
+        }
     }
 
     /**
@@ -298,7 +346,7 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = withContext(Dispatchers.IO){
+            val oldToolItemBean = withContext(Dispatchers.IO) {
                 networkService.getOldToolItem()
             }
 
@@ -383,15 +431,20 @@ class ToolFragment : BaseFragment() {
                                 return when ((mAdapter.currentList)[position].type) {
                                     1 -> 3
                                     2 -> 3
+                                    3 -> 3
                                     else -> 1
                                 }
                             }
                         }
                     }
+
+                isInitialized = true
+
+                // 如果在初始化前有分享信息需要处理，则在此处理
+                sharedIntent?.let { parseShare(it) }
             }
         }
     }
-
 
 
     override fun onDestroy() {

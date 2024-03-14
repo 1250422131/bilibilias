@@ -25,6 +25,7 @@ data class UserCardBean(
             val description: String = "",
             val fans: Int = 0,
             val friend: Int = 0,
+            val sign:String = ""
         )
     }
 }

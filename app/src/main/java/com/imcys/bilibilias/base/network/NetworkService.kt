@@ -339,7 +339,7 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n14(mid: Long): UserCardBean = runCatchingOnWithContextIo {
+    suspend fun getUserCardData(mid: Long): UserCardBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getUserCardPath) {
             parameterMID(mid.toString())
         }.body()
