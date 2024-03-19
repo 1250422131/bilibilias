@@ -67,6 +67,8 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
+        // 刷新登录数据
+        mid = asUser.mid
         this.arguments?.apply {
             mid = getLong("mid")
         }

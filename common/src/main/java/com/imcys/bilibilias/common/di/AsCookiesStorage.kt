@@ -56,6 +56,10 @@ class AsCookiesStorage @Inject constructor(
         }
     }
 
+    fun deleteAllCookie(){
+        UserInfoRepository.clearAllKV()
+    }
+
     override fun close() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
     }

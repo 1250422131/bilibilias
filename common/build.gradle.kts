@@ -179,7 +179,7 @@ dependencies {
     ksp(libs.kcomponent.compiler)
 
     // 百度统计
-    api(libs.mtj.sdk.circle)
+    api(libs.mtj.sdk)
 
     // 开屏引导
     api(libs.hyy920109.guidePro)

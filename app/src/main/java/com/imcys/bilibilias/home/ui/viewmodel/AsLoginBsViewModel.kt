@@ -200,7 +200,7 @@ class AsLoginBsViewModel @Inject constructor(
         viewModelScope.launchIO {
             val cookies = AESUtils.decrypt(data.cookie)
 
-            val myUserData = networkService.n38()
+            val myUserData = networkService.getMyUserData()
 
             launchUI {
                 if (myUserData.code != 0) {

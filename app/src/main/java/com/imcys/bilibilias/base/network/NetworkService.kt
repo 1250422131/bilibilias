@@ -65,6 +65,7 @@ class NetworkService @Inject constructor(
     private val httpClient: HttpClient,
     private val asCookiesStorage: AsCookiesStorage
 ) {
+
     private val ioDispatcher = Dispatchers.IO
     suspend fun getDashBangumiPlayInfo(cid: Long, qn: Int): DashBangumiPlayBean =
         runCatchingOnWithContextIo {
@@ -193,9 +194,10 @@ class NetworkService @Inject constructor(
         videoPlayPath(bvid, cid.toString(), qn, fnval = 0)
     }
 
-    suspend fun n9(bvid: String, cid: Long): VideoPlayBean = runCatchingOnWithContextIo {
-        videoPlayPath(bvid, cid.toString(), 64, fnval = 0)
-    }
+    suspend fun getVideoPlayInfo(bvid: String, cid: Long): VideoPlayBean =
+        runCatchingOnWithContextIo {
+            videoPlayPath(bvid, cid.toString(), 64, fnval = 0)
+        }
 
     // ---------------------------------------------------------------------------------------------
     suspend fun n4(cid: Long, qn: Int): BangumiPlayBean = runCatchingOnWithContextIo {
@@ -228,13 +230,6 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n6(): MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getMyUserData).body()
-    }
-
-    suspend fun n27(): MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getMyUserData).body()
-    }
 
     suspend fun getBILIHome(): String = runCatchingOnWithContextIo {
         httpClient.get(BILIBILI_URL).body()
@@ -293,9 +288,6 @@ class NetworkService @Inject constructor(
         httpClient.get("${BiliBiliAsApi.appFunction}?type=oldHomeAd").body()
     }
 
-    suspend fun n38(): MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getMyUserData).body()
-    }
 
     // ---------------------------------------------------------------------------------------------
     suspend fun n7(epid: Int): BangumiSeasonBean = runCatchingOnWithContextIo {
@@ -364,7 +356,7 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n15(bvid: String): VideoPageListData = runCatchingOnWithContextIo {
+    suspend fun getVideoPageListData(bvid: String): VideoPageListData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.videoPageListPath) {
             parameterBVID(bvid)
         }.body()
@@ -394,7 +386,7 @@ class NetworkService @Inject constructor(
         httpClient.get("${BilibiliApi.userUpStat}?mid=${BaseApplication.asUser.mid}").body()
     }
 
-    suspend fun n28(paramsStr: String): UserInfoBean = runCatchingOnWithContextIo {
+    suspend fun getUserInfoData(paramsStr: String): UserInfoBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.getUserInfoPath}?$paramsStr").body()
     }
 
