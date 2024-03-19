@@ -4,35 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
-import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.xiaojinzi.component.impl.Router
-import io.ktor.client.HttpClient
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
-import javax.inject.Inject
 
-class FragmentHomeViewModel @Inject constructor() : ViewModel() {
-
-    @Inject
-    lateinit var networkService: NetworkService
-
-    @Inject
-    lateinit var asCookiesStorage: AsCookiesStorage
-
+class FragmentHomeViewModel : ViewModel() {
 
     fun goToPrivacyPolicy(view: View) {
         val uri =
@@ -76,30 +53,4 @@ class FragmentHomeViewModel @Inject constructor() : ViewModel() {
         view.context.startActivity(intent)
     }
 
-    fun logoutLogin(view: View) {
-        DialogUtils.dialog(
-            view.context,
-            "退出登录",
-            "确定要退出登录了吗？",
-            "是的",
-            "点错了",
-            true,
-            positiveButtonClickListener =
-            {
-                val csrf = asCookiesStorage.getCookieValue("bili_jct")
-
-                launchUI {
-                    networkService.exitUserLogin(csrf ?: "")
-
-                    BaseApplication.dataKv.apply {
-                        encode("mid", 0)
-                    }
-
-                    asToast(view.context, "清除完成，请关闭后台重新进入")
-                }
-
-            },
-            negativeButtonClickListener = {},
-        ).show()
-    }
 }

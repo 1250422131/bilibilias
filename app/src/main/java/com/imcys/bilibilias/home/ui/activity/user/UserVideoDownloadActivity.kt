@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ActivityUserVideoDownloadBinding
@@ -20,6 +21,7 @@ import com.imcys.bilibilias.home.ui.adapter.UserVideoDownloadAdapter
 import com.imcys.bilibilias.home.ui.viewmodel.UserVideoDownloadViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserVideoDownloadActivity : BaseActivity() {
@@ -30,6 +32,9 @@ class UserVideoDownloadActivity : BaseActivity() {
     private lateinit var loadDialog: BottomSheetDialog
 
     private lateinit var userVideoDownloadAdapter: UserVideoDownloadAdapter
+
+    @Inject
+    lateinit var networkService: NetworkService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -80,7 +85,7 @@ class UserVideoDownloadActivity : BaseActivity() {
                 val oldList = userVideoDownloadAdapter.selectList
                 val newList = mutableListOf<Int>()
                 userVideoDownloadAdapter.currentList.forEachIndexed { index, _ ->
-                    if (!oldList.contains(index)){
+                    if (!oldList.contains(index)) {
                         newList.add(index)
                     }
                 }
@@ -98,7 +103,16 @@ class UserVideoDownloadActivity : BaseActivity() {
             }
 
             uvDownloadButton.setOnClickListener {
+                val selectList = userVideoDownloadAdapter.selectList
+                val currentList = userVideoDownloadAdapter.currentList
 
+                if (selectList.isNotEmpty()) {
+                    DialogUtils.batchDownloadVideoDialog(
+                        this@UserVideoDownloadActivity,
+                        currentList.filterIndexed { index, _ -> selectList.contains(index) },
+                        networkService,
+                    ).show()
+                }
             }
 
         }

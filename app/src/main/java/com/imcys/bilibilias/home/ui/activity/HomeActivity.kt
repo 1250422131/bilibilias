@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
@@ -64,6 +65,10 @@ class HomeActivity : BaseActivity() {
 
         parseShare()
 
+        // 启动百度统计
+        startBaiDuService()
+
+
     }
 
 
@@ -79,7 +84,7 @@ class HomeActivity : BaseActivity() {
 
     //启动时解析视频数据
     @SuppressLint("ResourceType")
-    private fun parseShare() {
+        private fun parseShare() {
         val intent = intent
         val action = intent.action
         val type = intent.type
@@ -176,6 +181,16 @@ class HomeActivity : BaseActivity() {
             }
 
         }
+    }
+
+    /**
+     * 百度统计
+     */
+     fun startBaiDuService() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
+        StatService.setAuthorizedState(this, authorizedState)
+        StatService.start(this)
     }
 
     companion object {

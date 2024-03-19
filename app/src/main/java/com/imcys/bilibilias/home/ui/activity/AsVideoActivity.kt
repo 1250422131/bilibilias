@@ -167,7 +167,7 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 launchUI {
                     // 获取播放信息
-                    val videoPlayBean = networkService.n9(bvid, cid)
+                    val videoPlayBean = networkService.getVideoPlayInfo(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
@@ -189,27 +189,18 @@ class AsVideoActivity : BaseActivity() {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
 
-                        dashVideoPlayBean.data.dash.video[0].also {
-                            if (it.width < it.height) {
-                                // 竖屏
-                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                    height = windowManager.defaultDisplay.height / 4 * 3
+                        if (dashVideoPlayBean.data.dash.video.isNotEmpty()){
+                            // 得有video才行
+                            dashVideoPlayBean.data.dash.video[0].also {
+                                if (it.width < it.height) {
+                                    // 竖屏
+                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                        height = windowManager.defaultDisplay.height / 4 * 3
+                                    }
                                 }
                             }
-
-//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-//                                // 计算折叠程度（0为完全展开，1为完全折叠）
-//
-//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
-//                                    // 根据当前滚动百分比计算内边距
-//                                    val totalScrollRange = appBarLayout.totalScrollRange
-//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
-//                                    val padding = (currentScrollPercentage * 100).toInt()
-//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
-//                                }
-//
-//                            }
                         }
+
                         // 真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
@@ -462,7 +453,7 @@ class AsVideoActivity : BaseActivity() {
     private fun loadVideoList() {
         launchIO {
 
-            val videoPlayListData = networkService.n15(bvid)
+            val videoPlayListData = networkService.getVideoPageListData(bvid)
 
             launchUI {
                 binding.apply {

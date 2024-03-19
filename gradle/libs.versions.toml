@@ -36,7 +36,7 @@ material = "1.11.0"
 mmkv = "1.3.3"
 monitor = "1.6.0"
 monitorNoOp = "1.4.6"
-mtjSdkCircle = "4.0.7.5"
+mtjSdkCircle = "4.0.7.6"
 napier = "2.7.1"
 okdownload = "1.0.7"
 okhttp = "4.12.0"
@@ -139,7 +139,7 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 
-mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
+mtj-sdk = { group = "com.baidu.mobstat", name = "mtj-sdk", version.ref = "mtjSdkCircle" }
 
 okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
 
