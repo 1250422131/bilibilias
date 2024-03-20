@@ -21,7 +21,6 @@ android {
         versionCode = 203
         versionName = "2.0.4-开阳-Alpha"
 
-        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
         testInstrumentationRunner = "com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner"
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")

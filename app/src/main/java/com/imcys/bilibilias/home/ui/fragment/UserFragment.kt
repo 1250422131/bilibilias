@@ -9,22 +9,21 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.databinding.FragmentUserBinding
-import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
-import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.core.model.UpStatBeam
 import com.imcys.bilibilias.core.model.UserBaseBean
 import com.imcys.bilibilias.core.model.UserCardBean
 import com.imcys.bilibilias.core.model.UserViewItemBean
 import com.imcys.bilibilias.core.model.UserWorksBean
+import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
+import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
@@ -33,7 +32,11 @@ import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class UserFragment : BaseFragment() {
+class UserFragment : BaseFragment<FragmentUserBinding>() {
+    override val layoutId: Int = R.layout.fragment_user
+    override fun initData() {
+
+    }
 
     private lateinit var userWorksAd: UserWorksAdapter
     private lateinit var userDataRvAd: UserDataAdapter
@@ -51,10 +54,6 @@ class UserFragment : BaseFragment() {
 
     @Inject
     lateinit var tokenUtils: TokenUtils
-    override fun onResume() {
-        super.onResume()
-        StatService.onPageStart(context, "UserFragment")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,7 +70,7 @@ class UserFragment : BaseFragment() {
         return fragmentUserBinding.root
     }
 
-    private fun initView() {
+    override fun initView() {
         initUserDataRv()
 
         initUserData()
@@ -251,11 +250,6 @@ class UserFragment : BaseFragment() {
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
         if (recyclerView == null) return false
         return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(context, "UserFragment")
     }
 
     // 回收数据留存

@@ -17,7 +17,6 @@ import com.hyy.highlightpro.parameter.MarginOffset
 import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -77,19 +76,6 @@ class ToolFragment : BaseFragment<FragmentToolBinding>() {
     override fun initData() {
         viewModel.getOldToolItem()
         initObserver()
-    }
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
-        // 这里仍然是在判断是否有被引导过了
-        val guideVersion =
-            (activity as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            (activity as HomeActivity).asSharedPreferences.edit()
-                .putString("AppGuideVersion", App.AppGuideVersion).apply()
-            loadToolGuide()
-        }
     }
 
     /**

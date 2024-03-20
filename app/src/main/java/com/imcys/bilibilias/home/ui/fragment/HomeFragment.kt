@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.hyy.highlightpro.HighlightPro
 import com.hyy.highlightpro.parameter.Constraints
@@ -21,28 +20,27 @@ import com.hyy.highlightpro.parameter.MarginOffset
 import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.core.model.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
-import com.imcys.bilibilias.core.model.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.core.model.LoginStateBean
+import com.imcys.bilibilias.core.model.MyUserData
+import com.imcys.bilibilias.core.model.OldHomeAdBean
+import com.imcys.bilibilias.core.model.OldUpdateDataBean
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
-import com.imcys.bilibilias.core.model.OldHomeAdBean
-import com.imcys.bilibilias.core.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -61,7 +59,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.annotation.Detainted
 import javax.inject.Inject
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.system.exitProcess
 
@@ -69,7 +66,11 @@ import kotlin.system.exitProcess
     hostAndPath = ARouterAddress.AppHomeFragment,
 )
 @AndroidEntryPoint
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment<FragmentHomeBinding>() {
+    override val layoutId: Int = R.layout.fragment_home
+    override fun initData() {
+
+    }
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
@@ -106,17 +107,6 @@ class HomeFragment : BaseFragment() {
         initView()
         loadServiceData()
         return fragmentHomeBinding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // 判断用户是否没有被引导
-        val guideVersion =
-            (requireActivity() as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            loadHomeGuide()
-        }
-        StatService.onPageStart(requireActivity(), "HomeFragment")
     }
 
     /**
@@ -318,7 +308,7 @@ class HomeFragment : BaseFragment() {
     }
 
     // 初始化列表
-    private fun initView() {
+    override fun initView() {
         // 登陆检测
         // context?.let { DialogUtils.loginDialog(it).show() }
         // 加载推荐视频
@@ -522,10 +512,5 @@ class HomeFragment : BaseFragment() {
             }
             return orginalCRC
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(requireContext(), "HomeFragment")
     }
 }

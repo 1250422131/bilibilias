@@ -12,7 +12,6 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
-import com.imcys.bilibilias.view.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
@@ -20,12 +19,17 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.imcys.bilibilias.view.base.BaseFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DownloadFragment : BaseFragment() {
+class DownloadFragment : BaseFragment<FragmentDownloadBinding>() {
+    override val layoutId: Int= R.layout.fragment_download
+    override fun initData() {
+
+    }
 
     lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
@@ -61,7 +65,7 @@ class DownloadFragment : BaseFragment() {
     /**
      * 初始化布局
      */
-    private fun initView() {
+    override fun initView() {
         initDownloadListAd()
         initEditLayout()
         initDownloadList()
