@@ -9,9 +9,9 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.core.model.OldDonateBean
-import com.imcys.bilibilias.core.model.TipBean
 import com.imcys.bilibilias.databinding.ActivityDonateBinding
 import com.imcys.bilibilias.home.ui.adapter.DonateItemAdapter
+import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class DonateActivity : BaseActivity() {
     data class DonateViewBean(
         val type: Int,
         val oldDonateBean: OldDonateBean? = null,
-        val tipBean: TipBean<DedicateActivity>? = null,
+        val tipBean: ToolFragment.TipBean<DedicateActivity>? = null,
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +74,7 @@ class DonateActivity : BaseActivity() {
             newMutableList.add(
                 DonateViewBean(
                     PAY_TIP,
-                    tipBean = TipBean(
+                    tipBean = ToolFragment.TipBean(
                         "为其他参与者捐款",
                         "现在你有更多选择",
                         "你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。",

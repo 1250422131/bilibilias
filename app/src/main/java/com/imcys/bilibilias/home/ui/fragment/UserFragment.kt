@@ -65,8 +65,6 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
-        initView()
-
         return fragmentUserBinding.root
     }
 

@@ -24,10 +24,10 @@ import java.net.URL
 @Deprecated("ktor")
 object HttpUtils {
 
-    private val okHttpClient = OkHttpClient()
+    val okHttpClient = OkHttpClient()
 
-    private val params = mutableMapOf<String, String>()
-    private val headers = mutableMapOf<String, String>()
+    val params = mutableMapOf<String, String>()
+    val headers = mutableMapOf<String, String>()
 
     private val misakaMoeUa by lazy {
         SystemUtil.getUserAgent()
@@ -126,7 +126,7 @@ object HttpUtils {
      */
     @JvmStatic
     @Deprecated("ktor")
-    private suspend inline fun <reified T : Any> asyncGet(url: String, clz: Class<T>): T {
+    suspend inline fun <reified T : Any> asyncGet(url: String, clz: Class<T>): T {
         // 检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
@@ -146,7 +146,7 @@ object HttpUtils {
         return getJsonObject(response, clz)
     }
 
-    private suspend inline fun <reified T> getJsonObject(response: Response, clz: Class<T>): T {
+    suspend inline fun <reified T> getJsonObject(response: Response, clz: Class<T>): T {
         return withContext(Dispatchers.IO) {
             Json.decodeFromStream<T>(response.body!!.byteStream())
         }
@@ -276,7 +276,7 @@ object HttpUtils {
         return result
     }
 
-    private fun checkUrl(url: String) {
+    fun checkUrl(url: String) {
         headers[USER_AGENT] = if (url.contains("misakamoe.com")) {
             misakaMoeUa + " BILIBILIAS/${BiliBiliAsApi.version}"
         } else {

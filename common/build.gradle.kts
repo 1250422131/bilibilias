@@ -122,8 +122,6 @@ dependencies {
     // 百度统计
     api(libs.mtj.sdk.circle)
 
-    // 开屏引导
-    api(libs.hyy920109.guidePro)
 
     // 微软分发
     api(libs.appcenter.distribute)

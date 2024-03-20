@@ -103,8 +103,6 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-hyy920109-GuidePro = { group = "com.github.hyy920109", name = "GuidePro", version.ref = "github-GuidePro" }
-
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
