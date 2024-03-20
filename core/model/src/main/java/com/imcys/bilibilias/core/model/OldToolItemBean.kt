@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,14 +8,20 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class OldToolItemBean(
-    val code: Int = 0,
-    val data: List<DataBean> = emptyList(),
+    @SerialName("code")
+    val code: Int,
+    @SerialName("data")
+    val result: List<Data>
 ) {
     @Serializable
-    data class DataBean(
-        val tool_code: Int = 0,
-        val color: String = "",
-        val title: String = "",
-        val img_url: String = "",
+    data class Data(
+        @SerialName("color")
+        val color: String,
+        @SerialName("img_url")
+        val imageUrl: String,
+        @SerialName("title")
+        val title: String,
+        @SerialName("tool_code")
+        val toolCode: Int
     )
 }

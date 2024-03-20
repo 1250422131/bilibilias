@@ -3,83 +3,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="ToolItemBean"
-            type="com.imcys.bilibilias.core.model.ToolItemBean" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="5dp">
 
-        <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <androidx.cardview.widget.CardView
             android:layout_width="95dp"
             android:layout_height="95dp"
+            app:cardBackgroundColor="?attr/colorPrimary"
             app:cardCornerRadius="10dp"
-            app:cardElevation="0dp"
-            tools:ignore="MissingConstraints">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@{ToolItemBean.bg_color}"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="@{ToolItemBean.bg_color == `` ? View.GONE : View.VISIBLE}">
+                android:layout_height="match_parent">
 
                 <ImageView
+                    android:id="@+id/toolImage"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
+                    android:layout_marginTop="15dp"
                     android:src="@drawable/ic_as_video_download"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
 
                 <com.imcys.bilibilias.base.view.MarqueeTextView
+                    android:id="@+id/toolName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@{ToolItemBean.title}"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/white"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/colorPrimary"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="@{ToolItemBean.bg_color == `` ? View.VISIBLE : View.GONE}">
-
-                <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
-                    android:src="@drawable/ic_as_video_download"
-                    app:tint="@color/white" />
-
-                <com.imcys.bilibilias.base.view.MarqueeTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@{ToolItemBean.title}"
-                    android:textColor="@color/white"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/toolImage"
+                    tools:text="hello" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -16,8 +16,8 @@ class AppModule {
     @Singleton
     fun provideJson(): Json = Json {
         prettyPrint = true
-        isLenient = true
         ignoreUnknownKeys = true
+        coerceInputValues = true
     }
     @OptIn(ExperimentalSerializationApi::class)
     @Provides

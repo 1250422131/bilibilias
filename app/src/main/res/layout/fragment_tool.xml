@@ -3,16 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="ToolViewHolder"
-            type="com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder" />
-
-
-    </data>
-
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -90,12 +80,10 @@
                             android:imeOptions="actionSearch"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:textColor="#000000" />
+                            android:textColor="#000000"
+                            android:autofillHints="name" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
-
                 </androidx.cardview.widget.CardView>
-
-
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 

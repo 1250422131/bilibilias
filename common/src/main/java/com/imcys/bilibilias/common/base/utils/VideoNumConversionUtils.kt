@@ -2,7 +2,7 @@ package com.imcys.bilibilias.common.base.utils
 
 // 新的BV转换
 // https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/bvid_desc.md
-object NewVideoNumConversionUtils {
+object VideoNumConversionUtils {
     private const val XOR_CODE = 23442827791579
     private const val MASK_CODE = 2251799813685247
     private const val MAX_AID = 1L shl 51
@@ -36,7 +36,4 @@ object NewVideoNumConversionUtils {
 
         return ((tmp and MASK_CODE.toBigInteger()) xor XOR_CODE.toBigInteger()).toLong()
     }
-
-
-
 }

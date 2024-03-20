@@ -42,8 +42,8 @@
                     android:layout_height="100dp"
                     android:layout_weight="6"
                     android:imageUrl="@{VideoBaseBean.data.pic}"
-                    android:transitionName="videoPic"
                     android:scaleType="fitXY"
+                    android:transitionName="videoPic"
                     app:round="10dp" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -68,9 +68,11 @@
                             android:text="@{VideoBaseBean.data.title}"
                             android:textSize="16dp"
                             android:textStyle="bold"
-                            android:transitionName="videoTitle" />
+                            android:transitionName="videoTitle"
+                            tools:text="标题" />
 
                         <TextView
+                            android:id="@+id/videoDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
@@ -78,7 +80,8 @@
                             android:maxLines="2"
                             android:text="@{VideoBaseBean.data.desc}"
                             android:textColor="@color/color_text_hint"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="简介" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -96,12 +99,14 @@
                             app:tint="@color/color_text_hint" />
 
                         <TextView
+                            android:id="@+id/viewStat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
                             android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.view)}"
                             android:textColor="@color/color_text_hint"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="播放量" />
 
                         <ImageView
                             android:layout_width="18dp"
@@ -111,12 +116,14 @@
                             app:tint="@color/color_text_hint" />
 
                         <TextView
+                            android:id="@+id/danmakuStat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
                             android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.danmaku)}"
                             android:textColor="@color/color_text_hint"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            tools:text="弹幕数" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>

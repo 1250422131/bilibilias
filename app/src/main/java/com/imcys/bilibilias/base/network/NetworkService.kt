@@ -93,7 +93,6 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-
     // ---------------------------------------------------------------------------------------------
     suspend fun flvPgcPlayUrl(cId: Long, qn: Int): BangumiPlayBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.bangumiPlayPath) {
@@ -117,7 +116,6 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             viewPlayUrl(bvid, cid.toString(), qn)
         }
-
 
     // ---------------------------------------------------------------------------------------------
     suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
@@ -149,7 +147,6 @@ class NetworkService @Inject constructor(
             httpClient.get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive")
                 .body()
         }
-
 
     private suspend inline fun <reified T> videoPlayPath(
         bvid: String,
@@ -259,12 +256,14 @@ class NetworkService @Inject constructor(
     }
 
     suspend fun getOldToolItem(): OldToolItemBean = runCatchingOnWithContextIo {
-        httpClient.get("${BiliBiliAsApi.appFunction}?type=oldToolItem").body()
+        httpClient.get(BiliBiliAsApi.appFunction) {
+            parameter("type", "oldToolItem")
+        }.body()
     }
 
     suspend fun getUserCollection(id: Long, pn: Int): CollectionDataBean =
         runCatchingOnWithContextIo {
-            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=${id}&pn=${pn}&ps=20")
+            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=$id&pn=$pn&ps=20")
                 .body()
         }
 
@@ -280,14 +279,12 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             httpClient.get("${BilibiliApi.bangumiFollowPath}?vmid=$vmid&type=$type&pn=$pn&ps=$ps")
                 .body()
-
         }
 
     suspend fun getUpdateData(): OldUpdateDataBean = runCatchingOnWithContextIo {
         httpClient.get("${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}")
             .body()
     }
-
 
     suspend fun getOldHomeAd(): OldHomeAdBean = runCatchingOnWithContextIo {
         httpClient.get("${BiliBiliAsApi.appFunction}?type=oldHomeAd").body()
@@ -440,7 +437,6 @@ class NetworkService @Inject constructor(
             }.body()
         }
 
-
     suspend fun n36(
         asCookie: String?,
         asLoginInfo: AsLoginBsViewModel.AsLoginInfo
@@ -482,7 +478,6 @@ class NetworkService @Inject constructor(
     ): T {
         return withContext(ioDispatcher, block)
     }
-
 
     suspend fun n44() = runCatchingOnWithContextIo {}
     suspend fun n45() = runCatchingOnWithContextIo {}

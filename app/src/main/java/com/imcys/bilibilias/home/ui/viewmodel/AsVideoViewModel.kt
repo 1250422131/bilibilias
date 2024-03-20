@@ -17,7 +17,7 @@ import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.VideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.*
 import com.imcys.bilibilias.common.network.danmaku.*
@@ -233,7 +233,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val dialogLoad = DialogUtils.loadDialog(context)
         dialogLoad.show()
         viewModelScope.launchIO {
-            val bvId = NewVideoNumConversionUtils.av2bv(avid)
+            val bvId = VideoNumConversionUtils.av2bv(avid)
             danmakuRepository.getCideoInfoV2(avid, cid).collect { result ->
                 when (result) {
                     is Result.Error -> TODO()

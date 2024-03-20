@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.VideoNumConversionUtils
 import com.imcys.bilibilias.databinding.ItemPlayHistoryWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.core.model.PlayHistoryBean
@@ -48,7 +48,7 @@ class PlayHistoryAdapter @Inject constructor() :
                 val bvid = if (getItem(position).history.bvid != "") {
                     getItem(position).history.bvid
                 } else {
-                    NewVideoNumConversionUtils.av2bv(getItem(position).history.oid)
+                    VideoNumConversionUtils.av2bv(getItem(position).history.oid)
                 }
                 AsVideoActivity.actionStart(holder.itemView.context, bvid)
             }

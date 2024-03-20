@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.common.base.utils.http
 
-import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -11,6 +9,8 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import okhttp3.*
 import java.io.*
 import java.net.HttpURLConnection
@@ -33,7 +33,6 @@ object HttpUtils {
         SystemUtil.getUserAgent()
     }
 
-
     /**
      * 使用 OkHttp 库发送 GET 请求的方法
      *
@@ -43,7 +42,7 @@ object HttpUtils {
     @JvmStatic
     @Deprecated("ktor")
     fun get(url: String, callBack: Callback) {
-        //检验url，添加对应的ua
+        // 检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
         val request: Request = Request.Builder().apply {
@@ -60,7 +59,6 @@ object HttpUtils {
         okHttpClient.newCall(request).enqueue(callBack)
     }
 
-
     /**
      * 使用 OkHttp 库发送 GET 请求的方法，并将响应数据自动映射为指定类型的对象
      *
@@ -71,7 +69,7 @@ object HttpUtils {
     @JvmStatic
     @Deprecated("ktor")
     fun <T> get(url: String, clz: Class<T>, method: (data: T) -> Unit) {
-        //检验url，添加对应的ua
+        // 检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
         val request: Request = Request.Builder().apply {
@@ -85,18 +83,11 @@ object HttpUtils {
             get()
         }.build()
         // 使用 OkHttp 的 enqueue 方法异步发送请求
-        okHttpClient.newCall(request).enqueue(HttpCallback {
-            // 使用 Gson 将响应数据映射为指定类型的对象
-            val data = Gson().fromJson(it, clz)
-            // 调用回调函数返回结果
-            data?.let {
-                BaseApplication.handler.post {
-                    method(it)
-                }
+        okHttpClient.newCall(request).enqueue(
+            HttpCallback {
             }
-        })
+        )
     }
-
 
     /**
      * 使用 OkHttp 库发送 GET 请求的方法
@@ -107,7 +98,7 @@ object HttpUtils {
     @JvmStatic
     @Deprecated("ktor")
     suspend fun asyncGet(url: String): Deferred<Response> {
-        //检验url，添加对应的ua
+        // 检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
         val request: Request = Request.Builder().apply {
@@ -135,8 +126,8 @@ object HttpUtils {
      */
     @JvmStatic
     @Deprecated("ktor")
-    suspend fun <T : Any> asyncGet(url: String, clz: Class<T>): T {
-        //检验url，添加对应的ua
+    private suspend inline fun <reified T : Any> asyncGet(url: String, clz: Class<T>): T {
+        // 检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
         val request: Request = Request.Builder().apply {
@@ -153,16 +144,13 @@ object HttpUtils {
         val response = okHttpClient.newCall(request).awaitResponse()
 
         return getJsonObject(response, clz)
-
     }
 
-    private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
+    private suspend inline fun <reified T> getJsonObject(response: Response, clz: Class<T>): T {
         return withContext(Dispatchers.IO) {
-            Gson().fromJson(response.body?.string() ?: "empty string", clz)
-
+            Json.decodeFromStream<T>(response.body!!.byteStream())
         }
     }
-
 
     /**
      * post请求类
@@ -172,29 +160,27 @@ object HttpUtils {
      */
     @JvmStatic
     fun post(url: String, callBack: Callback) {
-        //检验url，添加对应的ua
+        // 检验url，添加对应的ua
         checkUrl(url)
-        //构建FormBody
+        // 构建FormBody
         val formBody: FormBody.Builder = FormBody.Builder()
-        //添加params参数
+        // 添加params参数
         params.forEach {
             formBody.add(it.key, it.value)
         }
-        //构建request并且添加headers
+        // 构建request并且添加headers
         val request: Request = Request.Builder()
             .apply {
-                //设置请求头
+                // 设置请求头
                 headers.forEach {
                     addHeader(it.key, it.value)
                 }
-                //设置请求地址和参数
+                // 设置请求地址和参数
                 url(url)
                 post(formBody.build())
             }.build()
         okHttpClient.newCall(request).enqueue(callBack)
-
     }
-
 
     /**
      * 添加post的form参数
