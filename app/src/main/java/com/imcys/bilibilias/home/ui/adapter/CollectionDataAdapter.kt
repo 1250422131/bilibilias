@@ -7,10 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.CollectionDataBean
+import com.imcys.bilibilias.core.model.CollectionDataBean
 import javax.inject.Inject
 
 class CollectionDataAdapter @Inject constructor() :

@@ -34,9 +34,14 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
-import com.imcys.bilibilias.common.network.base.ResBean
+import com.imcys.bilibilias.core.model.ArchiveCoinsBean
+import com.imcys.bilibilias.core.model.ArchiveFavouredBean
+import com.imcys.bilibilias.core.model.ArchiveHasLikeBean
+import com.imcys.bilibilias.core.model.BangumiSeasonBean
+import com.imcys.bilibilias.core.model.ResBean
+import com.imcys.bilibilias.core.model.UserBaseBean
+import com.imcys.bilibilias.core.model.VideoBaseBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter

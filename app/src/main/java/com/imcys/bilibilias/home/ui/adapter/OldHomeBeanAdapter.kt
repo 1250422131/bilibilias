@@ -16,7 +16,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.core.model.OldHomeBannerDataBean
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback

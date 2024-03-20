@@ -6,7 +6,7 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
+            type="com.imcys.bilibilias.core.model.UserInfoBean" />
 
         <import type="android.view.View" />
 

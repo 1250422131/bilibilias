@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.danmaku.change
 
 import android.content.Context
-import com.imcys.bilibilias.home.ui.model.VideoCCInfo
+import com.imcys.bilibilias.core.model.VideoCCInfo
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 

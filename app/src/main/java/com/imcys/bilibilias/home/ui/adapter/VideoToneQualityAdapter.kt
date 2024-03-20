@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.databinding.ItemToneQualityBinding
-import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
+import com.imcys.bilibilias.core.model.DashVideoPlayBean
 
 class VideoToneQualityAdapter(
     private val videoAudioBeans: List<DashVideoPlayBean.DataBean.DashBean.AudioBean>,

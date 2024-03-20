@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemUserWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.UserWorksBean
+import com.imcys.bilibilias.core.model.UserWorksBean
 
 class UserWorksAdapter : ListAdapter<UserWorksBean.DataBean.ListBean.VlistBean, ViewHolder>(
     object : DiffUtil.ItemCallback<UserWorksBean.DataBean.ListBean.VlistBean>() {

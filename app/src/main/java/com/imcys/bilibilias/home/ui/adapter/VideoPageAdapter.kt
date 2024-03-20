@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemDlVideoPageBinding
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.core.model.VideoPageListData
 
 class VideoPageAdapter(
     private val datas: List<VideoPageListData.DataBean>,

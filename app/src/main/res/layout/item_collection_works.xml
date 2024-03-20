@@ -9,7 +9,7 @@
 
         <variable
             name="MediasBean"
-            type="com.imcys.bilibilias.home.ui.model.CollectionDataBean.DataBean.MediasBean" />
+            type="com.imcys.bilibilias.core.model.CollectionDataBean" />
 
     </data>
 

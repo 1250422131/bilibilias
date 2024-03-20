@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
+import com.imcys.bilibilias.core.model.VideoInfoV2
 import com.imcys.bilibilias.databinding.ItemCcAssLangBinding
 
 class CCAssAdapter(private val selectEvent: (index: Int) -> Unit) :

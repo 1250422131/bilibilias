@@ -2,9 +2,7 @@ package com.imcys.bilibilias.home.ui.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,8 +10,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemToolBinding
 import com.imcys.bilibilias.databinding.ItemToolVideoCardBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.model.ToolItemBean
+import com.imcys.bilibilias.core.model.ToolItemBean
 
 
 class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(

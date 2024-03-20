@@ -9,7 +9,7 @@
 
         <variable
             name="ToolItemBean"
-            type="com.imcys.bilibilias.home.ui.model.ToolItemBean" />
+            type="com.imcys.bilibilias.core.model.ToolItemBean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

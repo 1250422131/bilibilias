@@ -1,13 +1,11 @@
 package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,8 +15,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.core.model.LoginQrcodeBean
+import com.imcys.bilibilias.core.model.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast

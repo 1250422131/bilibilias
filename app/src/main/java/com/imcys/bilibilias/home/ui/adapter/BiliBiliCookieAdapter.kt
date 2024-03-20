@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
+import com.imcys.bilibilias.core.model.UserBiliBiliCookieModel
 import com.imcys.bilibilias.databinding.ItemAsAccountBinding
 
 class BiliBiliCookieAdapter(

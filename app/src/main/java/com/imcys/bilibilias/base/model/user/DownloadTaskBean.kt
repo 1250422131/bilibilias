@@ -1,11 +1,11 @@
 package com.imcys.bilibilias.base.model.user
 
-import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
-import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
-import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.core.model.BangumiPlayBean
+import com.imcys.bilibilias.core.model.BangumiSeasonBean
+import com.imcys.bilibilias.core.model.DashBangumiPlayBean
+import com.imcys.bilibilias.core.model.DashVideoPlayBean
+import com.imcys.bilibilias.core.model.VideoPageListData
+import com.imcys.bilibilias.core.model.VideoPlayBean
 
 data class DownloadTaskDataBean(
     val cid: Long,
@@ -24,4 +24,4 @@ data class DownloadTaskDataBean(
     val videoPageDataData: VideoPageListData.DataBean? = null,
     val bangumiSeasonBean: BangumiSeasonBean.ResultBean.EpisodesBean? = null,
 
-)
+    )

@@ -14,11 +14,11 @@
 
         <variable
             name="VideoBaseBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoBaseBean" />
+            type="com.imcys.bilibilias.core.model.VideoBaseBean" />
 
         <variable
             name="UserCardBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCardBean" />
+            type="com.imcys.bilibilias.core.model.UserCardBean" />
 
         <variable
             name="AsVideoViewModel"
@@ -27,32 +27,32 @@
 
         <variable
             name="BangumiSeasonBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiSeasonBean" />
+            type="com.imcys.bilibilias.core.model.BangumiSeasonBean" />
 
         <variable
             name="VideoPlayBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPlayBean" />
+            type="com.imcys.bilibilias.core.model.VideoPlayBean" />
 
         <variable
             name="VideoPageListData"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData" />
+            type="com.imcys.bilibilias.core.model.VideoPageListData" />
 
         <variable
             name="BangumiPlayBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiPlayBean" />
+            type="com.imcys.bilibilias.core.model.BangumiPlayBean" />
 
         <variable
             name="ArchiveHasLikeBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveHasLikeBean" />
+            type="com.imcys.bilibilias.core.model.ArchiveHasLikeBean" />
 
 
         <variable
             name="ArchiveCoinsBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean" />
+            type="com.imcys.bilibilias.core.model.ArchiveCoinsBean" />
 
         <variable
             name="ArchiveFavouredBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean" />
+            type="com.imcys.bilibilias.core.model.ArchiveFavouredBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

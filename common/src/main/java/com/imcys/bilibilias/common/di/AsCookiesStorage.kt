@@ -1,9 +1,9 @@
 package com.imcys.bilibilias.common.di
 
-import com.imcys.bilibilias.common.base.config.AsCookie
 import com.imcys.bilibilias.common.base.config.UserInfoRepository
-import com.imcys.bilibilias.common.base.config.toAsCookie
-import com.imcys.bilibilias.common.base.config.toCookie
+import com.imcys.bilibilias.core.model.AsCookie
+import com.imcys.bilibilias.core.model.toAsCookie
+import com.imcys.bilibilias.core.model.toCookie
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
 import io.ktor.http.Url

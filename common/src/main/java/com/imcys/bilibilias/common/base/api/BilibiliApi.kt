@@ -22,13 +22,13 @@ object BilibiliApi {
     // 获取用户卡片信息
     const val getUserCardPath = "x/web-interface/card"
 
-    // 获取视频详细信息 get bvid avid
+    // 获取视频详细信息
     const val getVideoDataPath = "x/web-interface/view"
 
     // 对视频进行点赞
     const val videLikePath = "x/web-interface/archive/like"
 
-    //视频V2接口信息->名称暂定 要求AID CID同时存在
+    // 视频V2接口信息-
     const val videoInfoV2 = "x/player/wbi/v2"
 
     // 获取收藏列表
@@ -52,7 +52,7 @@ object BilibiliApi {
     // 投币地址
     const val videoCoinAddPath = "x/web-interface/coin/add"
 
-    // 获取剧集明细 get season_id / ep_id
+    // 获取剧集明细
     const val bangumiVideoDataPath = "pgc/view/web/season"
 
     // 获取用户基本信息

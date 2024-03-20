@@ -1,19 +1,16 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
 import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
-import com.imcys.bilibilias.home.ui.model.UserViewItemBean
+import com.imcys.bilibilias.core.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.viewmodel.ItemFgUserToolViewModel
 
 

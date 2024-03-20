@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemSubsectionBinding
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
+import com.imcys.bilibilias.core.model.VideoPageListData
 
 class SubsectionAdapter(
     val datas: MutableList<VideoPageListData.DataBean>,

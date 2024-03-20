@@ -3,7 +3,8 @@ package com.imcys.bilibilias.common.network.danmaku
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.safeGet
-import com.imcys.bilibilias.common.network.base.ResBean
+import com.imcys.bilibilias.core.model.ResBean
+import com.imcys.bilibilias.core.model.VideoInfoV2
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
 import kotlinx.coroutines.flow.Flow

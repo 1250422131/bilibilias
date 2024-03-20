@@ -13,7 +13,7 @@ import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
-import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
+import com.imcys.bilibilias.core.model.PlayHistoryBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

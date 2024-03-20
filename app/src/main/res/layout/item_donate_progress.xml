@@ -6,7 +6,7 @@
 
         <variable
             name="OldDonateBean"
-            type="com.imcys.bilibilias.home.ui.model.OldDonateBean" />
+            type="com.imcys.bilibilias.core.model.OldDonateBean" />
 
     </data>
 

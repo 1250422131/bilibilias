@@ -7,7 +7,7 @@
     <data>
         <variable
             name="EpisodesBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiSeasonBean.ResultBean.EpisodesBean" />
+            type="com.imcys.bilibilias.core.model.BangumiSeasonBean" />
 
     </data>
 

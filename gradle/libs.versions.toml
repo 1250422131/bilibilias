@@ -42,7 +42,7 @@ uiTimateBarX = "0.8.1"
 work-runtime-ktx = "2.9.0"
 activity-compose = "1.8.2"
 compose-bom = "2024.02.02"
-
+kotlin-serialization = "1.6.3"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
@@ -106,13 +106,15 @@ kcomponent-compiler = { group = "com.github.xiaojinzi123.KComponent", name = "kc
 kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-rx", version.ref = "kcomponent-compiler" }
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+kotlinx-serialization-cbor = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor", version.ref = "kotlin-serialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
-kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "ktor" }
+
 
 ktx = { group = "com.liulishuo.okdownload", name = "ktx", version.ref = "okdownload" }
 

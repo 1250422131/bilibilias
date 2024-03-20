@@ -43,7 +43,7 @@ import coil.compose.AsyncImage
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.home.ui.model.DedicateBean
+import com.imcys.bilibilias.core.model.DedicateBean
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

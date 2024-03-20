@@ -13,7 +13,7 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.base.model.login.LoginQrcodeBean.DataBean" />
+            type="com.imcys.bilibilias.core.model.LoginQrcodeBean" />
 
     </data>
 

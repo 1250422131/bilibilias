@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
-import com.imcys.bilibilias.common.base.model.user.MyUserData
+import com.imcys.bilibilias.core.model.MyUserData
 import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config

@@ -11,15 +11,10 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
-import com.imcys.bilibilias.home.ui.model.CollectionDataBean
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import com.imcys.bilibilias.core.model.CollectionDataBean
+import com.imcys.bilibilias.core.model.UserCreateCollectionBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

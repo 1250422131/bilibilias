@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.home.ui.model.UpStatBeam
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.UserWorksBean
+import com.imcys.bilibilias.core.model.UpStatBeam
+import com.imcys.bilibilias.core.model.UserBaseBean
+import com.imcys.bilibilias.core.model.UserCardBean
+import com.imcys.bilibilias.core.model.UserWorksBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

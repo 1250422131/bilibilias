@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemCollectionBinding
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
+import com.imcys.bilibilias.core.model.UserCreateCollectionBean
 
 class CreateCollectionAdapter(
     val datas: MutableList<UserCreateCollectionBean.DataBean.ListBean>,

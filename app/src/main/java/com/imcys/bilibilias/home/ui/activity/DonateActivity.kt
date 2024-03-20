@@ -8,13 +8,10 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityDonateBinding
 import com.imcys.bilibilias.home.ui.adapter.DonateItemAdapter
-import com.imcys.bilibilias.home.ui.model.DonateViewBean
-import com.imcys.bilibilias.home.ui.model.OldDonateBean
-import com.imcys.bilibilias.home.ui.model.TipBean
+import com.imcys.bilibilias.core.model.DonateViewBean
+import com.imcys.bilibilias.core.model.TipBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

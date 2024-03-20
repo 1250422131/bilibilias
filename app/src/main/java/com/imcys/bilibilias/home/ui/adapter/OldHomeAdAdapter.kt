@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemHomeAdBinding
 import com.imcys.bilibilias.databinding.ItemHomeWebAdBinding
-import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
+import com.imcys.bilibilias.core.model.OldHomeAdBean
 
 class OldHomeAdAdapter : ListAdapter<OldHomeAdBean.Data, ViewHolder>(
     object : DiffUtil.ItemCallback<OldHomeAdBean.Data>() {

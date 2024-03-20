@@ -14,7 +14,7 @@ import com.imcys.bilibilias.databinding.ItemDonatePayTypeBinding
 import com.imcys.bilibilias.databinding.ItemDonateProgressBinding
 import com.imcys.bilibilias.databinding.ItemTipBinding
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.home.ui.model.DonateViewBean
+import com.imcys.bilibilias.core.model.DonateViewBean
 import javax.inject.Inject
 
 class DonateItemAdapter @Inject constructor() :

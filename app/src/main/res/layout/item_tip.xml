@@ -7,7 +7,7 @@
 
         <variable
             name="TipBean"
-            type="com.imcys.bilibilias.home.ui.model.TipBean" />
+            type="com.imcys.bilibilias.core.model.TipBean" />
 
     </data>
 

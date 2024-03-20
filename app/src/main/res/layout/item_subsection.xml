@@ -5,7 +5,7 @@
 
         <variable
             name="DataBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData.DataBean" />
+            type="com.imcys.bilibilias.core.model.VideoPageListData" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

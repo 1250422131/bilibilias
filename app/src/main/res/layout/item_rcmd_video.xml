@@ -8,7 +8,7 @@
 
         <variable
             name="ItemBean"
-            type="com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean.DataBean.ItemBean" />
+            type="com.imcys.bilibilias.core.model.HomeRCMDVideoBean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

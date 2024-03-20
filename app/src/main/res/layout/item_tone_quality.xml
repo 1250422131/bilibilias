@@ -8,7 +8,7 @@
 
         <variable
             name="AudioBean"
-            type="com.imcys.bilibilias.home.ui.model.DashVideoPlayBean.DataBean.DashBean.AudioBean" />
+            type="com.imcys.bilibilias.core.model.DashVideoPlayBean" />
 
     </data>
 

@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel.Data" />
+            type="com.imcys.bilibilias.core.model.UserBiliBiliCookieModel.Data" />
 
     </data>
 

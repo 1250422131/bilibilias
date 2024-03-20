@@ -3,7 +3,7 @@ package com.imcys.bilibilias.common.base.utils.http
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.model.common.IPostBody
+import com.imcys.bilibilias.core.model.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

@@ -1,9 +1,5 @@
 package com.imcys.bilibilias.base.network
 
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.user.LikeVideoBean
-import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -14,33 +10,37 @@ import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.model.user.AsUserLoginModel
 import com.imcys.bilibilias.common.base.model.user.BiLiCookieResponseModel
-import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.user.ResponseResult
-import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.common.di.AsCookiesStorage
-import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.CollectionDataBean
-import com.imcys.bilibilias.home.ui.model.CollectionResultBean
-import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
-import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
-import com.imcys.bilibilias.home.ui.model.OldDonateBean
-import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
-import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
-import com.imcys.bilibilias.home.ui.model.OldToolItemBean
-import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
-import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
-import com.imcys.bilibilias.home.ui.model.UpStatBeam
-import com.imcys.bilibilias.home.ui.model.UserBaseBean
-import com.imcys.bilibilias.home.ui.model.UserCardBean
-import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
-import com.imcys.bilibilias.home.ui.model.UserNavDataModel
-import com.imcys.bilibilias.home.ui.model.UserWorksBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.bilibilias.home.ui.model.VideoCoinAddBean
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
-import com.imcys.bilibilias.home.ui.model.VideoPlayBean
+import com.imcys.bilibilias.core.model.BangumiPlayBean
+import com.imcys.bilibilias.core.model.BangumiSeasonBean
+import com.imcys.bilibilias.core.model.CollectionDataBean
+import com.imcys.bilibilias.core.model.CollectionResultBean
+import com.imcys.bilibilias.core.model.DashBangumiPlayBean
+import com.imcys.bilibilias.core.model.DashVideoPlayBean
+import com.imcys.bilibilias.core.model.LikeVideoBean
+import com.imcys.bilibilias.core.model.LoginQrcodeBean
+import com.imcys.bilibilias.core.model.LoginStateBean
+import com.imcys.bilibilias.core.model.MyUserData
+import com.imcys.bilibilias.core.model.OldDonateBean
+import com.imcys.bilibilias.core.model.OldHomeAdBean
+import com.imcys.bilibilias.core.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.core.model.OldToolItemBean
+import com.imcys.bilibilias.core.model.OldUpdateDataBean
+import com.imcys.bilibilias.core.model.PlayHistoryBean
+import com.imcys.bilibilias.core.model.UpStatBeam
+import com.imcys.bilibilias.core.model.UserBaseBean
+import com.imcys.bilibilias.core.model.UserBiliBiliCookieModel
+import com.imcys.bilibilias.core.model.UserCardBean
+import com.imcys.bilibilias.core.model.UserCreateCollectionBean
+import com.imcys.bilibilias.core.model.UserInfoBean
+import com.imcys.bilibilias.core.model.UserNavDataModel
+import com.imcys.bilibilias.core.model.UserWorksBean
+import com.imcys.bilibilias.core.model.VideoBaseBean
+import com.imcys.bilibilias.core.model.VideoCoinAddBean
+import com.imcys.bilibilias.core.model.VideoPageListData
+import com.imcys.bilibilias.core.model.VideoPlayBean
 import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -470,7 +470,6 @@ class NetworkService @Inject constructor(
 
     suspend fun n43(biliBiliCookieInfo: AsLoginBsViewModel.BiliBiliCookieInfo): BiLiCookieResponseModel =
         runCatchingOnWithContextIo {
-
             ktHttpUtils.addHeader(COOKIE, BaseApplication.asUser.asCookie)
                 .asyncPostJson(
                     "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",

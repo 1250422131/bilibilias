@@ -9,7 +9,7 @@
 
         <variable
             name="ListBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean.DataBean.ListBean" />
+            type="com.imcys.bilibilias.core.model.UserCreateCollectionBean" />
 
     </data>
 

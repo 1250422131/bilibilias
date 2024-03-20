@@ -1,10 +1,11 @@
 ﻿plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.imcys.bilibili.core.model"
+    namespace = "com.imcys.bilibilias.core.model"
     compileSdk = 34
 
     defaultConfig {
@@ -40,4 +41,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(libs.ktor.serialization.kotlinx.json)
 }

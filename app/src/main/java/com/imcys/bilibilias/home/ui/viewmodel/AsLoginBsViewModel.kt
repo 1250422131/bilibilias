@@ -14,7 +14,6 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -26,9 +25,11 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
 import com.imcys.bilibilias.common.base.utils.AESUtils
+import com.imcys.bilibilias.core.model.IPostBody
+import com.imcys.bilibilias.core.model.LoginStateBean
+import com.imcys.bilibilias.core.model.UserBiliBiliCookieModel
 import com.imcys.bilibilias.databinding.DialogAsAccountListBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
