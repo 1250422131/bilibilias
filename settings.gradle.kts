@@ -1,6 +1,8 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
+        mavenCentral()
         google()
     }
 }
@@ -23,5 +25,6 @@ include(":app")
 include(":common")
 include(":model_ffmpeg")
 include(":tool_log_export")
+
 include(":core:model")
 include(":core:network")
