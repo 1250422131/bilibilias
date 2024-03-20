@@ -1,21 +1,52 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.library.compose)
+    alias(libs.plugins.bilibilias.android.library.jacoco)
     alias(libs.plugins.bilibilias.android.hilt)
-    alias(libs.plugins.kotlin.kapt)
+    kotlin("kapt")
+}
+
+ksp {
+    arg("ModuleName", project.name)
 }
 
 android {
     namespace = "com.imcys.bilibilias.common"
+    compileSdk = 34
 
+    defaultConfig {
+        minSdk = 21
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
     buildFeatures {
         dataBinding = true
     }
+//    kotlinOptions {
+//        jvmTarget = "17"
+//    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
-
+kotlin {
+    jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
+}
 dependencies {
-
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
@@ -136,10 +167,9 @@ dependencies {
     /**
      * ktor全局支持
      */
-    api(libs.napier)
-
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
+    api(libs.napier)
     api(libs.ktor.client.logging)
     api(libs.ktor.client.content.negotiation)
     api(libs.ktor.serialization.kotlinx.json)
@@ -149,12 +179,18 @@ dependencies {
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
 
+    api(libs.activity.compose)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.graphics)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.material3)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
     api(libs.androidx.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    api(projects.core.model)
 }

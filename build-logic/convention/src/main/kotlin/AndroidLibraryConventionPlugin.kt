@@ -1,11 +1,11 @@
 
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
-import com.imcys.bilibilias.configureFlavors
 import com.imcys.bilibilias.configureGradleManagedDevices
 import com.imcys.bilibilias.configureKotlinAndroid
 import com.imcys.bilibilias.configurePrintApksTask
 import com.imcys.bilibilias.disableUnnecessaryAndroidTests
+import com.imcys.bilibilias.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -25,7 +25,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 34
                 testOptions.animationsDisabled = true
-                configureFlavors(this)
                 configureGradleManagedDevices(this)
                 // The resource prefix is derived from the module name,
                 // so resources inside ":core:module1" must be prefixed with "core_module1_"
@@ -38,7 +37,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             dependencies {
                 add("testImplementation", kotlin("test"))
 
-//                add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
+                add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
             }
         }
     }

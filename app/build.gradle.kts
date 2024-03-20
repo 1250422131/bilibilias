@@ -7,12 +7,12 @@ plugins {
     id("jacoco")
     alias(libs.plugins.baselineprofile)
 //    alias(libs.plugins.roborazzi)
-    alias(libs.plugins.kotlin.kapt)
+    kotlin("kapt")
 }
 
-//ksp {
-//    arg("ModuleName", project.name)
-//}
+ksp {
+    arg("ModuleName", project.name)
+}
 android {
     namespace = "com.imcys.bilibilias"
 
@@ -22,12 +22,11 @@ android {
         versionName = "2.0.4-开阳-Alpha"
 
         buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
-
+        testInstrumentationRunner = "com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner"
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions += project.name
     }
 
@@ -57,6 +56,7 @@ android {
         }
     }
 
+
     lint {
         baseline = file("lint-baseline.xml")
         abortOnError = false
@@ -72,19 +72,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-//
-//    dependenciesInfo {
-//        includeInApk = true
-//        includeInBundle = true
-//    }
-}
-kapt {
-    correctErrorTypes = true
+
+    dependenciesInfo {
+        includeInApk = true
+        includeInBundle = true
+    }
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":tool_log_export"))
+    implementation(projects.common)
+    implementation(projects.toolLogExport)
+    implementation(projects.core.model)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.material)
 
     ksp(libs.deeprecopy.compiler)
 

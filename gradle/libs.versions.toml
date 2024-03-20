@@ -49,9 +49,11 @@ work = "2.9.0"
 activity-compose = "1.8.2"
 compose-bom = "2024.02.02"
 kotlin-serialization = "1.6.3"
+cardview = "1.0.0"
+viewpager2 = "1.0.0"
 [libraries]
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
-androidx-tracing = { group = "androidx.tracing", name = "tracing", version.ref = "androidxTracing" }
+androidx-tracing-ktx = { group = "androidx.tracing", name = "tracing", version.ref = "androidxTracing" }
 
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
@@ -159,6 +161,9 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 work-testing = { group = "androidx.work", name = "work-testing", version = "work" }
+
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

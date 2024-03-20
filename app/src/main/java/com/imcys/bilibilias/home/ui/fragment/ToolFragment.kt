@@ -2,6 +2,7 @@ package com.imcys.bilibilias.home.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +66,14 @@ class ToolFragment : BaseFragment() {
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
     @Inject
     lateinit var networkService: NetworkService
-
+    data class TipBean<T>(
+        val title: String,
+        val long_title: String,
+        val doc: String,
+        val face: Drawable,
+        val link: String = "",
+        val activity: Class<T>? = null
+    )
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
