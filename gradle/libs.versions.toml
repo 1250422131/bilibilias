@@ -1,17 +1,20 @@
 [versions]
 androidGradlePlugin = "8.3.1"
+androidxComposeCompiler = "1.5.11-dev-k1.9.23-96ef9dc6af1"
 androidTools = "31.3.1"
 androidxMacroBenchmark = "1.2.3"
+androidxTracing = "1.2.0"
 androidx-junit = "1.1.5"
 appcenter = "5.0.4"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 banner = "2.2.3"
 brv = "1.5.8"
+dependencyGuard = "0.4.3"
 coil-compose = "2.6.0"
 deeprecopy-compiler = "0.0.1-Beta-3"
 constraintlayout = "2.1.4"
-coreKtx = "1.12.0"
+androidxCore = "1.12.0"
 detekt = "1.23.5"
 dfm = "0.9.25"
 espresso-core = "3.5.1"
@@ -22,6 +25,7 @@ hilt = "2.51"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
+jacoco = "0.8.11"
 kcomponent-compiler = "v1.0.8-rc5"
 kotlin = "1.9.23"
 kotlinx-coroutines-android = "1.8.0"
@@ -46,7 +50,8 @@ activity-compose = "1.8.2"
 compose-bom = "2024.02.02"
 kotlin-serialization = "1.6.3"
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+androidx-tracing = { group = "androidx.tracing", name = "tracing", version.ref = "androidxTracing" }
 
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
@@ -138,14 +143,14 @@ uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.r
 
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-ui = { group = "androidx.compose.ui", name = "ui" }
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -166,18 +171,18 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 
-nowinandroid-android-application = { id = "nowinandroid.android.application", version = "unspecified" }
-nowinandroid-android-application-compose = { id = "nowinandroid.android.application.compose", version = "unspecified" }
-nowinandroid-android-application-firebase = { id = "nowinandroid.android.application.firebase", version = "unspecified" }
-nowinandroid-android-application-flavors = { id = "nowinandroid.android.application.flavors", version = "unspecified" }
-nowinandroid-android-application-jacoco = { id = "nowinandroid.android.application.jacoco", version = "unspecified" }
-nowinandroid-android-feature = { id = "nowinandroid.android.feature", version = "unspecified" }
-nowinandroid-android-hilt = { id = "nowinandroid.android.hilt", version = "unspecified" }
-nowinandroid-android-library = { id = "nowinandroid.android.library", version = "unspecified" }
-nowinandroid-android-library-compose = { id = "nowinandroid.android.library.compose", version = "unspecified" }
-nowinandroid-android-library-jacoco = { id = "nowinandroid.android.library.jacoco", version = "unspecified" }
-nowinandroid-android-lint = { id = "nowinandroid.android.lint", version = "unspecified" }
-nowinandroid-android-room = { id = "nowinandroid.android.room", version = "unspecified" }
-nowinandroid-android-test = { id = "nowinandroid.android.test", version = "unspecified" }
-nowinandroid-jvm-library = { id = "nowinandroid.jvm.library", version = "unspecified" }
+bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
+bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
+bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
+bilibilias-android-application-jacoco = { id = "bilibilias.android.application.jacoco", version = "unspecified" }
+bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
+bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
+bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }
+bilibilias-android-library-compose = { id = "bilibilias.android.library.compose", version = "unspecified" }
+bilibilias-android-library-jacoco = { id = "bilibilias.android.library.jacoco", version = "unspecified" }
+bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecified" }
+bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
+bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
+bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }

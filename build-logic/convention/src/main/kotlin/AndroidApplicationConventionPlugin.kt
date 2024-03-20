@@ -16,7 +16,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.android")
-                apply("nowinandroid.android.lint")
+                apply("bilibilias.android.lint")
                 apply("com.dropbox.dependency-guard")
             }
 
@@ -33,5 +33,4 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
         }
     }
-
 }

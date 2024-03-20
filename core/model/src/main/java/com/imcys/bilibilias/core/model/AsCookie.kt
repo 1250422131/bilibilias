@@ -17,7 +17,7 @@ data class AsCookie(
     val httpOnly: Boolean = false,
 )
 
- fun Cookie.toAsCookie(): AsCookie =
+fun Cookie.toAsCookie(): AsCookie =
     AsCookie(
         name = name,
         value = value,

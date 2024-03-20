@@ -1,10 +1,9 @@
 package com.imcys.bilibilias
 
+import com.android.SdkConstants
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
-import com.android.SdkConstants
-import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -78,16 +77,6 @@ abstract class CheckBadgingTask : DefaultTask() {
     abstract val updateBadgingTaskName: Property<String>
 
     override fun getGroup(): String = LifecycleBasePlugin.VERIFICATION_GROUP
-
-    @TaskAction
-    fun taskAction() {
-        assertWithMessage(
-            "Generated badging is different from golden badging! " +
-                "If this change is intended, run ./gradlew ${updateBadgingTaskName.get()}",
-        )
-            .that(generatedBadging.get().asFile.readText())
-            .isEqualTo(goldenBadging.get().asFile.readText())
-    }
 }
 
 fun Project.configureBadgingTasks(

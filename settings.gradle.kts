@@ -23,7 +23,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":app")
 include(":common")
-include(":model_ffmpeg")
 include(":tool_log_export")
 
 include(":core:model")

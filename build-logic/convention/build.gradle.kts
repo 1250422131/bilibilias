@@ -36,55 +36,55 @@ tasks {
 gradlePlugin {
     plugins {
         register("androidApplicationCompose") {
-            id = "nowinandroid.android.application.compose"
+            id = "bilibilias.android.application.compose"
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidApplication") {
-            id = "nowinandroid.android.application"
+            id = "bilibilias.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidApplicationJacoco") {
-            id = "nowinandroid.android.application.jacoco"
+            id = "bilibilias.android.application.jacoco"
             implementationClass = "AndroidApplicationJacocoConventionPlugin"
         }
         register("androidLibraryCompose") {
-            id = "nowinandroid.android.library.compose"
+            id = "bilibilias.android.library.compose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
         register("androidLibrary") {
-            id = "nowinandroid.android.library"
+            id = "bilibilias.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         register("androidFeature") {
-            id = "nowinandroid.android.feature"
+            id = "bilibilias.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("androidLibraryJacoco") {
-            id = "nowinandroid.android.library.jacoco"
+            id = "bilibilias.android.library.jacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
         register("androidTest") {
-            id = "nowinandroid.android.test"
+            id = "bilibilias.android.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
         register("androidHilt") {
-            id = "nowinandroid.android.hilt"
+            id = "bilibilias.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
         register("androidRoom") {
-            id = "nowinandroid.android.room"
+            id = "bilibilias.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
         register("androidFlavors") {
-            id = "nowinandroid.android.application.flavors"
+            id = "bilibilias.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
         register("androidLint") {
-            id = "nowinandroid.android.lint"
+            id = "bilibilias.android.lint"
             implementationClass = "AndroidLintConventionPlugin"
         }
         register("jvmLibrary") {
-            id = "nowinandroid.jvm.library"
+            id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
     }

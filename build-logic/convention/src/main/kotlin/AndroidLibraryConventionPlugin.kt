@@ -1,3 +1,4 @@
+
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
 import com.imcys.bilibilias.configureFlavors
@@ -5,7 +6,6 @@ import com.imcys.bilibilias.configureGradleManagedDevices
 import com.imcys.bilibilias.configureKotlinAndroid
 import com.imcys.bilibilias.configurePrintApksTask
 import com.imcys.bilibilias.disableUnnecessaryAndroidTests
-import com.imcys.bilibilias.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -18,7 +18,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
-                apply("nowinandroid.android.lint")
+                apply("bilibilias.android.lint")
             }
 
             extensions.configure<LibraryExtension> {
@@ -38,7 +38,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             dependencies {
                 add("testImplementation", kotlin("test"))
 
-                add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
+//                add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
             }
         }
     }
