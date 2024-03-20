@@ -9,7 +9,7 @@
 
         <variable
             name="ListBean"
-            type="com.imcys.bilibilias.core.model.PlayHistoryBean" />
+            type="com.imcys.bilibilias.core.model.PlayHistoryBean.DataBean.ListBean" />
 
     </data>
 

@@ -7,7 +7,7 @@
 
         <variable
             name="Data"
-            type="com.imcys.bilibilias.core.model.OldHomeAdBean" />
+            type="com.imcys.bilibilias.core.model.OldHomeAdBean.Data" />
 
         <import type="android.view.View" />
     </data>

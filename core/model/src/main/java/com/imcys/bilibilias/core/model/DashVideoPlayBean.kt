@@ -1,13 +1,11 @@
 package com.imcys.bilibilias.core.model
 
-import com.imcys.deeprecopy.an.EnhancedData
 import kotlinx.serialization.Serializable
 
 /**
  * dash类型视频返回数据
  */
 @Serializable
-@EnhancedData
 data class DashVideoPlayBean(
     val code: Int = 0,
     val message: String = "",

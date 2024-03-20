@@ -9,7 +9,7 @@
 
         <variable
             name="VlistBean"
-            type="com.imcys.bilibilias.core.model.UserWorksBean" />
+            type="com.imcys.bilibilias.core.model.UserWorksBean.DataBean.ListBean.VlistBean" />
 
     </data>
 

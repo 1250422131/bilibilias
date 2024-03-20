@@ -14,16 +14,15 @@ import com.imcys.bilibilias.databinding.ItemDonatePayTypeBinding
 import com.imcys.bilibilias.databinding.ItemDonateProgressBinding
 import com.imcys.bilibilias.databinding.ItemTipBinding
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.imcys.bilibilias.core.model.DonateViewBean
 import javax.inject.Inject
 
 class DonateItemAdapter @Inject constructor() :
-    ListAdapter<DonateViewBean, ViewHolder>(object : DiffUtil.ItemCallback<DonateViewBean>() {
-        override fun areItemsTheSame(oldItem: DonateViewBean, newItem: DonateViewBean): Boolean {
+    ListAdapter<DonateActivity.DonateViewBean, ViewHolder>(object : DiffUtil.ItemCallback<DonateActivity.DonateViewBean>() {
+        override fun areItemsTheSame(oldItem: DonateActivity.DonateViewBean, newItem: DonateActivity.DonateViewBean): Boolean {
             return oldItem.type == newItem.type
         }
 
-        override fun areContentsTheSame(oldItem: DonateViewBean, newItem: DonateViewBean): Boolean {
+        override fun areContentsTheSame(oldItem: DonateActivity.DonateViewBean, newItem: DonateActivity.DonateViewBean): Boolean {
             return oldItem.type == newItem.type
         }
 

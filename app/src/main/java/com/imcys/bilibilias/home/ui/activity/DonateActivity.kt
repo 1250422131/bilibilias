@@ -8,10 +8,10 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.core.model.OldDonateBean
+import com.imcys.bilibilias.core.model.TipBean
 import com.imcys.bilibilias.databinding.ActivityDonateBinding
 import com.imcys.bilibilias.home.ui.adapter.DonateItemAdapter
-import com.imcys.bilibilias.core.model.DonateViewBean
-import com.imcys.bilibilias.core.model.TipBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,7 +25,11 @@ class DonateActivity : BaseActivity() {
     lateinit var donateAdapter: DonateItemAdapter
     @Inject
     lateinit var networkService: NetworkService
-
+    data class DonateViewBean(
+        val type: Int,
+        val oldDonateBean: OldDonateBean? = null,
+        val tipBean: TipBean<DedicateActivity>? = null,
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_donate)
@@ -55,7 +59,6 @@ class DonateActivity : BaseActivity() {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun loadDonateData() {
-
         launchUI {
             val donateData = networkService.getDonateData()
             val newMutableList = mutableListOf<DonateViewBean>()
