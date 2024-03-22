@@ -13,6 +13,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchIO
@@ -21,6 +22,7 @@ import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.tool_log_export.R
 import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
+import com.imcys.bilibilias.tool_log_export.base.network.NetworkService
 import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Cover
 import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Evaluate
 import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Progress
@@ -38,6 +40,8 @@ import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils
 import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils.addCell
 import com.imcys.bilibilias.tool_log_export.utils.ExportDialogUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.util.network.NetworkAddress
 import jxl.format.Alignment
 import jxl.format.Border
 import jxl.format.BorderLineStyle
@@ -46,9 +50,14 @@ import jxl.write.WritableCell
 import jxl.write.WritableCellFormat
 import jxl.write.WritableFont
 import jxl.write.WritableSheet
+import javax.inject.Inject
 import kotlin.math.ceil
 
+@AndroidEntryPoint
 class BangumiFollowLogActivity : LogExportBaseActivity() {
+
+    @Inject
+    lateinit var networkService: NetworkService
 
     private lateinit var bangumiFollowList: BangumiFollowList
 
@@ -104,7 +113,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                 SeasonTypeName,
             ),
 
-        )
+            )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -200,7 +209,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             asToast(
                 this@BangumiFollowLogActivity,
                 "获取成功\n储存位置" +
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
             )
         }
     }
@@ -219,7 +228,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Title -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.title ?: "", arial10format)
+                            addCell(selectIndex, row++, it.title, arial10format)
                         }
                     }
 
@@ -229,7 +238,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                it?.season_id?.toString() ?: "",
+                                it.season_id.toString(),
                                 arial10format,
                             )
                         }
@@ -238,14 +247,14 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Evaluate -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.evaluate ?: "", arial10format)
+                            addCell(selectIndex, row++, it.evaluate, arial10format)
                         }
                     }
 
                     Summary -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.summary ?: "", arial10format)
+                            addCell(selectIndex, row++, it.summary, arial10format)
                         }
                     }
 
@@ -255,7 +264,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                it?.total_count?.toString() ?: "",
+                                it.total_count.toString(),
                                 arial10format,
                             )
                         }
@@ -264,35 +273,35 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                     Progress -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.progress ?: "", arial10format)
+                            addCell(selectIndex, row++, it.progress, arial10format)
                         }
                     }
 
                     Cover -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.cover ?: "", arial10format)
+                            addCell(selectIndex, row++, it.cover, arial10format)
                         }
                     }
 
                     SeasonTitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.season_title ?: "", arial10format)
+                            addCell(selectIndex, row++, it.season_title, arial10format)
                         }
                     }
 
                     Subtitle -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.subtitle ?: "", arial10format)
+                            addCell(selectIndex, row++, it.subtitle, arial10format)
                         }
                     }
 
                     Subtitle14 -> {
                         var row = if (i == 0) i + 1 else 30 * i
                         bangumiFollowList.data.list.forEach {
-                            addCell(selectIndex, row++, it?.subtitle_14 ?: "", arial10format)
+                            addCell(selectIndex, row++, it.subtitle_14, arial10format)
                         }
                     }
 
@@ -302,7 +311,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                             addCell(
                                 selectIndex,
                                 row++,
-                                listBean?.season_type_name ?: "",
+                                listBean.season_type_name,
                                 arial10format,
                             )
                         }
@@ -313,8 +322,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-            .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=$pn&ps=30")
+        return networkService.getBangumiFollow(asUser.mid, 1, pn, 30)
     }
 
     /**
@@ -373,14 +381,10 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      * 加载番剧情况
      */
     private fun loadBanguiFollowData() {
-        launchIO {
-            bangumiFollowList = KtHttpUtils.addHeader("coolie", asUser.cookie)
-                .asyncGet("${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15")
-
-            launchUI {
-                if (bangumiFollowList.code == 0) {
-                    binding.bangumiFollowList = bangumiFollowList
-                }
+        launchUI {
+            bangumiFollowList = networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
+            if (bangumiFollowList.code == 0) {
+                binding.bangumiFollowList = bangumiFollowList
             }
         }
     }

@@ -57,7 +57,7 @@
                                     android:textStyle="bold" />
                             </LinearLayout>
 
-                            <LinearLayout
+                            <View
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="5" />
@@ -95,10 +95,35 @@
                         app:sr_enableLoadMore="true"
                         app:sr_enableRefresh="false">
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/fragment_user_works_rv"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:orientation="horizontal"
+                                android:paddingBottom="4dp"
+                                tools:ignore="RtlHardcoded">
+
+                                <androidx.constraintlayout.utils.widget.ImageFilterView
+                                    android:id="@+id/uv_download_image"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                                    android:src="@drawable/uv_download_four" />
+                            </LinearLayout>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/fragment_user_works_rv"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                        </LinearLayout>
+
+
                     </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -1,36 +1,31 @@
 package com.imcys.bilibilias.common.di
 
-import com.imcys.bilibilias.base.utils.asLogD
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.utils.file.SystemUtil
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.ROAM_API
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.observer.ResponseObserver
 import io.ktor.client.plugins.plugin
-import io.ktor.client.request.header
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
+import okhttp3.brotli.BrotliInterceptor
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -38,56 +33,57 @@ import javax.inject.Singleton
 class NetworkModule {
     @Provides
     @Singleton
-    fun provideHttpClient(): HttpClient = HttpClient(
-        OkHttp.create {
-            addInterceptor { chain ->
-                chain.proceed(chain.request())
-            }
-        },
+    fun provideOkhttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .pingInterval(1, TimeUnit.SECONDS)
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .removeHeader(HttpHeaders.AcceptEncoding)
+                .removeHeader(HttpHeaders.UserAgent)
+                .addHeader(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
+                .build()
+            chain.proceed(request)
+        }
+        .addInterceptor(MonitorInterceptor())
+        .addInterceptor(BrotliInterceptor)
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideHttpClient(
+        asLogger: AsLogger,
+        json: Json,
+        asCookiesStorage: AsCookiesStorage,
+        okHttpClient: OkHttpClient
+    ): HttpClient = HttpClient(
+        OkHttp.create { preconfigured = okHttpClient }
     ) {
+
+        install(HttpCookies) {
+            storage = asCookiesStorage
+        }
+
+        install(HttpTimeout) {
+            requestTimeoutMillis = 50000
+        }
+
         defaultRequest {
-            url(BILIBILI_URL)
+            url(ROAM_API)
         }
-        BrowserUserAgent()
-        install(DefaultRequest) {
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-        }
-        install(ResponseObserver) {
-            onResponse { response ->
-                asLogD("Http status:", "${response.status.value}")
-            }
-        }
+
         install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                },
-            )
+            json(json)
         }
+
         install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 2)
+            retryOnServerErrors(maxRetries = 5)
             exponentialDelay()
         }
         install(Logging) {
-            logger = Logger.DEFAULT
+            logger = asLogger
             level = LogLevel.ALL
-            filter { request ->
-                request.url.host.contains("ktor.io")
-            }
-            sanitizeHeader { header -> header == HttpHeaders.Authorization }
         }
     }.apply {
         plugin(HttpSend).intercept { request ->
-            if (request.headers.contains("misakamoe")) {
-                request.userAgent(SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}")
-            }
-            // todo 注意是否还有其他方法使用cookie
-            if (request.method == HttpMethod.Get) {
-                request.header(COOKIE, BaseApplication.asUser.cookie)
-            }
-
             val originalCall = execute(request)
             if (originalCall.response.status.value !in 100..399) {
                 execute(request)

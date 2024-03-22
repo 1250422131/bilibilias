@@ -9,10 +9,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemToolBinding
+import com.imcys.bilibilias.databinding.ItemToolUserCardBinding
 import com.imcys.bilibilias.databinding.ItemToolVideoCardBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 
 
@@ -51,6 +54,12 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 )
             }
 
+            3 -> {
+                DataBindingUtil.inflate<ItemToolUserCardBinding>(
+                    LayoutInflater.from(parent.context),
+                    R.layout.item_tool_user_card, parent, false
+                )
+            }
 
             else -> {
                 TODO("无效内容")
@@ -80,27 +89,26 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 val clickEvent: () -> Unit = getItem(position).clickEvent
                 binding?.root?.setOnClickListener {
 
-                    val videoPic = androidx.core.util.Pair<View, String>(
-                        binding.itemToolVideoCardPic,
-                        "videoPic"
-                    )
-
                     val i = Intent(holder.itemView.context, AsVideoActivity::class.java)
-
-                    val optionsCompat: ActivityOptionsCompat =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            holder.itemView.context as HomeActivity,
-                            videoPic
-                        )
-
 
 
                     i.putExtra("bvId", getItem(position).videoBaseBean?.data?.bvid)
 
-                    holder.itemView.context.startActivity(i, optionsCompat.toBundle())
+                    holder.itemView.context.startActivity(i)
 
                     clickEvent()
                 }
+            }
+
+            3 -> {
+                val data = getItem(position).userCardBean
+                val binding = DataBindingUtil.getBinding<ItemToolUserCardBinding>(holder.itemView)
+                binding?.cardBean = data
+
+                holder.itemView.setOnClickListener {
+                    UserInfoActivity.actionStart(holder.itemView.context,data?.mid?.toLong())
+                }
+
             }
 
         }

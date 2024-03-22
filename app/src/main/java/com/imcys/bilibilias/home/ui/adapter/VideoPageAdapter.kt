@@ -10,7 +10,7 @@ import com.imcys.bilibilias.databinding.ItemDlVideoPageBinding
 import com.imcys.bilibilias.home.ui.model.VideoPageListData
 
 class VideoPageAdapter(
-    val datas: MutableList<VideoPageListData.DataBean>,
+    private val datas: List<VideoPageListData.DataBean>,
     val selectedResult: (position: Int, itemBinding: ItemDlVideoPageBinding) -> Unit,
 ) : RecyclerView.Adapter<VideoPageAdapter.ViewHolder>() {
 
@@ -20,7 +20,9 @@ class VideoPageAdapter(
         val binding: ItemDlVideoPageBinding =
             DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.item_dl_video_page, parent, false
+                R.layout.item_dl_video_page,
+                parent,
+                false
             )
         return ViewHolder(binding.root)
     }
@@ -31,11 +33,10 @@ class VideoPageAdapter(
             dataBean = datas[position]
         }
 
-        //回调点击项数
+        // 回调点击项数
         binding?.itemCollectionButton?.setOnClickListener {
             selectedResult(position, binding)
         }
-
     }
 
     override fun getItemCount(): Int {
