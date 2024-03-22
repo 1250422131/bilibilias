@@ -1,13 +1,11 @@
 package com.imcys.bilibilias.base.model.login.view
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -170,7 +168,7 @@ class LoginQRModel @Inject constructor(
     fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
         val kv = MMKV.mmkvWithID("data")
 
-        kv.encode("refreshToken", loginStateBean.data.refresh_token)
+        kv.encode("refreshToken", loginStateBean.data.refreshToken)
 
         var cookies = ""
         // 创建 Pattern 对象
@@ -197,7 +195,7 @@ class LoginQRModel @Inject constructor(
         }
         kv.apply {
             encode(COOKIES, cookies)
-            encode("refreshToken", loginStateBean.data.refresh_token)
+            encode("refreshToken", loginStateBean.data.refreshToken)
         }
     }
 }

@@ -305,4 +305,25 @@
     <string name="Copied">复制成功</string>
     <string name="app_root_preferences_long_title_language">设置软件显示的语言</string>
     <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言（测试功能）</string>
+    <string name="app_donate_tip_title">为其他参与者捐款</string>
+    <string name="app_donate_tip_long_title">现在你有更多选择</string>
+    <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
+    <string name="app_donate_tip_link" />
+    <string name="app_login_view_biliagreement_context">无论如何，你都在间接使用B站</string>
+    <string name="app_login_view_biliagreement_alert_title">B站账户需要遵守的协议列表</string>
+    <string name="app_login_view_biliagreement_alert_button_text">使用则代表同意</string>
+    <string name="app_login_view_bilibiliasagreement_title">BILIBILIAS隐私政策</string>
+    <string name="app_login_view_bilibiliasagreement_text">使用则代表同意</string>
+    <string name="app_user_download_save_path_error">获取用户下载路径错误</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_title">视频文件特殊</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_content">该视频无FLV格式，故无法播放，请选择Dash模式缓存。</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_button_text">知道啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_title">越界啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_message">没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_button_text">我知道啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_badge">会员</string>
+    <string name="app_asvideoactivity_ismember_badge">会员</string>
+    <string name="app_asvideoactivity_ismember_dialog_title">越界啦</string>
+    <string name="app_asvideoactivity_ismember_dialog_message">没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。</string>
+    <string name="app_asvideoactivity_ismember_dialog_button_text">我知道啦</string>
 </resources>
