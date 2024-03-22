@@ -14,6 +14,6 @@ data class LoginQrcodeBean(
     @Serializable
     data class DataBean(
         var url: String = "",
-        var qrcode_key: String = "",
+        var qrcodeKey: String = "",
     )
 }
