@@ -41,11 +41,13 @@ class SplashActivity : BaseActivity() {
         } else {
             getSavePermissions()
         }
-        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
-        constraintLayout.addStatusBarTopPadding()
+
+//        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
+//        constraintLayout.addStatusBarTopPadding()
     }
 
     override fun onBackPressed() {
+        super.onBackPressed()
         moveTaskToBack(true)
     }
 

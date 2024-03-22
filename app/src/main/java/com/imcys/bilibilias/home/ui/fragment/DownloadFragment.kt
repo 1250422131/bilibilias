@@ -11,6 +11,8 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
@@ -36,6 +38,9 @@ class DownloadFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
+    
+    @Inject
+    lateinit var downloadQueue: DownloadQueue
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +53,8 @@ class DownloadFragment : BaseFragment() {
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
 
         initView()
+        
+        DialogUtils.downloadQueue = downloadQueue
 
         return fragmentDownloadBinding.root
     }
@@ -142,7 +149,7 @@ class DownloadFragment : BaseFragment() {
                         when (tab.position) {
                             0 -> {
                                 fragmentDownloadRecyclerView.adapter =
-                                    App.downloadQueue.downloadTaskAdapter
+                                    downloadQueue.downloadTaskAdapter
                             }
 
                             1 -> {
@@ -219,13 +226,13 @@ class DownloadFragment : BaseFragment() {
      */
     private fun loadDownloadTask() {
         fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
+            downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
 
             launchIO {
                 // 协程提交
                 downloadFinishTaskRepository.apply {
-                    App.downloadQueue.downloadFinishTaskAd?.apply {
+                    downloadQueue.downloadFinishTaskAd?.apply {
                         val finishTasks = allDownloadFinishTask()
                         lifecycleScope.launchUI {
                             submitList(finishTasks)
@@ -241,9 +248,9 @@ class DownloadFragment : BaseFragment() {
      */
     private fun initDownloadList() {
         fragmentDownloadBinding.apply {
-            App.downloadQueue.downloadTaskAdapter = downloadTaskAdapter
+            downloadQueue.downloadTaskAdapter = downloadTaskAdapter
 
-            fragmentDownloadRecyclerView.adapter = App.downloadQueue.downloadTaskAdapter
+            fragmentDownloadRecyclerView.adapter = downloadQueue.downloadTaskAdapter
 //            fragmentDownloadRecyclerView.itemAnimator = null
             fragmentDownloadRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

@@ -1,15 +1,17 @@
+//import com.google.protobuf.gradle.id
+
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
+//    alias(libs.plugins.protobuf)
     kotlin("kapt")
 }
 apply {
-    from("/../config.gradle")
+    from("../config.gradle")
 }
 
 ksp {
@@ -22,7 +24,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,14 +33,13 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
-
     }
 
     dataBinding {
-        isEnabled = true
+        enable = true
     }
 
     compileOptions {
@@ -53,9 +53,59 @@ android {
 }
 kotlin {
     jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
+// https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
+// https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
+
+//protobuf {
+//    protoc {
+//        artifact = "com.google.protobuf:protoc:3.25.2"
+//    }
+//    plugins {
+//        id("java") {
+//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
+//        }
+//        id("grpc") {
+//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
+//        }
+//        id("grpckt") {
+//            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
+//        }
+//    }
+//    generateProtoTasks {
+//        all().forEach {
+//            it.plugins {
+//                id("java") {
+//                    option("lite")
+//                }
+//                id("grpc") {
+//                    option("lite")
+//                }
+//                id("grpckt") {
+//                    option("lite")
+//                }
+//            }
+//            it.builtins {
+//                id("kotlin") {
+//                    option("lite")
+//                }
+//            }
+//        }
+//    }
+//}
 dependencies {
+
+    api(libs.grpc.kotlin.stub)
+    api(libs.grpc.protobuf)
+
+    api(libs.protobuf.kotlin)
+    api(libs.protobuf.java.util)
 
     // 深拷贝
     api(libs.deeprecopy.core)
@@ -63,9 +113,9 @@ dependencies {
 
     // hilt库，实现控制反转
     api(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
-    // 核心代码库
+    // 文件下载
     api(libs.okdownload)
 
     // 提供kotlin extension，可以不引入
@@ -75,15 +125,13 @@ dependencies {
      * SmoothRefreshLayout支持
      */
     api(libs.srl.core)
-    api(libs.srl.ext.material) // md刷新头
+    api(libs.srl.ext.material)
     api(libs.srl.ext.classics)
-
 
     /**
      * MMKV 储存框架
      */
     api(libs.mmkv)
-
 
     /**
      * 伸缩布局
@@ -116,6 +164,7 @@ dependencies {
 
     // 协程
     api(libs.kotlinx.coroutines.android)
+    api(libs.kotlinx.serialization.cbor)
 
     /**
      * RxFFmpeg
@@ -130,7 +179,7 @@ dependencies {
     ksp(libs.kcomponent.compiler)
 
     // 百度统计
-    api(libs.mtj.sdk.circle)
+    api(libs.mtj.sdk)
 
     // 开屏引导
     api(libs.hyy920109.guidePro)
@@ -141,8 +190,6 @@ dependencies {
     api(libs.appcenter.analytics)
     api(libs.appcenter.crashes)
 
-    //api( "com.github.fondesa:recycler-view-divider:3.6.0" rv分割
-
     /**
      * room
      * 本地化数据库
@@ -152,51 +199,39 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     /**
-     * 文件选择器
-     */
-    api(libs.androidFilePicker)
-
-    /**
-     * xutils
-     * 下载文件支持
-     */
-    api(libs.xutils)
-
-    /**
      * DanmakuFlameMaster
      * 烈焰弹幕使
      */
     api(libs.dfm)
 
-    //饺子播放器
+    // 饺子播放器
     api(libs.jiaozivideoplayer)
 
-    //lottie动画库
+    // lottie动画库
     api(libs.lottie)
-
-    //implementation "androidx.palette:palette:1.0.0"
 
     api(libs.banner)
 
     api(libs.glide)
-    //implementation("jp.wasabeef:glide-transformations:4.3.0")
 
     /**
      * 沉浸式布局库
      */
     api(libs.uiTimateBarX)
 
+    debugImplementation(libs.monitor)
+    releaseImplementation(libs.monitor.no.op)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.brotli)
+
     /**
      * ktor全局支持
      */
     api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
-    //日志
-    api(libs.ktor.client.logging)//Logging
-    //json解析支持
+    api(libs.napier)
+    api(libs.ktor.client.logging)
     api(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization.gson)
-    api(libs.gson)
     api(libs.ktor.serialization.kotlinx.json)
 
     api(libs.constraintlayout)
@@ -218,18 +253,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-}
-
-tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
-    reports {
-        // Enable/Disable XML report (default: true)
-        xml.required.set(true)
-        xml.outputLocation.set(file("$projectDir/config/detekt.xml"))
-        // Enable/Disable HTML report (default: true)
-        html.required.set(true)
-        html.outputLocation.set(file("$projectDir/config/detekt.html"))
-        // Enable/Disable MD report (default: false)
-        md.required.set(true)
-        md.outputLocation.set(file("$projectDir/config/detekt.md"))
-    }
 }

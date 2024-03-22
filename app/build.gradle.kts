@@ -14,14 +14,13 @@ ksp {
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
-    buildToolsVersion = "33.0.2"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
         // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 32
+        targetSdk = 34
         versionCode = 203
-        versionName = "2.0.31"
+        versionName = "2.0.4-开阳-Alpha"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
@@ -31,11 +30,7 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-
-        flavorDimensions(project.name)
+        flavorDimensions += project.name
     }
 
     buildTypes {
@@ -80,12 +75,19 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         compose = true
     }
 
+    dataBinding {
+        enable = true
+    }
+
+    viewBinding {
+        enable = true
+    }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
 
     packaging {
@@ -99,15 +101,23 @@ android {
         includeInBundle = true
     }
 }
-
+kapt {
+    correctErrorTypes = true
+}
 kotlin {
     jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
 dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
+    implementation(libs.androidx.activity)
 
     ksp(libs.deeprecopy.compiler)
 
@@ -116,7 +126,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     ksp(libs.kcomponent.compiler)
     implementation(libs.material)

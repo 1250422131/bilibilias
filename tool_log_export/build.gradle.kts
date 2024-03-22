@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.hilt)
     kotlin("kapt")
 }
 
@@ -12,12 +13,11 @@ ksp {
 
 android {
     namespace = "com.imcys.bilibilias.tool_log_export"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
-
+        targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,18 +38,26 @@ android {
         jvmTarget = "17"
     }
     dataBinding {
-        isEnabled = true
+        enable = true
     }
 }
 
 kotlin {
     jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
 }
 
 dependencies {
     implementation(project(":common"))
     implementation(libs.constraintlayout)
     ksp(libs.kcomponent.compiler)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.appcompat)

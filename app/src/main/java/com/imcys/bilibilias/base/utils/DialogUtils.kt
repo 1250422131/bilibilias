@@ -29,28 +29,24 @@ import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi.serviceTestApi
-import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.AS_COOKIES
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
-import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
+import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
+import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -61,6 +57,8 @@ import kotlinx.coroutines.flow.*
 object DialogUtils {
 
     private val TAG = DialogUtils::class.java.simpleName
+    lateinit var downloadQueue: DownloadQueue
+
     const val DASH_TYPE = 1
     const val MP4_TYPE = 2
     const val ADM_DOWNLOAD = 3
@@ -93,7 +91,7 @@ object DialogUtils {
 
             dialogLoginAs.setOnClickListener {
                 asToast(context, "云端账户即将出炉")
-                bottomSheetDialog.cancel()
+//                bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
 //                    }.show()
@@ -126,6 +124,7 @@ object DialogUtils {
         loginQrcodeBean: LoginQrcodeBean,
         responseResult: (Int, LoginStateBean) -> Unit,
     ): BottomSheetDialog {
+
         val binding: DialogLoginQrBottomsheetBinding =
             DialogLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
 
@@ -134,7 +133,10 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
         binding.dataBean = loginQrcodeBean.data
-        binding.loginQRModel = LoginQRModel()
+        binding.loginQRModel =
+            ViewModelProvider(
+                context as HomeActivity,
+            )[LoginQRModel::class.java]
         binding.loginQRModel?.responseResult = responseResult
         // 传导binding过去
         binding.loginQRModel?.binding = binding
@@ -220,7 +222,7 @@ object DialogUtils {
     class AsLoginBsViewModelFactory(
         binding: DialogAsLoginBottomsheetBinding,
         bottomSheetDialog: BottomSheetDialog,
-        function: () -> Unit
+        function: () -> Unit,
     ) : ViewModelProvider.Factory
 
     /**
@@ -332,6 +334,27 @@ object DialogUtils {
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
+        return bottomSheetDialog
+    }
+
+    /**
+     * 加载等待弹窗
+     * @param context Context
+     * @return BottomSheetDialog
+     */
+    @SuppressLint("InflateParams")
+    fun loadProgressDialog(context: Context): BottomSheetDialog {
+        // 先获取View实例
+        val view: View = LayoutInflater.from(context)
+            .inflate(R.layout.dialog_load_progress_bottomsheet, null, false)
+
+        // 设置布局背景
+        val bottomSheetDialog = initBottomSheetDialog(context, view)
+        // 用户行为val mDialogBehavior =
+        initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        // 自定义方案
+        // mDialogBehavior.peekHeight = 600
+
         return bottomSheetDialog
     }
 
@@ -539,6 +562,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -566,6 +590,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     videoPageMutableList,
+                    networkService
                 )
             }
 
@@ -577,6 +602,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     videoPageMutableList,
+                    networkService
                 )
             }
         }
@@ -603,6 +629,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -630,6 +657,7 @@ object DialogUtils {
                     downloadCondition,
                     toneQuality,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
 
@@ -641,6 +669,7 @@ object DialogUtils {
                     80,
                     downloadTool,
                     bangumiPageMutableList,
+                    networkService
                 )
             }
         }
@@ -677,7 +706,7 @@ object DialogUtils {
     }
 
     /**
-     * 下载弹幕/字幕文件
+     * 下载弹幕文件
      */
     fun downloadDMDialog(
         context: Context,
@@ -687,14 +716,7 @@ object DialogUtils {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
@@ -710,6 +732,252 @@ object DialogUtils {
     }
 
     /**
+     * 设置动态高斯模糊效果
+     */
+    fun BottomSheetDialog.setDynamicGaussianBlurEffect(blurRadius: Int = 40) {
+        window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setBackgroundBlurRadius(40)
+            }
+        }
+    }
+
+    /**
+     * 下载字幕文件
+     */
+    fun downloadCCAssDialog(
+        context: Context,
+        videoInfoV2: VideoInfoV2,
+        block: (selectCC: VideoInfoV2.Subtitle.MSubtitle) -> Unit,
+    ): BottomSheetDialog {
+        val binding = DialogDownloadCcAssBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener { setDynamicGaussianBlurEffect() }
+        }
+
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
+        binding.apply {
+            var selectIndex = 0
+            val ccAssAdapter = CCAssAdapter {
+                // 获取选中的值
+                selectIndex = it
+            }
+
+            dialogDownloadCcAssRv.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            dialogDownloadCcAssRv.adapter = ccAssAdapter
+
+            ccAssAdapter.submitList(videoInfoV2.subtitle.subtitles)
+
+            dialogDlCcButton.setOnClickListener {
+                block.invoke(videoInfoV2.subtitle.subtitles[selectIndex])
+                bottomSheetDialog.cancel()
+            }
+
+            dialogDlCcCloseButton.setOnClickListener { bottomSheetDialog.cancel() }
+
+            if (videoInfoV2.subtitle.subtitles.isEmpty()) {
+                dialogDlCcButton.visibility = View.GONE
+            }
+        }
+
+        return bottomSheetDialog
+    }
+
+
+    @SuppressLint("CommitPrefEdits")
+    @JvmStatic
+    fun batchDownloadVideoDialog(
+        context: Context,
+        works: List<UserWorksBean.DataBean.ListBean.VlistBean>,
+        networkService: NetworkService
+    ): BottomSheetDialog {
+
+        var selectDefinition = 80
+        var toneQuality = 30280
+
+        var downloadType = DASH_TYPE
+        var downloadTool = APP_DOWNLOAD
+        var downloadCondition = VIDEOANDAUDIO
+
+        val binding = DialogBatchDownloadVideoBinding.inflate(LayoutInflater.from(context))
+
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                setDynamicGaussianBlurEffect()
+            }
+        }
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+
+        initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
+
+        binding.apply {
+
+            launchUI {
+                val baseVideoBaseBean = networkService.getVideoBaseInfoByBvid(works[0].bvid)
+
+                val baseVideo = networkService.getDashVideoPlayInfo(works[0].bvid,baseVideoBaseBean.data.cid,80)
+
+                dialogDlVideoDefinitionLy.setOnClickListener {
+                    loadVideoDefinition(context, baseVideo) {
+                        // 这里返回的是清晰度的数值代码
+                        selectDefinition = it
+
+                        // 处理下
+                        baseVideo.data.support_formats.forEach { it1 ->
+                            if (it1.quality == it) {
+                                dialogDlVideoDefinitionTx.text =
+                                    it1.new_description
+                            }
+                        }
+                    }.show()
+                }
+
+                // 设置音质选择
+                dialogDlAudioTypeTx.setOnClickListener {
+                    loadVideoToneQualityList(context, baseVideo) {
+                        toneQuality = it.id
+                        dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    }.show()
+                }
+
+            }
+
+
+            dialogDlVideoTypeLy.setOnClickListener {
+                loadDownloadTypeDialog(context) { selects, typeName ->
+                    downloadType = selects
+                    dialogDlVideoTypeTx.text = typeName
+                }.show()
+            }
+
+
+            val sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context).apply {
+                    when (getInt("user_download_tool_list", 1)) {
+                        1 -> {
+                            downloadTool = APP_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_app_dl)
+                        }
+
+                        2 -> {
+                            downloadTool = IDM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_idm_dl)
+                        }
+
+                        3 -> {
+                            downloadTool = ADM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_adm_dl)
+                        }
+                    }
+
+                    downloadType = getInt("user_download_type", 1)
+                    when (getInt("user_download_type", 1)) {
+                        1 -> {
+                            dialogDlVideoTypeTx.text = "Dash"
+                        }
+
+                        2 -> {
+                            dialogDlVideoTypeTx.text = "MP4"
+                        }
+                    }
+
+                    downloadCondition = getInt("user_download_condition", 1)
+                    when (getInt("user_download_condition", 1)) {
+                        1 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
+                        }
+
+                        2 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_audio)
+                        }
+
+                        3 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_video)
+                        }
+                    }
+                }
+
+            dialogDlVideoRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                when (i) {
+                    R.id.dialog_dl_video_idm_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 2).apply()
+                        downloadTool = IDM_DOWNLOAD
+                    }
+
+                    R.id.dialog_dl_video_app_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 1).apply()
+                        downloadTool = APP_DOWNLOAD
+                    }
+
+                    R.id.dialog_dl_video_adm_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 3).apply()
+                        downloadTool = ADM_DOWNLOAD
+                    }
+                }
+            }
+
+            dialogDlConditionRadioGroup.setOnCheckedChangeListener { _, i ->
+                when (i) {
+                    R.id.dialog_dl_video_and_audio -> {
+                        downloadCondition = VIDEOANDAUDIO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", VIDEOANDAUDIO)
+                            apply()
+                        }
+                    }
+
+                    R.id.dialog_dl_only_video -> {
+                        downloadCondition = ONLY_VIDEO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", ONLY_VIDEO)
+                            apply()
+                        }
+                    }
+
+                    R.id.dialog_dl_only_audio -> {
+                        downloadCondition = ONLY_AUDIO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", ONLY_AUDIO)
+                            apply()
+                        }
+                    }
+                }
+            }
+
+            dialogDlVideoButton.setOnClickListener {
+                launchUI {
+                    works.forEach {
+                        val videoBaseBean = networkService.getVideoBaseInfoByBvid(it.bvid)
+                        val videoPlayListData = networkService.getVideoPageListData(it.bvid)
+                        // 设置布局视频播放数据
+                        downloadTaskStream(
+                            context,
+                            downloadType,
+                            downloadTool,
+                            downloadCondition,
+                            toneQuality,
+                            videoBaseBean,
+                            selectDefinition,
+                            80,
+                            listOf(videoPlayListData.data[0]).toMutableList(),
+                            networkService
+                        )
+                    }
+                }
+                bottomSheetDialog.cancel()
+            }
+        }
+        return bottomSheetDialog
+
+
+    }
+    /**
      * 缓存视频弹窗
      * @param context Context
      * @param videoBaseBean VideoBaseBean
@@ -724,6 +992,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
         var selectDefinition = 80
@@ -739,14 +1008,7 @@ object DialogUtils {
 
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener {
-                window?.apply {
-                    // 设置动态高斯模糊效果
-                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        setBackgroundBlurRadius(40)
-                    } // 设置背景模糊程度
-                }
+                setDynamicGaussianBlurEffect()
             }
         }
         // 设置布局
@@ -905,6 +1167,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
                 bottomSheetDialog.cancel()
             }
@@ -927,6 +1190,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
+        networkService: NetworkService
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         var selectDefinition = 80
@@ -1101,6 +1365,7 @@ object DialogUtils {
                     selectDefinition,
                     80,
                     videoPageMutableList,
+                    networkService
                 )
 
                 bottomSheetDialog.cancel()
@@ -1119,6 +1384,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
@@ -1127,19 +1393,13 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val dashBangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<DashBangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
-                        )
+                    val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
                     emit(VideoData(dashBangumiPlayBean, it))
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1209,6 +1469,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
@@ -1217,20 +1478,14 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<DashVideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=4048&fourk=1"
-                            )
+                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
             }.collect {
-                delay(300)
                 when (downloadCondition) {
                     VIDEOANDAUDIO -> {
                         addTask(
@@ -1306,6 +1561,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val videoPlayBean: VideoPlayBean,
@@ -1314,15 +1570,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean =
-                        KtHttpUtils.addHeader(COOKIE, asUser.cookie)
-                            .addHeader(REFERER, BILIBILI_URL)
-                            .asyncGet<VideoPlayBean>(
-                                "${BilibiliApi.videoPlayPath}?bvid=${videoBaseBean.data.bvid}&cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
-                            )
+                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1357,6 +1608,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        networkService: NetworkService
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
@@ -1365,15 +1617,10 @@ object DialogUtils {
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = KtHttpUtils
-                        .addHeader(COOKIE, asUser.cookie)
-                        .addHeader(REFERER, BILIBILI_URL)
-                        .asyncGet<BangumiPlayBean>(
-                            "${ROAM_API}pgc/player/web/playurl?cid=${it.cid}&qn=$qn&fnval=0&fourk=1"
-                        )
+                    val bangumiPlayBean = networkService.n4(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -1449,7 +1696,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1480,11 +1727,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1553,7 +1804,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1584,11 +1835,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1672,7 +1927,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1703,11 +1958,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }
@@ -1790,7 +2049,7 @@ object DialogUtils {
 
         when (downloadTool) {
             APP_DOWNLOAD -> {
-                App.downloadQueue.addTask(
+                downloadQueue.addTask(
                     url,
                     savePath,
                     intFileType,
@@ -1821,11 +2080,15 @@ object DialogUtils {
             }
 
             IDM_DOWNLOAD -> {
-                toIdmDownload(url, context)
+                launchUI {
+                    toIdmDownload(url, context)
+                }
             }
 
             ADM_DOWNLOAD -> {
-                toAdmDownload(url, context)
+                launchUI {
+                    toAdmDownload(url, context)
+                }
             }
         }
     }

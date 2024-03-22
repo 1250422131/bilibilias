@@ -58,7 +58,6 @@ class LogExportActivity : LogExportBaseActivity() {
 
         binding.logExportHomeRv.linear().setup {
             //防抖动
-            clickThrottle = 1000 // 单位毫秒
             setAnimation(AnimationType.SCALE)
             addType<ExportItemBean>(R.layout.log_export_item_export_tool)
 

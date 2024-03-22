@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.common.base
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -62,7 +64,7 @@ open class AbsActivity : AppCompatActivity() {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
     ) {
-        lifecycleScope.launch(Dispatchers.Main, start, block)
+        lifecycleScope.launch(Dispatchers.Main.immediate, start, block)
     }
 
     private fun setLanguage() {
@@ -106,27 +108,40 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 // 统计接入
-                AppCenter.start(
-                    application,
-                    BaseApplication.appSecret,
-                    Analytics::class.java,
-                    Crashes::class.java,
-                )
+//                AppCenter.start(
+//                    application,
+//                    BaseApplication.appSecret,
+//                    Analytics::class.java,
+//                    Crashes::class.java,
+//                )
             }
         }
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
         // 注册广播
-        registerReceiver(
-            // 这块是主题广播
-            mThemeChangedBroadcast,
-            IntentFilter().apply {
-                addAction("com.imcys.bilibilias.app.THEME_CHANGED")
-                addAction("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
-            },
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                // 这块是主题广播
+                mThemeChangedBroadcast,
+                IntentFilter().apply {
+                    addAction("com.imcys.bilibilias.app.THEME_CHANGED")
+                    addAction("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
+                },
+                RECEIVER_NOT_EXPORTED,
+            )
+        } else {
+            registerReceiver(
+                // 这块是主题广播
+                mThemeChangedBroadcast,
+                IntentFilter().apply {
+                    addAction("com.imcys.bilibilias.app.THEME_CHANGED")
+                    addAction("com.imcys.bilibilias.app.LANGUAGE_CHANGED")
+                },
+            )
+        }
     }
 
     // 添加活动

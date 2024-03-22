@@ -8,11 +8,14 @@ import android.view.KeyEvent
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
@@ -21,10 +24,13 @@ import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.anno.RouterAnno
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @RouterAnno(
     hostAndPath = ARouterAddress.AppHomeActivity,
 )
+@AndroidEntryPoint
 class HomeActivity : BaseActivity() {
     private var exitTime: Long = 0
     lateinit var activityHomeBinding: ActivityHomeBinding
@@ -33,6 +39,9 @@ class HomeActivity : BaseActivity() {
     lateinit var homeFragment: HomeFragment
     lateinit var downloadFragment: DownloadFragment
     lateinit var userFragment: UserFragment
+    @Inject
+    lateinit var asCookiesStorage: AsCookiesStorage
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
@@ -56,6 +65,10 @@ class HomeActivity : BaseActivity() {
 
         parseShare()
 
+        // 启动百度统计
+        startBaiDuService()
+
+
     }
 
 
@@ -71,7 +84,7 @@ class HomeActivity : BaseActivity() {
 
     //启动时解析视频数据
     @SuppressLint("ResourceType")
-    private fun parseShare() {
+        private fun parseShare() {
         val intent = intent
         val action = intent.action
         val type = intent.type
@@ -170,6 +183,16 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    /**
+     * 百度统计
+     */
+     fun startBaiDuService() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
+        StatService.setAuthorizedState(this, authorizedState)
+        StatService.start(this)
+    }
+
     companion object {
 
         fun actionStart(context: Context, asUrl: String) {
@@ -179,6 +202,11 @@ class HomeActivity : BaseActivity() {
         }
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        asCookiesStorage.close()
     }
 
     override fun onResume() {
