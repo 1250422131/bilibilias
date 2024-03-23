@@ -79,6 +79,7 @@ class SettingActivity : BaseActivity() {
                     }
                     val documentFile = DocumentFile.fromSingleUri(this, resultData.data!!)
 
+                    // Not need to translate to file path
                     var filePath = documentFile!!.uri.path?.replace("/tree/primary:", "手机根目录:")
                     filePath = filePath?.replace(Regex("/tree/.*:"), "储存卡:")
                     settingsFragment.userDownloadSavePathEditText.summary = filePath

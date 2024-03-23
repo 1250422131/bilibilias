@@ -326,4 +326,10 @@
     <string name="app_asvideoactivity_ismember_dialog_title">越界啦</string>
     <string name="app_asvideoactivity_ismember_dialog_message">没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。</string>
     <string name="app_asvideoactivity_ismember_dialog_button_text">我知道啦</string>
+    <string name="app_dialog_dialog_astoast_content">云端账户即将出炉</string>
+    <string name="app_dialog_addbangumidownloadtask_toast_text">已添加到下载队列</string>
+    <string name="app_download_queue_error_text">下载失败问题:</string>
+    <string name="app_download_queue_cachesuccessful">缓存成功</string>
+    <string name="app_download_queue_merge_error">合并错误</string>
+    <string name="app_download_queue_merge_finish">合并完成</string>
 </resources>
