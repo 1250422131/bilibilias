@@ -90,7 +90,7 @@ object DialogUtils {
             }
 
             dialogLoginAs.setOnClickListener {
-                asToast(context, "云端账户即将出炉")
+                asToast(context, context.getString(R.string.app_dialog_dialog_astoast_content))
 //                bottomSheetDialog.cancel()
 //                    loginAsDialog(context) {
 //                        bottomSheetDialog.cancel()
@@ -536,6 +536,7 @@ object DialogUtils {
         StatService.onEvent(
             App.context,
             "AnalysisVideo",
+            // No need to translate
             "解析视频",
             1,
             properties,
@@ -789,7 +790,7 @@ object DialogUtils {
     }
 
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("CommitPrefEdits", "SetTextI18n")
     @JvmStatic
     fun batchDownloadVideoDialog(
         context: Context,
@@ -985,7 +986,7 @@ object DialogUtils {
      * @param dashVideoPlayBean DashVideoPlayBean
      * @return BottomSheetDialog
      */
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("CommitPrefEdits", "SetTextI18n")
     @JvmStatic
     fun downloadVideoDialog(
         context: Context,
@@ -1184,6 +1185,7 @@ object DialogUtils {
      * @param dashVideoPlayBean DashVideoPlayBean
      * @return BottomSheetDialog
      */
+    @SuppressLint("SetTextI18n")
     @JvmStatic
     fun downloadVideoDialog(
         context: Context,
@@ -1391,7 +1393,8 @@ object DialogUtils {
             val dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
         )
 
-        Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context,
+            context.getString(R.string.app_dialog_addbangumidownloadtask_toast_text), Toast.LENGTH_SHORT).show()
 
         launchUI {
             flow {
