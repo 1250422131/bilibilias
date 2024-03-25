@@ -69,10 +69,7 @@ class LoginQRModel @Inject constructor(
             bottomSheetDialog?.cancel()
 
             if (loginStateBean.data.code != 0) {
-                // 展示登录结果
-                val loginQRModel = binding?.loginQRModel
-                loginQRModel?.loginTip = loginStateBean.data.message
-                binding?.loginQRModel = loginQRModel
+
             }else{
                 asCookiesStorage.saveCookies()
             }
@@ -92,8 +89,6 @@ class LoginQRModel @Inject constructor(
         viewModelScope.launchUI {
             val loginQRData = networkService.getLoginQRData()
                 .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
-
-            binding?.dataBean = loginQRData.data
         }
     }
 

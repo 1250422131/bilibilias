@@ -21,8 +21,6 @@
         <item name="colorControlNormal">?attr/colorPrimary</item>
     </style>
 
-
-
     <style name="Home_TabLayoutTextStyle">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
@@ -68,5 +66,10 @@
     <style name="Theme.BILIBILIAS.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.BILIBILIAS.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!-- Base application theme. -->
+    <style name="Base.Theme.BILIBILIAS" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
 
 </resources>

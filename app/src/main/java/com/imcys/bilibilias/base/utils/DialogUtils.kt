@@ -77,11 +77,6 @@ object DialogUtils {
     fun loginDialog(context: Context): BottomSheetDialog {
         val binding = DialogLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 设置布局
-        binding.loginViewModel =
-            ViewModelProvider(
-                context as HomeActivity,
-            )[LoginViewModel::class.java]
 
         binding.apply {
             dialogLoginBiliQr.setOnClickListener {

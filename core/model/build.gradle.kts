@@ -1,15 +1,8 @@
 ﻿plugins {
-    alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.library.jacoco)
-    alias(libs.plugins.bilibilias.android.hilt)
-}
-
-android {
-    namespace = "com.imcys.bilibilias.core.model"
+    alias(libs.plugins.bilibilias.jvm.library)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    implementation(libs.kotlinx.serialization.json)
 }
