@@ -100,13 +100,6 @@ kotlin {
 //    }
 //}
 dependencies {
-
-    api(libs.grpc.kotlin.stub)
-    api(libs.grpc.protobuf)
-
-    api(libs.protobuf.kotlin)
-    api(libs.protobuf.java.util)
-
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
@@ -240,12 +233,6 @@ dependencies {
     api(libs.androidx.preference.ktx)
 
     api(libs.activity.compose)
-    api(platform(libs.compose.bom))
-    api(libs.ui)
-    api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
-    api(libs.material3)
-    androidTestImplementation(platform(libs.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
