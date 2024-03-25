@@ -7,6 +7,7 @@ plugins {
     id("jacoco")
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
+    alias(libs.plugins.kotlin)
 }
 
 ksp {
@@ -65,6 +66,7 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 
     dataBinding {
@@ -87,6 +89,8 @@ kapt {
 }
 
 dependencies {
+    implementation(projects.core.network)
+
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
@@ -114,6 +118,17 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 
     implementation(libs.androidx.compose.material3)
+
+    implementation("androidx.compose.ui:ui-viewbinding:1.6.4")
+    implementation("com.github.getActivity:Toaster:12.6")
+
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.screenModel)
+    implementation(libs.voyager.bottomSheetNavigator)
+    implementation(libs.voyager.tabNavigator)
+    implementation(libs.voyager.transitions)
+    implementation(libs.voyager.koin)
+    implementation(libs.voyager.hilt)
 }
 dependencyGuard {
     configuration("prodReleaseRuntimeClasspath")

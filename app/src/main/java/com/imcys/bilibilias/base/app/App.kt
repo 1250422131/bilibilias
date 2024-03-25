@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
+import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -23,6 +24,7 @@ class App : BaseApplication() {
         initBRV()
 
         context = applicationContext()
+        Toaster.init(this)
     }
 
     private fun initBRV() {

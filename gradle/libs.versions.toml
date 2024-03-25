@@ -29,7 +29,7 @@ jacoco = "0.8.7"
 kcomponent-compiler = "v1.0.8-rc5"
 kotlin = "1.9.23"
 kotlinx-coroutines-android = "1.8.0"
-kotlinxSerializationCbor = "1.6.3"
+kotlinxSerialization = "1.6.3"
 ksp = "1.9.23-1.0.19"
 ktor = "2.3.9"
 lifecycle = "2.7.0"
@@ -51,10 +51,11 @@ srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.1"
 work = "2.9.0"
 xutils = "3.9.0"
-activity-compose = "1.8.2"
+androidxActivity = "1.8.2"
 androidxComposeBom = "2024.03.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha09"
+voyager = "1.0.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
@@ -63,7 +64,8 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
-kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinxSerializationCbor" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinxSerialization" }
 monitor = { module = "io.github.leavesczy:monitor", version.ref = "monitor" }
 monitor-no-op = { module = "io.github.leavesczy:monitor-no-op", version.ref = "monitorNoOp" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
@@ -123,7 +125,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 ktx = { group = "com.liulishuo.okdownload", name = "ktx", version.ref = "okdownload" }
@@ -145,8 +146,15 @@ srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", vers
 
 uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
 
-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
 
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
