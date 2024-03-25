@@ -32,7 +32,7 @@ val reportMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMe
 }
 dependencies {
     detektPlugins(libs.twitter.detekt)
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.5")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
 }
 tasks.named("detekt", io.gitlab.arturbosch.detekt.Detekt::class).configure {
     reports {
