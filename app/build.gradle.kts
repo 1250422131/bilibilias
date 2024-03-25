@@ -1,9 +1,10 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.bilibilias.android.application)
+    alias(libs.plugins.bilibilias.android.application.compose)
+    alias(libs.plugins.bilibilias.android.application.jacoco)
+    alias(libs.plugins.bilibilias.android.hilt)
+    id("jacoco")
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
@@ -21,9 +22,6 @@ android {
         targetSdk = 34
         versionCode = 203
         versionName = "2.0.4-开阳-Alpha"
-        // multiDexEnabled true
-//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
-//        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
 
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
@@ -65,25 +63,12 @@ android {
         checkReleaseBuilds = false
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
         compose = true
     }
 
     dataBinding {
         enable = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
 
     packaging {
@@ -99,14 +84,6 @@ android {
 }
 kapt {
     correctErrorTypes = true
-}
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
 }
 
 dependencies {
@@ -128,4 +105,16 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.core.ktx)
+
+    implementation(libs.androidx.compose.material3)
+}
+dependencyGuard {
+    configuration("prodReleaseRuntimeClasspath")
 }

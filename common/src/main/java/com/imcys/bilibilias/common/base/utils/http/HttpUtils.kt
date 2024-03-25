@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.common.base.utils.http
 
-import com.google.gson.Gson
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -11,6 +9,8 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.awaitResponse
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import okhttp3.*
 import java.io.*
 import java.net.HttpURLConnection
@@ -24,10 +24,10 @@ import java.net.URL
 @Deprecated("ktor")
 object HttpUtils {
 
-    private val okHttpClient = OkHttpClient()
+    val okHttpClient = OkHttpClient()
 
-    private val params = mutableMapOf<String, String>()
-    private val headers = mutableMapOf<String, String>()
+    val params = mutableMapOf<String, String>()
+    val headers = mutableMapOf<String, String>()
 
     private val misakaMoeUa by lazy {
         SystemUtil.getUserAgent()
@@ -87,13 +87,9 @@ object HttpUtils {
         // 使用 OkHttp 的 enqueue 方法异步发送请求
         okHttpClient.newCall(request).enqueue(HttpCallback {
             // 使用 Gson 将响应数据映射为指定类型的对象
-            val data = Gson().fromJson(it, clz)
+
             // 调用回调函数返回结果
-            data?.let {
-                BaseApplication.handler.post {
-                    method(it)
-                }
-            }
+
         })
     }
 
@@ -135,7 +131,7 @@ object HttpUtils {
      */
     @JvmStatic
     @Deprecated("ktor")
-    suspend fun <T : Any> asyncGet(url: String, clz: Class<T>): T {
+    suspend inline fun <reified T : Any> asyncGet(url: String, clz: Class<T>): T {
         //检验url，添加对应的ua
         checkUrl(url)
         // 创建请求对象
@@ -152,15 +148,8 @@ object HttpUtils {
         // 使用 OkHttp 的 enqueue 方法异步发送请求
         val response = okHttpClient.newCall(request).awaitResponse()
 
-        return getJsonObject(response, clz)
+        return Json.decodeFromStream(response.body!!.byteStream())
 
-    }
-
-    private suspend fun <T> getJsonObject(response: Response, clz: Class<T>): T {
-        return withContext(Dispatchers.IO) {
-            Gson().fromJson(response.body?.string() ?: "empty string", clz)
-
-        }
     }
 
 
@@ -290,7 +279,7 @@ object HttpUtils {
         return result
     }
 
-    private fun checkUrl(url: String) {
+    fun checkUrl(url: String) {
         headers[USER_AGENT] = if (url.contains("misakamoe.com")) {
             misakaMoeUa + " BILIBILIAS/${BiliBiliAsApi.version}"
         } else {
