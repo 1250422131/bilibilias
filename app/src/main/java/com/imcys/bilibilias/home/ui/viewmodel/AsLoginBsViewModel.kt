@@ -14,7 +14,6 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -290,24 +289,10 @@ class AsLoginBsViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     URLEncoder.encode(loginQrcodeBean.data.url, "UTF-8")
                 }
-            val loginQRDialog = DialogUtils.loginQRDialog(
-                context,
-                loginQrcodeBean,
-            ) { code: Int, _: LoginStateBean ->
-                // 登陆成功
-                if (code == 0) {
-                    (context as HomeActivity).homeFragment.initUserData()
-                    context.homeFragment.startStatistics()
-                    // 提交云端资料
-                    postCloudCookie(context)
-                } else {
-                    asToast(context, "登录异常")
-                }
-            }.apply {
-                show()
-            }
-
-            (context as HomeActivity).homeFragment.loginQRDialog = loginQRDialog
+            (context as HomeActivity).homeFragment.initUserData()
+            context.homeFragment.startStatistics()
+            // 提交云端资料
+            postCloudCookie(context)
         }
     }
 

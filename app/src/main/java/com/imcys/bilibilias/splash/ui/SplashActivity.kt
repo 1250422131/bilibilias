@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -19,7 +18,6 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.tencent.mmkv.MMKV
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
@@ -41,9 +39,6 @@ class SplashActivity : BaseActivity() {
         } else {
             getSavePermissions()
         }
-
-//        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
-//        constraintLayout.addStatusBarTopPadding()
     }
 
     override fun onBackPressed() {

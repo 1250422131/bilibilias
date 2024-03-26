@@ -12,7 +12,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
@@ -38,6 +37,7 @@ class HomeActivity : BaseActivity() {
     lateinit var homeFragment: HomeFragment
     lateinit var downloadFragment: DownloadFragment
     lateinit var userFragment: UserFragment
+
     @Inject
     lateinit var asCookiesStorage: AsCookiesStorage
 

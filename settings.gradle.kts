@@ -22,6 +22,7 @@ rootProject.name = "BILIBILIAS"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
+include(":benchmarks")
 include(":common")
 include(":model_ffmpeg")
 include(":tool_log_export")

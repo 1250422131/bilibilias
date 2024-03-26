@@ -6,15 +6,20 @@
 
 android {
     namespace = "com.imcys.bilibilias.core.network"
+    buildTypes {
+        release {
+            matchingFallbacks += "release"
+        }
+    }
 }
 
 dependencies {
     api(projects.core.common)
     api(projects.core.model)
+    implementation(projects.core.datastore)
 
 //    implementation(libs.coil.kt)
 //    implementation(libs.coil.kt.svg)
-    implementation(libs.kotlinx.serialization.json)
 
 //    testImplementation(libs.kotlinx.coroutines.test)
 
@@ -22,4 +27,9 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    debugImplementation(libs.monitor)
+    releaseImplementation(libs.monitor.no.op)
+
+    implementation(libs.okhttp.brotli)
 }

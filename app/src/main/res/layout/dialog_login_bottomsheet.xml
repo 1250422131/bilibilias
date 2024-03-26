@@ -13,22 +13,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="5dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                app:cardCornerRadius="2dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:id="@+id/dialog_login_tip_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/colorPrimaryVariant"
-                    android:orientation="vertical" />
-            </androidx.cardview.widget.CardView>
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -164,20 +148,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/app_dialog_login_bottomsheet_text2" />
-
+                        <!--   android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"-->
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
                             android:textColor="?attr/colorPrimary" />
-
+                        <!--  android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"-->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
-                            android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_2"
                             android:textColor="?attr/colorPrimary" />
 

@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -23,7 +22,6 @@ import com.hyy.highlightpro.shape.RectShape
 import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
@@ -44,14 +42,11 @@ import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
@@ -65,7 +60,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.annotation.Detainted
 import javax.inject.Inject
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.system.exitProcess
 
@@ -350,20 +344,8 @@ class HomeFragment : BaseFragment() {
             //自己会切换IO
             val loginQRData = networkService.getLoginQRData()
                 .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
-
-            loginQRDialog = DialogUtils.loginQRDialog(
-                requireActivity(),
-                loginQRData,
-            ) { code: Int, _: LoginStateBean ->
-                // 登陆成功
-                if (code == 0) {
                     initUserData()
                     startStatistics()
-                }
-            }.apply {
-                show()
-            }
-
         }
     }
 
@@ -410,13 +392,8 @@ class HomeFragment : BaseFragment() {
         launchUI {
 
             val myUserData = networkService.getMyUserData()
-
-            if (myUserData.code != 0) {
-                DialogUtils.loginDialog(requireActivity())
-                    .show()
-            } else {
                 BaseApplication.myUserData = myUserData.data
-            }
+
         }
     }
 
