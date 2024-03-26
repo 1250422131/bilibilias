@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -148,15 +147,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/app_dialog_login_bottomsheet_text2" />
-                        <!--   android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"-->
+
                         <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/privacy_bilibili"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
                             android:textColor="?attr/colorPrimary" />
-                        <!--  android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"-->
+
                         <TextView
+                            android:id="@+id/privacy_bilibilias"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"

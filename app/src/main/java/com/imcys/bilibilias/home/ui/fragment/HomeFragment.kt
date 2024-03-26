@@ -53,7 +53,6 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
-import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
@@ -72,7 +71,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
-     val fragmentHomeViewModel by viewModels<FragmentHomeViewModel>()
+   private  val viewModel by viewModels<FragmentHomeViewModel>()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -98,7 +97,6 @@ class HomeFragment : BaseFragment() {
         // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel = this@HomeFragment.fragmentHomeViewModel
         }
 
         initView()
@@ -335,17 +333,9 @@ class HomeFragment : BaseFragment() {
     /**
      * 加载登陆对话框
      */
-    internal fun loadLogin() {
+    private fun loadLogin() {
         launchUI {
-
-            //解除风控
             networkService.getBILIHome()
-
-            //自己会切换IO
-            val loginQRData = networkService.getLoginQRData()
-                .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
-                    initUserData()
-                    startStatistics()
         }
     }
 
@@ -381,7 +371,6 @@ class HomeFragment : BaseFragment() {
             }
 
             bottomSheetDialog.cancel()
-
         }
     }
 

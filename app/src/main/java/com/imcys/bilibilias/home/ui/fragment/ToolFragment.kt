@@ -25,16 +25,12 @@ import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -43,7 +39,7 @@ import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
@@ -67,6 +63,7 @@ class ToolFragment : BaseFragment() {
     private lateinit var fragmentToolBinding: FragmentToolBinding
     private lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
+
     @Inject
     lateinit var networkService: NetworkService
 
@@ -146,20 +143,12 @@ class ToolFragment : BaseFragment() {
      * @param intent Intent?
      */
     @SuppressLint("ResourceType")
-    internal fun parseShare(intent: Intent?) {
-        val action = intent?.action
-        val type = intent?.type
+    internal fun parseShare(intent: Intent) {
         lifecycleScope.launchWhenResumed {
-            if (Intent.ACTION_SEND == action && type != null) {
-                if ("text/plain" == type) {
-                    asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
-                }
+            if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
+                asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
             }
-            // 下面这段代表是从浏览器解析过来的
-            val asUrl = intent?.extras?.getString("asUrl")
-            if (asUrl != null) {
-                asVideoId(asUrl)
-            }
+            intent.extras?.getString("asUrl")?.let { asVideoId(it) }
         }
     }
 
@@ -298,7 +287,7 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = withContext(Dispatchers.IO){
+            val oldToolItemBean = withContext(Dispatchers.IO) {
                 networkService.getOldToolItem()
             }
 
@@ -391,7 +380,6 @@ class ToolFragment : BaseFragment() {
             }
         }
     }
-
 
 
     override fun onDestroy() {

@@ -85,6 +85,7 @@ kapt {
 
 dependencies {
     implementation(projects.core.network)
+    implementation(projects.core.datastore)
 
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))

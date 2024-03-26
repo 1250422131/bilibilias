@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import com.baidu.mobstat.StatService
@@ -16,8 +15,10 @@ object LoginViewModel {
     fun toBiliAgreement(view: View) {
         asToast(view.context, "无论如何，你都在间接使用B站")
         privacyAgreementWebView(
-            view.context, "https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html",
-            "B站账户需要遵守的协议列表", "使用则代表同意"
+            view.context,
+            "https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html",
+            "B站账户需要遵守的协议列表",
+            "使用则代表同意"
         )
     }
 
@@ -32,7 +33,9 @@ object LoginViewModel {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun privacyAgreementWebView(
-        context: Context, url: String, title: String,
+        context: Context,
+        url: String,
+        title: String,
         positiveText: String,
     ) {
         val webView = WebView(context)
@@ -58,5 +61,4 @@ object LoginViewModel {
                 dialog.cancel()
             }.show()
     }
-
 }

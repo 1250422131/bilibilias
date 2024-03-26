@@ -4,20 +4,28 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.CookieSyncManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class WebAsActivity : BaseActivity() {
     private lateinit var webAsBinding: ActivityWebAsBinding
+
     @Inject
     lateinit var asCookiesStorage: AsCookiesStorage
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +59,9 @@ class WebAsActivity : BaseActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
-            // 注入cookie
-            println("Cookie检测${asCookiesStorage.getAllCookies()}")
-            cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
+            lifecycleScope.launch {
+                cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
+            }
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
 
