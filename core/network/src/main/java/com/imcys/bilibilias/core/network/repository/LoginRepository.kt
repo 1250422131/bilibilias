@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.network.repository
+package com.imcys.bilibilias.core.network.repository
 
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate

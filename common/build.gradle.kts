@@ -61,6 +61,7 @@ dependencies {
 
     // 深拷贝
     api(libs.deeprecopy.core)
+    implementation(project(":core:network"))
     ksp(libs.deeprecopy.compiler)
 
     // hilt库，实现控制反转

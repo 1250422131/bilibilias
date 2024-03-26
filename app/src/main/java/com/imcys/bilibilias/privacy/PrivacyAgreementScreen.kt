@@ -3,6 +3,7 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.hjq.toast.Toaster
+import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.databinding.DialogLoginBottomsheetBinding
 import com.imcys.bilibilias.destinations.LoginScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
@@ -15,7 +16,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun PrivacyAgreementScreen(
     navigator: DestinationsNavigator
 ) {
-    AndroidViewBinding(DialogLoginBottomsheetBinding::inflate) {
+    AndroidViewBinding(factory = { inflater, parent, attachToParent ->
+        val binding = DialogLoginBottomsheetBinding.inflate(inflater, parent, attachToParent)
+        binding.privacyBilibili.setOnClickListener { LoginViewModel.toBiliAgreement(it) }
+        binding.privacyBilibilias.setOnClickListener { LoginViewModel.toBilibiliAsAgreement(it) }
+        binding
+    }) {
         dialogLoginBiliQr.setOnClickListener {
             navigator.navigate(LoginScreenDestination)
         }

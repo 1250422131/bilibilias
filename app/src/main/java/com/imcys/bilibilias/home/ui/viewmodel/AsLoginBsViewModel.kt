@@ -33,10 +33,7 @@ import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URLEncoder
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -283,12 +280,6 @@ class AsLoginBsViewModel @Inject constructor(
      */
     private fun loadCloudAccountLogin(context: Context) {
         viewModelScope.launch {
-
-            val loginQrcodeBean = networkService.n41()
-            loginQrcodeBean.data.url =
-                withContext(Dispatchers.IO) {
-                    URLEncoder.encode(loginQrcodeBean.data.url, "UTF-8")
-                }
             (context as HomeActivity).homeFragment.initUserData()
             context.homeFragment.startStatistics()
             // 提交云端资料

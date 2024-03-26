@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.base.network
 
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
@@ -18,7 +17,7 @@ import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.user.ResponseResult
 import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
 import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -62,7 +61,7 @@ import javax.inject.Singleton
 @Singleton
 class NetworkService @Inject constructor(
     private val ktHttpUtils: KtHttpUtils,
-     private val httpClient: HttpClient,
+    private val httpClient: HttpClient,
     private val asCookiesStorage: AsCookiesStorage
 ) {
     private val ioDispatcher = Dispatchers.IO
@@ -244,10 +243,6 @@ class NetworkService @Inject constructor(
         httpClient.get(BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcodeKey).body()
     }
 
-    suspend fun getLoginQRData(): LoginQrcodeBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getLoginQRPath).body()
-    }
-
     suspend fun getMyUserData(): MyUserData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getMyUserData).body()
     }
@@ -403,7 +398,7 @@ class NetworkService @Inject constructor(
         httpClient.submitForm(
             url = BilibiliApi.videLikePath,
             formParameters = parameters {
-                append("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
+//                append("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
                 append("like", "1")
                 append("bvid", bvid)
             }
@@ -415,7 +410,7 @@ class NetworkService @Inject constructor(
             COOKIE,
             BaseApplication.dataKv.decodeString(COOKIES, "")!!,
         )
-            .addParam("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
+//            .addParam("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
             .addParam("like", "2")
             .addParam("bvid", bvid)
             .asyncPost(BilibiliApi.videLikePath)
@@ -423,7 +418,7 @@ class NetworkService @Inject constructor(
 
     suspend fun n33(bvid: String): VideoCoinAddBean = runCatchingOnWithContextIo {
         ktHttpUtils
-            .addHeader(COOKIE, asCookiesStorage.getCookieValue("bili_jct") ?: "")
+//            .addHeader(COOKIE, asCookiesStorage.getCookieValue("bili_jct") ?: "")
             .addParam("bvid", bvid)
             .addParam("multiply", "2")
             .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
@@ -435,7 +430,7 @@ class NetworkService @Inject constructor(
             httpClient.get(BilibiliApi.videoCollectionSetPath) {
                 parameter("rid", toString)
                 parameter("add_media_ids", addMediaIds)
-                parameter("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
+//                parameter("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
                 parameter("type", "2")
             }.body()
         }
@@ -465,12 +460,8 @@ class NetworkService @Inject constructor(
             )
         }
 
-    suspend fun n41(): LoginQrcodeBean =
-        runCatchingOnWithContextIo { ktHttpUtils.asyncGet(BilibiliApi.getLoginQRPath) }
-
     suspend fun n43(biliBiliCookieInfo: AsLoginBsViewModel.BiliBiliCookieInfo): BiLiCookieResponseModel =
         runCatchingOnWithContextIo {
-
             ktHttpUtils.addHeader(COOKIE, BaseApplication.asUser.asCookie)
                 .asyncPostJson(
                     "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
@@ -483,14 +474,4 @@ class NetworkService @Inject constructor(
     ): T {
         return withContext(ioDispatcher, block)
     }
-
-
-    suspend fun n44() = runCatchingOnWithContextIo {}
-    suspend fun n45() = runCatchingOnWithContextIo {}
-    suspend fun n46() = runCatchingOnWithContextIo {}
-    suspend fun n47() = runCatchingOnWithContextIo {}
-    suspend fun n48() = runCatchingOnWithContextIo {}
-    suspend fun n49() = runCatchingOnWithContextIo {}
-    suspend fun n50() = runCatchingOnWithContextIo {}
-    suspend fun n51() = runCatchingOnWithContextIo {}
 }
