@@ -91,10 +91,6 @@ gradlePlugin {
             id = "bilibilias.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
-        register("androidFlavors") {
-            id = "bilibilias.android.application.flavors"
-            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
-        }
         register("androidLint") {
             id = "bilibilias.android.lint"
             implementationClass = "AndroidLintConventionPlugin"

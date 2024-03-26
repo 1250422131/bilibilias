@@ -7,7 +7,7 @@ plugins {
     id("jacoco")
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.baselineprofile)
 }
 
 ksp {
@@ -15,21 +15,15 @@ ksp {
 }
 android {
     namespace = "com.imcys.bilibilias"
-    compileSdk = 34
+
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
-        minSdk = 21
-        // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 34
         versionCode = 203
         versionName = "2.0.4-开阳-Alpha"
 
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        flavorDimensions += project.name
     }
 
     buildTypes {
@@ -55,6 +49,7 @@ android {
             )
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
+            baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 
@@ -122,13 +117,17 @@ dependencies {
     implementation("androidx.compose.ui:ui-viewbinding:1.6.4")
     implementation("com.github.getActivity:Toaster:12.6")
 
-    implementation(libs.voyager.navigator)
-    implementation(libs.voyager.screenModel)
-    implementation(libs.voyager.bottomSheetNavigator)
-    implementation(libs.voyager.tabNavigator)
-    implementation(libs.voyager.transitions)
-    implementation(libs.voyager.koin)
-    implementation(libs.voyager.hilt)
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
+    implementation(libs.compose.destinations.animations)
+
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation ("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+}
+baselineProfile {
+    // Don't build on every iteration of a full assemble.
+    // Instead enable generation directly for the release build variant.
+    automaticGenerationDuringBuild = false
 }
 dependencyGuard {
     configuration("prodReleaseRuntimeClasspath")

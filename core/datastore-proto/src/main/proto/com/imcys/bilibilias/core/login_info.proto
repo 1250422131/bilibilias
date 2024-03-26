@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.bilias.core.datastore.cookie";
+option java_multiple_files = true;
+
+message LoginInfo {
+    map<string, Cookie> store = 1;
+    bool loginState = 2;
+    string refreshToken = 3;
+    string mixKey = 4;
+}
+message Cookie {
+    string name = 1;
+    string value = 2;
+}

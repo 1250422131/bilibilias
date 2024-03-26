@@ -5,11 +5,19 @@
 }
 
 android {
-    namespace = "com.imcys.bilibilias.core.datastore.proto"
+    namespace = "com.imcys.bilibilias.core.datastore"
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    api("androidx.datastore:datastore:1.0.0")
+//    api(libs.androidx.dataStore.core)
+    api(projects.core.datastoreProto)
+    api(projects.core.model)
+
+    implementation(projects.core.common)
 }

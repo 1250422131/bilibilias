@@ -1,15 +1,18 @@
 ﻿plugins {
     alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.library.jacoco)
-    alias(libs.plugins.bilibilias.android.hilt)
+    id("com.squareup.wire")
 }
 
 android {
-    namespace = "com.imcys.bilibilias.core.network"
+    namespace = "com.imcys.bilibilias.core.datastore.proto"
 }
-
+wire {
+    kotlin {
+        sourcePath {
+            srcDirs("src/main/proto")
+        }
+    }
+}
 dependencies {
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    implementation("com.squareup.wire:wire-runtime:4.9.8")
 }

@@ -14,7 +14,6 @@ import android.view.ViewParent
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -23,10 +22,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.login.view.LoginQRModel
-import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.network.NetworkService
@@ -36,7 +31,6 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
@@ -44,7 +38,6 @@ import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
@@ -69,83 +62,6 @@ object DialogUtils {
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
 
-    /**
-     * 登录对话框
-     * @param context Context
-     */
-    @SuppressLint("InflateParams")
-    fun loginDialog(context: Context): BottomSheetDialog {
-        val binding = DialogLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-
-        binding.apply {
-            dialogLoginBiliQr.setOnClickListener {
-                context.homeFragment.loadLogin()
-                bottomSheetDialog.cancel()
-            }
-
-            dialogLoginAs.setOnClickListener {
-                asToast(context, "云端账户即将出炉")
-//                bottomSheetDialog.cancel()
-//                    loginAsDialog(context) {
-//                        bottomSheetDialog.cancel()
-//                    }.show()
-            }
-        }
-
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.setCancelable(false)
-
-        // 用户行为val mDialogBehavior =
-        initDialogBehaviorBinding(
-            binding.dialogLoginTipBar,
-            context,
-            binding.root.parent,
-        )
-        // 自定义方案
-        // mDialogBehavior.peekHeight = 600
-
-        return bottomSheetDialog
-    }
-
-    /**
-     * 本地/AS绑定 B站账号登录弹窗
-     * @param activity Activity
-     * @param loginQrcodeBean LoginQrcodeBean
-     * @return BottomSheetDialog
-     */
-    fun loginQRDialog(
-        context: Context,
-        loginQrcodeBean: LoginQrcodeBean,
-        responseResult: (Int, LoginStateBean) -> Unit,
-    ): BottomSheetDialog {
-
-        val binding: DialogLoginQrBottomsheetBinding =
-            DialogLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
-
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 设置布局
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.setCancelable(false)
-        binding.dataBean = loginQrcodeBean.data
-        binding.loginQRModel =
-            ViewModelProvider(
-                context as HomeActivity,
-            )[LoginQRModel::class.java]
-        binding.loginQRModel?.responseResult = responseResult
-        // 传导binding过去
-        binding.loginQRModel?.binding = binding
-        // 用户行为val mDialogBehavior =
-
-        initDialogBehaviorBinding(
-            binding.dialogLoginQrTipBar,
-            context,
-            binding.root.parent,
-        )
-        // 自定义方案
-        // mDialogBehavior.peekHeight = 600
-        return bottomSheetDialog
-    }
 //
 //    /**
 //     * 登录AS账号
@@ -213,12 +129,6 @@ object DialogUtils {
 //
 //        return bottomSheetDialog
 //    }
-
-    class AsLoginBsViewModelFactory(
-        binding: DialogAsLoginBottomsheetBinding,
-        bottomSheetDialog: BottomSheetDialog,
-        function: () -> Unit,
-    ) : ViewModelProvider.Factory
 
     /**
      * 构建底部对话框

@@ -19,14 +19,12 @@ import io.ktor.http.HttpMessageBuilder
 import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.collections.set
 
-@Singleton
-class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
+class KtHttpUtils @Inject constructor() {
     val params = mutableMapOf<String, Any>()
     val headers = mutableMapOf<String, String>()
-
+    val httpClient: HttpClient = HttpClient()
     var setCookies = ""
 
     suspend inline fun <reified T> asyncGet(
@@ -46,13 +44,11 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         return mBean
     }
 
-     inline fun < reified T> asyncGet(
+    inline fun <reified T> asyncGet(
     ): String {
-
-
-
         return T::class.java.simpleName
     }
+
 
     suspend inline fun <reified T> asyncPost(url: String): T {
         checkUrl(url)
@@ -123,6 +119,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
 
     /**
      * 添加post的form参数
+     *
      * @param key String
      * @param value String
      * @return HttpUtils
@@ -134,6 +131,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
 
     /**
      * 添加请求头
+     *
      * @param key String
      * @param value String
      * @return HttpUtils

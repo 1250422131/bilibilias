@@ -13,23 +13,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="5dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                app:cardCornerRadius="2dp"
-                app:cardElevation="0dp">
-
-                <LinearLayout
-                    android:id="@+id/dialog_login_qr_tip_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/colorPrimaryVariant"
-                    android:orientation="vertical" />
-            </androidx.cardview.widget.CardView>
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -49,8 +32,6 @@
                 android:layout_height="130dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:imageUrl="@{`https://pan.misakamoe.com/qrcode/?url=`+DataBean.url}"
-                android:onClick="@{() -> LoginQRModel.reloadLoginQR(DataBean)}"
                 android:scaleType="fitXY" />
 
             <TextView
@@ -59,7 +40,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{LoginQRModel.loginTip}"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
 
@@ -74,6 +54,7 @@
                 app:cardElevation="0dp">
 
                 <Button
+                    android:id="@+id/btn_login"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
@@ -113,14 +94,14 @@
                 android:layout_marginBottom="25dp"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="0dp">
-
+                <!-- android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"-->
+                <!-- android:imageUrl="@{`https://pan.misakamoe.com/qrcode/?url=`+DataBean.url}"-->
                 <Button
                     android:id="@+id/dialog_login_qr_go_to_scan"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimaryVariant"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> LoginQRModel.goToQR(view)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_go"
                     android:textColor="@color/black"
                     android:textSize="15sp"

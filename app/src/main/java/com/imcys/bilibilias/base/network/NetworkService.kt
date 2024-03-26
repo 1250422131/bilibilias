@@ -62,7 +62,7 @@ import javax.inject.Singleton
 @Singleton
 class NetworkService @Inject constructor(
     private val ktHttpUtils: KtHttpUtils,
-    private val httpClient: HttpClient,
+     private val httpClient: HttpClient,
     private val asCookiesStorage: AsCookiesStorage
 ) {
     private val ioDispatcher = Dispatchers.IO
