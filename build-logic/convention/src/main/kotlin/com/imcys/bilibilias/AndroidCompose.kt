@@ -18,7 +18,8 @@ internal fun Project.configureAndroidCompose(
         }
 
         composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("androidxComposeCompiler").get().toString()
+            kotlinCompilerExtensionVersion =
+                libs.findVersion("androidxComposeCompiler").get().toString()
         }
 
         dependencies {
@@ -39,9 +40,19 @@ internal fun Project.configureAndroidCompose(
 
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            freeCompilerArgs += buildComposeMetricsParameters() 
+            freeCompilerArgs += buildComposeMetricsParameters()
             freeCompilerArgs += stabilityConfiguration()
         }
+    }
+    configureComposeDestinations()
+}
+
+private fun Project.configureComposeDestinations() {
+    pluginManager.apply("com.google.devtools.ksp")
+    dependencies {
+        add("implementation", libs.findLibrary("compose-destinations").get())
+        add("implementation", libs.findLibrary("compose-destinations-animations").get())
+        add("ksp", libs.findLibrary("compose-destinations-ksp").get())
     }
 }
 
