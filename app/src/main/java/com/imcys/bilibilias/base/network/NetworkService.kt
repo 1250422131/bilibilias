@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.base.network
 
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -122,12 +121,6 @@ class NetworkService @Inject constructor(
     suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
         runCatchingOnWithContextIo { videoPlayPath(bvid, cid.toString(), qn) }
 
-    suspend fun exitUserLogin(crsf: String): String = runCatchingOnWithContextIo {
-        httpClient.post(BilibiliApi.exitLogin) {
-            parameter("biliCSRF", crsf)
-        }.body()
-    }
-
     suspend fun n10(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
         videoPlayPath(bvid, cid.toString(), 64)
     }
@@ -233,14 +226,6 @@ class NetworkService @Inject constructor(
 
     suspend fun n27(): MyUserData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getMyUserData).body()
-    }
-
-    suspend fun getBILIHome(): String = runCatchingOnWithContextIo {
-        httpClient.get(BILIBILI_URL).body()
-    }
-
-    suspend fun biliUserLogin(qrcodeKey: String): LoginStateBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcodeKey).body()
     }
 
     suspend fun getMyUserData(): MyUserData = runCatchingOnWithContextIo {

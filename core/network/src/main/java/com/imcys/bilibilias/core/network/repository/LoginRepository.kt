@@ -3,11 +3,14 @@ package com.imcys.bilibilias.core.network.repository
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll
+import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BilibiliApi
 import com.imcys.bilibilias.core.network.di.WrapperClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
@@ -29,4 +32,13 @@ class LoginRepository @Inject constructor(
         }
         return response
     }
+
+    suspend fun exitLogin() {
+        val cookie = loginInfoDataSource.cookieStore.first()["bili_jct"]
+        client.post(BilibiliApi.EXIT) {
+            parameter("biliCSRF", cookie?.value_)
+        }
+    }
+
+    suspend fun getBilibiliHome() = client.get(BILIBILI_URL)
 }

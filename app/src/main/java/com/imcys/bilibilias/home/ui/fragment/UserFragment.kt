@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
@@ -51,10 +50,6 @@ class UserFragment : BaseFragment() {
 
     @Inject
     lateinit var tokenUtils: TokenUtils
-    override fun onResume() {
-        super.onResume()
-        StatService.onPageStart(context, "UserFragment")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,18 +61,20 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
-        initView()
-
         return fragmentUserBinding.root
     }
 
-    private fun initView() {
+     override fun initView() {
         initUserDataRv()
 
         initUserData()
         initUserWorks()
 
         initSmoothRefreshLayout()
+    }
+
+    override fun initData() {
+
     }
 
     private fun initSmoothRefreshLayout() {
@@ -251,11 +248,6 @@ class UserFragment : BaseFragment() {
     private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
         if (recyclerView == null) return false
         return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(context, "UserFragment")
     }
 
     // 回收数据留存
