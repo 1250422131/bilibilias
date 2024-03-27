@@ -36,7 +36,7 @@ class DonateActivity : BaseActivity() {
     }
 
 
-    private fun initView() {
+    override fun initView() {
 
         binding.apply {
             donateTopLy.addStatusBarTopPadding()

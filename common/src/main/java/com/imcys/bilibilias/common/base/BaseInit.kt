@@ -6,4 +6,5 @@ interface BaseInit {
     fun initObserveViewModel()
 }
 
+interface BaseActivityInit : BaseInit
 interface BaseFragmentInit : BaseInit

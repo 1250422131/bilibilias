@@ -4,9 +4,9 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity
-import dagger.hilt.android.AndroidEntryPoint
+import com.imcys.bilibilias.common.base.BaseActivityInit
 
-open class BaseActivity : AbsActivity() {
+abstract class BaseActivity : AbsActivity(), BaseActivityInit {
 
     override val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(applicationContext)
@@ -14,7 +14,13 @@ open class BaseActivity : AbsActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 沉浸式状态栏
         statusBarOnly(this)
+        initView()
+        initData()
+        initObserveViewModel()
     }
+
+    override fun initView() = Unit
+    override fun initData() = Unit
+    override fun initObserveViewModel() = Unit
 }
