@@ -354,10 +354,6 @@ object DialogUtils {
         return bottomSheetDialog
     }
 
-    private fun bottomInit() {
-
-    }
-
     private fun addThirdPartyData(
         bvid: String,
         aid: Long,
