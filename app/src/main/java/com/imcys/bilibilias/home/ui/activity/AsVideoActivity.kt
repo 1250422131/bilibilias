@@ -34,11 +34,10 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
-import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.activity.video.BiliDanmukuUtil
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
@@ -50,30 +49,19 @@ import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
-import master.flame.danmaku.danmaku.loader.IllegalDataException
-import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
-import master.flame.danmaku.danmaku.model.IDisplayer
-import master.flame.danmaku.danmaku.model.android.DanmakuContext
-import master.flame.danmaku.danmaku.model.android.Danmakus
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.util.zip.Inflater
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
-
-    private val TAG = this.javaClass.name
 
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
@@ -85,10 +73,6 @@ class AsVideoActivity : BaseActivity() {
 
     // 烈焰弹幕使 弹幕解析器
     private lateinit var asDanmaku: IDanmakuView
-
-    // 烈焰弹幕使，方便全局调用
-    private lateinit var danmakuParser: BaseDanmakuParser
-    private val danmakuContext = DanmakuContext.create()
 
     lateinit var userBaseBean: UserBaseBean
 
@@ -108,14 +92,12 @@ class AsVideoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
 
-        // 加载用户信息&视频信息
-        loadUserData()
-        // 加载控件
-        initView()
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
+    override fun initData() {
+        loadUserData()
+    }
 //    override fun attachBaseContext(newBase: Context?) {
 //        super.attachBaseContext(newBase)
 //
@@ -131,7 +113,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    private fun initView() {
+    override fun initView() {
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd
@@ -222,7 +204,6 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-
                     val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
@@ -252,7 +233,7 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                        NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
+                    NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
 
@@ -511,7 +492,6 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-
         launchUI {
             // 储存弹幕
             saveDanmaku(networkService.getDanmuBytes(cid))
@@ -524,16 +504,6 @@ class AsVideoActivity : BaseActivity() {
      * 初始化弹幕
      */
     private fun initDanmaku() {
-        // 我们得先从临时文件拉取弹幕xml
-        val input: InputStream =
-            FileInputStream(getExternalFilesDir("temp").toString() + "/tempDm.xml")
-
-        // 解析弹幕
-        danmakuParser = createParser(input)
-
-        // 设置弹幕配置
-        setDanmakuContextCongif()
-
         // 设置弹幕监听器
         setAsDanmakuCallback()
     }
@@ -654,7 +624,10 @@ class AsVideoActivity : BaseActivity() {
                         asDanmaku.resume()
                     }
                 } else {
-                    asDanmaku.prepare(danmakuParser, danmakuContext)
+                    asDanmaku.prepare(
+                        BiliDanmukuUtil.createParser(this@AsVideoActivity),
+                        BiliDanmukuUtil.setDanmakuContext(),
+                    )
                     asDanmaku.enableDanmakuDrawingCache(true)
                 }
             }
@@ -719,24 +692,7 @@ class AsVideoActivity : BaseActivity() {
      * 配置弹幕信息
      */
 
-    private fun setDanmakuContextCongif() {
 
-        // 设置弹幕的最大显示行数
-        val maxLinesPair = HashMap<Int, Int>()
-        // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
-        // 设置是否禁止重叠
-        val overlappingEnablePair = HashMap<Int, Boolean>()
-        overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
-        overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
-
-
-        danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
-            .setDuplicateMergingEnabled(false)
-            .setScrollSpeedFactor(1.2f) // 是否启用合并重复弹幕
-            .setScaleTextSize(1.2f) // 设置弹幕滚动速度系数,只对滚动弹幕有效
-            .setMaximumLines(maxLinesPair) // 设置最大显示行数
-            .preventOverlapping(overlappingEnablePair) // 设置防弹幕重叠，null为允许重叠
-    }
 
     /**
      * 配置弹幕监听器
@@ -763,30 +719,6 @@ class AsVideoActivity : BaseActivity() {
         })
     }
 
-    /**
-     * 创建解析器对象，解析输入流
-     * @param stream
-     * @return
-     */
-    private fun createParser(stream: InputStream?): BaseDanmakuParser {
-        if (stream == null) {
-            return object : BaseDanmakuParser() {
-                override fun parse(): Danmakus {
-                    return Danmakus()
-                }
-            }
-        }
-        val loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
-        try {
-            loader.load(stream)
-        } catch (e: IllegalDataException) {
-            e.printStackTrace()
-        }
-        val parser: BaseDanmakuParser = BiliDanmukuParser()
-        val dataSource = loader.dataSource
-        parser.load(dataSource)
-        return parser
-    }
 
     // ——————————————————————————————————————————————————————————————————————————
 

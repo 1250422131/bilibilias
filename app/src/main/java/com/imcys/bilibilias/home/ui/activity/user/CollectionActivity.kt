@@ -51,7 +51,7 @@ class CollectionActivity : BaseActivity() {
         initView()
     }
 
-    private fun initView() {
+    override fun initView() {
         initCollectionRv()
         loadCollectionList()
     }

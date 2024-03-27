@@ -46,7 +46,7 @@ class PlayHistoryActivity : BaseActivity() {
         initView()
     }
 
-    private fun initView() {
+    override fun initView() {
         initPlayHistory()
     }
 
