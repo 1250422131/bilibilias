@@ -14,26 +14,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
@@ -65,44 +55,6 @@ class ToolFragment : BaseFragment() {
 
     @Inject
     lateinit var networkService: NetworkService
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
-        // 这里仍然是在判断是否有被引导过了
-        val guideVersion =
-            (activity as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            (activity as HomeActivity).asSharedPreferences.edit()
-                .putString("AppGuideVersion", App.AppGuideVersion).apply()
-            loadToolGuide()
-        }
-        StatService.onPageStart(context, "ToolFragment")
-    }
-
-    private fun loadToolGuide() {
-        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(activity))
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_tool)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentToolBinding.fragmentToolSearch.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setOnDismissCallback {
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0,
-                ).isCheckable = true
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .show()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
