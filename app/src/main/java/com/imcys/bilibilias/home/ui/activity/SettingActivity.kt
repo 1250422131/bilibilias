@@ -3,30 +3,25 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.edit
-import androidx.databinding.DataBindingUtil
 import androidx.documentfile.provider.DocumentFile
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
-import com.imcys.bilibilias.common.base.utils.file.toFilePath
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
-class SettingActivity : BaseActivity() {
+class SettingActivity : BaseActivity<ActivitySttingBinding>() {
+    override val layoutId: Int = R.layout.activity_stting
     private lateinit var settingsFragment: SettingsFragment
-    lateinit var binding: ActivitySttingBinding
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_stting)
         binding.settingTopLy.addStatusBarTopPadding()
         settingsFragment = SettingsFragment()
         supportFragmentManager
@@ -58,7 +53,7 @@ class SettingActivity : BaseActivity() {
                     }
                     resultData.data?.also {
                         val mDocumentFile = DocumentFile.fromTreeUri(this, it)
-                        if (!mDocumentFile!!.hasSubDirectory( "download")) {
+                        if (!mDocumentFile!!.hasSubDirectory("download")) {
                             mDocumentFile.createDirectory("download")
                         }
                     }

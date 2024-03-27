@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.network.configration
+package com.imcys.bilibilias.core.network.configration
 
 import dagger.Binds
 import dagger.Module

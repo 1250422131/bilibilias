@@ -123,7 +123,9 @@ dependencies {
     implementation(libs.compose.destinations.animations)
 
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation ("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.
