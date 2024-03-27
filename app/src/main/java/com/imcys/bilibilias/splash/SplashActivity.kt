@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.splash.ui
+﻿package com.imcys.bilibilias.splash
 
 import android.Manifest
 import android.content.Intent
@@ -19,9 +19,7 @@ import com.imcys.bilibilias.databinding.ActivitySplashBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.privacy.PrivacyActivity
 import dagger.hilt.android.AndroidEntryPoint
-
 private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
-
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val layoutId: Int = R.layout.activity_splash
