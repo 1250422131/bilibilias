@@ -419,7 +419,7 @@ class DownloadQueue @Inject constructor() {
 
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val myUserData = networkService.n6()
+            val myUserData = networkService.getMyUserData()
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"

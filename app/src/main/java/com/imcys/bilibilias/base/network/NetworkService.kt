@@ -47,7 +47,6 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.statement.readBytes
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
@@ -217,15 +216,6 @@ class NetworkService @Inject constructor(
 
     suspend fun n26(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
         getVideoBaseInfoByBvid(bvid)
-    }
-
-    // ---------------------------------------------------------------------------------------------
-    suspend fun n6(): MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getMyUserData).body()
-    }
-
-    suspend fun n27(): MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getMyUserData).body()
     }
 
     suspend fun getMyUserData(): MyUserData = runCatchingOnWithContextIo {

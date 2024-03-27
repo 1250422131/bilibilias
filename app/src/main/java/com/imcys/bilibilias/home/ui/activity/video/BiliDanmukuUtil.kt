@@ -8,19 +8,19 @@ import master.flame.danmaku.danmaku.model.IDisplayer
 import master.flame.danmaku.danmaku.model.android.DanmakuContext
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 
 object BiliDanmukuUtil {
-    fun getDmTempFile(context: Context): InputStream {
-        val fileInputStream =
-            FileInputStream(File(context.cacheDir.path, "temp_dm.xml"))
-        return fileInputStream
+    fun saveDmTempFile(context: Context, content: ByteArray) {
+        getDmTempFile(context).writeBytes(content)
+    }
+
+    fun getDmTempFile(context: Context): File {
+        return File(context.cacheDir.path, "temp_dm.xml")
     }
 
     fun createParser(context: Context): BaseDanmakuParser {
         val loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
-        loader.load(getDmTempFile(context))
+        loader.load(getDmTempFile(context).inputStream())
 
         val parser = BiliDanmukuParser()
         parser.load(loader.dataSource)

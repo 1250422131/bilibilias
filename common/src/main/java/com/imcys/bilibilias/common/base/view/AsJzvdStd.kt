@@ -9,7 +9,12 @@ import android.os.Environment
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
@@ -42,7 +47,7 @@ open class AsJzvdStd : JzvdStd {
 
     private lateinit var jzbdStdInfo: JzbdStdInfo
     var stopTime: Long = 0
-    var asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
+    val asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
     private var startLinearLayout: LinearLayout = findViewById(R.id.start_layout)
     protected val asJzvdstdPosterFL: FrameLayout = findViewById(R.id.as_jzvdstd_poster_fl)
     private var asJzvdstdPicDlBt: TextView = findViewById(R.id.as_jzvdstd_pic_dl_bt)
