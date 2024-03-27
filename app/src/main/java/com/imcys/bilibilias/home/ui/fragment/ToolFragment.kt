@@ -40,7 +40,6 @@ import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
-import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -112,22 +111,15 @@ class ToolFragment : BaseFragment() {
     ): View {
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
-
-        initView()
-
         return fragmentToolBinding.root
     }
 
-    private fun initView() {
+     override fun initView() {
         // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 
         // 加载工具item
         loadToolItem()
-
-        // 设置点击事件
-        fragmentToolBinding.toolViewHolder =
-            context?.let { ToolViewHolder(it, fragmentToolBinding) }
 
         // 绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
@@ -135,6 +127,9 @@ class ToolFragment : BaseFragment() {
         // 设置监听
         setEditListener()
 
+    }
+
+    override fun initData() {
     }
 
     /**
