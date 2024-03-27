@@ -426,24 +426,24 @@ class AsVideoViewModel @Inject constructor(
         viewModelScope.launchUI {
             val likeVideoBean = networkService.videoLike(bvid)
 
-            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-                when (likeVideoBean.code) {
-                    0 -> {
-                        context.binding.archiveHasLikeBean?.data = 1
-                        context.binding.asVideoLikeBt.isSelected = true
-                    }
-
-                    65006 -> {
-                        cancelLikeVideo(view, bvid)
-                    }
-
-                    else -> {
-                        asToast(context, likeVideoBean.message)
-                    }
+//            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
+            when (likeVideoBean.code) {
+                0 -> {
+//                        context.binding.archiveHasLikeBean?.data = 1
+//                        context.binding.asVideoLikeBt.isSelected = true
                 }
-            } else {
-                cancelLikeVideo(view, bvid)
+
+                65006 -> {
+                    cancelLikeVideo(view, bvid)
+                }
+
+                else -> {
+                    asToast(context, likeVideoBean.message)
+                }
             }
+//            } else {
+//                cancelLikeVideo(view, bvid)
+//            }
         }
     }
 
@@ -460,10 +460,10 @@ class AsVideoViewModel @Inject constructor(
             launchUI {
                 when (likeVideoBean.code) {
                     0 -> {
-                        (context as AsVideoActivity).binding.apply {
-                            archiveHasLikeBean?.data = 0
-                            asVideoLikeBt.isSelected = false
-                        }
+//                        (context as AsVideoActivity).binding.apply {
+//                            archiveHasLikeBean?.data = 0
+//                            asVideoLikeBt.isSelected = false
+//                        }
                     }
 
                     65004 -> {
@@ -489,8 +489,8 @@ class AsVideoViewModel @Inject constructor(
             networkService.n33(bvid)
 
             launchUI {
-                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
-                context.binding.asVideoThrowBt.isSelected = true
+//                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
+//                context.binding.asVideoThrowBt.isSelected = true
             }
         }
     }
@@ -501,24 +501,23 @@ class AsVideoViewModel @Inject constructor(
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(view: View, avid: Long) {
         val context = view.context
-        (context as AsVideoActivity).binding.apply {
-            viewModelScope.launchIO {
-                userSpaceRepository.查询用户创建的视频收藏夹(BaseApplication.asUser.mid)
-                val userCreateCollectionBean = networkService.n34()
+//        (context as AsVideoActivity).binding.apply {
+        viewModelScope.launchIO {
+            userSpaceRepository.查询用户创建的视频收藏夹(BaseApplication.asUser.mid)
+            val userCreateCollectionBean = networkService.n34()
 
-                launchUI {
-                    if (userCreateCollectionBean.code == 0) {
-                        DialogUtils.loadUserCreateCollectionDialog(
-                            context,
-                            userCreateCollectionBean,
-                            { _, _ ->
-                            },
-                            { selects ->
-                                // 选取完成了收藏文件夹
-                                setCollection(context, selects, avid)
-                            },
-                        ).show()
-                    }
+            launchUI {
+                if (userCreateCollectionBean.code == 0) {
+                    DialogUtils.loadUserCreateCollectionDialog(
+                        context,
+                        userCreateCollectionBean,
+                        { _, _ ->
+                        },
+                        { selects ->
+                            // 选取完成了收藏文件夹
+                            setCollection(context, selects, avid)
+                        },
+                    ).show()
                 }
             }
         }
@@ -546,7 +545,7 @@ class AsVideoViewModel @Inject constructor(
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
-    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Long) {
+    private fun setCollection(context: Context, selects: MutableList<Long>, avid: Long) {
         var addMediaIds = ""
         selects.forEachIndexed { index, l ->
             if (index == selects.size) {
@@ -561,13 +560,13 @@ class AsVideoViewModel @Inject constructor(
      * 新增收藏夹内容
      * @param addMediaIds String
      */
-    private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
+    private fun addCollection(context: Context, addMediaIds: String, avid: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             val collectionResultBean = networkService.n35(avid.toString(), addMediaIds)
 
             if (collectionResultBean.code == 0) {
-                context.binding.archiveFavouredBean?.isFavoured = true
-                context.binding.asVideoCollectionBt.isSelected = true
+//                context.binding.archiveFavouredBean?.isFavoured = true
+//                context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
             }

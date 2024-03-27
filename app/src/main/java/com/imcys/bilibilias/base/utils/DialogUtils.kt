@@ -284,27 +284,27 @@ object DialogUtils {
 
     /**
      * 加载用户收藏文件夹
-     * @param activity Activity
+     * @param context Activity
      * @param userCreateCollectionBean UserCreateCollectionBean
      * @param selectedResult Function2<[@kotlin.ParameterName] Int, [@kotlin.ParameterName] MutableList<Long>, Unit>
      * @return BottomSheetDialog
      */
     @SuppressLint("NotifyDataSetChanged")
     fun loadUserCreateCollectionDialog(
-        activity: Activity,
+        context: Context,
         userCreateCollectionBean: UserCreateCollectionBean,
         selectedResult: (selectedItem: Int, selects: MutableList<Long>) -> Unit,
         finished: (selects: MutableList<Long>) -> Unit,
     ): BottomSheetDialog {
-        val binding = DialogCollectionBinding.inflate(LayoutInflater.from(activity))
+        val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
-        val bottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
 
         initDialogBehaviorBinding(
             binding.dialogCollectionBar,
-            activity,
+            context,
             binding.root.parent,
         )
 
@@ -342,7 +342,7 @@ object DialogUtils {
 
             // 设置布局加载器
             dialogCollectionRv.layoutManager =
-                LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
             // 设置完成选中收藏夹
             dialogCollectionFinishBt.setOnClickListener {
@@ -353,9 +353,11 @@ object DialogUtils {
 
         return bottomSheetDialog
     }
-    private fun bottomInit(){
+
+    private fun bottomInit() {
 
     }
+
     private fun addThirdPartyData(
         bvid: String,
         aid: Long,
@@ -1177,7 +1179,8 @@ object DialogUtils {
         launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
+                    val dashVideoPlayBean =
+                        networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
