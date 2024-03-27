@@ -9,6 +9,7 @@ import com.drake.statelayout.StateConfig
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.core.crash.ACRAUtil
 import com.imcys.bilibilias.tool_log_export.BR
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
@@ -28,6 +29,7 @@ class App : BaseApplication(), ImageLoaderFactory {
 
         context = applicationContext()
         Toaster.init(this)
+        ACRAUtil.init(this)
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()
