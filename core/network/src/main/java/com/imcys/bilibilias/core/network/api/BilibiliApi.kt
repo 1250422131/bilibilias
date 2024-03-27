@@ -10,4 +10,7 @@ internal object BilibiliApi {
     const val WEB_QRCODE_GENERATE = PASSPORT_BILIBILI + "x/passport-login/web/qrcode/generate"
     const val WEB_QRCODE_POLL = PASSPORT_BILIBILI + "x/passport-login/web/qrcode/poll"
     const val EXIT = PASSPORT_BILIBILI + "login/exit/v2"
+    const val DM_REAL_TIME = "x/v1/dm/list.so"
+
+    const val FAVOURED_FOLDER_ALL = "/x/v3/fav/folder/created/list-all"
 }

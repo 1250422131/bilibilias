@@ -15,6 +15,7 @@ import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.databinding.ActivitySplashBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.privacy.PrivacyActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,12 +23,12 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
 
 @AndroidEntryPoint
-class SplashActivity : BaseActivity() {
+class SplashActivity : BaseActivity<ActivitySplashBinding>() {
+    override val layoutId: Int = R.layout.activity_splash
     private val viewModel by viewModels<SplashViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // 安卓13废弃对写入权限检测
             // TODO 将准备改为SAF，届时不在对软件检查储存权限

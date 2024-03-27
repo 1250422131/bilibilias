@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
@@ -21,9 +20,8 @@ import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class BangumiFollowActivity : BaseActivity() {
-
-    lateinit var binding: ActivityBangumiFollowBinding
+class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
+    override val layoutId: Int = R.layout.activity_bangumi_follow
 
     @Inject
     lateinit var bangumiFollowAdapter: BangumiFollowAdapter
@@ -35,10 +33,7 @@ class BangumiFollowActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_bangumi_follow)
-        binding.apply {
-            bangumiFollowTopLy.addStatusBarTopPadding()
-        }
+        binding.bangumiFollowTopLy.addStatusBarTopPadding()
 
         initView()
     }

@@ -111,13 +111,11 @@ class ToolFragment : BaseFragment() {
     ): View {
         fragmentToolBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
+        fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
         return fragmentToolBinding.root
     }
 
      override fun initView() {
-        // 设置布局不浸入
-        fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
-
         // 加载工具item
         loadToolItem()
 
@@ -126,7 +124,6 @@ class ToolFragment : BaseFragment() {
 
         // 设置监听
         setEditListener()
-
     }
 
     override fun initData() {

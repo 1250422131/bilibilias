@@ -49,8 +49,6 @@
                     android:text="我创建的收藏夹"
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
-
-
             </LinearLayout>
 
 
