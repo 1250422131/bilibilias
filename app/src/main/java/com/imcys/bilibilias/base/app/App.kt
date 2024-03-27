@@ -2,19 +2,22 @@ package com.imcys.bilibilias.base.app
 
 import android.annotation.SuppressLint
 import android.content.Context
+import coil.ImageLoader
+import coil.ImageLoaderFactory
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
 import dagger.hilt.android.HiltAndroidApp
 import io.microshow.rxffmpeg.RxFFmpegInvoke
+import javax.inject.Inject
 
 @HiltAndroidApp
-class App : BaseApplication() {
-
+class App : BaseApplication(), ImageLoaderFactory {
+    @Inject
+    lateinit var imageLoader: dagger.Lazy<ImageLoader>
     override fun onCreate() {
         super.onCreate()
 
@@ -26,6 +29,8 @@ class App : BaseApplication() {
         context = applicationContext()
         Toaster.init(this)
     }
+
+    override fun newImageLoader(): ImageLoader = imageLoader.get()
 
     private fun initBRV() {
         // 初始化BindingAdapter的默认绑定ID, 如果不使用DataBinding并不需要初始化

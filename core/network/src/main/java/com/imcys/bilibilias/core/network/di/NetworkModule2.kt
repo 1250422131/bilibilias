@@ -1,10 +1,19 @@
 ﻿package com.imcys.bilibilias.core.network.di
 
 import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import androidx.tracing.trace
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.decode.SvgDecoder
+import coil.decode.VideoFrameDecoder
+import coil.util.DebugLogger
 import com.imcys.bilibilias.core.common.utils.ofMap
 import com.imcys.bilibilias.core.common.utils.print
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.Box
+import com.imcys.bilibilias.core.network.BuildConfig
 import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
@@ -62,6 +71,32 @@ internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule2 {
+    @Provides
+    @Singleton
+    fun imageLoader(
+        okHttpClient: dagger.Lazy<OkHttpClient>,
+        @ApplicationContext application: Context,
+    ): ImageLoader = trace("AsImageLoader") {
+        ImageLoader.Builder(application)
+            .callFactory { okHttpClient.get() }
+            .components {
+                add(SvgDecoder.Factory())
+                add(VideoFrameDecoder.Factory())
+                if (SDK_INT >= 28) {
+                    add(ImageDecoderDecoder.Factory())
+                } else {
+                    add(GifDecoder.Factory())
+                }
+            }
+            .respectCacheHeaders(false)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    logger(DebugLogger())
+                }
+            }
+            .build()
+    }
+
     @Provides
     @Singleton
     fun provideBaseOkhttpClient(

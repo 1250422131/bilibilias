@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.network.repository
 
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.model.login.NavigationBar
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll
 import com.imcys.bilibilias.core.network.api.BILIBILI_URL
@@ -31,6 +32,10 @@ class LoginRepository @Inject constructor(
             loginInfoDataSource.setRefreshToken(token)
         }
         return response
+    }
+
+    suspend fun 导航栏用户信息(): NavigationBar {
+        return client.get(BilibiliApi.WEB_QRCODE_POLL).body()
     }
 
     suspend fun exitLogin() {

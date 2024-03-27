@@ -55,6 +55,7 @@ androidxActivity = "1.8.2"
 androidxComposeBom = "2024.03.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha09"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
@@ -94,7 +95,11 @@ banner = { group = "io.github.youth5201314", name = "banner", version.ref = "ban
 
 brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
 
+coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
+coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 deeprecopy-compiler = { group = "com.imcys.deeprecopy", name = "compiler", version.ref = "deeprecopy-compiler" }
 

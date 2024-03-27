@@ -1,8 +1,8 @@
 ﻿package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.bilias.core.datastore.cookie.Cookie
-import com.bilias.core.datastore.cookie.LoginInfo
+import com.imcys.bilibilias.core.datastore.proto.Cookie
+import com.imcys.bilibilias.core.datastore.proto.LoginInfo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -14,6 +14,12 @@ class LoginInfoDataSource @Inject constructor(
     val loginState = loginInfo.data.map { it.loginState }
     val refreshToken = loginInfo.data.map { it.refreshToken }
     val mixKey = loginInfo.data.map { it.mixKey }
+    val mid = loginInfo.data.map { it.mid }
+    suspend fun setMid(mid: Long) {
+        loginInfo.updateData {
+            it.copy(mid = mid)
+        }
+    }
 
     suspend fun setCookie(cookie: Cookie) {
         val map = cookieStore.map { it.toMutableMap() }.first()
