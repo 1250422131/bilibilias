@@ -51,22 +51,16 @@ import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.util.zip.Inflater
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity() {
-
+class AsVideoActivity() : BaseActivity<ActivityAsVideoBinding>() {
+    override val layoutId: Int = R.layout.activity_as_video
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
-
-    lateinit var binding: ActivityAsVideoBinding
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -76,7 +70,7 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
-    private val asVideoViewModel: AsVideoViewModel by viewModels()
+    private val viewModel: AsVideoViewModel by viewModels()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -90,30 +84,14 @@ class AsVideoActivity : BaseActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    override fun initData() {
-        loadUserData()
-    }
-//    override fun attachBaseContext(newBase: Context?) {
-//        super.attachBaseContext(newBase)
-//
-//    }
-    /**
-     * 加载用户信息，为了确保会员视频及时通知用户
-     */
-    private fun loadUserData() {
-        launchUI {
-            userBaseBean = withContext(Dispatchers.IO) { getUserData() }
-            // 加载视频首要信息
-            initVideoData()
-        }
-    }
-
     override fun initView() {
+
+        binding.asVideoCollectionLy.setOnClickListener {
+
+        }
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd
@@ -136,7 +114,25 @@ class AsVideoActivity : BaseActivity() {
             }
 
             // 设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = this@AsVideoActivity.asVideoViewModel
+            asVideoViewModel = this@AsVideoActivity.viewModel
+        }
+    }
+
+    override fun initData() {
+        loadUserData()
+    }
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//
+//    }
+    /**
+     * 加载用户信息，为了确保会员视频及时通知用户
+     */
+    private fun loadUserData() {
+        launchUI {
+            userBaseBean = withContext(Dispatchers.IO) { getUserData() }
+            // 加载视频首要信息
+            initVideoData()
         }
     }
 
@@ -237,7 +233,6 @@ class AsVideoActivity : BaseActivity() {
                 )
             }
 
-
             // 设置数据
             videoDataBean = videoBaseBean
             // 这里需要显示视频数据
@@ -316,7 +311,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadBangumiVideoList() {
         launchIO {
-
             val bangumiSeasonBean = networkService.n13(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
@@ -443,7 +437,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         launchIO {
-
             val videoPlayListData = networkService.n15(bvid)
 
             launchUI {
@@ -492,18 +485,7 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-        launchUI {
-            // 储存弹幕
-            saveDanmaku(networkService.getDanmuBytes(cid))
-            // 初始化弹幕配置
-            initDanmaku()
-        }
-    }
-
-    /**
-     * 初始化弹幕
-     */
-    private fun initDanmaku() {
+        viewModel.getDanmaku(cid, this)
         // 设置弹幕监听器
         setAsDanmakuCallback()
     }
@@ -578,21 +560,6 @@ class AsVideoActivity : BaseActivity() {
         StatService.onPause(this)
     }
 
-    companion object {
-
-        fun actionStart(context: Context, bvId: String) {
-            val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", bvId)
-            context.startActivity(intent)
-        }
-
-        @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
-        fun actionStart(context: Context, aid: Long) {
-            val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
-            context.startActivity(intent)
-        }
-    }
 
     /**
      * 设置饺子播放器参数配置
@@ -672,28 +639,6 @@ class AsVideoActivity : BaseActivity() {
     // ——————————————————————————————————————————————————————————————————————————
 
     // ——————————————————————————————————————————————————————————————————————————
-    // 弹幕抽离
-    /**
-     * 储存弹幕内容
-     */
-    private fun saveDanmaku(bytes: ByteArray) {
-        val bufferedSink: BufferedSink?
-        val dest = File(getExternalFilesDir("temp").toString(), "tempDm.xml")
-        if (!dest.exists()) dest.createNewFile()
-        val sink = dest.sink() // 打开目标文件路径的sink
-        val decompressBytes =
-            decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-        bufferedSink = sink.buffer()
-        decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-        bufferedSink.close()
-    }
-
-    /**
-     * 配置弹幕信息
-     */
-
-
-
     /**
      * 配置弹幕监听器
      */
@@ -704,21 +649,13 @@ class AsVideoActivity : BaseActivity() {
                 asDanmaku.start()
             }
 
-            override fun updateTimer(timer: DanmakuTimer?) {
-                // 定时器更新的时候回调
-            }
+            override fun updateTimer(timer: DanmakuTimer?) = Unit
 
-            override fun danmakuShown(danmaku: BaseDanmaku?) {
-                // 弹幕展示的时候回调
+            override fun danmakuShown(danmaku: BaseDanmaku?) = Unit
 
-            }
-
-            override fun drawingFinished() {
-                // 弹幕绘制完成时回调
-            }
+            override fun drawingFinished() = Unit
         })
     }
-
 
     // ——————————————————————————————————————————————————————————————————————————
 
@@ -768,5 +705,20 @@ class AsVideoActivity : BaseActivity() {
         }
         decompresser.end()
         return output
+    }
+
+    companion object {
+        fun actionStart(context: Context, bvId: String) {
+            val intent = Intent(context, AsVideoActivity::class.java)
+            intent.putExtra("bvId", bvId)
+            context.startActivity(intent)
+        }
+
+        @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
+        fun actionStart(context: Context, aid: Long) {
+            val intent = Intent(context, AsVideoActivity::class.java)
+            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
+            context.startActivity(intent)
+        }
     }
 }

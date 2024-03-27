@@ -302,7 +302,6 @@ object DialogUtils {
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
 
-        // val mDialogBehavior =
         initDialogBehaviorBinding(
             binding.dialogCollectionBar,
             activity,
@@ -354,7 +353,9 @@ object DialogUtils {
 
         return bottomSheetDialog
     }
+    private fun bottomInit(){
 
+    }
     private fun addThirdPartyData(
         bvid: String,
         aid: Long,

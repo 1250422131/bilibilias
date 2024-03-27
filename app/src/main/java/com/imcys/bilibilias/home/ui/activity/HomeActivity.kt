@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
@@ -24,9 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
     hostAndPath = ARouterAddress.AppHomeActivity,
 )
 @AndroidEntryPoint
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity<ActivityHomeBinding>() {
+    override val layoutId: Int = R.layout.activity_home
     private var exitTime: Long = 0
-    lateinit var activityHomeBinding: ActivityHomeBinding
 
     lateinit var toolFragment: ToolFragment
     lateinit var homeFragment: HomeFragment
@@ -36,9 +35,6 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
-
-        activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-
         initFragment()
         loadFragment()
 
@@ -67,8 +63,8 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun realHandleShare(intent: Intent) {
-        activityHomeBinding.homeViewPage.currentItem = 1
-        activityHomeBinding.homeBottomNavigationView.menu.getItem(1).isChecked = true
+        binding.homeViewPage.currentItem = 1
+        binding.homeBottomNavigationView.menu.getItem(1).isChecked = true
         toolFragment.parseShare(intent)
     }
 
@@ -77,7 +73,7 @@ class HomeActivity : BaseActivity() {
         val fragmentArrayList = listOf(homeFragment, toolFragment, downloadFragment, userFragment)
         val myFragmentPageAdapter =
             MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
-        activityHomeBinding.let {
+        binding.let {
             it.homeViewPage.adapter = myFragmentPageAdapter
             it.homeViewPage.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {

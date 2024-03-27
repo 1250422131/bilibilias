@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
@@ -11,11 +10,6 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
 import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -27,11 +21,10 @@ import kotlin.math.ceil
 
 // 收藏夹
 @AndroidEntryPoint
-class CollectionActivity : BaseActivity() {
-
+class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
+    override val layoutId: Int =   R.layout.activity_collection
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<CollectionDataBean.DataBean.MediasBean>()
-    private lateinit var binding: ActivityCollectionBinding
 
     @Inject
     lateinit var collectionDataAd: CollectionDataAdapter
@@ -41,14 +34,7 @@ class CollectionActivity : BaseActivity() {
     lateinit var networkService: NetworkService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<ActivityCollectionBinding?>(
-            this,
-            R.layout.activity_collection,
-        ).apply {
-            collectionTopLy.addStatusBarTopPadding()
-        }
-
-        initView()
+        binding .collectionTopLy.addStatusBarTopPadding()
     }
 
     override fun initView() {

@@ -7,6 +7,7 @@ import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.Box
 import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
+import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.imcys.bilibilias.core.network.api.BilibiliApi
 import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
 import com.imcys.bilibilias.core.network.utils.WBIUtils
@@ -156,6 +157,7 @@ class NetworkModule2 {
         loginInfoDataSource: LoginInfoDataSource
     ): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { request, content, requestedType ->
+            if (request.request.url.host == BiliBiliAsApi.API_HOST) return@transformResponseBody null
             if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
             val box = json.decodeFromStream(
                 Box.serializer(serializer(requestedType.kotlinType!!)),
