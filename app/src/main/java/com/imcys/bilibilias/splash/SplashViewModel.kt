@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.splash.ui
+﻿package com.imcys.bilibilias.splash
 
 import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
