@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.network.repository.BiliBiliAsRepository
 import com.imcys.bilibilias.core.network.repository.LoginRepository
+import com.imcys.bilibilias.core.network.utils.WBIUtils
 import com.imcys.bilibilias.home.ui.viewmodel.home.HomeIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            loginRepository.getBilibiliHome()
+            saveDailyToken()
         }
     }
 
@@ -53,5 +54,12 @@ class HomeViewModel @Inject constructor(
             loginInfoDataSource.setLoginState(false)
             loginRepository.exitLogin()
         }
+    }
+
+    private suspend fun saveDailyToken() {
+        loginRepository.getBilibiliHome()
+        val bar = loginRepository.导航栏用户信息()
+        loginInfoDataSource.setMid(bar.mid)
+        loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
     }
 }

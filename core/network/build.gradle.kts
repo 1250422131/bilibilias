@@ -6,10 +6,8 @@
 
 android {
     namespace = "com.imcys.bilibilias.core.network"
-    buildTypes {
-        release {
-            matchingFallbacks += "release"
-        }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -18,8 +16,10 @@ dependencies {
     api(projects.core.model)
     implementation(projects.core.datastore)
 
-//    implementation(libs.coil.kt)
-//    implementation(libs.coil.kt.svg)
+    implementation(libs.coil.kt)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.svg)
+    implementation(libs.coil.video)
 
 //    testImplementation(libs.kotlinx.coroutines.test)
 

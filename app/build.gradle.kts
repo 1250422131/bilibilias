@@ -126,6 +126,8 @@ dependencies {
     implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
 
     implementation("androidx.fragment:fragment-ktx:1.6.2")
+
+    implementation(libs.coil.kt)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

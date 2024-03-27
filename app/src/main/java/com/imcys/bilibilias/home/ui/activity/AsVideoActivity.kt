@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -57,7 +56,7 @@ import java.util.zip.Inflater
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AsVideoActivity() : BaseActivity<ActivityAsVideoBinding>() {
+class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     override val layoutId: Int = R.layout.activity_as_video
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
@@ -88,7 +87,6 @@ class AsVideoActivity() : BaseActivity<ActivityAsVideoBinding>() {
     }
 
     override fun initView() {
-
         binding.asVideoCollectionLy.setOnClickListener {
 
         }
@@ -121,10 +119,7 @@ class AsVideoActivity() : BaseActivity<ActivityAsVideoBinding>() {
     override fun initData() {
         loadUserData()
     }
-//    override fun attachBaseContext(newBase: Context?) {
-//        super.attachBaseContext(newBase)
-//
-//    }
+
     /**
      * 加载用户信息，为了确保会员视频及时通知用户
      */

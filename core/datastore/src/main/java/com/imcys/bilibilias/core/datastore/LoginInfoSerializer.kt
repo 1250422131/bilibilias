@@ -1,7 +1,7 @@
-﻿package com.imcys.bilibilias.core.datastore
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.Serializer
-import com.bilias.core.datastore.cookie.LoginInfo
+import com.imcys.bilibilias.core.datastore.proto.LoginInfo
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
