@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
-rootProject.name = "BILIBILIAS"
+rootProject.name = "bilibilias"
 include(":app")
 include(":common")
 include(":model_ffmpeg")
