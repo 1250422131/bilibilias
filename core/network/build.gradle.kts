@@ -48,8 +48,8 @@ dependencies {
     testImplementation("com.google.dagger:hilt-android-testing:2.51")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.51")
 
-    kspTest("com.google.dagger:hilt-android-compiler:2.51")
-    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.51")
+    kspTest("com.google.dagger:hilt-android-compiler:2.51.1")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.hilt.work)
