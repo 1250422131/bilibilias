@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.model.video
+package com.imcys.bilibilias.core.model.video
 
 import com.imcys.bilibilias.core.model.user.Official
 import com.imcys.bilibilias.core.model.user.Vip
@@ -89,8 +89,8 @@ data class ViewDetail(
     val videos: Int = 0,
     @SerialName("vt_display")
     val vtDisplay: String = "",
-    @SerialName("redirect_url")
     // https://www.bilibili.com/bangumi/play/ep809844
+    @SerialName("redirect_url")
     val redirectUrl: String? = null
 ) {
     @Serializable
@@ -133,7 +133,6 @@ data class ViewDetail(
         val weblink: String = ""
     )
 
-
     @Serializable
     data class Staff(
         @SerialName("face")
@@ -152,9 +151,7 @@ data class ViewDetail(
         val title: String = "",
         @SerialName("vip")
         val vip: Vip = Vip()
-    ) {
-
-    }
+    )
 
     @Serializable
     data class UserGarb(

@@ -8,12 +8,44 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
@@ -24,15 +56,17 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
+import com.imcys.bilibilias.home.ui.fragment.tool.SearchResultUiState
+import com.imcys.bilibilias.home.ui.fragment.tool.ToolViewModel
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,21 +95,103 @@ class ToolFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        fragmentToolBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
-        fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
-        return fragmentToolBinding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                val viewModel: ToolViewModel = hiltViewModel()
+                val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+                val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+                ToolContent(
+                    searchQuery,
+                    viewModel::onSearchQueryChanged,
+                    viewModel::clearSearches,
+                    searchResultUiState
+                )
+            }
+        }
     }
 
-     override fun initView() {
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun ToolContent(
+        searchQuery: String,
+        onSearchQueryChanged: (String) -> Unit,
+        onClearSearches: () -> Unit,
+        searchResultUiState: SearchResultUiState
+    ) {
+        Scaffold { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChanged,
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        Icon(
+                            Icons.Default.Clear,
+                            contentDescription = "清空输入框",
+                            modifier = Modifier.clickable { onClearSearches() }
+                        )
+                    }
+                )
+                when (searchResultUiState) {
+                    SearchResultUiState.EmptyQuery -> Unit
+                    SearchResultUiState.LoadFailed -> Unit
+                    SearchResultUiState.Loading -> Unit
+                    is SearchResultUiState.Success ->
+                        LazyColumn(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp)),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(16.dp)
+                        ) {
+                            item {
+                                val context = LocalContext.current
+                                TextButton(
+                                    onClick = {
+                                        AsVideoActivity.actionStart(
+                                            context,
+                                            searchResultUiState.bvid
+                                        )
+                                    }
+                                ) {
+                                    Text(text = "点击进入详情页")
+                                }
+                            }
+                            items(searchResultUiState.collection, key = { it.cid }) { item ->
+                                val indication = LocalIndication.current
+                                Row(
+                                    modifier = Modifier
+                                        .clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = indication
+                                        ) { }
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = item.title)
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowForward,
+                                        contentDescription = "去播放页面"
+                                    )
+                                }
+                                HorizontalDivider()
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    override fun initView() {
         // 加载工具item
-        loadToolItem()
+//        loadToolItem()
 
         // 绑定列表
-        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
+//        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
         // 设置监听
-        setEditListener()
+//        setEditListener()
     }
 
     override fun initData() {
@@ -186,7 +302,6 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-
             val bangumiSeasonBean = networkService.n25(epId)
 
             if (bangumiSeasonBean.code == 0) {
@@ -200,7 +315,6 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchUI {
-
                 val videoBaseBean = networkService.n26(bvid)
 
                 (mAdapter).apply {
@@ -323,12 +437,6 @@ class ToolFragment : BaseFragment() {
                     }
             }
         }
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
     companion object {
