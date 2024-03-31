@@ -35,7 +35,7 @@ class LoginRepository @Inject constructor(
     }
 
     suspend fun 导航栏用户信息(): NavigationBar {
-        return client.get(BilibiliApi.WEB_QRCODE_POLL).body()
+        return client.get(BilibiliApi.NAV_BAR).body()
     }
 
     suspend fun exitLogin() {

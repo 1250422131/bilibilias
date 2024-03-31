@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.network.di
+package com.imcys.bilibilias.core.network.di
 
 import android.content.Context
 import android.os.Build.VERSION.SDK_INT
@@ -13,6 +13,7 @@ import com.imcys.bilibilias.core.common.utils.ofMap
 import com.imcys.bilibilias.core.common.utils.print
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.Box
+import com.imcys.bilibilias.core.model.Response
 import com.imcys.bilibilias.core.network.BuildConfig
 import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
@@ -44,6 +45,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.parameter
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import io.ktor.http.ParametersBuilderImpl
@@ -67,6 +69,7 @@ import kotlin.reflect.typeOf
 data class WrapperClient(val client: HttpClient)
 
 internal val requireWbi = AttributeKey<Boolean>("requireWbi")
+internal val requireCSRF = AttributeKey<Boolean>("requireCSRF")
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -167,6 +170,12 @@ class NetworkModule2 {
         request: HttpRequestBuilder,
         loginInfoDataSource: LoginInfoDataSource,
     ): HttpClientCall {
+        if (request.attributes.getOrNull(requireCSRF) == true) {
+            val cookie = loginInfoDataSource.cookieStore.first()["bili_jct"]
+            if (cookie != null) {
+                request.parameter("csrf", cookie.value_)
+            }
+        }
         if (request.attributes.getOrNull(requireWbi) == true) {
             val params = request.url.parameters
             val signatureParams = mutableListOf<Parameter>()
@@ -193,7 +202,12 @@ class NetworkModule2 {
     ): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { request, content, requestedType ->
             if (request.request.url.host == BiliBiliAsApi.API_HOST) return@transformResponseBody null
-            if (requestedType.kotlinType == typeOf<ByteReadChannel>()) return@transformResponseBody null
+            if (requestedType.kotlinType == typeOf<ByteReadChannel>() ||
+                requestedType.kotlinType == typeOf<Response>()
+            ) {
+                return@transformResponseBody null
+            }
+
             val box = json.decodeFromStream(
                 Box.serializer(serializer(requestedType.kotlinType!!)),
                 content.toInputStream()
@@ -205,8 +219,8 @@ class NetworkModule2 {
                 throw ApiIOException(
                     box.code,
                     box.message +
-                            "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
-                            "\n链接: ${request.request.url}",
+                        "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
+                        "\n链接: ${request.request.url}",
                     box.data?.ofMap()?.print()
                 )
             }

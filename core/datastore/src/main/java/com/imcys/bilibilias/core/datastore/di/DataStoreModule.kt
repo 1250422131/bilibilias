@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import com.bilias.core.datastore.cookie.LoginInfo
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.datastore.LoginInfoSerializer
+import com.imcys.bilibilias.core.datastore.proto.LoginInfo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

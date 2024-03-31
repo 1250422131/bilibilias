@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.home.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -9,14 +11,21 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material3.Text
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
+import coil.load
 import com.baidu.mobstat.StatService
+import com.hjq.toast.Toaster
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
@@ -35,17 +44,23 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
+import com.imcys.bilibilias.core.model.user.Card
+import com.imcys.bilibilias.core.model.video.ViewDetail
+import com.imcys.bilibilias.core.model.video.ViewTriple
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
 import com.imcys.bilibilias.home.ui.activity.video.BiliDanmukuUtil
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.Event
+import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.model.BaseDanmaku
@@ -58,6 +73,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     override val layoutId: Int = R.layout.activity_as_video
+
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
 
@@ -87,8 +103,13 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     }
 
     override fun initView() {
+        lifecycleScope.launch {
+            when (val event = viewModel._effect.receive()) {
+                is Event.ShowToast -> Toaster.show(event.text)
+                is Event.ToolBarReportChange -> renderViewTriple(event.viewTriple)
+            }
+        }
         binding.asVideoCollectionLy.setOnClickListener {
-
         }
         binding.apply {
             // 绑定播放器，弹幕控制器
@@ -117,7 +138,77 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     }
 
     override fun initData() {
-        loadUserData()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.asVideoUiState.collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
+    private fun render(state: ViewUiState) {
+        when (state) {
+            ViewUiState.Loading -> Unit
+            is ViewUiState.Success -> {
+                renderTitleWithDesc(state.viewDetail)
+                renderUpInfoContainer(state.userCard)
+                renderToolBarReport(state.viewDetail, state.viewTriple)
+            }
+        }
+    }
+
+    private fun renderUpInfoContainer(userCard: Card) {
+        val card = userCard.card
+        binding.ivOwnerFace.load(card.face)
+        binding.asVideoUserName.text = card.name
+        binding.tvOwnerData.text =
+            "%s粉丝\t%s投稿".format(card.fans, userCard.archiveCount)
+    }
+
+    private fun renderTitleWithDesc(viewDetail: ViewDetail) {
+        val title = viewDetail.title
+        binding.tvViewTitle.text = title
+        binding.tvViewTitle.setOnClickListener {
+            textCopyThenPost(title)
+        }
+        binding.tvViewDesc.text = viewDetail.descV2.first().rawText
+    }
+
+    private fun textCopyThenPost(textCopied: String) {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("", textCopied))
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            Toaster.show(R.string.Copied)
+        }
+    }
+
+    private fun renderToolBarReport(viewDetail: ViewDetail, viewTriple: ViewTriple) {
+        binding.asVideoLikeLy.setOnClickListener {
+            viewModel.likeVideo(viewTriple.hasLike, viewDetail.bvid)
+        }
+        binding.asVideoThrowLy.setOnClickListener {
+            viewModel.videoCoinAdd(viewDetail.bvid)
+        }
+        binding.asVideoCollectionLy.setOnClickListener {
+//         viewModel.loadCollectionView()
+            setContent {
+                Text(text = "haaaaa")
+            }
+        }
+
+        val stat = viewDetail.stat
+        binding.tvViewStatLike.text = stat.like.toString()
+        binding.tvViewStatCoins.text = stat.coin.toString()
+        binding.tvViewStatFavoured.text = stat.favorite.toString()
+        binding.tvViewStatShared.text = stat.share.toString()
+        renderViewTriple(viewTriple)
+    }
+
+    private fun renderViewTriple(viewTriple: ViewTriple) {
+        binding.asVideoLikeBt.isSelected = viewTriple.hasLike
+        binding.asVideoThrowBt.isSelected = viewTriple.hasLike
+        binding.asVideoFaButton.isSelected = viewTriple.hasLike
     }
 
     /**
@@ -230,8 +321,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
             // 设置数据
             videoDataBean = videoBaseBean
-            // 这里需要显示视频数据
-            showVideoData()
             // 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
             setBaseData(videoBaseBean)
             // 加载用户卡片
@@ -440,7 +529,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                            // 将子集切换后的逻辑交给activity完成
+                        // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
@@ -480,7 +569,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-        viewModel.getDanmaku(cid, this)
         // 设置弹幕监听器
         setAsDanmakuCallback()
     }
@@ -523,15 +611,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         }
     }
 
-    /**
-     * 显示视频数据页面
-     */
-    private fun showVideoData() {
-        binding.apply {
-            asVideoDataLy.visibility = View.VISIBLE
-        }
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 释放播放器
@@ -545,7 +624,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         super.onPause()
         asDanmaku.apply {
             pause()
-            // hide()
         }
         if (asJzvdStd.state == Jzvd.STATE_PLAYING) { // 暂停视频
             asJzvdStd.startButton.performClick()
@@ -554,7 +632,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         // 百度统计
         StatService.onPause(this)
     }
-
 
     /**
      * 设置饺子播放器参数配置
@@ -653,17 +730,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
     }
 
     // ——————————————————————————————————————————————————————————————————————————
-
-    override fun onResume() {
-        super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
-            // asDanmaku.show()
-            // asJzvdStd.startButton.performClick()
-        }
-        // 百度统计
-        StatService.onResume(this)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         asDanmaku.release()

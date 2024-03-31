@@ -9,6 +9,10 @@ android {
 }
 
 dependencies {
+    api(projects.core.model)
+    api(projects.core.network)
+
+//    testImplementation(projects.core.testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

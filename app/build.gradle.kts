@@ -28,8 +28,6 @@ android {
 
     buildTypes {
         debug {
-            // 混淆
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -87,6 +85,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.datastore)
     implementation(projects.core.crash)
+    implementation(projects.core.domain)
 
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
@@ -129,6 +128,9 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     implementation(libs.coil.kt)
+
+    implementation("org.orbit-mvi:orbit-core:7.0.1")
+    implementation("org.orbit-mvi:orbit-viewmodel:7.0.1")
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

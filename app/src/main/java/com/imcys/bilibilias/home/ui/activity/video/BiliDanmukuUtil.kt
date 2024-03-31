@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.home.ui.activity.video
 
 import android.content.Context
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.model.BaseDanmaku
@@ -10,8 +11,8 @@ import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 import java.io.File
 
 object BiliDanmukuUtil {
-    fun saveDmTempFile(context: Context, content: ByteArray) {
-        getDmTempFile(context).writeBytes(content)
+    fun saveDmTempFile(content: ByteArray) {
+        getDmTempFile(BaseApplication.applicationContext()).writeBytes(content)
     }
 
     fun getDmTempFile(context: Context): File {

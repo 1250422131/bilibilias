@@ -66,9 +66,8 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@{VideoBaseBean.data.title}"
-                            android:textSize="16dp"
-                            android:textStyle="bold"
-                            android:transitionName="videoTitle" />
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="match_parent"
