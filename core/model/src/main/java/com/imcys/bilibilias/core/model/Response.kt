@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Response(
     @SerialName("data")
-    val `data`: Int = 0,
+    val `data`: Int = Int.MIN_VALUE,
     @SerialName("message")
     val message: String = "",
-)
+) {
+    val success = data == 0
+}

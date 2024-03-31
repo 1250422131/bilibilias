@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import androidx.lifecycle.SavedStateHandle
@@ -13,7 +12,6 @@ import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.asResult
 import com.imcys.bilibilias.common.base.extend.launchIO
@@ -22,9 +20,12 @@ import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.network.danmaku.DanmakuRepository
+import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import com.imcys.bilibilias.core.domain.GetDmDataWriteFileUseCase
 import com.imcys.bilibilias.core.domain.GetViewTripleUseCase
+import com.imcys.bilibilias.core.model.space.FavouredFolder
 import com.imcys.bilibilias.core.model.video.ViewTriple
+import com.imcys.bilibilias.core.network.di.ApiIOException
 import com.imcys.bilibilias.core.network.repository.UserRepository
 import com.imcys.bilibilias.core.network.repository.UserSpaceRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
@@ -40,6 +41,7 @@ import com.imcys.bilibilias.home.ui.model.toDashVideoPlayBean
 import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
 import com.microsoft.appcenter.analytics.Analytics
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -51,6 +53,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -67,6 +70,7 @@ import javax.inject.Inject
 sealed class Event {
     data class ShowToast(val text: String) : Event()
     data class ToolBarReportChange(val viewTriple: ViewTriple) : Event()
+    data class ShowFavouredDialog(val favouredFolder: FavouredFolder) : Event()
 }
 
 @HiltViewModel
@@ -77,10 +81,11 @@ class AsVideoViewModel @Inject constructor(
     private val userSpaceRepository: UserSpaceRepository,
     private val videoRepository: VideoRepository,
     private val userRepository: UserRepository,
+    private val loginInfoDataSource: LoginInfoDataSource,
     getViewTripleUseCase: GetViewTripleUseCase,
     getDmDataWriteFileUseCase: GetDmDataWriteFileUseCase
 ) : ViewModel() {
-    val _effect = Channel<Event>()
+    val _effect = Channel<Event>(Channel.UNLIMITED)
     val bvid = savedStateHandle.getStateFlow("bvId", "")
     val asVideoUiState = bvid.flatMapLatest {
         viewDetailUiState(
@@ -444,11 +449,15 @@ class AsVideoViewModel @Inject constructor(
      */
     fun likeVideo(hasLike: Boolean, bvid: String) {
         viewModelScope.launch {
-            val response = videoRepository.点赞视频(hasLike, bvid)
-            val success = response.data == 0
-            if (!success) {
-                _effect.send(Event.ShowToast(response.message))
-            } else {
+            val response = try {
+                videoRepository.点赞视频(hasLike, bvid)
+            } catch (e: ApiIOException) {
+                Napier.d(e) { "走了吗" }
+                _effect.send(Event.ShowToast(e.message!!))
+                null
+            }
+            if (response?.success == false) return@launch
+            response?.let {
                 (asVideoUiState.value as? ViewUiState.Success)?.let {
                     val newTriple = it.viewTriple.copy(true)
                     _effect.send(Event.ToolBarReportChange(newTriple))
@@ -462,11 +471,13 @@ class AsVideoViewModel @Inject constructor(
      */
     fun videoCoinAdd(bvid: String) {
         viewModelScope.launch {
-            val response = videoRepository.投币视频(bvid)
-            val success = response.data == 0
-            if (!success) {
-                _effect.send(Event.ShowToast(response.message))
-            } else {
+            val response = try {
+                videoRepository.投币视频(bvid)
+            } catch (e: ApiIOException) {
+                _effect.send(Event.ShowToast(e.message!!))
+                null
+            }
+            response?.let {
                 (asVideoUiState.value as? ViewUiState.Success)?.let {
                     val newTriple = it.viewTriple.copy(hasCoins = true)
                     _effect.send(Event.ToolBarReportChange(newTriple))
@@ -478,28 +489,25 @@ class AsVideoViewModel @Inject constructor(
     /**
      * 加载用户收藏夹
      */
-    @SuppressLint("NotifyDataSetChanged")
-    fun loadCollectionView(view: View, avid: Long) {
-        val context = view.context
-//        (context as AsVideoActivity).binding.apply {
-        viewModelScope.launchIO {
-            userSpaceRepository.查询用户创建的视频收藏夹(BaseApplication.asUser.mid)
-            val userCreateCollectionBean = networkService.n34()
+    fun getUserFavorites() {
+        viewModelScope.launch {
+            val folder =
+                userSpaceRepository.查询用户创建的视频收藏夹(loginInfoDataSource.mid.first())
+            _effect.send(Event.ShowFavouredDialog(folder))
 
-            launchUI {
-                if (userCreateCollectionBean.code == 0) {
-                    DialogUtils.loadUserCreateCollectionDialog(
-                        context,
-                        userCreateCollectionBean,
-                        { _, _ ->
-                        },
-                        { selects ->
-                            // 选取完成了收藏文件夹
-                            setCollection(context, selects, avid)
-                        },
-                    ).show()
-                }
-            }
+//            launchUI {
+//                if (userCreateCollectionBean.code == 0) {
+//                    DialogUtils.loadUserCreateCollectionDialog(
+//                        context,
+//                        userCreateCollectionBean,
+//                        { _, _ ->
+//                        },
+//                        { selects ->
+//                            // 选取完成了收藏文件夹
+//                            setCollection(context, selects, aid)
+//                        },
+//                    ).show()
+//                }
         }
     }
 

@@ -129,8 +129,7 @@ dependencies {
 
     implementation(libs.coil.kt)
 
-    implementation("org.orbit-mvi:orbit-core:7.0.1")
-    implementation("org.orbit-mvi:orbit-viewmodel:7.0.1")
+    implementation("com.holix.android:bottomsheetdialog-compose:1.4.1")
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

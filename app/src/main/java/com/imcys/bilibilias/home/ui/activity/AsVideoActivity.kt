@@ -11,12 +11,11 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.Text
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +30,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -43,7 +41,6 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
-import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.core.model.user.Card
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewTriple
@@ -56,12 +53,8 @@ import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
 import com.imcys.bilibilias.home.ui.viewmodel.Event
 import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import master.flame.danmaku.controller.IDanmakuView
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
@@ -69,6 +62,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.zip.Inflater
 import javax.inject.Inject
+import kotlin.collections.set
 
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
@@ -104,11 +98,17 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     override fun initView() {
         lifecycleScope.launch {
-            when (val event = viewModel._effect.receive()) {
-                is Event.ShowToast -> Toaster.show(event.text)
-                is Event.ToolBarReportChange -> renderViewTriple(event.viewTriple)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel._effect.consumeAsFlow().collect {
+                    when (it) {
+                        is Event.ShowToast -> Toaster.show(it.text)
+                        is Event.ToolBarReportChange -> renderViewTriple(it.viewTriple)
+                        is Event.ShowFavouredDialog -> Unit
+                    }
+                }
             }
         }
+
         binding.asVideoCollectionLy.setOnClickListener {
         }
         binding.apply {
@@ -139,10 +139,8 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
     override fun initData() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.asVideoUiState.collect {
-                    render(it)
-                }
+            viewModel.asVideoUiState.flowWithLifecycle(lifecycle).collect {
+                render(it)
             }
         }
     }
@@ -155,6 +153,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                 renderUpInfoContainer(state.userCard)
                 renderToolBarReport(state.viewDetail, state.viewTriple)
             }
+
         }
     }
 
@@ -192,9 +191,8 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         }
         binding.asVideoCollectionLy.setOnClickListener {
 //         viewModel.loadCollectionView()
-            setContent {
-                Text(text = "haaaaa")
-            }
+            viewModel.getUserFavorites()
+
         }
 
         val stat = viewDetail.stat
@@ -209,17 +207,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         binding.asVideoLikeBt.isSelected = viewTriple.hasLike
         binding.asVideoThrowBt.isSelected = viewTriple.hasLike
         binding.asVideoFaButton.isSelected = viewTriple.hasLike
-    }
-
-    /**
-     * 加载用户信息，为了确保会员视频及时通知用户
-     */
-    private fun loadUserData() {
-        launchUI {
-            userBaseBean = withContext(Dispatchers.IO) { getUserData() }
-            // 加载视频首要信息
-            initVideoData()
-        }
     }
 
     /**
@@ -343,50 +330,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                     loadVideoList() // 加载正常列表
                 }
             }
-            // 检查三连情况
-            archiveHasLikeTriple()
         }
-    }
-
-    @Inject
-    lateinit var http: HttpClient
-
-    /**
-     * 检查三连情况
-     */
-    private fun archiveHasLikeTriple() {
-        launchIO {
-            archiveHasLike()
-            archiveCoins()
-            archiveFavoured()
-        }
-    }
-
-    /**
-     * 收藏检验
-     */
-    private suspend fun archiveFavoured() {
-        val bean = http.get("${BilibiliApi.archiveFavoured}?aid=$bvid")
-            .body<ResBean<ArchiveFavouredBean>>()
-        binding.archiveFavouredBean = bean.data
-    }
-
-    /**
-     * 检验投币情况
-     */
-    private suspend fun archiveCoins() {
-        val bean = http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
-            .body<ArchiveHasLikeBean>()
-        binding.archiveHasLikeBean = bean
-    }
-
-    /**
-     * 检验是否点赞
-     */
-    private suspend fun archiveHasLike() {
-        val bean =
-            http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
-        binding.archiveCoinsBean = bean.data
     }
 
     /**
@@ -500,21 +444,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
-    /**
-     * 获取用户基础信息
-     * @return UserBaseBean
-     */
-    private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n11(paramsStr)
-    }
-
     /**
      * 加载视频列表信息
      *
@@ -529,7 +458,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                        // 将子集切换后的逻辑交给activity完成
+                            // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
@@ -772,13 +701,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         fun actionStart(context: Context, bvId: String) {
             val intent = Intent(context, AsVideoActivity::class.java)
             intent.putExtra("bvId", bvId)
-            context.startActivity(intent)
-        }
-
-        @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
-        fun actionStart(context: Context, aid: Long) {
-            val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
             context.startActivity(intent)
         }
     }
