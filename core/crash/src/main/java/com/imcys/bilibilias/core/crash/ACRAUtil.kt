@@ -7,15 +7,15 @@ import org.acra.ktx.initAcra
 
 object ACRAUtil {
     fun init(app: Application) {
-        app.init()
+        app.initAcra()
     }
 
-    fun Application.init() {
+    private fun Application.initAcra() {
         initAcra {
             reportFormat = StringFormat.JSON
 
             dialog {
-                enabled = true
+                enabled = false
                 text = "dialog"
             }
         }

@@ -144,7 +144,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.splash.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.SplashOverlay">
             <intent-filter>

@@ -9,6 +9,4 @@ data class LevelInfo(
     val currentLevel: Int = 0,
     @SerialName("current_min")
     val currentMin: Int = 0,
-    @SerialName("next_exp")
-    val nextExp: String = ""
 )

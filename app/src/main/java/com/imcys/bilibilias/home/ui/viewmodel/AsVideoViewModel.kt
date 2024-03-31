@@ -1,13 +1,8 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
-import android.os.Build
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,23 +15,29 @@ import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.Result
+import com.imcys.bilibilias.common.base.extend.asResult
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.network.danmaku.DanmakuRepository
+import com.imcys.bilibilias.core.domain.GetDmDataWriteFileUseCase
+import com.imcys.bilibilias.core.domain.GetViewTripleUseCase
+import com.imcys.bilibilias.core.model.video.ViewTriple
+import com.imcys.bilibilias.core.network.repository.UserRepository
 import com.imcys.bilibilias.core.network.repository.UserSpaceRepository
+import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.imcys.bilibilias.danmaku.change.CCJsonToAss
 import com.imcys.bilibilias.danmaku.change.DmXmlToAss
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.activity.video.BiliDanmukuUtil
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.VideoCCInfo
 import com.imcys.bilibilias.home.ui.model.VideoPageListData
 import com.imcys.bilibilias.home.ui.model.toDashVideoPlayBean
+import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
 import com.microsoft.appcenter.analytics.Analytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -44,8 +45,16 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okio.BufferedSink
@@ -55,9 +64,10 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-/**
- * 解析视频的ViewModel
- */
+sealed class Event {
+    data class ShowToast(val text: String) : Event()
+    data class ToolBarReportChange(val viewTriple: ViewTriple) : Event()
+}
 
 @HiltViewModel
 class AsVideoViewModel @Inject constructor(
@@ -65,8 +75,22 @@ class AsVideoViewModel @Inject constructor(
     private val danmakuRepository: DanmakuRepository,
     private val danmakuRepository2: com.imcys.bilibilias.core.network.repository.DanmakuRepository,
     private val userSpaceRepository: UserSpaceRepository,
+    private val videoRepository: VideoRepository,
+    private val userRepository: UserRepository,
+    getViewTripleUseCase: GetViewTripleUseCase,
+    getDmDataWriteFileUseCase: GetDmDataWriteFileUseCase
 ) : ViewModel() {
+    val _effect = Channel<Event>()
     val bvid = savedStateHandle.getStateFlow("bvId", "")
+    val asVideoUiState = bvid.flatMapLatest {
+        viewDetailUiState(
+            it,
+            videoRepository,
+            userRepository,
+            getViewTripleUseCase,
+            getDmDataWriteFileUseCase
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, ViewUiState.Loading)
 
     @Inject
     lateinit var http: HttpClient
@@ -89,7 +113,7 @@ class AsVideoViewModel @Inject constructor(
 
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                //并发
+                // 并发
                 val dashVideoPlayDeferred =
                     async { networkService.viewDash(context.bvid, context.cid, 64) }
                 val dashBangumiPlayDeferred =
@@ -153,7 +177,7 @@ class AsVideoViewModel @Inject constructor(
 
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                //并发
+                // 并发
                 val dashVideoPlayDeferred =
                     async { networkService.viewDash(context.bvid, context.cid, 94) }
                 val dashBangumiPlayDeferred =
@@ -200,7 +224,6 @@ class AsVideoViewModel @Inject constructor(
             }
         }
     }
-
 
     /**
      * 显示下载对话框
@@ -418,61 +441,17 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 点赞视频
-     * @param bvid String aid
      */
-    fun likeVideo(view: View, bvid: String) {
-        val context = view.context
-
-        viewModelScope.launchUI {
-            val likeVideoBean = networkService.videoLike(bvid)
-
-//            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-            when (likeVideoBean.code) {
-                0 -> {
-//                        context.binding.archiveHasLikeBean?.data = 1
-//                        context.binding.asVideoLikeBt.isSelected = true
-                }
-
-                65006 -> {
-                    cancelLikeVideo(view, bvid)
-                }
-
-                else -> {
-                    asToast(context, likeVideoBean.message)
-                }
-            }
-//            } else {
-//                cancelLikeVideo(view, bvid)
-//            }
-        }
-    }
-
-    /**
-     * 取消对视频的点赞
-     * @param bvid String
-     */
-    private fun cancelLikeVideo(view: View, bvid: String) {
-        val context = view.context
-
-        viewModelScope.launchIO {
-            val likeVideoBean = networkService.n32(bvid)
-
-            launchUI {
-                when (likeVideoBean.code) {
-                    0 -> {
-//                        (context as AsVideoActivity).binding.apply {
-//                            archiveHasLikeBean?.data = 0
-//                            asVideoLikeBt.isSelected = false
-//                        }
-                    }
-
-                    65004 -> {
-                        likeVideo(view, bvid)
-                    }
-
-                    else -> {
-                        asToast(context, likeVideoBean.message)
-                    }
+    fun likeVideo(hasLike: Boolean, bvid: String) {
+        viewModelScope.launch {
+            val response = videoRepository.点赞视频(hasLike, bvid)
+            val success = response.data == 0
+            if (!success) {
+                _effect.send(Event.ShowToast(response.message))
+            } else {
+                (asVideoUiState.value as? ViewUiState.Success)?.let {
+                    val newTriple = it.viewTriple.copy(true)
+                    _effect.send(Event.ToolBarReportChange(newTriple))
                 }
             }
         }
@@ -480,17 +459,18 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 视频投币
-     * @param bvid String
      */
-    fun videoCoinAdd(view: View, bvid: String) {
-        val context = view.context
-
-        viewModelScope.launchIO {
-            networkService.n33(bvid)
-
-            launchUI {
-//                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
-//                context.binding.asVideoThrowBt.isSelected = true
+    fun videoCoinAdd(bvid: String) {
+        viewModelScope.launch {
+            val response = videoRepository.投币视频(bvid)
+            val success = response.data == 0
+            if (!success) {
+                _effect.send(Event.ShowToast(response.message))
+            } else {
+                (asVideoUiState.value as? ViewUiState.Success)?.let {
+                    val newTriple = it.viewTriple.copy(hasCoins = true)
+                    _effect.send(Event.ToolBarReportChange(newTriple))
+                }
             }
         }
     }
@@ -524,24 +504,6 @@ class AsVideoViewModel @Inject constructor(
     }
 
     /**
-     * 复制内容
-     * @param inputStr String
-     */
-    fun addClipboardMessage(view: View, inputStr: String): Boolean {
-        val context = view.context
-
-        val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        // When setting the clip board text.
-        clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
-        // Only show a toast for Android 12 and lower.
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
-        }
-
-        return true
-    }
-
-    /**
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
@@ -572,10 +534,27 @@ class AsVideoViewModel @Inject constructor(
             }
         }
     }
+}
 
-    fun getDanmaku(cid: Long, context: Context) {
-        viewModelScope.launch {
-            BiliDanmukuUtil.saveDmTempFile(context, danmakuRepository2.getRealTimeDanmaku(cid))
+private suspend fun viewDetailUiState(
+    bvid: String,
+    videoRepository: VideoRepository,
+    userRepository: UserRepository,
+    getViewTripleUseCase: GetViewTripleUseCase,
+    getDmDataWriteFileUseCase: GetDmDataWriteFileUseCase
+): Flow<ViewUiState> {
+    val detailFlow = flow { emit(videoRepository.获取视频详细信息(bvid)) }
+    val cardFlow =
+        detailFlow.map { getDmDataWriteFileUseCase(it.cid); userRepository.用户名片信息(it.owner.mid) }
+    val tripleFlow = getViewTripleUseCase.invoke(bvid)
+    return combine(detailFlow, cardFlow, tripleFlow, ::Triple).asResult().map { result ->
+        when (result) {
+            is Result.Error -> ViewUiState.Loading
+            Result.Loading -> ViewUiState.Loading
+            is Result.Success -> {
+                val (viewDetail, card, viewTriple) = result.data
+                ViewUiState.Success(viewDetail, card, viewTriple)
+            }
         }
     }
 }
