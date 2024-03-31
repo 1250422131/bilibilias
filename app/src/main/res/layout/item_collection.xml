@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-
         <variable
             name="ListBean"
             type="com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean.DataBean.ListBean" />
@@ -31,7 +28,6 @@
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@{ListBean.title}"
             android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"
-
             android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

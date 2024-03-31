@@ -63,6 +63,7 @@ class VideoRepository @Inject constructor(
             parameter("like", if (hasLike) 2 else 1)
         }.body<Response>()
     }
+
     suspend fun 投币视频(bvid: String): Response {
         return client.post(BilibiliApi.COIN_ADD) {
             attributes.put(requireCSRF, true)
@@ -70,5 +71,14 @@ class VideoRepository @Inject constructor(
             parameter("select_like", 1)
             parameter("multiply", 2)
         }.body<Response>()
+    }
+
+    suspend fun 收藏视频(aid: Long, addIds: String, delIds: String = ""): Response {
+        return client.get(BilibiliApi.ARCHIVE_RESOURCE_FAVOURED) {
+            attributes.put(requireCSRF, true)
+            parameter("rid", aid)
+            parameter("add_media_ids", addIds)
+            parameter("type", "2")
+        }.body()
     }
 }
