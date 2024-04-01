@@ -16,9 +16,6 @@ object WBIUtils {
         36, 20, 34, 44, 52
     )
 
-    /**
-     * bar=514&baz=1919810&foo=114&wts=1687541921&w_rid=26e82b1b9b3a11dbb1807a9228a40d3b
-     */
     fun getMixinKey(imgKey: String, subKey: String): String {
         val mixKey = imgKey + subKey
         return MIXIN_KEY_ENC_TAB.map {

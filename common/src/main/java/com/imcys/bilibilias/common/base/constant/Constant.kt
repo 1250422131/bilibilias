@@ -11,8 +11,6 @@ const val ROAM_API = "https://api.bilibili.com/"
 
 const val AS_COOKIES = "as_cookies"
 
-const val SET_COOKIE = "Set-Cookie"
-
 const val COOKIE = "cookie"
 
  const val COOKIES = "cookies"

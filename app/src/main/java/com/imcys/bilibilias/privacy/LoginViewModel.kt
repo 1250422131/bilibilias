@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.model.login.view
+package com.imcys.bilibilias.privacy
 
 import android.annotation.SuppressLint
 import android.content.Context

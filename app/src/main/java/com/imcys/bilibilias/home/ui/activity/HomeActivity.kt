@@ -19,26 +19,22 @@ import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.anno.RouterAnno
 import dagger.hilt.android.AndroidEntryPoint
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeActivity,
-)
+@RouterAnno(hostAndPath = ARouterAddress.AppHomeActivity,)
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId: Int = R.layout.activity_home
     private var exitTime: Long = 0
 
-    lateinit var toolFragment: ToolFragment
-    lateinit var homeFragment: HomeFragment
-    lateinit var downloadFragment: DownloadFragment
-    lateinit var userFragment: UserFragment
+    private lateinit var toolFragment: ToolFragment
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var downloadFragment: DownloadFragment
+    private lateinit var userFragment: UserFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
         initFragment()
         loadFragment()
-
-        handleShare(intent)
     }
 
     /**
@@ -53,19 +49,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleShare(intent)
-    }
-
-    private fun handleShare(intent: Intent) {
         if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
-            realHandleShare(intent)
+            binding.homeViewPage.currentItem = 1
+            binding.homeBottomNavigationView.menu.getItem(1).isChecked = true
+            toolFragment.parseShare(intent)
         }
-    }
-
-    private fun realHandleShare(intent: Intent) {
-        binding.homeViewPage.currentItem = 1
-        binding.homeBottomNavigationView.menu.getItem(1).isChecked = true
-        toolFragment.parseShare(intent)
     }
 
     // 加载fragment

@@ -125,7 +125,7 @@
             android:name=".home.ui.activity.HomeActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            tools:ignore="IntentFilterExportedReceiver">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 

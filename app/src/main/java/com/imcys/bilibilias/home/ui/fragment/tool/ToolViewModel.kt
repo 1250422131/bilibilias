@@ -1,12 +1,14 @@
-﻿package com.imcys.bilibilias.home.ui.fragment.tool
+package com.imcys.bilibilias.home.ui.fragment.tool
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.base.utils.FileDownloadFactory
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.asResult
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
+import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ToolViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val videoRepository: VideoRepository
+    private val getStreamWithVideoDetailUseCase: GetStreamWithVideoDetailUseCase,
+    private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
+    private val fileDownloadFactory: FileDownloadFactory,
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
     val searchResultUiState = searchQuery.map {
@@ -29,13 +33,13 @@ class ToolViewModel @Inject constructor(
             is SearchType.AV -> handleAV(it.id)
             is SearchType.BV -> handleBV(it.id)
             is SearchType.EP -> handleEP(it.id)
-            SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
             is SearchType.ShortLink -> TODO()
+            SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
 
-    private fun handleEP(id: String): Flow<SearchResultUiState> {
-        TODO("Not yet implemented")
+    fun download(downloadFileRequest: DownloadFileRequest) {
+        fileDownloadFactory.download(downloadFileRequest)
     }
 
     fun onSearchQueryChanged(query: String) {
@@ -46,20 +50,45 @@ class ToolViewModel @Inject constructor(
         savedStateHandle[SEARCH_QUERY] = ""
     }
 
-    private suspend fun handleAV(id: String): Flow<SearchResultUiState> {
+    private fun handleAV(id: String): Flow<SearchResultUiState> {
         val bvid = NewVideoNumConversionUtils.av2bv(id.toLong())
         return handleBV(bvid)
     }
 
-    private suspend fun handleBV(id: String): Flow<SearchResultUiState> {
-        return flowOf(videoRepository.获取视频详细信息(id)).asResult().map { result ->
+    private fun handleBV(id: String): Flow<SearchResultUiState> {
+        return getStreamWithVideoDetailUseCase(id).asResult().map { result ->
             when (result) {
                 is Result.Error -> SearchResultUiState.LoadFailed
                 Result.Loading -> SearchResultUiState.Loading
                 is Result.Success -> {
-                    val detail = result.data
-                    val collection = detail.pages.map { View(it.cid, it.part) }
+                    val (detail, streams) = result.data
+                    val descs = streams.map {
+                        it.streamUrl.mapToVideoStreamDesc()
+                    }
+                    val collection = detail.pages.zip(descs).map {
+                        View(it.first.cid, it.first.part, it.second)
+                    }
                     SearchResultUiState.Success(detail.aid, detail.bvid, detail.cid, collection)
+                }
+            }
+        }
+    }
+
+    private fun handleEP(id: String): Flow<SearchResultUiState> {
+        return getStreamWithBangumiDetailUseCase(id.toLong()).asResult().map { result ->
+            when (result) {
+                is Result.Error -> SearchResultUiState.LoadFailed
+                Result.Loading -> SearchResultUiState.Loading
+                is Result.Success -> {
+                    val (detail, streams) = result.data
+                    val descs = streams.map {
+                        it.streamUrl.mapToVideoStreamDesc()
+                    }
+                    val collection = detail.episodes.zip(descs).map {
+                        View(it.first.cid, it.first.longTitle, it.second)
+                    }
+                    val episode = detail.episodes.first()
+                    SearchResultUiState.Success(episode.aid, episode.bvid, episode.cid, collection)
                 }
             }
         }

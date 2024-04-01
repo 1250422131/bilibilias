@@ -4,12 +4,16 @@ import com.imcys.bilibilias.core.model.Response
 import com.imcys.bilibilias.core.model.video.ArchiveCoins
 import com.imcys.bilibilias.core.model.video.ArchiveFavoured
 import com.imcys.bilibilias.core.model.video.ArchiveLike
+import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.network.api.BilibiliApi
 import com.imcys.bilibilias.core.network.di.WrapperClient
 import com.imcys.bilibilias.core.network.di.requireCSRF
+import com.imcys.bilibilias.core.network.di.requireWbi
+import com.imcys.bilibilias.core.network.utils.parameterAVid
 import com.imcys.bilibilias.core.network.utils.parameterAid
 import com.imcys.bilibilias.core.network.utils.parameterBVid
+import com.imcys.bilibilias.core.network.utils.parameterCid
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -20,6 +24,19 @@ class VideoRepository @Inject constructor(
     wrapperClient: WrapperClient
 ) {
     private val client = wrapperClient.client
+    suspend fun videoStreamingURL(aid: Long, bvid: String, cid: Long): VideoStreamUrl {
+        return client.get("x/player/wbi/playurl") {
+            attributes.put(requireWbi, true)
+            parameterAVid(aid)
+            parameterBVid(bvid)
+            parameterCid(cid)
+            parameter("qn", 127)
+            parameter("fnver", 0)
+            parameter("fnval", 4048)
+            parameter("fourk", 1)
+            parameter("from_client", "BROWSER")
+        }.body()
+    }
 
     suspend fun 获取视频详细信息(bvid: String): ViewDetail {
         return client.get(BilibiliApi.VIEW) {
