@@ -185,7 +185,7 @@ class HomeFragment : BaseFragment() {
     /**
      * 启动统计
      */
-    internal fun startStatistics() {
+    private fun startStatistics() {
         requireContext().getDefaultSharedPreferences().edit {
             putBoolean("microsoft_app_center_type", true)
             putBoolean("baidu_statistics_type", true)

@@ -1,17 +1,13 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.LocalIndication
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,12 +15,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,7 +30,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,8 +62,10 @@ import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
+import com.imcys.bilibilias.home.ui.fragment.tool.DownloadFileRequest
 import com.imcys.bilibilias.home.ui.fragment.tool.SearchResultUiState
 import com.imcys.bilibilias.home.ui.fragment.tool.ToolViewModel
+import com.imcys.bilibilias.home.ui.fragment.tool.VideoStreamDesc
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
@@ -105,18 +107,19 @@ class ToolFragment : BaseFragment() {
                     searchQuery,
                     viewModel::onSearchQueryChanged,
                     viewModel::clearSearches,
+                    viewModel::download,
                     searchResultUiState
                 )
             }
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun ToolContent(
         searchQuery: String,
         onSearchQueryChanged: (String) -> Unit,
         onClearSearches: () -> Unit,
+        onDownloadFile: (DownloadFileRequest) -> Unit,
         searchResultUiState: SearchResultUiState
     ) {
         Scaffold { paddingValues ->
@@ -142,7 +145,7 @@ class ToolFragment : BaseFragment() {
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp)),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            contentPadding = PaddingValues(16.dp)
+                            contentPadding = PaddingValues(4.dp)
                         ) {
                             item {
                                 val context = LocalContext.current
@@ -158,30 +161,61 @@ class ToolFragment : BaseFragment() {
                                 }
                             }
                             items(searchResultUiState.collection, key = { it.cid }) { item ->
-                                val indication = LocalIndication.current
-                                Row(
-                                    modifier = Modifier
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = indication
-                                        ) { }
-                                        .padding(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(text = item.title)
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "去播放页面"
+                                ViewItem(item.title, item.videoStreamDesc) {
+                                    onDownloadFile(
+                                        DownloadFileRequest(
+                                            searchResultUiState.aid,
+                                            searchResultUiState.bvid,
+                                            item.cid,
+                                            it
+                                        )
                                     )
                                 }
-                                HorizontalDivider()
                             }
                         }
                 }
             }
         }
     }
+
+    @Composable
+    fun ViewItem(
+        title: String,
+        videoStreamDesc: VideoStreamDesc,
+        selected: (Int) -> Unit
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+        Card(
+            onClick = { expanded = !expanded },
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = title)
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            }
+            AnimatedVisibility(visible = expanded) {
+                Column {
+                    LazyRow {
+                        items(videoStreamDesc.descriptionQuality) {
+                            TextButton(onClick = { selected(it.quality) }) {
+                                Text(text = it.desc)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun initView() {
         // 加载工具item
@@ -202,28 +236,12 @@ class ToolFragment : BaseFragment() {
      * 如果外部有分享内容，就会在这里过滤
      * @param intent Intent?
      */
-    @SuppressLint("ResourceType")
     internal fun parseShare(intent: Intent) {
         lifecycleScope.launchWhenResumed {
             if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
                 asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
             }
             intent.extras?.getString("asUrl")?.let { asVideoId(it) }
-        }
-    }
-
-    /**
-     * 设置输入框的搜索监听器
-     * 当搜索除发时执行
-     */
-    private fun setEditListener() {
-        fragmentToolBinding.apply {
-            fragmentToolEditText.setOnEditorActionListener { textView, i, keyEvent ->
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    asVideoId(textView.text.toString())
-                }
-                false
-            }
         }
     }
 

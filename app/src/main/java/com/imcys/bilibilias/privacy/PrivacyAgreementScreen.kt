@@ -3,7 +3,6 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.hjq.toast.Toaster
-import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.databinding.DialogLoginBottomsheetBinding
 import com.imcys.bilibilias.destinations.LoginScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
