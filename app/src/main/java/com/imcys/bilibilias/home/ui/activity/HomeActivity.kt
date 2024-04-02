@@ -25,26 +25,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId: Int = R.layout.activity_home
     private var exitTime: Long = 0
 
-    private lateinit var toolFragment: ToolFragment
-    private lateinit var homeFragment: HomeFragment
-    private lateinit var downloadFragment: DownloadFragment
-    private lateinit var userFragment: UserFragment
+    private val toolFragment: ToolFragment = ToolFragment.newInstance()
+    private val homeFragment: HomeFragment = HomeFragment.newInstance()
+    private val downloadFragment: DownloadFragment = DownloadFragment.newInstance()
+    private val userFragment: UserFragment = UserFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Component.inject(target = this)
-        initFragment()
         loadFragment()
-    }
-
-    /**
-     * 初始化fragment
-     */
-    private fun initFragment() {
-        homeFragment = HomeFragment.newInstance()
-        toolFragment = ToolFragment.newInstance()
-        userFragment = UserFragment.newInstance()
-        downloadFragment = DownloadFragment.newInstance()
     }
 
     override fun onNewIntent(intent: Intent) {
