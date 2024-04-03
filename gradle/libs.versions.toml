@@ -52,7 +52,7 @@ uiTimateBarX = "0.8.1"
 work = "2.9.0"
 destinations = "1.10.2"
 androidxActivity = "1.8.2"
-androidxComposeBom = "2024.03.00"
+androidxComposeBom = "2024.04.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha09"
 
