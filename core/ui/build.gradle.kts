@@ -9,6 +9,10 @@ android {
 }
 
 dependencies {
+//    api(libs.androidx.metrics)
+//    api(projects.core.analytics)
+    api(projects.core.designsystem)
+    api(projects.core.model)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

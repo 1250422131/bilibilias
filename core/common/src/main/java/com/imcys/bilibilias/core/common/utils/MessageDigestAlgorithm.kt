@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.home.ui.viewmodel.home
+package com.imcys.bilibilias.core.common.utils
 
 object MessageDigestAlgorithm {
     const val MD2 = "MD2"

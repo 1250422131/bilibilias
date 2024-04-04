@@ -1,6 +1,6 @@
-package com.imcys.bilibilias.home.ui.viewmodel.home
+package com.imcys.bilibilias.core.common.utils
 
-import com.imcys.bilibilias.home.ui.viewmodel.home.StringUtils.encodeHex
+import com.imcys.bilibilias.core.common.utils.StringUtils.encodeHex
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
