@@ -90,8 +90,7 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToNewVersionDoc(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp"
-                            tools:ignore="UnusedAttribute">
+                            android:padding="20dp">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -108,7 +107,7 @@
                                 <androidx.appcompat.widget.LinearLayoutCompat
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginLeft="20dp"
+                                    android:layout_marginStart="20dp"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
 
@@ -158,8 +157,7 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToDedicatePage(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp"
-                            tools:ignore="UnusedAttribute">
+                            android:padding="20dp">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -208,8 +206,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/app_fragment_home_salute_doc"
-                                    tools:ignore="HardcodedText" />
+                                    android:text="@string/app_fragment_home_salute_doc" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
                         </LinearLayout>
 
@@ -221,8 +218,7 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToDonate(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp"
-                            tools:ignore="UnusedAttribute">
+                            android:padding="20dp">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -300,8 +296,7 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToCommunity(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp"
-                            tools:ignore="UnusedAttribute">
+                            android:padding="20dp">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -318,7 +313,7 @@
                                 <androidx.appcompat.widget.LinearLayoutCompat
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginLeft="20dp"
+                                    android:layout_marginStart="20dp"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
 
@@ -385,7 +380,7 @@
                                     <androidx.appcompat.widget.LinearLayoutCompat
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_marginLeft="20dp"
+                                        android:layout_marginStart="20dp"
                                         android:gravity="center_vertical"
                                         android:orientation="vertical">
 

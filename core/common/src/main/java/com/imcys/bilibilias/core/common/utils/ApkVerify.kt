@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.home.ui.viewmodel.home
+﻿package com.imcys.bilibilias.core.common.utils
 
 import java.io.File
 import java.security.MessageDigest
