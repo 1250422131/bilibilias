@@ -252,7 +252,7 @@ class AsVideoViewModel @Inject constructor(
     fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
         val context = view.context
 
-        DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
+        DialogUtils.downloadDMDialog(view.context) { binding ->
             viewModelScope.launchIO {
                 val response =
                     HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
