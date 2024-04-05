@@ -41,7 +41,6 @@ fun BannerPager(
 
     val pagerState = rememberPagerState(
         initialPage = (Int.MAX_VALUE / 2) % items.size,
-        initialPageOffsetFraction = 0f
     ) {
         Int.MAX_VALUE
     }

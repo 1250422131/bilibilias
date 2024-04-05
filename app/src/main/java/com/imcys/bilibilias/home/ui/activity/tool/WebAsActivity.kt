@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.activity.tool
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO: 提取公共方法
 @AndroidEntryPoint
 class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
     override val layoutId: Int = R.layout.activity_web_as
@@ -40,17 +40,17 @@ class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
 
             webAsTopLy.addStatusBarTopPadding()
         }
-        loadWebView()
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    override fun initView() {
+        loadWebView()
+    }
     private fun loadWebView() {
         binding.apply {
             // 不缓存
             webAsWebView.settings.javaScriptEnabled = true
             webAsWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webAsWebView.settings.allowFileAccess = false
-
             CookieSyncManager.createInstance(this@WebAsActivity)
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
