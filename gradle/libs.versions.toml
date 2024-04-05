@@ -54,7 +54,7 @@ destinations = "1.10.2"
 androidxActivity = "1.8.2"
 androidxComposeBom = "2024.04.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
-androidxComposeMaterial3Adaptive = "1.0.0-alpha09"
+androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
