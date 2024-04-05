@@ -1,5 +1,4 @@
-﻿package com.imcys.bilibilias.home.ui.fragment.tool
-
+﻿
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 

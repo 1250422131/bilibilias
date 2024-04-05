@@ -9,6 +9,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
+    implementation(projects.core.domain)
+    implementation(project(":common"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

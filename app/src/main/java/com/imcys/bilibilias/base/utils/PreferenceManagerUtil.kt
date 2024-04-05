@@ -21,3 +21,8 @@ fun Context.setAppNotices(notice: String) =
     getDefaultSharedPreferences().edit {
         putString("AppNotice", notice)
     }
+
+fun Context.getUserSetDownloadFileName() = getDefaultSharedPreferences().getString(
+    "user_download_file_name_editText",
+    "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+) ?: error("获取用户设置的文件名设置错误")

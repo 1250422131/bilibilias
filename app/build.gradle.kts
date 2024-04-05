@@ -90,7 +90,8 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
-    implementation(project(":feature:home"))
+    implementation(projects.feature.home)
+    implementation(projects.feature.tool)
 
     ksp(libs.deeprecopy.compiler)
 

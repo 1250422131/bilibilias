@@ -5,11 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
@@ -43,18 +40,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
 
-    private val TAG = this.javaClass.name
-
-    private val saveImport = registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree(),
-    ) {
-        (context as SettingActivity).asSharedPreferences.edit().apply {
-            putString("AppDataUri", it.toString())
-            putBoolean("user_dl_finish_automatic_import_switch", true)
-            apply()
-        }
-    }
-
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -67,9 +52,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindingEvent() {
+        val regex = Regex(""".*([<>:*?"]).*""")
         userDownloadFileNameEditText.setOnPreferenceChangeListener { preference, newValue ->
-
-            val regex = Regex(""".*([<>:*?"]).*""")
             if (newValue.toString() in "{FILE_TYPE}") {
                 Toast.makeText(context, "缺少文件后缀", Toast.LENGTH_SHORT).show()
                 false
@@ -117,7 +101,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
                         )
-                        apply()
                     }
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                 },

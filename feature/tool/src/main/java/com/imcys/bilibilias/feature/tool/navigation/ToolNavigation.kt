@@ -11,3 +11,8 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 fun NavigationToTool() {
     ToolRoute()
 }
+
+@Composable
+fun ToolFragmentScreen() {
+    ToolRoute()
+}

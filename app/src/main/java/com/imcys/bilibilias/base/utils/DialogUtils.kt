@@ -13,9 +13,6 @@ import android.view.View
 import android.view.ViewParent
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -286,7 +283,6 @@ object DialogUtils {
     }
 
 
-
     private fun addThirdPartyData(
         bvid: String,
         aid: Long,
@@ -415,7 +411,6 @@ object DialogUtils {
                     context,
                     videoBaseBean,
                     qn,
-                    80,
                     downloadTool,
                     videoPageMutableList,
                     networkService
@@ -426,13 +421,6 @@ object DialogUtils {
 
     /**
      * 判断番剧下载方案
-     * @param context Context
-     * @param downloadType Int
-     * @param downloadTool Int
-     * @param videoBaseBean VideoBaseBean
-     * @param qn Int
-     * @param fnval Int
-     * @param videoPageMutableList MutableList<DataBean>
      */
     @JvmName("downloadTaskStream1")
     private fun downloadTaskStream(
@@ -443,7 +431,6 @@ object DialogUtils {
         toneQuality: Int,
         videoBaseBean: VideoBaseBean,
         qn: Int,
-        fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
         networkService: NetworkService
     ) {
@@ -526,7 +513,6 @@ object DialogUtils {
      */
     fun downloadDMDialog(
         context: Context,
-        videoBaseBean: VideoBaseBean,
         clickEvent: (binding: DialogDownloadDmBinding) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
@@ -550,7 +536,7 @@ object DialogUtils {
     /**
      * 设置动态高斯模糊效果
      */
-    fun BottomSheetDialog.setDynamicGaussianBlurEffect(blurRadius: Int = 40) {
+    fun BottomSheetDialog.setDynamicGaussianBlurEffect() {
         window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
@@ -990,7 +976,6 @@ object DialogUtils {
                     toneQuality,
                     videoBaseBean,
                     selectDefinition,
-                    80,
                     videoPageMutableList,
                     networkService
                 )
@@ -1186,7 +1171,6 @@ object DialogUtils {
         context: Context,
         videoBaseBean: VideoBaseBean,
         qn: Int,
-        fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
         networkService: NetworkService
@@ -1211,7 +1195,6 @@ object DialogUtils {
                     it.dataBean,
                     it.videoPlayBean,
                     qn,
-                    fnval,
                     videoBaseBean,
                     downloadTool,
                     "video",
@@ -1258,7 +1241,6 @@ object DialogUtils {
                     it.dataBean,
                     it.bangumiPlayBean,
                     qn,
-                    fnval,
                     videoBaseBean,
                     downloadTool,
                     "video",
@@ -1282,7 +1264,6 @@ object DialogUtils {
         dataBean: VideoPageListData.DataBean,
         videoPlayBean: VideoPlayBean,
         qn: Int,
-        fnval: Int,
         videoBaseBean: VideoBaseBean,
         downloadTool: Int,
         type: String,
@@ -1303,15 +1284,7 @@ object DialogUtils {
             else -> throw IllegalArgumentException("Invalid type: $type")
         }
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val inputString =
-            sharedPreferences.getString(
-                "user_download_file_name_editText",
-                "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
-            )
-                .toString()
-        val savePath = inputString.toAsDownloadSavePath(
-            context,
+        val savePath = context.getUserSetDownloadFileName().toAsDownloadSavePath(
             videoBaseBean.data.aid.toString(),
             videoBaseBean.data.bvid,
             dataBean.part,
@@ -1382,7 +1355,6 @@ object DialogUtils {
         dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
         bangumiPlayBean: BangumiPlayBean,
         qn: Int,
-        fnval: Int,
         videoBaseBean: VideoBaseBean,
         downloadTool: Int,
         type: String,
@@ -1419,7 +1391,6 @@ object DialogUtils {
                 .toString()
 
         val savePath = inputString.toAsDownloadSavePath(
-            context,
             videoBaseBean.data.aid.toString(),
             videoBaseBean.data.bvid,
             dataBean.long_title,
@@ -1542,7 +1513,6 @@ object DialogUtils {
 
         // 扩展函数 -> 把下载地址换出来
         val savePath = inputString.toAsDownloadSavePath(
-            context,
             videoBaseBean.data.aid.toString(),
             videoBaseBean.data.bvid,
             dataBean.long_title,
@@ -1664,7 +1634,6 @@ object DialogUtils {
 
         // 获取下载地址
         val savePath = inputString.toAsDownloadSavePath(
-            context,
             videoBaseBean.data.aid.toString(),
             videoBaseBean.data.bvid,
             dataBean.part,

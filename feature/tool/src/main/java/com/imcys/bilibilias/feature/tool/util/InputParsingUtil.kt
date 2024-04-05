@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.home.ui.fragment.tool
+﻿package com.imcys.bilibilias.feature.tool.util
 
 object InputParseUtil {
     private val epRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=ep)([0-9]+)""") }
