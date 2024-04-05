@@ -58,7 +58,6 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
-import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
@@ -427,7 +426,6 @@ class ToolFragment : BaseFragment() {
                                 it.img_url,
                                 it.color,
                             ) {
-                                MergeVideoActivity.actionStart(requireContext())
                             },
                         )
                     }
