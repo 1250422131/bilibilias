@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath("com.squareup.wire:wire-gradle-plugin:4.9.8")
+        classpath("com.squareup.wire:wire-gradle-plugin:4.9.9")
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
