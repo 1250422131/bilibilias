@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.common.di
 
-import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.common.base.config.AsCookie
 import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.config.toAsCookie
