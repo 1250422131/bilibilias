@@ -23,6 +23,8 @@ import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -73,6 +75,9 @@ class ToolFragment : BaseFragment() {
 
     @Inject
     lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var downloadQueue: DownloadQueue
 
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
@@ -126,6 +131,9 @@ class ToolFragment : BaseFragment() {
     }
 
     private fun initView() {
+
+        DialogUtils.downloadQueue = downloadQueue
+
         // 设置布局不浸入
         fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 

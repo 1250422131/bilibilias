@@ -20,7 +20,7 @@ android {
         // noinspecton ExpiredTargetSdkVersion
         targetSdk = 34
         versionCode = 203
-        versionName = "2.0.4-开阳-Alpha"
+        versionName = "2.0.4-开阳-Alpha-2"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
