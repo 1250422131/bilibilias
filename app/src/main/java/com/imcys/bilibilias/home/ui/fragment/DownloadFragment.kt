@@ -1,11 +1,14 @@
 package com.imcys.bilibilias.home.ui.fragment
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
@@ -21,6 +24,7 @@ import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
+import com.liulishuo.okdownload.OkDownloadProvider
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,7 +42,7 @@ class DownloadFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
-    
+
     @Inject
     lateinit var downloadQueue: DownloadQueue
 
@@ -58,7 +62,7 @@ class DownloadFragment : BaseFragment() {
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
 
         initView()
-        
+
 
         return fragmentDownloadBinding.root
     }
@@ -203,7 +207,39 @@ class DownloadFragment : BaseFragment() {
      */
     private fun deleteSelectTaskAndFile() {
         downloadFinishTaskAd.currentList.filter { it.selectState }
-            .forEach { FileUtils.deleteFile(it.savePath) }
+            .forEach {
+                val sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                val saveUriPath = sharedPreferences.getString(
+                    "user_download_save_uri_path",
+                    null,
+                )
+                if (saveUriPath != null) {
+                    // 走SAF
+                    var dlFileDocument = DocumentFile.fromTreeUri(
+                        OkDownloadProvider.context,
+                        Uri.parse(saveUriPath)
+                    )
+                    launchIO {
+                        // 无需等待
+                        val mPath = it.savePath.replace("/storage/emulated/0/", "")
+                        val docList = mPath.split("/")
+                        docList.forEachIndexed { index, name ->
+                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+                            if (index == docList.size - 1) {
+                                dlFileDocument?.delete()
+                            }
+                        }
+                    }
+                } else {
+                    // 走普通删除
+                    launchIO {
+                        FileUtils.delete(it.savePath)
+                    }
+                }
+            }
+
+
         deleteSelectTaskRecords()
     }
 
