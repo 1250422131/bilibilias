@@ -923,7 +923,7 @@ class DownloadQueue @Inject constructor() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
                     OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模 板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
                     danmakuDocument?.uri,
                     OkDownloadProvider.context,
                 )
@@ -1064,8 +1064,8 @@ class DownloadQueue @Inject constructor() {
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
-            .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+            .setPassIfAlreadyCompleted(true) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setConnectionCount(2) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
             .setWifiRequired(false) // 是否只允许wifi下载，默认为false
@@ -1108,6 +1108,7 @@ class DownloadQueue @Inject constructor() {
                         "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
                         ""
                 ).split("/")
+
                 docList.forEachIndexed { index, name ->
                     // 是不是最后尾部
                     if (index != docList.size - 1) {
@@ -1119,15 +1120,20 @@ class DownloadQueue @Inject constructor() {
                     } else {
                         dlFileDocument =
                                 dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
-                        AppFilePathUtils.copySafFile(
+                       val copyResult =  AppFilePathUtils.copySafFile(
                                 oldPath,
                                 dlFileDocument.uri,
                                 OkDownloadProvider.context
                         )
+
+                        if (copyResult) {
+                            FileUtils.deleteFile(oldPath)
+                        }else{
+                            asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径")
+                        }
                     }
                 }
 
-                FileUtils.deleteFile(oldPath)
             }
         }
     }

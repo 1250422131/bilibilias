@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.common.di
 
+import com.imcys.bilibilias.base.utils.asLogI
 import com.imcys.bilibilias.common.base.config.AsCookie
 import com.imcys.bilibilias.common.base.config.UserInfoRepository
 import com.imcys.bilibilias.common.base.config.toAsCookie
@@ -27,7 +28,11 @@ class AsCookiesStorage @Inject constructor(
         if (UserInfoRepository.asCookies.isNotEmpty()) {
             cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies)
                     .map { it.toCookie() }
-                    .forEach { cookies.add(it) }
+                    .forEach {
+                        cookies.add(it)
+                    }
+
+
         }
     }
 

@@ -42,6 +42,11 @@ class DownloadFragment : BaseFragment() {
     @Inject
     lateinit var downloadQueue: DownloadQueue
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        DialogUtils.downloadQueue = downloadQueue
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +59,6 @@ class DownloadFragment : BaseFragment() {
 
         initView()
         
-        DialogUtils.downloadQueue = downloadQueue
 
         return fragmentDownloadBinding.root
     }

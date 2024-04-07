@@ -17,18 +17,21 @@ class GrayFrameLayout : FrameLayout {
     private val mPaint: Paint = Paint()
 
     // 判断是否使用灰度图层做滤镜
-    private var isGrayType = false
+    var isGrayType = false
 
     private val graylessSubviews = mutableListOf<View>()
 
     constructor(context: Context) : super(context)
+
 
     @SuppressLint("Recycle")
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
 
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.GrayFrameLayout)
+
         isGrayType = typedArray.getBoolean(R.styleable.GrayFrameLayout_isGray, false)
+
         //判断是否灰度化
         if (isGrayType) {
             val cm = ColorMatrix()
@@ -49,8 +52,15 @@ class GrayFrameLayout : FrameLayout {
     // 因此这里绘制子控件
     override fun dispatchDraw(canvas: Canvas) {
 
-        if (isGrayType) canvas.saveLayer(null, mPaint, Canvas.ALL_SAVE_FLAG)
-
+        //判断是否灰度化
+        if (isGrayType) {
+            val cm = ColorMatrix()
+            cm.setSaturation(0f)
+            // 使用Paint.setColorFilter()方法设置颜色过滤器
+            //还可以对其颜色、透明度、混合模式等属性进行更改
+            mPaint.colorFilter = ColorMatrixColorFilter(cm)
+            canvas.saveLayer(null, mPaint, Canvas.ALL_SAVE_FLAG)
+        }
 
         // 调用父类的dispatchDraw()方法，完成控件的子控件绘制
         // 调用restore()方法会销毁新的图层，但是新图层中应用的滤镜效果并不会丢失。
@@ -67,8 +77,15 @@ class GrayFrameLayout : FrameLayout {
 
     // View的整个生命周期中只会被调用一次，用于渲染View本身
     override fun draw(canvas: Canvas) {
-        if (isGrayType) canvas.saveLayer(null, mPaint, Canvas.ALL_SAVE_FLAG)
-
+        //判断是否灰度化
+        if (isGrayType) {
+            val cm = ColorMatrix()
+            cm.setSaturation(0f)
+            // 使用Paint.setColorFilter()方法设置颜色过滤器
+            //还可以对其颜色、透明度、混合模式等属性进行更改
+            mPaint.colorFilter = ColorMatrixColorFilter(cm)
+            canvas.saveLayer(null, mPaint, Canvas.ALL_SAVE_FLAG)
+        }
         //去除部分组件灰度化
         drawGraylessSubview(canvas)
 

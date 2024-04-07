@@ -223,6 +223,11 @@ class HomeFragment : BaseFragment() {
                 networkService.getUpdateData()
             }
 
+            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+                isGrayType = oldUpdateDataBean.gray
+               invalidate() // 通知 View 重新绘制，以显示灰度效果
+            }
+
             if (oldUpdateDataBean.notice != "") {
                 loadNotice(oldUpdateDataBean.notice.toString())
             }
@@ -350,8 +355,10 @@ class HomeFragment : BaseFragment() {
                     val csrf = asCookiesStorage.getCookieValue("bili_jct")
 
                     launchUI {
+
                         networkService.exitUserLogin(csrf ?: "")
 
+                        asCookiesStorage.deleteAllCookie()
                         BaseApplication.dataKv.apply {
                             encode("mid", 0)
                         }
@@ -375,8 +382,7 @@ class HomeFragment : BaseFragment() {
     internal fun loadLogin() {
         launchUI {
 
-            //解除风控
-            networkService.getBILIHome()
+
 
             //自己会切换IO
             val loginQRData = networkService.getLoginQRData()
@@ -418,6 +424,7 @@ class HomeFragment : BaseFragment() {
         // mid
         bottomSheetDialog.show()
 
+
         launchUI {
 
             val myUserData = withContext(Dispatchers.IO) {
@@ -443,13 +450,15 @@ class HomeFragment : BaseFragment() {
      */
     private fun detectUserLogin() {
         launchUI {
-
+            //无论如何优先获取必要Token
             val myUserData = networkService.getMyUserData()
 
             if (myUserData.code != 0) {
                 DialogUtils.loginDialog(requireActivity())
                     .show()
             } else {
+                // 解除风控
+                networkService.getBILIHome()
                 BaseApplication.myUserData = myUserData.data
             }
         }
