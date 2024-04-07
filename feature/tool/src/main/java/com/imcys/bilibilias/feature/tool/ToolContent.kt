@@ -41,8 +41,8 @@ fun ToolContent(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
     onClearSearches: () -> Unit,
-    onDownloadFile: (DownloadFileRequest) -> Unit,
-    searchResultUiState: SearchResultUiState
+    searchResultUiState: SearchResultUiState,
+    onDownload: (DownloadFileRequest) -> Unit
 ) {
     Scaffold { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
@@ -84,14 +84,13 @@ fun ToolContent(
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->
                             ViewItem(item.title, item.videoStreamDesc) {
-                                onDownloadFile(
+                                onDownload(
                                     DownloadFileRequest(
                                         searchResultUiState.aid,
                                         searchResultUiState.bvid,
                                         item.cid,
                                         it
-                                    )
-                                )
+                                    ))
                             }
                         }
                     }

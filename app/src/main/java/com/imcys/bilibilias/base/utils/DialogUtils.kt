@@ -282,7 +282,6 @@ object DialogUtils {
         return bottomSheetDialog
     }
 
-
     private fun addThirdPartyData(
         bvid: String,
         aid: Long,
@@ -356,13 +355,6 @@ object DialogUtils {
 
     /**
      * 判断视频下载方案
-     * @param context Context
-     * @param downloadType Int
-     * @param downloadTool Int
-     * @param videoBaseBean VideoBaseBean
-     * @param qn Int
-     * @param fnval Int
-     * @param videoPageMutableList MutableList<DataBean>
      */
     private fun downloadTaskStream(
         context: Context,
@@ -372,7 +364,6 @@ object DialogUtils {
         toneQuality: Int,
         videoBaseBean: VideoBaseBean,
         qn: Int,
-        fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
         networkService: NetworkService
     ) {
@@ -778,7 +769,6 @@ object DialogUtils {
                     toneQuality,
                     videoBaseBean,
                     selectDefinition,
-                    80,
                     videoPageMutableList,
                     networkService
                 )
@@ -1181,7 +1171,6 @@ object DialogUtils {
         )
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
-
         launchUI {
             flow {
                 videoPageMutableList.forEach {
