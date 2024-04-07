@@ -1064,8 +1064,8 @@ class DownloadQueue @Inject constructor() {
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-            .setPassIfAlreadyCompleted(true) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
-            .setConnectionCount(2) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+//            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
             .setWifiRequired(false) // 是否只允许wifi下载，默认为false
@@ -1129,7 +1129,7 @@ class DownloadQueue @Inject constructor() {
                         if (copyResult) {
                             FileUtils.deleteFile(oldPath)
                         }else{
-                            asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径")
+                            launchUI { asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径") }
                         }
                     }
                 }

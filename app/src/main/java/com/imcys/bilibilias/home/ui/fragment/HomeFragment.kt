@@ -223,6 +223,7 @@ class HomeFragment : BaseFragment() {
                 networkService.getUpdateData()
             }
 
+            // 确定是否灰度
             (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
                 isGrayType = oldUpdateDataBean.gray
                invalidate() // 通知 View 重新绘制，以显示灰度效果
