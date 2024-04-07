@@ -1,5 +1,6 @@
 ﻿package com.imcys.bilibilias.feature.tool
 
+import DownloadFileRequest
 import SearchResultUiState
 import View
 import androidx.lifecycle.SavedStateHandle
@@ -10,6 +11,8 @@ import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
 import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
+import com.imcys.bilibilias.core.network.download.DownloadParameter
+import com.imcys.bilibilias.core.network.download.FileDownload
 import com.imcys.bilibilias.feature.tool.util.SearchType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +29,7 @@ class ToolViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getStreamWithVideoDetailUseCase: GetStreamWithVideoDetailUseCase,
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
+    private val fileDownload: FileDownload,
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
     val searchResultUiState = searchQuery.map {
@@ -39,6 +43,17 @@ class ToolViewModel @Inject constructor(
             SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
+
+    fun download(request: DownloadFileRequest) {
+        fileDownload.enqueue(
+            DownloadParameter(
+                request.aid,
+                request.bvid,
+                request.cid,
+                request.quality
+            )
+        )
+    }
 
     fun onSearchQueryChanged(query: String) {
         savedStateHandle[SEARCH_QUERY] = query

@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.common.network.di
+package com.imcys.bilibilias.core.common.network.di
 
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
@@ -27,7 +27,9 @@ internal object CoroutineScopesModule {
     fun providesCoroutineScope(
         @Dispatcher(AsDispatchers.IO) dispatcher: CoroutineDispatcher,
     ): CoroutineScope =
-        CoroutineScope(SupervisorJob() + dispatcher + CoroutineExceptionHandler { coroutineContext, throwable ->
-            Napier.w(throwable) { "发生错误" }
-        })
+        CoroutineScope(
+            SupervisorJob() + dispatcher + CoroutineExceptionHandler { _, throwable ->
+                Napier.w(throwable) { throwable.message ?: "发生错误" }
+            }
+        )
 }
