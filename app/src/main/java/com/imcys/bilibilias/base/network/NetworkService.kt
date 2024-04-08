@@ -32,6 +32,7 @@ import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.VideoPageListData
 import com.imcys.bilibilias.home.ui.model.VideoPlayBean
 import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder

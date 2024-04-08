@@ -22,3 +22,16 @@ fun AsCard(
         content = content
     )
 }
+@Composable
+fun AsCard(
+    modifier: Modifier = Modifier,
+    content: @Composable (ColumnScope.() -> Unit),
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(251, 114, 153)
+        ),
+        content = content
+    )
+}

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -22,7 +20,6 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp">
 
@@ -31,9 +28,7 @@
                 android:layout_height="wrap_content"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical"
-                android:orientation="vertical"
-
-                >
+                android:orientation="vertical">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
@@ -60,14 +55,15 @@
                                 android:text="@{TaskBean.fileType == 0 ? `VIDEO` : `AUDIO`}"
                                 android:textColor="@color/white"
                                 android:textSize="20sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                tools:text="VIDEO" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -80,9 +76,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:ellipsize="middle"
+                                android:singleLine="true"
                                 android:text="@{TaskBean.downloadTaskDataBean.pageTitle}"
                                 android:textSize="18sp"
-                                android:singleLine="true" />
+                                tools:text="title" />
 
                         </LinearLayout>
 
@@ -105,6 +102,7 @@
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
                                     android:maxLines="1"
+                                    tools:text="1234444444"
                                     android:textColor="@color/color_text_hint"
                                     android:textSize="12sp" />
 
@@ -115,7 +113,8 @@
                                     android:maxLines="1"
                                     android:text="@{`子集：`+TaskBean.downloadTaskDataBean.cid}"
                                     android:textColor="@color/color_text_hint"
-                                    android:textSize="12sp" />
+                                    android:textSize="12sp"
+                                    tools:text="1234444444" />
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
 

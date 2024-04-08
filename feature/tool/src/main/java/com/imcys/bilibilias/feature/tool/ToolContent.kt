@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -45,7 +46,7 @@ fun ToolContent(
     onDownload: (DownloadFileRequest) -> Unit
 ) {
     Scaffold { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(modifier = Modifier.padding(paddingValues).statusBarsPadding()) {
             TextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryChanged,

@@ -8,18 +8,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
-import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.anno.RouterAnno
 import dagger.hilt.android.AndroidEntryPoint
 
-@RouterAnno(hostAndPath = ARouterAddress.AppHomeActivity,)
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId: Int = R.layout.activity_home
@@ -32,7 +28,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Component.inject(target = this)
         loadFragment()
     }
 

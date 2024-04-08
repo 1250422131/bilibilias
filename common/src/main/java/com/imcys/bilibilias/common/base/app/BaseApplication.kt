@@ -8,9 +8,6 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
 import com.tencent.mmkv.MMKV
-import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.Config
-import com.xiaojinzi.component.impl.application.ModuleManager
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -28,8 +25,6 @@ open class BaseApplication : Application() {
         // 百度统计开始
         startBaiDuService()
 
-        initKComponent()
-
         initMMKV()
         initNapier()
     }
@@ -41,21 +36,6 @@ open class BaseApplication : Application() {
     private fun initMMKV() {
         MMKV.initialize(this)
         dataKv = MMKV.mmkvWithID("data")
-    }
-
-    private fun initKComponent() {
-        Component.init(
-            application = this,
-            isDebug = false,
-            config = Config.Builder()
-                .build(),
-        )
-        // 手动加载模块
-        ModuleManager.registerArr(
-            "app",
-            "common",
-            "tool_log_export",
-        )
     }
 
     /**

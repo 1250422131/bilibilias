@@ -54,7 +54,6 @@ kotlin {
 dependencies {
     implementation(project(":common"))
     implementation(libs.constraintlayout)
-    ksp(libs.kcomponent.compiler)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

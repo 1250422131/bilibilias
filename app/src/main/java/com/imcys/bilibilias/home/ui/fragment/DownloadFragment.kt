@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
-import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
@@ -18,16 +17,16 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
+import com.imcys.bilibilias.feature.download.navigation.DownloadFragmentScreen
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DownloadFragment : BaseFragment() {
 
-    lateinit var fragmentDownloadBinding: FragmentDownloadBinding
+    private lateinit var fragmentDownloadBinding: FragmentDownloadBinding
 
     @Inject
     lateinit var downloadFinishTaskAd: DownloadFinishTaskAd
@@ -37,7 +36,7 @@ class DownloadFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadFinishTaskRepository: DownloadFinishTaskRepository
-    
+
     @Inject
     lateinit var downloadQueue: DownloadQueue
 
@@ -46,24 +45,28 @@ class DownloadFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        fragmentDownloadBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
-        // 添加边距
-        fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
-        DialogUtils.downloadQueue = downloadQueue
-
-        return fragmentDownloadBinding.root
+//        fragmentDownloadBinding =
+//            DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
+//        // 添加边距
+//        fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
+//        DialogUtils.downloadQueue = downloadQueue
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                DownloadFragmentScreen()
+            }
+        }
     }
 
     /**
      * 初始化布局
      */
     override fun initView() {
-        initDownloadListAd()
-        initEditLayout()
-        initDownloadList()
-
-        initTabLayout()
+//        initDownloadListAd()
+//        initEditLayout()
+//        initDownloadList()
+//
+//        initTabLayout()
     }
 
     override fun initData() {

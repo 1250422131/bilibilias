@@ -125,17 +125,8 @@ dependencies {
      */
     api(libs.rxFFmpeg)
 
-    /**
-     * 组件化路由库
-     */
-    api(libs.kcomponent.rx)
-    ksp(libs.kcomponent.compiler)
-
     // 百度统计
     api(libs.mtj.sdk.circle)
-
-    // 开屏引导
-    api(libs.hyy920109.guidePro)
 
     // 微软分发
     api(libs.appcenter.distribute)

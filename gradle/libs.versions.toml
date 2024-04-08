@@ -22,7 +22,6 @@ flexbox = "3.0.0"
 github-GuidePro = "1.4.0"
 glide = "4.16.0"
 hilt = "2.51.1"
-hiltNavigationCompose = "1.2.0"
 androidxHiltNavigationCompose = "1.2.0"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
@@ -92,8 +91,6 @@ appcenter-crashes = { group = "com.microsoft.appcenter", name = "appcenter-crash
 appcenter-analytics = { group = "com.microsoft.appcenter", name = "appcenter-analytics", version.ref = "appcenter" }
 appcenter-distribute = { group = "com.microsoft.appcenter", name = "appcenter-distribute", version.ref = "appcenter" }
 
-androidFilePicker = { group = "me.rosuh", name = "AndroidFilePicker", version.ref = "androidFilePicker" }
-
 asBottomDialog = { group = "com.github.1250422131", name = "AsBottomDialog", version.ref = "asBottomDialog" }
 
 banner = { group = "io.github.youth5201314", name = "banner", version.ref = "banner" }
@@ -107,7 +104,6 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 deeprecopy-compiler = { group = "com.imcys.deeprecopy", name = "compiler", version.ref = "deeprecopy-compiler" }
-
 deeprecopy-core = { group = "com.imcys.deeprecopy", name = "core", version.ref = "deeprecopy-compiler" }
 
 dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
@@ -119,16 +115,11 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-hyy920109-GuidePro = { group = "com.github.hyy920109", name = "GuidePro", version.ref = "github-GuidePro" }
-
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
-
-kcomponent-compiler = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-compiler", version.ref = "kcomponent-compiler" }
-kcomponent-rx = { group = "com.github.xiaojinzi123.KComponent", name = "kcomponent-rx", version.ref = "kcomponent-compiler" }
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
 
@@ -148,7 +139,6 @@ mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version
 okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
-ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKit" }
 
 srl-core = { group = "com.github.dkzwm", name = "srl-core", version.ref = "srl-core" }
 srl-ext-classics = { group = "com.github.dkzwm", name = "srl-ext-classics", version.ref = "srl-core" }
