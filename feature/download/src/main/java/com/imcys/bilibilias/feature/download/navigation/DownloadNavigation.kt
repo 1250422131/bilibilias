@@ -11,3 +11,8 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 fun NavigationToDownload() {
     DownloadRoute()
 }
+
+@Composable
+fun DownloadFragmentScreen() {
+    DownloadRoute()
+}

@@ -65,12 +65,12 @@ class UserFragment : BaseFragment() {
     }
 
      override fun initView() {
-        initUserDataRv()
-
-        initUserData()
-        initUserWorks()
-
-        initSmoothRefreshLayout()
+//        initUserDataRv()
+//
+//        initUserData()
+//        initUserWorks()
+//
+//        initSmoothRefreshLayout()
     }
 
     override fun initData() {

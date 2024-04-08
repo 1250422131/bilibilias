@@ -17,7 +17,6 @@ import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
@@ -29,7 +28,6 @@ import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
-import com.xiaojinzi.component.anno.RouterAnno
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,9 +38,6 @@ import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.ToolFragment,
-)
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
 
@@ -62,15 +57,9 @@ class ToolFragment : BaseFragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 ToolFragmentScreen()
-
             }
         }
     }
-
-
-
-
-
 
     override fun initView() {
         // 加载工具item

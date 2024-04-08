@@ -92,6 +92,8 @@ dependencies {
     implementation(project(":tool_log_export"))
     implementation(projects.feature.home)
     implementation(projects.feature.tool)
+    implementation(projects.feature.download)
+    implementation(projects.feature.user)
 
     ksp(libs.deeprecopy.compiler)
 
@@ -102,7 +104,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     ksp(libs.hilt.compiler)
 
-    ksp(libs.kcomponent.compiler)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -117,7 +118,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
 
-    implementation("androidx.compose.ui:ui-viewbinding:1.6.4")
+    implementation("androidx.compose.ui:ui-viewbinding:1.6.5")
     implementation("com.github.getActivity:Toaster:12.6")
 
     implementation(libs.compose.destinations)

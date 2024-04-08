@@ -10,16 +10,11 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.edit
 import com.imcys.bilibilias.base.utils.getDefaultSharedPreferences
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.feature.home.navigation.HomeFragmentScreen
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.xiaojinzi.component.anno.RouterAnno
 import dagger.hilt.android.AndroidEntryPoint
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
-)
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
 

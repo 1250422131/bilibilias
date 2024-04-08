@@ -1,32 +1,25 @@
 package com.imcys.bilibilias.tool_log_export.ui.activity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.drake.brv.annotaion.AnimationType
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.tool_log_export.R
 import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
 import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
 import com.imcys.bilibilias.tool_log_export.data.model.ExportItemBean
 import com.imcys.bilibilias.tool_log_export.databinding.ActivityLogExportBinding
-import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.anno.RouterAnno
-import com.xiaojinzi.component.impl.Router
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.LogExportActivity,
-)
 class LogExportActivity : LogExportBaseActivity() {
 
     lateinit var binding: ActivityLogExportBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Component.inject(target = this)
 
         binding = DataBindingUtil.setContentView<ActivityLogExportBinding?>(
             this,
@@ -84,11 +77,7 @@ class LogExportActivity : LogExportBaseActivity() {
 
     companion object {
         fun actionStart(context: Context) {
-            Router
-                .with(context)
-                .hostAndPath(ARouterAddress.LogExportActivity)
-                .forward { }
+            context.startActivity(Intent(context, LogExportActivity::class.java))
         }
-
     }
 }
