@@ -123,9 +123,9 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
                 modifier = Modifier
                     .weight(1f, false)
                     .fillMaxWidth(),
-                progress = { state.progress },
+                progress = state.progress,
                 color = Color(251, 114, 153),
-                trackColor = Color(0xffd2e0)
+                trackColor = Color(255, 210, 224)
             )
         }
     }
