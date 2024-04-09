@@ -24,7 +24,7 @@ class Downloader @Inject constructor(
     val taskFlow = _taskFlow.consumeAsFlow()
     fun dispatch(task: Task) {
         ready.add(task)
-        _taskFlow.trySend(allTask())
+        sendNewList()
         promoteAndExecute()
     }
 
@@ -38,10 +38,9 @@ class Downloader @Inject constructor(
     }
 
     fun cancel(task: Task) {
-        Napier.d { task.toString() }
         ready.remove(task)
         running.remove(task)
-        _taskFlow.trySend(allTask())
+        sendNewList()
         task.cancelTask()
     }
 
@@ -73,7 +72,7 @@ class Downloader @Inject constructor(
 
                         DownloadResult.Success -> {
                             finished(task)
-                            Napier.d { "下载进度成功" }
+                            Napier.d { "下载成功" }
                         }
                     }
                 }
@@ -97,5 +96,8 @@ class Downloader @Inject constructor(
     private fun addErrorMessage(task: Task, message: DownloadResult.Error) {
         task.errorMessage = message.message
         changeRunningState(task, false)
+    }
+    private fun sendNewList(){
+        _taskFlow.trySend(allTask())
     }
 }

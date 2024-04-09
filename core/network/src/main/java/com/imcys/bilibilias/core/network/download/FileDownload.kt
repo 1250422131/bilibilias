@@ -35,10 +35,10 @@ class FileDownload @Inject constructor(
     fun enqueue(parameter: DownloadParameter) {
         scope.launch {
             val detail = videoRepository.获取视频详细信息(parameter.bvid)
-//            persistedFile
             val streamUrl =
                 videoRepository.videoStreamingURL(parameter.aid, parameter.bvid, parameter.cid)
             download(streamUrl, detail, parameter)
+            persistedFile(detail, parameter.cid)
         }
     }
 
@@ -57,33 +57,33 @@ class FileDownload @Inject constructor(
         )
     }
 
-    // TODO: 两个函数重复了
     private fun startVideoDownload(video: Video, parameter: ViewDetail, quality: Int) {
-        val path = buildDownloadFullPath(parameter.aid, parameter.cid, quality)
-        val file = File(path, "video.m4s").apply { parentFile!!.mkdirs(); createNewFile() }
-        val task = Task(
-            video.baseUrl,
-            file,
-            FileType.VIDEO,
-            parameter.title,
-            parameter.cid,
-            parameter.bvid
-        )
+        val task = createTask(video.baseUrl, "video.m4s", parameter, FileType.VIDEO, quality)
         downloader.dispatch(task)
     }
 
     private fun startAudioDownload(audio: Audio, parameter: ViewDetail, quality: Int) {
-        val path = buildDownloadFullPath(parameter.aid, parameter.cid, quality)
-        val file = File(path, "audio.m4s").apply { parentFile!!.mkdirs(); createNewFile() }
-        val task = Task(
-            audio.baseUrl,
-            file,
-            FileType.AUDIO,
-            parameter.title,
-            parameter.cid,
-            parameter.bvid
-        )
+        val task = createTask(audio.baseUrl, "audio.m4s", parameter, FileType.AUDIO, quality)
         downloader.dispatch(task)
+    }
+
+    private fun createTask(
+        url: String,
+        name: String,
+        detail: ViewDetail,
+        type: FileType,
+        quality: Int
+    ): Task {
+        val path = buildDownloadFullPath(detail.aid, detail.cid, quality)
+        val file = File(path, name).apply { parentFile!!.mkdirs(); createNewFile() }
+        return Task(
+            url,
+            file,
+            type,
+            detail.title,
+            detail.cid,
+            detail.bvid
+        )
     }
 
     private fun getVideoStrategy(video: List<Video>, quality: Int): Video {
@@ -95,9 +95,10 @@ class FileDownload @Inject constructor(
         return audio.maxBy { it.id }
     }
 
-    private fun persistedFile(aid: Long, cid: Long) {
-        val path = buildDownloadBasePath(aid, cid)
+    private fun persistedFile(detail: ViewDetail, cid: Long) {
+        val path = buildDownloadBasePath(detail.aid, detail.cid)
         saveDmFile(path, cid)
+        saveEntryFile(detail, cid, path)
     }
 
     private fun saveDmFile(path: String, cid: Long) {
@@ -108,24 +109,25 @@ class FileDownload @Inject constructor(
     }
 
     // region entry.json
-    private fun saveEntryFile() {
-        """
+    private fun saveEntryFile(detail: ViewDetail, cid: Long, path: String) {
+        val page = detail.pages.single { it.cid == cid }
+        val content = """
             {
                 "media_type": 2,
                 "has_dash_audio": true,
                 "is_completed": true,
-                "total_bytes": 623167143,
-                "downloaded_bytes": 623167143,
-                "title": "cos申鹤去墨尔本city海边一日游",
-                "type_tag": "120",
-                "cover": "http:\/\/i2.hdslb.com\/bfs\/archive\/ce46dc072f226c219d3e8269890e8fc18ea316b8.jpg",
-                "video_quality": 120,
-                "prefered_video_quality": 120,
+                "total_bytes": ${Int.MIN_VALUE},
+                "downloaded_bytes": ${Int.MAX_VALUE},
+                "title": "${detail.title}",
+                "type_tag": "80",
+                "cover": "${detail.pic}",
+                "video_quality": 80,
+                "prefered_video_quality": 80,
                 "guessed_total_bytes": 0,
-                "total_time_milli": 195242,
-                "danmaku_count": 55,
-                "time_update_stamp": 1709807482370,
-                "time_create_stamp": 1709807393236,
+                "total_time_milli": ${detail.duration},
+                "danmaku_count": ${detail.stat.danmaku},
+                "time_update_stamp": ${System.currentTimeMillis()},
+                "time_create_stamp": ${System.currentTimeMillis()},
                 "can_play_in_advance": true,
                 "interrupt_transform_temp_file": false,
                 "quality_pithy_description": "4K",
@@ -133,31 +135,32 @@ class FileDownload @Inject constructor(
                 "cache_version_code": 7630200,
                 "preferred_audio_quality": 0,
                 "audio_quality": 0,
-                "avid": 1751258192,
+                "avid": ${detail.aid},
                 "spid": 0,
                 "seasion_id": 0,
-                "bvid": "BV1px42127ry",
-                "owner_id": 3746949,
-                "owner_name": "圆脸馨儿",
-                "owner_avatar": "https:\/\/i0.hdslb.com\/bfs\/face\/c2798d04ba4bceeea388c36083e931630f18d3ed.jpg",
+                "bvid": "${detail.bvid}",
+                "owner_id": ${detail.owner.mid},
+                "owner_name": "${detail.owner.name}",
+                "owner_avatar": "${detail.owner.face}",
                 "page_data": {
-                    "cid": 1462053131,
+                    "cid": ${page.cid},
                     "page": 1,
-                    "from": "vupload",
-                    "part": "cos申鹤去墨尔本city海边一日游",
-                    "link": "",
+                    "from": "${page.from}",
+                    "part": "${page.part}",
+                    "link": "${page.weblink}",
                     "rich_vid": "",
-                    "vid": "",
+                    "vid": "${page.vid}",
                     "has_alias": false,
-                    "tid": 21,
-                    "width": 3840,
-                    "height": 2160,
-                    "rotate": 0,
+                    "tid": ${detail.tid},
+                    "width": ${page.dimension.width},
+                    "height": ${page.dimension.height},
+                    "rotate": ${page.dimension.rotate},
                     "download_title": "视频已缓存完成",
-                    "download_subtitle": "cos申鹤去墨尔本city海边一日游"
+                    "download_subtitle": "${page.part}"
                 }
             }
         """.trimIndent()
+        File(path).writeText(content)
     }
 
     // endregion
@@ -182,6 +185,7 @@ class FileDownload @Inject constructor(
         val task =
             allTask().single { it.groupId == cid && it.type == type && it.groupTag == bvid }
         downloader.cancel(task)
+        task.path.delete()
     }
 }
 
