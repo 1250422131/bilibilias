@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -26,7 +25,7 @@ import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -35,6 +34,7 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
@@ -43,14 +43,11 @@ import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.distribute.Distribute
 import com.xiaojinzi.component.anno.RouterAnno
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
@@ -77,8 +74,12 @@ class HomeFragment : BaseFragment() {
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
+
     @Inject
     lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var asCookiesStorage: AsCookiesStorage
 
     // 懒加载
     private val bottomSheetDialog by lazy {
@@ -101,8 +102,7 @@ class HomeFragment : BaseFragment() {
         // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel =
-                ViewModelProvider(this@HomeFragment)[FragmentHomeViewModel::class.java]
+            fragmentHomeViewModel = FragmentHomeViewModel()
         }
 
         initView()
@@ -161,7 +161,7 @@ class HomeFragment : BaseFragment() {
      * 加载首页广告
      */
     @Detainted
-     fun initHomeAd() {
+    fun initHomeAd() {
         val userGoogleADSwitch =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("user_google_ad_switch", true)
@@ -196,7 +196,7 @@ class HomeFragment : BaseFragment() {
     private fun loadBannerData() {
         launchUI {
 
-            val oldHomeBannerDataBean = withContext(Dispatchers.IO){
+            val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
                 networkService.getOldHomeBannerData()
             }
 
@@ -218,8 +218,14 @@ class HomeFragment : BaseFragment() {
 
         launchUI {
 
-            val oldUpdateDataBean = withContext(Dispatchers.IO){
+            val oldUpdateDataBean = withContext(Dispatchers.IO) {
                 networkService.getUpdateData()
+            }
+
+            // 确定是否灰度
+            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+                isGrayType = oldUpdateDataBean.gray
+               invalidate() // 通知 View 重新绘制，以显示灰度效果
             }
 
             if (oldUpdateDataBean.notice != "") {
@@ -331,6 +337,40 @@ class HomeFragment : BaseFragment() {
         // loadRoamData()
 
         initSmoothRefreshLayout()
+        initLogoutLoginButton()
+
+    }
+
+    private fun initLogoutLoginButton() {
+        fragmentHomeBinding.fragmentHomeLoginout.setOnClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "退出登录",
+                "确定要退出登录了吗？",
+                "是的",
+                "点错了",
+                true,
+                positiveButtonClickListener =
+                {
+                    val csrf = asCookiesStorage.getCookieValue("bili_jct")
+
+                    launchUI {
+
+                        networkService.exitUserLogin(csrf ?: "")
+
+                        asCookiesStorage.deleteAllCookie()
+                        BaseApplication.dataKv.apply {
+                            encode("mid", 0)
+                        }
+
+                        asToast(requireContext(), "清除完成，请关闭后台重新进入")
+                        (requireActivity() as HomeActivity).finishAll()
+                    }
+
+                },
+                negativeButtonClickListener = {},
+            ).show()
+        }
     }
 
     private fun initSmoothRefreshLayout() {
@@ -342,8 +382,7 @@ class HomeFragment : BaseFragment() {
     internal fun loadLogin() {
         launchUI {
 
-            //解除风控
-            networkService.getBILIHome()
+
 
             //自己会切换IO
             val loginQRData = networkService.getLoginQRData()
@@ -374,6 +413,10 @@ class HomeFragment : BaseFragment() {
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
             .apply()
+
+        // 重新执行百度统计
+        (activity as HomeActivity).startBaiDuService()
+
     }
 
     // 初始化用户数据
@@ -381,10 +424,11 @@ class HomeFragment : BaseFragment() {
         // mid
         bottomSheetDialog.show()
 
+
         launchUI {
 
-            val myUserData = withContext(Dispatchers.IO){
-                networkService.n27()
+            val myUserData = withContext(Dispatchers.IO) {
+                networkService.getMyUserData()
             }
 
             if (myUserData.code == 0) {
@@ -406,13 +450,15 @@ class HomeFragment : BaseFragment() {
      */
     private fun detectUserLogin() {
         launchUI {
-
+            //无论如何优先获取必要Token
             val myUserData = networkService.getMyUserData()
 
             if (myUserData.code != 0) {
                 DialogUtils.loginDialog(requireActivity())
                     .show()
             } else {
+                // 解除风控
+                networkService.getBILIHome()
                 BaseApplication.myUserData = myUserData.data
             }
         }
@@ -429,7 +475,7 @@ class HomeFragment : BaseFragment() {
             params["mid"] = myUserData.data.mid.toString()
             val paramsStr = tokenUtils.getParamStr(params)
 
-            val userInfoBean = networkService.n28(paramsStr)
+            val userInfoBean = networkService.getUserInfoData(paramsStr)
 
             // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)

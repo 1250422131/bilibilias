@@ -7,7 +7,7 @@
 
         <variable
             name="FragmentHomeViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.home.HomeCardIntent" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel" />
 
     </data>
 
@@ -90,7 +90,8 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToNewVersionDoc(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="20dp"
+                            tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -107,7 +108,7 @@
                                 <androidx.appcompat.widget.LinearLayoutCompat
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginStart="20dp"
+                                    android:layout_marginLeft="20dp"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
 
@@ -126,6 +127,8 @@
                                         android:text="@string/app_fragment_home_version"
                                         android:textColor="@color/black" />
                                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
@@ -141,7 +144,10 @@
                                     tools:ignore="HardcodedText" />
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                         </LinearLayout>
+
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/fragment_home_ad_rv"
@@ -157,7 +163,8 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToDedicatePage(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="20dp"
+                            tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -194,6 +201,8 @@
                                         android:text="@string/app_fragment_home_salute_text"
                                         android:textColor="@color/black" />
                                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
@@ -206,8 +215,11 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/app_fragment_home_salute_doc" />
+                                    android:text="@string/app_fragment_home_salute_doc"
+                                    tools:ignore="HardcodedText" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -218,7 +230,8 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToDonate(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="20dp"
+                            tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -254,6 +267,8 @@
                                         android:text="@string/app_fragment_home_donate_text"
                                         android:textColor="@color/black" />
                                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
@@ -286,6 +301,8 @@
                                     android:textColor="?attr/colorPrimary"
                                     tools:ignore="HardcodedText" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -296,7 +313,8 @@
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
                             android:onClick="@{(view)->FragmentHomeViewModel.goToCommunity(view)}"
                             android:orientation="vertical"
-                            android:padding="20dp">
+                            android:padding="20dp"
+                            tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
@@ -313,7 +331,7 @@
                                 <androidx.appcompat.widget.LinearLayoutCompat
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_marginStart="20dp"
+                                    android:layout_marginLeft="20dp"
                                     android:gravity="center_vertical"
                                     android:orientation="vertical">
 
@@ -332,6 +350,8 @@
                                         android:text="@string/app_fragment_home_feedback_text"
                                         android:textColor="@color/black" />
                                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                             </androidx.appcompat.widget.LinearLayoutCompat>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
@@ -347,15 +367,17 @@
                                     android:text="@string/app_fragment_home_feedback_doc"
                                     tools:ignore="HardcodedText" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                         </LinearLayout>
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/card_exit_login"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="20dp"
                             app:cardCornerRadius="10dp"
-                            app:cardElevation="0dp">
+                            app:cardElevation="0dp"
+                            tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
                                android:id="@+id/fragment_home_loginout"
@@ -381,7 +403,7 @@
                                     <androidx.appcompat.widget.LinearLayoutCompat
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_marginStart="20dp"
+                                        android:layout_marginLeft="20dp"
                                         android:gravity="center_vertical"
                                         android:orientation="vertical">
 
@@ -400,12 +422,20 @@
                                             android:text="@string/app_fragment_home_logout_text"
                                             android:textColor="@color/white" />
                                     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                                 </androidx.appcompat.widget.LinearLayoutCompat>
+
                             </androidx.appcompat.widget.LinearLayoutCompat>
+
                         </androidx.cardview.widget.CardView>
+
+
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
+
+
         </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </FrameLayout>
 </layout>

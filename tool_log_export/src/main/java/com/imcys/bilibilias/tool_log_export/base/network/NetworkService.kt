@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.tool_log_export.base.network
-
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
+import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -9,12 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class NetworkService @Inject constructor(
-   private val httpClient: HttpClient
+    private val ktHttpUtils: KtHttpUtils,
+    private val httpClient: HttpClient
 ) {
     private val ioDispatcher = Dispatchers.IO
 

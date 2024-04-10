@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
@@ -18,8 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
-    override val layoutId: Int = R.layout.activity_play_history
+class PlayHistoryActivity : BaseActivity() {
+    private lateinit var binding: ActivityPlayHistoryBinding
 
     // 自动装配
     @Inject
@@ -36,11 +37,16 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.playHistoryTopLy.addStatusBarTopPadding()
+        binding = DataBindingUtil.setContentView<ActivityPlayHistoryBinding?>(
+            this,
+            R.layout.activity_play_history
+        ).apply {
+            playHistoryTopLy.addStatusBarTopPadding()
+        }
         initView()
     }
 
-    override fun initView() {
+    private fun initView() {
         initPlayHistory()
     }
 

@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,22 +15,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import com.liulishuo.okdownload.OkDownloadProvider
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import kotlin.math.log
 
 class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
 
@@ -190,18 +185,23 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                         OkDownloadProvider.context,
                         Uri.parse(saveUriPath)
                     )
-                    val mPath = task.savePath.replace("/storage/emulated/0/", "")
-                    val docList = mPath.split("/")
-                    docList.forEachIndexed { index, name ->
-                        dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                        if (index == docList.size - 1) {
-                            dlFileDocument?.delete()
-                        }
-                    }
+                    launchIO {
+                       // 无需等待
+                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
+                       val docList = mPath.split("/")
+                       docList.forEachIndexed { index, name ->
+                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+                           if (index == docList.size - 1) {
+                               dlFileDocument?.delete()
+                           }
+                       }
+                   }
                 } else {
-                    FileUtils.delete(task.savePath)
+                    // 走普通删除
+                    launchIO {
+                        FileUtils.delete(task.savePath)
+                    }
                 }
-
                 it.cancel()
             }
             .setNegativeButton("点错了") {

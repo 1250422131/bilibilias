@@ -3,15 +3,19 @@ package com.imcys.bilibilias.home.ui.activity.user
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
+import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -20,8 +24,9 @@ import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
-class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
-    override val layoutId: Int = R.layout.activity_bangumi_follow
+class BangumiFollowActivity : BaseActivity() {
+
+    lateinit var binding: ActivityBangumiFollowBinding
 
     @Inject
     lateinit var bangumiFollowAdapter: BangumiFollowAdapter
@@ -33,12 +38,15 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.bangumiFollowTopLy.addStatusBarTopPadding()
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_bangumi_follow)
+        binding.apply {
+            bangumiFollowTopLy.addStatusBarTopPadding()
+        }
 
         initView()
     }
 
-    override fun initView() {
+    private fun initView() {
         initRv()
     }
 
@@ -48,7 +56,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
                 bangumiFollowRv.adapter = bangumiFollowAdapter
                 bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
                 val mBangumiFollowList =
-                    networkService.getBangumiFollow(BaseApplication.myUserData.mid, 1, 1, 15)
+                    networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
 
                 if (mBangumiFollowList.code == 0) {
                     bangumiFollowList = mBangumiFollowList
@@ -74,7 +82,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
     private fun loadBangumiFollow(pn: Int) {
         launchUI {
             val mBangumiFollowList =
-                networkService.getBangumiFollow(BaseApplication.myUserData.mid, 1, pn, 15)
+                networkService.getBangumiFollow(asUser.mid, 1, pn, 15)
             if (mBangumiFollowList.code == 0) {
                 bangumiFollowList = mBangumiFollowList
                 bangumiFollowMutableList.addAll(mBangumiFollowList.data.list)

@@ -2,36 +2,19 @@ package com.imcys.bilibilias.base
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.annotation.CallSuper
-import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity
-import com.imcys.bilibilias.common.base.BaseActivityInit
+import dagger.hilt.android.AndroidEntryPoint
 
-abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseActivityInit {
-    protected lateinit var binding: DB
-        private set
-
-    @get:LayoutRes
-    abstract val layoutId: Int
+open class BaseActivity : AbsActivity() {
 
     override val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(applicationContext)
     }
 
-    @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView<DB>(this, layoutId)
+        // 沉浸式状态栏
         statusBarOnly(this)
-        initView()
-        initData()
-        initObserveViewModel()
     }
-
-    override fun initView() = Unit
-    override fun initData() = Unit
-    override fun initObserveViewModel() = Unit
 }

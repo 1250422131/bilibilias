@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
+import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.tencent.mmkv.MMKV
 import com.xiaojinzi.component.Component
 import com.xiaojinzi.component.Config
@@ -66,11 +67,9 @@ open class BaseApplication : Application() {
             private set
         val asUser: AsUser
             get() = run {
-                val kv = BaseApplication.dataKv
+                val kv = dataKv
                 AsUser.apply {
                     cookie = kv.decodeString(COOKIES, "")!!
-                    sessdata = kv.decodeString("SESSDATA", "")!!
-                    biliJct = kv.decodeString("bili_jct", "")!!
                     mid = kv.decodeLong("mid", 0)
                     asCookie = kv.decodeString("as_cookie", "")!!
                 }
@@ -87,6 +86,7 @@ open class BaseApplication : Application() {
             return instance!!.applicationContext
         }
 
+        lateinit var myUserData: MyUserData.DataBean
         // —————————————————————————————————————————————————
     }
 }

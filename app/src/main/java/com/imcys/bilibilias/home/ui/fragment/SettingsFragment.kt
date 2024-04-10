@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
@@ -40,6 +41,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2
 
+    private val TAG = this.javaClass.name
+
+    private val saveImport = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree(),
+    ) {
+        (context as SettingActivity).asSharedPreferences.edit().apply {
+            putString("AppDataUri", it.toString())
+            putBoolean("user_dl_finish_automatic_import_switch", true)
+            apply()
+        }
+    }
+
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -52,8 +65,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun bindingEvent() {
-        val regex = Regex(""".*([<>:*?"]).*""")
         userDownloadFileNameEditText.setOnPreferenceChangeListener { preference, newValue ->
+
+            val regex = Regex(""".*([<>:*?"]).*""")
             if (newValue.toString() in "{FILE_TYPE}") {
                 Toast.makeText(context, "缺少文件后缀", Toast.LENGTH_SHORT).show()
                 false
@@ -101,6 +115,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "user_download_file_name_editText",
                             "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
                         )
+                        apply()
                     }
                     asToast(requireContext(), "恢复成功，返回页面重新进入可见")
                 },
@@ -177,12 +192,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "拒绝授权",
                     true,
                     positiveButtonClickListener = {
-                        // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+//                         saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
                         fileUriUtils.startFor(
                             "/storage/emulated/0/Android/data/tv.danmaku.bili",
                             context as Activity,
                             IMPORT_FILE_PATH_CODE,
                         )
+
+
+
                     },
                     negativeButtonClickListener = {
                     },
@@ -196,10 +214,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun bindingGetSavePathEvent() {
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            fileUriUtils.startForRoot(
-                context as Activity,
-                SAVE_FILE_PATH_CODE,
-            )
+//            fileUriUtils.startForRoot(
+//                context as Activity,
+//                SAVE_FILE_PATH_CODE,
+//            )
+            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
+                requireActivity().startActivityForResult(it,SAVE_FILE_PATH_CODE)
+            }
             true
         }
     }
@@ -216,7 +237,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         appThemeListPreference = findPreference("app_theme")!!
         appLanguageListPreference = findPreference("app_language")!!
 
-        userDownloadSavePathEditText = findPreference("user_download_save_path")!!
+        userDownloadSavePathEditText = findPreference("user_download_save_uri_path")!!
 
         val value = sharedPreferences.getString(
             "user_download_save_uri_path",

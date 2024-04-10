@@ -4,9 +4,8 @@
     <PreferenceCategory app:title="@string/app_root_preferences_title_download_conf">
 
         <Preference
-            app:defaultValue="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
-            app:key="user_download_save_path"
-            app:summary="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+            app:defaultValue="null"
+            app:key="user_download_save_uri_path"
             app:title="@string/user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
 

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="LoginViewModel"
+            type="com.imcys.bilibilias.base.model.login.view.LoginViewModel" />
+
+    </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,6 +20,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+
+                android:layout_width="50dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:id="@+id/dialog_login_tip_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="?attr/colorPrimaryVariant"
+                    android:orientation="vertical" />
+            </androidx.cardview.widget.CardView>
+
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -26,7 +53,10 @@
                     android:text="@string/app_dialog_login_bottomsheet_title"
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
+
+
             </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -86,6 +116,7 @@
                 android:orientation="vertical">
 
                 <TextView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_dialog_login_bottomsheet_text"
@@ -100,6 +131,7 @@
                     android:layout_marginBottom="30dp"
                     android:orientation="vertical">
 
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -113,6 +145,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@string/app_dialog_login_bottomsheet_list_text_2" />
+
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -149,22 +182,23 @@
                             android:text="@string/app_dialog_login_bottomsheet_text2" />
 
                         <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/privacy_bilibili"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
+                            android:onClick="@{(view)->LoginViewModel.toBiliAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_1"
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
-                            android:id="@+id/privacy_bilibilias"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
+                            android:onClick="@{(view)->LoginViewModel.toBilibiliAsAgreement(view)}"
                             android:text="@string/app_dialog_login_bottomsheet_list_text2_2"
                             android:textColor="?attr/colorPrimary" />
 
                         <TextView
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="2dp"
@@ -186,8 +220,12 @@
                             android:textColor="@color/color_primary" />
 
                     </LinearLayout>
+
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
+
     </RelativeLayout>
 </layout>

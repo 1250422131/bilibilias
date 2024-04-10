@@ -45,7 +45,7 @@
                     android:id="@+id/dialog_bottomSheet_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="title"
+                    android:text=""
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
@@ -64,8 +64,8 @@
                     android:id="@+id/dialog_bottomSheet_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    tools:text="teststsssssssssssssssssssssssssssssssssssssssss" />
+                    android:text=""
+                    android:textSize="18sp" />
 
                 <ImageView
                     android:id="@+id/dialog_bottomSheet_image"
@@ -73,8 +73,7 @@
                     android:layout_height="wrap_content"
                     android:maxHeight="400dp"
                     android:padding="10dp"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -98,8 +97,7 @@
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:visibility="gone" />
 
             </androidx.cardview.widget.CardView>
 
@@ -123,8 +121,7 @@
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:visibility="gone" />
 
             </androidx.cardview.widget.CardView>
 
