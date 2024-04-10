@@ -91,7 +91,7 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
-    private val asVideoViewModel: AsVideoViewModel by viewModels()
+    private val asVideoViewModel    : AsVideoViewModel by viewModels()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -503,8 +503,10 @@ class AsVideoActivity : BaseActivity() {
     private fun loadDanmakuFlameMaster() {
 
         launchUI {
-            // 储存弹幕
-            saveDanmaku(networkService.getDanmuBytes(cid))
+           runCatching {
+               // 储存弹幕
+               saveDanmaku(networkService.getDanmuBytes(cid))
+           }
             // 初始化弹幕配置
             initDanmaku()
         }
