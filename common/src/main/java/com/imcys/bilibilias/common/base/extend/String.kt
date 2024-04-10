@@ -1,9 +1,12 @@
 package com.imcys.bilibilias.common.base.extend
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
+import androidx.preference.PreferenceManager
+import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 
 /**
  * Html化
@@ -37,9 +40,20 @@ fun String.extract(startString: String, endString: String): String {
 }
 
 /**
- * 下载文件名称获取
+ * bilibilias下载文件名称获取
+ * @receiver String
+ * @param avid String
+ * @param bvid String
+ * @param pTitle String
+ * @param cid String
+ * @param fileType String
+ * @param p String
+ * @param title String
+ * @param type String
+ * @return String
  */
-fun String.toAsDownloadSavePath(
+ fun String.toAsDownloadSavePath(
+    context: Context,
     avid: String = "",
     bvid: String = "",
     pTitle: String = "",
@@ -50,19 +64,26 @@ fun String.toAsDownloadSavePath(
     type: String = "",
 ): String {
 
-    val downloadName = replace("{AV}", avid)
-        .replace("{BV}", bvid)
-        .replace("{P_TITLE}", pTitle)
-        .replace("{CID}", cid)
-        .replace("{FILE_TYPE}", fileType)
-        .replace("{P}", p)
-        .replace("{TITLE}", title)
-        .replace("{TYPE}", type)
-        .replace("\\s".toRegex(), "_")
-        .replace("\\n".toRegex(), "_")
+    val savePath = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
 
-    return "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/$downloadName"
+    var downloadName =
+        this.replace("{AV}", avid)
+    downloadName = downloadName.replace("{BV}", bvid)
+    downloadName =
+        downloadName.replace("{P_TITLE}", pTitle)
+    downloadName = downloadName.replace("{CID}", cid)
+    downloadName = downloadName.replace("{FILE_TYPE}", fileType)
+    downloadName = downloadName.replace("{P}", p)
+    downloadName = downloadName.replace(
+        "{TITLE}",
+        title
+    )
+    downloadName = downloadName.replace("{TYPE}", type)
+    downloadName = downloadName.replace(" ", "_")
+
+    return "${savePath}/$downloadName"
 }
+
 
 /**
  * 转换为FFmpeg命令
@@ -84,4 +105,11 @@ fun String.toAsFFmpeg(
             replace("{VIDEO_MERGE_PATH}", videoMergePath)
         }
     return cmd.split(" ").toTypedArray()
+
+
 }
+
+
+
+
+

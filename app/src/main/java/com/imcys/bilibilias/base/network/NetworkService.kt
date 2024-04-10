@@ -49,7 +49,6 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.statement.readBytes
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
@@ -76,12 +75,6 @@ class NetworkService @Inject constructor(
     // ---------------------------------------------------------------------------------------------
     suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
             runCatchingOnWithContextIo { videoPlayPath(bvid, cid.toString(), qn) }
-
-    suspend fun exitUserLogin(crsf:String) :String = runCatchingOnWithContextIo {
-        httpClient.post(BilibiliApi.exitLogin){
-            parameter("biliCSRF",crsf)
-        }.body()
-    }
 
     suspend fun n10(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
         videoPlayPath(bvid, cid.toString(), 64)

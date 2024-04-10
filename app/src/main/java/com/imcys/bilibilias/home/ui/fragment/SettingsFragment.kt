@@ -216,7 +216,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         appThemeListPreference = findPreference("app_theme")!!
         appLanguageListPreference = findPreference("app_language")!!
 
-        userDownloadSavePathEditText = findPreference("user_download_save_uri_path")!!
+        userDownloadSavePathEditText = findPreference("user_download_save_path")!!
 
         val value = sharedPreferences.getString(
             "user_download_save_uri_path",
