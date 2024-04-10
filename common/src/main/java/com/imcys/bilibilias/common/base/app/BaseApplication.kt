@@ -25,9 +25,6 @@ open class BaseApplication : Application() {
 
         handler = Handler(mainLooper)
 
-        // 百度统计开始
-        startBaiDuService()
-
         initKComponent()
 
         initMMKV()
@@ -58,15 +55,6 @@ open class BaseApplication : Application() {
         )
     }
 
-    /**
-     * 百度统计
-     */
-    private fun startBaiDuService() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
-        StatService.setAuthorizedState(applicationContext, authorizedState)
-        StatService.autoTrace(applicationContext)
-    }
 
     companion object {
 

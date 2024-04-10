@@ -18,7 +18,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized

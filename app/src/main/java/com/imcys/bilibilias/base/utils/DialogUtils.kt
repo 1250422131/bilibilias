@@ -34,6 +34,7 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
@@ -239,6 +240,27 @@ object DialogUtils {
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
+        return bottomSheetDialog
+    }
+
+    /**
+     * 加载等待弹窗
+     * @param context Context
+     * @return BottomSheetDialog
+     */
+    @SuppressLint("InflateParams")
+    fun loadProgressDialog(context: Context): BottomSheetDialog {
+        // 先获取View实例
+        val view: View = LayoutInflater.from(context)
+            .inflate(R.layout.dialog_load_progress_bottomsheet, null, false)
+
+        // 设置布局背景
+        val bottomSheetDialog = initBottomSheetDialog(context, view)
+        // 用户行为val mDialogBehavior =
+        initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        // 自定义方案
+        // mDialogBehavior.peekHeight = 600
+
         return bottomSheetDialog
     }
 
@@ -581,6 +603,195 @@ object DialogUtils {
         return bottomSheetDialog
     }
 
+
+    @SuppressLint("CommitPrefEdits")
+    @JvmStatic
+    fun batchDownloadVideoDialog(
+        context: Context,
+        works: List<UserWorksBean.DataBean.ListBean.VlistBean>,
+        networkService: NetworkService
+    ): BottomSheetDialog {
+
+        var selectDefinition = 80
+        var toneQuality = 30280
+
+        var downloadType = DASH_TYPE
+        var downloadTool = APP_DOWNLOAD
+        var downloadCondition = VIDEOANDAUDIO
+
+        val binding = DialogBatchDownloadVideoBinding.inflate(LayoutInflater.from(context))
+
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                setDynamicGaussianBlurEffect()
+            }
+        }
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+
+        initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
+
+        binding.apply {
+
+            launchUI {
+                val baseVideoBaseBean = networkService.getVideoBaseInfoByBvid(works[0].bvid)
+
+                val baseVideo = networkService.getDashVideoPlayInfo(works[0].bvid,baseVideoBaseBean.data.cid,80)
+
+                dialogDlVideoDefinitionLy.setOnClickListener {
+                    loadVideoDefinition(context, baseVideo) {
+                        // 这里返回的是清晰度的数值代码
+                        selectDefinition = it
+
+                        // 处理下
+                        baseVideo.data.support_formats.forEach { it1 ->
+                            if (it1.quality == it) {
+                                dialogDlVideoDefinitionTx.text =
+                                    it1.new_description
+                            }
+                        }
+                    }.show()
+                }
+
+                // 设置音质选择
+                dialogDlAudioTypeTx.setOnClickListener {
+                    loadVideoToneQualityList(context, baseVideo) {
+                        toneQuality = it.id
+                        dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
+                    }.show()
+                }
+
+            }
+
+
+            dialogDlVideoTypeLy.setOnClickListener {
+                loadDownloadTypeDialog(context) { selects, typeName ->
+                    downloadType = selects
+                    dialogDlVideoTypeTx.text = typeName
+                }.show()
+            }
+
+
+            val sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context).apply {
+                    when (getInt("user_download_tool_list", 1)) {
+                        1 -> {
+                            downloadTool = APP_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_app_dl)
+                        }
+
+                        2 -> {
+                            downloadTool = IDM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_idm_dl)
+                        }
+
+                        3 -> {
+                            downloadTool = ADM_DOWNLOAD
+                            dialogDlVideoRadioGroup.check(R.id.dialog_dl_video_adm_dl)
+                        }
+                    }
+
+                    downloadType = getInt("user_download_type", 1)
+                    when (getInt("user_download_type", 1)) {
+                        1 -> {
+                            dialogDlVideoTypeTx.text = "Dash"
+                        }
+
+                        2 -> {
+                            dialogDlVideoTypeTx.text = "MP4"
+                        }
+                    }
+
+                    downloadCondition = getInt("user_download_condition", 1)
+                    when (getInt("user_download_condition", 1)) {
+                        1 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
+                        }
+
+                        2 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_audio)
+                        }
+
+                        3 -> {
+                            dialogDlConditionRadioGroup.check(R.id.dialog_dl_only_video)
+                        }
+                    }
+                }
+
+            dialogDlVideoRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                when (i) {
+                    R.id.dialog_dl_video_idm_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 2).apply()
+                        downloadTool = IDM_DOWNLOAD
+                    }
+
+                    R.id.dialog_dl_video_app_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 1).apply()
+                        downloadTool = APP_DOWNLOAD
+                    }
+
+                    R.id.dialog_dl_video_adm_dl -> {
+                        sharedPreferences.edit().putInt("user_download_tool_list", 3).apply()
+                        downloadTool = ADM_DOWNLOAD
+                    }
+                }
+            }
+
+            dialogDlConditionRadioGroup.setOnCheckedChangeListener { _, i ->
+                when (i) {
+                    R.id.dialog_dl_video_and_audio -> {
+                        downloadCondition = VIDEOANDAUDIO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", VIDEOANDAUDIO)
+                            apply()
+                        }
+                    }
+
+                    R.id.dialog_dl_only_video -> {
+                        downloadCondition = ONLY_VIDEO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", ONLY_VIDEO)
+                            apply()
+                        }
+                    }
+
+                    R.id.dialog_dl_only_audio -> {
+                        downloadCondition = ONLY_AUDIO
+                        sharedPreferences.edit {
+                            putInt("user_download_condition", ONLY_AUDIO)
+                            apply()
+                        }
+                    }
+                }
+            }
+
+            dialogDlVideoButton.setOnClickListener {
+                launchUI {
+                    works.forEach {
+                        val videoBaseBean = networkService.getVideoBaseInfoByBvid(it.bvid)
+                        val videoPlayListData = networkService.getVideoPageListData(it.bvid)
+                        // 设置布局视频播放数据
+                        downloadTaskStream(
+                            context,
+                            downloadType,
+                            downloadTool,
+                            downloadCondition,
+                            toneQuality,
+                            videoBaseBean,
+                            selectDefinition,
+                            80,
+                            listOf(videoPlayListData.data[0]).toMutableList(),
+                            networkService
+                        )
+                    }
+                }
+                bottomSheetDialog.cancel()
+            }
+        }
+        return bottomSheetDialog
+
+
+    }
     /**
      * 缓存视频弹窗
      * @param context Context

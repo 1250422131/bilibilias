@@ -12,8 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
@@ -87,9 +86,7 @@ open class AbsActivity : AppCompatActivity() {
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
+    private fun initAsUser() {
     }
 
     override fun onDestroy() {
@@ -142,8 +139,6 @@ open class AbsActivity : AppCompatActivity() {
                 },
             )
         }
-
-        StatService.onResume(this)
     }
 
     // 添加活动

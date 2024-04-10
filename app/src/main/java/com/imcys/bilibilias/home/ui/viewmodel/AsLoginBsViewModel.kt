@@ -15,7 +15,7 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -194,7 +194,7 @@ class AsLoginBsViewModel @Inject constructor(
         viewModelScope.launchIO {
             val cookies = AESUtils.decrypt(data.cookie)
 
-            val myUserData = networkService.n38()
+            val myUserData = networkService.getMyUserData()
 
             launchUI {
                 if (myUserData.code != 0) {

@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.base.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +25,7 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
@@ -31,21 +33,19 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
+import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownloadProvider
+import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
-import com.liulishuo.okdownload.core.listener.DownloadListener2
+import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -62,6 +62,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
+
+
+
 const val FLV_FILE = 1
 const val DASH_FILE = 0
 
@@ -76,16 +79,9 @@ const val STATE_MERGE_END = 5
 const val STATE_DOWNLOAD_ERROR = -1
 const val STATE_MERGE_ERROR = -1
 
-data class DownloadParameter(val url: String)
-
 // 定义一个下载队列类
 @Singleton
-class DownloadQueue @Inject constructor(
-    private val networkService: NetworkService,
-    private val videoRepository: VideoRepository,
-    @ApplicationScope private val scope: CoroutineScope,
-    @ApplicationContext private val context: Context,
-) {
+class DownloadQueue @Inject constructor() {
 
     private val groupTasksMap: MutableMap<Long, MutableList<DownloadTaskInfo>> = mutableMapOf()
 
@@ -93,10 +89,13 @@ class DownloadQueue @Inject constructor(
     var downloadFinishTaskAd: DownloadFinishTaskAd? = null
 
     // 存储待下载的任务
-    private val ready = mutableListOf<DownloadTaskInfo>()
+    private val queue = mutableListOf<DownloadTaskInfo>()
 
     // 当前正在下载的任务
-    private val running = mutableListOf<DownloadTaskInfo>()
+    private val currentTasks = mutableListOf<DownloadTaskInfo>()
+
+    @Inject
+    lateinit var networkService: NetworkService
 
     // 添加下载任务到队列中
     fun addTask(
@@ -133,18 +132,18 @@ class DownloadQueue @Inject constructor(
             }
         }
         // 添加下载任务到队列中
-        ready.add(task)
+        queue.add(task)
         // 如果队列不为空，就执行队列中的所有任务
-        if (ready.isNotEmpty()) {
+        if (queue.isNotEmpty()) {
             executeTask()
         }
     }
 
     // 执行下载任务
     private fun executeTask() {
-        while (running.size < 2 && ready.isNotEmpty()) {
+        while (currentTasks.size < 2 && queue.isNotEmpty()) {
             // 删除并且返回当前的task
-            val mTask = ready.removeAt(0)
+            val mTask = queue.removeAt(0)
 
             val fileRegex = ".+/(.+)\$"
             val rFile: Pattern = Pattern.compile(fileRegex)
@@ -161,12 +160,54 @@ class DownloadQueue @Inject constructor(
             // 更新任务状态
             mTask.state = STATE_DOWNLOADING
             // 添加任务到当前任务列表中
-            running.add(mTask)
+            currentTasks.add(mTask)
 
             mTask.call = okDownloadTask
 
-            okDownloadTask.enqueue(object : DownloadListener2() {
-                override fun taskStart(task: DownloadTask) = Unit
+            okDownloadTask.enqueue(object : DownloadListener {
+                override fun taskStart(task: DownloadTask) {
+                }
+
+                override fun connectTrialStart(
+                    task: DownloadTask,
+                    requestHeaderFields: MutableMap<String, MutableList<String>>,
+                ) {
+                }
+
+                override fun connectTrialEnd(
+                    task: DownloadTask,
+                    responseCode: Int,
+                    responseHeaderFields: MutableMap<String, MutableList<String>>,
+                ) {
+                }
+
+                override fun downloadFromBeginning(
+                    task: DownloadTask,
+                    info: BreakpointInfo,
+                    cause: ResumeFailedCause,
+                ) {
+                }
+
+                override fun downloadFromBreakpoint(task: DownloadTask, info: BreakpointInfo) {
+                }
+
+                override fun connectStart(
+                    task: DownloadTask,
+                    blockIndex: Int,
+                    requestHeaderFields: MutableMap<String, MutableList<String>>,
+                ) {
+                }
+
+                override fun connectEnd(
+                    task: DownloadTask,
+                    blockIndex: Int,
+                    responseCode: Int,
+                    responseHeaderFields: MutableMap<String, MutableList<String>>,
+                ) {
+                }
+
+                override fun fetchStart(task: DownloadTask, blockIndex: Int, contentLength: Long) {
+                }
 
                 override fun fetchProgress(
                     task: DownloadTask,
@@ -183,6 +224,8 @@ class DownloadQueue @Inject constructor(
                     // 下载进度更新时的回调，可以在这里处理下载百分比
                 }
 
+                override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
+                }
 
                 override fun taskEnd(
                     task: DownloadTask,
@@ -191,7 +234,7 @@ class DownloadQueue @Inject constructor(
                 ) {
                     // 异常
                     if (realCause != null) {
-                        running.remove(mTask)
+                        currentTasks.remove(mTask)
                         // 更新任务状态
                         mTask.state = STATE_DOWNLOAD_ERROR
                         // 下载失败，调用任务的完成回调
@@ -201,6 +244,7 @@ class DownloadQueue @Inject constructor(
                         // 执行下一个任务
                         executeTask()
                         Log.d("TAG", "下载失败问题:${realCause.message} ")
+
                         return
                     }
                     // 下载完成
@@ -219,7 +263,7 @@ class DownloadQueue @Inject constructor(
                         }
                     } else {
                         moveFileToDlUriPath(mTask.savePath)
-                        running.remove(mTask)
+                        currentTasks.remove(mTask)
                         // 下载成功，调用任务的完成回调
                         mTask.onComplete(true)
 
@@ -278,10 +322,7 @@ class DownloadQueue @Inject constructor(
                 "/storage/emulated/0/" + documentFile!!.uri.path?.replace(
                     Regex("/tree/.*:"),
                     ""
-                )!! + task.savePath.replace(
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
-                    ""
-                )
+                )!! + task.savePath.replace("/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download","")
             }
 
             val downloadFinishTaskInfo = DownloadFinishTaskInfo(
@@ -294,8 +335,7 @@ class DownloadQueue @Inject constructor(
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao =
-                AppDatabase.getDatabase(OkDownloadProvider.context).downloadFinishTaskDao()
+            val downloadFinishTaskDao = AppDatabase.getDatabase(OkDownloadProvider.context).downloadFinishTaskDao()
 
             // 协程提交
             DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
@@ -371,8 +411,7 @@ class DownloadQueue @Inject constructor(
         StatService.onEvent(OkDownloadProvider.context, "CacheSuccessful", "缓存成功")
 
         launchIO {
-            val sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
             val microsoftAppCenterType =
                 sharedPreferences.getBoolean("microsoft_app_center_type", true)
             val baiduStatisticsType =
@@ -462,7 +501,7 @@ class DownloadQueue @Inject constructor(
         task.onComplete(downloadState)
         // 移除任务
         groupTasksMap[task.downloadTaskDataBean.cid]?.forEach { item ->
-            running.remove(item)
+            currentTasks.remove(item)
         }
         // 更新
         updateAdapter()
@@ -501,11 +540,10 @@ class DownloadQueue @Inject constructor(
                     asToast(OkDownloadProvider.context, "合并完成")
                     // 删除合并文件
                     val deleteMergeSatae =
-                        PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                            .getBoolean(
-                                "user_dl_finish_delete_merge_switch",
-                                true,
-                            )
+                        PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context).getBoolean(
+                            "user_dl_finish_delete_merge_switch",
+                            true,
+                        )
                     if (deleteMergeSatae) {
                         FileUtils.deleteFile(videoPath)
                         FileUtils.deleteFile(audioPath)
@@ -809,9 +847,8 @@ class DownloadQueue @Inject constructor(
     ) {
         launchIO {
             var videoEntry = videoEntry
-            val appDataUri =
-                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                    .getString("AppDataUri", "")
+            val appDataUri = PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                .getString("AppDataUri", "")
 
             val saf = DocumentFile.fromTreeUri(OkDownloadProvider.context, Uri.parse(appDataUri))
 
@@ -886,7 +923,7 @@ class DownloadQueue @Inject constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
                     OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模 板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
                     danmakuDocument?.uri,
                     OkDownloadProvider.context,
                 )
@@ -925,11 +962,10 @@ class DownloadQueue @Inject constructor(
             }
 
             val impFileDeleteState =
-                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                    .getBoolean(
-                        "user_dl_delete_import_file_switch",
-                        true,
-                    )
+                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context).getBoolean(
+                    "user_dl_delete_import_file_switch",
+                    true,
+                )
 
             if (impFileDeleteState) {
                 FileUtils.deleteFile(videoPath)
@@ -963,9 +999,12 @@ class DownloadQueue @Inject constructor(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateAdapter() {
+        // 通知 RecyclerView 适配器数据发生了改变
+
         downloadTaskAdapter?.apply {
-            submitList((running + ready).map { it.copy() })
+            submitList((currentTasks + queue).map { it.copy() })
         }
     }
 
@@ -1024,36 +1063,52 @@ class DownloadQueue @Inject constructor(
      */
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
-            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
+//            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
             .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
+            .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
+            .setWifiRequired(false) // 是否只允许wifi下载，默认为false
+            .setAutoCallbackToUIThread(true) // 是否在主线程通知调用者，默认为true
+            // .setHeaderMapFields(new HashMap<String, List<String>>())//设置请求头
+            // .addHeader(String key, String value)//追加请求头
+            // .setPriority(0) //设置优先级，默认值是0，值越大下载优先级越高
+            .setReadBufferSize(4096) // 设置读取缓存区大小，默认4096
+            .setFlushBufferSize(16384) // 设置写入缓存区大小，默认16384
+            .setSyncBufferSize(65536) // 写入到文件的缓冲区大小，默认65536
+            .setSyncBufferIntervalMillis(2000) // 写入文件的最小时间间隔，默认2000
         task.addHeader(
             USER_AGENT,
             BROWSER_USER_AGENT,
         )
         task.addHeader(REFERER, "https://www.bilibili.com/")
+        val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+        task.addHeader(COOKIE, cookie!!)
+
         return task.build()
     }
+
 
     private fun moveFileToDlUriPath(oldPath: String) {
         launchIO {
             val sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
             val saveUriPath = sharedPreferences.getString(
-                "user_download_save_uri_path",
-                null,
+                    "user_download_save_uri_path",
+                    null,
             )
 
             if (saveUriPath != null) {
                 var dlFileDocument = DocumentFile.fromTreeUri(
-                    OkDownloadProvider.context,
-                    Uri.parse(saveUriPath)
+                        OkDownloadProvider.context,
+                        Uri.parse(saveUriPath)
                 )!!
 
                 val docList = oldPath.replace(
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
-                    ""
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        ""
                 ).split("/")
+
                 docList.forEachIndexed { index, name ->
                     // 是不是最后尾部
                     if (index != docList.size - 1) {
@@ -1064,20 +1119,23 @@ class DownloadQueue @Inject constructor(
                         }
                     } else {
                         dlFileDocument =
-                            dlFileDocument.createFile(
-                                "application/${name.split(".").last()}",
-                                name
-                            )!!
-                        AppFilePathUtils.copySafFile(
-                            oldPath,
-                            dlFileDocument.uri,
-                            OkDownloadProvider.context
+                                dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
+                       val copyResult =  AppFilePathUtils.copySafFile(
+                                oldPath,
+                                dlFileDocument.uri,
+                                OkDownloadProvider.context
                         )
+
+                        if (copyResult) {
+                            FileUtils.deleteFile(oldPath)
+                        }else{
+                            launchUI { asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径") }
+                        }
                     }
                 }
 
-                FileUtils.deleteFile(oldPath)
             }
         }
     }
+
 }
