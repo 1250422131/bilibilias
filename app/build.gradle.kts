@@ -20,7 +20,7 @@ android {
         // noinspecton ExpiredTargetSdkVersion
         targetSdk = 34
         versionCode = 203
-        versionName = "2.0.4-玉衡-Alpha-31"
+        versionName = "2.0.4-开阳-Alpha-3"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
@@ -82,8 +82,12 @@ android {
         enable = true
     }
 
+    viewBinding {
+        enable = true
+    }
+
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8-dev-k1.9.22-42b6ec2b037"
+        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
 
     packaging {
@@ -113,6 +117,7 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
+    implementation(libs.androidx.activity)
 
     ksp(libs.deeprecopy.compiler)
 

@@ -47,6 +47,7 @@ protobufKotlin = "3.25.3"
 protobuf = "0.9.4"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
+ffmpegKit = "6.0-2"
 srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.1"
 work-runtime-ktx = "2.9.0"
@@ -143,6 +144,7 @@ mtj-sdk = { group = "com.baidu.mobstat", name = "mtj-sdk", version.ref = "mtjSdk
 okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
+ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKit" }
 
 srl-core = { group = "com.github.dkzwm", name = "srl-core", version.ref = "srl-core" }
 srl-ext-classics = { group = "com.github.dkzwm", name = "srl-ext-classics", version.ref = "srl-core" }

@@ -132,7 +132,7 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (item != null) {
                 if (item.duration != null) {
-                    String tagName = !localName.isEmpty() ? localName : qName;
+                    String tagName = localName.length() != 0 ? localName : qName;
                     if (tagName.equalsIgnoreCase("d")) {
                         item.setTimer(mTimer);
                         result.addItem(item);

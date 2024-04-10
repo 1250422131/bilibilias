@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.di
 
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.ROAM_API
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -62,12 +63,13 @@ class NetworkModule {
         }
 
         install(HttpTimeout) {
-            requestTimeoutMillis = 10000
+            requestTimeoutMillis = 50000
         }
 
         defaultRequest {
-            url(BILIBILI_URL)
+            url(ROAM_API)
         }
+
         install(ContentNegotiation) {
             json(json)
         }

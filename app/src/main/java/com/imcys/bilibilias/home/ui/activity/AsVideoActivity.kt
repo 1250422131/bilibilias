@@ -33,7 +33,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -91,7 +91,7 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
-    private val asVideoViewModel: AsVideoViewModel by viewModels()
+    private val asVideoViewModel    : AsVideoViewModel by viewModels()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -167,7 +167,7 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 launchUI {
                     // 获取播放信息
-                    val videoPlayBean = networkService.n9(bvid, cid)
+                    val videoPlayBean = networkService.getVideoPlayInfo(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
@@ -189,27 +189,18 @@ class AsVideoActivity : BaseActivity() {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
 
-                        dashVideoPlayBean.data.dash.video[0].also {
-                            if (it.width < it.height) {
-                                // 竖屏
-                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                    height = windowManager.defaultDisplay.height / 4 * 3
+                        if (dashVideoPlayBean.data.dash.video.isNotEmpty()){
+                            // 得有video才行
+                            dashVideoPlayBean.data.dash.video[0].also {
+                                if (it.width < it.height) {
+                                    // 竖屏
+                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                        height = windowManager.defaultDisplay.height / 4 * 3
+                                    }
                                 }
                             }
-
-//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-//                                // 计算折叠程度（0为完全展开，1为完全折叠）
-//
-//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
-//                                    // 根据当前滚动百分比计算内边距
-//                                    val totalScrollRange = appBarLayout.totalScrollRange
-//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
-//                                    val padding = (currentScrollPercentage * 100).toInt()
-//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
-//                                }
-//
-//                            }
                         }
+
                         // 真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
@@ -251,7 +242,7 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                    VideoNumConversion.toAvidOffline(bvId).toString()
+                        NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
 
@@ -462,7 +453,7 @@ class AsVideoActivity : BaseActivity() {
     private fun loadVideoList() {
         launchIO {
 
-            val videoPlayListData = networkService.n15(bvid)
+            val videoPlayListData = networkService.getVideoPageListData(bvid)
 
             launchUI {
                 binding.apply {
@@ -512,8 +503,10 @@ class AsVideoActivity : BaseActivity() {
     private fun loadDanmakuFlameMaster() {
 
         launchUI {
-            // 储存弹幕
-            saveDanmaku(networkService.getDanmuBytes(cid))
+           runCatching {
+               // 储存弹幕
+               saveDanmaku(networkService.getDanmuBytes(cid))
+           }
             // 初始化弹幕配置
             initDanmaku()
         }
@@ -543,7 +536,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadUserCardData(mid: Long) {
         launchUI {
-            val userCardBean = networkService.n14(mid)
+            val userCardBean = networkService.getUserCardData(mid)
             // 显示用户卡片
             showUserCard()
             // 将数据交给viewModel
@@ -618,7 +611,7 @@ class AsVideoActivity : BaseActivity() {
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Long) {
             val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
+            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
             context.startActivity(intent)
         }
     }
