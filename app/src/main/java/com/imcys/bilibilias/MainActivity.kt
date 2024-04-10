@@ -1,17 +1,14 @@
 package com.imcys.bilibilias
 
 import android.os.Bundle
-import com.imcys.bilibilias.base.BaseActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX.statusBarOnly
 
-class MainActivity : BaseActivity() {
-
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        //沉浸式
+        enableEdgeToEdge()
         statusBarOnly(this)
-
     }
-
-
 }

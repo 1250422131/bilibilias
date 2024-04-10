@@ -36,7 +36,4 @@ object NewVideoNumConversionUtils {
 
         return ((tmp and MASK_CODE.toBigInteger()) xor XOR_CODE.toBigInteger()).toLong()
     }
-
-
-
 }

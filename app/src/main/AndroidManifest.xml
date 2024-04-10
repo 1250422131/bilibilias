@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- if you want to load images from the internet -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 允许访问网络状态的权限 -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
-
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
-
     <uses-permission android:name="android.permission.WRITE_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_IMAGES" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
     <application
@@ -44,7 +42,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BILIBILIAS"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        tools:targetApi="34">
+        <activity
+            android:name=".privacy.PrivacyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BILIBILIAS" />
         <activity
             android:name=".home.ui.activity.tool.MergeVideoActivity"
             android:exported="false" />
@@ -123,7 +125,7 @@
             android:name=".home.ui.activity.HomeActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            tools:ignore="IntentFilterExportedReceiver">
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -142,11 +144,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".splash.ui.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.SplashOverlay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

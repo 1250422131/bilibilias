@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.ViewModel
@@ -14,7 +13,6 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.asToast
@@ -30,14 +28,10 @@ import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
 import com.imcys.bilibilias.common.base.utils.AESUtils
 import com.imcys.bilibilias.databinding.DialogAsAccountListBinding
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.http.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URLEncoder
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -142,7 +136,7 @@ class AsLoginBsViewModel @Inject constructor(
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         binding.dialogAsAccountButton.setOnClickListener {
-            addCloudAccount(view)
+            addCloudAccount()
             bottomSheetDialog.cancel()
         }
 
@@ -204,8 +198,8 @@ class AsLoginBsViewModel @Inject constructor(
 
             launchUI {
                 if (myUserData.code != 0) {
-                    loadCloudAccountLogin(view.context)
-                    deleteCloudAccount(view.context, data)
+                    loadCloudAccountLogin()
+                    deleteCloudAccount(data)
                     asToast(view.context, "账户失效,为您跳转到添加账户页面")
                 } else {
                     // 为0则代表用户数据仍然有效果，开始为全局设置
@@ -221,7 +215,7 @@ class AsLoginBsViewModel @Inject constructor(
      * 由于用户cookie失效，这里干掉服务器上的cookie
      * @param context Context?
      */
-    private fun deleteCloudAccount(context: Context, data: UserBiliBiliCookieModel.Data) {
+    private fun deleteCloudAccount(data: UserBiliBiliCookieModel.Data) {
         viewModelScope.launch {
             val asCookie = BaseApplication.dataKv.decodeString(AS_COOKIES)
             networkService.n39(asCookie, data)
@@ -275,39 +269,17 @@ class AsLoginBsViewModel @Inject constructor(
      * 添加账户
      * @param view View
      */
-    private fun addCloudAccount(view: View) {
-        loadCloudAccountLogin(view.context)
+    private fun addCloudAccount() {
+        loadCloudAccountLogin()
     }
 
     /**
      * 加载登陆对话框
      */
-    private fun loadCloudAccountLogin(context: Context) {
+    private fun loadCloudAccountLogin() {
         viewModelScope.launch {
-
-            val loginQrcodeBean = networkService.n41()
-            loginQrcodeBean.data.url =
-                withContext(Dispatchers.IO) {
-                    URLEncoder.encode(loginQrcodeBean.data.url, "UTF-8")
-                }
-            val loginQRDialog = DialogUtils.loginQRDialog(
-                context,
-                loginQrcodeBean,
-            ) { code: Int, _: LoginStateBean ->
-                // 登陆成功
-                if (code == 0) {
-                    (context as HomeActivity).homeFragment.initUserData()
-                    context.homeFragment.startStatistics()
-                    // 提交云端资料
-                    postCloudCookie(context)
-                } else {
-                    asToast(context, "登录异常")
-                }
-            }.apply {
-                show()
-            }
-
-            (context as HomeActivity).homeFragment.loginQRDialog = loginQRDialog
+            // 提交云端资料
+            postCloudCookie()
         }
     }
 
@@ -324,7 +296,7 @@ class AsLoginBsViewModel @Inject constructor(
         val type: Int = 1,
     ) : IPostBody
 
-    private fun postCloudCookie(context: HomeActivity) {
+    private fun postCloudCookie() {
         viewModelScope.launch {
             // 获取用户数据
 

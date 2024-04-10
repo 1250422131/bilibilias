@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.imcys.bilibilias.core.datastore.proto";
+option java_multiple_files = true;
+
+message LoginInfo {
+    map<string, Cookie> store = 1;
+    bool loginState = 2;
+    string refreshToken = 3;
+    string mixKey = 4;
+    uint64 mid = 5;
+}
+message Cookie {
+    string name = 1;
+    string value = 2;
+}

@@ -12,13 +12,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.base.utils.asLogD
 import com.imcys.bilibilias.common.R
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -89,7 +87,9 @@ open class AbsActivity : AppCompatActivity() {
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
-    private fun initAsUser() {
+    override fun onPause() {
+        super.onPause()
+        StatService.onPause(this)
     }
 
     override fun onDestroy() {
@@ -142,6 +142,8 @@ open class AbsActivity : AppCompatActivity() {
                 },
             )
         }
+
+        StatService.onResume(this)
     }
 
     // 添加活动

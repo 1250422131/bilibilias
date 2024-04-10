@@ -2,10 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-
-    </data>
-
     <com.imcys.bilibilias.base.view.GrayFrameLayout
         android:id="@+id/home_GrayFrameLayout"
         android:layout_width="match_parent"
@@ -22,11 +18,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
-
             </androidx.viewpager2.widget.ViewPager2>
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
-
                 android:id="@+id/home_bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,11 +28,7 @@
                 app:itemIconTint="@color/home_bottom_nav_seletor"
                 app:itemTextColor="@color/home_bottom_nav_seletor"
                 app:menu="@menu/home_menu_bottom_navigation">
-
             </com.google.android.material.bottomnavigation.BottomNavigationView>
-
-
         </LinearLayout>
-
     </com.imcys.bilibilias.base.view.GrayFrameLayout>
 </layout>

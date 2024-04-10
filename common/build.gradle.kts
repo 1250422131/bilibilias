@@ -1,5 +1,3 @@
-//import com.google.protobuf.gradle.id
-
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
@@ -7,7 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.protobuf)
     kotlin("kapt")
 }
 apply {
@@ -60,55 +57,11 @@ kotlin {
     }
 }
 
-// https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
-// https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
-
-//protobuf {
-//    protoc {
-//        artifact = "com.google.protobuf:protoc:3.25.2"
-//    }
-//    plugins {
-//        id("java") {
-//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
-//        }
-//        id("grpc") {
-//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
-//        }
-//        id("grpckt") {
-//            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
-//        }
-//    }
-//    generateProtoTasks {
-//        all().forEach {
-//            it.plugins {
-//                id("java") {
-//                    option("lite")
-//                }
-//                id("grpc") {
-//                    option("lite")
-//                }
-//                id("grpckt") {
-//                    option("lite")
-//                }
-//            }
-//            it.builtins {
-//                id("kotlin") {
-//                    option("lite")
-//                }
-//            }
-//        }
-//    }
-//}
 dependencies {
-
-    api(libs.grpc.kotlin.stub)
-    api(libs.grpc.protobuf)
-
-    api(libs.protobuf.kotlin)
-    api(libs.protobuf.java.util)
 
     // 深拷贝
     api(libs.deeprecopy.core)
+    implementation(project(":core:network"))
     ksp(libs.deeprecopy.compiler)
 
     // hilt库，实现控制反转
@@ -227,7 +180,6 @@ dependencies {
     /**
      * ktor全局支持
      */
-    api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
     api(libs.napier)
     api(libs.ktor.client.logging)
@@ -239,13 +191,7 @@ dependencies {
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.preference.ktx)
 
-    api(libs.activity.compose)
-    api(platform(libs.compose.bom))
-    api(libs.ui)
-    api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
-    api(libs.material3)
-    androidTestImplementation(platform(libs.compose.bom))
+    api(libs.androidx.activity.compose)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)

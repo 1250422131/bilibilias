@@ -1,53 +1,35 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.baidu.mobstat.StatService
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.feature.tool.navigation.ToolFragmentScreen
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
-import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
+import com.imcys.bilibilias.home.ui.model.ToolItemBean
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.xiaojinzi.component.anno.RouterAnno
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,77 +49,41 @@ class ToolFragment : BaseFragment() {
     private lateinit var fragmentToolBinding: FragmentToolBinding
     private lateinit var mRecyclerView: RecyclerView
     lateinit var mAdapter: ListAdapter<ToolItemBean, ViewHolder>
+
     @Inject
     lateinit var networkService: NetworkService
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
-        // 这里仍然是在判断是否有被引导过了
-        val guideVersion =
-            (activity as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            (activity as HomeActivity).asSharedPreferences.edit()
-                .putString("AppGuideVersion", App.AppGuideVersion).apply()
-            loadToolGuide()
-        }
-        StatService.onPageStart(context, "ToolFragment")
-    }
-
-    private fun loadToolGuide() {
-        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(activity))
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_tool)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentToolBinding.fragmentToolSearch.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setOnDismissCallback {
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0,
-                ).isCheckable = true
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .show()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        fragmentToolBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ToolFragmentScreen()
 
-        initView()
-
-        return fragmentToolBinding.root
+            }
+        }
     }
 
-    private fun initView() {
-        // 设置布局不浸入
-        fragmentToolBinding.fragmentToolTopLy.addStatusBarTopPadding()
 
+
+
+
+
+    override fun initView() {
         // 加载工具item
-        loadToolItem()
-
-        // 设置点击事件
-        fragmentToolBinding.toolViewHolder =
-            context?.let { ToolViewHolder(it, fragmentToolBinding) }
+//        loadToolItem()
 
         // 绑定列表
-        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
+//        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
         // 设置监听
-        setEditListener()
+//        setEditListener()
+    }
 
+    override fun initData() {
     }
 
     /**
@@ -145,36 +91,12 @@ class ToolFragment : BaseFragment() {
      * 如果外部有分享内容，就会在这里过滤
      * @param intent Intent?
      */
-    @SuppressLint("ResourceType")
-    internal fun parseShare(intent: Intent?) {
-        val action = intent?.action
-        val type = intent?.type
+    internal fun parseShare(intent: Intent) {
         lifecycleScope.launchWhenResumed {
-            if (Intent.ACTION_SEND == action && type != null) {
-                if ("text/plain" == type) {
-                    asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
-                }
+            if (Intent.ACTION_SEND == intent.action && "text/plain" == intent.type) {
+                asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
             }
-            // 下面这段代表是从浏览器解析过来的
-            val asUrl = intent?.extras?.getString("asUrl")
-            if (asUrl != null) {
-                asVideoId(asUrl)
-            }
-        }
-    }
-
-    /**
-     * 设置输入框的搜索监听器
-     * 当搜索除发时执行
-     */
-    private fun setEditListener() {
-        fragmentToolBinding.apply {
-            fragmentToolEditText.setOnEditorActionListener { textView, i, keyEvent ->
-                if (i == EditorInfo.IME_ACTION_SEARCH) {
-                    asVideoId(textView.text.toString())
-                }
-                false
-            }
+            intent.extras?.getString("asUrl")?.let { asVideoId(it) }
         }
     }
 
@@ -253,7 +175,6 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-
             val bangumiSeasonBean = networkService.n25(epId)
 
             if (bangumiSeasonBean.code == 0) {
@@ -267,7 +188,6 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchUI {
-
                 val videoBaseBean = networkService.n26(bvid)
 
                 (mAdapter).apply {
@@ -298,7 +218,7 @@ class ToolFragment : BaseFragment() {
         val toolItemMutableList = mutableListOf<ToolItemBean>()
         launchUI {
             // 通过远程数据获取item
-            val oldToolItemBean = withContext(Dispatchers.IO){
+            val oldToolItemBean = withContext(Dispatchers.IO) {
                 networkService.getOldToolItem()
             }
 
@@ -362,7 +282,6 @@ class ToolFragment : BaseFragment() {
                                 it.img_url,
                                 it.color,
                             ) {
-                                MergeVideoActivity.actionStart(requireContext())
                             },
                         )
                     }
@@ -390,13 +309,6 @@ class ToolFragment : BaseFragment() {
                     }
             }
         }
-    }
-
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
     companion object {

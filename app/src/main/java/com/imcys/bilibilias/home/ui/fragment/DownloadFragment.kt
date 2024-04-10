@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
@@ -51,9 +50,6 @@ class DownloadFragment : BaseFragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_download, container, false)
         // 添加边距
         fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
-
-        initView()
-        
         DialogUtils.downloadQueue = downloadQueue
 
         return fragmentDownloadBinding.root
@@ -62,12 +58,16 @@ class DownloadFragment : BaseFragment() {
     /**
      * 初始化布局
      */
-    private fun initView() {
+    override fun initView() {
         initDownloadListAd()
         initEditLayout()
         initDownloadList()
 
         initTabLayout()
+    }
+
+    override fun initData() {
+
     }
 
     private fun initDownloadListAd() {

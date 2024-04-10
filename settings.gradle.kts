@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
         google()
@@ -13,13 +14,32 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io")
         google()
-        // 临时为Kotlin提供对应的compose-compiler支持，详细见仓库：
         // https://github.com/jimgoog/ComposeAppUsingPrereleaseComposeCompiler#project-configuration
         maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "BILIBILIAS"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
+include(":benchmarks")
 include(":common")
 include(":model_ffmpeg")
 include(":tool_log_export")
+
+include(":core:common")
+include(":core:database")
+include(":core:datastore")
+include(":core:datastore-proto")
+include(":core:designsystem")
+include(":core:domain")
+include(":core:model")
+include(":core:network")
+include(":core:testing")
+include(":core:ui")
+include(":core:crash")
+include(":feature:splash")
+include(":feature:home")
+include(":feature:tool")
+include(":feature:download")
+include(":feature:user")

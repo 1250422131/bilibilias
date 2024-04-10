@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.home.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -12,18 +14,22 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
 import cn.jzvd.JzvdStd
+import coil.load
 import com.baidu.mobstat.StatService
+import com.hjq.toast.Toaster
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -34,51 +40,36 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
-import com.imcys.bilibilias.common.network.base.ResBean
-import com.imcys.bilibilias.danmaku.BiliDanmukuParser
+import com.imcys.bilibilias.core.model.user.Card
+import com.imcys.bilibilias.core.model.video.ViewDetail
+import com.imcys.bilibilias.core.model.video.ViewTriple
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
+import com.imcys.bilibilias.home.ui.activity.video.BiliDanmukuUtil
 import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
 import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.Event
+import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.launch
 import master.flame.danmaku.controller.IDanmakuView
-import master.flame.danmaku.danmaku.loader.IllegalDataException
-import master.flame.danmaku.danmaku.loader.android.DanmakuLoaderFactory
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
-import master.flame.danmaku.danmaku.model.IDisplayer
-import master.flame.danmaku.danmaku.model.android.DanmakuContext
-import master.flame.danmaku.danmaku.model.android.Danmakus
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.util.zip.Inflater
 import javax.inject.Inject
-
+import kotlin.collections.set
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity() {
-
-    private val TAG = this.javaClass.name
+class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
+    override val layoutId: Int = R.layout.activity_as_video
 
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
-
-    lateinit var binding: ActivityAsVideoBinding
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -86,13 +77,9 @@ class AsVideoActivity : BaseActivity() {
     // 烈焰弹幕使 弹幕解析器
     private lateinit var asDanmaku: IDanmakuView
 
-    // 烈焰弹幕使，方便全局调用
-    private lateinit var danmakuParser: BaseDanmakuParser
-    private val danmakuContext = DanmakuContext.create()
-
     lateinit var userBaseBean: UserBaseBean
 
-    private val asVideoViewModel: AsVideoViewModel by viewModels()
+    private val viewModel: AsVideoViewModel by viewModels()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -106,32 +93,24 @@ class AsVideoActivity : BaseActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
-        // 加载用户信息&视频信息
-        loadUserData()
-        // 加载控件
-        initView()
-
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-//    override fun attachBaseContext(newBase: Context?) {
-//        super.attachBaseContext(newBase)
-//
-//    }
-    /**
-     * 加载用户信息，为了确保会员视频及时通知用户
-     */
-    private fun loadUserData() {
-        launchUI {
-            userBaseBean = withContext(Dispatchers.IO) { getUserData() }
-            // 加载视频首要信息
-            initVideoData()
+    override fun initView() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel._effect.consumeAsFlow().collect {
+                    when (it) {
+                        is Event.ShowToast -> Toaster.show(it.text)
+                        is Event.ToolBarReportChange -> renderViewTriple(it.viewTriple)
+                        is Event.ShowFavouredDialog -> Unit
+                    }
+                }
+            }
         }
-    }
 
-    private fun initView() {
+        binding.asVideoCollectionLy.setOnClickListener {
+        }
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd
@@ -154,8 +133,80 @@ class AsVideoActivity : BaseActivity() {
             }
 
             // 设置点击事件->这里将点击事件都放这个类了
-            asVideoViewModel = this@AsVideoActivity.asVideoViewModel
+            asVideoViewModel = this@AsVideoActivity.viewModel
         }
+    }
+
+    override fun initData() {
+        lifecycleScope.launch {
+            viewModel.asVideoUiState.flowWithLifecycle(lifecycle).collect {
+                render(it)
+            }
+        }
+    }
+
+    private fun render(state: ViewUiState) {
+        when (state) {
+            ViewUiState.Loading -> Unit
+            is ViewUiState.Success -> {
+                renderTitleWithDesc(state.viewDetail)
+                renderUpInfoContainer(state.userCard)
+                renderToolBarReport(state.viewDetail, state.viewTriple)
+            }
+
+        }
+    }
+
+    private fun renderUpInfoContainer(userCard: Card) {
+        val card = userCard.card
+        binding.ivOwnerFace.load(card.face)
+        binding.asVideoUserName.text = card.name
+        binding.tvOwnerData.text =
+            "%s粉丝\t%s投稿".format(card.fans, userCard.archiveCount)
+    }
+
+    private fun renderTitleWithDesc(viewDetail: ViewDetail) {
+        val title = viewDetail.title
+        binding.tvViewTitle.text = title
+        binding.tvViewTitle.setOnClickListener {
+            textCopyThenPost(title)
+        }
+        binding.tvViewDesc.text = viewDetail.descV2.first().rawText
+    }
+
+    private fun textCopyThenPost(textCopied: String) {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("", textCopied))
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            Toaster.show(R.string.Copied)
+        }
+    }
+
+    private fun renderToolBarReport(viewDetail: ViewDetail, viewTriple: ViewTriple) {
+        binding.asVideoLikeLy.setOnClickListener {
+            viewModel.likeVideo(viewTriple.hasLike, viewDetail.bvid)
+        }
+        binding.asVideoThrowLy.setOnClickListener {
+            viewModel.videoCoinAdd(viewDetail.bvid)
+        }
+        binding.asVideoCollectionLy.setOnClickListener {
+//         viewModel.loadCollectionView()
+            viewModel.getUserFavorites()
+
+        }
+
+        val stat = viewDetail.stat
+        binding.tvViewStatLike.text = stat.like.toString()
+        binding.tvViewStatCoins.text = stat.coin.toString()
+        binding.tvViewStatFavoured.text = stat.favorite.toString()
+        binding.tvViewStatShared.text = stat.share.toString()
+        renderViewTriple(viewTriple)
+    }
+
+    private fun renderViewTriple(viewTriple: ViewTriple) {
+        binding.asVideoLikeBt.isSelected = viewTriple.hasLike
+        binding.asVideoThrowBt.isSelected = viewTriple.hasLike
+        binding.asVideoFaButton.isSelected = viewTriple.hasLike
     }
 
     /**
@@ -222,7 +273,6 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-
                     val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
@@ -252,15 +302,12 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                        NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
+                    NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
 
-
             // 设置数据
             videoDataBean = videoBaseBean
-            // 这里需要显示视频数据
-            showVideoData()
             // 设置基本数据，注意这里必须优先，因为我们在后面会复用这些数据
             setBaseData(videoBaseBean)
             // 加载用户卡片
@@ -283,50 +330,7 @@ class AsVideoActivity : BaseActivity() {
                     loadVideoList() // 加载正常列表
                 }
             }
-            // 检查三连情况
-            archiveHasLikeTriple()
         }
-    }
-
-    @Inject
-    lateinit var http: HttpClient
-
-    /**
-     * 检查三连情况
-     */
-    private fun archiveHasLikeTriple() {
-        launchIO {
-            archiveHasLike()
-            archiveCoins()
-            archiveFavoured()
-        }
-    }
-
-    /**
-     * 收藏检验
-     */
-    private suspend fun archiveFavoured() {
-        val bean = http.get("${BilibiliApi.archiveFavoured}?aid=$bvid")
-            .body<ResBean<ArchiveFavouredBean>>()
-        binding.archiveFavouredBean = bean.data
-    }
-
-    /**
-     * 检验投币情况
-     */
-    private suspend fun archiveCoins() {
-        val bean = http.get("${BilibiliApi.archiveHasLikePath}?bvid=$bvid")
-            .body<ArchiveHasLikeBean>()
-        binding.archiveHasLikeBean = bean
-    }
-
-    /**
-     * 检验是否点赞
-     */
-    private suspend fun archiveHasLike() {
-        val bean =
-            http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
-        binding.archiveCoinsBean = bean.data
     }
 
     /**
@@ -335,7 +339,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadBangumiVideoList() {
         launchIO {
-
             val bangumiSeasonBean = networkService.n13(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
@@ -441,28 +444,12 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
-    /**
-     * 获取用户基础信息
-     * @return UserBaseBean
-     */
-    private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n11(paramsStr)
-    }
-
     /**
      * 加载视频列表信息
      *
      */
     private fun loadVideoList() {
         launchIO {
-
             val videoPlayListData = networkService.n15(bvid)
 
             launchUI {
@@ -511,29 +498,6 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-
-        launchUI {
-            // 储存弹幕
-            saveDanmaku(networkService.getDanmuBytes(cid))
-            // 初始化弹幕配置
-            initDanmaku()
-        }
-    }
-
-    /**
-     * 初始化弹幕
-     */
-    private fun initDanmaku() {
-        // 我们得先从临时文件拉取弹幕xml
-        val input: InputStream =
-            FileInputStream(getExternalFilesDir("temp").toString() + "/tempDm.xml")
-
-        // 解析弹幕
-        danmakuParser = createParser(input)
-
-        // 设置弹幕配置
-        setDanmakuContextCongif()
-
         // 设置弹幕监听器
         setAsDanmakuCallback()
     }
@@ -576,15 +540,6 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    /**
-     * 显示视频数据页面
-     */
-    private fun showVideoData() {
-        binding.apply {
-            asVideoDataLy.visibility = View.VISIBLE
-        }
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 释放播放器
@@ -598,7 +553,6 @@ class AsVideoActivity : BaseActivity() {
         super.onPause()
         asDanmaku.apply {
             pause()
-            // hide()
         }
         if (asJzvdStd.state == Jzvd.STATE_PLAYING) { // 暂停视频
             asJzvdStd.startButton.performClick()
@@ -606,22 +560,6 @@ class AsVideoActivity : BaseActivity() {
         }
         // 百度统计
         StatService.onPause(this)
-    }
-
-    companion object {
-
-        fun actionStart(context: Context, bvId: String) {
-            val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", bvId)
-            context.startActivity(intent)
-        }
-
-        @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
-        fun actionStart(context: Context, aid: Long) {
-            val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
-            context.startActivity(intent)
-        }
     }
 
     /**
@@ -654,7 +592,10 @@ class AsVideoActivity : BaseActivity() {
                         asDanmaku.resume()
                     }
                 } else {
-                    asDanmaku.prepare(danmakuParser, danmakuContext)
+                    asDanmaku.prepare(
+                        BiliDanmukuUtil.createParser(this@AsVideoActivity),
+                        BiliDanmukuUtil.setDanmakuContext(),
+                    )
                     asDanmaku.enableDanmakuDrawingCache(true)
                 }
             }
@@ -699,45 +640,6 @@ class AsVideoActivity : BaseActivity() {
     // ——————————————————————————————————————————————————————————————————————————
 
     // ——————————————————————————————————————————————————————————————————————————
-    // 弹幕抽离
-    /**
-     * 储存弹幕内容
-     */
-    private fun saveDanmaku(bytes: ByteArray) {
-        val bufferedSink: BufferedSink?
-        val dest = File(getExternalFilesDir("temp").toString(), "tempDm.xml")
-        if (!dest.exists()) dest.createNewFile()
-        val sink = dest.sink() // 打开目标文件路径的sink
-        val decompressBytes =
-            decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-        bufferedSink = sink.buffer()
-        decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-        bufferedSink.close()
-    }
-
-    /**
-     * 配置弹幕信息
-     */
-
-    private fun setDanmakuContextCongif() {
-
-        // 设置弹幕的最大显示行数
-        val maxLinesPair = HashMap<Int, Int>()
-        // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
-        // 设置是否禁止重叠
-        val overlappingEnablePair = HashMap<Int, Boolean>()
-        overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
-        overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
-
-
-        danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
-            .setDuplicateMergingEnabled(false)
-            .setScrollSpeedFactor(1.2f) // 是否启用合并重复弹幕
-            .setScaleTextSize(1.2f) // 设置弹幕滚动速度系数,只对滚动弹幕有效
-            .setMaximumLines(maxLinesPair) // 设置最大显示行数
-            .preventOverlapping(overlappingEnablePair) // 设置防弹幕重叠，null为允许重叠
-    }
-
     /**
      * 配置弹幕监听器
      */
@@ -748,58 +650,15 @@ class AsVideoActivity : BaseActivity() {
                 asDanmaku.start()
             }
 
-            override fun updateTimer(timer: DanmakuTimer?) {
-                // 定时器更新的时候回调
-            }
+            override fun updateTimer(timer: DanmakuTimer?) = Unit
 
-            override fun danmakuShown(danmaku: BaseDanmaku?) {
-                // 弹幕展示的时候回调
+            override fun danmakuShown(danmaku: BaseDanmaku?) = Unit
 
-            }
-
-            override fun drawingFinished() {
-                // 弹幕绘制完成时回调
-            }
+            override fun drawingFinished() = Unit
         })
     }
 
-    /**
-     * 创建解析器对象，解析输入流
-     * @param stream
-     * @return
-     */
-    private fun createParser(stream: InputStream?): BaseDanmakuParser {
-        if (stream == null) {
-            return object : BaseDanmakuParser() {
-                override fun parse(): Danmakus {
-                    return Danmakus()
-                }
-            }
-        }
-        val loader = DanmakuLoaderFactory.create(DanmakuLoaderFactory.TAG_BILI)
-        try {
-            loader.load(stream)
-        } catch (e: IllegalDataException) {
-            e.printStackTrace()
-        }
-        val parser: BaseDanmakuParser = BiliDanmukuParser()
-        val dataSource = loader.dataSource
-        parser.load(dataSource)
-        return parser
-    }
-
     // ——————————————————————————————————————————————————————————————————————————
-
-    override fun onResume() {
-        super.onResume()
-        if (asDanmaku.isPrepared && asDanmaku.isPaused) {
-            // asDanmaku.show()
-            // asJzvdStd.startButton.performClick()
-        }
-        // 百度统计
-        StatService.onResume(this)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         asDanmaku.release()
@@ -836,5 +695,13 @@ class AsVideoActivity : BaseActivity() {
         }
         decompresser.end()
         return output
+    }
+
+    companion object {
+        fun actionStart(context: Context, bvId: String) {
+            val intent = Intent(context, AsVideoActivity::class.java)
+            intent.putExtra("bvId", bvId)
+            context.startActivity(intent)
+        }
     }
 }
