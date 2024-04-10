@@ -24,8 +24,7 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
-import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
@@ -304,7 +303,7 @@ class DownloadQueue @Inject constructor() {
                 videoPageTitle = part
                 avid = this.cid
                 cid = this.cid
-                videoBvid = NewVideoNumConversionUtils.av2bv(avid)
+                videoBvid = VideoNumConversion.toBvidOffline(avid)
             }
 
             val sharedPreferences =
@@ -419,7 +418,7 @@ class DownloadQueue @Inject constructor() {
 
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val myUserData = networkService.getMyUserData()
+            val myUserData = networkService.n6()
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
@@ -627,7 +626,7 @@ class DownloadQueue @Inject constructor() {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
             }
         } ?: downloadTaskDataBean.videoPageDataData?.apply {
-            bvid = NewVideoNumConversionUtils.av2bv(this.cid)
+            bvid = VideoNumConversion.toBvidOffline(this.cid)
             type = VIDEO_TYPE
             downloadTaskDataBean.dashVideoPlayBean?.data?.support_formats?.forEach {
                 if (it.quality.toString() == downloadTaskDataBean.qn) displayDesc = it.display_desc
@@ -923,7 +922,7 @@ class DownloadQueue @Inject constructor() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 AppFilePathUtils.copySafFile(
                     OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+                        .toString() + "/导入模 板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
                     danmakuDocument?.uri,
                     OkDownloadProvider.context,
                 )
@@ -1064,7 +1063,7 @@ class DownloadQueue @Inject constructor() {
     private fun createTasK(url: String, parentPath: String, fileName: String): DownloadTask {
         val task = DownloadTask.Builder(url, parentPath, fileName)
             .setFilenameFromResponse(false) // 是否使用 response header or url path 作为文件名，此时会忽略指定的文件名，默认false
-//            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
+            .setPassIfAlreadyCompleted(false) // 如果文件已经下载完成，再次下载时，是否忽略下载，默认为true(忽略)，设为false会从头下载
             .setConnectionCount(1) // 需要用几个线程来下载文件，默认根据文件大小确定；如果文件已经 split block，则设置后无效
             .setPreAllocateLength(false) // 在获取资源长度后，设置是否需要为文件预分配长度，默认false
             .setMinIntervalMillisCallbackProcess(1500) // 通知调用者的频率，避免anr，默认3000
@@ -1090,52 +1089,45 @@ class DownloadQueue @Inject constructor() {
 
 
     private fun moveFileToDlUriPath(oldPath: String) {
-        launchIO {
-            val sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-            val saveUriPath = sharedPreferences.getString(
-                    "user_download_save_uri_path",
-                    null,
-            )
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+        val saveUriPath = sharedPreferences.getString(
+            "user_download_save_uri_path",
+            null,
+        )
 
-            if (saveUriPath != null) {
-                var dlFileDocument = DocumentFile.fromTreeUri(
-                        OkDownloadProvider.context,
-                        Uri.parse(saveUriPath)
-                )!!
+        if (saveUriPath != null) {
+            var dlFileDocument = DocumentFile.fromTreeUri(
+                OkDownloadProvider.context,
+                Uri.parse(saveUriPath)
+            )!!
 
-                val docList = oldPath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
-                        ""
-                ).split("/")
-
-                docList.forEachIndexed { index, name ->
-                    // 是不是最后尾部
-                    if (index != docList.size - 1) {
-                        dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
-                            dlFileDocument.createDirectory(name)!!
-                        } else {
-                            dlFileDocument.findFile(name)!!
-                        }
+            val docList = oldPath.replace(
+                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                ""
+            ).split("/")
+            docList.forEachIndexed { index, name ->
+                // 是不是最后尾部
+                if (index != docList.size - 1) {
+                    dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
+                        dlFileDocument.createDirectory(name)!!
                     } else {
-                        dlFileDocument =
-                                dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
-                       val copyResult =  AppFilePathUtils.copySafFile(
-                                oldPath,
-                                dlFileDocument.uri,
-                                OkDownloadProvider.context
-                        )
-
-                        if (copyResult) {
-                            FileUtils.deleteFile(oldPath)
-                        }else{
-                            launchUI { asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径") }
-                        }
+                        dlFileDocument.findFile(name)!!
                     }
+                } else {
+                    dlFileDocument =
+                        dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
+                    AppFilePathUtils.copySafFile(
+                        oldPath,
+                        dlFileDocument.uri,
+                        OkDownloadProvider.context
+                    )
                 }
-
             }
+
+            FileUtils.deleteFile(oldPath)
         }
+
     }
 
 }

@@ -48,7 +48,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
                 bangumiFollowRv.adapter = bangumiFollowAdapter
                 bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
                 val mBangumiFollowList =
-                    networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
+                    networkService.getBangumiFollow(BaseApplication.myUserData.mid, 1, 1, 15)
 
                 if (mBangumiFollowList.code == 0) {
                     bangumiFollowList = mBangumiFollowList
@@ -74,7 +74,7 @@ class BangumiFollowActivity : BaseActivity<ActivityBangumiFollowBinding>() {
     private fun loadBangumiFollow(pn: Int) {
         launchUI {
             val mBangumiFollowList =
-                networkService.getBangumiFollow(asUser.mid, 1, pn, 15)
+                networkService.getBangumiFollow(BaseApplication.myUserData.mid, 1, pn, 15)
             if (mBangumiFollowList.code == 0) {
                 bangumiFollowList = mBangumiFollowList
                 bangumiFollowMutableList.addAll(mBangumiFollowList.data.list)

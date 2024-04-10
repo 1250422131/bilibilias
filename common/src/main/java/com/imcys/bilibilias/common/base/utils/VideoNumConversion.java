@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.common.base.utils;
 
 
-import kotlin.Deprecated;
-
 /**
  * av转bv类
  * thanks mcfx - https://www.zhihu.com/question/381784377/answer/1099438784
@@ -10,7 +8,6 @@ import kotlin.Deprecated;
  *
  * @author BakaJzon
  */
-@Deprecated(message = "旧的VideoNumConversion已经放弃了，改用NewVideoNumConversionUtils，此类后续版本会被移除。")
 public class VideoNumConversion {
 
     private VideoNumConversion() {

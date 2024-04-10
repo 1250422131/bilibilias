@@ -46,7 +46,6 @@ import jxl.write.WritableFont
 import jxl.write.WritableSheet
 import javax.inject.Inject
 import kotlin.math.ceil
-
 @AndroidEntryPoint
 class BangumiFollowLogActivity : LogExportBaseActivity() {
 
@@ -107,7 +106,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                 SeasonTypeName,
             ),
 
-            )
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -203,7 +202,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             asToast(
                 this@BangumiFollowLogActivity,
                 "获取成功\n储存位置" +
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
+                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
             )
         }
     }
@@ -316,7 +315,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return networkService.getBangumiFollow(asUser.mid, 1, pn, 30)
+        return networkService.getBangumiFollow(BaseApplication.myUserData.mid,1,pn,30)
     }
 
     /**
@@ -376,7 +375,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      */
     private fun loadBanguiFollowData() {
         launchUI {
-            bangumiFollowList = networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
+            bangumiFollowList = networkService.getBangumiFollow(BaseApplication.myUserData.mid,1,1,15)
             if (bangumiFollowList.code == 0) {
                 binding.bangumiFollowList = bangumiFollowList
             }

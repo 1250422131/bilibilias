@@ -41,9 +41,6 @@ class UserFragment : BaseFragment() {
     private lateinit var userDataRv: RecyclerView
     private var userDataMutableList = mutableListOf<UserViewItemBean>()
     private lateinit var userWorksBean: UserWorksBean
-    private val userWorkList = mutableListOf<UserWorksBean.DataBean.ListBean.VlistBean>()
-    private var mid: Long = asUser.mid
-
 
     lateinit var fragmentUserBinding: FragmentUserBinding
 
@@ -105,6 +102,7 @@ class UserFragment : BaseFragment() {
             setOnRefreshListener(object : RefreshingListenerAdapter() {
                 override fun onLoadingMore() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
+                        val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
                             // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
                             val params = mutableMapOf<String, String>()
@@ -113,13 +111,13 @@ class UserFragment : BaseFragment() {
                             params["ps"] = "20"
                             val paramsStr = tokenUtils.getParamStr(params)
 
-                            val userWorksBean = networkService.getUserWorkData(paramsStr)
+                            val userWorksBean = networkService.n19(paramsStr)
 
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launchUI {
-                                userWorkList.addAll(userWorksBean.data.list.vlist)
-                                userWorksAd.submitList(userWorkList + mutableListOf())
+                                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
+
                                 // 更新数据 -> fragmentUserWorksCsr 支持
                                 refreshComplete()
                             }
@@ -161,8 +159,7 @@ class UserFragment : BaseFragment() {
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     // 刷新刚刚请求的代码
-                    userWorkList.addAll(userWorksBean.data.list.vlist)
-                    userWorksAd.submitList(userWorkList + mutableListOf())
+                    userWorksAd.submitList(userWorksBean.data.list.vlist)
                 }
             } else {
                 launchUI {

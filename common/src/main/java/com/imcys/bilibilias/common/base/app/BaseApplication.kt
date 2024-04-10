@@ -66,9 +66,11 @@ open class BaseApplication : Application() {
             private set
         val asUser: AsUser
             get() = run {
-                val kv = dataKv
+                val kv = BaseApplication.dataKv
                 AsUser.apply {
                     cookie = kv.decodeString(COOKIES, "")!!
+                    sessdata = kv.decodeString("SESSDATA", "")!!
+                    biliJct = kv.decodeString("bili_jct", "")!!
                     mid = kv.decodeLong("mid", 0)
                     asCookie = kv.decodeString("as_cookie", "")!!
                 }

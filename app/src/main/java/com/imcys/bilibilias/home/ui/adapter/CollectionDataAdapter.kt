@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -48,7 +48,7 @@ class CollectionDataAdapter @Inject constructor() :
                     val bvid = if (getItem(position).bvid != "") {
                         getItem(position).bvid
                     } else {
-                        NewVideoNumConversionUtils.av2bv(getItem(position).id)
+                        VideoNumConversion.toBvidOffline(getItem(position).id)
                     }
                     AsVideoActivity.actionStart(holder.itemView.context, bvid)
                 }
