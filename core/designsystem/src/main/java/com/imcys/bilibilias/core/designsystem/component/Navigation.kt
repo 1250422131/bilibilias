@@ -24,7 +24,7 @@ fun AsNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        contentColor = NiaNavigationDefaults.navigationContentColor(),
+        contentColor = AsNavigationDefaults.navigationContentColor(),
         tonalElevation = 0.dp,
         content = content,
     )
@@ -62,11 +62,11 @@ fun AsNavigationRailItem(
         label = label,
         alwaysShowLabel = alwaysShowLabel,
         colors = NavigationRailItemDefaults.colors(
-            selectedIconColor = NiaNavigationDefaults.navigationSelectedItemColor(),
-            unselectedIconColor = NiaNavigationDefaults.navigationContentColor(),
-            selectedTextColor = NiaNavigationDefaults.navigationSelectedItemColor(),
-            unselectedTextColor = NiaNavigationDefaults.navigationContentColor(),
-            indicatorColor = NiaNavigationDefaults.navigationIndicatorColor(),
+            selectedIconColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = AsNavigationDefaults.navigationContentColor(),
+            selectedTextColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = AsNavigationDefaults.navigationContentColor(),
+            indicatorColor = AsNavigationDefaults.navigationIndicatorColor(),
         ),
     )
 }
@@ -86,7 +86,7 @@ fun AsNavigationRail(
     NavigationRail(
         modifier = modifier,
         containerColor = Color.Transparent,
-        contentColor = NiaNavigationDefaults.navigationContentColor(),
+        contentColor = AsNavigationDefaults.navigationContentColor(),
         header = header,
         content = content,
     )
@@ -95,7 +95,7 @@ fun AsNavigationRail(
 /**
  * Now in Android navigation default values.
  */
-object NiaNavigationDefaults {
+object AsNavigationDefaults {
     @Composable
     fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
 

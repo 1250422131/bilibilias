@@ -4,16 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.viewpager2.widget.ViewPager2
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
+import com.imcys.bilibilias.feature.download.navigation.destinations.NavigationToDownloadDestination
+import com.imcys.bilibilias.feature.home.navigation.destinations.NavigationToHomeDestination
+import com.imcys.bilibilias.feature.tool.navigation.destinations.NavigationToToolDestination
+import com.imcys.bilibilias.feature.user.navigation.destinations.NavigationToUserDestination
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
+import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,7 +37,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadFragment()
+        enableEdgeToEdge()
+        setContent {
+
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -104,6 +116,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             finishAll()
         }
     }
+
+
 
     companion object {
         fun actionStart(context: Context, asUrl: String) {

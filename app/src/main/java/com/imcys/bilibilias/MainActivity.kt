@@ -8,7 +8,5 @@ import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX.statusBarOnly
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        statusBarOnly(this)
     }
 }
