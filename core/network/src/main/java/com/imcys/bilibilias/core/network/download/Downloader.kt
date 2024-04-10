@@ -15,6 +15,7 @@ private const val MAX_RUNNING = 4
 
 class Downloader @Inject constructor(
     private val videoRepository: VideoRepository,
+    private val mixedWorker: MixedWorker,
     @ApplicationScope private val scope: CoroutineScope,
 ) {
     private val ready = ArrayDeque<Task>(MAX_RUNNING)
@@ -84,7 +85,8 @@ class Downloader @Inject constructor(
     }
 
     private fun finished(deque: ArrayDeque<Task>, task: Task) {
-        completed.add(task)
+        deque.remove(task)
+        d(task)
         promoteAndExecute()
         changeRunningState(task, false)
     }
@@ -97,7 +99,16 @@ class Downloader @Inject constructor(
         task.errorMessage = message.message
         changeRunningState(task, false)
     }
-    private fun sendNewList(){
+
+    private fun sendNewList() {
         _taskFlow.trySend(allTask())
+    }
+
+    private fun d(task: Task) {
+        completed.add(task)
+        val target = if (task.type == FileType.AUDIO) FileType.VIDEO else FileType.AUDIO
+        completed.find { it.type == target }?.let {
+            mixedWorker.mix(it, task)
+        }
     }
 }

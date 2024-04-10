@@ -1,78 +1,29 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.bilibilias.android.library)
+    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.android.library.jacoco)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
-}
-apply {
-    from("../config.gradle")
-}
-
-ksp {
-    arg("ModuleName", project.name)
 }
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 21
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
 
     dataBinding {
         enable = true
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
 }
 
 dependencies {
+    implementation(project(":core:network"))
 
     // 深拷贝
     api(libs.deeprecopy.core)
-    implementation(project(":core:network"))
     ksp(libs.deeprecopy.compiler)
-
-    // hilt库，实现控制反转
-    api(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     // 文件下载
     api(libs.okdownload)
-
-    // 提供kotlin extension，可以不引入
-    api(libs.ktx)
 
     /**
      * SmoothRefreshLayout支持
@@ -116,8 +67,8 @@ dependencies {
     api(libs.asBottomDialog)
 
     // 协程
+    api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.coroutines.android)
-    api(libs.kotlinx.serialization.cbor)
 
     /**
      * RxFFmpeg

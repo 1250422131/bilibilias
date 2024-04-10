@@ -10,9 +10,6 @@ plugins {
     alias(libs.plugins.baselineprofile)
 }
 
-ksp {
-    arg("ModuleName", project.name)
-}
 android {
     namespace = "com.imcys.bilibilias"
 
@@ -59,11 +56,7 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
-    }
-
-    dataBinding {
-        enable = true
+        dataBinding = true
     }
 
     packaging {
