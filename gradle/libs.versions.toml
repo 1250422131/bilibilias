@@ -54,7 +54,7 @@ work-runtime-ktx = "2.9.0"
 xutils = "3.9.0"
 activity-compose = "1.8.2"
 compose-bom = "2024.04.00"
-activity = "1.8.0"
+activity = "1.8.2"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 detekt-rules-libraries = { module = "io.gitlab.arturbosch.detekt:detekt-rules-libraries", version.ref = "detekt" }
