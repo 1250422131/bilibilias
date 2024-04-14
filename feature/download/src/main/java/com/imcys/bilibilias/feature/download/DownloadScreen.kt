@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.feature.download
+package com.imcys.bilibilias.feature.download
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-internal fun DownloadRoute() {
+fun DownloadRoute() {
     val viewModel: DownloadViewModel = hiltViewModel()
     val uiState by viewModel.k.collectAsState()
     DownloadScreen(uiState, viewModel::cancel)
@@ -114,7 +114,8 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = onCancel) {
                     Icon(
-                        Icons.Default.Delete, contentDescription = "删除",
+                        Icons.Default.Delete,
+                        contentDescription = "删除",
                         tint = Color(251, 114, 153)
                     )
                 }

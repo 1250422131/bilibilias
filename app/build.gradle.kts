@@ -75,13 +75,13 @@ kapt {
 }
 
 dependencies {
+    implementation(projects.core.designsystem)
     implementation(projects.core.network)
     implementation(projects.core.datastore)
     implementation(projects.core.crash)
     implementation(projects.core.domain)
 
     implementation(project(":common"))
-    implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
     implementation(projects.feature.home)
     implementation(projects.feature.tool)
@@ -116,7 +116,6 @@ dependencies {
 
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
-    implementation(libs.compose.destinations.animations)
 
     implementation(libs.androidx.hilt.navigation.compose)
     implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
@@ -127,6 +126,8 @@ dependencies {
 
     implementation("com.holix.android:bottomsheetdialog-compose:1.4.1")
     implementation("io.github.androidpoet:dropdown:1.1.2")
+
+    implementation(libs.androidx.tracing.ktx)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

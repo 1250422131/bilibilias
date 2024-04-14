@@ -3,7 +3,9 @@
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)
 }
-
+ksp {
+    arg("compose-destinations.moduleName", "home")
+}
 android {
     namespace = "com.imcys.bilibilias.feature.home"
 }

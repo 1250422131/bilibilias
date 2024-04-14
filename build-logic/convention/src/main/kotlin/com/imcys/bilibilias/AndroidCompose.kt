@@ -44,15 +44,17 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs += stabilityConfiguration()
         }
     }
-    configureComposeDestinations()
+    configureVoyager()
 }
 
-private fun Project.configureComposeDestinations() {
-    pluginManager.apply("com.google.devtools.ksp")
+private fun Project.configureVoyager() {
     dependencies {
-        add("implementation", libs.findLibrary("compose-destinations").get())
-        add("implementation", libs.findLibrary("compose-destinations-animations").get())
-        add("ksp", libs.findLibrary("compose-destinations-ksp").get())
+        add("implementation", libs.findLibrary("voyager-navigator").get())
+        add("implementation", libs.findLibrary("voyager-screenModel").get())
+        add("implementation", libs.findLibrary("voyager-bottomSheetNavigator").get())
+        add("implementation", libs.findLibrary("voyager-tabNavigator").get())
+        add("implementation", libs.findLibrary("voyager-transitions").get())
+        add("implementation", libs.findLibrary("voyager-hilt").get())
     }
 }
 
