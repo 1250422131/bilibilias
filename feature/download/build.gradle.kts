@@ -3,7 +3,9 @@
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)
 }
-
+ksp {
+    arg("compose-destinations.moduleName", "download")
+}
 android {
     namespace = "com.imcys.bilibilias.feature.download"
 }

@@ -6,6 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.core.screen.Screen
+
+class ToolScreen : Screen {
+    @Composable
+    override fun Content() {
+        ToolRoute()
+    }
+}
 
 @Composable
 internal fun ToolRoute() {

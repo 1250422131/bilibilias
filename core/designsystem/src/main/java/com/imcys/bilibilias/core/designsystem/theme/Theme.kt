@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.dp
  */
 @VisibleForTesting
 val LightDefaultColorScheme = lightColorScheme(
+    primary = Color(251, 114, 153),
+    secondary = Color(255, 210, 224),
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
     onError = Color.White,
-
     )
 
 /**
@@ -39,6 +40,8 @@ val DarkDefaultColorScheme = darkColorScheme()
  */
 @VisibleForTesting
 val LightAndroidColorScheme = lightColorScheme(
+    primary = Color(251, 114, 153),
+    secondary = Color(255, 210, 224),
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
