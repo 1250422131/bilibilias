@@ -5,18 +5,11 @@ import SearchResultUiState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import cafe.adriel.voyager.core.screen.Screen
-
-class ToolScreen : Screen {
-    @Composable
-    override fun Content() {
-        ToolRoute()
-    }
-}
 
 @Composable
-internal fun ToolRoute() {
+fun ToolRoute(modifier: Modifier) {
     val viewmodel: ToolViewModel = hiltViewModel()
     val searchQuery by viewmodel.searchQuery.collectAsState()
     val uiState by viewmodel.searchResultUiState.collectAsState()

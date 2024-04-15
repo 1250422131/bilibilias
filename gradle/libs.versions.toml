@@ -45,7 +45,6 @@ okhttp = "4.12.0"
 preferenceKtx = "1.2.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
-ffmpegKit = "6.0-2"
 srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.1"
 work = "2.9.0"
@@ -55,6 +54,7 @@ androidxComposeBom = "2024.04.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
 voyager = "1.1.0-alpha04"
+composeMaterial = "1.3.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
@@ -63,13 +63,13 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
-monitor = { module = "io.github.leavesczy:monitor", version.ref = "monitor" }
-monitor-no-op = { module = "io.github.leavesczy:monitor-no-op", version.ref = "monitor" }
-napier = { module = "io.github.aakira:napier", version.ref = "napier" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-okhttp-brotli = { module = "com.squareup.okhttp3:okhttp-brotli", version.ref = "okhttp" }
+monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
+monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
+napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
@@ -144,22 +144,22 @@ srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", vers
 
 uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
 
-compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
-compose-destinations-bottom-sheet = { module = "io.github.raamcosta.compose-destinations:bottom-sheet", version.ref = "destinations" }
+compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "core", version.ref = "destinations" }
+compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "destinations" }
+compose-destinations-bottom-sheet = { group = "io.github.raamcosta.compose-destinations", name = "bottom-sheet", version.ref = "destinations" }
 
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
-voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
-voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { group = "cafe.adriel.voyager", name = "voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
+voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyager" }
+voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version = "1.7.0-alpha06" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = "1.7.0-alpha06" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }

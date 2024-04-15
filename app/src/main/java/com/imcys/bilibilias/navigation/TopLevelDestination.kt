@@ -1,15 +1,13 @@
-﻿package com.imcys.bilibilias.navigation
+package com.imcys.bilibilias.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import cafe.adriel.voyager.navigator.tab.Tab
-import coil.decode.ImageSource
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.navigation.tabs.DownloadTab
 import com.imcys.bilibilias.navigation.tabs.HomeTab
 import com.imcys.bilibilias.navigation.tabs.ToolTab
 import com.imcys.bilibilias.navigation.tabs.UserTab
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 
 enum class TopLevelDestination(
     val tab: Tab,

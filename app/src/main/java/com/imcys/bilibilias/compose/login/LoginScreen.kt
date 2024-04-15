@@ -9,7 +9,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import io.github.aakira.napier.Napier
 
 class LoginScreen : Screen {
     @Composable
@@ -24,7 +23,6 @@ class LoginScreen : Screen {
                     viewModel.applyQrCode(it.context)
                 }
                 binding.btnLogin.setOnClickListener {
-                    Napier.d { "登录状态 ${loginUiState.success}" }
                     if (loginUiState.success) {
                         val intent = Intent(it.context, HomeActivity::class.java)
                         it.context.startActivity(intent)

@@ -28,6 +28,7 @@ internal fun Project.configureAndroidCompose(
             add("androidTestImplementation", platform(bom))
             add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
             add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
+            configureVoyager()
         }
 
         testOptions {
@@ -44,7 +45,6 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs += stabilityConfiguration()
         }
     }
-    configureVoyager()
 }
 
 private fun Project.configureVoyager() {

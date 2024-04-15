@@ -1,6 +1,5 @@
-﻿package com.imcys.bilibilias.core.designsystem.component
+package com.imcys.bilibilias.core.designsystem.component
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LooksOne
@@ -9,13 +8,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 
@@ -59,6 +56,7 @@ fun RowScope.AsNavigationBarItem(
         ),
     )
 }
+
 /**
  * @param modifier Modifier to be applied to the navigation bar.
  * @param content Destinations inside the navigation bar. This should contain multiple
@@ -129,7 +127,7 @@ object AsNavigationDefaults {
     fun navigationSelectedItemColor() = MaterialTheme.colorScheme.onPrimaryContainer
 
     @Composable
-    fun navigationIndicatorColor() = MaterialTheme.colorScheme.primaryContainer
+    fun navigationIndicatorColor() = MaterialTheme.colorScheme.onPrimary
 }
 
 @ThemePreviews

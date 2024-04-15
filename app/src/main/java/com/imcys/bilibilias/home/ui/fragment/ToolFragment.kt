@@ -21,7 +21,6 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
-import com.imcys.bilibilias.feature.tool.navigation.ToolFragmentScreen
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
@@ -54,10 +53,6 @@ class ToolFragment : BaseFragment() {
         savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                ToolFragmentScreen()
-            }
         }
     }
 
