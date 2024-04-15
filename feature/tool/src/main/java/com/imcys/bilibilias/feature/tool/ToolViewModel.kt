@@ -13,6 +13,8 @@ import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.network.download.DownloadParameter
 import com.imcys.bilibilias.core.network.download.FileDownload
+import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -30,16 +32,17 @@ class ToolViewModel @Inject constructor(
     private val getStreamWithVideoDetailUseCase: GetStreamWithVideoDetailUseCase,
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
     private val fileDownload: FileDownload,
+    private val videoRepository: VideoRepository,
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
     val searchResultUiState = searchQuery.map {
-        com.imcys.bilibilias.feature.tool.util.InputParseUtil.searchType(it)
+        InputParseUtil.searchType(it)
     }.flatMapLatest {
         when (it) {
             is SearchType.AV -> handleAV(it.id)
             is SearchType.BV -> handleBV(it.id)
             is SearchType.EP -> handleEP(it.id)
-            is SearchType.ShortLink -> TODO()
+            is SearchType.ShortLink -> handleShortLink(it.url)
             SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
@@ -61,6 +64,20 @@ class ToolViewModel @Inject constructor(
 
     fun clearSearches() {
         savedStateHandle[SEARCH_QUERY] = ""
+    }
+
+    private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> {
+        return flowOf(videoRepository.shortLink(url)).map {
+            InputParseUtil.searchType(it)
+        }.flatMapLatest { type ->
+            when (type) {
+                is SearchType.AV -> handleAV(type.id)
+                is SearchType.BV -> handleBV(type.id)
+                is SearchType.EP -> handleEP(type.id)
+                SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
+                is SearchType.ShortLink -> flowOf(SearchResultUiState.EmptyQuery)
+            }
+        }
     }
 
     private fun handleAV(id: String): Flow<SearchResultUiState> {
