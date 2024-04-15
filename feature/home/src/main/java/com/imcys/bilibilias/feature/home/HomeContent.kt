@@ -4,14 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
@@ -29,17 +32,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
 import com.imcys.bilibilias.core.model.bilibilias.Banner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
+import dev.utils.app.AppUtils
 
 @Composable
 fun HomeContent(
@@ -56,9 +63,26 @@ fun HomeContent(
             contentPadding = PaddingValues(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-//            item {
-//                BannerPager(banner.imgUrlList.map(::BannerBean)) {}
-//            }
+            item {
+                com.imcys.bilibilias.core.ui.banner.Banner(
+                    modifier = Modifier
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    count = banner.imgUrlList.size,
+                    loop = true
+                ) {
+                    AsyncImage(
+                        model = banner.imgUrlList[it],
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.clickable {
+                            val uri = Uri.parse(banner.dataList[it])
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            AppUtils.startActivity(intent)
+                        }
+                    )
+                }
+            }
             item {
                 HomeCard(
                     onClick = {
@@ -202,6 +226,7 @@ private fun HomeCard(onClick: () -> Unit, title: String, desc: String) {
             modifier = Modifier
                 .padding(20.dp)
         ) {
+            // TODO: 图标不对
             Icon(
                 Icons.AutoMirrored.Filled.ExitToApp,
                 contentDescription = null,
