@@ -9,13 +9,10 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
-        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
         mavenCentral()
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         maven("https://jitpack.io")
         google()
-        // https://github.com/jimgoog/ComposeAppUsingPrereleaseComposeCompiler#project-configuration
-        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
 rootProject.name = "BILIBILIAS"

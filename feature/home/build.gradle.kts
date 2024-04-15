@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.datastore)
 
     implementation(libs.coil.compose)
+    implementation(libs.banner)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

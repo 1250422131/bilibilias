@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun DownloadRoute() {
+fun DownloadRoute(modifier: Modifier) {
     val viewModel: DownloadViewModel = hiltViewModel()
     val uiState by viewModel.k.collectAsState()
     DownloadScreen(uiState, viewModel::cancel)

@@ -1,7 +1,5 @@
 ﻿package com.imcys.bilibilias.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,8 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
@@ -41,22 +37,22 @@ fun AsApp(appState: AsAppState) {
                 }
             ) { tabNavigator ->
                 Scaffold(
+                    containerColor = Color.Transparent,
+                    contentColor = MaterialTheme.colorScheme.onBackground,
                     bottomBar = {
                         AsBottomBar(
                             destinations = appState.topLevelDestinations,
                             onNavigateToDestination = appState::navigateToTopLevelDestination,
                             currentDestination = appState::currentDestination,
+                            tabNavigator = tabNavigator,
                             modifier = Modifier.testTag("AsBottomBar")
                         )
                     }
                 ) { padding ->
-                    Box(
+                    com.imcys.bilibilias.navigation.tabs.CurrentTab(
                         modifier = Modifier
-                            .fillMaxSize()
                             .padding(padding)
-                    ) {
-                        CurrentTab()
-                    }
+                    )
                 }
             }
         }
@@ -68,12 +64,12 @@ private fun AsBottomBar(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TabNavigator, TopLevelDestination) -> Unit,
     currentDestination: (TabNavigator, TopLevelDestination) -> Boolean,
+    tabNavigator: TabNavigator,
     modifier: Modifier = Modifier,
 ) {
     AsNavigationBar(
         modifier = modifier,
     ) {
-        val tabNavigator = LocalTabNavigator.current
         destinations.forEach { destination ->
             val selected = currentDestination(tabNavigator, destination)
             AsNavigationBarItem(

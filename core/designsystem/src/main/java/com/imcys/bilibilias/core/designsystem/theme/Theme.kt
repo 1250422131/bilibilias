@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.designsystem.theme
+package com.imcys.bilibilias.core.designsystem.theme
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
@@ -27,7 +27,7 @@ val LightDefaultColorScheme = lightColorScheme(
     onSecondary = Color.White,
     onTertiary = Color.White,
     onError = Color.White,
-    )
+)
 
 /**
  * Dark default theme color scheme

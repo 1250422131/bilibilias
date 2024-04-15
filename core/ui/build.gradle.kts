@@ -13,6 +13,9 @@ dependencies {
 //    api(projects.core.analytics)
     api(projects.core.designsystem)
     api(projects.core.model)
+
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

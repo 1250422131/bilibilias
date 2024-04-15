@@ -125,7 +125,6 @@ dependencies {
     implementation(libs.coil.kt)
 
     implementation("com.holix.android:bottomsheetdialog-compose:1.4.1")
-    implementation("io.github.androidpoet:dropdown:1.1.2")
 
     implementation(libs.androidx.tracing.ktx)
 }

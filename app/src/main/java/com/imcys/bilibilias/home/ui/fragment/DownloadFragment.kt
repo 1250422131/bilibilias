@@ -17,7 +17,6 @@ import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.FragmentDownloadBinding
-import com.imcys.bilibilias.feature.download.navigation.DownloadFragmentScreen
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,10 +50,6 @@ class DownloadFragment : BaseFragment() {
 //        fragmentDownloadBinding.fragmentDownloadTopLinearLayout.addStatusBarTopPadding()
 //        DialogUtils.downloadQueue = downloadQueue
         return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                DownloadFragmentScreen()
-            }
         }
     }
 
