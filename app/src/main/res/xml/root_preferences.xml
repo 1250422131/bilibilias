@@ -1,24 +1,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <PreferenceCategory app:title="@string/app_root_preferences_title_download_conf">
-
         <Preference
-            app:defaultValue="null"
             app:key="user_download_save_uri_path"
             app:title="@string/user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
-
-
-<!--        <SwitchPreferenceCompat-->
-<!--            android:defaultValue="false"-->
-<!--            app:key="user_download_save_sd_path_switch"-->
-<!--            app:summaryOff="@string/user_download_save_sd_path_switch_off"-->
-<!--            app:summaryOn="@string/user_download_save_sd_path_switch_on"-->
-<!--            app:title="@string/user_download_save_sd_path_switch_title">-->
-
-<!--        </SwitchPreferenceCompat>-->
-
 
         <EditTextPreference
             app:defaultValue="@string/user_download_file_name_default"
@@ -26,31 +12,22 @@
             app:key="user_download_file_name_editText"
             app:title="@string/user_download_file_name"
             app:useSimpleSummaryProvider="true" />
-
-
         <Preference
             app:key="rename_user_download_save_path"
             app:title="@string/rename_user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
-
         <Preference
             app:key="rename_user_download_file_name_editText"
             app:title="@string/rename_user_download_file_name_editText_title"
             app:useSimpleSummaryProvider="true" />
-
     </PreferenceCategory>
-
     <PreferenceCategory app:title="@string/app_root_preferences_title_behavior">
-
         <SwitchPreferenceCompat
             android:defaultValue="true"
             app:key="user_dl_finish_automatic_merge_switch"
             app:summaryOff="@string/user_dl_finish_automatic_merge_switch_off"
             app:summaryOn="@string/user_dl_finish_automatic_merge_switch_on"
-            app:title="@string/user_dl_finish_automatic_merge_switch_title">
-
-        </SwitchPreferenceCompat>
-
+            app:title="@string/user_dl_finish_automatic_merge_switch_title"></SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
             android:icon="@drawable/ic_setting_bilibili"
@@ -58,37 +35,25 @@
             app:summaryOff="@string/user_dl_finish_automatic_import_switch_off"
             app:summaryOn="@string/user_dl_finish_automatic_import_switch_on"
             app:title="@string/user_dl_finish_automatic_import_switch_title" />
-
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/app_root_preferences_title_merge_conf">
-
         <SwitchPreferenceCompat
             android:defaultValue="true"
             app:key="user_dl_finish_delete_merge_switch"
-            app:title="@string/user_dl_finish_delete_merge_switch_title">
-
-        </SwitchPreferenceCompat>
-
+            app:title="@string/user_dl_finish_delete_merge_switch_title"></SwitchPreferenceCompat>
         <EditTextPreference
             android:defaultValue="@string/user_dl_merge_cmd_editText_default"
             android:dialogTitle="RxFFmpeg"
             app:dialogMessage="@string/user_dl_merge_cmd"
             app:key="user_dl_merge_cmd_editText"
             app:title="@string/user_dl_merge_cmd_editText_title"
-            app:useSimpleSummaryProvider="true">
-
-        </EditTextPreference>
-
+            app:useSimpleSummaryProvider="true"></EditTextPreference>
     </PreferenceCategory>
-
     <PreferenceCategory app:title="@string/app_root_preferences_title_import_conf">
-
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="user_dl_delete_import_file_switch"
-            app:title="@string/user_dl_delete_import_file_switch_title">
-
-        </SwitchPreferenceCompat>
+            app:title="@string/user_dl_delete_import_file_switch_title"></SwitchPreferenceCompat>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_theme">
@@ -98,9 +63,7 @@
             android:entryValues="@array/app_theme_value"
             android:key="app_theme"
             android:summary="@string/app_root_preferences_long_title_theme_tip"
-            android:title="@string/app_root_preferences_long_title_theme">
-
-        </ListPreference>
+            android:title="@string/app_root_preferences_long_title_theme"></ListPreference>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_language">
@@ -110,27 +73,8 @@
             android:entryValues="@array/app_language_value"
             android:key="app_language"
             android:summary="@string/app_root_preferences_long_title_language_tip"
-            android:title="@string/app_root_preferences_long_title_language">
-
-
-        </ListPreference>
+            android:title="@string/app_root_preferences_long_title_language"></ListPreference>
     </PreferenceCategory>
-
-
-<!--    <PreferenceCategory app:title="广告配置">-->
-
-<!--        <SwitchPreferenceCompat-->
-<!--            android:icon="@drawable/ic_public_ad"-->
-<!--            android:summaryOff="很抱歉广告打扰了你，我们利用广告展示和点击获取一些收入。"-->
-<!--            app:defaultValue="true"-->
-<!--            app:key="user_google_ad_switch"-->
-<!--            app:summaryOn="我们很感谢你可以打开它，这个谷歌广告不会阻碍你使用任何功能。"-->
-<!--            app:title="展示谷歌广告" />-->
-
-
-<!--    </PreferenceCategory>-->
-
-
     <PreferenceCategory app:title="@string/app_root_preferences_title_privacy_policy">
 
         <SwitchPreferenceCompat
@@ -139,15 +83,11 @@
             app:key="microsoft_app_center_type"
             app:summary="@string/microsoft_app_center_type_summary"
             app:title="@string/microsoft_app_center_type_title"></SwitchPreferenceCompat>
-
         <SwitchPreferenceCompat
             android:icon="@drawable/baidu_logo"
             app:defaultValue="false"
             app:key="baidu_statistics_type"
             app:summary="@string/baidu_statistics_type_summary"
             app:title="@string/baidu_statistics_type_title"></SwitchPreferenceCompat>
-
     </PreferenceCategory>
-
-
 </PreferenceScreen>

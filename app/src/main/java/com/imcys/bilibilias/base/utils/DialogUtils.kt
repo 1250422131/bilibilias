@@ -36,6 +36,7 @@ import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
+import com.imcys.bilibilias.core.common.utils.getUserSetDownloadFileNameRule
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.*
@@ -1273,7 +1274,7 @@ object DialogUtils {
             else -> throw IllegalArgumentException("Invalid type: $type")
         }
 
-        val savePath = context.getUserSetDownloadFileName().toAsDownloadSavePath(
+        val savePath = getUserSetDownloadFileNameRule().toAsDownloadSavePath(
             videoBaseBean.data.aid.toString(),
             videoBaseBean.data.bvid,
             dataBean.part,

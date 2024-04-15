@@ -80,6 +80,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.crash)
     implementation(projects.core.domain)
+    implementation(projects.core.common)
 
     implementation(project(":common"))
     implementation(project(":tool_log_export"))

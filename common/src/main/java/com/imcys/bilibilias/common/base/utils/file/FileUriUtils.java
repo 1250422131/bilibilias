@@ -8,24 +8,19 @@ package com.imcys.bilibilias.common.base.utils.file;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.UriPermission;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 
 import androidx.documentfile.provider.DocumentFile;
 
 //此类来源
 //https://blog.csdn.net/qq_26280383/article/details/113995727
 
-public class fileUriUtils {
+public class FileUriUtils {
 
     private static final String TAG = "fileUriUtils";
     public static String root = Environment.getExternalStorageDirectory().getPath() + "/";
@@ -87,7 +82,6 @@ public class fileUriUtils {
         Uri parse = Uri.parse(uri);
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-
 
         intent.addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION

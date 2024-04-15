@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.edit
-import com.imcys.bilibilias.base.utils.getDefaultSharedPreferences
 import com.imcys.bilibilias.common.base.BaseFragment
+import com.imcys.bilibilias.core.common.utils.getDefaultSharedPreferences
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +34,7 @@ class HomeFragment : BaseFragment() {
      * 启动统计
      */
     private fun startStatistics() {
-        requireContext().getDefaultSharedPreferences().edit {
+        getDefaultSharedPreferences().edit {
             putBoolean("microsoft_app_center_type", true)
             putBoolean("baidu_statistics_type", true)
         }
