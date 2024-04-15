@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun ToolRoute(modifier: Modifier) {
+fun ToolRoute(modifier: Modifier, onSetting: () -> Unit) {
     val viewmodel: ToolViewModel = hiltViewModel()
     val searchQuery by viewmodel.searchQuery.collectAsState()
     val uiState by viewmodel.searchResultUiState.collectAsState()
@@ -18,7 +18,9 @@ fun ToolRoute(modifier: Modifier) {
         uiState,
         viewmodel::clearSearches,
         viewmodel::onSearchQueryChanged,
-        viewmodel::download
+        viewmodel::download,
+        modifier,
+        onSetting,
     )
 }
 
@@ -28,13 +30,17 @@ internal fun ToolScreen(
     uiState: SearchResultUiState,
     clearSearches: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    download: (DownloadFileRequest) -> Unit
+    download: (DownloadFileRequest) -> Unit,
+    modifier: Modifier,
+    onSetting: () -> Unit
 ) {
     ToolContent(
         searchQuery = searchQuery,
         onSearchQueryChanged = onSearchQueryChanged,
         onClearSearches = clearSearches,
         searchResultUiState = uiState,
-        onDownload = download
+        onDownload = download,
+        modifier,
+        onSetting,
     )
 }

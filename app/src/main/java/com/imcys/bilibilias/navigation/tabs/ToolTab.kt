@@ -1,11 +1,14 @@
 package com.imcys.bilibilias.navigation.tabs
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.imcys.bilibilias.feature.tool.ToolRoute
+import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.navigation.TopLevelDestination
 
 object ToolTab : TabX() {
@@ -26,6 +29,10 @@ object ToolTab : TabX() {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        ToolRoute(modifier)
+        val context = LocalContext.current
+        ToolRoute(Modifier) {
+            val intent = Intent(context, SettingActivity::class.java)
+            context.startActivity(intent)
+        }
     }
 }

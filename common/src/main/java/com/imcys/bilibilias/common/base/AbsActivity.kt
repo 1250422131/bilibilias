@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.base
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -25,12 +26,13 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 open class AbsActivity : AppCompatActivity() {
-
+    @Deprecated("emm")
     private val mThemeChangedBroadcast by lazy {
         ThemeChangedBroadcast()
     }
 
-    open val asSharedPreferences: SharedPreferences by lazy {
+    @Deprecated("emm")
+    val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -39,8 +41,6 @@ open class AbsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 打印活动名称
-        asLogD(this, javaClass.simpleName)
         // 启动APP统计
         startAppCenter()
         // 添加当前活动
@@ -171,7 +171,7 @@ open class AbsActivity : AppCompatActivity() {
             .apply()
     }
 
-    open fun updateTheme() {
+    fun updateTheme() {
         // 重启activity（）
         recreate()
     }

@@ -12,5 +12,8 @@ dependencies {
     api(libs.kotlinx.serialization.json)
 
     api(libs.napier)
+    api(libs.devappx)
     implementation(kotlin("reflect"))
+
+    implementation(libs.androidx.preference.ktx)
 }

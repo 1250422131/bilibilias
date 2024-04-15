@@ -1,12 +1,10 @@
 package com.imcys.bilibilias.base
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.BaseActivityInit
 
@@ -16,10 +14,6 @@ abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseActivityI
 
     @get:LayoutRes
     abstract val layoutId: Int
-
-    override val asSharedPreferences: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(applicationContext)
-    }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
