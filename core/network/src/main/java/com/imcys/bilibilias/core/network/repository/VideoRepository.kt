@@ -24,6 +24,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
 import io.ktor.util.cio.writeChannel
@@ -38,6 +39,12 @@ class VideoRepository @Inject constructor(
     wrapperClient: WrapperClient
 ) {
     private val client = wrapperClient.client
+    suspend fun shortLink(url: String): String {
+        return client.get(url)
+            .request
+            .url
+            .toString()
+    }
     suspend fun videoStreamingURL(aid: Long, bvid: String, cid: Long): VideoStreamUrl {
         return client.get("x/player/wbi/playurl") {
             attributes.put(requireWbi, true)
