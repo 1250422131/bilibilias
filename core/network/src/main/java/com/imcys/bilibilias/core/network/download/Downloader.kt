@@ -57,7 +57,7 @@ class Downloader @Inject constructor(
 
     private fun execute(task: Task) {
         task.job = scope.launch {
-            changeRunningState(task, true)
+            task.state = TaskState.Running
             videoRepository.downloader(task.url, task.path)
                 .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST).collect {
                     when (it) {
@@ -73,6 +73,7 @@ class Downloader @Inject constructor(
 
                         DownloadResult.Success -> {
                             finished(task)
+                            task.state = TaskState.Success
                             Napier.d { "下载成功" }
                         }
                     }
@@ -88,16 +89,10 @@ class Downloader @Inject constructor(
         deque.remove(task)
         合并音视频(task)
         promoteAndExecute()
-        changeRunningState(task, false)
-    }
-
-    private fun changeRunningState(task: Task, isRunning: Boolean) {
-        task.isRunning = isRunning
     }
 
     private fun addErrorMessage(task: Task, message: DownloadResult.Error) {
-        task.errorMessage = message.message
-        changeRunningState(task, false)
+        task.state = TaskState.Error(message.message)
     }
 
     private fun sendNewList() {

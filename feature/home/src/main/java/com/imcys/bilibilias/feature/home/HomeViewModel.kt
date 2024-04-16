@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource
 ) : ViewModel() {
-
+    // TODO: 缺少异常处理，需要处理超时异常
     val homeUiState: StateFlow<HomeUiState> = flowOf(HomeUiState.Empty).flatMapLatest {
         val updateNoticeFlow = flow { emit(asRepository.getUpdateNotice()) }
         val bannerFlow = flow { emit(asRepository.getHomeBanner()) }

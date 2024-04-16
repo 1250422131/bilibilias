@@ -93,39 +93,40 @@
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:visibility="gone"
                         android:id="@+id/fg_download_top_edit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="5dp">
+                        android:padding="5dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
 
                         <TextView
                             android:id="@+id/fg_download_edit_cancel"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
-                            android:text="取消" />
+                            android:text="取消"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/fg_download_edit_select_all"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:text="全选"
-                            android:textColor="?attr/colorPrimary" />
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/fg_download_edit_invert"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:text="反选"
-                            android:textColor="?attr/colorPrimary" />
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="16sp" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -138,10 +139,10 @@
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
-                    android:visibility="gone"
                     android:id="@+id/fg_download_bottom_edit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
