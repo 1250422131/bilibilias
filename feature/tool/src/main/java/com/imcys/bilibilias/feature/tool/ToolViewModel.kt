@@ -1,8 +1,5 @@
 ﻿package com.imcys.bilibilias.feature.tool
 
-import DownloadFileRequest
-import SearchResultUiState
-import View
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +20,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import mapToVideoStreamDesc
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,15 +43,8 @@ class ToolViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
 
-    fun download(request: DownloadFileRequest) {
-        fileDownload.enqueue(
-            DownloadParameter(
-                request.aid,
-                request.bvid,
-                request.cid,
-                request.quality
-            )
-        )
+    fun download(parameter: DownloadParameter) {
+        fileDownload.enqueue(parameter)
     }
 
     fun onSearchQueryChanged(query: String) {

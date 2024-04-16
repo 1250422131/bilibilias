@@ -86,7 +86,7 @@ class Downloader @Inject constructor(
 
     private fun finished(deque: ArrayDeque<Task>, task: Task) {
         deque.remove(task)
-        d(task)
+        合并音视频(task)
         promoteAndExecute()
         changeRunningState(task, false)
     }
@@ -104,7 +104,7 @@ class Downloader @Inject constructor(
         _taskFlow.trySend(allTask())
     }
 
-    private fun d(task: Task) {
+    private fun 合并音视频(task: Task) {
         completed.add(task)
         val target = if (task.type == FileType.AUDIO) FileType.VIDEO else FileType.AUDIO
         completed.find { it.type == target }?.let {

@@ -1,9 +1,7 @@
-﻿package com.imcys.bilibilias.feature.tool
+package com.imcys.bilibilias.feature.tool
 
-import DownloadFileRequest
-import SearchResultUiState
-import VideoStreamDesc
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -12,10 +10,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -41,8 +41,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.core.designsystem.component.AsButton
+import com.imcys.bilibilias.core.designsystem.component.AsTextButton
+import com.imcys.bilibilias.core.network.download.DownloadParameter
+import com.imcys.bilibilias.core.network.download.Format
+import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
+import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
+import com.imcys.bilibilias.core.ui.radio.TaskType
+import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
+import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,13 +59,13 @@ fun ToolContent(
     onSearchQueryChanged: (String) -> Unit,
     onClearSearches: () -> Unit,
     searchResultUiState: SearchResultUiState,
-    onDownload: (DownloadFileRequest) -> Unit,
+    onDownload: (DownloadParameter) -> Unit,
     modifier: Modifier,
     onSetting: () -> Unit
 ) {
     Scaffold(modifier, topBar = {
         TopAppBar(
-            title = { Text(text = "haha") },
+            title = {},
             actions = {
                 IconButton(onClick = onSetting) {
                     Icon(
@@ -80,7 +88,8 @@ fun ToolContent(
                         contentDescription = "清空输入框",
                         modifier = Modifier.clickable { onClearSearches() }
                     )
-                }
+                },
+                maxLines = 1,
             )
             when (searchResultUiState) {
                 SearchResultUiState.EmptyQuery -> Unit
@@ -95,24 +104,24 @@ fun ToolContent(
                     ) {
                         item {
                             val context = LocalContext.current
-                            TextButton(
+                            AsTextButton(
                                 onClick = {
 //                                    AsVideoActivity.actionStart(
 //                                        context,
 //                                        searchResultUiState.bvid
 //                                    )
-                                }
-                            ) {
-                                Text(text = "点击进入详情页")
-                            }
+                                },
+                                text = { Text(text = "点击进入详情页") }
+                            )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->
                             ViewItem(item.title, item.videoStreamDesc) {
                                 onDownload(
-                                    DownloadFileRequest(
+                                    DownloadParameter(
                                         searchResultUiState.aid,
                                         searchResultUiState.bvid,
                                         item.cid,
+                                        item.title,
                                         it
                                     )
                                 )
@@ -128,8 +137,8 @@ fun ToolContent(
 @Composable
 fun ViewItem(
     title: String,
-    videoStreamDesc: VideoStreamDesc,
-    selected: (Int) -> Unit
+    streamDesc: VideoStreamDesc,
+    onDownload: (Format) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     Card(
@@ -150,15 +159,61 @@ fun ViewItem(
             )
         }
         AnimatedVisibility(visible = expanded) {
+            var codecs by remember { mutableStateOf(streamDesc.supportCodecs.first()) }
+            val codecsState = rememberCodecsState(codecs.useAV1, codecs.useH265, codecs.useH264)
+            val typeState = rememberFileTypeState()
+            var currentQuality by remember { mutableStateOf(streamDesc.descriptionQuality.first()) }
             Column {
                 LazyRow {
-                    items(videoStreamDesc.descriptionQuality) {
-                        TextButton(onClick = { selected(it.quality) }) {
-                            Text(text = it.desc)
+                    itemsIndexed(streamDesc.descriptionQuality) { index, item ->
+                        TextButton(
+                            onClick = {
+                                currentQuality = item
+                                codecs = streamDesc.supportCodecs[index]
+                            },
+                            border = if (currentQuality == item) {
+                                BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                            } else {
+                                null
+                            }
+                        ) {
+                            Text(text = item.desc)
                         }
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CodecsRadioGroup(codecsState)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    FileTypeRadioGroup(typeState)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsButton(
+                        onClick = {
+                            onDownload(
+                                Format(
+                                    codecsState.current.codeid,
+                                    typeState.current.mapToDownladTaskType(),
+                                    codecs.quality
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                    ) {
+                        Text(text = "下载")
                     }
                 }
             }
         }
+    }
+}
+
+private fun TaskType.mapToDownladTaskType(): com.imcys.bilibilias.core.network.download.TaskType {
+    return when (this) {
+        TaskType.ALL -> com.imcys.bilibilias.core.network.download.TaskType.ALL
+        TaskType.VIDEO -> com.imcys.bilibilias.core.network.download.TaskType.VIDEO
+        TaskType.AUDIO -> com.imcys.bilibilias.core.network.download.TaskType.AUDIO
     }
 }
