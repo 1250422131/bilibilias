@@ -1,12 +1,11 @@
 package com.imcys.bilibilias.feature.tool
 
-import DownloadFileRequest
-import SearchResultUiState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imcys.bilibilias.core.network.download.DownloadParameter
 
 @Composable
 fun ToolRoute(modifier: Modifier, onSetting: () -> Unit) {
@@ -30,7 +29,7 @@ internal fun ToolScreen(
     uiState: SearchResultUiState,
     clearSearches: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    download: (DownloadFileRequest) -> Unit,
+    onDownload: (DownloadParameter) -> Unit,
     modifier: Modifier,
     onSetting: () -> Unit
 ) {
@@ -39,7 +38,7 @@ internal fun ToolScreen(
         onSearchQueryChanged = onSearchQueryChanged,
         onClearSearches = clearSearches,
         searchResultUiState = uiState,
-        onDownload = download,
+        onDownload = onDownload,
         modifier,
         onSetting,
     )

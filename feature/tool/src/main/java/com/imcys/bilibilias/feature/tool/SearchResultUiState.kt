@@ -1,6 +1,8 @@
-﻿
+﻿package com.imcys.bilibilias.feature.tool
+
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
+import com.imcys.bilibilias.core.ui.radio.TaskType
 
 sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState
@@ -49,5 +51,3 @@ fun BangumiStreamUrl.mapToVideoStreamDesc(): VideoStreamDesc {
     }
     return VideoStreamDesc(selectableDescription, supportCodecs)
 }
-
-data class DownloadFileRequest(val aid: Long, val bvid: String, val cid: Long, val quality: Int)

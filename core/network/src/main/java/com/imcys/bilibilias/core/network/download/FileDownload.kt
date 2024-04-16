@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.core.network.download
 
 import android.content.Context
-import android.preference.PreferenceManager
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.model.video.Audio
 import com.imcys.bilibilias.core.model.video.Video
@@ -11,6 +10,7 @@ import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -34,64 +34,105 @@ class FileDownload @Inject constructor(
     fun allTask() = downloader.allTask()
     fun enqueue(parameter: DownloadParameter) {
         scope.launch {
-            val detail = videoRepository.获取视频详细信息(parameter.bvid)
-            val streamUrl =
-                videoRepository.videoStreamingURL(parameter.aid, parameter.bvid, parameter.cid)
-            download(streamUrl, detail, parameter)
+            val (detail, streamUrl) = get视频详情和流链接(parameter)
+            handleTaskType(streamUrl, parameter)
             persistedFile(detail, parameter.cid)
         }
     }
 
-    private fun download(
-        streamUrl: VideoStreamUrl,
-        detail: ViewDetail,
-        parameter: DownloadParameter
-    ) {
-        startVideoDownload(
-            getVideoStrategy(streamUrl.dash.video, parameter.quality),
-            detail, parameter.quality
-        )
-        startAudioDownload(
-            getAudioStrategy(streamUrl.dash.audio),
-            detail, parameter.quality
-        )
+    private suspend fun get视频详情和流链接(parameter: DownloadParameter): Pair<ViewDetail, VideoStreamUrl> {
+        val detail = scope.async { videoRepository.获取视频详细信息(parameter.bvid) }
+        val streamUrl =
+            scope.async {
+                videoRepository.videoStreamingURL(
+                    parameter.aid,
+                    parameter.bvid,
+                    parameter.cid
+                )
+            }
+        return detail.await() to streamUrl.await()
     }
 
-    private fun startVideoDownload(video: Video, parameter: ViewDetail, quality: Int) {
-        val task = createTask(video.baseUrl, "video.m4s", parameter, FileType.VIDEO, quality)
+    private fun handleTaskType(
+        streamUrl: VideoStreamUrl,
+        parameter: DownloadParameter
+    ) {
+        when (val type = parameter.format.taskType) {
+            TaskType.ALL -> handleAllTask(streamUrl, parameter, type.extension)
+            TaskType.VIDEO -> handleVideoTask(streamUrl, parameter, type.extension)
+            TaskType.AUDIO -> handleAudioTask(streamUrl, parameter, type.extension)
+        }
+    }
+
+    private fun handleAllTask(
+        streamUrl: VideoStreamUrl,
+        parameter: DownloadParameter,
+        extension: String
+    ) {
+        handleVideoTask(streamUrl, parameter, extension)
+        handleAudioTask(streamUrl, parameter, extension)
+    }
+
+    private fun handleAudioTask(
+        streamUrl: VideoStreamUrl,
+        parameter: DownloadParameter,
+        extension: String
+    ) {
+        val audio = getAudioStrategy(streamUrl.dash.audio, parameter)
+        download(audio, parameter, extension)
+    }
+
+    private fun handleVideoTask(
+        streamUrl: VideoStreamUrl,
+        parameter: DownloadParameter,
+        extension: String
+    ) {
+        val video = getVideoStrategy(streamUrl.dash.video, parameter)
+        download(video, parameter, extension)
+    }
+
+    private fun download(
+        video: Video,
+        parameter: DownloadParameter,
+        extension: String
+    ) {
+        val task = createTask(video.baseUrl, "video.$extension", parameter, FileType.VIDEO)
         downloader.dispatch(task)
     }
 
-    private fun startAudioDownload(audio: Audio, parameter: ViewDetail, quality: Int) {
-        val task = createTask(audio.baseUrl, "audio.m4s", parameter, FileType.AUDIO, quality)
+    private fun download(
+        audio: Audio,
+        parameter: DownloadParameter,
+        extension: String
+    ) {
+        val task = createTask(audio.baseUrl, "audio.$extension", parameter, FileType.AUDIO)
         downloader.dispatch(task)
     }
 
     private fun createTask(
         url: String,
         name: String,
-        detail: ViewDetail,
+        parameter: DownloadParameter,
         type: FileType,
-        quality: Int
     ): Task {
-        val path = buildDownloadFullPath(detail.aid, detail.cid, quality)
+        val path = buildDownloadFullPath(parameter.aid, parameter.cid, parameter.format.quality)
         val file = File(path, name).apply { parentFile!!.mkdirs(); createNewFile() }
         return Task(
             url,
             file,
             type,
-            detail.title,
-            detail.cid,
-            detail.bvid
+            parameter.title,
+            parameter.cid,
+            parameter.bvid
         )
     }
 
-    private fun getVideoStrategy(video: List<Video>, quality: Int): Video {
-        val videos = video.groupBy { it.id }[quality] ?: error("没有所选清晰度")
-        return videos.maxBy { it.codecid }
+    private fun getVideoStrategy(video: List<Video>, parameter: DownloadParameter): Video {
+        val videos = video.groupBy { it.id }[parameter.format.quality] ?: error("没有所选清晰度")
+        return videos.single { it.codecid == parameter.format.codecid }
     }
 
-    private fun getAudioStrategy(audio: List<Audio>): Audio {
+    private fun getAudioStrategy(audio: List<Audio>, parameter: DownloadParameter): Audio {
         return audio.maxBy { it.id }
     }
 
@@ -164,15 +205,6 @@ class FileDownload @Inject constructor(
     }
 
     // endregion
-    private fun getUserDownloadOption(): String {
-        val sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getString(
-            "user_download_file_name_editText",
-            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
-        ) ?: error("获取保存路径错误")
-    }
-
     private fun buildDownloadFullPath(aid: Long, cid: Long, quality: Int): String {
         return "${buildDownloadBasePath(aid, cid)}${File.separator}$quality"
     }
@@ -188,10 +220,3 @@ class FileDownload @Inject constructor(
         task.path.delete()
     }
 }
-
-data class DownloadParameter(
-    val aid: Long,
-    val bvid: String,
-    val cid: Long,
-    val quality: Int,
-)

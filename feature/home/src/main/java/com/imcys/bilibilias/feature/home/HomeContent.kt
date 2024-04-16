@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -57,105 +58,107 @@ fun HomeContent(
     updateNotice: UpdateNotice,
     modifier: Modifier,
 ) {
-    val context = LocalContext.current
-    Column(modifier) {
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            item {
-                com.imcys.bilibilias.core.ui.banner.Banner(
-                    modifier = Modifier
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    count = banner.imgUrlList.size,
-                    loop = true
-                ) {
-                    AsyncImage(
-                        model = banner.imgUrlList[it],
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.clickable {
-                            val uri = Uri.parse(banner.dataList[it])
-                            val intent = Intent(Intent.ACTION_VIEW, uri)
-                            AppUtils.startActivity(intent)
-                        }
+    Scaffold { innerPadding ->
+        val context = LocalContext.current
+        Column(modifier = Modifier.padding(innerPadding),) {
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                item {
+                    com.imcys.bilibilias.core.ui.banner.Banner(
+                        modifier = Modifier
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        count = banner.imgUrlList.size,
+                        loop = true
+                    ) {
+                        AsyncImage(
+                            model = banner.imgUrlList[it],
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.clickable {
+                                val uri = Uri.parse(banner.dataList[it])
+                                val intent = Intent(Intent.ACTION_VIEW, uri)
+                                AppUtils.startActivity(intent)
+                            }
+                        )
+                    }
+                }
+                item {
+                    HomeCard(
+                        onClick = {
+                            startActivityForUri(
+                                context,
+                                "https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va"
+                            )
+                        },
+                        title = "更新内容",
+                        desc = ""
                     )
                 }
-            }
-            item {
-                HomeCard(
-                    onClick = {
-                        startActivityForUri(
-                            context,
-                            "https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va"
-                        )
-                    },
-                    title = "更新内容",
-                    desc = ""
-                )
-            }
-            item {
-                HomeCard(
-                    onClick = onSalute,
-                    title = "致敬",
-                    desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
-                )
-            }
-            item {
-                HomeCard(
-                    onClick = onDonation,
-                    title = "捐款",
-                    desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
-                )
-            }
-            item {
-                HomeCard(
-                    onClick = {
-                        startActivityForUri(
-                            context,
-                            "https://support.qq.com/product/337496"
-                        )
-                    },
-                    title = "反馈问题",
-                    desc = "如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
-                )
-            }
-            item {
-                AsCard(
-                    onClick = exitLogin,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                item {
+                    HomeCard(
+                        onClick = onSalute,
+                        title = "致敬",
+                        desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
+                    )
+                }
+                item {
+                    HomeCard(
+                        onClick = onDonation,
+                        title = "捐款",
+                        desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
+                    )
+                }
+                item {
+                    HomeCard(
+                        onClick = {
+                            startActivityForUri(
+                                context,
+                                "https://support.qq.com/product/337496"
+                            )
+                        },
+                        title = "反馈问题",
+                        desc = "如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
+                    )
+                }
+                item {
+                    AsCard(
+                        onClick = exitLogin,
                         modifier = Modifier
-                            .padding(20.dp)
+                            .fillMaxWidth()
                     ) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = null,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .size(50.dp)
-                                .padding(10.dp)
-                        )
-                        Column(modifier = Modifier.padding(start = 20.dp)) {
-                            Text(
-                                text = "退出登录",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold
+                                .padding(20.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(10.dp)
                             )
-                            Text(
-                                text = "退出账号登录",
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
+                            Column(modifier = Modifier.padding(start = 20.dp)) {
+                                Text(
+                                    text = "退出登录",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "退出账号登录",
+                                    modifier = Modifier.padding(top = 8.dp)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+        DetectUpdateLogs(updateNotice)
     }
-    DetectUpdateLogs(updateNotice)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
