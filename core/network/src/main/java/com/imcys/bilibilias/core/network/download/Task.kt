@@ -20,18 +20,27 @@ data class Task(
     val groupId: Long = 0,
     val groupTag: String = ""
 ) {
-    var errorMessage by mutableStateOf<String?>(null)
-    internal var job: Job? = null
-    var isRunning by mutableStateOf(false)
+    var state by mutableStateOf<TaskState>(TaskState.Idle)
         internal set
-    val isSuccess = errorMessage == null
 
-    val isFailed = errorMessage != null
+    val isRunning by mutableStateOf(state is TaskState.Running)
+
+    val isSuccess = state is TaskState.Success
+
+    val isFailed = state is TaskState.Error
 
     var progress by mutableFloatStateOf(0f)
         internal set
 
+    internal var job: Job? = null
     fun cancelTask() {
         requireNotNull(job).cancel()
     }
+}
+
+sealed class TaskState {
+    data object Idle : TaskState()
+    data object Running : TaskState()
+    data class Error(val message: String) : TaskState()
+    data object Success : TaskState()
 }
