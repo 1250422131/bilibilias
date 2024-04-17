@@ -19,6 +19,7 @@ detekt = "1.23.5"
 devappx = "2.4.4"
 dfm = "0.9.25"
 espresso-core = "3.5.1"
+ffmpegcommand = "1.3.2"
 flexbox = "3.0.0"
 github-GuidePro = "1.4.0"
 glide = "4.16.0"
@@ -29,8 +30,9 @@ junit = "4.13.2"
 jxl = "2.6.12"
 jacoco = "0.8.7"
 kotlin = "1.9.23"
-kotlinx-coroutines = "1.8.0"
+kotlinxCoroutines = "1.8.0"
 kotlinxSerialization = "1.6.3"
+kotlinxCollections = "0.3.7"
 ksp = "1.9.23-1.0.20"
 ktor = "2.3.10"
 androidxLifecycle = "2.7.0"
@@ -55,7 +57,6 @@ androidxComposeBom = "2024.04.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
 voyager = "1.1.0-alpha04"
-composeMaterial = "1.3.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
@@ -65,8 +66,7 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androi
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-
+ffmpegcommand = { module = "com.github.AnJoiner:FFmpegCommand", version.ref = "ffmpegcommand" }
 monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
@@ -82,7 +82,6 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-runtimeTesting = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
-androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -122,8 +121,10 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
 
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollections" }
 
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
@@ -145,10 +146,6 @@ srl-ext-classics = { group = "com.github.dkzwm", name = "srl-ext-classics", vers
 srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", version.ref = "srl-core" }
 
 uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
-
-compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "core", version.ref = "destinations" }
-compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "destinations" }
-compose-destinations-bottom-sheet = { group = "io.github.raamcosta.compose-destinations", name = "bottom-sheet", version.ref = "destinations" }
 
 voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }

@@ -115,9 +115,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-viewbinding:1.6.5")
     implementation("com.github.getActivity:Toaster:12.6")
 
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
-
     implementation(libs.androidx.hilt.navigation.compose)
     implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
 
