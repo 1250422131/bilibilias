@@ -21,5 +21,5 @@ fun UserRoute(modifier: Modifier) {
 }
 
 @Composable
-internal fun UserScreen(todo: () -> Unit) {
+internal fun UserScreen() {
 }
