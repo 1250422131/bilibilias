@@ -131,7 +131,6 @@ dependencies {
     api(libs.constraintlayout)
     api(libs.androidx.lifecycle.viewmodel.ktx)
     api(libs.androidx.lifecycle.runtime.ktx)
-    api(libs.androidx.preference.ktx)
 
     api(libs.androidx.activity.compose)
 

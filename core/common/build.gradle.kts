@@ -10,10 +10,9 @@ android {
 
 dependencies {
     api(libs.kotlinx.serialization.json)
+    api(libs.kotlinx.collections.immutable)
 
     api(libs.napier)
     api(libs.devappx)
     implementation(kotlin("reflect"))
-
-    implementation(libs.androidx.preference.ktx)
 }
