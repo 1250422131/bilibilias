@@ -161,7 +161,7 @@ voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.r
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version = "1.7.0-alpha06" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = "1.7.0-alpha06" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version = "1.7.0-alpha07" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
