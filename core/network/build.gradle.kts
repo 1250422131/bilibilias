@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
 
     implementation(libs.androidx.compose.runtime)
-    implementation("com.github.AnJoiner:FFmpegCommand:1.3.2")
+
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
 
