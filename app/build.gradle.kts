@@ -112,7 +112,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
 
-    implementation("androidx.compose.ui:ui-viewbinding:1.6.5")
+    implementation("androidx.compose.ui:ui-viewbinding:1.6.6")
     implementation("com.github.getActivity:Toaster:12.6")
 
     implementation(libs.compose.destinations)
