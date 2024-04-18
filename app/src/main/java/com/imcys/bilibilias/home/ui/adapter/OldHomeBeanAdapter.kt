@@ -13,7 +13,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.core.model.bilibilias.Banner
+import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.youth.banner.adapter.BannerAdapter
@@ -25,7 +25,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 class OldHomeBeanAdapter(
-    private val aggregatingData: Banner,
+    private val aggregatingData: HomeBanner,
 ) : BannerAdapter<String, OldHomeBeanAdapter.BannerViewHolder>(aggregatingData.textList) {
 
     override fun onCreateHolder(parent: ViewGroup, viewType: Int): BannerViewHolder {
@@ -41,7 +41,7 @@ class OldHomeBeanAdapter(
     class BannerViewHolder(binding: ItemHomeBannerBinding) : RecyclerView.ViewHolder(binding.root) {
         private val bannerTitle = binding.itemHomeBannerTitle
         private val bannerImage = binding.itemHomeBannerImage
-        fun bind(aggregatingData: Banner) {
+        fun bind(aggregatingData: HomeBanner) {
             val position = bindingAdapterPosition
             bannerTitle.text = aggregatingData.textList[position]
             bannerImage.load(aggregatingData.imgUrlList[position])
@@ -54,7 +54,7 @@ class OldHomeBeanAdapter(
             type: String,
             position: Int,
             context: Context,
-            aggregatingData: Banner
+            aggregatingData: HomeBanner
         ) {
             when (type) {
                 "goBilibili" -> {
