@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,16 +38,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
+import coil.load
 import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
-import com.imcys.bilibilias.core.model.bilibilias.Banner
+import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
+import com.youth.banner.Banner
+import com.youth.banner.adapter.BannerImageAdapter
+import com.youth.banner.holder.BannerImageHolder
+import com.youth.banner.indicator.CircleIndicator
 import dev.utils.app.AppUtils
 
 @Composable
@@ -54,35 +62,44 @@ fun HomeContent(
     onSalute: () -> Unit,
     onDonation: () -> Unit,
     exitLogin: () -> Unit,
-    banner: Banner,
+    homeBanner: HomeBanner,
     updateNotice: UpdateNotice,
-    modifier: Modifier,
 ) {
     Scaffold { innerPadding ->
         val context = LocalContext.current
-        Column(modifier = Modifier.padding(innerPadding),) {
+        Column(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
-                    com.imcys.bilibilias.core.ui.banner.Banner(
-                        modifier = Modifier
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        count = banner.imgUrlList.size,
-                        loop = true
-                    ) {
-                        AsyncImage(
-                            model = banner.imgUrlList[it],
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.clickable {
-                                val uri = Uri.parse(banner.dataList[it])
-                                val intent = Intent(Intent.ACTION_VIEW, uri)
-                                AppUtils.startActivity(intent)
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    AndroidView(
+                        factory = { context ->
+                            Banner<String, BannerImageAdapter<String>>(context).apply {
+                                addBannerLifecycleObserver(lifecycleOwner)
+                                setIndicator(CircleIndicator(context))
                             }
-                        )
+                        }, modifier = Modifier
+                            .height(180.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                    ) { banner ->
+                        banner.setAdapter(object : BannerImageAdapter<String>(homeBanner.imgUrlList) {
+                            override fun onBindView(
+                                holder: BannerImageHolder,
+                                data: String,
+                                position: Int,
+                                size: Int
+                            ) {
+                                holder.imageView.load(data)
+                                holder.itemView.setOnClickListener {
+                                    val uri = Uri.parse(homeBanner.dataList[position])
+                                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                                    AppUtils.startActivity(intent)
+                                }
+                            }
+                        })
                     }
                 }
                 item {

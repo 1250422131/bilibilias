@@ -35,9 +35,8 @@ internal fun HomeScreen(
             onSalute,
             onDonation,
             exitLogin,
-            uiState.banner,
+            uiState.homeBanner,
             uiState.updateNotice,
-            modifier,
         )
     }
 }

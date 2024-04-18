@@ -1,6 +1,6 @@
 ﻿package com.imcys.bilibilias.core.network.repository
 
-import com.imcys.bilibilias.core.model.bilibilias.Banner
+import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.imcys.bilibilias.core.network.di.WrapperClient
@@ -32,7 +32,7 @@ class BiliBiliAsRepository @Inject constructor(
         }
     }
 
-    suspend fun getHomeBanner(): Banner =
+    suspend fun getHomeBanner(): HomeBanner =
         client.get(BiliBiliAsApi.UPDATE_DATA) {
             parameter("type", "banner")
         }.body()

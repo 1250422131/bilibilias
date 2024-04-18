@@ -15,7 +15,6 @@ private const val MAX_RUNNING = 4
 
 class Downloader @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val mixedWorker: MixedWorker,
     @ApplicationScope private val scope: CoroutineScope,
 ) {
     private val ready = ArrayDeque<Task>(MAX_RUNNING)
@@ -103,7 +102,7 @@ class Downloader @Inject constructor(
         completed.add(task)
         val target = if (task.type == FileType.AUDIO) FileType.VIDEO else FileType.AUDIO
         completed.find { it.type == target }?.let {
-            mixedWorker.mix(it, task)
+
         }
     }
 }

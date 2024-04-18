@@ -3,9 +3,7 @@
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)
 }
-ksp {
-    arg("compose-destinations.moduleName", "tool")
-}
+
 android {
     namespace = "com.imcys.bilibilias.feature.tool"
 }

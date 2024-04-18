@@ -20,6 +20,7 @@ dependencies {
 
     // 深拷贝
     api(libs.deeprecopy.core)
+    api(libs.androidx.preference.ktx)
     ksp(libs.deeprecopy.compiler)
 
     // 文件下载
