@@ -112,17 +112,17 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
 
-    implementation("androidx.compose.ui:ui-viewbinding:1.6.6")
-    implementation("com.github.getActivity:Toaster:12.6")
+    implementation(libs.androidx.ui.viewbinding)
+    implementation(libs.toaster)
 
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+    implementation(libs.custom.qr.generator)
 
-    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation(libs.androidx.fragment.ktx)
 
     implementation(libs.coil.kt)
 
-    implementation("com.holix.android:bottomsheetdialog-compose:1.4.1")
+    implementation(libs.bottomsheetdialog.compose)
 
     implementation(libs.androidx.tracing.ktx)
 }

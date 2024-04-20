@@ -9,9 +9,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven("https://jitpack.io")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
-        maven("https://jitpack.io")
         google()
     }
 }
