@@ -11,7 +11,7 @@ android {
 dependencies {
     api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.collections.immutable)
-
+    api("com.squareup.okio:okio:3.9.0")
     api(libs.napier)
     api(libs.devappx)
     implementation(kotlin("reflect"))
