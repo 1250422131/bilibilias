@@ -42,3 +42,6 @@ include(":feature:download")
 include(":feature:user")
 include(":core:ffmpeg")
 include(":core:download")
+
+include(":okdownload:okdownload")
+include(":okdownload:okdownload-connection-okhttp")
