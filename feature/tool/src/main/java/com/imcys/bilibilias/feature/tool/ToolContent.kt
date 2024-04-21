@@ -44,8 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
-import com.imcys.bilibilias.core.network.download.DownloadParameter
-import com.imcys.bilibilias.core.network.download.Format
+import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.download.DownloadRequest
+import com.imcys.bilibilias.core.download.Format
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.TaskType
@@ -59,7 +60,7 @@ fun ToolContent(
     onSearchQueryChanged: (String) -> Unit,
     onClearSearches: () -> Unit,
     searchResultUiState: SearchResultUiState,
-    onDownload: (DownloadParameter) -> Unit,
+    onDownload: (DownloadRequest) -> Unit,
     modifier: Modifier,
     onSetting: () -> Unit
 ) {
@@ -117,11 +118,13 @@ fun ToolContent(
                         items(searchResultUiState.collection, key = { it.cid }) { item ->
                             ViewItem(item.title, item.videoStreamDesc) {
                                 onDownload(
-                                    DownloadParameter(
-                                        searchResultUiState.aid,
-                                        searchResultUiState.bvid,
-                                        item.cid,
-                                        item.title,
+                                    DownloadRequest(
+                                        ViewInfo(
+                                            searchResultUiState.aid,
+                                            searchResultUiState.bvid,
+                                            item.cid,
+                                            item.title,
+                                        ),
                                         it
                                     )
                                 )
@@ -210,10 +213,10 @@ fun ViewItem(
     }
 }
 
-private fun TaskType.mapToDownladTaskType(): com.imcys.bilibilias.core.network.download.TaskType {
+private fun TaskType.mapToDownladTaskType(): com.imcys.bilibilias.core.download.TaskType {
     return when (this) {
-        TaskType.ALL -> com.imcys.bilibilias.core.network.download.TaskType.ALL
-        TaskType.VIDEO -> com.imcys.bilibilias.core.network.download.TaskType.VIDEO
-        TaskType.AUDIO -> com.imcys.bilibilias.core.network.download.TaskType.AUDIO
+        TaskType.ALL -> com.imcys.bilibilias.core.download.TaskType.ALL
+        TaskType.VIDEO -> com.imcys.bilibilias.core.download.TaskType.VIDEO
+        TaskType.AUDIO -> com.imcys.bilibilias.core.download.TaskType.AUDIO
     }
 }

@@ -23,7 +23,7 @@ import com.imcys.bilibilias.core.common.utils.restoreVideoNameRule
 import com.imcys.bilibilias.core.common.utils.setUserDownloadFileNameRule
 import com.imcys.bilibilias.core.common.utils.微软统计
 import com.imcys.bilibilias.core.common.utils.百度统计
-import com.imcys.bilibilias.core.network.download.downloadDir
+import com.imcys.bilibilias.core.download.downloadDir
 import dev.utils.app.AppUtils
 
 private const val SAVE_FILE_PATH_CODE = 1

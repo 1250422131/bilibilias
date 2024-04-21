@@ -11,7 +11,6 @@ import com.imcys.bilibilias.core.network.api.BilibiliApi
 import com.imcys.bilibilias.core.network.di.WrapperClient
 import com.imcys.bilibilias.core.network.di.requireCSRF
 import com.imcys.bilibilias.core.network.di.requireWbi
-import com.imcys.bilibilias.core.network.download.DownloadResult
 import com.imcys.bilibilias.core.network.utils.parameterAVid
 import com.imcys.bilibilias.core.network.utils.parameterAid
 import com.imcys.bilibilias.core.network.utils.parameterBVid
@@ -118,27 +117,5 @@ class VideoRepository @Inject constructor(
             parameter("add_media_ids", addIds)
             parameter("type", "2")
         }.body()
-    }
-
-    suspend fun downloader(url: String, file: File): Flow<DownloadResult> {
-        return channelFlow {
-            val response = client.prepareGet(url) {
-                header(HttpHeaders.Referrer, BILIBILI_URL)
-                onDownload { bytesSentTotal, contentLength ->
-                    send(DownloadResult.Progress(bytesSentTotal / contentLength.toFloat()))
-                }
-            }
-                .execute { response ->
-                    response.bodyAsChannel().copyAndClose(file.writeChannel())
-                    response
-                }
-            if (response.status.isSuccess()) {
-                send(DownloadResult.Success)
-            } else {
-                send(DownloadResult.Error("File not downloaded"))
-            }
-        }.catch {
-            emit(DownloadResult.Error(it.message ?: "未知错误"))
-        }
     }
 }

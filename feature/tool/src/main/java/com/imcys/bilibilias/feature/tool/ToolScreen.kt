@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imcys.bilibilias.core.network.download.DownloadParameter
+import com.imcys.bilibilias.core.download.DownloadRequest
 
 @Composable
 fun ToolRoute(modifier: Modifier, onSetting: () -> Unit) {
@@ -29,7 +29,7 @@ internal fun ToolScreen(
     uiState: SearchResultUiState,
     clearSearches: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onDownload: (DownloadParameter) -> Unit,
+    onDownload: (DownloadRequest) -> Unit,
     modifier: Modifier,
     onSetting: () -> Unit
 ) {

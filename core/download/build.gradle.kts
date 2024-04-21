@@ -6,6 +6,9 @@ plugins {
 
 android {
     namespace = "com.imcys.bilibilias.core.download"
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {

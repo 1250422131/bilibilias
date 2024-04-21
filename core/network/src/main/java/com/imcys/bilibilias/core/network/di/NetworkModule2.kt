@@ -60,9 +60,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Cache
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
 import java.io.File
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlin.reflect.typeOf
@@ -104,7 +106,7 @@ class NetworkModule2 {
     @Provides
     @Singleton
     fun provideBaseOkhttpClient(
-//        executorService: ExecutorService,
+        executorService: ExecutorService,
         @ApplicationContext context: Context
     ): OkHttpClient =
         OkHttpClient.Builder()
@@ -118,7 +120,7 @@ class NetworkModule2 {
             }
             .addInterceptor(BrotliInterceptor)
             .pingInterval(1, TimeUnit.SECONDS)
-//            .dispatcher(Dispatcher(executorService))
+            .dispatcher(Dispatcher(executorService))
             .cache(Cache(File(context.cacheDir.path, "okhttp_cache"), 1024 * 1024 * 50))
             .addInterceptor(MonitorInterceptor())
             .build()
@@ -129,7 +131,6 @@ class NetworkModule2 {
 //        httpClientEngine: HttpClientEngine,
         json: Json,
         transform: ClientPlugin<Unit>,
-        asLogger: Logger,
         asCookiesStorage: AsCookiesStorage,
         loginInfoDataSource: LoginInfoDataSource,
         okHttpClient: OkHttpClient
@@ -145,6 +146,10 @@ class NetworkModule2 {
             Logging {
                 logger = Logger.Companion.ANDROID
                 level = LogLevel.BODY
+                filter {
+                    it.url.host == BilibiliApi.API_HOST ||
+                        it.url.host == BiliBiliAsApi.API_HOST
+                }
             }
 
             install(HttpCookies) {
