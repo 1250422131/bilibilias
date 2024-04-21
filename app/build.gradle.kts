@@ -88,6 +88,7 @@ dependencies {
     implementation(projects.feature.tool)
     implementation(projects.feature.download)
     implementation(projects.feature.user)
+    implementation(project(":core:download"))
 
     ksp(libs.deeprecopy.compiler)
 

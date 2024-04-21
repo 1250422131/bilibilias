@@ -7,6 +7,7 @@ internal const val BILIBILI_URL = "https://www.bilibili.com"
 internal object BilibiliApi {
 
     const val API_BILIBILI = "https://api.bilibili.com/"
+    const val API_HOST = "api.bilibili.com/"
     const val PASSPORT_BILIBILI = "https://passport.bilibili.com/"
     const val WEB_QRCODE_GENERATE = PASSPORT_BILIBILI + "x/passport-login/web/qrcode/generate"
     const val WEB_QRCODE_POLL = PASSPORT_BILIBILI + "x/passport-login/web/qrcode/poll"
