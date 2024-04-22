@@ -56,14 +56,12 @@ import com.liulishuo.okdownload.kotlin.listener.onTaskStart
 import com.liulishuo.okdownload.kotlin.listener.onTaskStartWithModel
 import com.liulishuo.okdownload.kotlin.listener.onWarn
 import com.liulishuo.okdownload.kotlin.listener.switchToExceptProgressListener
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * Correspond to [DownloadTask.execute].
@@ -81,19 +79,21 @@ fun DownloadTask.execute(
     onFetchProgress: onFetchProgress? = null,
     onFetchEnd: onFetchEnd? = null,
     onTaskEnd: onTaskEnd
-) = execute(createListener(
-    onTaskStart,
-    onConnectTrialStart,
-    onConnectTrialEnd,
-    onDownloadFromBeginning,
-    onDownloadFromBreakpoint,
-    onConnectStart,
-    onConnectEnd,
-    onFetchStart,
-    onFetchProgress,
-    onFetchEnd,
-    onTaskEnd
-))
+) = execute(
+    createListener(
+        onTaskStart,
+        onConnectTrialStart,
+        onConnectTrialEnd,
+        onDownloadFromBeginning,
+        onDownloadFromBreakpoint,
+        onConnectStart,
+        onConnectEnd,
+        onFetchStart,
+        onFetchProgress,
+        onFetchEnd,
+        onTaskEnd
+    )
+)
 
 /**
  * Correspond to [DownloadTask.execute].
@@ -133,17 +133,19 @@ fun DownloadTask.execute3(
     onRetry: onRetry? = null,
     onError: onError? = null,
     onTerminal: () -> Unit = {}
-) = execute(createListener3(
-    onStarted,
-    onConnected,
-    onProgress,
-    onCompleted,
-    onCanceled,
-    onWarn,
-    onRetry,
-    onError,
-    onTerminal
-))
+) = execute(
+    createListener3(
+        onStarted,
+        onConnected,
+        onProgress,
+        onCompleted,
+        onCanceled,
+        onWarn,
+        onRetry,
+        onError,
+        onTerminal
+    )
+)
 
 /**
  * Correspond to [DownloadTask.execute].
@@ -159,16 +161,18 @@ fun DownloadTask.execute4(
     onProgressWithoutTotalLength: onProgressWithoutTotalLength? = null,
     onBlockEnd: onBlockEnd? = null,
     onTaskEndWithListener4Model: onTaskEndWithListener4Model
-) = execute(createListener4(
-    onTaskStart,
-    onConnectStart,
-    onConnectEnd,
-    onInfoReady,
-    onProgressBlock,
-    onProgressWithoutTotalLength,
-    onBlockEnd,
-    onTaskEndWithListener4Model
-))
+) = execute(
+    createListener4(
+        onTaskStart,
+        onConnectStart,
+        onConnectEnd,
+        onInfoReady,
+        onProgressBlock,
+        onProgressWithoutTotalLength,
+        onBlockEnd,
+        onTaskEndWithListener4Model
+    )
+)
 
 /**
  * Correspond to [DownloadTask.execute].
@@ -184,16 +188,18 @@ fun DownloadTask.execute4WithSpeed(
     onProgressWithSpeed: onProgressWithSpeed? = null,
     onBlockEndWithSpeed: onBlockEndWithSpeed? = null,
     onTaskEndWithSpeed: onTaskEndWithSpeed
-) = execute(createListener4WithSpeed(
-    onTaskStart,
-    onConnectStart,
-    onConnectEnd,
-    onInfoReadyWithSpeed,
-    onProgressBlockWithSpeed,
-    onProgressWithSpeed,
-    onBlockEndWithSpeed,
-    onTaskEndWithSpeed
-))
+) = execute(
+    createListener4WithSpeed(
+        onTaskStart,
+        onConnectStart,
+        onConnectEnd,
+        onInfoReadyWithSpeed,
+        onProgressBlockWithSpeed,
+        onProgressWithSpeed,
+        onBlockEndWithSpeed,
+        onTaskEndWithSpeed
+    )
+)
 
 /**
  * Correspond to [DownloadTask.enqueue].
@@ -211,19 +217,21 @@ fun DownloadTask.enqueue(
     onFetchProgress: onFetchProgress? = null,
     onFetchEnd: onFetchEnd? = null,
     onTaskEnd: onTaskEnd
-) = enqueue(createListener(
-    onTaskStart,
-    onConnectTrialStart,
-    onConnectTrialEnd,
-    onDownloadFromBeginning,
-    onDownloadFromBreakpoint,
-    onConnectStart,
-    onConnectEnd,
-    onFetchStart,
-    onFetchProgress,
-    onFetchEnd,
-    onTaskEnd
-))
+) = enqueue(
+    createListener(
+        onTaskStart,
+        onConnectTrialStart,
+        onConnectTrialEnd,
+        onDownloadFromBeginning,
+        onDownloadFromBreakpoint,
+        onConnectStart,
+        onConnectEnd,
+        onFetchStart,
+        onFetchProgress,
+        onFetchEnd,
+        onTaskEnd
+    )
+)
 
 /**
  * Correspond to [DownloadTask.enqueue].
@@ -263,17 +271,19 @@ fun DownloadTask.enqueue3(
     onRetry: onRetry? = null,
     onError: onError? = null,
     onTerminal: () -> Unit = {}
-) = enqueue(createListener3(
-    onStarted,
-    onConnected,
-    onProgress,
-    onCompleted,
-    onCanceled,
-    onWarn,
-    onRetry,
-    onError,
-    onTerminal
-))
+) = enqueue(
+    createListener3(
+        onStarted,
+        onConnected,
+        onProgress,
+        onCompleted,
+        onCanceled,
+        onWarn,
+        onRetry,
+        onError,
+        onTerminal
+    )
+)
 
 /**
  * Correspond to [DownloadTask.enqueue].
@@ -289,16 +299,18 @@ fun DownloadTask.enqueue4(
     onProgressWithoutTotalLength: onProgressWithoutTotalLength? = null,
     onBlockEnd: onBlockEnd? = null,
     onTaskEndWithListener4Model: onTaskEndWithListener4Model
-) = enqueue(createListener4(
-    onTaskStart,
-    onConnectStart,
-    onConnectEnd,
-    onInfoReady,
-    onProgressBlock,
-    onProgressWithoutTotalLength,
-    onBlockEnd,
-    onTaskEndWithListener4Model
-))
+) = enqueue(
+    createListener4(
+        onTaskStart,
+        onConnectStart,
+        onConnectEnd,
+        onInfoReady,
+        onProgressBlock,
+        onProgressWithoutTotalLength,
+        onBlockEnd,
+        onTaskEndWithListener4Model
+    )
+)
 
 /**
  * Correspond to [DownloadTask.enqueue].
@@ -314,16 +326,18 @@ fun DownloadTask.enqueue4WithSpeed(
     onProgressWithSpeed: onProgressWithSpeed? = null,
     onBlockEndWithSpeed: onBlockEndWithSpeed? = null,
     onTaskEndWithSpeed: onTaskEndWithSpeed
-) = enqueue(createListener4WithSpeed(
-    onTaskStart,
-    onConnectStart,
-    onConnectEnd,
-    onInfoReadyWithSpeed,
-    onProgressBlockWithSpeed,
-    onProgressWithSpeed,
-    onBlockEndWithSpeed,
-    onTaskEndWithSpeed
-))
+) = enqueue(
+    createListener4WithSpeed(
+        onTaskStart,
+        onConnectStart,
+        onConnectEnd,
+        onInfoReadyWithSpeed,
+        onProgressBlockWithSpeed,
+        onProgressWithSpeed,
+        onBlockEndWithSpeed,
+        onTaskEndWithSpeed
+    )
+)
 
 /**
  * This method will create a [Channel] to represents a single download task's progress.
@@ -351,7 +365,7 @@ fun DownloadTask.spChannel(): Channel<DownloadProgress> {
     val progressListener = createListener1(
         progress = { task, currentOffset, totalLength ->
             if (channelClosed.get()) return@createListener1
-            channel.trySend(DownloadProgress(task, currentOffset, totalLength))
+            channel.trySend(DownloadProgress(currentOffset, totalLength))
         }
     ) { _, _, _, _ ->
         channelClosed.set(true)
@@ -360,6 +374,21 @@ fun DownloadTask.spChannel(): Channel<DownloadProgress> {
     val replaceListener = createReplaceListener(oldListener, progressListener)
     replaceListener(replaceListener)
     return channel
+}
+
+fun DownloadTask.progressFlow(): Flow<DownloadProgress> {
+    val oldListener = listener
+    return callbackFlow {
+        val progressListener = createListener1(
+            progress = { task, currentOffset, totalLength ->
+                trySend(DownloadProgress(currentOffset, totalLength))
+            }
+        ) { _, _, _, _ ->
+        }.also { it.setAlwaysRecoverAssistModelIfNotSet(true) }
+        val replaceListener = createReplaceListener(oldListener, progressListener)
+        replaceListener(replaceListener)
+        awaitClose {  }
+    }
 }
 
 /**

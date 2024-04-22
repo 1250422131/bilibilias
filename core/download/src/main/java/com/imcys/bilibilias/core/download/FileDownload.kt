@@ -16,6 +16,8 @@ import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.liulishuo.okdownload.OkDownload
+import com.liulishuo.okdownload.StatusUtil
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
@@ -42,13 +44,13 @@ class FileDownload @Inject constructor(
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskExecute: DownloadTaskExecute,
-//    private val groupCallback: GroupCallback
 ) {
     private val taskQueue = mutableScatterMapOf<Cid, Array<AsDownloadTask>>()
     val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())
 
+    var listener: GroupCallback? = null
     fun download(request: DownloadRequest) {
-        Napier.d { request.toString() }
+        Napier.d { "下载任务详情: $request" }
         scope.launch {
             val (detail, streamUrl) = get视频详情和流链接(request)
             dispatcherTaskType(streamUrl, request)
@@ -57,21 +59,28 @@ class FileDownload @Inject constructor(
     }
 
     private fun dispatcherTaskType(streamUrl: VideoStreamUrl, request: DownloadRequest) {
-        when (request.format.taskType) {
-            TaskType.ALL -> handleAllTask(streamUrl, request)
-            TaskType.VIDEO -> handleVideoTask(streamUrl, request)
-            TaskType.AUDIO -> handleAudioTask(streamUrl, request)
+        scope.launch {
+            when (request.format.taskType) {
+                TaskType.ALL -> handleAllTask(streamUrl, request)
+                TaskType.VIDEO -> handleVideoTask(streamUrl, request)
+                TaskType.AUDIO -> handleAudioTask(streamUrl, request)
+            }
         }
     }
 
     private fun handleAllTask(streamUrl: VideoStreamUrl, request: DownloadRequest) {
         val video = createVideoTask(streamUrl, request)
         val audio = createAudioTask(streamUrl, request)
-        putQueue(request, video, audio)
+        putQueue(request.viewInfo.cid, video, audio)
         downloadTaskExecute.enqueue(video, audio) { viewinfo, type ->
             val groupTask = 查询任务(viewinfo, type)
-
-            Napier.d { "完成任务 $type-$groupTask" }
+            if (groupTask.video.isCompleted && groupTask.audio.isCompleted) {
+                listener?.groupEnd(groupTask)
+            }
+            val v = groupTask.video.task
+            val a = groupTask.audio.task
+            Napier.d { "任务信息 ${v}\n$a" }
+            Napier.d { "任务状态 ${StatusUtil.getStatus(v)}\n${StatusUtil.getStatus(a)}" }
         }
     }
 
@@ -88,7 +97,7 @@ class FileDownload @Inject constructor(
         onComplete: TaskEnd = { _, _ -> }
     ) {
         val task = createVideoTask(streamUrl, request)
-        putQueue(request, task)
+        putQueue(request.viewInfo.cid, task)
         downloadTaskExecute.enqueue(task, onComplete)
     }
 
@@ -107,12 +116,16 @@ class FileDownload @Inject constructor(
         onComplete: TaskEnd = { _, _ -> }
     ) {
         val task = createVideoTask(streamUrl, request)
-        putQueue(request, task)
+        putQueue(request.viewInfo.cid, task)
         downloadTaskExecute.enqueue(task, onComplete)
     }
 
-    private fun putQueue(request: DownloadRequest, vararg task: AsDownloadTask) {
-        taskQueue[request.viewInfo.cid] = arrayOf(*task)
+    private fun putQueue(cid: Cid, vararg task: AsDownloadTask) {
+        taskQueue[cid] = arrayOf(*task)
+        updateFlow()
+    }
+
+    private fun updateFlow() {
         taskFlow.update {
             taskQueue.asMap().flatMap { (_, arr) -> arr.map { it } }.toImmutableList()
         }
@@ -157,10 +170,12 @@ class FileDownload @Inject constructor(
     }
 
     private fun persistedFile(detail: ViewDetail, request: DownloadRequest) {
-        val cid = detail.cid
-        val path = request.buildBasePath()
-        saveDmFile(path, cid)
-        saveEntryFile(detail, cid, path)
+        scope.launch {
+            val cid = detail.cid
+            val path = request.buildBasePath()
+            saveDmFile(path, cid)
+            saveEntryFile(detail, cid, path)
+        }
     }
 
     private fun saveDmFile(path: String, cid: Long) {
@@ -224,5 +239,26 @@ class FileDownload @Inject constructor(
         """.trimIndent()
         File(path, "entry.json").writeText(content)
     }
+
     // endregion
+    fun cancle(task: AsDownloadTask) {
+        task.task.cancel()
+        OkDownload.with().breakpointStore().remove(task.task.id)
+        val cid = task.viewInfo.cid
+        val tasks = taskQueue[cid] ?: return
+        if (tasks.size == 1) {
+            taskQueue.remove(cid)
+            updateFlow()
+            return
+        }
+        if (tasks.size == 2) {
+            val t = tasks.single { it.fileType == reverseType(task.fileType) }
+            putQueue(cid, t)
+        }
+    }
+
+    private fun reverseType(fileType: FileType) = when (fileType) {
+        FileType.VIDEO -> FileType.AUDIO
+        FileType.AUDIO -> FileType.VIDEO
+    }
 }

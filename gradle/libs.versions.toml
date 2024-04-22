@@ -124,7 +124,7 @@ flowmvi-core = { module = "pro.respawn.flowmvi:core", version.ref = "flowmvi" }
 flowmvi-test = { module = "pro.respawn.flowmvi:test", version.ref = "flowmvi" }
 flowmvi-android = { module = "pro.respawn.flowmvi:android", version.ref = "flowmvi" }
 flowmvi-debugger-client = { module = "pro.respawn.flowmvi:debugger-plugin", version.ref = "flowmvi" }
-
+flowmvi-compose = { module = "pro.respawn.flowmvi:compose", version.ref = "flowmvi" }
 
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }

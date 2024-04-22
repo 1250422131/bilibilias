@@ -1,5 +1,5 @@
-﻿package com.imcys.bilibilias.core.download.task
+package com.imcys.bilibilias.core.download.task
 
 fun interface GroupCallback {
-    fun groupEnd()
+    fun groupEnd(groupTask: GroupTask)
 }
