@@ -8,6 +8,7 @@ import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.GroupCallback
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
+import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Audio
 import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.Video

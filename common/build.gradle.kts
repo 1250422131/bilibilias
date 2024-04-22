@@ -91,8 +91,8 @@ dependencies {
      * 本地化数据库
      */
     api(libs.room.runtime)
-    api(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    api(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     /**
      * DanmakuFlameMaster
