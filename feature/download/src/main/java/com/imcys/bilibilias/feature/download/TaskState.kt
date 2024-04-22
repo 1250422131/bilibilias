@@ -1,4 +1,7 @@
 ﻿package com.imcys.bilibilias.feature.download
 
-import dev.utils.common.able.Taskable
+import pro.respawn.flowmvi.api.MVIState
 
+sealed interface TaskState : MVIState {
+    data object Loading : TaskState
+}

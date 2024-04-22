@@ -7,18 +7,19 @@ import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.StatusUtil
 import com.liulishuo.okdownload.kotlin.DownloadProgress
 import com.liulishuo.okdownload.kotlin.enqueue1
-import kotlinx.coroutines.channels.Channel
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 sealed class AsDownloadTask(val viewInfo: ViewInfo) {
     internal abstract val priority: Int
     internal abstract val destFile: File
-    internal abstract val fileType: FileType
+    abstract val fileType: FileType
     internal abstract val task: DownloadTask
-    abstract val state: State
+    abstract val state: () -> State
     abstract val isCompleted: Boolean
 
-    abstract val progress: Channel<DownloadProgress>
+    abstract val progress: Flow<DownloadProgress>
     protected fun getState(task: DownloadTask): State {
         return when (StatusUtil.getStatus(task)) {
             StatusUtil.Status.PENDING -> State.PENDING
@@ -58,6 +59,7 @@ sealed class AsDownloadTask(val viewInfo: ViewInfo) {
     internal fun executeTask(onEnd: TaskEnd) {
         task.enqueue1 { task, cause, realCause, model ->
             val info = getDownloadInfo(task)
+            Napier.d { "完成任务 ${toString()}" }
             onEnd(info.first, info.second)
         }
     }

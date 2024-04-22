@@ -23,9 +23,8 @@ import com.liulishuo.okdownload.DownloadTask
  * provides some methods to get the progress info.
  */
 data class DownloadProgress(
-    val task: DownloadTask,
-    val currentOffset: Long,
-    val totalOffset: Long
+    val currentOffset: Long = 0L,
+    val totalOffset: Long = UNKNOWN_TOTAL_OFFSET,
 ) {
     companion object {
         private const val UNKNOWN_TOTAL_OFFSET = -1L
