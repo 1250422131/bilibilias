@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.download.task
+package com.imcys.bilibilias.core.model.download
 
 public enum class State(val cn: String) {
     PENDING("等待"),

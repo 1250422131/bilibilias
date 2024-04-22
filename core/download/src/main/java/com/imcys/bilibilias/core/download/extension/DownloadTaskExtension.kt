@@ -387,7 +387,7 @@ fun DownloadTask.progressFlow(): Flow<DownloadProgress> {
         }.also { it.setAlwaysRecoverAssistModelIfNotSet(true) }
         val replaceListener = createReplaceListener(oldListener, progressListener)
         replaceListener(replaceListener)
-        awaitClose {  }
+        awaitClose { }
     }
 }
 

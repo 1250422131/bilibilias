@@ -1,7 +1,8 @@
 package com.imcys.bilibilias.core.download.task
 
-import com.imcys.bilibilias.core.download.FileType
+import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.download.TaskEnd
+import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.StatusUtil
@@ -16,7 +17,7 @@ sealed class AsDownloadTask(val viewInfo: ViewInfo) {
     internal abstract val destFile: File
     abstract val fileType: FileType
     internal abstract val task: DownloadTask
-    abstract val state: () -> State
+    abstract val state: State
     abstract val isCompleted: Boolean
 
     abstract val progress: Flow<DownloadProgress>
@@ -64,9 +65,7 @@ sealed class AsDownloadTask(val viewInfo: ViewInfo) {
         }
     }
 
-    override fun toString(): String {
-        return "AsDownloadTask(viewInfo=$viewInfo, destFile=$destFile, fileType=$fileType, task=$task)"
-    }
+    abstract override fun toString(): String
 
     companion object {
         internal fun getDownloadInfo(task: DownloadTask): Pair<ViewInfo, FileType> {

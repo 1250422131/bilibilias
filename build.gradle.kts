@@ -1,7 +1,7 @@
 buildscript {
     dependencies {
-        classpath("com.squareup.wire:wire-gradle-plugin:4.9.9")
-        classpath("app.cash.molecule:molecule-gradle-plugin:1.4.2")
+        classpath(libs.wire.gradle.plugin)
+        classpath(libs.molecule.gradle.plugin)
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
@@ -16,4 +16,8 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.dependencyGuard) apply false
+    alias(libs.plugins.room) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.baselineprofile) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }

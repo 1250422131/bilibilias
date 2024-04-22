@@ -156,7 +156,7 @@ fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
             }
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier, verticalArrangement = Arrangement.SpaceBetween) {
-                    val currentState = remember(task.state()) { task.state().cn }
+                    val currentState = remember(task.state) { task.state.cn }
                     Text(
                         text = currentState,
                         modifier = Modifier,
