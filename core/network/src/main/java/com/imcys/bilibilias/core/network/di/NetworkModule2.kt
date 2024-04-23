@@ -19,7 +19,10 @@ import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.imcys.bilibilias.core.network.api.BilibiliApi
-import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogLevel
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogger
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogging
 import com.imcys.bilibilias.core.network.utils.WBIUtils
 import dagger.Module
 import dagger.Provides
@@ -27,6 +30,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
@@ -40,10 +44,6 @@ import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.ANDROID
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.parameter
@@ -128,7 +128,7 @@ class NetworkModule2 {
     @Singleton
     @Provides
     fun provideHttpClient(
-//        httpClientEngine: HttpClientEngine,
+        asLogger: JsonAwareLogger,
         json: Json,
         transform: ClientPlugin<Unit>,
         asCookiesStorage: AsCookiesStorage,
@@ -143,15 +143,14 @@ class NetworkModule2 {
             }
             BrowserUserAgent()
             addDefaultResponseValidation()
-            Logging {
-                logger = Logger.Companion.ANDROID
-                level = LogLevel.BODY
+            JsonAwareLogging {
+                logger = asLogger
+                level = JsonAwareLogLevel.BODY
                 filter {
                     it.url.host == BilibiliApi.API_HOST ||
                         it.url.host == BiliBiliAsApi.API_HOST
                 }
             }
-
             install(HttpCookies) {
                 storage = asCookiesStorage
             }

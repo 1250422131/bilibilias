@@ -3,6 +3,7 @@ package com.imcys.bilibilias.core.download
 import android.content.Context
 import androidx.collection.mutableScatterMapOf
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.GroupCallback
@@ -45,6 +46,7 @@ class FileDownload @Inject constructor(
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskExecute: DownloadTaskExecute,
+    private val downloadTaskDao: DownloadTaskDao,
 ) {
     private val taskQueue = mutableScatterMapOf<Cid, Array<AsDownloadTask>>()
     val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())

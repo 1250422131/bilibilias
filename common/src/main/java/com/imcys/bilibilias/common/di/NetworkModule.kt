@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.common.di
 
 import com.imcys.bilibilias.common.base.constant.ROAM_API
-import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

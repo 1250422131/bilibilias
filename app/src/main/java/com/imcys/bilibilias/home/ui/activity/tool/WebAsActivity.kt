@@ -12,7 +12,6 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.lifecycleScope
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -25,8 +24,8 @@ import javax.inject.Inject
 class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
     override val layoutId: Int = R.layout.activity_web_as
 
-    @Inject
-    lateinit var asCookiesStorage: AsCookiesStorage
+//    @Inject
+//    lateinit var asCookiesStorage: AsCookiesStorage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,7 +55,7 @@ class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
             lifecycleScope.launch {
-                cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
+//                cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
             }
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
