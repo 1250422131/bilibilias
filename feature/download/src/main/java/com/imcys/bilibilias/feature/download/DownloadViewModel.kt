@@ -28,7 +28,9 @@ class DownloadViewModel @Inject constructor(
                     ViewInfo(it.aid, it.bvid, it.cid, it.title),
                     it.subTitle,
                     it.fileType,
-                    it.uri
+                    it.uri,
+                    it.progress,
+                    it.state.cn
                 )
             }
         }

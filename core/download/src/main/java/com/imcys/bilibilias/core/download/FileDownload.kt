@@ -51,11 +51,6 @@ class FileDownload @Inject constructor(
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
-        scope.launch {
-            downloadTaskDao.loadAllDownloadFlow().collect {
-                Napier.d(tag = "listener") { it.joinToString("\n") }
-            }
-        }
     }
 
     val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())
