@@ -12,9 +12,7 @@ android {
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.download)
-
-    implementation(libs.flowmvi.android)
-    implementation(libs.flowmvi.compose)
+    implementation(projects.core.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
