@@ -156,9 +156,8 @@ fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
             }
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier, verticalArrangement = Arrangement.SpaceBetween) {
-                    val currentState = remember(task.state) { task.state.cn }
                     Text(
-                        text = currentState,
+                        text = "",
                         modifier = Modifier,
                         color = Color.LightGray
                     )
@@ -177,12 +176,11 @@ fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
                     )
                 }
             }
-            val progress = task.progress.collectAsState(initial = DownloadProgress())
             LinearProgressIndicator(
                 modifier = Modifier
                     .weight(1f, false)
                     .fillMaxWidth(),
-                progress = { progress.value.progress() },
+                progress = { 0f },
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.secondary
             )
