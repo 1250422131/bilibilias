@@ -42,25 +42,25 @@ import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
-import com.liulishuo.okdownload.kotlin.DownloadProgress
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DownloadRoute(modifier: Modifier) {
     val viewModel: DownloadViewModel = hiltViewModel()
     val taskQueue by viewModel.taskFlow.collectAsState()
-    DownloadScreen(taskQueue, onCancel = viewModel::onCancle)
+    DownloadScreen(taskQueue, onCancel = viewModel::onCancle, modifier = modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DownloadScreen(
-    uiState: ImmutableList<AsDownloadTask>,
-    onCancel: (AsDownloadTask) -> Unit
+    uiState: List<DownloadTask>,
+    onCancel: (AsDownloadTask) -> Unit,
+    modifier: Modifier
 ) {
     var edit by remember { mutableStateOf(false) }
     var openConfirmationWindow by remember { mutableStateOf(false) }
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { /*TODO*/ },
@@ -74,12 +74,9 @@ internal fun DownloadScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            items(
-                uiState,
-                { it.fileType.toString() + it.viewInfo.bvid + it.viewInfo.cid }
-            ) { item ->
+            items(uiState, { it.id }) { item ->
                 DownloadTaskItem(item) {
-                    onCancel(item)
+//                    onCancel(item)
                     openConfirmationWindow = true
                 }
             }
@@ -113,7 +110,7 @@ fun ConfirmDeleteTaskDialog(
 }
 
 @Composable
-fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
+fun DownloadTaskItem(task: DownloadTask, onCancel: () -> Unit) {
     var isShow by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -186,11 +183,6 @@ fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
             )
         }
     }
-    ConfirmDeleteTaskDialog(
-        isShow = isShow,
-        onconfirm = onCancel,
-        onDismiss = { isShow = false }
-    )
 }
 
 @Composable

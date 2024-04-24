@@ -52,7 +52,7 @@ class FileDownload @Inject constructor(
             Util.enableConsoleLog()
         }
         scope.launch {
-            downloadTaskDao.getAllTask().collect {
+            downloadTaskDao.loadAllDownloadFlow().collect {
                 Napier.d(tag = "listener") { it.joinToString("\n") }
             }
         }
@@ -76,7 +76,7 @@ class FileDownload @Inject constructor(
                     title = info.title,
                     state = getState(task),
                 )
-                downloadTaskDao.insertTask(taskEntity)
+                downloadTaskDao.insertOrUpdate(taskEntity)
             }
         },
         progress = { task, currentOffset, totalLength ->

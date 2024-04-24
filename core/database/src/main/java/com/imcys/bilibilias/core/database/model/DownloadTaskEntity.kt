@@ -3,6 +3,7 @@ package com.imcys.bilibilias.core.database.model
 import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
@@ -27,4 +28,31 @@ data class DownloadTaskEntity(
     val bytesSentTotal: Long = 0,
     val contentLength: Long = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-)
+) {
+    @Ignore
+    val process = bytesSentTotal / contentLength.toFloat()
+
+    @Ignore
+    val isCompelete = bytesSentTotal == contentLength
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DownloadTaskEntity
+
+        if (aid != other.aid) return false
+        if (bvid != other.bvid) return false
+        if (cid != other.cid) return false
+        if (fileType != other.fileType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = aid.hashCode()
+        result = 31 * result + bvid.hashCode()
+        result = 31 * result + cid.hashCode()
+        result = 31 * result + fileType.hashCode()
+        return result
+    }
+}
