@@ -30,7 +30,7 @@ data class DownloadTaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
     @Ignore
-    val process = bytesSentTotal / contentLength.toFloat()
+    val progress = bytesSentTotal / contentLength.toFloat()
 
     @Ignore
     val isCompelete = bytesSentTotal == contentLength

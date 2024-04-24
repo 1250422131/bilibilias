@@ -10,4 +10,6 @@ data class DownloadTask(
     val subTitle: String,
     val fileType: FileType,
     val uri: Uri,
+    val progress: Float,
+    val state: String,
 )

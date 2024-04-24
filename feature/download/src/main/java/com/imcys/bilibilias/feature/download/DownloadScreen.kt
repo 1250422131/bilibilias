@@ -154,7 +154,7 @@ fun DownloadTaskItem(task: DownloadTask, onCancel: () -> Unit) {
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier, verticalArrangement = Arrangement.SpaceBetween) {
                     Text(
-                        text = "",
+                        text = task.state,
                         modifier = Modifier,
                         color = Color.LightGray
                     )
@@ -177,7 +177,7 @@ fun DownloadTaskItem(task: DownloadTask, onCancel: () -> Unit) {
                 modifier = Modifier
                     .weight(1f, false)
                     .fillMaxWidth(),
-                progress = { 0f },
+                progress = { task.progress },
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.secondary
             )
