@@ -1,35 +1,33 @@
 package com.imcys.bilibilias.core.download
 
 import android.content.Context
-import androidx.collection.mutableScatterMapOf
+import androidx.collection.mutableObjectListOf
+import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
+import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
-import com.imcys.bilibilias.core.download.task.GroupCallback
-import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
+import com.imcys.bilibilias.core.download.task.getState
 import com.imcys.bilibilias.core.model.download.FileType
-import com.imcys.bilibilias.core.model.video.Audio
-import com.imcys.bilibilias.core.model.video.Cid
-import com.imcys.bilibilias.core.model.video.Video
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
-import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
-import com.liulishuo.okdownload.StatusUtil
+import com.liulishuo.okdownload.core.Util
+import com.liulishuo.okdownload.kotlin.listener.createListener1
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,111 +43,138 @@ class FileDownload @Inject constructor(
     @ApplicationContext private val context: Context,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
-    private val downloadTaskExecute: DownloadTaskExecute,
     private val downloadTaskDao: DownloadTaskDao,
 ) {
-    private val taskQueue = mutableScatterMapOf<Cid, Array<AsDownloadTask>>()
-    val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())
+    private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
-    var listener: GroupCallback? = null
+    init {
+        if (BuildConfig.DEBUG) {
+            Util.enableConsoleLog()
+        }
+        scope.launch {
+            downloadTaskDao.getAllTask().collect {
+                Napier.d(tag = "listener") { it.joinToString("\n") }
+            }
+        }
+    }
+
+    val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())
+    private val listener = createListener1(
+        taskStart = { task, model ->
+            Napier.d(tag = "listener") { "任务开始 $task" }
+            val asTask = taskQueue.first { it.okTask === task }
+            scope.launch {
+                val info = asTask.viewInfo
+                val taskEntity = DownloadTaskEntity(
+                    uri = asTask.destFile.toUri(),
+                    created = Clock.System.now(),
+                    aid = info.aid,
+                    bvid = info.bvid,
+                    cid = info.cid,
+                    fileType = asTask.fileType,
+                    subTitle = asTask.subTitle,
+                    title = info.title,
+                    state = getState(task),
+                )
+                downloadTaskDao.insertTask(taskEntity)
+            }
+        },
+        progress = { task, currentOffset, totalLength ->
+            Napier.d(tag = "listener") { "任务中 $task $currentOffset-$totalLength" }
+            scope.launch {
+                downloadTaskDao.updateProgressAndState(
+                    task.uri,
+                    getState(task),
+                    currentOffset,
+                    totalLength
+                )
+            }
+        },
+        taskEnd = { task, cause, realCause, model ->
+            Napier.d(tag = "listener") { "任务结束 $task" }
+            scope.launch {
+                val status = cause.toString()
+                task.addTag(0, status)
+                // 手动更新断点信息到数据库
+                task.info?.let { OkDownload.with().breakpointStore().update(it) }
+                downloadTaskDao.updateState(task.uri, getState(task))
+            }
+        }
+    )
+
     fun download(request: DownloadRequest) {
         Napier.d { "下载任务详情: $request" }
         scope.launch {
             val (detail, streamUrl) = get视频详情和流链接(request)
-            dispatcherTaskType(streamUrl, request)
+            dispatcherTaskType(
+                streamUrl,
+                request,
+                detail.pages.single { it.cid == request.viewInfo.cid }
+            )
             persistedFile(detail, request)
         }
     }
 
-    private fun dispatcherTaskType(streamUrl: VideoStreamUrl, request: DownloadRequest) {
+    private fun dispatcherTaskType(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        page: ViewDetail.Pages
+    ) {
         scope.launch {
             when (request.format.taskType) {
-                TaskType.ALL -> handleAllTask(streamUrl, request)
-                TaskType.VIDEO -> handleVideoTask(streamUrl, request)
-                TaskType.AUDIO -> handleAudioTask(streamUrl, request)
+                TaskType.ALL -> handleAllTask(streamUrl, request, page)
+                TaskType.VIDEO -> handleVideoTask(streamUrl, request, page)
+                TaskType.AUDIO -> handleAudioTask(streamUrl, request, page)
             }
         }
     }
 
-    private fun handleAllTask(streamUrl: VideoStreamUrl, request: DownloadRequest) {
-        val video = createVideoTask(streamUrl, request)
-        val audio = createAudioTask(streamUrl, request)
-        putQueue(request.viewInfo.cid, video, audio)
-        downloadTaskExecute.enqueue(video, audio) { viewinfo, type ->
-            val groupTask = 查询任务(viewinfo, type)
-            if (groupTask.video.isCompleted && groupTask.audio.isCompleted) {
-                listener?.groupEnd(groupTask)
-            }
-            val v = groupTask.video.task
-            val a = groupTask.audio.task
-            Napier.d { "任务信息 ${v}\n$a" }
-            Napier.d { "任务状态 ${StatusUtil.getStatus(v)}\n${StatusUtil.getStatus(a)}" }
-        }
-    }
-
-    private fun 查询任务(info: ViewInfo, currentType: FileType): GroupTask {
-        val tasks = taskQueue[info.cid] ?: error("没有任务 $currentType-$info")
-        val v = tasks.single { it.fileType == FileType.VIDEO }
-        val a = tasks.single { it.fileType == FileType.AUDIO }
-        return GroupTask(v, a)
+    private fun handleAllTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        page: ViewDetail.Pages
+    ) {
+        val video = createVideoTask(streamUrl, request, page)
+        val audio = createAudioTask(streamUrl, request, page)
+        DownloadTask.enqueue(arrayOf(video.okTask, audio.okTask), listener)
     }
 
     private fun handleAudioTask(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        onComplete: TaskEnd = { _, _ -> }
+        page: ViewDetail.Pages
     ) {
-        val task = createVideoTask(streamUrl, request)
-        putQueue(request.viewInfo.cid, task)
-        downloadTaskExecute.enqueue(task, onComplete)
+        val task = createVideoTask(streamUrl, request, page)
+        task.okTask.enqueue(listener)
     }
 
-    private fun createAudioTask(streamUrl: VideoStreamUrl, request: DownloadRequest): AudioTask {
-        val audio = getAudioStrategy(streamUrl.dash.audio, request)
-        return AudioTask(
-            audio.baseUrl,
-            request.buildFullPath(),
-            request.viewInfo
-        )
+    private fun createAudioTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        page: ViewDetail.Pages
+    ): AudioTask {
+        val task = AudioTask(streamUrl, request, page)
+        taskQueue.add(task)
+        return task
     }
 
     private fun handleVideoTask(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        onComplete: TaskEnd = { _, _ -> }
+        page: ViewDetail.Pages
     ) {
-        val task = createVideoTask(streamUrl, request)
-        putQueue(request.viewInfo.cid, task)
-        downloadTaskExecute.enqueue(task, onComplete)
+        val task = createVideoTask(streamUrl, request, page)
+        task.okTask.enqueue(listener)
     }
 
-    private fun putQueue(cid: Cid, vararg task: AsDownloadTask) {
-        taskQueue[cid] = arrayOf(*task)
-        updateFlow()
-    }
-
-    private fun updateFlow() {
-        taskFlow.update {
-            taskQueue.asMap().flatMap { (_, arr) -> arr.map { it } }.toImmutableList()
-        }
-    }
-
-    private fun createVideoTask(streamUrl: VideoStreamUrl, request: DownloadRequest): VideoTask {
-        val audio = getVideoStrategy(streamUrl.dash.video, request)
-        return VideoTask(
-            audio.baseUrl,
-            request.buildFullPath(),
-            request.viewInfo
-        )
-    }
-
-    private fun getVideoStrategy(video: List<Video>, parameter: DownloadRequest): Video {
-        val videos = video.groupBy { it.id }[parameter.format.quality] ?: error("没有所选清晰度")
-        return videos.single { it.codecid == parameter.format.codecid }
-    }
-
-    private fun getAudioStrategy(audio: List<Audio>, request: DownloadRequest): Audio {
-        return audio.maxBy { it.id }
+    private fun createVideoTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        page: ViewDetail.Pages
+    ): VideoTask {
+        val task = VideoTask(streamUrl, request, page)
+        taskQueue.add(task)
+        return task
     }
 
     private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
@@ -163,13 +188,6 @@ class FileDownload @Inject constructor(
                 )
             }
         return detail.await() to streamUrl.await()
-    }
-
-    private fun DownloadRequest.buildFullPath() =
-        "${buildBasePath()}${File.separator}${format.quality}"
-
-    private fun DownloadRequest.buildBasePath(): String {
-        return "${context.downloadDir}${File.separator}${viewInfo.aid}${File.separator}c_${viewInfo.cid}"
     }
 
     private fun persistedFile(detail: ViewDetail, request: DownloadRequest) {
@@ -245,19 +263,6 @@ class FileDownload @Inject constructor(
 
     // endregion
     fun cancle(task: AsDownloadTask) {
-        task.task.cancel()
-        OkDownload.with().breakpointStore().remove(task.task.id)
-        val cid = task.viewInfo.cid
-        val tasks = taskQueue[cid] ?: return
-        if (tasks.size == 1) {
-            taskQueue.remove(cid)
-            updateFlow()
-            return
-        }
-        if (tasks.size == 2) {
-            val t = tasks.single { it.fileType == reverseType(task.fileType) }
-            putQueue(cid, t)
-        }
     }
 
     private fun reverseType(fileType: FileType) = when (fileType) {

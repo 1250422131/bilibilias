@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.database.di
+package com.imcys.bilibilias.core.database.di
 
 import android.content.Context
 import androidx.room.Room
@@ -21,5 +21,8 @@ internal class DatabaseModule {
         context,
         AsDatabase::class.java,
         "as-database",
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .fallbackToDestructiveMigrationOnDowngrade()
+        .build()
 }

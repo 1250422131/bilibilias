@@ -1,24 +1,25 @@
 package com.imcys.bilibilias.core.download.task
 
+import com.imcys.bilibilias.core.download.DownloadRequest
+import com.imcys.bilibilias.core.download.buildFullPath
 import com.imcys.bilibilias.core.model.download.FileType
-import com.imcys.bilibilias.core.model.download.State
-import com.imcys.bilibilias.core.model.video.ViewInfo
-import com.liulishuo.okdownload.StatusUtil
-import com.liulishuo.okdownload.kotlin.DownloadProgress
-import com.liulishuo.okdownload.kotlin.progressFlow
-import kotlinx.coroutines.flow.Flow
+import com.imcys.bilibilias.core.model.video.VideoStreamUrl
+import com.imcys.bilibilias.core.model.video.ViewDetail
 import java.io.File
 
-class VideoTask(url: String, path: String, viewInfo: ViewInfo) :
-    AsDownloadTask(viewInfo) {
+class VideoTask(
+    streamUrl: VideoStreamUrl,
+    request: DownloadRequest,
+    val page: ViewDetail.Pages
+) : AsDownloadTask(request.viewInfo, streamUrl, request, page.part) {
+
     override val priority = 99
     override val fileType = FileType.VIDEO
-    override val destFile = File(path, "video.mp4")
-    override val task = createTask(url, destFile, priority, viewInfo, fileType)
-    override val state: State = getState(task)
-    override val isCompleted: Boolean = StatusUtil.isCompleted(task)
-    override val progress: Flow<DownloadProgress> = task.progressFlow()
-    override fun toString(): String {
-        return "AudioTask(fileType=$fileType, task=$task, state=$state, isCompleted=$isCompleted)"
+    override val destFile = File(request.buildFullPath(), "video.mp4")
+    override val okTask = createTask(downloadUrl, destFile, priority)
+    override fun getStrategy(streamUrl: VideoStreamUrl, request: DownloadRequest): String {
+        val videos = streamUrl.dash.video.groupBy { it.id }[request.format.quality]
+            ?: error("没有所选清晰度")
+        return videos.single { it.codecid == request.format.codecid }.baseUrl
     }
 }

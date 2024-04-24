@@ -17,7 +17,7 @@ public interface JsonAwareLogger {
     /**
      * Format the [json] pretty.
      */
-    public fun prettifyJson(json: String): String = json
+    public fun prettifyJson(message: String): String = message
 
     public companion object
 }
