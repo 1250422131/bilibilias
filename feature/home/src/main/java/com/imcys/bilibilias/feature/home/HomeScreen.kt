@@ -37,6 +37,7 @@ internal fun HomeScreen(
             exitLogin,
             uiState.homeBanner,
             uiState.updateNotice,
+            modifier
         )
     }
 }

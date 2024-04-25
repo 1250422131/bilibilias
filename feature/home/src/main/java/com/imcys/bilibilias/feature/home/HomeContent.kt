@@ -3,26 +3,20 @@ package com.imcys.bilibilias.feature.home
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,15 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import coil.compose.AsyncImage
 import coil.load
 import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsCard
@@ -64,8 +56,9 @@ fun HomeContent(
     exitLogin: () -> Unit,
     homeBanner: HomeBanner,
     updateNotice: UpdateNotice,
+    modifier: Modifier,
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(modifier = modifier) { innerPadding ->
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(
@@ -85,7 +78,8 @@ fun HomeContent(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
                     ) { banner ->
-                        banner.setAdapter(object : BannerImageAdapter<String>(homeBanner.imgUrlList) {
+                        banner.setAdapter(object :
+                            BannerImageAdapter<String>(homeBanner.imgUrlList) {
                             override fun onBindView(
                                 holder: BannerImageHolder,
                                 data: String,
@@ -104,18 +98,20 @@ fun HomeContent(
                 }
                 item {
                     HomeCard(
+                        R.drawable.ic_home_trophy,
                         onClick = {
                             startActivityForUri(
                                 context,
-                                "https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va"
+                                "https://support.qq.com/products/337496/change-log"
                             )
                         },
                         title = "更新内容",
-                        desc = ""
+                        desc = "2.0.4-玉衡-Beta发布"
                     )
                 }
                 item {
                     HomeCard(
+                        R.drawable.ic_home_trophy,
                         onClick = onSalute,
                         title = "致敬",
                         desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
@@ -123,6 +119,7 @@ fun HomeContent(
                 }
                 item {
                     HomeCard(
+                        R.drawable.ic_home_red_envelopes,
                         onClick = onDonation,
                         title = "捐款",
                         desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
@@ -130,6 +127,7 @@ fun HomeContent(
                 }
                 item {
                     HomeCard(
+                        R.drawable.ic_home_rabbit,
                         onClick = {
                             startActivityForUri(
                                 context,
@@ -141,36 +139,12 @@ fun HomeContent(
                     )
                 }
                 item {
-                    AsCard(
-                        onClick = exitLogin,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .padding(20.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(10.dp)
-                            )
-                            Column(modifier = Modifier.padding(start = 20.dp)) {
-                                Text(
-                                    text = "退出登录",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "退出账号登录",
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                            }
-                        }
-                    }
+                    HomeCard(
+                        resId = R.drawable.ic_home_logout,
+                        title = "退出登录",
+                        desc = "退出账号登录",
+                        exitLogin
+                    )
                 }
             }
         }
@@ -230,29 +204,24 @@ private fun startActivityForUri(context: Context, uri: String) {
 }
 
 @Composable
-private fun HomeCard(onClick: () -> Unit, title: String, desc: String) {
+private fun HomeCard(resId: Int, title: String, desc: String, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(
-            2.dp,
-            Color.LightGray
-        )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(20.dp)
         ) {
-            // TODO: 图标不对
             Icon(
-                Icons.AutoMirrored.Filled.ExitToApp,
+                painterResource(id = resId),
                 contentDescription = null,
                 modifier = Modifier
                     .size(50.dp)
-                    .padding(10.dp)
+                    .padding(10.dp),
+                tint = MaterialTheme.colorScheme.primary
             )
             Column(modifier = Modifier.padding(start = 20.dp)) {
                 Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
