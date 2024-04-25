@@ -139,7 +139,10 @@ open class AsJzvdStd : JzvdStd {
                     resource: Bitmap,
                     transition: Transition<in Bitmap?>?,
                 ) {
-                    val photoDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath, "BILIBILIAS")
+                    val photoDir = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath,
+                        "BILIBILIAS"
+                    )
                     if (!photoDir.exists()) {
                         photoDir.mkdirs()
                     }

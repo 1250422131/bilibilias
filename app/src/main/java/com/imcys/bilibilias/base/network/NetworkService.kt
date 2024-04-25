@@ -213,7 +213,7 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n5(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
+    suspend fun getVideoBaseBean(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
         getVideoBaseInfoByBvid(bvid)
     }
 
@@ -290,34 +290,18 @@ class NetworkService @Inject constructor(
 
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n7(epid: Int): BangumiSeasonBean = runCatchingOnWithContextIo {
+    suspend fun getBangumiSeasonBeanByEpid(epid: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.bangumiVideoDataPath) {
             parameterEpID(epid.toString())
         }.body()
     }
 
-    suspend fun n13(epid: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
-        httpClient.get(ROAM_API + "pgc/view/web/season?ep_id=" + epid).body()
-    }
-
-    suspend fun n18(firstEp: Int): BangumiSeasonBean = runCatchingOnWithContextIo {
-        n7(firstEp)
-    }
-
-    suspend fun n25(epId: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.bangumiVideoDataPath}?ep_id=$epId").body()
-    }
-
     // ---------------------------------------------------------------------------------------------
-    suspend fun n8(): UserNavDataModel = runCatchingOnWithContextIo {
+    suspend fun getUserNavInfo(): UserNavDataModel = runCatchingOnWithContextIo {
         httpClient.get("https://api.bilibili.com/x/web-interface/nav").body()
     }
 
-    suspend fun n40(): UserNavDataModel = runCatchingOnWithContextIo {
-        n42()
-    }
-
-    suspend fun n42(): UserNavDataModel = runCatchingOnWithContextIo {
+    suspend fun getUserNavData(): UserNavDataModel = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.userNavDataPath).body()
     }
 
@@ -362,24 +346,21 @@ class NetworkService @Inject constructor(
         }.body()
     }
     // ---------------------------------------------------------------------------------------------
-    /**
-     * [n20] [getUserWorks]
-     */
     suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
     }
 
-    suspend fun n20(i: Int): UserWorksBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.userWorksPath) {
-            parameterMID(BaseApplication.asUser.mid.toString())
-            parameter("pn", i)
-            parameter("ps", 20)
-        }.body()
-    }
+    //    suspend fun n20(i: Int): UserWorksBean = runCatchingOnWithContextIo {
+    //        httpClient.get(BilibiliApi.userWorksPath) {
+    //            parameterMID(BaseApplication.asUser.mid.toString())
+    //            parameter("pn", i)
+    //            parameter("ps", 20)
+    //        }.body()
+    //    }
 
-    suspend fun getUserWorks(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
-    }
+    //    suspend fun getUserWorks(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
+    //        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
+    //    }
 
     // ----------------------------------------------------------------------------------------------
     suspend fun getUpStateInfo(): UpStatBeam = runCatchingOnWithContextIo {
@@ -476,13 +457,4 @@ class NetworkService @Inject constructor(
         return withContext(ioDispatcher, block)
     }
 
-
-    suspend fun n44() = runCatchingOnWithContextIo {}
-    suspend fun n45() = runCatchingOnWithContextIo {}
-    suspend fun n46() = runCatchingOnWithContextIo {}
-    suspend fun n47() = runCatchingOnWithContextIo {}
-    suspend fun n48() = runCatchingOnWithContextIo {}
-    suspend fun n49() = runCatchingOnWithContextIo {}
-    suspend fun n50() = runCatchingOnWithContextIo {}
-    suspend fun n51() = runCatchingOnWithContextIo {}
 }
