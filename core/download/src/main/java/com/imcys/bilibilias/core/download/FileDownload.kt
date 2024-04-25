@@ -6,8 +6,10 @@ import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
+import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
 import com.imcys.bilibilias.core.download.task.getState
 import com.imcys.bilibilias.core.model.download.FileType
@@ -16,10 +18,8 @@ import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.kotlin.listener.createListener1
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -40,10 +40,10 @@ val Context.downloadDir
 @Singleton
 class FileDownload @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
-    @ApplicationContext private val context: Context,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
+    private val defaultGroupTaskCall: DefaultGroupTaskCall,
 ) {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
@@ -88,11 +88,15 @@ class FileDownload @Inject constructor(
         taskEnd = { task, cause, realCause, model ->
             Napier.d(tag = "listener") { "任务结束 $task" }
             scope.launch {
-                val status = cause.toString()
-                task.addTag(0, status)
-                // 手动更新断点信息到数据库
-                task.info?.let { OkDownload.with().breakpointStore().update(it) }
                 downloadTaskDao.updateState(task.uri, getState(task))
+                val asDownloadTask = taskQueue.first { it.okTask === task }
+                val info = asDownloadTask.viewInfo
+                val tasks = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid)
+                val v = tasks.find { it.fileType == FileType.VIDEO }
+                val a = tasks.find { it.fileType == FileType.AUDIO }
+                if (v != null && a != null) {
+                    defaultGroupTaskCall.execute(GroupTask(v, a))
+                }
             }
         }
     )

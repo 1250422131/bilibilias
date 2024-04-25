@@ -14,7 +14,7 @@ class AudioTask(
 ) : AsDownloadTask(request.viewInfo, streamUrl, request, page.part) {
     override val priority = 100
     override val fileType = FileType.AUDIO
-    override val destFile = File(request.buildFullPath(), "audio.mp4")
+    override val destFile = File(request.buildFullPath(), "audio.aac")
     override val okTask = createTask(downloadUrl, destFile, priority)
     override fun getStrategy(streamUrl: VideoStreamUrl, request: DownloadRequest): String {
         return streamUrl.dash.audio.maxBy { it.id }.baseUrl

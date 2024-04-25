@@ -1,6 +1,5 @@
-﻿package com.imcys.bilibilias.core.ffmpeg
+package com.imcys.bilibilias.core.ffmpeg
 
-import com.coder.ffmpeg.call.CommonCallBack
 import com.coder.ffmpeg.call.IFFmpegCallBack
 import com.coder.ffmpeg.jni.FFmpegCommand
 import com.coder.ffmpeg.jni.FFmpegConfig

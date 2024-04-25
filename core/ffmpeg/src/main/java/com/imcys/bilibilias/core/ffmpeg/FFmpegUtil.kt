@@ -1,6 +1,6 @@
 ﻿package com.imcys.bilibilias.core.ffmpeg
 
-object FFmpegUtils {
+object FFmpegUtil {
     /**
      * 使用ffmpeg命令行进行音视频合成
      *
@@ -9,7 +9,7 @@ object FFmpegUtils {
      * @param duration  视频时长
      * @param muxFile   目标文件
      * @return 合成后的文件
-     * command = "ffmpeg -y -i %s -i %s %s"
+     * ffmpeg -i video.mp4 -i audio.m4a -c:v copy -c:a copy output.mp4
      */
     fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String?> {
         return buildCommandParams {
@@ -17,6 +17,10 @@ object FFmpegUtils {
             append(videoFile)
             append("-i")
             append(audioFile)
+            append("-c:v")
+            append("copy")
+            append("-c:a")
+            append("copy")
             append(muxFile)
         }
     }
