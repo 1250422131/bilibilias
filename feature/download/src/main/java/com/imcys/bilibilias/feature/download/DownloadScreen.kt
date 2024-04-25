@@ -44,10 +44,10 @@ import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 
 @Composable
-fun DownloadRoute(modifier: Modifier) {
+fun DownloadRoute() {
     val viewModel: DownloadViewModel = hiltViewModel()
     val taskQueue by viewModel.taskFlow.collectAsState()
-    DownloadScreen(taskQueue, onCancel = viewModel::onCancle, modifier = modifier)
+    DownloadScreen(taskQueue, onCancel = viewModel::onCancle)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,12 +55,10 @@ fun DownloadRoute(modifier: Modifier) {
 internal fun DownloadScreen(
     uiState: List<DownloadTask>,
     onCancel: (AsDownloadTask) -> Unit,
-    modifier: Modifier
 ) {
     var edit by remember { mutableStateOf(false) }
     var openConfirmationWindow by remember { mutableStateOf(false) }
     Scaffold(
-        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { /*TODO*/ },

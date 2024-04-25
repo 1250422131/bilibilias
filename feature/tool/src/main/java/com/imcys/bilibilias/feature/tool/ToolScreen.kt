@@ -8,7 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.imcys.bilibilias.core.download.DownloadRequest
 
 @Composable
-fun ToolRoute(modifier: Modifier, onSetting: () -> Unit) {
+fun ToolRoute(onSetting: () -> Unit) {
     val viewmodel: ToolViewModel = hiltViewModel()
     val searchQuery by viewmodel.searchQuery.collectAsState()
     val uiState by viewmodel.searchResultUiState.collectAsState()
@@ -18,7 +18,6 @@ fun ToolRoute(modifier: Modifier, onSetting: () -> Unit) {
         viewmodel::clearSearches,
         viewmodel::onSearchQueryChanged,
         viewmodel::download,
-        modifier,
         onSetting,
     )
 }
@@ -30,7 +29,6 @@ internal fun ToolScreen(
     clearSearches: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onDownload: (DownloadRequest) -> Unit,
-    modifier: Modifier,
     onSetting: () -> Unit
 ) {
     ToolContent(
@@ -39,7 +37,6 @@ internal fun ToolScreen(
         onClearSearches = clearSearches,
         searchResultUiState = uiState,
         onDownload = onDownload,
-        modifier,
         onSetting,
     )
 }

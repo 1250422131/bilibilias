@@ -2,13 +2,13 @@ package com.imcys.bilibilias.navigation.tabs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.imcys.bilibilias.feature.user.UserRoute
 import com.imcys.bilibilias.navigation.TopLevelDestination
 
-object UserTab : TabX() {
+object UserTab : Tab {
 
     override val options: TabOptions
         @Composable
@@ -25,7 +25,7 @@ object UserTab : TabX() {
         }
 
     @Composable
-    override fun Content(modifier: Modifier) {
-        UserRoute(modifier)
+    override fun Content() {
+        UserRoute()
     }
 }

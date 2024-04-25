@@ -44,9 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
-import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.TaskType
@@ -61,10 +61,9 @@ fun ToolContent(
     onClearSearches: () -> Unit,
     searchResultUiState: SearchResultUiState,
     onDownload: (DownloadRequest) -> Unit,
-    modifier: Modifier,
     onSetting: () -> Unit
 ) {
-    Scaffold(modifier, topBar = {
+    Scaffold(topBar = {
         TopAppBar(
             title = {},
             actions = {
@@ -84,11 +83,13 @@ fun ToolContent(
                 onValueChange = onSearchQueryChanged,
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    Icon(
-                        Icons.Default.Clear,
-                        contentDescription = "清空输入框",
-                        modifier = Modifier.clickable { onClearSearches() }
-                    )
+                    if (searchQuery.isNotEmpty()) {
+                        Icon(
+                            Icons.Default.Clear,
+                            contentDescription = "清空输入框",
+                            modifier = Modifier.clickable { onClearSearches() }
+                        )
+                    }
                 },
                 maxLines = 1,
             )
