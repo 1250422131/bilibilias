@@ -18,12 +18,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DownloadTaskDao {
     suspend fun insertOrUpdate(t: DownloadTaskEntity) {
-        val task = loadAllDownloadList().find {
-            it.aid == t.aid &&
-                    it.bvid == t.bvid &&
-                    it.cid == t.cid &&
-                    it.fileType == t.fileType
-        }
+        val task = getTaskByInfo(t.aid, t.bvid, t.cid, t.fileType)
         if (task == null) {
             insertTask(t)
         } else {
@@ -57,6 +52,13 @@ interface DownloadTaskDao {
         cid: Cid,
         fileType: FileType
     ): DownloadTaskEntity?
+
+    @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid")
+    suspend fun getTaskByInfo(
+        aid: Aid,
+        bvid: Bvid,
+        cid: Cid,
+    ): List<DownloadTaskEntity>
 
     @Query("SELECT * FROM download_task_list WHERE uri = :uri")
     suspend fun getTaskByUri(uri: Uri): DownloadTaskEntity
