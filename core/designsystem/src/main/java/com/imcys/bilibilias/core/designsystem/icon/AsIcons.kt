@@ -5,7 +5,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ShortText
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Upcoming
 import androidx.compose.material.icons.rounded.Add
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.rounded.ViewDay
 
 object AsIcons {
     val Add = Icons.Rounded.Add
+    val Feedback = Icons.Default.Feedback
     val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
     val Bookmark = Icons.Rounded.Bookmark
     val BookmarkBorder = Icons.Rounded.BookmarkBorder

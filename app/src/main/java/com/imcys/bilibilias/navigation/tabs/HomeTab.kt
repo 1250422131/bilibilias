@@ -32,7 +32,7 @@ object HomeTab : TabX() {
     override fun Content(modifier: Modifier) {
         val context = LocalContext.current
         HomeRoute(
-            modifier = Modifier,
+            modifier = modifier,
             onSalute = {
                 val intent = Intent(context, DedicateActivity::class.java)
                 context.startActivity(intent)

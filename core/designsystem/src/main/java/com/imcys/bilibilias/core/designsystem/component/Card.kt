@@ -22,6 +22,7 @@ fun AsCard(
         content = content
     )
 }
+
 @Composable
 fun AsCard(
     modifier: Modifier = Modifier,
