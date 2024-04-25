@@ -5,7 +5,7 @@ on:
     types:
       - opened
   push:
-    branches: [ "develop_imcys", "develop"]
+    branches: [ "develop_imcys", "develop","workflow_dispatch"]
   workflow_dispatch:
 
 jobs:
@@ -45,3 +45,10 @@ jobs:
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew assembleDebug
+
+      - name: Upload build APK Debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build DBUG
+          path: |
+            ./app/build/outputs/apk/debug/*.apk
