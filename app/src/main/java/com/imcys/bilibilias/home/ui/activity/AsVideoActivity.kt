@@ -326,7 +326,7 @@ class AsVideoActivity : BaseActivity() {
     private fun loadBangumiVideoList() {
         launchIO {
 
-            val bangumiSeasonBean = networkService.n13(epid)
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
             // 获取真实的cid

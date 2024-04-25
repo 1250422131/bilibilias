@@ -306,7 +306,7 @@ class ToolFragment : BaseFragment() {
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
 
-            val bangumiSeasonBean = networkService.n25(epId)
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epId)
 
             if (bangumiSeasonBean.code == 0) {
                 bangumiSeasonBean.result.episodes.forEach { it1 ->

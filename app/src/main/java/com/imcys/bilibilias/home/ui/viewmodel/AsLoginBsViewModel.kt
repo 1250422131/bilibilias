@@ -261,7 +261,7 @@ class AsLoginBsViewModel @Inject constructor(
             kv.encode(COOKIES, cookie)
 
             // 获取用户数据
-            val userNavDataModel = networkService.n40()
+            val userNavDataModel = networkService.getUserNavData()
 
 
             // 储存
@@ -328,7 +328,7 @@ class AsLoginBsViewModel @Inject constructor(
         viewModelScope.launch {
             // 获取用户数据
 
-            val userNavDataModel = networkService.n42()
+            val userNavDataModel = networkService.getUserNavData()
 
             val biliBiliCookieInfo = BiliBiliCookieInfo(
                 userNavDataModel.data.uname,

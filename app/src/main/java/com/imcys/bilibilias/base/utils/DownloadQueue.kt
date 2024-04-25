@@ -369,7 +369,7 @@ class DownloadQueue @Inject constructor() {
         launchUI {
             val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            val videoBaseBean = networkService.n5(task.downloadTaskDataBean.bvid)
+            val videoBaseBean = networkService.getVideoBaseBean(task.downloadTaskDataBean.bvid)
             val mid = videoBaseBean.data.owner.mid
             val name = videoBaseBean.data.owner.name
             val copyright = videoBaseBean.data.copyright
@@ -532,7 +532,7 @@ class DownloadQueue @Inject constructor() {
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
-                    asToast(OkDownloadProvider.context, "合并错误")
+                    asToast(OkDownloadProvider.context, "合并错误,请删除源文件后重新下载")
                     executeTask()
                 }
 
@@ -638,103 +638,104 @@ class DownloadQueue @Inject constructor() {
         var videoEntry = App.bangumiEntry
         var videoIndex = App.videoIndex
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
-        HttpUtils.addHeader(COOKIE, cookie!!)
-            .get("${BilibiliApi.getVideoDataPath}?bvid=$bvid", VideoBaseBean::class.java) {
-                if (it.code == 0) {
-                    videoEntry = videoEntry.replace("UP主UID", it.data.owner.mid.toString())
-                    videoEntry = videoEntry.replace("UP名称", it.data.owner.name)
-                    videoEntry = videoEntry.replace("UP头像", it.data.owner.face)
-                    videoEntry = videoEntry.replace("AID编号", it.data.aid.toString())
-                    videoEntry = videoEntry.replace("BVID编号", bvid)
-                    videoEntry = videoEntry.replace("CID编号", it.data.cid.toString())
-                    videoEntry = videoEntry.replace("下载标题", it.data.title + ".mp4")
 
-                    videoEntry = videoEntry.replace("文件名称", it.data.title + ".mp4")
-                    videoEntry = videoEntry.replace("标题", it.data.title)
-                    videoEntry = videoEntry.replace("子集号", pageThisNum.toString())
-                    videoEntry = videoEntry.replace("子集索引", (pageThisNum!! - 1).toString())
-                    videoEntry = videoEntry.replace("排序号", (2000000 + pageThisNum!!).toString())
-                    videoEntry = videoEntry.replace("下载子TITLE", downloadTaskDataBean.pageTitle)
+        launchUI {
+            val videoBaseBean = networkService.getVideoBaseBean(bvid)
+            if (videoBaseBean.code == 0) {
+                videoEntry = videoEntry.replace("UP主UID", videoBaseBean.data.owner.mid.toString())
+                videoEntry = videoEntry.replace("UP名称", videoBaseBean.data.owner.name)
+                videoEntry = videoEntry.replace("UP头像", videoBaseBean.data.owner.face)
+                videoEntry = videoEntry.replace("AID编号", videoBaseBean.data.aid.toString())
+                videoEntry = videoEntry.replace("BVID编号", bvid)
+                videoEntry = videoEntry.replace("CID编号", videoBaseBean.data.cid.toString())
+                videoEntry = videoEntry.replace("下载标题", videoBaseBean.data.title + ".mp4")
 
-                    videoEntry =
-                        videoEntry.replace("LINK地址", it.data.redirect_url.replace("/", "\\/"))
+                videoEntry = videoEntry.replace("文件名称", videoBaseBean.data.title + ".mp4")
+                videoEntry = videoEntry.replace("标题", videoBaseBean.data.title)
+                videoEntry = videoEntry.replace("子集号", pageThisNum.toString())
+                videoEntry = videoEntry.replace("子集索引", (pageThisNum!! - 1).toString())
+                videoEntry = videoEntry.replace("排序号", (2000000 + pageThisNum!!).toString())
+                videoEntry = videoEntry.replace("下载子TITLE", downloadTaskDataBean.pageTitle)
 
-                    val width: Int?
-                    val timeLength: Int?
-                    val height = when (type) {
-                        VIDEO_TYPE -> {
-                            timeLength = downloadTaskDataBean.dashVideoPlayBean?.data?.timelength
-                            width = downloadTaskDataBean.videoPageDataData?.dimension?.width
-                            downloadTaskDataBean.videoPageDataData?.dimension?.height
-                        }
+                videoEntry =
+                    videoEntry.replace("LINK地址", videoBaseBean.data.redirect_url.replace("/", "\\/"))
 
-                        BANGUMI_TYPE -> {
-                            timeLength =
-                                downloadTaskDataBean.dashBangumiPlayBean?.result?.timelength
-                            width = downloadTaskDataBean.bangumiSeasonBean?.dimension?.width
-                            downloadTaskDataBean.bangumiSeasonBean?.dimension?.height
-                        }
-
-                        else -> {
-                            TODO("判断错误")
-                        }
+                val width: Int?
+                val timeLength: Int?
+                val height = when (type) {
+                    VIDEO_TYPE -> {
+                        timeLength = downloadTaskDataBean.dashVideoPlayBean?.data?.timelength
+                        width = downloadTaskDataBean.videoPageDataData?.dimension?.width
+                        downloadTaskDataBean.videoPageDataData?.dimension?.height
                     }
-                    videoEntry = videoEntry.replace("高度", height.toString())
-                    videoEntry = videoEntry.replace("宽度", width.toString())
-                    videoEntry = videoEntry.replace("QN编码", downloadTaskDataBean.qn)
-                    videoEntry = if (downloadTaskDataBean.qn == "112") {
-                        videoEntry.replace(
-                            "码率",
-                            "高码率",
+
+                    BANGUMI_TYPE -> {
+                        timeLength =
+                            downloadTaskDataBean.dashBangumiPlayBean?.result?.timelength
+                        width = downloadTaskDataBean.bangumiSeasonBean?.dimension?.width
+                        downloadTaskDataBean.bangumiSeasonBean?.dimension?.height
+                    }
+
+                    else -> {
+                        TODO("判断错误")
+                    }
+                }
+                videoEntry = videoEntry.replace("高度", height.toString())
+                videoEntry = videoEntry.replace("宽度", width.toString())
+                videoEntry = videoEntry.replace("QN编码", downloadTaskDataBean.qn)
+                videoEntry = if (downloadTaskDataBean.qn == "112") {
+                    videoEntry.replace(
+                        "码率",
+                        "高码率",
+                    )
+                } else {
+                    videoEntry.replace("码率", "")
+                }
+
+                videoEntry = videoEntry.replace("总时间", timeLength.toString())
+
+                videoEntry = videoEntry.replace("弹幕数量", videoBaseBean.data.stat.danmaku.toString())
+                videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
+
+                val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
+                val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
+
+                videoEntry = videoEntry.replace("封面地址", videoBaseBean.data.pic.replace("/", "\\/"))
+                videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
+                videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
+                videoIndex = videoIndex.replace("高度", height.toString())
+                videoIndex = videoIndex.replace("宽度", width.toString())
+                videoEntry = videoEntry.replace("清晰度", displayDesc!!)
+                videoIndex = videoIndex.replace("QN编码", downloadTaskDataBean.qn)
+                videoIndex = videoIndex.replace("音频大小", dashAudioSize.toString())
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    if (type == BANGUMI_TYPE) {
+                        safImpVideo(
+                            videoTask[0],
+                            videoTask[0].savePath,
+                            audioTask[0].savePath,
+                            videoEntry,
+                            videoIndex,
+                            downloadTaskDataBean,
+                            videoBaseBean,
                         )
-                    } else {
-                        videoEntry.replace("码率", "")
                     }
-
-                    videoEntry = videoEntry.replace("总时间", timeLength.toString())
-
-                    videoEntry = videoEntry.replace("弹幕数量", it.data.stat.danmaku.toString())
-                    videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
-
-                    val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
-                    val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
-
-                    videoEntry = videoEntry.replace("封面地址", it.data.pic.replace("/", "\\/"))
-                    videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
-                    videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
-                    videoIndex = videoIndex.replace("高度", height.toString())
-                    videoIndex = videoIndex.replace("宽度", width.toString())
-                    videoEntry = videoEntry.replace("清晰度", displayDesc!!)
-                    videoIndex = videoIndex.replace("QN编码", downloadTaskDataBean.qn)
-                    videoIndex = videoIndex.replace("音频大小", dashAudioSize.toString())
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        if (type == BANGUMI_TYPE) {
-                            safImpVideo(
-                                videoTask[0],
-                                videoTask[0].savePath,
-                                audioTask[0].savePath,
-                                videoEntry,
-                                videoIndex,
-                                downloadTaskDataBean,
-                                it,
-                            )
-                        }
-                    } else {
-                        if (type == BANGUMI_TYPE) {
-                            fileImpVideo(
-                                videoTask[0],
-                                videoTask[0].savePath,
-                                audioTask[0].savePath,
-                                videoEntry,
-                                videoIndex,
-                                downloadTaskDataBean,
-                                it,
-                            )
-                        }
+                } else {
+                    if (type == BANGUMI_TYPE) {
+                        fileImpVideo(
+                            videoTask[0],
+                            videoTask[0].savePath,
+                            audioTask[0].savePath,
+                            videoEntry,
+                            videoIndex,
+                            downloadTaskDataBean,
+                            videoBaseBean,
+                        )
                     }
                 }
             }
+        }
     }
 
     private fun fileImpVideo(
@@ -852,7 +853,7 @@ class DownloadQueue @Inject constructor() {
 
             val saf = DocumentFile.fromTreeUri(OkDownloadProvider.context, Uri.parse(appDataUri))
 
-            var biliBiliDocument = saf?.findFile("download") ?: run {
+            val biliBiliDocument = saf?.findFile("download") ?: run {
                 saf?.createDirectory("download")
             }
 
@@ -862,12 +863,12 @@ class DownloadQueue @Inject constructor() {
             val epid = if (epRegex.containsMatchIn(epidUrl)) {
                 epRegex.find(
                     epidUrl,
-                )?.value!!.toInt()
+                )?.value!!.toLong()
             } else {
                 TODO()
             }
 
-            val bangumiSeasonBean = networkService.n7(epid)
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
 
             val ssid = bangumiSeasonBean.result.season_id
             videoEntry =
