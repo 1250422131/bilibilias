@@ -56,9 +56,8 @@ fun HomeContent(
     exitLogin: () -> Unit,
     homeBanner: HomeBanner,
     updateNotice: UpdateNotice,
-    modifier: Modifier,
 ) {
-    Scaffold(modifier = modifier) { innerPadding ->
+    Scaffold { innerPadding ->
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(

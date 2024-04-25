@@ -6,13 +6,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.imcys.bilibilias.feature.home.HomeRoute
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.navigation.TopLevelDestination
 
-object HomeTab : TabX() {
+object HomeTab : Tab {
 
     override val options: TabOptions
         @Composable
@@ -29,10 +30,9 @@ object HomeTab : TabX() {
         }
 
     @Composable
-    override fun Content(modifier: Modifier) {
+    override fun Content() {
         val context = LocalContext.current
         HomeRoute(
-            modifier = modifier,
             onSalute = {
                 val intent = Intent(context, DedicateActivity::class.java)
                 context.startActivity(intent)

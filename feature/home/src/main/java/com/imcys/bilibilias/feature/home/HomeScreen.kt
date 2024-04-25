@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun HomeRoute(modifier: Modifier, onSalute: () -> Unit, onDonation: () -> Unit) {
+fun HomeRoute(onSalute: () -> Unit, onDonation: () -> Unit) {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.homeUiState.collectAsState()
     HomeScreen(
@@ -15,7 +15,6 @@ fun HomeRoute(modifier: Modifier, onSalute: () -> Unit, onDonation: () -> Unit) 
         onDonation,
         viewModel::exitAccountLogin,
         uiState,
-        modifier
     )
 }
 
@@ -25,7 +24,6 @@ internal fun HomeScreen(
     onDonation: () -> Unit,
     exitLogin: () -> Unit,
     uiState: HomeUiState,
-    modifier: Modifier
 ) {
     when (uiState) {
         HomeUiState.Empty,
@@ -37,7 +35,6 @@ internal fun HomeScreen(
             exitLogin,
             uiState.homeBanner,
             uiState.updateNotice,
-            modifier
         )
     }
 }

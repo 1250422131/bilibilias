@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun UserRoute(modifier: Modifier) {
+fun UserRoute() {
     Scaffold { innerPading ->
         Column(
             modifier = Modifier.padding(innerPading),
