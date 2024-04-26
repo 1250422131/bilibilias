@@ -44,11 +44,11 @@ fun restoreVideoNameRule() {
     }
 }
 
-fun get下载路径(): String? {
+fun get保存路径(): String? {
     return getDefaultSharedPreferences().getString("user_download_save_uri_path", null)
 }
 
-fun set下载路径(path: String) {
+fun set保存路径(path: String) {
     edit {
         putString("user_download_save_uri_path", path)
     }
