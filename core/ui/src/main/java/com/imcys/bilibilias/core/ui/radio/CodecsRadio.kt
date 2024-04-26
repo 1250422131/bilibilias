@@ -17,49 +17,31 @@ fun CodecsRadioGroup(codecsState: CodecsState) {
             selected = codecsState.current == Codecs.AV1,
             onClick = { codecsState.current = Codecs.AV1 },
             text = { Text(text = "AV1") },
-            enable = codecsState.enableAV1
+            enable = true
         )
         AsRadioButton(
             selected = codecsState.current == Codecs.H265,
             onClick = { codecsState.current = Codecs.H265 },
             text = { Text(text = "H265") },
-            enable = codecsState.enableH265
+            enable = true
         )
         AsRadioButton(
             selected = codecsState.current == Codecs.H264,
             onClick = { codecsState.current = Codecs.H264 },
             text = { Text(text = "H264") },
-            enable = codecsState.enableH264
+            enable = true
         )
     }
 }
 
 @Composable
-fun rememberCodecsState(
-    enableAV1: Boolean,
-    enableH265: Boolean,
-    enableH264: Boolean,
-): CodecsState {
-    return remember(enableAV1, enableH265, enableH264) {
-        CodecsState(enableAV1, enableH265, enableH264)
-    }
+fun rememberCodecsState(): CodecsState {
+    return remember { CodecsState() }
 }
 
 @Stable
-class CodecsState(
-    val enableAV1: Boolean,
-    val enableH265: Boolean,
-    val enableH264: Boolean
-) {
-    var current by mutableStateOf(
-        if (enableAV1) {
-            Codecs.AV1
-        } else if (enableH265) {
-            Codecs.H265
-        } else {
-            Codecs.H264
-        }
-    )
+class CodecsState() {
+    var current by mutableStateOf(Codecs.AV1)
         internal set
 }
 

@@ -20,6 +20,8 @@ class VideoTask(
     override fun getStrategy(streamUrl: VideoStreamUrl, request: DownloadRequest): String {
         val videos = streamUrl.dash.video.groupBy { it.id }[request.format.quality]
             ?: error("没有所选清晰度")
-        return videos.single { it.codecid == request.format.codecid }.baseUrl
+        val v = videos.singleOrNull { it.codecid == request.format.codecid }
+            ?: videos.maxBy { it.codecid }
+        return v.baseUrl
     }
 }

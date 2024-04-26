@@ -111,7 +111,7 @@ class FileDownload @Inject constructor(
                 request,
                 detail.pages.single { it.cid == request.viewInfo.cid }
             )
-            persistedFile(detail, request)
+//            persistedFile(detail, request)
         }
     }
 
