@@ -72,7 +72,8 @@ fun HomeContent(
                                 addBannerLifecycleObserver(lifecycleOwner)
                                 setIndicator(CircleIndicator(context))
                             }
-                        }, modifier = Modifier
+                        },
+                        modifier = Modifier
                             .height(180.dp)
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
