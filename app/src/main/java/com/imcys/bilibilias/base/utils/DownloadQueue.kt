@@ -218,10 +218,9 @@ class DownloadQueue @Inject constructor() {
                     val totalLength = task.info?.totalLength ?: 0L
                     val progress = ((totalOffset.toFloat() / totalLength) * 100)
                     updateProgress(mTask, progress.toDouble())
-
+                    // 下载进度更新时的回调，可以在这里处理下载百分比
                     mTask.fileSize = (totalOffset / 1048576).toDouble()
                     mTask.fileDlSize = (totalLength / 1048576).toDouble()
-                    // 下载进度更新时的回调，可以在这里处理下载百分比
                 }
 
                 override fun fetchEnd(task: DownloadTask, blockIndex: Int, contentLength: Long) {
