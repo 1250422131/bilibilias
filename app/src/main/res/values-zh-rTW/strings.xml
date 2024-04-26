@@ -246,7 +246,7 @@
     <string name="user_dl_finish_automatic_merge_switch_title">緩存完成後自動合併</string>
     <string name="user_dl_finish_automatic_import_switch_off">這需要你單獨對資料夾進行授權，需要注意，只對番劇Dash下載有效果。</string>
     <string name="user_dl_finish_automatic_import_switch_on">現在下載完成後便會自動導入B站的緩存清單</string>
-    <string name="user_dl_finish_automatic_import_switch_title">緩存完成後自動導入B站</string>
+    <string name="user_dl_finish_automatic_import_switch_title">快取完成後自動導入B站</string>
     <string name="app_root_preferences_title_merge_conf">合併組態</string>
     <string name="user_dl_finish_delete_merge_switch_title">合併後删除原來音視頻檔案</string>
     <string name="user_dl_merge_cmd_editText_title">合併時的FFmpeg命令</string>
@@ -256,12 +256,12 @@
     <string name="microsoft_app_center_type_summary">這將匿名傳遞APP使用的統計資料，如：緩存使用什麼管道，FLV還是DASH，幫助我們優化APP。</string>
     <string name="microsoft_app_center_type_title">允許使用Microsoft AppCenter</string>
     <string name="baidu_statistics_type_summary">以匿名的管道上傳您的使用時長，頁面停留時間，和地區資訊，這將幫我們統計優化APP。</string>
-    <string name="baidu_statistics_type_title">以匿名的管道上傳您的使用時長，頁面停留時間，和地區資訊，這將幫我們統計優化APP。</string>
+    <string name="baidu_statistics_type_title">允許使用 百度統計</string>
     <string name="app_item_fg_user_tool_favorites">我的最愛</string>
     <string name="app_item_fg_user_tool_follow_series">追番</string>
     <string name="app_item_fg_user_tool_play_history">觀看</string>
     <string name="app_item_fg_user_tool_coin_history">投幣</string>
-    <string name="user_dl_delete_import_file_switch_title">導入後删除原來音視頻檔案</string>
+    <string name="user_dl_delete_import_file_switch_title">導入後删除原來音頻和影片檔案</string>
     <string name="app_tool_toolbar_menu_title">完成</string>
     <string name="app_tool_toolbar_menu_tooltipText">完成</string>
     <string name="app_HomeActivity_exit">再按一次退出程式</string>
@@ -270,7 +270,7 @@
     <string name="app_ToolFragment_asVideoId2">鍵入的內容不正確哦</string>
     <string name="app_ToolFragment_loadShareData">檢查是否為錯誤地址</string>
     <string name="app_LoginQRModel_goToQR">嗚哇，您好像沒有安裝Bilibili</string>
-    <string name="app_LoginQRModel_downloadLoginQR_asToast">下載完成，跳轉掃碼</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">下載完成，跳轉掃描QR碼</string>
     <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
     <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
     <string name="app_HomeFragment_loadVersionData_negativeButtonText">查看更新內容</string>
@@ -280,10 +280,10 @@
     <string name="app_root_preferences_title_theme">主題</string>
     <string name="app_root_preferences_long_title_theme">設定軟件主題</string>
     <string name="app_root_preferences_long_title_theme_tip">注意：這是實驗性功能，將持續調整。</string>
-    <string name="app_merge_video_top_ly_title">合并視頻</string>
+    <string name="app_merge_video_top_ly_title">合并影片</string>
     <string name="download_barrage">下載彈幕</string>
-    <string name="Copied">複製成功</string>
-    <string name="app_root_preferences_long_title_language">設置軟件顯示的語言</string>
-    <string name="app_root_preferences_long_title_language_tip">設置軟件顯示的語言（測試功能）</string>
+    <string name="Copied">拷貝成功</string>
+    <string name="app_root_preferences_long_title_language">設定軟體顯示的語言</string>
+    <string name="app_root_preferences_long_title_language_tip">設定軟體顯示的語言</string>
 
 </resources>

@@ -76,10 +76,6 @@ open class AbsActivity : AppCompatActivity() {
                 Locale.getDefault()
             }
 
-            "Default" -> {
-                Locale("zh")
-            }
-
             else -> Locale(language.split("-")[0], language.split("-")[1])
         }
         configuration.setLocale(locale)
