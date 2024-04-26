@@ -2,6 +2,7 @@
     alias(libs.plugins.bilibilias.android.feature)
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)
+    id("app.cash.molecule")
 }
 
 android {
@@ -11,6 +12,7 @@ android {
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.network)
+    implementation(projects.core.datastore)
 
     implementation(libs.coil.compose)
 
