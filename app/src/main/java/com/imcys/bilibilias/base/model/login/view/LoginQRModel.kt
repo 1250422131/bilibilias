@@ -168,7 +168,7 @@ class LoginQRModel @Inject constructor(
     fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
         val kv = MMKV.mmkvWithID("data")
 
-        kv.encode("refreshToken", loginStateBean.data.refresh_token)
+        kv.encode("refreshToken", loginStateBean.data.refreshToken)
 
         var cookies = ""
         // 创建 Pattern 对象
@@ -195,7 +195,7 @@ class LoginQRModel @Inject constructor(
         }
         kv.apply {
             encode(COOKIES, cookies)
-            encode("refreshToken", loginStateBean.data.refresh_token)
+            encode("refreshToken", loginStateBean.data.refreshToken)
         }
     }
 }

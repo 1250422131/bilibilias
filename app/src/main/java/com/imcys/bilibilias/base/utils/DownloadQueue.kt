@@ -9,7 +9,9 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.app.App.Companion.context
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.network.NetworkService
@@ -242,7 +244,7 @@ class DownloadQueue @Inject constructor() {
                         updateAdapter()
                         // 执行下一个任务
                         executeTask()
-                        Log.d("TAG", "下载失败问题:${realCause.message} ")
+                        Log.d("TAG", context.getString(R.string.app_download_queue_error_text) + " ${realCause.message} ")
 
                         return
                     }
@@ -411,8 +413,9 @@ class DownloadQueue @Inject constructor() {
         tName: String?,
     ) {
         // 通知缓存成功
-        Analytics.trackEvent("缓存成功")
-        StatService.onEvent(OkDownloadProvider.context, "CacheSuccessful", "缓存成功")
+        Analytics.trackEvent(context.getString(R.string.app_download_queue_cachesuccessful))
+        // Need to translate ?
+        StatService.onEvent(OkDownloadProvider.context, "CacheSuccessful", context.getString(R.string.app_download_queue_cachesuccessful))
 
         launchIO {
             val sharedPreferences =
@@ -537,6 +540,8 @@ class DownloadQueue @Inject constructor() {
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
+                    asToast(OkDownloadProvider.context,
+                        context.getString(R.string.app_download_queue_merge_error))
                     FileUtils.deleteFile(videoPath)
                     FileUtils.deleteFile(audioPath)
                     FileUtils.deleteFile(videoPath + "_merge.mp4")
@@ -548,6 +553,8 @@ class DownloadQueue @Inject constructor() {
                 }
 
                 override fun onFinish() {
+                    asToast(OkDownloadProvider.context,
+                        context.getString(R.string.app_download_queue_merge_finish))
                     runOnUiThread {
                         asToast(OkDownloadProvider.context, "合并完成")
                     }
@@ -626,6 +633,7 @@ class DownloadQueue @Inject constructor() {
             bvid = this.bvid
             type = BANGUMI_TYPE
             // av过滤
+            // No need to translate ?
             val pageRegex = Regex("""(?<=(第))([0-9]+)""")
             pageThisNum = if (pageRegex.containsMatchIn(share_copy)) {
                 pageRegex.find(
@@ -1148,7 +1156,6 @@ class DownloadQueue @Inject constructor() {
                     }
                 }
             }
-
         }
     }
 

@@ -13,7 +13,7 @@
 
 ---
 
-**Language:**
+**Languages:**
 
 - [English (United States)](./README-en_US.md)
 - [简体中文](./README.md)

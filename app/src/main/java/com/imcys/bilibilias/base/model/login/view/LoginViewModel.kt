@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModel
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.asToast
 
 class LoginViewModel : ViewModel() {
@@ -27,7 +29,7 @@ class LoginViewModel : ViewModel() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun biliAgreement(context: Context) {
-        asToast(context, "无论如何，你都在间接使用B站")
+        asToast(context, context.getString(R.string.app_login_view_biliagreement_context))
 
         val lLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -58,8 +60,8 @@ class LoginViewModel : ViewModel() {
         AlertDialog.Builder(context).apply {
             setView(lLayout)
             setCancelable(false)
-            setTitle("B站账户需要遵守的协议列表")
-            setPositiveButton("使用则代表同意") { dialog, _ ->
+            setTitle(context.getString(R.string.app_login_view_biliagreement_alert_title))
+            setPositiveButton(context.getString(R.string.app_login_view_biliagreement_alert_button_text)) { dialog, _ ->
                 privacy.destroy()
                 dialog.cancel()
             }
@@ -92,9 +94,9 @@ class LoginViewModel : ViewModel() {
         val builder = AlertDialog.Builder(context)
         builder.setView(lLayout)
         builder.setCancelable(false)
-        builder.setTitle("BILIBILIAS隐私政策")
+        builder.setTitle(context.getString(R.string.app_login_view_bilibiliasagreement_title))
         builder.setPositiveButton(
-            "使用则代表同意",
+            context.getString(R.string.app_login_view_bilibiliasagreement_text),
         ) { dialog, which ->
             dialog.cancel()
         }
