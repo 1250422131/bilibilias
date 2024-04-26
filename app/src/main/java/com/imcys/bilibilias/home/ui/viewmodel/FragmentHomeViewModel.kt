@@ -26,7 +26,7 @@ class FragmentHomeViewModel : ViewModel() {
     }
 
     fun goToNewVersionDoc(view: View) {
-        val uri = Uri.parse("https://docs.qq.com/doc/DVXZNWUVFakxEQ2Va")
+        val uri = Uri.parse("https://docs.qq.com/doc/p/3f995a45e0beb636caded8a294765393ffdd3708?u=1d3c4bb00b04452ca23e45fb683db0bc")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }

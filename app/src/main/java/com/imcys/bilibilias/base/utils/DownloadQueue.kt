@@ -33,6 +33,7 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
@@ -44,6 +45,8 @@ import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.utils.HandlerUtils
+import com.microsoft.appcenter.utils.HandlerUtils.runOnUiThread
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.Dispatchers
@@ -60,9 +63,6 @@ import java.util.regex.Pattern
 import java.util.zip.Inflater
 import javax.inject.Inject
 import javax.inject.Singleton
-
-
-
 
 
 const val FLV_FILE = 1
@@ -271,6 +271,7 @@ class DownloadQueue @Inject constructor() {
                         videoDataSubmit(mTask)
                         updatePhotoMedias(OkDownloadProvider.context, File(mTask.savePath))
                         updateAdapter()
+
                     }
                     // 执行下一个任务
                     executeTask()
@@ -321,7 +322,10 @@ class DownloadQueue @Inject constructor() {
                 "/storage/emulated/0/" + documentFile!!.uri.path?.replace(
                     Regex("/tree/.*:"),
                     ""
-                )!! + task.savePath.replace("/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download","")
+                )!! + task.savePath.replace(
+                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                    ""
+                )
             }
 
             val downloadFinishTaskInfo = DownloadFinishTaskInfo(
@@ -334,7 +338,8 @@ class DownloadQueue @Inject constructor() {
                 fileType = task.fileType,
             )
 
-            val downloadFinishTaskDao = AppDatabase.getDatabase(OkDownloadProvider.context).downloadFinishTaskDao()
+            val downloadFinishTaskDao =
+                AppDatabase.getDatabase(OkDownloadProvider.context).downloadFinishTaskDao()
 
             // 协程提交
             DownloadFinishTaskRepository(downloadFinishTaskDao).apply {
@@ -410,7 +415,8 @@ class DownloadQueue @Inject constructor() {
         StatService.onEvent(OkDownloadProvider.context, "CacheSuccessful", "缓存成功")
 
         launchIO {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+            val sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
             val microsoftAppCenterType =
                 sharedPreferences.getBoolean("microsoft_app_center_type", true)
             val baiduStatisticsType =
@@ -531,18 +537,27 @@ class DownloadQueue @Inject constructor() {
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
-                    asToast(OkDownloadProvider.context, "合并错误,请删除源文件后重新下载")
+                    FileUtils.deleteFile(videoPath)
+                    FileUtils.deleteFile(audioPath)
+                    FileUtils.deleteFile(videoPath + "_merge.mp4")
+
+                    runOnUiThread {
+                        asToast(OkDownloadProvider.context, "合并错误,请重新下载，已经删除下载文件。")
+                    }
                     executeTask()
                 }
 
                 override fun onFinish() {
-                    asToast(OkDownloadProvider.context, "合并完成")
+                    runOnUiThread {
+                        asToast(OkDownloadProvider.context, "合并完成")
+                    }
                     // 删除合并文件
                     val deleteMergeSatae =
-                        PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context).getBoolean(
-                            "user_dl_finish_delete_merge_switch",
-                            true,
-                        )
+                        PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                            .getBoolean(
+                                "user_dl_finish_delete_merge_switch",
+                                true,
+                            )
                     if (deleteMergeSatae) {
                         FileUtils.deleteFile(videoPath)
                         FileUtils.deleteFile(audioPath)
@@ -657,7 +672,10 @@ class DownloadQueue @Inject constructor() {
                 videoEntry = videoEntry.replace("下载子TITLE", downloadTaskDataBean.pageTitle)
 
                 videoEntry =
-                    videoEntry.replace("LINK地址", videoBaseBean.data.redirect_url.replace("/", "\\/"))
+                    videoEntry.replace(
+                        "LINK地址",
+                        videoBaseBean.data.redirect_url.replace("/", "\\/")
+                    )
 
                 val width: Int?
                 val timeLength: Int?
@@ -693,13 +711,15 @@ class DownloadQueue @Inject constructor() {
 
                 videoEntry = videoEntry.replace("总时间", timeLength.toString())
 
-                videoEntry = videoEntry.replace("弹幕数量", videoBaseBean.data.stat.danmaku.toString())
+                videoEntry =
+                    videoEntry.replace("弹幕数量", videoBaseBean.data.stat.danmaku.toString())
                 videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
 
                 val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
                 val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
 
-                videoEntry = videoEntry.replace("封面地址", videoBaseBean.data.pic.replace("/", "\\/"))
+                videoEntry =
+                    videoEntry.replace("封面地址", videoBaseBean.data.pic.replace("/", "\\/"))
                 videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
                 videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
                 videoIndex = videoIndex.replace("高度", height.toString())
@@ -753,86 +773,79 @@ class DownloadQueue @Inject constructor() {
         val epid = if (epRegex.containsMatchIn(epidUrl)) {
             epRegex.find(
                 epidUrl,
-            )?.value!!.toInt()
+            )?.value!!.toLong()
         } else {
             TODO()
         }
-        HttpUtils.get(
-            "${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid",
-            BangumiSeasonBean::class.java,
-        ) {
-            val ssid = it.result.season_id
-            videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
+        launchUI {
+
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
+
+            val ssid = bangumiSeasonBean.result.season_id
+            videoEntry =
+                videoEntry.replace("SSID编号", (bangumiSeasonBean.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            HttpUtils.addHeader(COOKIE, cookie!!)
-                .get(
-                    "${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
-                    object : okhttp3.Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-                        }
 
-                        override fun onResponse(call: Call, response: Response) {
-                            BaseApplication.handler.post {
-                                val bufferedSink: BufferedSink?
-                                val dest =
-                                    File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/danmaku.json")
-                                if (!dest.exists()) dest.createNewFile()
-                                val sink = dest.sink() // 打开目标文件路径的sink
-                                val decompressBytes =
-                                    decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-                                bufferedSink = sink.buffer()
-                                decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-                                bufferedSink.close()
+            val danmakuByte = networkService.getDanmuBytes(downloadTaskDataBean.cid)
 
-                                FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/entry.json",
-                                    videoEntry,
-                                )
-                                FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/index.json",
-                                    videoIndex,
-                                )
+            BaseApplication.handler.post {
+                val bufferedSink: BufferedSink?
+                val dest =
+                    File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/danmaku.json")
+                if (!dest.exists()) dest.createNewFile()
+                val sink = dest.sink() // 打开目标文件路径的sink
+                val decompressBytes =
+                    decompress(danmakuByte) // 调用解压函数进行解压，返回包含解压后数据的byte数组
+                bufferedSink = sink.buffer()
+                decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
+                bufferedSink.close()
 
-                                AppFilePathUtils.copyFile(
-                                    videoPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
-                                )
-                                AppFilePathUtils.copyFile(
-                                    audioPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
-                                )
-
-                                val impFileDeleteState =
-                                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                                        .getBoolean(
-                                            "user_dl_delete_import_file_switch",
-                                            true,
-                                        )
-
-                                if (impFileDeleteState) {
-                                    FileUtils.deleteFile(videoPath)
-                                    FileUtils.deleteFile(audioPath)
-                                    task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
-                                    // 分别储存两次下载结果
-                                    saveFinishTask(task)
-                                    task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
-                                    task.fileType = 1
-                                    saveFinishTask(task)
-                                } else {
-                                    // 分别储存两次下载结果
-                                    saveFinishTask(task)
-                                    task.savePath = audioPath
-                                    task.fileType = 1
-                                    saveFinishTask(task)
-                                }
-                            }
-                        }
-                    },
+                FileUtils.fileWrite(
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/entry.json",
+                    videoEntry,
                 )
+                FileUtils.fileWrite(
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/index.json",
+                    videoIndex,
+                )
+
+                AppFilePathUtils.copyFile(
+                    videoPath,
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
+                )
+                AppFilePathUtils.copyFile(
+                    audioPath,
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
+                )
+
+                val impFileDeleteState =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                        .getBoolean(
+                            "user_dl_delete_import_file_switch",
+                            true,
+                        )
+
+                if (impFileDeleteState) {
+                    FileUtils.deleteFile(videoPath)
+                    FileUtils.deleteFile(audioPath)
+                    task.savePath =
+                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
+                    // 分别储存两次下载结果
+                    saveFinishTask(task)
+                    task.savePath =
+                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
+                    task.fileType = 1
+                    saveFinishTask(task)
+                } else {
+                    // 分别储存两次下载结果
+                    saveFinishTask(task)
+                    task.savePath = audioPath
+                    task.fileType = 1
+                    saveFinishTask(task)
+                }
+            }
+
         }
     }
 
@@ -847,8 +860,9 @@ class DownloadQueue @Inject constructor() {
     ) {
         launchIO {
             var videoEntry = videoEntry
-            val appDataUri = PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                .getString("AppDataUri", "")
+            val appDataUri =
+                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                    .getString("AppDataUri", "")
 
             val saf = DocumentFile.fromTreeUri(OkDownloadProvider.context, Uri.parse(appDataUri))
 
@@ -898,12 +912,8 @@ class DownloadQueue @Inject constructor() {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex,
             )
-            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+            val danmakuByte = networkService.getDanmuBytes(downloadTaskDataBean.cid)
 
-            val asyncResponse = HttpUtils.addHeader(COOKIE, cookie!!)
-                .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
-
-            val response = asyncResponse.await()
 
             val bufferedSink: BufferedSink?
             val dest = File(
@@ -913,7 +923,7 @@ class DownloadQueue @Inject constructor() {
             if (!dest.exists()) dest.createNewFile()
             val sink = dest.sink() // 打开目标文件路径的sink
             val decompressBytes =
-                decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
+                decompress(danmakuByte) // 调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
             decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
             withContext(Dispatchers.IO) {
@@ -962,10 +972,11 @@ class DownloadQueue @Inject constructor() {
             }
 
             val impFileDeleteState =
-                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context).getBoolean(
-                    "user_dl_delete_import_file_switch",
-                    true,
-                )
+                PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                    .getBoolean(
+                        "user_dl_delete_import_file_switch",
+                        true,
+                    )
 
             if (impFileDeleteState) {
                 FileUtils.deleteFile(videoPath)
@@ -1090,51 +1101,54 @@ class DownloadQueue @Inject constructor() {
 
 
     private fun moveFileToDlUriPath(oldPath: String) {
-        launchIO {
-            val sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-            val saveUriPath = sharedPreferences.getString(
-                    "user_download_save_uri_path",
-                    null,
-            )
+        val sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+        val saveUriPath = sharedPreferences.getString(
+            "user_download_save_uri_path",
+            null,
+        )
 
-            if (saveUriPath != null) {
-                var dlFileDocument = DocumentFile.fromTreeUri(
-                        OkDownloadProvider.context,
-                        Uri.parse(saveUriPath)
-                )!!
+        if (saveUriPath != null) {
+            var dlFileDocument = DocumentFile.fromTreeUri(
+                OkDownloadProvider.context,
+                Uri.parse(saveUriPath)
+            )!!
 
-                val docList = oldPath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
-                        ""
-                ).split("/")
+            val docList = oldPath.replace(
+                "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                ""
+            ).split("/")
 
-                docList.forEachIndexed { index, name ->
-                    // 是不是最后尾部
-                    if (index != docList.size - 1) {
-                        dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
-                            dlFileDocument.createDirectory(name)!!
-                        } else {
-                            dlFileDocument.findFile(name)!!
-                        }
+            docList.forEachIndexed { index, name ->
+                // 是不是最后尾部
+                if (index != docList.size - 1) {
+                    dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
+                        dlFileDocument.createDirectory(name)!!
                     } else {
-                        dlFileDocument =
-                                dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
-                       val copyResult =  AppFilePathUtils.copySafFile(
-                                oldPath,
-                                dlFileDocument.uri,
-                                OkDownloadProvider.context
-                        )
+                        dlFileDocument.findFile(name)!!
+                    }
+                } else {
+                    dlFileDocument =
+                        dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
+                    val copyResult = AppFilePathUtils.copySafFile(
+                        oldPath,
+                        dlFileDocument.uri,
+                        OkDownloadProvider.context
+                    )
 
-                        if (copyResult) {
-                            FileUtils.deleteFile(oldPath)
-                        }else{
-                            launchUI { asToast(OkDownloadProvider.context,"移动失败，文件会被保留在原路径") }
+                    if (copyResult) {
+                        FileUtils.deleteFile(oldPath)
+                    } else {
+                        launchUI {
+                            asToast(
+                                OkDownloadProvider.context,
+                                "移动失败，文件会被保留在原路径"
+                            )
                         }
                     }
                 }
-
             }
+
         }
     }
 
