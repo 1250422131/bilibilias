@@ -164,7 +164,7 @@
     <string name="app_activity_bangumi_follow_title">追番</string>
     <string name="app_activity_collection_title">收藏</string>
     <string name="app_activity_dedicate_title">致敬</string>
-    <string name="app_activity_donate_title">捐款</string>
+    <string name="app_activity_donate_title">赞助</string>
     <string name="app_activity_play_history_title">播放历史</string>
     <string name="app_fragment_tool_input_tip">输入BV/AV/EP号</string>
     <string name="app_fragment_download_task_tab_downloading_title">正在下载</string>
@@ -304,8 +304,8 @@
     <string name="download_barrage">下载弹幕</string>
     <string name="Copied">复制成功</string>
     <string name="app_root_preferences_long_title_language">设置软件显示的语言</string>
-    <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言（测试功能）</string>
-    <string name="app_donate_tip_title">为其他参与者捐款</string>
+    <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言</string>
+    <string name="app_donate_tip_title">为其他参与者赞助</string>
     <string name="app_donate_tip_long_title">现在你有更多选择</string>
     <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
     <string name="app_donate_tip_link" />
