@@ -207,20 +207,20 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
             viewModelScope.launchIO {
-                val response =
-                    HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
+                val danmakuByte = networkService.getDanmuBytes((context as AsVideoActivity).cid)
+
 
                 when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
                     R.id.dialog_dl_dm_ass -> {
                         saveAssDanmaku(
                             context,
-                            response.await().body!!.bytes(),
+                            danmakuByte,
                             videoBaseBean,
                         )
                     }
 
                     R.id.dialog_dl_dm_xml -> {
-                        saveDanmaku(context, response.await().body!!.bytes(), videoBaseBean)
+                        saveDanmaku(context, danmakuByte, videoBaseBean)
                     }
 
                     else -> throw Exception("意外的选项")
