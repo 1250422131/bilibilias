@@ -29,7 +29,7 @@ internal object CoroutineScopesModule {
     ): CoroutineScope =
         CoroutineScope(
             SupervisorJob() + dispatcher + CoroutineExceptionHandler { _, throwable ->
-                Napier.w(throwable) { throwable.message ?: "发生错误" }
+                Napier.w(throwable, tag = "AsCoroutineScope") { throwable.message ?: "发生错误" }
             }
         )
 }

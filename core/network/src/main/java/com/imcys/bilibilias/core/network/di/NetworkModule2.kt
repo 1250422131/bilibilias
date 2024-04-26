@@ -19,7 +19,10 @@ import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.imcys.bilibilias.core.network.api.BilibiliApi
-import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogLevel
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogger
+import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogging
 import com.imcys.bilibilias.core.network.utils.WBIUtils
 import dagger.Module
 import dagger.Provides
@@ -27,6 +30,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
@@ -40,10 +44,6 @@ import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.ANDROID
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.parameter
@@ -60,9 +60,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Cache
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
 import java.io.File
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlin.reflect.typeOf
@@ -104,7 +106,7 @@ class NetworkModule2 {
     @Provides
     @Singleton
     fun provideBaseOkhttpClient(
-//        executorService: ExecutorService,
+        executorService: ExecutorService,
         @ApplicationContext context: Context
     ): OkHttpClient =
         OkHttpClient.Builder()
@@ -118,7 +120,7 @@ class NetworkModule2 {
             }
             .addInterceptor(BrotliInterceptor)
             .pingInterval(1, TimeUnit.SECONDS)
-//            .dispatcher(Dispatcher(executorService))
+            .dispatcher(Dispatcher(executorService))
             .cache(Cache(File(context.cacheDir.path, "okhttp_cache"), 1024 * 1024 * 50))
             .addInterceptor(MonitorInterceptor())
             .build()
@@ -126,10 +128,9 @@ class NetworkModule2 {
     @Singleton
     @Provides
     fun provideHttpClient(
-//        httpClientEngine: HttpClientEngine,
+        asLogger: JsonAwareLogger,
         json: Json,
         transform: ClientPlugin<Unit>,
-        asLogger: Logger,
         asCookiesStorage: AsCookiesStorage,
         loginInfoDataSource: LoginInfoDataSource,
         okHttpClient: OkHttpClient
@@ -142,11 +143,14 @@ class NetworkModule2 {
             }
             BrowserUserAgent()
             addDefaultResponseValidation()
-            Logging {
-                logger = Logger.Companion.ANDROID
-                level = LogLevel.BODY
+            JsonAwareLogging {
+                logger = asLogger
+                level = JsonAwareLogLevel.BODY
+                filter {
+                    it.url.host == BilibiliApi.API_HOST ||
+                        it.url.host == BiliBiliAsApi.API_HOST
+                }
             }
-
             install(HttpCookies) {
                 storage = asCookiesStorage
             }

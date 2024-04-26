@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,20 +38,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
+import com.imcys.bilibilias.core.download.task.AsDownloadTask
+import com.liulishuo.okdownload.kotlin.DownloadProgress
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DownloadRoute(modifier: Modifier) {
     val viewModel: DownloadViewModel = hiltViewModel()
-    val uiState by viewModel.allTaskFlow.collectAsState()
-    DownloadScreen(uiState, viewModel::cancel)
+    val taskQueue by viewModel.taskFlow.collectAsState()
+    DownloadScreen(taskQueue, onCancel = viewModel::onCancle)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DownloadScreen(uiState: List<TaskState>, onCancel: (TaskState) -> Unit) {
+internal fun DownloadScreen(
+    uiState: ImmutableList<AsDownloadTask>,
+    onCancel: (AsDownloadTask) -> Unit
+) {
     var edit by remember { mutableStateOf(false) }
+    var openConfirmationWindow by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,9 +74,13 @@ internal fun DownloadScreen(uiState: List<TaskState>, onCancel: (TaskState) -> U
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            items(uiState, { it.type.toString() + it.bvid + it.cid }) { item ->
-                TaskItem(item) {
+            items(
+                uiState,
+                { it.fileType.toString() + it.viewInfo.bvid + it.viewInfo.cid }
+            ) { item ->
+                DownloadTaskItem(item) {
                     onCancel(item)
+                    openConfirmationWindow = true
                 }
             }
         }
@@ -75,7 +88,33 @@ internal fun DownloadScreen(uiState: List<TaskState>, onCancel: (TaskState) -> U
 }
 
 @Composable
-fun TaskItem(state: TaskState, onCancel: () -> Unit) {
+fun ConfirmDeleteTaskDialog(
+    isShow: Boolean,
+    onconfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isShow) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                AsButton(onClick = onconfirm) {
+                    Text("确定")
+                }
+            },
+            modifier = modifier,
+            dismissButton = {
+                AsButton(onClick = onDismiss) {
+                    Text("取消")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun DownloadTaskItem(task: AsDownloadTask, onCancel: () -> Unit) {
+    var isShow by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .padding(8.dp)
@@ -87,12 +126,12 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
                 .padding(8.dp)
                 .size(80.dp)
                 .clip(shape = RoundedCornerShape(16.dp))
-                .background(Color(251, 114, 153)),
+                .background(MaterialTheme.colorScheme.primary),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = state.type.toString(),
+                text = task.fileType.toString(),
                 modifier = Modifier,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -109,7 +148,7 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = state.title,
+                    text = task.viewInfo.title,
                     modifier = Modifier,
                     maxLines = 1,
                     fontSize = 16.sp
@@ -118,19 +157,18 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier, verticalArrangement = Arrangement.SpaceBetween) {
                     Text(
-                        text = "正在下载",
+                        text = "",
                         modifier = Modifier,
                         color = Color.LightGray
                     )
                     Text(
-                        text = state.cid.toString(),
+                        text = task.viewInfo.cid.toString(),
                         modifier = Modifier,
                         color = Color.LightGray
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = onCancel) {
-                    AsIcons
+                IconButton(onClick = { isShow = true }) {
                     Icon(
                         AsIcons.Delete,
                         contentDescription = "删除",
@@ -142,12 +180,17 @@ fun TaskItem(state: TaskState, onCancel: () -> Unit) {
                 modifier = Modifier
                     .weight(1f, false)
                     .fillMaxWidth(),
-                progress = state.progress,
+                progress = { 0f },
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = Color(255, 210, 224)
+                trackColor = MaterialTheme.colorScheme.secondary
             )
         }
     }
+    ConfirmDeleteTaskDialog(
+        isShow = isShow,
+        onconfirm = onCancel,
+        onDismiss = { isShow = false }
+    )
 }
 
 @Composable

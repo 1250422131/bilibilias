@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.network.configration
+﻿package com.imcys.bilibilias.core.network.ktor
 
 import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
@@ -19,19 +19,15 @@ class AsCookiesStorage @Inject constructor(private val loginInfoDataSource: Logi
     override suspend fun get(requestUrl: Url): List<KtorCookie> {
         return loginInfoDataSource.cookieStore.first().values.map(AsCookie::mapToKtorCookie)
     }
+
     suspend fun getAllCookies(): String {
-        return loginInfoDataSource.cookieStore.first().values.map(AsCookie::mapToKtorCookie).toString()
+        return loginInfoDataSource.cookieStore.first().values.map(AsCookie::mapToKtorCookie)
+            .toString()
     }
+
     override fun close() = Unit
 }
 
-private fun AsCookie.mapToKtorCookie(): KtorCookie = KtorCookie(
-    name,
-    value_,
-    CookieEncoding.RAW,
-)
+private fun AsCookie.mapToKtorCookie() = KtorCookie(name, value_, CookieEncoding.RAW)
 
-private fun KtorCookie.mapToAsCookie(): AsCookie = AsCookie(
-    name,
-    value,
-)
+private fun KtorCookie.mapToAsCookie() = AsCookie(name, value)
