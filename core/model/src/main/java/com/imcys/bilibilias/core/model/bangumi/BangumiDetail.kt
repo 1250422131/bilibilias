@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.model.bangumi
 
+import com.imcys.bilibilias.core.model.user.Pendant
 import com.imcys.bilibilias.core.model.video.Rights
 import com.imcys.bilibilias.core.model.video.Stat
 import kotlinx.serialization.SerialName
@@ -286,17 +287,7 @@ data class BangumiDetail(
         val vipStatus: Int = 0,
         @SerialName("vip_type")
         val vipType: Int = 0
-    ) {
-        @Serializable
-        data class Pendant(
-            @SerialName("image")
-            val image: String = "",
-            @SerialName("name")
-            val name: String = "",
-            @SerialName("pid")
-            val pid: Int = 0
-        )
-    }
+    )
 
     @Serializable
     data class UserStatus(

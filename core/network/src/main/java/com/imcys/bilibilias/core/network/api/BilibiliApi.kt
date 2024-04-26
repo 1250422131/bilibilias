@@ -18,6 +18,7 @@ internal object BilibiliApi {
 
     const val VIEW = "x/web-interface/view"
     const val CARD = "x/web-interface/card"
+    const val SPACE_ACC_INFO = "x/space/wbi/acc/info"
 
     const val ARCHIVE_HAS_LIKE = "x/web-interface/archive/has/like"
     const val ARCHIVE_LIKE = "/x/web-interface/archive/like"
