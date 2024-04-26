@@ -16,8 +16,8 @@
 **Language:**
 
 - [English (United States)](./README-en_US.md)
-- 简体中文
-- [繁体中文(台湾)](./README-zh_TW.md)
+- [简体中文](./README.md)
+- [臺灣繁體](./README-zh_TW.md)
 
 ## 简介
 

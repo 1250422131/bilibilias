@@ -14,9 +14,9 @@
 ---
 
 **語言選擇:**
-- [English (United States)](./README-en_US.md) (英文版)
-- [简体中文](./READMEmd) (简体中文版)
-- [繁體中文(台灣)](./README-zh_TW.md) (繁體中文版-台灣)
+- [English (United States)](./README-en_US.md)
+- [简体中文](./README.md)
+- [臺灣繁體](./README-zh_TW.md)
 
 ## 簡介
 
