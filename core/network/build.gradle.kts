@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.coil.svg)
     implementation(libs.coil.video)
 
+    implementation(libs.kotlinx.atomicfu)
 //    testImplementation(libs.kotlinx.coroutines.test)
 
     implementation(libs.ktor.client.okhttp)

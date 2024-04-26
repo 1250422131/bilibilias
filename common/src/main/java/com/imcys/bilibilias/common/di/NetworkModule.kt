@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.common.di
 
 import com.imcys.bilibilias.common.base.constant.ROAM_API
-import com.imcys.bilibilias.core.network.configration.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +14,7 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -30,7 +31,6 @@ class NetworkModule {
     @Singleton
     fun provideHttpClient(
         json: Json,
-        asLogger: Logger,
         asCookiesStorage: AsCookiesStorage,
         okHttpClient: OkHttpClient
     ): HttpClient = HttpClient(OkHttp.create { preconfigured = okHttpClient }) {
@@ -55,7 +55,7 @@ class NetworkModule {
             exponentialDelay()
         }
         install(Logging) {
-            logger = asLogger
+            logger = Logger.ANDROID
             level = LogLevel.ALL
         }
     }.apply {

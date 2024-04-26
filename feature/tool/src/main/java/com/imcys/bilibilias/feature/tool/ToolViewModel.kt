@@ -8,8 +8,8 @@ import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
 import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
-import com.imcys.bilibilias.core.network.download.DownloadParameter
-import com.imcys.bilibilias.core.network.download.FileDownload
+import com.imcys.bilibilias.core.download.FileDownload
+import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
@@ -43,8 +43,8 @@ class ToolViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
 
-    fun download(parameter: DownloadParameter) {
-        fileDownload.enqueue(parameter)
+    fun download(request: DownloadRequest) {
+        fileDownload.download(request)
     }
 
     fun onSearchQueryChanged(query: String) {
