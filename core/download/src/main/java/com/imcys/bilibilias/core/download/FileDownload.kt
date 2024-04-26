@@ -13,6 +13,7 @@ import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
 import com.imcys.bilibilias.core.download.task.getState
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
