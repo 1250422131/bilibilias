@@ -9,7 +9,7 @@
 
         <variable
             name="TaskBean"
-            type="com.imcys.bilibilias.base.utils.DownloadQueue.Task" />
+            type="com.imcys.bilibilias.base.model.task.DownloadTaskInfo" />
 
     </data>
 
@@ -79,10 +79,10 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:maxLines="1"
+                                android:ellipsize="middle"
                                 android:text="@{TaskBean.downloadTaskDataBean.pageTitle}"
-                                android:textSize="18sp" />
+                                android:textSize="18sp"
+                                android:singleLine="true" />
 
                         </LinearLayout>
 
@@ -100,11 +100,11 @@
 
 
                                 <TextView
+                                    android:id="@+id/item_download_task_state"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ellipsize="end"
                                     android:maxLines="1"
-                                    android:text="@{`清晰度：`+TaskBean.downloadTaskDataBean.qn}"
                                     android:textColor="@color/color_text_hint"
                                     android:textSize="12sp" />
 

@@ -7,7 +7,7 @@
 
         <variable
             name="ItemFgUserToolViewModel"
-            type="com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.ItemFgUserToolViewModel" />
 
     </data>
 

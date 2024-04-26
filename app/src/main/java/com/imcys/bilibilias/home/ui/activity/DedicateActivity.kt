@@ -1,50 +1,161 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.databinding.ActivityDedicateBinding
-import com.imcys.bilibilias.home.ui.adapter.DedicateAdapter
 import com.imcys.bilibilias.home.ui.model.DedicateBean
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DedicateActivity : BaseActivity() {
-    lateinit var binding: ActivityDedicateBinding
 
-    @Inject
-    lateinit var adapter: DedicateAdapter
-
-
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dedicate = loadDedicate()
+        setContent {
+            val heightOffsetLimit = with(LocalDensity.current) { -64.dp.toPx() }
+            val scrollBehavior =
+                TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+            SideEffect {
+                if (scrollBehavior.state.heightOffsetLimit != heightOffsetLimit) {
+                    scrollBehavior.state.heightOffsetLimit = heightOffsetLimit
+                }
+            }
 
-        binding = DataBindingUtil.setContentView<ActivityDedicateBinding?>(
-            this,
-            R.layout.activity_dedicate
-        ).apply {
+            val heightPx = LocalDensity.current.run {
+                64.dp.toPx() + scrollBehavior.state.heightOffset
+            }
 
-            dedicateTopLy.addStatusBarTopPadding()
+            val height = LocalDensity.current.run {
+                heightPx.toDp()
+            }
+
+            Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    TopAppBar(
+                        title = { Text(text = stringResource(id = R.string.app_activity_dedicate_title)) },
+                        navigationIcon = {
+                            IconButton(onClick = { finish() }) {
+                                Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                            }
+                        },
+                        modifier = Modifier.height(height),
+                        scrollBehavior = scrollBehavior,
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                    )
+                }) { innerPadding ->
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    LazyColumn(Modifier.padding(20.dp)) {
+                        items(dedicate) {
+                            DedicateItem(it)
+                        }
+                    }
+                }
+            }
+
         }
-
-        initView()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun DedicateItem(dedicate: DedicateBean) {
+        Card(
+            onClick = {
+                if (dedicate.link.isNotBlank()) {
+                    val uri = Uri.parse(dedicate.link)
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(intent)
+                }
+            },
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
+            border = BorderStroke(2.dp, Color(0xffdedede)),
+            shape = RoundedCornerShape(10.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Row(Modifier.fillMaxSize()) {
+                Column(Modifier.padding(top = 20.dp)) {
+                    AsyncImage(
+                        model = dedicate.face, contentDescription = "头像",
+                        Modifier
+                            .padding(start = 20.dp)
+                            .size(50.dp)
+                            .clip(RoundedCornerShape(25.dp)),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
 
-    private fun initView() {
-
-        loadDedicate()
-
+                Column(Modifier.padding(20.dp)) {
+                    Text(
+                        text = dedicate.title,
+                        Modifier,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = dedicate.longTitle,
+                        Modifier.padding(top = 5.dp),
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = dedicate.doc,
+                        Modifier.padding(top = 5.dp),
+                    )
+                }
+            }
+        }
     }
 
-    private fun loadDedicate() {
-        val dedicateMutableList = mutableListOf(
+    private fun loadDedicate(): List<DedicateBean> {
+        return listOf(
             DedicateBean(
                 "BILIBILIAS捐款名单",
                 "粉丝为BILIBILIAS提供的捐款支持",
@@ -115,14 +226,7 @@ class DedicateActivity : BaseActivity() {
                 ""
             ),
         )
-        binding.apply {
-            dedicateRv.adapter = adapter
-            dedicateRv.layoutManager =
-                LinearLayoutManager(this@DedicateActivity, LinearLayoutManager.VERTICAL, false)
-            adapter.submitList(dedicateMutableList)
-        }
     }
-
 
     override fun onResume() {
         super.onResume()

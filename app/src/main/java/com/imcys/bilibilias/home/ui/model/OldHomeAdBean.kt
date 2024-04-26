@@ -1,23 +1,24 @@
 package com.imcys.bilibilias.home.ui.model
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
-
+@Serializable
 data class OldHomeAdBean(
-    @SerializedName("code")
-    val code: Int, // 0
-    @SerializedName("data")
-    val `data`: List<Data>,
-) : Serializable {
+    @SerialName("code")
+    val code: Int = 0,
+    @SerialName("data")
+    val `data`: List<Data> = emptyList(),
+) {
+    @Serializable
     data class Data(
-        @SerializedName("long_title")
+        @SerialName("long_title")
         val longTitle: String, // awa
-        @SerializedName("show_type")
+        @SerialName("show_type")
         val showType: Int, // 1
-        @SerializedName("title")
+        @SerialName("title")
         val title: String, // 老王梯子
-        @SerializedName("content")
+        @SerialName("content")
         val content: String,
-    ) : Serializable
+    )
 }

@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.home.ui.activity.tool
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,19 +8,25 @@ import android.webkit.*
 import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
-
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
 class WebAsActivity : BaseActivity() {
     private lateinit var webAsBinding: ActivityWebAsBinding
+    @Inject
+    lateinit var asCookiesStorage: AsCookiesStorage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //视图加载
+        // 视图加载
         webAsBinding =
             DataBindingUtil.setContentView<ActivityWebAsBinding?>(this, R.layout.activity_web_as)
                 .apply {
-                    //设置返回按钮可用
+                    // 设置返回按钮可用
                     setSupportActionBar(webAsMaterialToolbar)
                     supportActionBar?.apply {
                         setDisplayHomeAsUpEnabled(true)
@@ -31,15 +36,13 @@ class WebAsActivity : BaseActivity() {
                     webAsTopLy.addStatusBarTopPadding()
                 }
 
-
         loadWebView()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun loadWebView() {
         webAsBinding.apply {
-
-            //不缓存
+            // 不缓存
             webAsWebView.settings.javaScriptEnabled = true
             webAsWebView.settings.cacheMode = WebSettings.LOAD_NO_CACHE
             webAsWebView.settings.allowFileAccess = false
@@ -48,8 +51,9 @@ class WebAsActivity : BaseActivity() {
             val cookieManager = CookieManager.getInstance()
             cookieManager.setAcceptCookie(true)
             cookieManager.removeAllCookie()
-            //注入cookie
-            cookieManager.setCookie("https://bilibili.com", asUser.cookie)
+            // 注入cookie
+            println("Cookie检测${asCookiesStorage.getAllCookies()}")
+            cookieManager.setCookie("https://bilibili.com", asCookiesStorage.getAllCookies())
             cookieManager.flush()
             webAsWebView.loadUrl("https://m.bilibili.com")
 
@@ -62,7 +66,6 @@ class WebAsActivity : BaseActivity() {
                     return super.shouldOverrideUrlLoading(view, request)
                 }
             }
-
         }
     }
 
@@ -72,7 +75,7 @@ class WebAsActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //配置完成事件
+        // 配置完成事件
         when (item.itemId) {
             android.R.id.home -> finish()
             R.id.tool_web_toolbar_menu_finish -> {

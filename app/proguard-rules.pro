@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# proguardFiles setting in build.gradle.kts.
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -98,7 +98,6 @@
 -keep class cn.jzvd.JzvdStd{*; }
 -keep class com.imcys.bilibilias.common.base.view.AsJzvdStd{*; }
 -keep class com.imcys.bilibilias.base.view.AppAsJzvdStd{*; }
--keep class com.imcys.bilibilias.tool_livestream.base.view.LiveAsJzPlayer{*; }
 
 -keep class cn.jzvd.JZUtils{*; }
 
@@ -138,6 +137,11 @@
     java.lang.Object readResolve();
 }
 
+-keep class com.imcys.bilibilias.home.ui.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.base.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.common.base.model.**{*;} # 自定义数据模型的bean目录
+-keep class com.imcys.bilibilias.tool_log_export.data.**{*;} # 自定义数据模型的bean目录
+
 -dontwarn io.microshow.rxffmpeg.**
 -keep class io.microshow.rxffmpeg.**{*;}
 
@@ -167,3 +171,11 @@
 
 # 如果使用了 单类注入，即不定义接口实现 IProvider，需添加下面规则，保护实现
 # -keep class * implements com.alibaba.android.arouter.facade.template.IProvider
+
+-dontwarn com.baidu.helios.OnGetIdResultCallback
+-dontwarn com.squareup.picasso.Picasso
+-dontwarn com.squareup.picasso.RequestCreator
+-dontwarn edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean$DataBean
+-dontwarn com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean$DataBean

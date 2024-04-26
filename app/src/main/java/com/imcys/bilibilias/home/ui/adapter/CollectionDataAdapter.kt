@@ -6,10 +6,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
 import javax.inject.Inject
 
 class CollectionDataAdapter @Inject constructor() :
@@ -28,13 +29,14 @@ class CollectionDataAdapter @Inject constructor() :
         ): Boolean {
             return oldItem.bvid == newItem.bvid
         }
-
     }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<ItemCollectionWorksBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.item_collection_works, parent, false
+                R.layout.item_collection_works,
+                parent,
+                false,
             )
         return ViewHolder(binding.root)
     }
@@ -47,7 +49,7 @@ class CollectionDataAdapter @Inject constructor() :
                     val bvid = if (getItem(position).bvid != "") {
                         getItem(position).bvid
                     } else {
-                        VideoNumConversion.toBvidOffline(getItem(position).id)
+                        NewVideoNumConversionUtils.av2bv(getItem(position).id)
                     }
                     AsVideoActivity.actionStart(holder.itemView.context, bvid)
                 }

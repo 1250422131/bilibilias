@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.home.ui.adapter
 
+import android.app.Activity
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
@@ -11,10 +13,9 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemFgUserFaceBinding
 import com.imcys.bilibilias.databinding.ItemFgUserToolBinding
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
-import com.imcys.bilibilias.home.ui.model.view.ItemFgUserToolViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.ItemFgUserToolViewModel
+
 
 class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     ItemCallback<UserViewItemBean>() {
@@ -89,8 +90,8 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
             3 -> {
                 DataBindingUtil.getBinding<ItemFgUserToolBinding>(holder.itemView)?.apply {
                     //由于ItemFgUserTool 子属于 UserFragment 又依附于 HomeActivity 因此这么转换
-                    itemFgUserToolViewModel =
-                        ViewModelProvider(holder.itemView.context as HomeActivity)[ItemFgUserToolViewModel::class.java]
+
+                    itemFgUserToolViewModel = ItemFgUserToolViewModel()
                 }
             }
 

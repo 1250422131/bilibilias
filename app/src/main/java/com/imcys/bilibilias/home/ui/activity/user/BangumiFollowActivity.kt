@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityBangumiFollowBinding
 import com.imcys.bilibilias.home.ui.adapter.BangumiFollowAdapter
-import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -27,6 +30,9 @@ class BangumiFollowActivity : BaseActivity() {
 
     @Inject
     lateinit var bangumiFollowAdapter: BangumiFollowAdapter
+
+    @Inject
+    lateinit var networkService: NetworkService
     private val bangumiFollowMutableList = mutableListOf<BangumiFollowList.DataBean.ListBean>()
     private lateinit var bangumiFollowList: BangumiFollowList
 
@@ -41,51 +47,49 @@ class BangumiFollowActivity : BaseActivity() {
     }
 
     private fun initView() {
-
         initRv()
     }
 
     private fun initRv() {
-        binding.apply {
-            bangumiFollowRv.adapter = bangumiFollowAdapter
-            bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
+        launchUI {
+            binding.apply {
+                bangumiFollowRv.adapter = bangumiFollowAdapter
+                bangumiFollowRv.layoutManager = LinearLayoutManager(this@BangumiFollowActivity)
+                val mBangumiFollowList =
+                    networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
 
-            HttpUtils.addHeader("coolie", asUser.cookie).get(
-                "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=1&ps=15",
-                BangumiFollowList::class.java
-            ) {
-                if (it.code == 0) {
-                    bangumiFollowList = it
-                    bangumiFollowMutableList.addAll(it.data.list)
+                if (mBangumiFollowList.code == 0) {
+                    bangumiFollowList = mBangumiFollowList
+                    bangumiFollowMutableList.addAll(mBangumiFollowList.data.list)
                     bangumiFollowAdapter.submitList(bangumiFollowMutableList + mutableListOf())
                 }
-            }
 
-
-            bangumiFollowRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
-                        if (ceil((bangumiFollowList.data.total / 15).toDouble()) > bangumiFollowList.data.pn + 1) {
-                            loadBangumiFollow(bangumiFollowList.data.pn + 1)
+                bangumiFollowRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        if (RecyclerViewUtils.isSlideToBottom(recyclerView)) {
+                            if (ceil((bangumiFollowList.data.total / 15).toDouble()) > bangumiFollowList.data.pn + 1) {
+                                loadBangumiFollow(bangumiFollowList.data.pn + 1)
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
+
         }
     }
 
     private fun loadBangumiFollow(pn: Int) {
-        HttpUtils.get(
-            "${BilibiliApi.bangumiFollowPath}?vmid=${asUser.mid}&type=1&pn=${pn}&ps=15",
-            BangumiFollowList::class.java
-        ) {
-            if (it.code == 0) {
-                bangumiFollowList = it
-                bangumiFollowMutableList.addAll(it.data.list)
+        launchUI {
+            val mBangumiFollowList =
+                networkService.getBangumiFollow(asUser.mid, 1, pn, 15)
+            if (mBangumiFollowList.code == 0) {
+                bangumiFollowList = mBangumiFollowList
+                bangumiFollowMutableList.addAll(mBangumiFollowList.data.list)
                 bangumiFollowAdapter.submitList(bangumiFollowMutableList + mutableListOf())
             }
         }
+
     }
 
     override fun onResume() {
@@ -102,8 +106,6 @@ class BangumiFollowActivity : BaseActivity() {
         fun actionStart(context: Context) {
             val intent = Intent(context, BangumiFollowActivity::class.java)
             context.startActivity(intent)
-
         }
     }
-
 }

@@ -1,63 +1,57 @@
 package com.imcys.bilibilias.common.base.utils.http
 
-import android.util.Log
-import com.baidu.mobstat.cl
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
+import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
+import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.utils.file.SystemUtil
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.*
-import io.ktor.serialization.gson.*
-import io.ktor.util.reflect.TypeInfo
-import io.ktor.util.reflect.typeInfo
-import kotlin.reflect.KClass
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMessageBuilder
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.collections.set
 
-
-object KtHttpUtils {
-
-    var params = mutableMapOf<String, String>()
-    var headers = mutableMapOf<String, String>()
+@Singleton
+class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
+    val params = mutableMapOf<String, Any>()
+    val headers = mutableMapOf<String, String>()
 
     var setCookies = ""
 
-    val httpClient = HttpClient(OkHttp) {
-
-        expectSuccess = true
-
-        install(Logging)
-
-        install(ContentNegotiation) { gson() }
-
-        //请求失败
-        install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 2)
-            exponentialDelay()
-        }
-
-    }
-
-    suspend inline fun <reified T> asyncGet(url: String): T {
+    suspend inline fun <reified T> asyncGet(
+        url: String,
+        builder: HttpMessageBuilder.() -> Unit = {}
+    ): T {
         checkUrl(url)
         val mBean: T = httpClient.get(url) {
-            headers {
-                this@KtHttpUtils.headers.forEach {
-                    this.append(it.key, it.value)
-                }
+            builder()
+            this@KtHttpUtils.headers.forEach {
+                header(it.key, it.value)
             }
         }.body()
-        //清空
+        // 清空
         headers.clear()
 
-
         return mBean
+    }
+
+     inline fun < reified T> asyncGet(
+    ): String {
+
+
+
+        return T::class.java.simpleName
     }
 
     suspend inline fun <reified T> asyncPost(url: String): T {
@@ -67,80 +61,62 @@ object KtHttpUtils {
             url = url,
             formParameters = Parameters.build {
                 this@KtHttpUtils.params.forEach {
-                    this.append(it.key, it.value)
+                    this.append(it.key, it.value.toString())
                 }
-            }
+            },
         ) {
-            headers {
-                this@KtHttpUtils.headers.forEach {
-                    this.append(it.key, it.value)
-                }
+            this@KtHttpUtils.headers.forEach {
+                header(it.key, it.value)
             }
-
         }
-        //清空
+        // 清空
         headers.clear()
         params.clear()
         return response.body()
     }
 
-
     suspend inline fun <reified T> asyncPostJson(
         url: String,
         bodyObject: IPostBody,
     ): T {
-
         checkUrl(url)
         val response = httpClient.post(url) {
             contentType(ContentType.Application.Json)
 
             setBody(bodyObject)
-
-
-            headers {
-                this@KtHttpUtils.headers.forEach {
-                    this.append(it.key, it.value)
-                }
+            this@KtHttpUtils.headers.forEach {
+                header(it.key, it.value)
             }
-
         }
 
-        //清空
+        // 清空
         headers.clear()
-        //设置cookie
+        // 设置cookie
         // 获取所有 Set-Cookie 头部
         response.headers.getAll(HttpHeaders.SetCookie)?.forEach {
             setCookies += it
         }
 
-
         return response.body()
     }
-
 
     suspend inline fun <reified T> asyncDeleteJson(
         url: String,
         bodyObject: IPostBody,
     ): T {
-
         checkUrl(url)
         val response = httpClient.delete(url) {
             contentType(ContentType.Application.Json)
 
             setBody(bodyObject)
 
-
-            headers {
-                this@KtHttpUtils.headers.forEach {
-                    this.append(it.key, it.value)
-                }
+            this@KtHttpUtils.headers.forEach {
+                header(it.key, it.value)
             }
-
         }
 
-        //清空
+        // 清空
         headers.clear()
-
 
         return response.body()
     }
@@ -151,11 +127,10 @@ object KtHttpUtils {
      * @param value String
      * @return HttpUtils
      */
-    fun addParam(key: String, value: String): KtHttpUtils {
+    fun addParam(key: String, value: Any): KtHttpUtils {
         params[key] = value
         return this
     }
-
 
     /**
      * 添加请求头
@@ -169,11 +144,10 @@ object KtHttpUtils {
     }
 
     fun checkUrl(url: String) {
-        headers["user-agent"] = if (url in "misakamoe") {
+        headers[USER_AGENT] = if (url in "misakamoe") {
             SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
         } else {
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.54"
+            BROWSER_USER_AGENT
         }
     }
-
 }

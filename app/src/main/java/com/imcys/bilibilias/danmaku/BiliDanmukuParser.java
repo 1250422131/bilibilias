@@ -16,9 +16,9 @@ import java.io.IOException;
 import java.util.Locale;
 
 import master.flame.danmaku.danmaku.model.AlphaValue;
-
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.Duration;
+import master.flame.danmaku.danmaku.model.GlobalFlagValues;
 import master.flame.danmaku.danmaku.model.IDisplayer;
 import master.flame.danmaku.danmaku.model.android.DanmakuFactory;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
@@ -26,11 +26,6 @@ import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.danmaku.parser.android.AndroidFileSource;
 import master.flame.danmaku.danmaku.util.DanmakuUtils;
 
-/**
- * @author:imcys
- * @create: 2022-11-21 23:00
- * @Description:
- */
 
 public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseDanmakuParser {
 
@@ -123,6 +118,7 @@ public class BiliDanmukuParser extends master.flame.danmaku.danmaku.parser.BaseD
                     // int poolType = Integer.parseInt(values[5]); // 弹幕池类型（忽略
                     item = mContext.mDanmakuFactory.createDanmaku(type, mContext);
                     if (item != null) {
+                        item.flags = new GlobalFlagValues();
                         item.setTime(time);
                         item.textSize = textSize * (mDispDensity - 0.6f);
                         item.textColor = color;

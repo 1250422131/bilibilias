@@ -7,7 +7,7 @@
 
         <variable
             name="FragmentHomeViewModel"
-            type="com.imcys.bilibilias.home.ui.model.view.FragmentHomeViewModel" />
+            type="com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel" />
 
     </data>
 
@@ -380,11 +380,11 @@
                             tools:ignore="UnusedAttribute">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
+                               android:id="@+id/fragment_home_loginout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="?attr/colorPrimary"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->FragmentHomeViewModel.logoutLogin(view)}"
                                 android:orientation="vertical"
                                 android:padding="20dp">
 

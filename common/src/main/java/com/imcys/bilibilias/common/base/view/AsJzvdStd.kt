@@ -16,7 +16,7 @@ import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.R
 import com.microsoft.appcenter.analytics.Analytics
 import master.flame.danmaku.controller.IDanmakuView
@@ -139,7 +139,10 @@ open class AsJzvdStd : JzvdStd {
                     resource: Bitmap,
                     transition: Transition<in Bitmap?>?,
                 ) {
-                    val photoDir = File(Environment.getExternalStorageDirectory(), "BILIBILIAS")
+                    val photoDir = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath,
+                        "BILIBILIAS"
+                    )
                     if (!photoDir.exists()) {
                         photoDir.mkdirs()
                     }
@@ -201,7 +204,6 @@ open class AsJzvdStd : JzvdStd {
 
     override fun gotoFullscreen() {
 
-
         gotoFullscreenTime = System.currentTimeMillis()
         var vg = parent as ViewGroup
         jzvdContext = vg.context
@@ -227,7 +229,6 @@ open class AsJzvdStd : JzvdStd {
             JZUtils.setRequestedOrientation(jzvdContext, FULLSCREEN_ORIENTATION)
         } else {
             JZUtils.setRequestedOrientation(jzvdContext, NORMAL_ORIENTATION)
-
         }
         JZUtils.hideSystemUI(jzvdContext) //华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
 
