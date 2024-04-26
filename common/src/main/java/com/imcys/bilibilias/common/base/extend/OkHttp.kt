@@ -8,11 +8,9 @@ import okhttp3.Response
 
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun Call.awaitResponse(): Response {
-
     return suspendCancellableCoroutine {
-
         it.invokeOnCancellation {
-            //当协程被取消的时候，取消网络请求
+            // 当协程被取消的时候，取消网络请求
             cancel()
         }
 
@@ -22,9 +20,7 @@ suspend fun Call.awaitResponse(): Response {
 
             override fun onResponse(call: Call, response: Response) {
                 it.resume(response) {}
-
             }
-
         })
     }
 }

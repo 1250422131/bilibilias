@@ -34,15 +34,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 
 public class AppFilePathUtils {
@@ -103,17 +98,7 @@ public class AppFilePathUtils {
      * @return true：安装，false：未安装
      */
     public static boolean isInstallApp(Context context, String appPackageName) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++) {
-                String pn = pinfo.get(i).packageName.toLowerCase(Locale.ENGLISH);
-                if (pn.equals(appPackageName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return context.getPackageManager().getLaunchIntentForPackage(appPackageName) != null;
     }
 
     /**
@@ -188,48 +173,47 @@ public class AppFilePathUtils {
      * @param uri          被覆盖文件/文件夹
      * @return
      */
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public static boolean copySafFile(String oldPath$Name, Uri uri, Context context) {
-
         File oldFile = new File(oldPath$Name);
-        try {
 
-            if (!oldFile.exists()) {
-                Log.e("--Method--", "copyFile:  oldFile not exist.");
-                return false;
-            } else if (!oldFile.isFile()) {
-                Log.e("--Method--", "copyFile:  oldFile not file.");
-                return false;
-            } else if (!oldFile.canRead()) {
-                Log.e("--Method--", "copyFile:  oldFile cannot read.");
+        if (!oldFile.exists()) {
+            Log.e("--Method--", "copyFile: oldFile does not exist.");
+            return false;
+        }
+
+        if (!oldFile.isFile()) {
+            Log.e("--Method--", "copyFile: oldFile is not a file.");
+            return false;
+        }
+
+        if (!oldFile.canRead()) {
+            Log.e("--Method--", "copyFile: oldFile cannot be read.");
+            return false;
+        }
+
+        try (InputStream inputStream = new FileInputStream(oldFile);
+             OutputStream outputStream = context.getContentResolver().openOutputStream(uri)) {
+
+            if (outputStream == null) {
+                Log.e("--Method--", "copyFile: outputStream is null.");
                 return false;
             }
 
-            ContentResolver contentResolver = context.getContentResolver();
-            try {
-
-                //InputStream is = contentResolver.openInputStream(uri);
-                //FileOutputStream fos = new FileOutputStream(oldFile);
-
-                OutputStream fos1 = contentResolver.openOutputStream(uri);
-                FileInputStream is1 = new FileInputStream(oldFile);
-
-
-                FileUtils.copy(is1, fos1);
-                File file = oldFile;
-                fos1.close();
-                is1.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
             }
-
 
             return true;
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             e.printStackTrace();
+            Log.e("--Method--", "copySafFile: " + e.getMessage());
             return false;
         }
     }
+
 
     public static String getFilePathByUri(Context context, Uri uri) {
         String path = null;

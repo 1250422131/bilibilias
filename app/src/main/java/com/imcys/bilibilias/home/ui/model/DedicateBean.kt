@@ -5,7 +5,7 @@ package com.imcys.bilibilias.home.ui.model
  */
 data class DedicateBean(
     val title: String,
-    val long_title: String,
+    val longTitle: String,
     val doc: String,
     val face: String,
     val link: String = "",

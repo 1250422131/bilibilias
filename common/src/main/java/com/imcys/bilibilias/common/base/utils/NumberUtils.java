@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.utils;
 
-import android.graphics.Color;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
 /**
  * @author:imcys
@@ -8,7 +9,6 @@ import android.graphics.Color;
  * @Description:
  */
 public class NumberUtils {
-
 
     public static String digitalConversion(int num) {
         String originallyNum = num + "";

@@ -14,10 +14,10 @@ object AsVideoNumUtils {
 
         //av过滤
         epRegex = Regex("""(?<=(av|aV|AV|Av))([0-9]+)""")
-        if (epRegex.containsMatchIn(string)) return VideoNumConversion.toBvidOffline(
+        if (epRegex.containsMatchIn(string)) return NewVideoNumConversionUtils.av2bv(
             epRegex.find(
                 string
-            )?.value!!.toInt()
+            )?.value!!.toInt().toLong()
         )
 
 

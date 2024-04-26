@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base.extend
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
@@ -53,7 +52,7 @@ fun String.extract(startString: String, endString: String): String {
  * @param type String
  * @return String
  */
-fun String.toAsDownloadSavePath(
+ fun String.toAsDownloadSavePath(
     context: Context,
     avid: String = "",
     bvid: String = "",
@@ -65,28 +64,7 @@ fun String.toAsDownloadSavePath(
     type: String = "",
 ): String {
 
-    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-    var savePath = sharedPreferences.getString(
-        "user_download_save_path",
-        context.getExternalFilesDir("download").toString()
-    )
-
-    val sdPathState =
-        sharedPreferences.getBoolean(
-            "user_download_save_sd_path_switch",
-            false
-        )
-
-    //获取下载地址
-    if (sdPathState) {
-        savePath = "${
-            AppFilePathUtils(
-                context,
-                "com.imcys.bilibilias"
-            ).sdCardDirectory
-        }/Android/data/com.imcys.bilibilias/files/download"
-    }
+    val savePath = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
 
     var downloadName =
         this.replace("{AV}", avid)
@@ -101,7 +79,9 @@ fun String.toAsDownloadSavePath(
         title
     )
     downloadName = downloadName.replace("{TYPE}", type)
-    downloadName = downloadName.replace(" ", "_")
+    downloadName = downloadName.replace("""\s""".toRegex(),"_")
+    downloadName = downloadName.replace("""\n""".toRegex(),"_")
+    downloadName = downloadName.replace("""\\""".toRegex(),"_")
 
     return "${savePath}/$downloadName"
 }

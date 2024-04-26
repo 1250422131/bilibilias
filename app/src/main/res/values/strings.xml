@@ -1,10 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name_debug" translatable="false">BILIBILIAS_DEBUG</string>
     <string name="app_name_release" translatable="false">BILIBILIAS</string>
     <string name="app_channel_release" translatable="false">Official Channel</string>
     <string name="app_channel_debug" translatable="false">Official Channel Debug</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="action_settings">设置</string>
     <string name="title_activity_user">用户活动</string>
     <string name="dl_file_rename_rules">
@@ -20,6 +19,7 @@
         \n\n【注意】：如果修改后发现文件下载失败了，就尝试直接用CID等作为名称，也可能是系统对这类文件名称有劫持。\n
         尽可能保证音频和视频不在一个文件夹里，经过测试，这样有可能诱发一个文件下载失败。
     </string>
+
     <string name="user_download_save_path_title">缓存文件储存路径</string>
     <string name="user_download_file_name">缓存文件命名规则</string>
 
@@ -152,7 +152,7 @@
             }
         }
     </string>
-    <string name="new_version_doc">2.0.31紧急修复了B站接口改动的问题（但不确定是否后面还会有其他接口改动）</string>
+    <string name="new_version_doc">2.0.4修改了存储权限，需要重新在设置授权自定义存储位置。</string>
     <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
@@ -190,7 +190,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.31</string>
+    <string name="app_fragment_home_version">V2.0.4</string>
     <string name="app_fragment_home_salute_text">向全体BILIBILIAS用户致敬</string>
     <string name="app_fragment_home_salute_doc">爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户</string>
     <string name="app_fragment_home_donate_text">为BILIBILIAS的开发提供支持</string>
@@ -303,4 +303,6 @@
     <string name="app_merge_video_top_ly_title">合并视频</string>
     <string name="download_barrage">下载弹幕</string>
     <string name="Copied">复制成功</string>
+    <string name="app_root_preferences_long_title_language">设置软件显示的语言</string>
+    <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言（测试功能）</string>
 </resources>

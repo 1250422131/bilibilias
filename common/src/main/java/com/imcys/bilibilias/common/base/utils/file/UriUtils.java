@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.common.base.utils.file;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,10 +9,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-
-import androidx.loader.content.CursorLoader;
-
-import com.youth.banner.util.LogUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

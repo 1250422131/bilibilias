@@ -5,16 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.databinding.ItemFgUserCardDataBinding
 import com.imcys.bilibilias.databinding.ItemToolBinding
-import com.imcys.bilibilias.databinding.ItemToolLiveCardBinding
+import com.imcys.bilibilias.databinding.ItemToolUserCardBinding
 import com.imcys.bilibilias.databinding.ItemToolVideoCardBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
 import com.imcys.bilibilias.home.ui.model.ToolItemBean
 
 
@@ -53,10 +54,10 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 )
             }
 
-            2 -> {
-                DataBindingUtil.inflate<ItemToolLiveCardBinding>(
+            3 -> {
+                DataBindingUtil.inflate<ItemToolUserCardBinding>(
                     LayoutInflater.from(parent.context),
-                    R.layout.item_tool_live_card, parent, false
+                    R.layout.item_tool_user_card, parent, false
                 )
             }
 
@@ -88,38 +89,28 @@ class ToolItemAdapter : ListAdapter<ToolItemBean, ViewHolder>(
                 val clickEvent: () -> Unit = getItem(position).clickEvent
                 binding?.root?.setOnClickListener {
 
-                    val videoPic = androidx.core.util.Pair<View, String>(
-                        binding.itemToolVideoCardPic,
-                        "videoPic"
-                    )
-
                     val i = Intent(holder.itemView.context, AsVideoActivity::class.java)
-
-                    val optionsCompat: ActivityOptionsCompat =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            holder.itemView.context as HomeActivity,
-                            videoPic
-                        )
-
 
 
                     i.putExtra("bvId", getItem(position).videoBaseBean?.data?.bvid)
 
-                    holder.itemView.context.startActivity(i, optionsCompat.toBundle())
+                    holder.itemView.context.startActivity(i)
 
                     clickEvent()
                 }
             }
 
-            2 -> {
-                //视频/番剧Item
-                val binding = DataBindingUtil.getBinding<ItemToolLiveCardBinding>(holder.itemView)
-                binding?.liveRoomDataBean = getItem(position).liveRoomDataBean
-                val clickEvent: () -> Unit = getItem(position).clickEvent
-                binding?.root?.setOnClickListener {
-                    clickEvent()
+            3 -> {
+                val data = getItem(position).userCardBean
+                val binding = DataBindingUtil.getBinding<ItemToolUserCardBinding>(holder.itemView)
+                binding?.cardBean = data
+
+                holder.itemView.setOnClickListener {
+                    UserInfoActivity.actionStart(holder.itemView.context,data?.mid?.toLong())
                 }
+
             }
+
         }
 
 

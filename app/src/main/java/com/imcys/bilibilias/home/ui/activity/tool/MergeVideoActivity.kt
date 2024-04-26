@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.databinding.ActivityMergeVideoBinding
-import com.imcys.bilibilias.home.ui.model.view.MargeVideoViewModel
+import com.imcys.bilibilias.home.ui.viewmodel.MargeVideoViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
 class MergeVideoActivity : BaseActivity() {
@@ -17,14 +17,12 @@ class MergeVideoActivity : BaseActivity() {
 
         binding = DataBindingUtil.setContentView<ActivityMergeVideoBinding?>(
             this,
-            R.layout.activity_merge_video
+            R.layout.activity_merge_video,
         ).apply {
             mergeVideoTopLy.addStatusBarTopPadding()
         }
 
         binding.margeVideoViewModel = MargeVideoViewModel()
-
-
     }
 
     companion object {
@@ -33,6 +31,4 @@ class MergeVideoActivity : BaseActivity() {
             context.startActivity(intent)
         }
     }
-
-
 }

@@ -9,14 +9,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,9 +22,12 @@ import javax.inject.Inject
 class PlayHistoryActivity : BaseActivity() {
     private lateinit var binding: ActivityPlayHistoryBinding
 
-    //自动装配
+    // 自动装配
     @Inject
     lateinit var playHistoryAdapter: PlayHistoryAdapter
+
+    @Inject
+    lateinit var networkService: NetworkService
 
     private var max = 0L
     private var viewAt = 0L
@@ -44,7 +44,6 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopLy.addStatusBarTopPadding()
         }
         initView()
-
     }
 
     private fun initView() {
@@ -57,16 +56,14 @@ class PlayHistoryActivity : BaseActivity() {
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-            HttpUtils.addHeader("cookie", asUser.cookie)
-                .get(
-                    "${BilibiliApi.userPlayHistoryPath}?max=0&view_at=0&type=archive",
-                    PlayHistoryBean::class.java
-                ) {
+            launchUI {
+                networkService.getPlayHistory(0, 0).let {
                     max = it.data.cursor.max
                     viewAt = it.data.cursor.view_at
                     playHistoryDataMutableList.addAll(it.data.list)
                     playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
                 }
+            }
 
             playHistoryTopRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -79,24 +76,22 @@ class PlayHistoryActivity : BaseActivity() {
     }
 
     private fun loadPlayHistory() {
-        HttpUtils.addHeader("cookie", asUser.cookie)
-            .get(
-                "${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive",
-                PlayHistoryBean::class.java
-            ) {
+        launchUI {
+            networkService.getPlayHistory(max, viewAt).let {
                 max = it.data.cursor.max
                 viewAt = it.data.cursor.view_at
                 playHistoryDataMutableList.addAll(it.data.list)
                 playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
             }
-    }
 
+        }
+
+    }
 
     override fun onResume() {
         super.onResume()
         StatService.onResume(this)
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -108,7 +103,5 @@ class PlayHistoryActivity : BaseActivity() {
             val intent = Intent(context, PlayHistoryActivity::class.java)
             context.startActivity(intent)
         }
-
     }
-
 }

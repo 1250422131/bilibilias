@@ -7,7 +7,12 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.loader.content.CursorLoader
 import com.microsoft.appcenter.utils.storage.FileManager.deleteDirectory
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -60,8 +65,7 @@ object FileUtils {
         val file = File(sPath!!)
         // 路径为文件且不为空则进行删除
         if (file.isFile && file.exists()) {
-            file.delete()
-            flag = true
+            flag = file.delete()
         }
         return flag
     }

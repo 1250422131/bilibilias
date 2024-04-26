@@ -4,21 +4,20 @@
     <PreferenceCategory app:title="@string/app_root_preferences_title_download_conf">
 
         <Preference
-            app:defaultValue="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
-            app:key="user_download_save_path"
-            app:summary="/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+            app:defaultValue="null"
+            app:key="user_download_save_uri_path"
             app:title="@string/user_download_save_path_title"
             app:useSimpleSummaryProvider="true" />
 
 
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            app:key="user_download_save_sd_path_switch"
-            app:summaryOff="@string/user_download_save_sd_path_switch_off"
-            app:summaryOn="@string/user_download_save_sd_path_switch_on"
-            app:title="@string/user_download_save_sd_path_switch_title">
+<!--        <SwitchPreferenceCompat-->
+<!--            android:defaultValue="false"-->
+<!--            app:key="user_download_save_sd_path_switch"-->
+<!--            app:summaryOff="@string/user_download_save_sd_path_switch_off"-->
+<!--            app:summaryOn="@string/user_download_save_sd_path_switch_on"-->
+<!--            app:title="@string/user_download_save_sd_path_switch_title">-->
 
-        </SwitchPreferenceCompat>
+<!--        </SwitchPreferenceCompat>-->
 
 
         <EditTextPreference
@@ -104,19 +103,32 @@
         </ListPreference>
     </PreferenceCategory>
 
-
-    <PreferenceCategory app:title="广告配置">
-
-        <SwitchPreferenceCompat
-            android:icon="@drawable/ic_public_ad"
-            android:summaryOff="很抱歉广告打扰了你，我们利用广告展示和点击获取一些收入。"
-            app:defaultValue="true"
-            app:key="user_google_ad_switch"
-            app:summaryOn="我们很感谢你可以打开它，这个谷歌广告不会阻碍你使用任何功能。"
-            app:title="展示谷歌广告" />
+    <PreferenceCategory app:title="@string/app_root_preferences_title_language">
+        <ListPreference
+            android:defaultValue="System"
+            android:entries="@array/app_language"
+            android:entryValues="@array/app_language_value"
+            android:key="app_language"
+            android:summary="@string/app_root_preferences_long_title_language_tip"
+            android:title="@string/app_root_preferences_long_title_language">
 
 
+        </ListPreference>
     </PreferenceCategory>
+
+
+<!--    <PreferenceCategory app:title="广告配置">-->
+
+<!--        <SwitchPreferenceCompat-->
+<!--            android:icon="@drawable/ic_public_ad"-->
+<!--            android:summaryOff="很抱歉广告打扰了你，我们利用广告展示和点击获取一些收入。"-->
+<!--            app:defaultValue="true"-->
+<!--            app:key="user_google_ad_switch"-->
+<!--            app:summaryOn="我们很感谢你可以打开它，这个谷歌广告不会阻碍你使用任何功能。"-->
+<!--            app:title="展示谷歌广告" />-->
+
+
+<!--    </PreferenceCategory>-->
 
 
     <PreferenceCategory app:title="@string/app_root_preferences_title_privacy_policy">
