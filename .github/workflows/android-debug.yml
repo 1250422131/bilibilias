@@ -7,6 +7,7 @@ on:
   push:
     branches: [ "develop_imcys", "develop" ]
   workflow_dispatch:
+    branches: [ "develop_imcys", "develop" ]
 
 jobs:
   build:
