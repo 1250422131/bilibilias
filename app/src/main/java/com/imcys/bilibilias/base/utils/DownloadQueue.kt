@@ -33,6 +33,7 @@ import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
@@ -271,6 +272,7 @@ class DownloadQueue @Inject constructor() {
                         videoDataSubmit(mTask)
                         updatePhotoMedias(OkDownloadProvider.context, File(mTask.savePath))
                         updateAdapter()
+
                     }
                     // 执行下一个任务
                     executeTask()
@@ -753,86 +755,78 @@ class DownloadQueue @Inject constructor() {
         val epid = if (epRegex.containsMatchIn(epidUrl)) {
             epRegex.find(
                 epidUrl,
-            )?.value!!.toInt()
+            )?.value!!.toLong()
         } else {
             TODO()
         }
-        HttpUtils.get(
-            "${BilibiliApi.bangumiVideoDataPath}?ep_id=$epid",
-            BangumiSeasonBean::class.java,
-        ) {
-            val ssid = it.result.season_id
-            videoEntry = videoEntry.replace("SSID编号", (it.result.season_id).toString())
+        launchUI {
+
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
+
+            val ssid = bangumiSeasonBean.result.season_id
+            videoEntry = videoEntry.replace("SSID编号", (bangumiSeasonBean.result.season_id).toString())
             videoEntry = videoEntry.replace("EPID编号", epid.toString())
-            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
 
-            HttpUtils.addHeader(COOKIE, cookie!!)
-                .get(
-                    "${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}",
-                    object : okhttp3.Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-                        }
 
-                        override fun onResponse(call: Call, response: Response) {
-                            BaseApplication.handler.post {
-                                val bufferedSink: BufferedSink?
-                                val dest =
-                                    File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/danmaku.json")
-                                if (!dest.exists()) dest.createNewFile()
-                                val sink = dest.sink() // 打开目标文件路径的sink
-                                val decompressBytes =
-                                    decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-                                bufferedSink = sink.buffer()
-                                decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-                                bufferedSink.close()
+            val danmakuByte = networkService.getDanmuBytes(downloadTaskDataBean.cid)
 
-                                FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/entry.json",
-                                    videoEntry,
-                                )
-                                FileUtils.fileWrite(
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/index.json",
-                                    videoIndex,
-                                )
+            BaseApplication.handler.post {
+                val bufferedSink: BufferedSink?
+                val dest =
+                    File("/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/danmaku.json")
+                if (!dest.exists()) dest.createNewFile()
+                val sink = dest.sink() // 打开目标文件路径的sink
+                val decompressBytes =
+                    decompress(danmakuByte) // 调用解压函数进行解压，返回包含解压后数据的byte数组
+                bufferedSink = sink.buffer()
+                decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
+                bufferedSink.close()
 
-                                AppFilePathUtils.copyFile(
-                                    videoPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
-                                )
-                                AppFilePathUtils.copyFile(
-                                    audioPath,
-                                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
-                                )
-
-                                val impFileDeleteState =
-                                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                                        .getBoolean(
-                                            "user_dl_delete_import_file_switch",
-                                            true,
-                                        )
-
-                                if (impFileDeleteState) {
-                                    FileUtils.deleteFile(videoPath)
-                                    FileUtils.deleteFile(audioPath)
-                                    task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
-                                    // 分别储存两次下载结果
-                                    saveFinishTask(task)
-                                    task.savePath =
-                                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
-                                    task.fileType = 1
-                                    saveFinishTask(task)
-                                } else {
-                                    // 分别储存两次下载结果
-                                    saveFinishTask(task)
-                                    task.savePath = audioPath
-                                    task.fileType = 1
-                                    saveFinishTask(task)
-                                }
-                            }
-                        }
-                    },
+                FileUtils.fileWrite(
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/entry.json",
+                    videoEntry,
                 )
+                FileUtils.fileWrite(
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/index.json",
+                    videoIndex,
+                )
+
+                AppFilePathUtils.copyFile(
+                    videoPath,
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
+                )
+                AppFilePathUtils.copyFile(
+                    audioPath,
+                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
+                )
+
+                val impFileDeleteState =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                        .getBoolean(
+                            "user_dl_delete_import_file_switch",
+                            true,
+                        )
+
+                if (impFileDeleteState) {
+                    FileUtils.deleteFile(videoPath)
+                    FileUtils.deleteFile(audioPath)
+                    task.savePath =
+                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s"
+                    // 分别储存两次下载结果
+                    saveFinishTask(task)
+                    task.savePath =
+                        "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s"
+                    task.fileType = 1
+                    saveFinishTask(task)
+                } else {
+                    // 分别储存两次下载结果
+                    saveFinishTask(task)
+                    task.savePath = audioPath
+                    task.fileType = 1
+                    saveFinishTask(task)
+                }
+            }
+
         }
     }
 
@@ -898,12 +892,8 @@ class DownloadQueue @Inject constructor() {
                     .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
                 videoIndex,
             )
-            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
+            val danmakuByte = networkService.getDanmuBytes(downloadTaskDataBean.cid)
 
-            val asyncResponse = HttpUtils.addHeader(COOKIE, cookie!!)
-                .asyncGet("${BilibiliApi.videoDanMuPath}?oid=${downloadTaskDataBean.cid}")
-
-            val response = asyncResponse.await()
 
             val bufferedSink: BufferedSink?
             val dest = File(
@@ -913,7 +903,7 @@ class DownloadQueue @Inject constructor() {
             if (!dest.exists()) dest.createNewFile()
             val sink = dest.sink() // 打开目标文件路径的sink
             val decompressBytes =
-                decompress(response.body!!.bytes()) // 调用解压函数进行解压，返回包含解压后数据的byte数组
+                decompress(danmakuByte) // 调用解压函数进行解压，返回包含解压后数据的byte数组
             bufferedSink = sink.buffer()
             decompressBytes.let { it -> bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
             withContext(Dispatchers.IO) {
