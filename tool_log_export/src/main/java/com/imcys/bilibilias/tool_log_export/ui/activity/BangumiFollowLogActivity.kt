@@ -11,15 +11,10 @@ import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.tool_log_export.R
 import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
 import com.imcys.bilibilias.tool_log_export.base.network.NetworkService
@@ -41,7 +36,6 @@ import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils.addCell
 import com.imcys.bilibilias.tool_log_export.utils.ExportDialogUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.network.NetworkAddress
 import jxl.format.Alignment
 import jxl.format.Border
 import jxl.format.BorderLineStyle
