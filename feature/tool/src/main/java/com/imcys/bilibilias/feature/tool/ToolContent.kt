@@ -49,7 +49,6 @@ import com.imcys.bilibilias.core.download.Format
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
-import com.imcys.bilibilias.core.ui.radio.TaskType
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
 
@@ -91,7 +90,7 @@ fun ToolContent(
                         )
                     }
                 },
-                maxLines = 1,
+                singleLine = true,
             )
             when (searchResultUiState) {
                 SearchResultUiState.EmptyQuery -> Unit
@@ -197,7 +196,7 @@ fun ViewItem(
                             onDownload(
                                 Format(
                                     codecsState.current.codeid,
-                                    typeState.current.mapToDownladTaskType(),
+                                    typeState.current,
                                     codecs.quality
                                 )
                             )
@@ -211,13 +210,5 @@ fun ViewItem(
                 }
             }
         }
-    }
-}
-
-private fun TaskType.mapToDownladTaskType(): com.imcys.bilibilias.core.download.TaskType {
-    return when (this) {
-        TaskType.ALL -> com.imcys.bilibilias.core.download.TaskType.ALL
-        TaskType.VIDEO -> com.imcys.bilibilias.core.download.TaskType.VIDEO
-        TaskType.AUDIO -> com.imcys.bilibilias.core.download.TaskType.AUDIO
     }
 }

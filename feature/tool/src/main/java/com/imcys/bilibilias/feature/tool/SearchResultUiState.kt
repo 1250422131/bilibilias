@@ -1,8 +1,8 @@
 ﻿package com.imcys.bilibilias.feature.tool
 
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
+import com.imcys.bilibilias.core.model.video.SupportFormat
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
-import com.imcys.bilibilias.core.ui.radio.TaskType
 
 sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState
@@ -30,12 +30,7 @@ fun VideoStreamUrl.mapToVideoStreamDesc(): VideoStreamDesc {
     val selectableDescription = acceptDescription.zip(acceptQuality).map {
         Description(it.first, it.second)
     }
-    val supportCodecs = supportFormats.map { supportFormat ->
-        val av01 = supportFormat.codecs.any { it.startsWith("av01") }
-        val h264 = supportFormat.codecs.any { it.startsWith("avc1") }
-        val h265 = supportFormat.codecs.any { it.startsWith("hev1") }
-        Codecs(supportFormat.quality, av01, h264, h265)
-    }
+    val supportCodecs = supportFormats.mapToCodecs()
     return VideoStreamDesc(selectableDescription, supportCodecs)
 }
 
@@ -43,11 +38,15 @@ fun BangumiStreamUrl.mapToVideoStreamDesc(): VideoStreamDesc {
     val selectableDescription = videoInfo.acceptDescription.zip(videoInfo.acceptQuality).map {
         Description(it.first, it.second)
     }
-    val supportCodecs = videoInfo.supportFormats.map { supportFormat ->
+    val supportCodecs = videoInfo.supportFormats.mapToCodecs()
+    return VideoStreamDesc(selectableDescription, supportCodecs)
+}
+
+private fun List<SupportFormat>.mapToCodecs(): List<Codecs> {
+    return map { supportFormat ->
         val av01 = supportFormat.codecs.any { it.startsWith("av01") }
         val h264 = supportFormat.codecs.any { it.startsWith("avc1") }
         val h265 = supportFormat.codecs.any { it.startsWith("hev1") }
         Codecs(supportFormat.quality, av01, h264, h265)
     }
-    return VideoStreamDesc(selectableDescription, supportCodecs)
 }

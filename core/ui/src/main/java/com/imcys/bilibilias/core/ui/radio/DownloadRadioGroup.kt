@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.imcys.bilibilias.core.designsystem.component.AsRadioButton
+import com.imcys.bilibilias.core.model.download.TaskType
 
 @Composable
 fun FileTypeRadioGroup(typeState: FileTypeState) {
@@ -35,19 +36,11 @@ fun FileTypeRadioGroup(typeState: FileTypeState) {
 fun rememberFileTypeState(
     initialState: TaskType = TaskType.ALL
 ): FileTypeState {
-    return remember {
-        FileTypeState(initialState)
-    }
+    return remember { FileTypeState(initialState) }
 }
 
 @Stable
 class FileTypeState(initialState: TaskType) {
     var current by mutableStateOf(initialState)
         internal set
-}
-
-enum class TaskType {
-    ALL,
-    VIDEO,
-    AUDIO,
 }
