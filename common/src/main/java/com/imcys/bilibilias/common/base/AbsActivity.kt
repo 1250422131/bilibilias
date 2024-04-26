@@ -14,8 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -76,10 +79,6 @@ open class AbsActivity : AppCompatActivity() {
                 Locale.getDefault()
             }
 
-            "Default" -> {
-                Locale("zh")
-            }
-
             else -> Locale(language.split("-")[0], language.split("-")[1])
         }
         configuration.setLocale(locale)
@@ -105,12 +104,12 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 // 统计接入
-//                AppCenter.start(
-//                    application,
-//                    BaseApplication.appSecret,
-//                    Analytics::class.java,
-//                    Crashes::class.java,
-//                )
+                AppCenter.start(
+                    application,
+                    BaseApplication.appSecret,
+                    Analytics::class.java,
+                    Crashes::class.java,
+                )
             }
         }
     }

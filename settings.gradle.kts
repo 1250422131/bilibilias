@@ -1,5 +1,4 @@
 pluginManagement {
-    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
         google()
@@ -9,39 +8,18 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven("https://jitpack.io")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
+        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
         mavenCentral()
+        maven("https://jitpack.io")
         google()
+        // 临时为Kotlin提供对应的compose-compiler支持，详细见仓库：
+        // https://github.com/jimgoog/ComposeAppUsingPrereleaseComposeCompiler#project-configuration
+        maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
-rootProject.name = "BILIBILIAS"
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+rootProject.name = "bilibilias"
 include(":app")
-include(":benchmarks")
 include(":common")
 include(":model_ffmpeg")
 include(":tool_log_export")
-
-include(":core:common")
-include(":core:database")
-include(":core:datastore")
-include(":core:datastore-proto")
-include(":core:designsystem")
-include(":core:domain")
-include(":core:model")
-include(":core:network")
-include(":core:testing")
-include(":core:ui")
-include(":core:crash")
-include(":feature:splash")
-include(":feature:home")
-include(":feature:tool")
-include(":feature:download")
-include(":feature:user")
-include(":core:ffmpeg")
-include(":core:download")
-
-include(":okdownload:okdownload")
-include(":okdownload:okdownload-connection-okhttp")
