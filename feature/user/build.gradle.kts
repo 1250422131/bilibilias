@@ -9,6 +9,11 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
+    implementation(projects.core.network)
+
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
