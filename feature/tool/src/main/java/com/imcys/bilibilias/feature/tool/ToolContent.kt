@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -42,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
@@ -162,18 +159,14 @@ fun ViewItem(
             )
         }
         AnimatedVisibility(visible = expanded) {
-            var codecs by remember { mutableStateOf(streamDesc.supportCodecs.first()) }
-            val codecsState = rememberCodecsState(codecs.useAV1, codecs.useH265, codecs.useH264)
+            val codecsState = rememberCodecsState()
             val typeState = rememberFileTypeState()
             var currentQuality by remember { mutableStateOf(streamDesc.descriptionQuality.first()) }
             Column {
                 LazyRow {
-                    itemsIndexed(streamDesc.descriptionQuality) { index, item ->
+                    items(streamDesc.descriptionQuality) { item ->
                         TextButton(
-                            onClick = {
-                                currentQuality = item
-                                codecs = streamDesc.supportCodecs[index]
-                            },
+                            onClick = { currentQuality = item },
                             border = if (currentQuality == item) {
                                 BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                             } else {
@@ -184,29 +177,21 @@ fun ViewItem(
                         }
                     }
                 }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CodecsRadioGroup(codecsState)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    FileTypeRadioGroup(typeState)
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AsButton(
-                        onClick = {
-                            onDownload(
-                                Format(
-                                    codecsState.current.codeid,
-                                    typeState.current,
-                                    codecs.quality
-                                )
+                CodecsRadioGroup(codecsState)
+                FileTypeRadioGroup(typeState)
+                AsTextButton(
+                    onClick = {
+                        onDownload(
+                            Format(
+                                codecsState.current.codeid,
+                                typeState.current,
+                                currentQuality.quality
                             )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
-                    ) {
-                        Text(text = "下载")
-                    }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = "下载")
                 }
             }
         }
