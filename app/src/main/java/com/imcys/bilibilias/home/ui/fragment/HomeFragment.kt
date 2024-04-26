@@ -265,9 +265,6 @@ class HomeFragment : BaseFragment() {
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
-//                    val uri = Uri.parse(oldUpdateDataBean.url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri)
-//                    requireContext().startActivity(intent)
                 },
             ).show()
         }
