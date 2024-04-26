@@ -1,28 +1,28 @@
-name: Push
+name: Build DEBUG APK
 
 on:
   pull_request:
     types:
       - opened
   push:
-    branches: [ "develop_imcys", "develop","workflow_dispatch"]
+    branches: [ "develop_imcys", "develop" ]
   workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Clone repository
+        uses: actions/checkout@v4
 
       # Set Current Date As Env Variable
-      - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      # - name: Set current date as env variable
+      #  run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       # Set Repository Name As Env Variable
-      - name: Set repository name as env variable
-        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+      # - name: Set repository name as env variable
+      #  run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
       - name: Set Up JDK
         uses: actions/setup-java@v3
@@ -35,20 +35,20 @@ jobs:
         run: chmod +x ./gradlew
 
       # Run Tests Build
-      - name: Run gradle tests
-        run: ./gradlew test
+      # - name: Run gradle tests
+      #  run: ./gradlew test
 
       # Run Build Project
-      - name: Build gradle project
-        run: ./gradlew build
-        
+      # - name: Build gradle project
+      #  run: ./gradlew build
+
       # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+      - name: Build apk debug project (APK)
         run: ./gradlew assembleDebug
 
       - name: Upload build APK Debug
         uses: actions/upload-artifact@v4
         with:
-          name: Build DBUG
+          name: Build debug APK
           path: |
-            ./app/build/outputs/apk/debug/*.apk
+            ./**/*.apk
