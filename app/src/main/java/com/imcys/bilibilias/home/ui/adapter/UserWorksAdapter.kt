@@ -16,6 +16,7 @@ class UserWorksAdapter : ListAdapter<UserWorksBean.DataBean.ListBean.VlistBean, 
             oldItem: UserWorksBean.DataBean.ListBean.VlistBean,
             newItem: UserWorksBean.DataBean.ListBean.VlistBean,
         ): Boolean {
+
             return oldItem.aid == newItem.aid
         }
 
@@ -23,10 +24,13 @@ class UserWorksAdapter : ListAdapter<UserWorksBean.DataBean.ListBean.VlistBean, 
             oldItem: UserWorksBean.DataBean.ListBean.VlistBean,
             newItem: UserWorksBean.DataBean.ListBean.VlistBean,
         ): Boolean {
+
+
             return oldItem.bvid == newItem.bvid
         }
     }
 ) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             DataBindingUtil.inflate<ItemUserWorksBinding>(

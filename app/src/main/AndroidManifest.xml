@@ -48,6 +48,12 @@
             android:exported="false"
             android:theme="@style/Theme.BILIBILIAS" />
         <activity
+            android:name=".home.ui.activity.user.UserVideoDownloadActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.ui.activity.user.UserInfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.ui.activity.tool.MergeVideoActivity"
             android:exported="false" />
 

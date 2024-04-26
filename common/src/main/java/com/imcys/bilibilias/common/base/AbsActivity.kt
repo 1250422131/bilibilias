@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -13,8 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
@@ -26,13 +24,12 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 open class AbsActivity : AppCompatActivity() {
-    @Deprecated("emm")
+
     private val mThemeChangedBroadcast by lazy {
         ThemeChangedBroadcast()
     }
 
-    @Deprecated("emm")
-    val asSharedPreferences: SharedPreferences by lazy {
+    open val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -41,6 +38,8 @@ open class AbsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 打印活动名称
+        asLogD(this, javaClass.simpleName)
         // 启动APP统计
         startAppCenter()
         // 添加当前活动
@@ -87,9 +86,7 @@ open class AbsActivity : AppCompatActivity() {
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
+    private fun initAsUser() {
     }
 
     override fun onDestroy() {
@@ -142,8 +139,6 @@ open class AbsActivity : AppCompatActivity() {
                 },
             )
         }
-
-        StatService.onResume(this)
     }
 
     // 添加活动
@@ -171,7 +166,7 @@ open class AbsActivity : AppCompatActivity() {
             .apply()
     }
 
-    fun updateTheme() {
+    open fun updateTheme() {
         // 重启activity（）
         recreate()
     }

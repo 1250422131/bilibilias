@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.base.utils
+package com.imcys.bilibilias.common.base.utils
 
 import android.content.Context
 import android.util.Log

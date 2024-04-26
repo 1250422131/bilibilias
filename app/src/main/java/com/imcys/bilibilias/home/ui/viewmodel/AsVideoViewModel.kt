@@ -1,107 +1,59 @@
 package com.imcys.bilibilias.home.ui.viewmodel
 
-import android.content.Context
-import android.view.View
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
-import com.imcys.asbottomdialog.bottomdialog.AsDialog
+import android.annotation.*
+import android.content.*
+import android.content.Context.CLIPBOARD_SERVICE
+import android.os.*
+import android.view.*
+import android.widget.*
+import androidx.lifecycle.*
+import androidx.preference.*
+import com.imcys.asbottomdialog.bottomdialog.*
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.extend.Result
-import com.imcys.bilibilias.common.base.extend.asResult
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
-import com.imcys.bilibilias.common.network.danmaku.DanmakuRepository
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
-import com.imcys.bilibilias.core.domain.GetDmDataWriteFileUseCase
-import com.imcys.bilibilias.core.domain.GetViewTripleUseCase
-import com.imcys.bilibilias.core.model.space.FavouredFolder
-import com.imcys.bilibilias.core.model.video.ViewTriple
-import com.imcys.bilibilias.core.network.di.ApiIOException
-import com.imcys.bilibilias.core.network.repository.UserRepository
-import com.imcys.bilibilias.core.network.repository.UserSpaceRepository
-import com.imcys.bilibilias.core.network.repository.VideoRepository
-import com.imcys.bilibilias.danmaku.change.CCJsonToAss
-import com.imcys.bilibilias.danmaku.change.DmXmlToAss
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
-import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
-import com.imcys.bilibilias.home.ui.model.VideoBaseBean
-import com.imcys.bilibilias.home.ui.model.VideoCCInfo
-import com.imcys.bilibilias.home.ui.model.VideoPageListData
-import com.imcys.bilibilias.home.ui.model.toDashVideoPlayBean
-import com.imcys.bilibilias.home.ui.viewmodel.player.ViewUiState
-import com.microsoft.appcenter.analytics.Analytics
-import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.get
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import okio.BufferedSink
-import okio.buffer
-import okio.sink
-import java.io.File
-import java.io.FileOutputStream
-import javax.inject.Inject
+import com.imcys.bilibilias.common.base.utils.http.*
+import com.imcys.bilibilias.common.network.danmaku.*
+import com.imcys.bilibilias.danmaku.change.*
+import com.imcys.bilibilias.home.ui.activity.*
+import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
+import com.imcys.bilibilias.home.ui.model.*
+import com.microsoft.appcenter.analytics.*
+import dagger.hilt.android.lifecycle.*
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import okio.*
+import java.io.*
+import javax.inject.*
 
-sealed class Event {
-    data class ShowToast(val text: String) : Event()
-    data class ToolBarReportChange(val viewTriple: ViewTriple) : Event()
-    data class ShowFavouredDialog(val favouredFolder: FavouredFolder) : Event()
-}
+/**
+ * 解析视频的ViewModel
+ */
 
 @HiltViewModel
-class AsVideoViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    private val danmakuRepository: DanmakuRepository,
-    private val danmakuRepository2: com.imcys.bilibilias.core.network.repository.DanmakuRepository,
-    private val userSpaceRepository: UserSpaceRepository,
-    private val videoRepository: VideoRepository,
-    private val userRepository: UserRepository,
-    private val loginInfoDataSource: LoginInfoDataSource,
-    getViewTripleUseCase: GetViewTripleUseCase,
-    getDmDataWriteFileUseCase: GetDmDataWriteFileUseCase
-) : ViewModel() {
-    val _effect = Channel<Event>(Channel.UNLIMITED)
-    val bvid = savedStateHandle.getStateFlow("bvId", "")
-    val asVideoUiState = bvid.flatMapLatest {
-        viewDetailUiState(
-            it,
-            videoRepository,
-            userRepository,
-            getViewTripleUseCase,
-            getDmDataWriteFileUseCase
-        )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, ViewUiState.Loading)
+class AsVideoViewModel @Inject constructor(private val danmakuRepository: DanmakuRepository) :
+    ViewModel() {
 
     @Inject
     lateinit var http: HttpClient
 
     @Inject
     lateinit var networkService: NetworkService
+
+
+    fun toUserPage(view: View, mid: String) {
+        UserInfoActivity.actionStart(view.context, mid.toLong())
+    }
 
     /**
      * 缓存视频
@@ -118,7 +70,7 @@ class AsVideoViewModel @Inject constructor(
 
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                // 并发
+                //并发
                 val dashVideoPlayDeferred =
                     async { networkService.viewDash(context.bvid, context.cid, 64) }
                 val dashBangumiPlayDeferred =
@@ -182,7 +134,7 @@ class AsVideoViewModel @Inject constructor(
 
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                // 并发
+                //并发
                 val dashVideoPlayDeferred =
                     async { networkService.viewDash(context.bvid, context.cid, 94) }
                 val dashBangumiPlayDeferred =
@@ -230,6 +182,7 @@ class AsVideoViewModel @Inject constructor(
         }
     }
 
+
     /**
      * 显示下载对话框
      */
@@ -252,22 +205,22 @@ class AsVideoViewModel @Inject constructor(
     fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
         val context = view.context
 
-        DialogUtils.downloadDMDialog(view.context) { binding ->
+        DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
             viewModelScope.launchIO {
-                val response =
-                    HttpUtils.asyncGet("${BilibiliApi.videoDanMuPath}?oid=${(context as AsVideoActivity).cid}")
+                val danmakuByte = networkService.getDanmuBytes((context as AsVideoActivity).cid)
+
 
                 when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
                     R.id.dialog_dl_dm_ass -> {
                         saveAssDanmaku(
                             context,
-                            response.await().body!!.bytes(),
+                            danmakuByte,
                             videoBaseBean,
                         )
                     }
 
                     R.id.dialog_dl_dm_xml -> {
-                        saveDanmaku(context, response.await().body!!.bytes(), videoBaseBean)
+                        saveDanmaku(context, danmakuByte, videoBaseBean)
                     }
 
                     else -> throw Exception("意外的选项")
@@ -446,21 +399,61 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 点赞视频
+     * @param bvid String aid
      */
-    fun likeVideo(hasLike: Boolean, bvid: String) {
-        viewModelScope.launch {
-            val response = try {
-                videoRepository.点赞视频(hasLike, bvid)
-            } catch (e: ApiIOException) {
-                Napier.d(e) { "走了吗" }
-                _effect.send(Event.ShowToast(e.message!!))
-                null
+    fun likeVideo(view: View, bvid: String) {
+        val context = view.context
+
+        viewModelScope.launchUI {
+            val likeVideoBean = networkService.videoLike(bvid)
+
+            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
+                when (likeVideoBean.code) {
+                    0 -> {
+                        context.binding.archiveHasLikeBean?.data = 1
+                        context.binding.asVideoLikeBt.isSelected = true
+                    }
+
+                    65006 -> {
+                        cancelLikeVideo(view, bvid)
+                    }
+
+                    else -> {
+                        asToast(context, likeVideoBean.message)
+                    }
+                }
+            } else {
+                cancelLikeVideo(view, bvid)
             }
-            if (response?.success == false) return@launch
-            response?.let {
-                (asVideoUiState.value as? ViewUiState.Success)?.let {
-                    val newTriple = it.viewTriple.copy(true)
-                    _effect.send(Event.ToolBarReportChange(newTriple))
+        }
+    }
+
+    /**
+     * 取消对视频的点赞
+     * @param bvid String
+     */
+    private fun cancelLikeVideo(view: View, bvid: String) {
+        val context = view.context
+
+        viewModelScope.launchIO {
+            val likeVideoBean = networkService.n32(bvid)
+
+            launchUI {
+                when (likeVideoBean.code) {
+                    0 -> {
+                        (context as AsVideoActivity).binding.apply {
+                            archiveHasLikeBean?.data = 0
+                            asVideoLikeBt.isSelected = false
+                        }
+                    }
+
+                    65004 -> {
+                        likeVideo(view, bvid)
+                    }
+
+                    else -> {
+                        asToast(context, likeVideoBean.message)
+                    }
                 }
             }
         }
@@ -468,20 +461,17 @@ class AsVideoViewModel @Inject constructor(
 
     /**
      * 视频投币
+     * @param bvid String
      */
-    fun videoCoinAdd(bvid: String) {
-        viewModelScope.launch {
-            val response = try {
-                videoRepository.投币视频(bvid)
-            } catch (e: ApiIOException) {
-                _effect.send(Event.ShowToast(e.message!!))
-                null
-            }
-            response?.let {
-                (asVideoUiState.value as? ViewUiState.Success)?.let {
-                    val newTriple = it.viewTriple.copy(hasCoins = true)
-                    _effect.send(Event.ToolBarReportChange(newTriple))
-                }
+    fun videoCoinAdd(view: View, bvid: String) {
+        val context = view.context
+
+        viewModelScope.launchIO {
+            networkService.n33(bvid)
+
+            launchUI {
+                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
+                context.binding.asVideoThrowBt.isSelected = true
             }
         }
     }
@@ -489,33 +479,54 @@ class AsVideoViewModel @Inject constructor(
     /**
      * 加载用户收藏夹
      */
-    fun getUserFavorites() {
-        viewModelScope.launch {
-            val folder =
-                userSpaceRepository.查询用户创建的视频收藏夹(loginInfoDataSource.mid.first())
-            _effect.send(Event.ShowFavouredDialog(folder))
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadCollectionView(view: View, avid: Long) {
+        val context = view.context
+        (context as AsVideoActivity).binding.apply {
+            viewModelScope.launchIO {
+                val userCreateCollectionBean = networkService.n34()
 
-//            launchUI {
-//                if (userCreateCollectionBean.code == 0) {
-//                    DialogUtils.loadUserCreateCollectionDialog(
-//                        context,
-//                        userCreateCollectionBean,
-//                        { _, _ ->
-//                        },
-//                        { selects ->
-//                            // 选取完成了收藏文件夹
-//                            setCollection(context, selects, aid)
-//                        },
-//                    ).show()
-//                }
+                launchUI {
+                    if (userCreateCollectionBean.code == 0) {
+                        DialogUtils.loadUserCreateCollectionDialog(
+                            context,
+                            userCreateCollectionBean,
+                            { _, _ ->
+                            },
+                            { selects ->
+                                // 选取完成了收藏文件夹
+                                setCollection(context, selects, avid)
+                            },
+                        ).show()
+                    }
+                }
+            }
         }
+    }
+
+    /**
+     * 复制内容
+     * @param inputStr String
+     */
+    fun addClipboardMessage(view: View, inputStr: String): Boolean {
+        val context = view.context
+
+        val clipboardManager = context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        // When setting the clip board text.
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
+        // Only show a toast for Android 12 and lower.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
+        }
+
+        return true
     }
 
     /**
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
-    private fun setCollection(context: Context, selects: MutableList<Long>, avid: Long) {
+    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Long) {
         var addMediaIds = ""
         selects.forEachIndexed { index, l ->
             if (index == selects.size) {
@@ -530,38 +541,15 @@ class AsVideoViewModel @Inject constructor(
      * 新增收藏夹内容
      * @param addMediaIds String
      */
-    private fun addCollection(context: Context, addMediaIds: String, avid: Long) {
+    private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
         viewModelScope.launch(Dispatchers.Default) {
             val collectionResultBean = networkService.n35(avid.toString(), addMediaIds)
 
             if (collectionResultBean.code == 0) {
-//                context.binding.archiveFavouredBean?.isFavoured = true
-//                context.binding.asVideoCollectionBt.isSelected = true
+                context.binding.archiveFavouredBean?.isFavoured = true
+                context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
-            }
-        }
-    }
-}
-
-private suspend fun viewDetailUiState(
-    bvid: String,
-    videoRepository: VideoRepository,
-    userRepository: UserRepository,
-    getViewTripleUseCase: GetViewTripleUseCase,
-    getDmDataWriteFileUseCase: GetDmDataWriteFileUseCase
-): Flow<ViewUiState> {
-    val detailFlow = flow { emit(videoRepository.获取视频详细信息(bvid)) }
-    val cardFlow =
-        detailFlow.map { getDmDataWriteFileUseCase(it.cid); userRepository.用户名片信息(it.owner.mid) }
-    val tripleFlow = getViewTripleUseCase.invoke(bvid)
-    return combine(detailFlow, cardFlow, tripleFlow, ::Triple).asResult().map { result ->
-        when (result) {
-            is Result.Error -> ViewUiState.Loading
-            Result.Loading -> ViewUiState.Loading
-            is Result.Success -> {
-                val (viewDetail, card, viewTriple) = result.data
-                ViewUiState.Success(viewDetail, card, viewTriple)
             }
         }
     }
