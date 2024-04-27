@@ -155,6 +155,7 @@ class DedicateActivity : ComponentActivity() {
     }
 
     private fun loadDedicate(): List<DedicateBean> {
+        // TODO: i18n Need to translate the content
         return listOf(
             DedicateBean(
                 "BILIBILIAS捐款名单",

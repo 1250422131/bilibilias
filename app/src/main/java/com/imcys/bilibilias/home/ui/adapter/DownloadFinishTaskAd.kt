@@ -15,7 +15,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
@@ -184,7 +185,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                         OkDownloadProvider.context,
                         Uri.parse(saveUriPath)
                     )
-                   launchIO {
+                    launchIO {
                        // 无需等待
                        val mPath = task.savePath.replace("/storage/emulated/0/", "")
                        val docList = mPath.split("/")
@@ -196,9 +197,11 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                        }
                    }
                 } else {
-                   launchIO {  FileUtils.delete(task.savePath) }
+                    // 走普通删除
+                    launchIO {
+                        FileUtils.delete(task.savePath)
+                    }
                 }
-
                 it.cancel()
             }
             .setNegativeButton("点错了") {

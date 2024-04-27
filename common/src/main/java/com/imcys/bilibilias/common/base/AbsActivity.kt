@@ -2,7 +2,6 @@ package com.imcys.bilibilias.common.base
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -13,11 +12,13 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
+import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import com.zackratos.ultimatebarx.ultimatebarx.java.UltimateBarX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -26,13 +27,12 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 open class AbsActivity : AppCompatActivity() {
-    @Deprecated("emm")
+
     private val mThemeChangedBroadcast by lazy {
         ThemeChangedBroadcast()
     }
 
-    @Deprecated("emm")
-    val asSharedPreferences: SharedPreferences by lazy {
+    open val asSharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
 
@@ -41,6 +41,8 @@ open class AbsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 打印活动名称
+        asLogD(this, javaClass.simpleName)
         // 启动APP统计
         startAppCenter()
         // 添加当前活动
@@ -77,19 +79,13 @@ open class AbsActivity : AppCompatActivity() {
                 Locale.getDefault()
             }
 
-            "Default" -> {
-                Locale("zh")
-            }
-
             else -> Locale(language.split("-")[0], language.split("-")[1])
         }
         configuration.setLocale(locale)
         resources.updateConfiguration(configuration, resources.displayMetrics)
     }
 
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
+    private fun initAsUser() {
     }
 
     override fun onDestroy() {
@@ -108,12 +104,12 @@ open class AbsActivity : AppCompatActivity() {
         if (sharedPreferences.getBoolean("microsoft_app_center_type", false)) {
             if (!AppCenter.isConfigured()) {
                 // 统计接入
-//                AppCenter.start(
-//                    application,
-//                    BaseApplication.appSecret,
-//                    Analytics::class.java,
-//                    Crashes::class.java,
-//                )
+                AppCenter.start(
+                    application,
+                    BaseApplication.appSecret,
+                    Analytics::class.java,
+                    Crashes::class.java,
+                )
             }
         }
     }
@@ -142,8 +138,6 @@ open class AbsActivity : AppCompatActivity() {
                 },
             )
         }
-
-        StatService.onResume(this)
     }
 
     // 添加活动
@@ -171,7 +165,7 @@ open class AbsActivity : AppCompatActivity() {
             .apply()
     }
 
-    fun updateTheme() {
+    open fun updateTheme() {
         // 重启activity（）
         recreate()
     }

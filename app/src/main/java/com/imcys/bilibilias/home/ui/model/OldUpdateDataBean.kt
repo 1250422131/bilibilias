@@ -37,5 +37,6 @@ data class OldUpdateDataBean(
     val apkmD5: String = "",
     val apkToKen: String = "",
     val apkToKenCR: String = "",
-    val id: String = ""
+    val id: String = "",
+    val gray:Boolean = false,
 )

@@ -11,6 +11,7 @@
             name="VlistBean"
             type="com.imcys.bilibilias.home.ui.model.UserWorksBean.DataBean.ListBean.VlistBean" />
 
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,6 +28,7 @@
             tools:ignore="MissingConstraints">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/item_uw_cover_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"

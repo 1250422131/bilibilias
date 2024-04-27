@@ -50,7 +50,7 @@ class TokenUtils @Inject constructor(private val networkService: NetworkService)
     suspend fun getParamStr(params: MutableMap<String, String>): String {
         var security = requestToken
         if (requestToken.isEmpty()) {
-            val userNavDataModel = networkService.n8()
+            val userNavDataModel = networkService.getUserNavInfo()
             val imgUrl = userNavDataModel.data.wbiImg.imgUrl
             val subUrl = userNavDataModel.data.wbiImg.subUrl
 
