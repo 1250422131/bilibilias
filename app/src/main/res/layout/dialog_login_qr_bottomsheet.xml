@@ -98,7 +98,7 @@
                     android:layout_height="60dp"
                     android:background="?attr/colorPrimary"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcodeKey)}"
+                    android:onClick="@{(view) -> LoginQRModel.finishLogin(view,DataBean.qrcode_key)}"
                     android:text="@string/app_dialog_login_qr_bottomsheet_finish"
                     android:textColor="@color/white"
                     android:textSize="15sp"
