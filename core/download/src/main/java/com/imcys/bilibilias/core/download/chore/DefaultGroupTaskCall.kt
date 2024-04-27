@@ -4,7 +4,6 @@ import android.content.Context
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.ffmpeg.FFmpegWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
-import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 class DefaultGroupTaskCall @Inject constructor(
@@ -22,9 +21,10 @@ class DefaultGroupTaskCall @Inject constructor(
     }
 
     private fun getResponseWithInterceptorChain(groupTask: GroupTask) {
-        val interceptors = mutableListOf<Interceptor>()
+        val interceptors = mutableListOf<Interceptor<*>>()
         interceptors += MixingInterceptor(context, fFmpegWorker)
-        val chain = DefaultInterceptorChain(0, groupTask, interceptors)
+        interceptors += MoveFileInterceptor(context)
+        val chain = Interceptor.Chain(interceptors,0)
         return chain.proceed(groupTask)
     }
 }

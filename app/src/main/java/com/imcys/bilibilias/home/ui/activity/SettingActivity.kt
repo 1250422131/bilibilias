@@ -8,7 +8,7 @@ import androidx.documentfile.provider.DocumentFile
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.core.common.utils.setBiliBiliUri
-import com.imcys.bilibilias.core.common.utils.set下载路径
+import com.imcys.bilibilias.core.common.utils.set保存路径
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -44,7 +44,7 @@ class SettingActivity : BaseActivity<ActivitySttingBinding>() {
             SAVE_FILE_PATH_CODE -> {
                 if (resultCode == Activity.RESULT_OK && resultData != null) {
                     requestPermission(resultData.data!!)
-                    set下载路径(resultData.data.toString())
+                    set保存路径(resultData.data.toString())
                     val documentFile = DocumentFile.fromSingleUri(this, resultData.data!!)
                     settingsFragment.更新保存路径(documentFile!!.uri.path!!)
                 }

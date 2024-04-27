@@ -33,6 +33,7 @@ sealed class AsDownloadTask(
                     "Referer" to listOf("https://www.bilibili.com/")
                 )
             )
+            .setConnectionCount(1)
             .setPriority(priority)
             .build()
     }

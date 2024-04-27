@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -17,14 +19,16 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
 import com.imcys.bilibilias.core.common.utils.getBiliBiliUri
-import com.imcys.bilibilias.core.common.utils.get下载路径
+import com.imcys.bilibilias.core.common.utils.get保存路径
 import com.imcys.bilibilias.core.common.utils.restoreDownloadAddress
 import com.imcys.bilibilias.core.common.utils.restoreVideoNameRule
 import com.imcys.bilibilias.core.common.utils.setUserDownloadFileNameRule
+import com.imcys.bilibilias.core.common.utils.set保存路径
 import com.imcys.bilibilias.core.common.utils.微软统计
 import com.imcys.bilibilias.core.common.utils.百度统计
 import com.imcys.bilibilias.core.download.downloadDir
 import dev.utils.app.AppUtils
+import io.github.aakira.napier.Napier
 
 private const val SAVE_FILE_PATH_CODE = 1
 private const val IMPORT_FILE_PATH_CODE = 2
@@ -56,11 +60,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun 统计数据() {
-        findPreference<SwitchPreferenceCompat>("microsoft_app_center_type")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>(
+            "microsoft_app_center_type"
+        )!!.setOnPreferenceChangeListener { preference, newValue ->
             微软统计(newValue as Boolean)
             true
         }
-        findPreference<SwitchPreferenceCompat>("baidu_statistics_type")!!.setOnPreferenceChangeListener { preference, newValue ->
+        findPreference<SwitchPreferenceCompat>(
+            "baidu_statistics_type"
+        )!!.setOnPreferenceChangeListener { preference, newValue ->
             百度统计(newValue as Boolean)
             true
         }
@@ -72,17 +80,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private val openDocumentTreeLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            val appPath = requireContext().downloadDir
+            val customPath = if (uri != null) {
+                DocumentFile.fromTreeUri(requireContext(), uri)!!.uri
+            } else {
+                appPath.toUri()
+            }
+            val savePath = customPath.toString()
+            更新保存路径(savePath)
+            set保存路径(savePath)
+            Napier.d(tag = "自定义保存路径") { "$savePath" }
+        }
+
     private fun 保存路径() {
         findPreference<Preference>(保存路径)!!.apply {
             setOnPreferenceClickListener {
-                Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
-                    requireActivity().startActivityForResult(it, SAVE_FILE_PATH_CODE)
-                }
+                openDocumentTreeLauncher.launch(null)
+//                Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+//                    requireActivity().startActivityForResult(this, SAVE_FILE_PATH_CODE)
+//                }
                 true
             }
         }
 
-        val savePath = get下载路径()
+        val savePath = get保存路径()
 
         val path = if (savePath == null) {
             requireContext().downloadDir.absolutePath

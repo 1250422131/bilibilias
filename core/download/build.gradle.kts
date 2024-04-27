@@ -22,6 +22,8 @@ dependencies {
     implementation(projects.okdownload.okdownload)
     implementation(projects.okdownload.okdownloadConnectionOkhttp)
 
+    implementation("com.lazygeniouz:dfc:1.0.8")
+
     implementation(libs.okhttp)
 
     testImplementation(libs.junit)

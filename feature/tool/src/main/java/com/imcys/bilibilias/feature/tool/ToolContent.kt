@@ -189,7 +189,7 @@ fun ViewItem(
                             )
                         )
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 ) {
                     Text(text = "下载")
                 }
