@@ -18,7 +18,15 @@ dependencyResolutionManagement {
         maven("https://androidx.dev/storage/compose-compiler/repository/")
     }
 }
-rootProject.name = "bilibilias"
+
+val osName = System.getProperty("os.name").toLowerCase()
+
+val projectPrefix = when {
+    osName.contains("win") -> "BILIBILIAS"
+    else -> "bilibilias"
+}
+
+rootProject.name = projectPrefix
 include(":app")
 include(":common")
 include(":model_ffmpeg")
