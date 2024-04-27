@@ -8,9 +8,6 @@ plugins {
     kotlin("kapt")
 }
 
-ksp {
-    arg("ModuleName", project.name)
-}
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
@@ -76,18 +73,12 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    dataBinding {
-        enable = true
-    }
-
-    viewBinding {
-        enable = true
+        dataBinding = true
+        viewBinding = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
+        kotlinCompilerExtensionVersion = "1.5.12"
     }
 
     packaging {
@@ -103,14 +94,6 @@ android {
 }
 kapt {
     correctErrorTypes = true
-}
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
 }
 
 dependencies {
