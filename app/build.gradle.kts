@@ -8,12 +8,22 @@ plugins {
     kotlin("kapt")
 }
 
+ksp {
+    arg("ModuleName", project.name)
+}
 android {
     namespace = "com.imcys.bilibilias"
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
+        minSdk = 21
+        // noinspecton ExpiredTargetSdkVersion
+        targetSdk = 34
         versionCode = 204
         versionName = "2.0.41"
+        // multiDexEnabled true
+//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
+//        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
 
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
@@ -49,9 +59,35 @@ android {
         }
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     buildFeatures {
         compose = true
-        dataBinding = true
+    }
+
+    dataBinding {
+        enable = true
+    }
+
+    viewBinding {
+        enable = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
     }
 
     packaging {
@@ -68,9 +104,18 @@ android {
 kapt {
     correctErrorTypes = true
 }
+kotlin {
+    jvmToolchain(17)
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
+}
 
 dependencies {
     implementation(project(":common"))
+    implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
     implementation(libs.androidx.activity.compose)
 
