@@ -39,6 +39,7 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.asLogE
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
@@ -133,6 +134,8 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
         binding.dataBean = loginQrcodeBean.data
+        asLogE(context,"loginQRDialog: ${loginQrcodeBean.data.qrcode_key}")
+
         binding.loginQRModel =
             ViewModelProvider(
                 context as HomeActivity,
