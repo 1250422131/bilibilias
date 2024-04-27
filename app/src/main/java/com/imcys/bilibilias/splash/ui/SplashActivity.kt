@@ -46,6 +46,7 @@ class SplashActivity : BaseActivity() {
 //        constraintLayout.addStatusBarTopPadding()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         moveTaskToBack(true)

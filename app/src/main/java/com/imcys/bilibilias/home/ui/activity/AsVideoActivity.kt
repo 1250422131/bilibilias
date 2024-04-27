@@ -174,10 +174,13 @@ class AsVideoActivity : BaseActivity() {
                     if (videoPlayBean.code != 0) {
                         // 弹出通知弹窗
                         AsDialog.init(this@AsVideoActivity).build {
-                            title = "视频文件特殊"
+                            title =
+                                getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_title)
                             config = {
-                                content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
-                                positiveButtonText = "知道啦"
+                                content =
+                                    getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_content)
+                                positiveButtonText =
+                                    getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_button_text)
                                 positiveButton = {
                                     it.cancel()
                                 }
@@ -378,12 +381,12 @@ class AsVideoActivity : BaseActivity() {
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
     ) {
         val userVipState = userBaseBean.data.vip.status
-        if (data.badge == "会员" && userVipState != 1) {
+        if (data.badge == getString(R.string.app_asvideoactivity_updatebangumiinformation_badge) && userVipState != 1) {
             DialogUtils.dialog(
                 this,
-                "越界啦",
-                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
-                "我知道啦",
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_title),
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_message),
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_button_text),
                 positiveButtonClickListener = {
                 },
             ).show()
@@ -415,14 +418,14 @@ class AsVideoActivity : BaseActivity() {
 
         val userVipState = userBaseBean.data.vip.status
         bangumiSeasonBean.result.episodes.forEach {
-            if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
+            if (it.cid == cid && it.badge == getString(R.string.app_asvideoactivity_ismember_badge) && userVipState != 1) memberType = true
         }
         if (memberType) {
             DialogUtils.dialog(
                 this,
-                "越界啦",
-                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
-                "我知道啦",
+                getString(R.string.app_asvideoactivity_ismember_dialog_title),
+                getString(R.string.app_asvideoactivity_ismember_dialog_message),
+                getString(R.string.app_asvideoactivity_ismember_dialog_button_text),
                 positiveButtonClickListener = {
                 },
             ).show()
