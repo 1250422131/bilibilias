@@ -155,6 +155,10 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 
+lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidTools" }
+lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
+lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
+
 mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
 
 okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
