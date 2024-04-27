@@ -7,7 +7,11 @@ import androidx.preference.PreferenceManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
+import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.tencent.mmkv.MMKV
+import com.xiaojinzi.component.Component
+import com.xiaojinzi.component.Config
+import com.xiaojinzi.component.impl.application.ModuleManager
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
@@ -22,8 +26,7 @@ open class BaseApplication : Application() {
 
         handler = Handler(mainLooper)
 
-        // 百度统计开始
-        startBaiDuService()
+        initKComponent()
 
         initMMKV()
         initNapier()
@@ -38,15 +41,21 @@ open class BaseApplication : Application() {
         dataKv = MMKV.mmkvWithID("data")
     }
 
-    /**
-     * 百度统计
-     */
-    private fun startBaiDuService() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
-        StatService.setAuthorizedState(applicationContext, authorizedState)
-        StatService.autoTrace(applicationContext)
+    private fun initKComponent() {
+        Component.init(
+            application = this,
+            isDebug = false,
+            config = Config.Builder()
+                .build(),
+        )
+        // 手动加载模块
+        ModuleManager.registerArr(
+            "app",
+            "common",
+            "tool_log_export",
+        )
     }
+
 
     companion object {
 
@@ -77,6 +86,7 @@ open class BaseApplication : Application() {
             return instance!!.applicationContext
         }
 
+        lateinit var myUserData: MyUserData.DataBean
         // —————————————————————————————————————————————————
     }
 }

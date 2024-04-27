@@ -152,7 +152,7 @@
             }
         }
     </string>
-    <string name="new_version_doc">2.0.4-开阳-Alpha-1修改了存储权限，需要重新在设置授权自定义存储位置。</string>
+    <string name="new_version_doc">2.0.41修改了存储权限，需要重新在设置授权自定义存储位置。</string>
     <string name="user_dl_merge_cmd">
         如果你不清楚FFmpeg命令，请不要修改\n
         BILIBILIAS为大家提供了简单的命令参数\n
@@ -164,7 +164,7 @@
     <string name="app_activity_bangumi_follow_title">追番</string>
     <string name="app_activity_collection_title">收藏</string>
     <string name="app_activity_dedicate_title">致敬</string>
-    <string name="app_activity_donate_title">捐款</string>
+    <string name="app_activity_donate_title">赞助</string>
     <string name="app_activity_play_history_title">播放历史</string>
     <string name="app_fragment_tool_input_tip">输入BV/AV/EP号</string>
     <string name="app_fragment_download_task_tab_downloading_title">正在下载</string>
@@ -190,7 +190,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.4-开阳-Alpha-1</string>
+    <string name="app_fragment_home_version">V2.0.41</string>
     <string name="app_fragment_home_salute_text">向全体BILIBILIAS用户致敬</string>
     <string name="app_fragment_home_salute_doc">爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户</string>
     <string name="app_fragment_home_donate_text">为BILIBILIAS的开发提供支持</string>
@@ -304,5 +304,32 @@
     <string name="download_barrage">下载弹幕</string>
     <string name="Copied">复制成功</string>
     <string name="app_root_preferences_long_title_language">设置软件显示的语言</string>
-    <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言（测试功能）</string>
+    <string name="app_root_preferences_long_title_language_tip">设置软件显示的语言</string>
+    <string name="app_donate_tip_title">为其他参与者赞助</string>
+    <string name="app_donate_tip_long_title">现在你有更多选择</string>
+    <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
+    <string name="app_donate_tip_link" />
+    <string name="app_login_view_biliagreement_context">无论如何，你都在间接使用B站</string>
+    <string name="app_login_view_biliagreement_alert_title">B站账户需要遵守的协议列表</string>
+    <string name="app_login_view_biliagreement_alert_button_text">使用则代表同意</string>
+    <string name="app_login_view_bilibiliasagreement_title">BILIBILIAS隐私政策</string>
+    <string name="app_login_view_bilibiliasagreement_text">使用则代表同意</string>
+    <string name="app_user_download_save_path_error">获取用户下载路径错误</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_title">视频文件特殊</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_content">该视频无FLV格式，故无法播放，请选择Dash模式缓存。</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_button_text">知道啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_title">越界啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_message">没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_button_text">我知道啦</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_badge">会员</string>
+    <string name="app_asvideoactivity_ismember_badge">会员</string>
+    <string name="app_asvideoactivity_ismember_dialog_title">越界啦</string>
+    <string name="app_asvideoactivity_ismember_dialog_message">没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。</string>
+    <string name="app_asvideoactivity_ismember_dialog_button_text">我知道啦</string>
+    <string name="app_dialog_dialog_astoast_content">云端账户即将出炉</string>
+    <string name="app_dialog_addbangumidownloadtask_toast_text">已添加到下载队列</string>
+    <string name="app_download_queue_error_text">下载失败问题:</string>
+    <string name="app_download_queue_cachesuccessful">缓存成功</string>
+    <string name="app_download_queue_merge_error">合并错误</string>
+    <string name="app_download_queue_merge_finish">合并完成</string>
 </resources>

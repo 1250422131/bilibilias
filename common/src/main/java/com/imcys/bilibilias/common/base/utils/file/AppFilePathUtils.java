@@ -174,55 +174,46 @@ public class AppFilePathUtils {
      * @return
      */
     public static boolean copySafFile(String oldPath$Name, Uri uri, Context context) {
-
         File oldFile = new File(oldPath$Name);
-        try {
 
-            if (!oldFile.exists()) {
-                Log.e("--Method--", "copyFile:  oldFile not exist.");
-                return false;
-            } else if (!oldFile.isFile()) {
-                Log.e("--Method--", "copyFile:  oldFile not file.");
-                return false;
-            } else if (!oldFile.canRead()) {
-                Log.e("--Method--", "copyFile:  oldFile cannot read.");
+        if (!oldFile.exists()) {
+            Log.e("--Method--", "copyFile: oldFile does not exist.");
+            return false;
+        }
+
+        if (!oldFile.isFile()) {
+            Log.e("--Method--", "copyFile: oldFile is not a file.");
+            return false;
+        }
+
+        if (!oldFile.canRead()) {
+            Log.e("--Method--", "copyFile: oldFile cannot be read.");
+            return false;
+        }
+
+        try (InputStream inputStream = new FileInputStream(oldFile);
+             OutputStream outputStream = context.getContentResolver().openOutputStream(uri)) {
+
+            if (outputStream == null) {
+                Log.e("--Method--", "copyFile: outputStream is null.");
                 return false;
             }
 
-            ContentResolver contentResolver = context.getContentResolver();
-            try {
-
-                //InputStream is = contentResolver.openInputStream(uri);
-                //FileOutputStream fos = new FileOutputStream(oldFile);
-
-                OutputStream outputStream = contentResolver.openOutputStream(uri);
-                FileInputStream inputStream = new FileInputStream(oldFile);
-
-
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    if (outputStream != null) {
-                        outputStream.write(buffer, 0, length);
-                    }
-                }
-
-                inputStream.close();
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("--Method--", "copySafFile: }"+e.getMessage());
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
             }
-
 
             return true;
-        } catch (Exception e) {
+
+        } catch (IOException e) {
             e.printStackTrace();
+            Log.e("--Method--", "copySafFile: " + e.getMessage());
             return false;
         }
     }
+
 
     public static String getFilePathByUri(Context context, Uri uri) {
         String path = null;

@@ -107,27 +107,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="20sp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/as_video_data_ly"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/tv_view_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
+                        android:onLongClick="@{(view)->AsVideoViewModel.addClipboardMessage(view,VideoBaseBean.data.title)}"
+                        android:text="@{VideoBaseBean.data.title}"
                         android:textColor="@color/black"
                         android:textSize="30sp"
-                        android:textStyle="bold"
-                        tools:text="这是标题吧这是标题吧这是标题吧这是标题吧这是标题吧这是标题吧这是标题吧" />
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_view_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -136,8 +143,8 @@
                         android:text="@{VideoBaseBean.data.desc}"
                         android:textColor="@color/home_bottom_nav_seletor"
                         android:textSize="19sp"
-                        android:textStyle="bold"
-                        tools:text="简介" />
+                        android:textStyle="bold" />
+
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
@@ -150,25 +157,27 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
+                            android:onClick="@{(view) -> AsVideoViewModel.likeVideo(view,VideoBaseBean.data.bvid)}"
                             android:orientation="horizontal">
 
-                            <com.google.android.material.imageview.ShapeableImageView
+                            <ImageView
                                 android:id="@+id/as_video_like_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:backgroundTint="@color/white"
                                 android:contentDescription="点赞按钮"
                                 android:src="@drawable/ic_as_video_like"
-                                app:tint="@color/as_like_seletor" />
+                                android:tint="@color/as_like_seletor"
+                                app:isSelected="@{ArchiveHasLikeBean.data == 1}"
+                                tools:ignore="UseAppTint" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_view_stat_like"
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.like)}"
                                 android:textColor="@color/black"
-                                android:textStyle="bold"
-                                tools:text="123123" />
+                                android:textStyle="bold" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -176,46 +185,54 @@
                             android:id="@+id/as_video_throw_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:onClick="@{(view)->AsVideoViewModel.videoCoinAdd(view,VideoBaseBean.data.bvid)}">
 
-                            <com.google.android.material.imageview.ShapeableImageView
+
+                            <ImageView
                                 android:id="@+id/as_video_throw_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
-                                app:tint="@color/as_like_seletor" />
+                                android:tint="@color/as_like_seletor"
+                                app:isSelected="@{ArchiveCoinsBean.multiply != 0}"
+                                tools:ignore="UseAppTint" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_view_stat_coins"
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.coin)}"
                                 android:textColor="@color/black"
-                                android:textStyle="bold"
-                                tools:text="123123" />
+                                android:textStyle="bold" />
+
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/as_video_collection_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1">
+                            android:layout_weight="1"
+                            android:onClick="@{(view)->AsVideoViewModel.loadCollectionView(view,VideoBaseBean.data.aid)}">
 
-                            <com.google.android.material.imageview.ShapeableImageView
+
+                            <ImageView
                                 android:id="@+id/as_video_collection_bt"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"
-                                app:tint="@color/as_like_seletor" />
+                                android:tint="@color/as_like_seletor"
+                                app:isSelected="@{ArchiveFavouredBean.favoured}"
+                                tools:ignore="UseAppTint" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_view_stat_favoured"
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.favorite)}"
                                 android:textColor="@color/black"
-                                android:textStyle="bold"
-                                tools:text="12313" />
+                                android:textStyle="bold" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -225,22 +242,26 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1">
 
-                            <com.google.android.material.imageview.ShapeableImageView
+
+                            <ImageView
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_fasong"
-                                app:tint="@color/black" />
+                                android:tint="@color/black"
+                                tools:ignore="UseAppTint" />
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tv_view_stat_shared"
+                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.share)}"
                                 android:textColor="@color/black"
-                                android:textStyle="bold"
-                                tools:text="123123" />
+                                android:textStyle="bold" />
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -248,47 +269,55 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{(view)->AsVideoViewModel.toUserPage(view,UserCardBean.data.card.mid)}"
+                    android:visibility="visible">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/iv_owner_face"
+                    <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:imageUrl="@{UserCardBean.data.card.face}"
-                        app:round="20dp"
-                        tools:src="@mipmap/ic_launcher">
+                        android:src="@mipmap/ic_launcher"
+                        app:round="20dp">
 
-                    </com.google.android.material.imageview.ShapeableImageView>
+                    </androidx.constraintlayout.utils.widget.ImageFilterView>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginLeft="25dp"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
-                        <com.google.android.material.textview.MaterialTextView
+                        <TextView
                             android:id="@+id/as_video_user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            tools:text="用户名" />
+                            android:text="@{VideoBaseBean.data.owner.name}"
+                            android:textSize="16sp"
+                            android:transitionName="videoTitle" />
 
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/tv_owner_data"
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{NumberUtils.digitalConversion(UserCardBean.data.card.fans)  +`粉丝  `+NumberUtils.digitalConversion(UserCardBean.data.archive_count)+`投稿`}"
                             android:textColor="@color/color_text_hint"
-                            android:textSize="12sp"
-                            tools:text="粉丝" />
+                            android:textSize="12sp" />
+
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/as_video_subsection_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp" />
+
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/as_video_cd"
@@ -310,7 +339,7 @@
                             app:cardCornerRadius="15dp"
                             app:cardElevation="0dp">
 
-                            <com.google.android.material.button.MaterialButton
+                            <Button
                                 android:id="@+id/as_video_dl_bt"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
@@ -321,6 +350,7 @@
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -338,6 +368,8 @@
                                 android:textSize="15sp"
                                 android:textStyle="bold"
                                 android:tint="@color/white" />
+
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -356,8 +388,11 @@
                                 android:textStyle="bold"
                                 android:tint="@color/white" />
 
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -380,7 +415,7 @@
                             app:cardCornerRadius="15dp"
                             app:cardElevation="0dp">
 
-                            <com.google.android.material.button.MaterialButton
+                            <Button
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_video_dl_bt_bg"
@@ -410,16 +445,21 @@
                                 android:tint="@color/white" />
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+
             </LinearLayout>
+
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/as_video_faButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
             android:clickable="true"
             android:elevation="3dp"
             android:focusable="true"
@@ -428,7 +468,8 @@
             app:backgroundTint="@color/white"
             app:layout_anchor="@id/as_video_appbar"
             app:layout_anchorGravity="bottom|end"
-            app:pressedTranslationZ="16dp" />
+            app:pressedTranslationZ="16dp"
+            tools:ignore="KeyboardInaccessibleWidget,RtlHardcoded" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
