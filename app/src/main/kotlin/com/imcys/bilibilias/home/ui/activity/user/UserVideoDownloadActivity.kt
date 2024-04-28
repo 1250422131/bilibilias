@@ -24,9 +24,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UserVideoDownloadActivity : BaseActivity() {
-
-    lateinit var binding: ActivityUserVideoDownloadBinding
+class UserVideoDownloadActivity : BaseActivity<ActivityUserVideoDownloadBinding>() {
+    override val layoutId = R.layout.activity_user_video_download
 
     private val viewModel: UserVideoDownloadViewModel by viewModels<UserVideoDownloadViewModel>()
     private lateinit var loadDialog: BottomSheetDialog
@@ -38,7 +37,6 @@ class UserVideoDownloadActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityUserVideoDownloadBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
@@ -49,7 +47,7 @@ class UserVideoDownloadActivity : BaseActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun initView() {
+    fun initView() {
 
         binding.apply {
             uvDownloadTopLy.addStatusBarTopPadding()

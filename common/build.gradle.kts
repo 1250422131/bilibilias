@@ -78,7 +78,7 @@ dependencies {
     api(libs.rxFFmpeg)
 
     // 百度统计
-    api(libs.mtj.sdk)
+    api(libs.mtj.sdk.circle)
 
     // 微软分发
     api(libs.appcenter.distribute)

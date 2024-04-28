@@ -32,7 +32,6 @@
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:imageUrl="@{data.icoUrl}"
                 android:padding="10dp"
                 app:tint="?attr/colorPrimary" />
 

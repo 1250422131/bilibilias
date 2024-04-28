@@ -70,14 +70,12 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class AsVideoActivity : BaseActivity() {
-
+class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
+    override val layoutId = R.layout.activity_as_video
     private val TAG = this.javaClass.name
 
     // 视频基本数据类，方便全局调用
     private lateinit var videoDataBean: VideoBaseBean
-
-    lateinit var binding: ActivityAsVideoBinding
 
     // 饺子播放器，方便全局调用
     private lateinit var asJzvdStd: AppAsJzvdStd
@@ -105,8 +103,6 @@ class AsVideoActivity : BaseActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_as_video)
-
         // 加载用户信息&视频信息
         loadUserData()
         // 加载控件
@@ -130,7 +126,7 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    private fun initView() {
+     fun initView() {
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd

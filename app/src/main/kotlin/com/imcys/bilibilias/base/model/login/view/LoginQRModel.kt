@@ -24,7 +24,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.SET_COOKIE
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
 import com.tencent.mmkv.MMKV
 import dagger.hilt.android.lifecycle.HiltViewModel
