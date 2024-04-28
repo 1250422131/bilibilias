@@ -18,7 +18,7 @@ import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.user.ResponseResult
 import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
 import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
-import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -63,7 +63,6 @@ import javax.inject.Singleton
 class NetworkService @Inject constructor(
     private val ktHttpUtils: KtHttpUtils,
     private val httpClient: HttpClient,
-    private val asCookiesStorage: AsCookiesStorage
 ) {
 
     private val ioDispatcher = Dispatchers.IO
@@ -376,7 +375,6 @@ class NetworkService @Inject constructor(
         httpClient.submitForm(
             url = BilibiliApi.videLikePath,
             formParameters = parameters {
-                append("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
                 append("like", "1")
                 append("bvid", bvid)
             }
@@ -388,7 +386,6 @@ class NetworkService @Inject constructor(
             COOKIE,
             BaseApplication.dataKv.decodeString(COOKIES, "")!!,
         )
-            .addParam("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
             .addParam("like", "2")
             .addParam("bvid", bvid)
             .asyncPost(BilibiliApi.videLikePath)
@@ -396,7 +393,6 @@ class NetworkService @Inject constructor(
 
     suspend fun n33(bvid: String): VideoCoinAddBean = runCatchingOnWithContextIo {
         ktHttpUtils
-            .addHeader(COOKIE, asCookiesStorage.getCookieValue("bili_jct") ?: "")
             .addParam("bvid", bvid)
             .addParam("multiply", "2")
             .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
@@ -408,7 +404,6 @@ class NetworkService @Inject constructor(
             httpClient.get(BilibiliApi.videoCollectionSetPath) {
                 parameter("rid", toString)
                 parameter("add_media_ids", addMediaIds)
-                parameter("csrf", asCookiesStorage.getCookieValue("bili_jct") ?: "")
                 parameter("type", "2")
             }.body()
         }

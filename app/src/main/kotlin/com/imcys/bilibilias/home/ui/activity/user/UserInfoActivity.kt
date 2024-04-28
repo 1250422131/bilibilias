@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.databinding.ActivityUserInfoBinding
@@ -13,9 +14,8 @@ import com.imcys.bilibilias.home.ui.fragment.UserFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UserInfoActivity : BaseActivity() {
-
-    lateinit var binding: ActivityUserInfoBinding
+class UserInfoActivity : BaseActivity<ActivityUserInfoBinding>() {
+    override val layoutId = R.layout.activity_user_info
 
     lateinit var fragmentTransaction:FragmentTransaction
 
@@ -24,9 +24,7 @@ class UserInfoActivity : BaseActivity() {
 
         val mid = intent.getLongExtra("mid", BaseApplication.asUser.mid)
 
-        binding = ActivityUserInfoBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(binding.root)
 
         val fragmentManager: FragmentManager = supportFragmentManager
 

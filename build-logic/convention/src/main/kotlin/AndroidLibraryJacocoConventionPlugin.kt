@@ -15,5 +15,4 @@ class AndroidLibraryJacocoConventionPlugin : Plugin<Project> {
             configureJacoco(extension)
         }
     }
-
 }

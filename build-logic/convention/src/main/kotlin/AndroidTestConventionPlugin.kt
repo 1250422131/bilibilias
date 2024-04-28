@@ -36,5 +36,4 @@ class AndroidTestConventionPlugin : Plugin<Project> {
             }
         }
     }
-
 }

@@ -15,23 +15,19 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.arouter.ARouterAddress
-import com.imcys.bilibilias.common.di.AsCookiesStorage
+import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
 import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
 import com.imcys.bilibilias.home.ui.fragment.HomeFragment
 import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
-import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.anno.RouterAnno
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeActivity,
-)
 @AndroidEntryPoint
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity<ActivityHomeBinding>() {
+    override val layoutId =  R.layout.activity_home
     private var exitTime: Long = 0
     lateinit var activityHomeBinding: ActivityHomeBinding
 
@@ -44,21 +40,6 @@ class HomeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Component.inject(target = this)
-        /*
-        备选方案
-        val paint = Paint()
-        val cm = ColorMatrix()
-        cm.setSaturation(0f)
-        mPaint.setColorFilter(ColorMatrixColorFilter(cm))
-        window.decorView.setLayerType(View.LAYER_TYPE_HARDWARE, paint)
-        */
-
-
-        //补全必须要的内容
-        activityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-
-
         initFragment()
         loadFragment()
 
