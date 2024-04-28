@@ -11,6 +11,12 @@ android {
     dataBinding {
         enable = true
     }
+    buildTypes {
+        create("nonMinifiedRelease") {
+        }
+        create("benchmarkRelease") {
+        }
+    }
 }
 
 dependencies {

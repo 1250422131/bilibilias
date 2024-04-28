@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics

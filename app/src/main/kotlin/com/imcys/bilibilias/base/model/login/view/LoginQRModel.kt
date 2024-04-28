@@ -72,7 +72,6 @@ class LoginQRModel @Inject constructor(
                 loginQRModel?.loginTip = loginStateBean.data.message
                 binding?.loginQRModel = loginQRModel
             }else{
-                asCookiesStorage.saveCookies()
             }
             // 将登录完成事件返回给Fragment
             responseResult(loginStateBean.data.code, loginStateBean)

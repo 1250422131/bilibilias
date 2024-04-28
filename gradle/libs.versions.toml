@@ -66,6 +66,8 @@ androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
 voyager = "1.1.0-alpha04"
 preferenceKtxVersion = "1.2.1"
 [libraries]
+
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

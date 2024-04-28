@@ -13,6 +13,12 @@ android {
     dataBinding {
         enable = true
     }
+    buildTypes {
+        create("benchmarkRelease") {
+        }
+        create("nonMinifiedRelease") {
+        }
+    }
 }
 
 dependencies {
@@ -20,8 +26,8 @@ dependencies {
 
     // 深拷贝
     api(libs.deeprecopy.core)
-    api(libs.androidx.preference.ktx)
     ksp(libs.deeprecopy.compiler)
+    api(libs.androidx.preference.ktx)
 
     // 文件下载
     api(libs.okdownload)
@@ -117,6 +123,7 @@ dependencies {
 
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
+
     implementation(libs.okhttp)
     implementation(libs.okhttp.brotli)
 
@@ -130,10 +137,8 @@ dependencies {
     api(libs.ktor.serialization.kotlinx.json)
 
     api(libs.constraintlayout)
-    api(libs.androidx.lifecycle.viewmodel.ktx)
-    api(libs.androidx.lifecycle.runtime.ktx)
-
-    api(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
