@@ -46,19 +46,13 @@ android {
             )
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
+            baselineProfile.automaticGenerationDuringBuild = true
         }
-    }
-
-    lint {
-        baseline = file("lint-baseline.xml")
-        abortOnError = false
-        checkReleaseBuilds = false
     }
 
     buildFeatures {
         compose = true
         dataBinding = true
-        viewBinding = true
     }
 
     packaging {
@@ -82,6 +76,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     ksp(libs.deeprecopy.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
@@ -93,5 +88,17 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    implementation("androidx.activity:activity-ktx:1.9.0")
+    implementation(libs.androidx.activity.ktx)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+}
+baselineProfile {
+    // Don't build on every iteration of a full assemble.
+    // Instead enable generation directly for the release build variant.
+    automaticGenerationDuringBuild = false
+}
+
+dependencyGuard {
+    configuration("releaseRuntimeClasspath")
 }
