@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation("io.github.alexzhirkevich:qrose:1.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
