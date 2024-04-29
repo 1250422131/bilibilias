@@ -89,7 +89,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             } else {
                 PrivacyActivity::class.java
             }
-            startActivity(Intent(this, activity))
+            startActivity(Intent(this, PrivacyActivity::class.java))
             overridePendingTransition(
                 android.R.anim.fade_in,
                 android.R.anim.fade_out,

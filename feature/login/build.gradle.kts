@@ -9,7 +9,11 @@ android {
 }
 
 dependencies {
-    implementation("io.github.alexzhirkevich:qrose:1.0.0")
+    implementation(projects.core.common)
+    implementation(projects.core.network)
+    implementation(projects.core.datastore)
+
+    implementation("io.github.alexzhirkevich:qrose:1.0.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

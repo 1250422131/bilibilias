@@ -24,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId = R.layout.activity_home
     private var exitTime: Long = 0
-    lateinit var activityHomeBinding: ActivityHomeBinding
 
     lateinit var toolFragment: ToolFragment
     lateinit var homeFragment: HomeFragment
@@ -60,7 +59,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val type = intent.type
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
-                activityHomeBinding.apply {
+                binding.apply {
                     homeViewPage.currentItem = 1
                     homeBottomNavigationView.menu.getItem(1).isChecked = true
                     toolFragment.parseShare(intent)
@@ -76,7 +75,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val type = intent.type
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
-                activityHomeBinding.apply {
+                binding.apply {
                     homeViewPage.currentItem = 1
                     homeBottomNavigationView.menu.getItem(1).isChecked = true
                     toolFragment.parseShare(intent)
@@ -85,7 +84,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
         val asUrl = intent?.extras?.getString("asUrl")
         if (asUrl != null) {
-            activityHomeBinding.apply {
+            binding.apply {
                 homeViewPage.currentItem = 1
                 homeBottomNavigationView.menu.getItem(1).isChecked = true
                 toolFragment.parseShare(intent)
@@ -104,7 +103,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
         val myFragmentPageAdapter =
             MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
-        activityHomeBinding.let {
+        binding.let {
             it.homeViewPage.adapter = myFragmentPageAdapter
             it.homeViewPage.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
