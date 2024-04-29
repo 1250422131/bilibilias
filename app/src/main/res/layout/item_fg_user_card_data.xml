@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
         <variable
             name="UpStatBeam"
             type="com.imcys.bilibilias.home.ui.model.UpStatBeam" />
@@ -38,7 +35,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{NumberUtils.digitalConversion(UserCardBean.data.card.fans)}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -66,7 +62,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{NumberUtils.digitalConversion(UserCardBean.data.card.friend)}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -93,7 +88,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{NumberUtils.digitalConversion(UpStatBeam.data.likes)}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -121,7 +115,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{NumberUtils.digitalConversion(UpStatBeam.data.archive.view)}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />

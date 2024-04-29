@@ -13,14 +13,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -29,23 +22,14 @@ import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
-import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
-import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.distribute.Distribute
-import com.xiaojinzi.component.anno.RouterAnno
-import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,21 +50,15 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.system.exitProcess
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
-)
+
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
-
     @Inject
     lateinit var networkService: NetworkService
-
-    @Inject
-    lateinit var asCookiesStorage: AsCookiesStorage
 
     // 懒加载
     private val bottomSheetDialog by lazy {
@@ -103,7 +81,6 @@ class HomeFragment : BaseFragment() {
         // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel = FragmentHomeViewModel()
         }
 
         initView()
@@ -113,41 +90,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        // 判断用户是否没有被引导
-        val guideVersion =
-            (requireActivity() as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            loadHomeGuide()
-        }
         StatService.onPageStart(requireActivity(), "HomeFragment")
-    }
-
-    /**
-     * 加载引导
-     */
-    private fun loadHomeGuide() {
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(requireActivity()))
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_home)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentHomeBinding.fragmentHomeNewVersionLy.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.TopToBottomOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .setOnDismissCallback {
-                // 让ViewPage来切换页面
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1,
-                ).isCheckable = true
-            }
-            .show()
     }
 
     /**
@@ -195,20 +138,6 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        launchUI {
-
-            val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
-                networkService.getOldHomeBannerData()
-            }
-
-            // 新增BannerLifecycleObserver
-            fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                OldHomeBeanAdapter(
-                    oldHomeBannerDataBean.textList,
-                    oldHomeBannerDataBean,
-                ),
-            ).setIndicator(CircleIndicator(requireContext()))
-        }
     }
 
     /**
@@ -324,19 +253,15 @@ class HomeFragment : BaseFragment() {
     }
 
     // 初始化列表
-    private fun initView() {
-        // 登陆检测
-        // context?.let { DialogUtils.loginDialog(it).show() }
-        // 加载推荐视频
-        // loadRCMDVideoData()
-        // 检测用户是否登陆
+    override fun initView() {
         detectUserLogin()
-
-        // loadRoamData()
 
         initSmoothRefreshLayout()
         initLogoutLoginButton()
 
+    }
+
+    override fun initData() {
     }
 
     private fun initLogoutLoginButton() {
@@ -350,13 +275,7 @@ class HomeFragment : BaseFragment() {
                 true,
                 positiveButtonClickListener =
                 {
-                    val csrf = asCookiesStorage.getCookieValue("bili_jct")
-
                     launchUI {
-
-                        networkService.exitUserLogin(csrf ?: "")
-
-                        asCookiesStorage.deleteAllCookie()
                         BaseApplication.dataKv.apply {
                             encode("mid", 0)
                         }
@@ -379,8 +298,6 @@ class HomeFragment : BaseFragment() {
      */
     internal fun loadLogin() {
         launchUI {
-
-
 
             //自己会切换IO
             val loginQRData = networkService.getLoginQRData()

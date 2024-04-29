@@ -79,7 +79,7 @@ class UserFragment : BaseFragment() {
         return fragmentUserBinding.root
     }
 
-    private fun initView() {
+    override fun initView() {
         initUserDataRv()
 
         initUserData()
@@ -90,6 +90,9 @@ class UserFragment : BaseFragment() {
         initUserVideoDownloadButton()
 
 
+    }
+
+    override fun initData() {
     }
 
     private fun initUserVideoDownloadButton() {

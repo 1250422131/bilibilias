@@ -9,12 +9,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    buildTypes {
-        create("nonMinifiedRelease") {
-        }
-        create("benchmarkRelease") {
-        }
-    }
 }
 
 dependencies {

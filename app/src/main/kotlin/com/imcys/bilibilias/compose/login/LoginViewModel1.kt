@@ -38,8 +38,7 @@ import kotlin.time.Duration.Companion.seconds
 class LoginViewModel1 @Inject constructor(
     private val loginRepository: LoginRepository,
     @ApplicationContext context: Context,
-) :
-    ViewModel() {
+) : ViewModel() {
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState = _loginUiState.asStateFlow()
 

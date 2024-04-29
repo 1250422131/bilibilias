@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.adapter
 
-import android.animation.ValueAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.databinding.ItemUserVidoeDownloadBinding
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
-import okhttp3.internal.notifyAll
 
 
 class UserVideoDownloadAdapter :

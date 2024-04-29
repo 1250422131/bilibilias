@@ -407,24 +407,24 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         viewModelScope.launchUI {
             val likeVideoBean = networkService.videoLike(bvid)
 
-            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-                when (likeVideoBean.code) {
-                    0 -> {
-                        context.binding.archiveHasLikeBean?.data = 1
-                        context.binding.asVideoLikeBt.isSelected = true
-                    }
-
-                    65006 -> {
-                        cancelLikeVideo(view, bvid)
-                    }
-
-                    else -> {
-                        asToast(context, likeVideoBean.message)
-                    }
-                }
-            } else {
-                cancelLikeVideo(view, bvid)
-            }
+//            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
+//                when (likeVideoBean.code) {
+//                    0 -> {
+//                        context.binding.archiveHasLikeBean?.data = 1
+//                        context.binding.asVideoLikeBt.isSelected = true
+//                    }
+//
+//                    65006 -> {
+//                        cancelLikeVideo(view, bvid)
+//                    }
+//
+//                    else -> {
+//                        asToast(context, likeVideoBean.message)
+//                    }
+//                }
+//            } else {
+//                cancelLikeVideo(view, bvid)
+//            }
         }
     }
 
@@ -440,12 +440,12 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
             launchUI {
                 when (likeVideoBean.code) {
-                    0 -> {
-                        (context as AsVideoActivity).binding.apply {
-                            archiveHasLikeBean?.data = 0
-                            asVideoLikeBt.isSelected = false
-                        }
-                    }
+//                    0 -> {
+//                        (context as AsVideoActivity).binding.apply {
+//                            archiveHasLikeBean?.data = 0
+//                            asVideoLikeBt.isSelected = false
+//                        }
+//                    }
 
                     65004 -> {
                         likeVideo(view, bvid)
@@ -470,8 +470,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             networkService.n33(bvid)
 
             launchUI {
-                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
-                context.binding.asVideoThrowBt.isSelected = true
+//                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
+//                context.binding.asVideoThrowBt.isSelected = true
             }
         }
     }
@@ -482,26 +482,26 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(view: View, avid: Long) {
         val context = view.context
-        (context as AsVideoActivity).binding.apply {
-            viewModelScope.launchIO {
-                val userCreateCollectionBean = networkService.n34()
-
-                launchUI {
-                    if (userCreateCollectionBean.code == 0) {
-                        DialogUtils.loadUserCreateCollectionDialog(
-                            context,
-                            userCreateCollectionBean,
-                            { _, _ ->
-                            },
-                            { selects ->
-                                // 选取完成了收藏文件夹
-                                setCollection(context, selects, avid)
-                            },
-                        ).show()
-                    }
-                }
-            }
-        }
+//        (context as AsVideoActivity).binding.apply {
+//            viewModelScope.launchIO {
+//                val userCreateCollectionBean = networkService.n34()
+//
+//                launchUI {
+//                    if (userCreateCollectionBean.code == 0) {
+//                        DialogUtils.loadUserCreateCollectionDialog(
+//                            context,
+//                            userCreateCollectionBean,
+//                            { _, _ ->
+//                            },
+//                            { selects ->
+//                                // 选取完成了收藏文件夹
+//                                setCollection(context, selects, avid)
+//                            },
+//                        ).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**
@@ -546,8 +546,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             val collectionResultBean = networkService.n35(avid.toString(), addMediaIds)
 
             if (collectionResultBean.code == 0) {
-                context.binding.archiveFavouredBean?.isFavoured = true
-                context.binding.asVideoCollectionBt.isSelected = true
+//                context.binding.archiveFavouredBean?.isFavoured = true
+//                context.binding.asVideoCollectionBt.isSelected = true
             } else {
                 asToast(context, "收藏失败${collectionResultBean.code}")
             }

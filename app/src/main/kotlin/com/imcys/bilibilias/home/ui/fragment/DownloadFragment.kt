@@ -70,12 +70,16 @@ class DownloadFragment : BaseFragment() {
     /**
      * 初始化布局
      */
-    private fun initView() {
+    override fun initView() {
         initDownloadListAd()
         initEditLayout()
         initDownloadList()
 
         initTabLayout()
+    }
+
+    override fun initData() {
+
     }
 
     private fun initDownloadListAd() {

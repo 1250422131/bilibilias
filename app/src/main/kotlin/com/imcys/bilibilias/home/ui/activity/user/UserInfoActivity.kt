@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class UserInfoActivity : BaseActivity<ActivityUserInfoBinding>() {
     override val layoutId = R.layout.activity_user_info
 
-    lateinit var fragmentTransaction:FragmentTransaction
+    lateinit var fragmentTransaction: FragmentTransaction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +41,11 @@ class UserInfoActivity : BaseActivity<ActivityUserInfoBinding>() {
         fragmentTransaction.commit()
     }
 
-
     companion object {
         fun actionStart(context: Context, mid: Long?) {
             val intent = Intent(context, UserInfoActivity::class.java)
             intent.putExtra("mid", mid)
             context.startActivity(intent)
         }
-
     }
 }

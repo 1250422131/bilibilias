@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.base.model.login.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -19,29 +18,20 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.constant.COOKIES
-import com.imcys.bilibilias.common.base.constant.SET_COOKIE
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
-import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.databinding.DialogLoginQrBottomsheetBinding
-import com.tencent.mmkv.MMKV
 import dagger.hilt.android.lifecycle.HiltViewModel
-import okhttp3.Response
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URLEncoder
-import java.util.regex.Pattern
 import javax.inject.Inject
-
 
 @HiltViewModel
 class LoginQRModel @Inject constructor(
-    private val networkService: NetworkService,
-    private val asCookiesStorage: AsCookiesStorage
+    private val networkService: NetworkService
 ) : ViewModel() {
 
     private val TAG = this.javaClass.name
@@ -71,13 +61,11 @@ class LoginQRModel @Inject constructor(
                 val loginQRModel = binding?.loginQRModel
                 loginQRModel?.loginTip = loginStateBean.data.message
                 binding?.loginQRModel = loginQRModel
-            }else{
+            } else {
             }
             // 将登录完成事件返回给Fragment
             responseResult(loginStateBean.data.code, loginStateBean)
-
         }
-
     }
 
     /**
@@ -144,57 +132,17 @@ class LoginQRModel @Inject constructor(
     fun goToQR(view: View) {
         val context = view.context
         val packName = "tv.danmaku.bili"
-        if (AppFilePathUtils.isInstallApp(context, packName)) {
-            Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan")).also {
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(it)
-            }
-        } else {
-            Toast.makeText(
-                context,
-                context.getString(R.string.app_LoginQRModel_goToQR),
-                Toast.LENGTH_SHORT,
-            ).show()
-        }
-    }
-
-    /**
-     * 登录成功后储存cookie等资源
-     * @param loginStateBean LoginStateBean
-     * @param response Response
-     */
-    @SuppressLint("CommitPrefEdits")
-    fun loginSuccessOp(loginStateBean: LoginStateBean, response: Response) {
-        val kv = MMKV.mmkvWithID("data")
-
-        kv.encode("refreshToken", loginStateBean.data.refreshToken)
-
-        var cookies = ""
-        // 创建 Pattern 对象
-        val patternSESSDATA = "SESSDATA=(.*?);"
-        val rSESSDATA: Pattern = Pattern.compile(patternSESSDATA)
-        val patternBiliJct = "bili_jct=(.*?);"
-        val rBiliJct: Pattern = Pattern.compile(patternBiliJct)
-
-        response.headers.values(SET_COOKIE).forEach {
-            cookies += it
-            var m = rSESSDATA.matcher(it)
-
-            if (m.find()) {
-                val groupStr = m.group(1)
-                kv.encode("SESSDATA", groupStr)
-            }
-
-            m = rBiliJct.matcher(it)
-
-            if (m.find()) {
-                val groupStr = m.group(1)
-                kv.encode("bili_jct", groupStr)
-            }
-        }
-        kv.apply {
-            encode(COOKIES, cookies)
-            encode("refreshToken", loginStateBean.data.refreshToken)
-        }
+//        if (AppFilePathUtils.isInstallApp(context, packName)) {
+//            Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan")).also {
+//                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                context.startActivity(it)
+//            }
+//        } else {
+//            Toast.makeText(
+//                context,
+//                context.getString(R.string.app_LoginQRModel_goToQR),
+//                Toast.LENGTH_SHORT,
+//            ).show()
+//        }
     }
 }

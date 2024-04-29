@@ -15,6 +15,7 @@ dependencies {
     api("com.squareup.okio:okio:3.9.0")
     api(libs.napier)
     api(libs.devappx)
+    api("com.github.getActivity:Toaster:12.6")
     implementation(kotlin("reflect"))
     implementation(libs.androidx.preference.ktx)
 }

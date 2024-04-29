@@ -24,7 +24,6 @@
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{ListBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@{ListBean.title}"
             android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"

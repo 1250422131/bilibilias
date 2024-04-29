@@ -14,37 +14,23 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentToolBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
-import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
-import com.xiaojinzi.component.anno.RouterAnno
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -56,9 +42,6 @@ import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.ToolFragment,
-)
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
 
@@ -78,39 +61,7 @@ class ToolFragment : BaseFragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onResume() {
         super.onResume()
-        // 这里仍然是在判断是否有被引导过了
-        val guideVersion =
-            (activity as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            (activity as HomeActivity).asSharedPreferences.edit()
-                .putString("AppGuideVersion", App.AppGuideVersion).apply()
-            loadToolGuide()
-        }
         StatService.onPageStart(context, "ToolFragment")
-    }
-
-    private fun loadToolGuide() {
-        val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(activity))
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_tool)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentToolBinding.fragmentToolSearch.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.BottomToTopOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setOnDismissCallback {
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 0
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    0,
-                ).isCheckable = true
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .show()
     }
 
     override fun onCreateView(
@@ -126,8 +77,7 @@ class ToolFragment : BaseFragment() {
         return fragmentToolBinding.root
     }
 
-    private fun initView() {
-
+    override fun initView() {
         DialogUtils.downloadQueue = downloadQueue
 
         // 设置布局不浸入
@@ -136,18 +86,14 @@ class ToolFragment : BaseFragment() {
         // 加载工具item
         loadToolItem()
 
-        // 设置点击事件
-        fragmentToolBinding.toolViewHolder =
-            context?.let { ToolViewHolder(it, fragmentToolBinding) }
-
         // 绑定列表
         mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
 
-
         // 设置监听
         setEditListener()
+    }
 
-
+    override fun initData() {
     }
 
     /**
@@ -166,7 +112,6 @@ class ToolFragment : BaseFragment() {
             asVideoId(asUrl)
         }
 
-
         if (isInitialized) {
             if (Intent.ACTION_SEND == action && type != null) {
                 if ("text/plain" == type) {
@@ -176,7 +121,6 @@ class ToolFragment : BaseFragment() {
         } else {
             sharedIntent = intent
         }
-
     }
 
     /**
@@ -220,8 +164,10 @@ class ToolFragment : BaseFragment() {
             getVideoCardData(AsVideoNumUtils.getBvid(inputString))
             return
         } else if ("""[space.bilibili.com/]?(\d+).*""".toRegex().containsMatchIn(inputString)) {
-            loadUserCardData("""[space.bilibili.com/]?(\d+).*""".toRegex()
-                .find(inputString)?.groups?.get(1)?.value ?: asUser.mid.toString())
+            loadUserCardData(
+                """[space.bilibili.com/]?(\d+).*""".toRegex()
+                    .find(inputString)?.groups?.get(1)?.value ?: asUser.mid.toString()
+            )
             return
         }
 
@@ -249,7 +195,6 @@ class ToolFragment : BaseFragment() {
     }
 
     private fun loadUserCardData(inputString: String) {
-
         launchUI {
             val userCardBean = networkService.getUserCardData(inputString.toLong())
             (mAdapter).apply {
@@ -262,7 +207,6 @@ class ToolFragment : BaseFragment() {
                             type = 3,
                             userCardBean = userCardBean.data.card,
                             clickEvent = {
-
                             },
                         ),
                     ) + this
@@ -270,7 +214,6 @@ class ToolFragment : BaseFragment() {
                     submitList(this)
                 }
             }
-
         }
     }
 
@@ -305,7 +248,6 @@ class ToolFragment : BaseFragment() {
      */
     private fun loadEpVideoCard(epId: Long) {
         lifecycleScope.launch(Dispatchers.Default) {
-
             val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epId)
 
             if (bangumiSeasonBean.code == 0) {
@@ -319,7 +261,6 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchUI {
-
                 val videoBaseBean = networkService.n26(bvid)
 
                 (mAdapter).apply {
@@ -414,7 +355,6 @@ class ToolFragment : BaseFragment() {
                                 it.img_url,
                                 it.color,
                             ) {
-                                MergeVideoActivity.actionStart(requireContext())
                             },
                         )
                     }
@@ -449,7 +389,6 @@ class ToolFragment : BaseFragment() {
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
