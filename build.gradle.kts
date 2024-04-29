@@ -20,5 +20,15 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.kotlin.serialization) apply false
-//    id("org.jetbrains.kotlin.kapt") version "1.9.23" apply false
 }
+
+beforeEvaluate {
+    tasks {
+        register<Exec>("submodulesUpdate") {
+            description = "Updates (and inits) git submodules"
+            commandLine = listOf("git", "submodule", "update", "--init", "--recursive")
+            group = "Build Setup"
+        }
+    }
+}
+

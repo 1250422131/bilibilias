@@ -75,7 +75,7 @@ open class AbsActivity : AppCompatActivity() {
             val language =
                 sharedPreferences.getString("app_language", "System") ?: "System"
         ) {
-            "System" -> {
+            "Default", "System" -> {
                 Locale.getDefault()
             }
 

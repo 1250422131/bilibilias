@@ -153,10 +153,10 @@ class HomeFragment : BaseFragment() {
             }
 
             // 确定是否灰度
-            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
-                isGrayType = oldUpdateDataBean.gray
-               invalidate() // 通知 View 重新绘制，以显示灰度效果
-            }
+//            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+//                isGrayType = oldUpdateDataBean.gray
+//               invalidate() // 通知 View 重新绘制，以显示灰度效果
+//            }
 
             if (oldUpdateDataBean.notice != "") {
                 loadNotice(oldUpdateDataBean.notice.toString())
@@ -209,7 +209,7 @@ class HomeFragment : BaseFragment() {
      */
     private fun checkAppData(it: OldUpdateDataBean, sha: String, md5: String, crc: String) {
         if (it.apkmD5 != sha || it.apkToKenCR != crc || it.apkToKen != md5) {
-            (activity as HomeActivity).activityHomeBinding.homeViewPage.visibility = View.GONE
+//            (activity as HomeActivity).activityHomeBinding.homeViewPage.visibility = View.GONE
             val uri: Uri = Uri.parse(it.url)
             val intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)

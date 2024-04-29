@@ -78,6 +78,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.download)
 
+    implementation(projects.feature.login)
     implementation(projects.feature.home)
     implementation(projects.feature.tool)
     implementation(projects.feature.download)
