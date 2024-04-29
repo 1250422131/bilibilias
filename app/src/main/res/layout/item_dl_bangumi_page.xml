@@ -25,7 +25,6 @@
             android:id="@+id/item_collection_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{EpisodesBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:text="@{EpisodesBean.badge + EpisodesBean.long_title}"
             android:textColor="@{EpisodesBean.selected == 0 ? @color/black  : @color/white}"

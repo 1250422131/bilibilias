@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.hilt)
@@ -12,12 +11,6 @@ android {
 
     dataBinding {
         enable = true
-    }
-    buildTypes {
-        create("benchmarkRelease") {
-        }
-        create("nonMinifiedRelease") {
-        }
     }
 }
 

@@ -37,17 +37,12 @@ class UserVideoDownloadActivity : BaseActivity<ActivityUserVideoDownloadBinding>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(binding.root)
-
-
-        initView()
         bindingEvent()
         initUserList()
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun initView() {
+    override fun initView() {
 
         binding.apply {
             uvDownloadTopLy.addStatusBarTopPadding()

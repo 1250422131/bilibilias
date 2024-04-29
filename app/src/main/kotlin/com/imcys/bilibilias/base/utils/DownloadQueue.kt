@@ -16,7 +16,6 @@ import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
-import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -28,17 +27,14 @@ import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
 import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.common.data.AppDatabase
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.adapter.DownloadFinishTaskAd
 import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
-import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.liulishuo.okdownload.DownloadListener
 import com.liulishuo.okdownload.DownloadTask
@@ -47,14 +43,11 @@ import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.utils.HandlerUtils
 import com.microsoft.appcenter.utils.HandlerUtils.runOnUiThread
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Call
-import okhttp3.Response
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -723,42 +716,42 @@ class DownloadQueue @Inject constructor() {
                     videoEntry.replace("弹幕数量", videoBaseBean.data.stat.danmaku.toString())
                 videoEntry = videoEntry.replace("下载子标题", downloadTaskDataBean.pageTitle)
 
-                val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
-                val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
+//                val dashAudioSize = AppFilePathUtils.getFileSize(audioTask!![0].savePath)
+//                val dashVideoSize = AppFilePathUtils.getFileSize(videoTask[0].savePath)
 
                 videoEntry =
                     videoEntry.replace("封面地址", videoBaseBean.data.pic.replace("/", "\\/"))
-                videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
-                videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
-                videoIndex = videoIndex.replace("高度", height.toString())
-                videoIndex = videoIndex.replace("宽度", width.toString())
-                videoEntry = videoEntry.replace("清晰度", displayDesc!!)
-                videoIndex = videoIndex.replace("QN编码", downloadTaskDataBean.qn)
-                videoIndex = videoIndex.replace("音频大小", dashAudioSize.toString())
+//                videoEntry = videoEntry.replace("下载大小", dashVideoSize.toString())
+//                videoIndex = videoIndex.replace("视频大小", dashVideoSize.toString())
+//                videoIndex = videoIndex.replace("高度", height.toString())
+//                videoIndex = videoIndex.replace("宽度", width.toString())
+//                videoEntry = videoEntry.replace("清晰度", displayDesc!!)
+//                videoIndex = videoIndex.replace("QN编码", downloadTaskDataBean.qn)
+//                videoIndex = videoIndex.replace("音频大小", dashAudioSize.toString())
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    if (type == BANGUMI_TYPE) {
-                        safImpVideo(
-                            videoTask[0],
-                            videoTask[0].savePath,
-                            audioTask[0].savePath,
-                            videoEntry,
-                            videoIndex,
-                            downloadTaskDataBean,
-                            videoBaseBean,
-                        )
-                    }
+//                    if (type == BANGUMI_TYPE) {
+//                        safImpVideo(
+//                            videoTask[0],
+//                            videoTask[0].savePath,
+//                            audioTask[0].savePath,
+//                            videoEntry,
+//                            videoIndex,
+//                            downloadTaskDataBean,
+//                            videoBaseBean,
+//                        )
+//                    }
                 } else {
                     if (type == BANGUMI_TYPE) {
-                        fileImpVideo(
-                            videoTask[0],
-                            videoTask[0].savePath,
-                            audioTask[0].savePath,
-                            videoEntry,
-                            videoIndex,
-                            downloadTaskDataBean,
-                            videoBaseBean,
-                        )
+//                        fileImpVideo(
+//                            videoTask[0],
+//                            videoTask[0].savePath,
+//                            audioTask[0].savePath,
+//                            videoEntry,
+//                            videoIndex,
+//                            downloadTaskDataBean,
+//                            videoBaseBean,
+//                        )
                     }
                 }
             }
@@ -818,14 +811,14 @@ class DownloadQueue @Inject constructor() {
                     videoIndex,
                 )
 
-                AppFilePathUtils.copyFile(
-                    videoPath,
-                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
-                )
-                AppFilePathUtils.copyFile(
-                    audioPath,
-                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
-                )
+//                AppFilePathUtils.copyFile(
+//                    videoPath,
+//                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/video.m4s",
+//                )
+//                AppFilePathUtils.copyFile(
+//                    audioPath,
+//                    "/storage/emulated/0/Android/data/tv.danmaku.bili/download/s_$ssid/$epid/${downloadTaskDataBean.qn}/audio.m4s",
+//                )
 
                 val impFileDeleteState =
                     PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
@@ -939,18 +932,18 @@ class DownloadQueue @Inject constructor() {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                AppFilePathUtils.copySafFile(
-                    OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
-                    danmakuDocument?.uri,
-                    OkDownloadProvider.context,
-                )
-                AppFilePathUtils.copySafFile(
-                    OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/entry.json",
-                    entryDocument?.uri,
-                    OkDownloadProvider.context,
-                )
+//                AppFilePathUtils.copySafFile(
+//                    OkDownloadProvider.context.getExternalFilesDir("temp")
+//                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/danmaku.json",
+//                    danmakuDocument?.uri,
+//                    OkDownloadProvider.context,
+//                )
+//                AppFilePathUtils.copySafFile(
+//                    OkDownloadProvider.context.getExternalFilesDir("temp")
+//                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/entry.json",
+//                    entryDocument?.uri,
+//                    OkDownloadProvider.context,
+//                )
             }
 
             val indexDocument =
@@ -961,22 +954,22 @@ class DownloadQueue @Inject constructor() {
                 qnDocument?.createFile("application/m4s", "audio.m4s")
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                AppFilePathUtils.copySafFile(
-                    videoPath,
-                    videoDocument?.uri,
-                    OkDownloadProvider.context,
-                )
-                AppFilePathUtils.copySafFile(
-                    audioPath,
-                    audioDocument?.uri,
-                    OkDownloadProvider.context,
-                )
-                AppFilePathUtils.copySafFile(
-                    OkDownloadProvider.context.getExternalFilesDir("temp")
-                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
-                    indexDocument?.uri,
-                    OkDownloadProvider.context,
-                )
+//                AppFilePathUtils.copySafFile(
+//                    videoPath,
+//                    videoDocument?.uri,
+//                    OkDownloadProvider.context,
+//                )
+//                AppFilePathUtils.copySafFile(
+//                    audioPath,
+//                    audioDocument?.uri,
+//                    OkDownloadProvider.context,
+//                )
+//                AppFilePathUtils.copySafFile(
+//                    OkDownloadProvider.context.getExternalFilesDir("temp")
+//                        .toString() + "/导入模板/" + downloadTaskDataBean.bangumiSeasonBean?.aid + "/c_" + downloadTaskDataBean.cid + "/" + downloadTaskDataBean.qn + "/index.json",
+//                    indexDocument?.uri,
+//                    OkDownloadProvider.context,
+//                )
             }
 
             val impFileDeleteState =
@@ -1138,22 +1131,22 @@ class DownloadQueue @Inject constructor() {
                 } else {
                     dlFileDocument =
                         dlFileDocument.createFile("application/${name.split(".").last()}", name)!!
-                    val copyResult = AppFilePathUtils.copySafFile(
-                        oldPath,
-                        dlFileDocument.uri,
-                        OkDownloadProvider.context
-                    )
+//                    val copyResult = AppFilePathUtils.copySafFile(
+//                        oldPath,
+//                        dlFileDocument.uri,
+//                        OkDownloadProvider.context
+//                    )
 
-                    if (copyResult) {
-                        FileUtils.deleteFile(oldPath)
-                    } else {
-                        launchUI {
-                            asToast(
-                                OkDownloadProvider.context,
-                                "移动失败，文件会被保留在原路径"
-                            )
-                        }
-                    }
+//                    if (copyResult) {
+//                        FileUtils.deleteFile(oldPath)
+//                    } else {
+//                        launchUI {
+//                            asToast(
+//                                OkDownloadProvider.context,
+//                                "移动失败，文件会被保留在原路径"
+//                            )
+//                        }
+//                    }
                 }
             }
         }

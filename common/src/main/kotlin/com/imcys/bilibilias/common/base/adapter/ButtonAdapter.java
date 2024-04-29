@@ -5,13 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 
 import androidx.databinding.BindingConversion;
 
-/**
- * @author:imcys
- * @create: 2022-11-17 15:45
- * @Description: Button视图绑定器
- */
 public class ButtonAdapter {
-
 
     @BindingConversion
     public static ColorDrawable setBackground(int color) {

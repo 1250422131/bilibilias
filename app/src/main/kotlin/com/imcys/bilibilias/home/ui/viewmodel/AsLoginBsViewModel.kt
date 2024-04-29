@@ -15,7 +15,6 @@ import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -26,7 +25,7 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.IPostBody
 import com.imcys.bilibilias.common.base.model.user.*
-import com.imcys.bilibilias.common.base.utils.AESUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.databinding.DialogAsAccountListBinding
 import com.imcys.bilibilias.home.ui.adapter.BiliBiliCookieAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -192,7 +191,7 @@ class AsLoginBsViewModel @Inject constructor(
         view: View,
     ) {
         viewModelScope.launchIO {
-            val cookies = AESUtils.decrypt(data.cookie)
+//            val cookies = AESUtils.decrypt(data.cookie)
 
             val myUserData = networkService.getMyUserData()
 
@@ -203,7 +202,7 @@ class AsLoginBsViewModel @Inject constructor(
                     asToast(view.context, "账户失效,为您跳转到添加账户页面")
                 } else {
                     // 为0则代表用户数据仍然有效果，开始为全局设置
-                    saveBiliCookieData(cookies)
+//                    saveBiliCookieData(cookies)
                 }
 
                 bottomSheetDialog.cancel()
@@ -302,15 +301,15 @@ class AsLoginBsViewModel @Inject constructor(
 
             val userNavDataModel = networkService.getUserNavData()
 
-            val biliBiliCookieInfo = BiliBiliCookieInfo(
-                userNavDataModel.data.uname,
-                userNavDataModel.data.levelInfo.currentLevel,
-                userNavDataModel.data.face,
-                AESUtils.encrypt(asUser.cookie),
-            )
+//            val biliBiliCookieInfo = BiliBiliCookieInfo(
+//                userNavDataModel.data.uname,
+//                userNavDataModel.data.levelInfo.currentLevel,
+//                userNavDataModel.data.face,
+//                AESUtils.encrypt(asUser.cookie),
+//            )
 
             // 提交云端 采用默认数据
-            networkService.n43(biliBiliCookieInfo)
+//            networkService.n43(biliBiliCookieInfo)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.home.ui.fragment
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +15,6 @@ import androidx.preference.SwitchPreferenceCompat
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.utils.file.FileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
 import com.imcys.bilibilias.core.common.utils.getBiliBiliUri
 import com.imcys.bilibilias.core.common.utils.get保存路径
@@ -134,11 +132,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         "拒绝授权",
                         true,
                         positiveButtonClickListener = {
-                            FileUriUtils.startFor(
-                                "/storage/emulated/0/Android/data/tv.danmaku.bili",
-                                context as Activity,
-                                IMPORT_FILE_PATH_CODE,
-                            )
+//                            FileUriUtils.startFor(
+//                                "/storage/emulated/0/Android/data/tv.danmaku.bili",
+//                                context as Activity,
+//                                IMPORT_FILE_PATH_CODE,
+//                            )
                         },
                         negativeButtonClickListener = {
                         },

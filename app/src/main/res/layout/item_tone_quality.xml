@@ -26,7 +26,6 @@
             android:id="@+id/item_tone_quality_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{AudioBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:textColor="@{AudioBean.selected == 0 ? @color/black  : @color/white}"
             android:textSize="15sp"

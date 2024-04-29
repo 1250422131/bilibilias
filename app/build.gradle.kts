@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.bilibilias.android.application)
     alias(libs.plugins.bilibilias.android.application.compose)
@@ -25,8 +24,6 @@ android {
 
     buildTypes {
         debug {
-            // 混淆
-            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -71,9 +68,36 @@ kapt {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":tool_log_export"))
+    implementation(projects.common)
+    implementation(projects.toolLogExport)
+
+    implementation(projects.core.common)
+    implementation(projects.core.crash)
+    implementation(projects.core.datastore)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.network)
+    implementation(projects.core.download)
+
+    implementation(projects.feature.home)
+    implementation(projects.feature.tool)
+    implementation(projects.feature.download)
+    implementation(projects.feature.user)
+
     implementation(libs.androidx.activity.compose)
+    implementation("androidx.compose.ui:ui-viewbinding")
+    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.core.ktx)
+
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+//    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.tracing.ktx)
+//    implementation(libs.androidx.window.core)
+    implementation(libs.coil.kt)
 
     ksp(libs.deeprecopy.compiler)
     ksp(libs.hilt.compiler)
@@ -92,6 +116,8 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

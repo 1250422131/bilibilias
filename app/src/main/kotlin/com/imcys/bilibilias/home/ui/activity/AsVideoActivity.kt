@@ -126,7 +126,7 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         }
     }
 
-     fun initView() {
+     override fun initView() {
         binding.apply {
             // 绑定播放器，弹幕控制器
             asJzvdStd = asVideoAsJzvdStd

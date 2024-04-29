@@ -16,11 +16,14 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "bilibilias"
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+include(":app")
+
 include(":common")
 include(":tool_log_export")
 
-include(":app")
 // include(":app-nia-catalog")
 include(":benchmarks")
 // include(":core:analytics")
@@ -49,7 +52,7 @@ include(":okdownload:okdownload-connection-okhttp")
 include(":feature:home")
 include(":feature:tool")
 include(":feature:download")
-include(":feature:user")
+ include(":feature:user")
 include(":feature:splash")
 // include(":feature:settings")
 // include(":lint")

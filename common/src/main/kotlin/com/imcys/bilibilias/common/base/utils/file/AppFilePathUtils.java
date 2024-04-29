@@ -1,11 +1,5 @@
 package com.imcys.bilibilias.common.base.utils.file;
 
-/**
- * @author:imcys
- * @create: 2022-12-30 16:17
- * @Description:
- */
-
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -16,7 +10,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.FileUtils;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
@@ -37,11 +30,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-
 
 public class AppFilePathUtils {
-
     private static final File dataFile = Environment.getDataDirectory();
     private static final File sdcardFile = Environment.getExternalStorageDirectory();
     public final String SDUnMount = "存储卡未装载";
@@ -79,8 +69,8 @@ public class AppFilePathUtils {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             //递归删除目录中的子目录下
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
+            for (String child : children) {
+                boolean success = deleteDir(new File(dir, child));
                 if (!success) {
                     return false;
                 }
