@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
+import androidx.metrics.performance.JankStats
 import androidx.preference.PreferenceManager
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
@@ -18,16 +19,20 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
-import com.imcys.bilibilias.splash.SplashViewModel
+import com.imcys.bilibilias.splash.MainActivityViewModel
 import com.imcys.bilibilias.ui.MainScreen
 import com.sockmagic.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId = R.layout.activity_home
     private var exitTime: Long = 0
-    private val viewModel by viewModels<SplashViewModel>()
+
+    @Inject
+    lateinit var lazyStats: dagger.Lazy<JankStats>
+    private val viewModel by viewModels<MainActivityViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -93,7 +98,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             finishAll()
         }
     }
+    override fun onResume() {
+        super.onResume()
+        lazyStats.get().isTrackingEnabled = true
+    }
 
+    override fun onPause() {
+        super.onPause()
+        lazyStats.get().isTrackingEnabled = false
+    }
     companion object {
         fun actionStart(context: Context, asUrl: String) {
             val intent = Intent(context, HomeActivity::class.java)
