@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class MainActivityViewModel @Inject constructor(
     private val loginInfoDataSource: LoginInfoDataSource
 ) : ViewModel() {
     internal val isLogin = runBlocking { loginInfoDataSource.loginState.first() }
