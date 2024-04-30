@@ -68,21 +68,21 @@ kapt {
 }
 
 dependencies {
-    implementation(projects.common)
-    implementation(projects.toolLogExport)
+    implementation(projects.feature.login)
+    implementation(projects.feature.home)
+    implementation(projects.feature.tool)
+    implementation(projects.feature.download)
+    implementation(projects.feature.user)
 
     implementation(projects.core.common)
     implementation(projects.core.crash)
     implementation(projects.core.datastore)
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
-    implementation(projects.core.download)
+    implementation(projects.core.ui)
 
-    implementation(projects.feature.login)
-    implementation(projects.feature.home)
-    implementation(projects.feature.tool)
-    implementation(projects.feature.download)
-    implementation(projects.feature.user)
+    implementation(projects.common)
+    implementation(projects.toolLogExport)
 
     implementation(libs.androidx.activity.compose)
     implementation("androidx.compose.ui:ui-viewbinding")
@@ -95,9 +95,9 @@ dependencies {
 
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
-//    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing.ktx)
-//    implementation(libs.androidx.window.core)
+    implementation(libs.androidx.window.core)
     implementation(libs.coil.kt)
 
     ksp(libs.deeprecopy.compiler)
