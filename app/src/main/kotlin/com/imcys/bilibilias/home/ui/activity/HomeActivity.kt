@@ -11,11 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
 import androidx.preference.PreferenceManager
-import cafe.adriel.voyager.core.registry.ScreenProvider
-import cafe.adriel.voyager.core.registry.rememberScreen
-import cafe.adriel.voyager.core.registry.screenModule
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
@@ -54,14 +50,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 onDispose {}
             }
             AsTheme {
-//                if (viewModel.isLogin) {
-//                    Navigator(screen = MainScreen)
-//                } else {
-                val navigationToMain: () -> Screen = { MainScreen }
-                Navigator(
-                    LoginScreen(navigationToMain)
-                )
-//                }
+                if (viewModel.isLogin) {
+                    Navigator(screen = MainScreen)
+                } else {
+                    val navigationToMain: () -> Screen = { MainScreen }
+                    Navigator(
+                        LoginScreen(navigationToMain)
+                    )
+                }
             }
         }
         startBaiDuService()
