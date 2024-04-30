@@ -1,148 +1,62 @@
 package com.imcys.bilibilias.home.ui.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.preference.PreferenceManager
-import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
-import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
-import com.imcys.bilibilias.home.ui.fragment.DownloadFragment
-import com.imcys.bilibilias.home.ui.fragment.HomeFragment
-import com.imcys.bilibilias.home.ui.fragment.ToolFragment
-import com.imcys.bilibilias.home.ui.fragment.UserFragment
+import com.imcys.bilibilias.ui.AsApp
+import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId = R.layout.activity_home
     private var exitTime: Long = 0
 
-    lateinit var toolFragment: ToolFragment
-    lateinit var homeFragment: HomeFragment
-    lateinit var downloadFragment: DownloadFragment
-    lateinit var userFragment: UserFragment
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initFragment()
-        loadFragment()
-
-        parseShare()
-
-        // 启动百度统计
+        enableEdgeToEdge()
+        setContent {
+            // Update the edge to edge configuration to match the theme
+            // This is the same parameters as the default enableEdgeToEdge call, but we manually
+            // resolve whether or not to show dark theme using uiState, since it can be different
+            // than the configuration's dark theme value based on the user preference.
+            DisposableEffect(Unit) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(
+                        android.graphics.Color.TRANSPARENT,
+                        android.graphics.Color.TRANSPARENT,
+                    ) { false },
+                    navigationBarStyle = SystemBarStyle.auto(
+                        lightScrim,
+                        darkScrim,
+                    ) { false },
+                )
+                onDispose {}
+            }
+            val rememberNiaAppState = rememberNiaAppState(
+                windowSizeClass = calculateWindowSizeClass(this)
+            )
+            AsTheme {
+                AsApp(rememberNiaAppState)
+            }
+        }
         startBaiDuService()
-    }
-
-    /**
-     * 初始化fragment
-     */
-    private fun initFragment() {
-        homeFragment = HomeFragment.newInstance()
-        toolFragment = ToolFragment.newInstance()
-        userFragment = UserFragment.newInstance()
-        downloadFragment = DownloadFragment.newInstance()
-    }
-
-    // 启动时解析视频数据
-    @SuppressLint("ResourceType")
-    private fun parseShare() {
-        val intent = intent
-        val action = intent.action
-        val type = intent.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                binding.apply {
-                    homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
-                    toolFragment.parseShare(intent)
-                }
-            }
-        }
-    }
-
-    // 复用/创建时检测
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        val action = intent.action
-        val type = intent.type
-        if (Intent.ACTION_SEND == action && type != null) {
-            if ("text/plain" == type) {
-                binding.apply {
-                    homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
-                    toolFragment.parseShare(intent)
-                }
-            }
-        }
-        val asUrl = intent?.extras?.getString("asUrl")
-        if (asUrl != null) {
-            binding.apply {
-                homeViewPage.currentItem = 1
-                homeBottomNavigationView.menu.getItem(1).isChecked = true
-                toolFragment.parseShare(intent)
-            }
-        }
-    }
-
-    // 加载fragment
-    private fun loadFragment() {
-        val fragmentArrayList = ArrayList<Fragment>()
-        // 添加fragment
-        fragmentArrayList.add(homeFragment)
-        fragmentArrayList.add(toolFragment)
-        fragmentArrayList.add(downloadFragment)
-        fragmentArrayList.add(userFragment)
-
-        val myFragmentPageAdapter =
-            MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
-        binding.let {
-            it.homeViewPage.adapter = myFragmentPageAdapter
-            it.homeViewPage.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-
-                // 滚动监听选择
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    it.homeBottomNavigationView.menu.getItem(position).isChecked = true
-                }
-            })
-
-            it.homeViewPage.isUserInputEnabled = false
-
-            // 点击监听
-            it.homeBottomNavigationView.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.home_bottom_menu_black_room -> {
-                        it.homeViewPage.currentItem = 0
-                        it.homeBottomNavigationView.menu.getItem(0).isChecked = true
-                    }
-
-                    R.id.home_bottom_menu_discipline_admin -> {
-                        it.homeViewPage.currentItem = 1
-                        it.homeBottomNavigationView.menu.getItem(1).isChecked = true
-                    }
-
-                    R.id.home_bottom_menu_operation_log -> {
-                        it.homeViewPage.currentItem = 2
-                        it.homeBottomNavigationView.menu.getItem(2).isChecked = true
-                    }
-
-                    R.id.home_bottom_menu_statistics -> {
-                        it.homeViewPage.currentItem = 3
-                        it.homeBottomNavigationView.menu.getItem(3).isChecked = true
-                    }
-                }
-                false
-            }
-        }
     }
 
     /**
@@ -153,25 +67,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
         StatService.setAuthorizedState(this, authorizedState)
         StatService.start(this)
-    }
-
-    companion object {
-
-        fun actionStart(context: Context, asUrl: String) {
-            val intent = Intent(context, HomeActivity::class.java)
-            intent.putExtra("asUrl", asUrl)
-            context.startActivity(intent)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -194,4 +89,24 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             finishAll()
         }
     }
+
+    companion object {
+        fun actionStart(context: Context, asUrl: String) {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra("asUrl", asUrl)
+            context.startActivity(intent)
+        }
+    }
 }
+
+/**
+ * The default light scrim, as defined by androidx and the platform:
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=35-38;drc=27e7d52e8604a080133e8b842db10c89b4482598
+ */
+private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+
+/**
+ * The default dark scrim, as defined by androidx and the platform:
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=40-44;drc=27e7d52e8604a080133e8b842db10c89b4482598
+ */
+private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
