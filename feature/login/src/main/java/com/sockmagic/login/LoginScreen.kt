@@ -53,10 +53,9 @@ private fun LoginContent(
         ) {
             val navigator = LocalNavigator.currentOrThrow
             SideEffect {
-//                if (model.isSuccess) {
-
+                if (model.isSuccess) {
                 navigator.push(navigationToMain())
-//                }
+                }
             }
             val context = LocalContext.current
             LaunchedEffect(model.qrCodePainter) {
