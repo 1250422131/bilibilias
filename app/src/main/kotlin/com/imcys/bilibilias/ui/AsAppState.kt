@@ -12,22 +12,25 @@ import androidx.tracing.trace
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun rememberNiaAppState(
     windowSizeClass: WindowSizeClass,
-//    networkMonitor: NetworkMonitor,
+    networkMonitor: NetworkMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
 ): AsAppState {
     return remember(
-        navController,
         coroutineScope,
     ) {
         AsAppState(
+            networkMonitor=networkMonitor,
             windowSizeClass = windowSizeClass,
             coroutineScope = coroutineScope,
         )
@@ -36,9 +39,9 @@ fun rememberNiaAppState(
 
 @Stable
 class AsAppState(
-    val coroutineScope: CoroutineScope,
+    coroutineScope: CoroutineScope,
     val windowSizeClass: WindowSizeClass,
-//    networkMonitor: NetworkMonitor,
+    networkMonitor: NetworkMonitor,
 ) {
     fun currentDestination(tabNavigator: TabNavigator, topLevelDestination: TopLevelDestination): Boolean {
         return tabNavigator.current.key == topLevelDestination.tab.key
@@ -46,7 +49,13 @@ class AsAppState(
 
     val shouldShowBottomBar: Boolean
         get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
-
+    val isOffline = networkMonitor.isOnline
+        .map(Boolean::not)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
     val topLevelTabs: List<Tab> = TopLevelDestination.entries.map { it.tab }
 

@@ -81,6 +81,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.download)
     implementation(projects.core.ui)
+    implementation(projects.core.data)
 
     implementation(projects.common)
     implementation(projects.toolLogExport)
