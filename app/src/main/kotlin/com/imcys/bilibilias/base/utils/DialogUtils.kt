@@ -14,7 +14,6 @@ import android.view.ViewParent
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.edit
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -23,9 +22,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
-import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.network.NetworkService
@@ -38,11 +34,9 @@ import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
-import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.*
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
@@ -54,7 +48,6 @@ import kotlinx.coroutines.flow.*
  */
 object DialogUtils {
 
-    private val TAG = DialogUtils::class.java.simpleName
     lateinit var downloadQueue: DownloadQueue
 
     const val DASH_TYPE = 1
@@ -66,162 +59,6 @@ object DialogUtils {
     const val VIDEOANDAUDIO = 1
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
-
-    /**
-     * 登录对话框
-     * @param context Context
-     */
-    @SuppressLint("InflateParams")
-    fun loginDialog(context: Context): BottomSheetDialog {
-        val binding = DialogLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 设置布局
-//        binding.loginViewModel =
-//            ViewModelProvider(
-//                context as HomeActivity,
-//            )[LoginViewModel::class.java]
-
-        binding.apply {
-            dialogLoginBiliQr.setOnClickListener {
-//                context.homeFragment.loadLogin()
-                bottomSheetDialog.cancel()
-            }
-
-            dialogLoginAs.setOnClickListener {
-                asToast(context, context.getString(R.string.app_dialog_dialog_astoast_content))
-//                bottomSheetDialog.cancel()
-//                    loginAsDialog(context) {
-//                        bottomSheetDialog.cancel()
-//                    }.show()
-            }
-        }
-
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.setCancelable(false)
-
-        // 用户行为val mDialogBehavior =
-//        initDialogBehaviorBinding(
-//            binding.dialogLoginTipBar,
-//            context,
-//            binding.root.parent,
-//        )
-        // 自定义方案
-        // mDialogBehavior.peekHeight = 600
-
-        return bottomSheetDialog
-    }
-
-    /**
-     * 本地/AS绑定 B站账号登录弹窗
-     * @param activity Activity
-     * @param loginQrcodeBean LoginQrcodeBean
-     * @return BottomSheetDialog
-     */
-    fun loginQRDialog(
-        context: Context,
-        loginQrcodeBean: LoginQrcodeBean,
-        responseResult: (Int, LoginStateBean) -> Unit,
-    ): BottomSheetDialog {
-
-        val binding: DialogLoginQrBottomsheetBinding =
-            DialogLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
-
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 设置布局
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.setCancelable(false)
-        binding.dataBean = loginQrcodeBean.data
-        binding.loginQRModel =
-            ViewModelProvider(
-                context as HomeActivity,
-            )[LoginQRModel::class.java]
-        binding.loginQRModel?.responseResult = responseResult
-        // 传导binding过去
-        binding.loginQRModel?.binding = binding
-        // 用户行为val mDialogBehavior =
-
-        initDialogBehaviorBinding(
-            binding.dialogLoginQrTipBar,
-            context,
-            binding.root.parent,
-        )
-        // 自定义方案
-        // mDialogBehavior.peekHeight = 600
-        return bottomSheetDialog
-    }
-//
-//    /**
-//     * 登录AS账号
-//     * @param context Context
-//     * @return BottomSheetDialog
-//     */
-//    private fun loginAsDialog(context: Context, finish: () -> Unit): BottomSheetDialog {
-//        val binding: DialogAsLoginBottomsheetBinding =
-//            DialogAsLoginBottomsheetBinding.inflate(LayoutInflater.from(context))
-//
-//        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).also {
-//            it.setContentView(binding.root)
-//            it.setCancelable(true)
-//        }
-//
-//        // 这里务必拆开看一下，这里kotlin的语法题混合后已经不容易看出来在做什么了，其中第三个参数是当完成登录时要做的事情
-//        binding.asLoginBsViewModel =
-//            ViewModelProvider(
-//                this as HomeActivity,
-//                AsLoginBsViewModelFactory(
-//                    binding,
-//                    bottomSheetDialog,
-//                ) { finish() },
-//            )[AsLoginBsViewModel::class.java]
-//
-//        initDialogBehaviorBinding(
-//            binding.dialogAsLoginBar,
-//            context,
-//            binding.root.parent,
-//        )
-//
-//        // 添加验证码 -> 很蠢的办法
-//        HttpUtils.get(
-//            "${serviceTestApi}users/getCaptchaImage",
-//            object : Callback {
-//                override fun onFailure(call: Call, e: IOException) {
-//                }
-//
-//                override fun onResponse(call: Call, response: Response) {
-//                    var cookie = ""
-//                    response.headers.values(SET_COOKIE).forEach {
-//                        cookie += it
-//                    }
-//                    cookie += ";"
-//
-//                    BaseApplication.dataKv.encode(AS_COOKIES, cookie)
-//
-//                    val glideUrl = GlideUrl(
-//                        "${serviceTestApi}users/getCaptchaImage",
-//                        LazyHeaders.Builder()
-//                            .addHeader(COOKIE, cookie)
-//                            .build(),
-//                    )
-//
-//                    BaseApplication.handler.post {
-//                        Glide.with(context)
-//                            .load(glideUrl)
-//                            .diskCacheStrategy(DiskCacheStrategy.NONE) // 不缓存任何图片，即禁用磁盘缓存
-//                            .error(R.mipmap.ic_launcher)
-//                            .into(binding.dgAsLoginVerificationImage)
-//                    }
-//                }
-//            },
-//        )
-//
-//        return bottomSheetDialog
-//    }
-
-    class AsLoginBsViewModelFactory(
-        binding: DialogAsLoginBottomsheetBinding,
-        bottomSheetDialog: BottomSheetDialog,
-        function: () -> Unit,
-    ) : ViewModelProvider.Factory
 
     /**
      * 构建底部对话框
@@ -1020,20 +857,11 @@ object DialogUtils {
             // 子集选择 默认选中1集
             videoPageListData.data[0].selected = 1
             dialogDlVideoDiversityLy.setOnClickListener {
-                loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
-                    videoPageMutableList = it1
-                    var videoPageMsg = ""
-                    if (videoPageMutableList.size != 1) {
-                        videoPageMutableList.forEach {
-                            videoPageMsg = "$videoPageMsg${it.part} "
-                        }
-                        dialogDlVideoDiversityTx.text = videoPageMsg
-                    }
-                }.show()
+                loadVideoPageDialog(context).show()
             }
 
             dialogDlVideoDefinitionLy.setOnClickListener {
-                loadVideoDefinition(context, dashVideoPlayBean) {
+                loadVideoDefinition(context) {
                     // 这里返回的是清晰度的数值代码
                     selectDefinition = it
 
@@ -1232,7 +1060,7 @@ object DialogUtils {
 
             // 清晰度选择
             dialogDlVideoDefinitionLy.setOnClickListener {
-                loadVideoDefinition(context, dashVideoPlayBean) {
+                loadVideoDefinition(context) {
                     // 这里返回的是清晰度的数值代码
                     selectDefinition = it
 
@@ -2161,76 +1989,12 @@ object DialogUtils {
      */
     private fun loadVideoPageDialog(
         context: Context,
-        videoPageListData: VideoPageListData,
-        videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        finished: (selects: MutableList<VideoPageListData.DataBean>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
-
-        // val mDialogBehavior =
-        initDialogBehaviorBinding(
-            binding.dialogCollectionBar,
-            context,
-            binding.root.parent,
-        )
-
-        binding.apply {
-            dialogCollectionTitle.text = "请选择视频子集"
-
-            val pageData = mutableListOf<VideoPageListData.DataBean>() + videoPageListData.data
-
-//            dialogCollectionRv.adapter =
-//                VideoPageAdapter(videoPageListData.data) { position, itemBinding ->
-//                    // 这个接口是为了处理弹窗背景问题
-//                    // 标签，判断这一次是否有重复
-//                    var tage = true
-//                    // 这里加also标签为的是可以return掉forEachIndexed
-//                    videoPageMutableList.also { range ->
-//                        range.forEachIndexed { index, dataBean ->
-//                            if (dataBean.cid == videoPageListData.data[position].cid) {
-//                                tage = false
-//                                itemBinding.dataBean?.selected = 0
-//                                videoPageMutableList.removeAt(index)
-//                                dialogCollectionRv.adapter?.notifyItemChanged(index)
-//                                return@also
-//                            }
-//                        }
-//                    }
-//
-//                    if (tage) {
-//                        itemBinding.dataBean?.selected = 1
-//                        videoPageMutableList.add(videoPageListData.data[position])
-//                    }
-//
-//                    dialogCollectionRv.adapter?.notifyItemChanged(position)
-//                }
-
-            // 设置布局加载器
-//            dialogCollectionRv.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
-            // 设置完成选中的子集
-            dialogCollectionFinishBt.setOnClickListener {
-                bottomSheetDialog.cancel()
-                finished(videoPageMutableList)
-            }
-
-            dialogCollectionAllSelectBt.apply {
-                visibility = View.VISIBLE
-
-                setOnClickListener {
-                    pageData.forEachIndexed { index, episodesBean ->
-                        episodesBean.selected = 1
-                        videoPageMutableList.add(episodesBean)
-//                        dialogCollectionRv.adapter?.notifyItemChanged(index)
-                    }
-                }
-            }
-        }
 
         return bottomSheetDialog
     }
@@ -2336,7 +2100,6 @@ object DialogUtils {
      */
     private fun loadVideoDefinition(
         context: Context,
-        dashVideoPlayBean: DashVideoPlayBean,
         finished: (selects: Int) -> Unit,
     ): BottomSheetDialog {
         var selectDefinition = 80

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
@@ -39,7 +38,6 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
-import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.zip.ZipEntry
@@ -297,26 +295,6 @@ class HomeFragment : BaseFragment() {
      * 加载登陆对话框
      */
     internal fun loadLogin() {
-        launchUI {
-
-            //自己会切换IO
-            val loginQRData = networkService.getLoginQRData()
-                .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
-
-            loginQRDialog = DialogUtils.loginQRDialog(
-                requireActivity(),
-                loginQRData,
-            ) { code: Int, _: LoginStateBean ->
-                // 登陆成功
-                if (code == 0) {
-                    initUserData()
-                    startStatistics()
-                }
-            }.apply {
-                show()
-            }
-
-        }
     }
 
     /**
@@ -364,19 +342,6 @@ class HomeFragment : BaseFragment() {
      * 检查用户是否登陆
      */
     private fun detectUserLogin() {
-        launchUI {
-            //无论如何优先获取必要Token
-            val myUserData = networkService.getMyUserData()
-
-            if (myUserData.code != 0) {
-                DialogUtils.loginDialog(requireActivity())
-                    .show()
-            } else {
-                // 解除风控
-                networkService.getBILIHome()
-                BaseApplication.myUserData = myUserData.data
-            }
-        }
     }
 
     @Inject

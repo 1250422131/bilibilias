@@ -31,11 +31,11 @@ object QRUtil {
         } catch (_: FileNotFoundException) {
         } catch (_: IOException) {
         } finally {
-            goToQRScan(context)
+//            goToQRScan(context)
         }
     }
 
-    private fun goToQRScan(context: Context) {
+    fun goToQRScan(context: Context) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan"))
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val packageManager = context.packageManager

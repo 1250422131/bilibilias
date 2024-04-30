@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.privacy
+package com.sockmagic.login
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,11 +7,9 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
-import com.baidu.mobstat.StatService
 import com.hjq.toast.Toaster
 
-object LoginViewModel {
-
+object LoginRequiresInfo {
     fun toBiliAgreement(view: View) {
         Toaster.show("无论如何，你都在间接使用B站")
         privacyAgreementWebView(
@@ -40,8 +38,7 @@ object LoginViewModel {
     ) {
         val webView = WebView(context)
         val client = WebChromeClient()
-        StatService.trackWebView(context, webView, client)
-
+        webView.webChromeClient = client
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
         webView.settings.javaScriptEnabled = true
         webView.settings.loadWithOverviewMode = true

@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.base.network
 
-import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
-import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -13,7 +11,6 @@ import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.model.user.AsUserLoginModel
-import com.imcys.bilibilias.common.base.model.user.BiLiCookieResponseModel
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.user.ResponseResult
 import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
@@ -26,7 +23,6 @@ import com.imcys.bilibilias.home.ui.model.DashBangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
-import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
@@ -48,7 +44,6 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
-import io.ktor.client.request.post
 import io.ktor.client.statement.readBytes
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
@@ -64,18 +59,11 @@ class NetworkService @Inject constructor(
     private val httpClient: HttpClient,
 ) {
 
-    private val ioDispatcher = Dispatchers.IO
     suspend fun getDashBangumiPlayInfo(cid: Long, qn: Int): DashBangumiPlayBean =
         runCatchingOnWithContextIo {
             httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
                 refererBILIHarder()
             }.body()
-        }
-
-    // ---------------------------------------------------------------------------------------------
-    suspend fun viewFlv(bvid: String, cid: Long, qn: Int): VideoPlayBean =
-        runCatchingOnWithContextIo {
-            viewPlayUrl(bvid, cid.toString(), qn)
         }
 
     private suspend inline fun <reified T> viewPlayUrl(
@@ -89,17 +77,6 @@ class NetworkService @Inject constructor(
             parameter("qn", qn)
             parameter("fnval", 4048)
             parameter("fourk", 1)
-        }.body()
-    }
-
-
-    // ---------------------------------------------------------------------------------------------
-    suspend fun flvPgcPlayUrl(cId: Long, qn: Int): BangumiPlayBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.bangumiPlayPath) {
-            parameterCID(cId.toString())
-            parameter("qn", qn)
-            parameter("fnval", "0")
-            parameter("fourk", "1")
         }.body()
     }
 
@@ -117,38 +94,19 @@ class NetworkService @Inject constructor(
             viewPlayUrl(bvid, cid.toString(), qn)
         }
 
-
     // ---------------------------------------------------------------------------------------------
     suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
         runCatchingOnWithContextIo { videoPlayPath(bvid, cid.toString(), qn) }
 
-    suspend fun exitUserLogin(crsf: String): String = runCatchingOnWithContextIo {
-        httpClient.post(BilibiliApi.exitLogin) {
-            parameter("biliCSRF", crsf)
-        }.body()
-    }
-
     suspend fun n10(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
         videoPlayPath(bvid, cid.toString(), 64)
     }
-
-    suspend fun n29(bvid: String, cid: Long): DashVideoPlayBean = runCatchingOnWithContextIo {
-        videoPlayPath(bvid, cid.toString(), 64)
-    }
-
-    suspend fun getDashBangumiPlay(cid: Long, qn: Int): DashBangumiPlayBean =
-        runCatchingOnWithContextIo {
-            httpClient.get("${ROAM_API}pgc/player/web/playurl?cid=$cid&qn=$qn&fnval=4048&fourk=1") {
-                refererBILIHarder()
-            }.body()
-        }
 
     suspend fun getPlayHistory(max: Long, viewAt: Long): PlayHistoryBean =
         runCatchingOnWithContextIo {
             httpClient.get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive")
                 .body()
         }
-
 
     private suspend inline fun <reified T> videoPlayPath(
         bvid: String,
@@ -229,18 +187,6 @@ class NetworkService @Inject constructor(
 
     // ---------------------------------------------------------------------------------------------
 
-    suspend fun getBILIHome(): String = runCatchingOnWithContextIo {
-        httpClient.get(BILIBILI_URL).body()
-    }
-
-    suspend fun biliUserLogin(qrcodeKey: String): LoginStateBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getLoginStatePath + "?qrcode_key=" + qrcodeKey).body()
-    }
-
-    suspend fun getLoginQRData(): LoginQrcodeBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getLoginQRPath).body()
-    }
-
     suspend fun getMyUserData(): MyUserData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getMyUserData).body()
     }
@@ -257,7 +203,7 @@ class NetworkService @Inject constructor(
 
     suspend fun getUserCollection(id: Long, pn: Int): CollectionDataBean =
         runCatchingOnWithContextIo {
-            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=${id}&pn=${pn}&ps=20")
+            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=$id&pn=$pn&ps=20")
                 .body()
         }
 
@@ -265,15 +211,10 @@ class NetworkService @Inject constructor(
         httpClient.get("${BiliBiliAsApi.appFunction}?type=Donate").body()
     }
 
-    suspend fun getOldHomeBannerData(): OldHomeBannerDataBean = runCatchingOnWithContextIo {
-        httpClient.get("${BiliBiliAsApi.updateDataPath}?type=banner").body()
-    }
-
     suspend fun getBangumiFollow(vmid: Long, type: Int, pn: Int, ps: Int): BangumiFollowList =
         runCatchingOnWithContextIo {
             httpClient.get("${BilibiliApi.bangumiFollowPath}?vmid=$vmid&type=$type&pn=$pn&ps=$ps")
                 .body()
-
         }
 
     suspend fun getUpdateData(): OldUpdateDataBean = runCatchingOnWithContextIo {
@@ -281,11 +222,9 @@ class NetworkService @Inject constructor(
             .body()
     }
 
-
     suspend fun getOldHomeAd(): OldHomeAdBean = runCatchingOnWithContextIo {
         httpClient.get("${BiliBiliAsApi.appFunction}?type=oldHomeAd").body()
     }
-
 
     // ---------------------------------------------------------------------------------------------
     suspend fun getBangumiSeasonBeanByEpid(epid: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
@@ -331,34 +270,17 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun n34(): UserCreateCollectionBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.userCreatedScFolderPath) {
-            parameterUpMID(BaseApplication.asUser.mid.toString())
-        }.body()
-    }
-
     // ---------------------------------------------------------------------------------------------
     suspend fun getVideoPageListData(bvid: String): VideoPageListData = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.videoPageListPath) {
             parameterBVID(bvid)
         }.body()
     }
+
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
     }
-
-    //    suspend fun n20(i: Int): UserWorksBean = runCatchingOnWithContextIo {
-    //        httpClient.get(BilibiliApi.userWorksPath) {
-    //            parameterMID(BaseApplication.asUser.mid.toString())
-    //            parameter("pn", i)
-    //            parameter("ps", 20)
-    //        }.body()
-    //    }
-
-    //    suspend fun getUserWorks(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
-    //        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
-    //    }
 
     // ----------------------------------------------------------------------------------------------
     suspend fun getUpStateInfo(): UpStatBeam = runCatchingOnWithContextIo {
@@ -407,7 +329,6 @@ class NetworkService @Inject constructor(
             }.body()
         }
 
-
     suspend fun n36(
         asCookie: String?,
         asLoginInfo: AsLoginBsViewModel.AsLoginInfo
@@ -432,23 +353,9 @@ class NetworkService @Inject constructor(
             )
         }
 
-    suspend fun n41(): LoginQrcodeBean =
-        runCatchingOnWithContextIo { ktHttpUtils.asyncGet(BilibiliApi.getLoginQRPath) }
-
-    suspend fun n43(biliBiliCookieInfo: AsLoginBsViewModel.BiliBiliCookieInfo): BiLiCookieResponseModel =
-        runCatchingOnWithContextIo {
-
-            ktHttpUtils.addHeader(COOKIE, BaseApplication.asUser.asCookie)
-                .asyncPostJson(
-                    "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
-                    biliBiliCookieInfo,
-                )
-        }
-
     private suspend inline fun <reified T> runCatchingOnWithContextIo(
         noinline block: suspend CoroutineScope.() -> T
     ): T {
-        return withContext(ioDispatcher, block)
+        return withContext(Dispatchers.IO, block)
     }
-
 }

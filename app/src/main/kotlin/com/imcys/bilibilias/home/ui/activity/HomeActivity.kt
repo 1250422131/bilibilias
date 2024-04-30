@@ -8,26 +8,30 @@ import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
+import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
 import androidx.preference.PreferenceManager
+import cafe.adriel.voyager.core.registry.ScreenProvider
+import cafe.adriel.voyager.core.registry.rememberScreen
+import cafe.adriel.voyager.core.registry.screenModule
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
-import com.imcys.bilibilias.ui.AsApp
-import com.imcys.bilibilias.ui.rememberNiaAppState
+import com.imcys.bilibilias.splash.SplashViewModel
+import com.imcys.bilibilias.ui.MainScreen
+import com.sockmagic.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @AndroidEntryPoint
 class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     override val layoutId = R.layout.activity_home
     private var exitTime: Long = 0
-
+    private val viewModel by viewModels<SplashViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -49,11 +53,15 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 )
                 onDispose {}
             }
-            val rememberNiaAppState = rememberNiaAppState(
-                windowSizeClass = calculateWindowSizeClass(this)
-            )
             AsTheme {
-                AsApp(rememberNiaAppState)
+//                if (viewModel.isLogin) {
+//                    Navigator(screen = MainScreen)
+//                } else {
+                val navigationToMain: () -> Screen = { MainScreen }
+                Navigator(
+                    LoginScreen(navigationToMain)
+                )
+//                }
             }
         }
         startBaiDuService()

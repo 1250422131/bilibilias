@@ -17,14 +17,12 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.ActivitySplashBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.privacy.PrivacyActivity
 import dagger.hilt.android.AndroidEntryPoint
 private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val layoutId: Int = R.layout.activity_splash
-    private val viewModel by viewModels<SplashViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +82,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private fun toHome() {
         val handler = Handler(Looper.getMainLooper())
         HandlerCompat.postDelayed(handler, {
-            val activity = if (viewModel.isLogin) {
-                HomeActivity::class.java
-            } else {
-                PrivacyActivity::class.java
-            }
-            startActivity(Intent(this, PrivacyActivity::class.java))
+            startActivity(Intent(this, HomeActivity::class.java))
             overridePendingTransition(
                 android.R.anim.fade_in,
                 android.R.anim.fade_out,
