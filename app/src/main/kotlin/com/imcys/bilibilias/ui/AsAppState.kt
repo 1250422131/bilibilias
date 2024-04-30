@@ -1,23 +1,16 @@
-﻿package com.imcys.bilibilias.ui
+package com.imcys.bilibilias.ui
 
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.tracing.trace
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.TopLevelDestination
@@ -29,18 +22,14 @@ fun rememberNiaAppState(
 //    networkMonitor: NetworkMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
-    tabNavigator: TabNavigator = LocalTabNavigator.current
 ): AsAppState {
-    NavigationTrackingSideEffect(tabNavigator)
     return remember(
         navController,
         coroutineScope,
-        tabNavigator
     ) {
         AsAppState(
             windowSizeClass = windowSizeClass,
             coroutineScope = coroutineScope,
-            tabNavigator = tabNavigator,
         )
     }
 }
@@ -48,11 +37,10 @@ fun rememberNiaAppState(
 @Stable
 class AsAppState(
     val coroutineScope: CoroutineScope,
-    val tabNavigator: TabNavigator,
     val windowSizeClass: WindowSizeClass,
 //    networkMonitor: NetworkMonitor,
 ) {
-    fun currentDestination(topLevelDestination: TopLevelDestination): Boolean {
+    fun currentDestination(tabNavigator: TabNavigator, topLevelDestination: TopLevelDestination): Boolean {
         return tabNavigator.current.key == topLevelDestination.tab.key
     }
 
@@ -60,6 +48,7 @@ class AsAppState(
         get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
 
     val topLevelDestinations: List<TopLevelDestination> = TopLevelDestination.entries
+    val topLevelTabs: List<Tab> = TopLevelDestination.entries.map { it.tab }
 
     /**
      * UI logic for navigating to a top level destination in the app. Top level destinations have
@@ -68,7 +57,7 @@ class AsAppState(
      *
      * @param topLevelDestination: The destination the app needs to navigate to.
      */
-    fun navigateToTopLevelDestination(topLevelDestination: TopLevelDestination) {
+    fun navigateToTopLevelDestination(tabNavigator: TabNavigator, topLevelDestination: TopLevelDestination) {
         trace("Navigation: ${topLevelDestination.name}") {
             tabNavigator.current = topLevelDestination.tab
         }
@@ -79,12 +68,9 @@ class AsAppState(
  * Stores information about navigation events to be used with JankStats
  */
 @Composable
-private fun NavigationTrackingSideEffect(
-    tabNavigator: TabNavigator
-) {
+internal fun NavigationTrackingSideEffect(tabNavigator: TabNavigator) {
     TrackDisposableJank(tabNavigator) { metricsHolder ->
         metricsHolder.state?.putState("Navigation", tabNavigator.current.toString())
-        onDispose {
-        }
+        onDispose {}
     }
 }

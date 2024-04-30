@@ -7,24 +7,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
+import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.navigation.TopLevelDestination
-import com.imcys.bilibilias.navigation.tabs.DownloadTab
 import com.imcys.bilibilias.navigation.tabs.HomeTab
-import com.imcys.bilibilias.navigation.tabs.ToolTab
-import com.imcys.bilibilias.navigation.tabs.UserTab
+
+object MainScreen : Screen {
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    @Composable
+    override fun Content() {
+        val activity = LocalContext.current.getActivity()
+        val rememberAsAppState = rememberNiaAppState(
+            windowSizeClass = calculateWindowSizeClass(activity)
+        )
+        AsTheme {
+            AsApp(rememberAsAppState)
+        }
+    }
+}
 
 @Composable
 fun AsApp(appState: AsAppState) {
@@ -35,10 +52,11 @@ fun AsApp(appState: AsAppState) {
                 tabDisposable = {
                     TabDisposable(
                         navigator = it,
-                        tabs = listOf(HomeTab, ToolTab, DownloadTab, UserTab)
+                        tabs = appState.topLevelTabs
                     )
                 }
-            ) { tabNavigator ->
+            ) {
+                NavigationTrackingSideEffect(tabNavigator = it)
                 Scaffold(
                     containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.onBackground,
@@ -47,8 +65,8 @@ fun AsApp(appState: AsAppState) {
                             destinations = appState.topLevelDestinations,
                             onNavigateToDestination = appState::navigateToTopLevelDestination,
                             currentDestination = appState::currentDestination,
-                            tabNavigator = tabNavigator,
-                            modifier = Modifier.testTag("AsBottomBar")
+                            modifier = Modifier.testTag("AsBottomBar"),
+                            tabNavigator = it
                         )
                     }
                 ) { innerPadding ->
@@ -70,8 +88,8 @@ private fun AsBottomBar(
     destinations: List<TopLevelDestination>,
     onNavigateToDestination: (TabNavigator, TopLevelDestination) -> Unit,
     currentDestination: (TabNavigator, TopLevelDestination) -> Boolean,
-    tabNavigator: TabNavigator,
     modifier: Modifier = Modifier,
+    tabNavigator: TabNavigator,
 ) {
     AsNavigationBar(
         modifier = modifier,

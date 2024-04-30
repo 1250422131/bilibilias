@@ -23,16 +23,16 @@ import kotlin.time.Duration.Companion.seconds
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource,
-) : MoleculeViewModel<Unit, LoginModel>() {
+) : MoleculeViewModel<LoginEvent, LoginModel>() {
     @Composable
-    override fun models(events: Flow<Unit>): LoginModel {
+    override fun models(events: Flow<LoginEvent>): LoginModel {
         return LoginPresenter(events, loginRepository, loginInfoDataSource)
     }
 }
 
 @Composable
 fun LoginPresenter(
-    events: Flow<Unit>,
+    events: Flow<LoginEvent>,
     loginRepository: LoginRepository,
     loginInfoDataSource: LoginInfoDataSource
 ): LoginModel {
@@ -61,6 +61,13 @@ fun LoginPresenter(
     }
     LaunchedEffect(Unit) {
         events.collect { event ->
+            when (event) {
+                LoginEvent.RefreshQrCode -> {
+                    val (qrcodeKey, url) = loginRepository.获取二维码()
+                    key = qrcodeKey
+                    qrUrl = url
+                }
+            }
         }
     }
     val painter = rememberQrCodePainter(data = qrUrl)

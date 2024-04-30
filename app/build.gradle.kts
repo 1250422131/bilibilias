@@ -79,6 +79,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
+    implementation(projects.core.download)
     implementation(projects.core.ui)
 
     implementation(projects.common)

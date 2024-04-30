@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.common.utils
+package com.imcys.bilibilias.core.common.utils
 
 import android.app.Activity
 import android.content.Context
@@ -12,6 +12,7 @@ tailrec fun Context.getActivity(): Activity = when (this) {
     is ContextWrapper -> baseContext.getActivity()
     else -> error("Permissions should be called in the context of an Activity")
 }
+
 // 更新图库
 fun updatePhotoMedias(
     context: Context,
