@@ -17,6 +17,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.splash.MainActivityViewModel
@@ -32,6 +33,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
 
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     private val viewModel by viewModels<MainActivityViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +61,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             }
             AsTheme {
                 if (viewModel.isLogin) {
-                    Navigator(screen = MainScreen)
+                    Navigator(screen = MainScreen(networkMonitor))
                 } else {
-                    val navigationToMain: () -> Screen = { MainScreen }
+                    val navigationToMain: () -> Screen = { MainScreen(networkMonitor) }
                     Navigator(
                         LoginScreen(navigationToMain)
                     )
@@ -98,6 +103,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             finishAll()
         }
     }
+
     override fun onResume() {
         super.onResume()
         lazyStats.get().isTrackingEnabled = true
@@ -107,6 +113,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         super.onPause()
         lazyStats.get().isTrackingEnabled = false
     }
+
     companion object {
         fun actionStart(context: Context, asUrl: String) {
             val intent = Intent(context, HomeActivity::class.java)
