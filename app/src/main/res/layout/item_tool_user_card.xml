@@ -5,6 +5,7 @@
 
     <data>
 
+
         <variable
             name="cardBean"
             type="com.imcys.bilibilias.home.ui.model.UserCardBean.DataBean.CardBean" />
@@ -38,7 +39,6 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:imageUrl="@{cardBean.face}"
                     android:scaleType="fitXY"
                     app:round="45dp" />
 
@@ -63,13 +63,13 @@
                         android:transitionName="videoTitle" />
 
                     <TextView
-                        android:text="@{cardBean.sign}"
                         android:id="@+id/item_tool_user_card_sign"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:ellipsize="end"
                         android:maxLines="2"
+                        android:text="@{cardBean.sign}"
                         android:textColor="@color/color_text_hint"
                         android:textSize="12sp" />
 

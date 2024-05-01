@@ -4,6 +4,7 @@
 
     <data>
 
+
         <variable
             name="DataBean"
             type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
@@ -70,7 +71,6 @@
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:adjustViewBounds="true"
-                    android:imageUrl="@{DataBean.data.face}"
                     android:scaleType="fitXY" />
             </androidx.cardview.widget.CardView>
 

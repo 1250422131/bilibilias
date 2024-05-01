@@ -5,8 +5,6 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
     </data>
 
     <FrameLayout

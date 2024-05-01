@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="com.imcys.bilibilias.common.base.extend.LongKt" />
 
         <variable
@@ -39,7 +38,6 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:imageUrl="@{MediasBean.cover}"
                         android:scaleType="fitXY" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -54,7 +52,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:background="#80a1a3a6"
                             android:padding="2dp"
                             android:text="@{LongKt.timeStampDateStr(MediasBean.fav_time,`MM-dd`)}"
                             android:textColor="@color/white"

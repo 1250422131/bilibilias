@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
 
         <variable
@@ -28,7 +27,6 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@{ToolItemBean.bg_color}"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -37,7 +35,6 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
                     android:src="@drawable/ic_as_video_download"
                     app:tint="@color/white" />
 
@@ -55,7 +52,6 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorPrimary"
                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -64,7 +60,6 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:imageUrl="@{ToolItemBean.image_url}"
                     android:src="@drawable/ic_as_video_download"
                     app:tint="@color/white" />
 
