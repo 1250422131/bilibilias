@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="UserBaseBean"
             type="com.imcys.bilibilias.home.ui.model.UserBaseBean" />
@@ -25,7 +24,6 @@
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 tools:src="@drawable/ic_as_video_download"
-                android:imageUrl="@{UserBaseBean.data.face}"
                 app:round="45dp" />
 
             <androidx.appcompat.widget.LinearLayoutCompat

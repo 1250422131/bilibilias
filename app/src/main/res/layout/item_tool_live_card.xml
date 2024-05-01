@@ -6,8 +6,6 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-        <!--com.imcys.bilibilias.tool_livestream.ui.model.LiveRoomDataBean-->
         <variable
             name="LiveRoomDataBean"
             type="java.lang.Void" />

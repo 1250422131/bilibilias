@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -20,7 +19,6 @@
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
-
                 android:layout_width="50dp"
                 android:layout_height="5dp"
                 android:layout_gravity="center"
@@ -36,7 +34,6 @@
                     android:orientation="vertical" />
             </androidx.cardview.widget.CardView>
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -48,8 +45,6 @@
                     android:text="@string/app_dialog_dl_video_bar_title"
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -60,7 +55,6 @@
                 android:layout_marginRight="25dp"
                 android:orientation="vertical">
 
-
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -68,7 +62,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="10dp">
-
 
                     <ImageView
                         android:layout_width="20dp"
@@ -86,8 +79,6 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold" />
-
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
 
@@ -96,7 +87,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp">
-
 
                     <ImageView
                         android:id="@+id/as_video_definition_ic"
@@ -118,7 +108,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-
                     <TextView
                         android:id="@+id/dialog_dl_video_definition_tx"
                         android:layout_width="wrap_content"
@@ -139,8 +128,6 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right"
                         app:tint="@color/color_text_hint" />
-
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -149,9 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp">
 
-
                     <ImageView
-
                         android:id="@+id/as_video_diversity_ic"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
@@ -163,7 +148,6 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
@@ -173,7 +157,6 @@
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
-
 
                     <TextView
                         android:id="@+id/dialog_dl_video_diversity_tx"
@@ -190,7 +173,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-
                     <ImageView
                         android:id="@+id/as_video_diversity_right"
                         android:layout_width="20sp"
@@ -199,7 +181,6 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right"
                         app:tint="@color/color_text_hint" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -212,7 +193,6 @@
 
                     <ImageView
                         android:id="@+id/as_video_download_ic"
-
                         android:layout_width="20sp"
                         android:layout_height="20sp"
                         android:layout_alignParentLeft="true"
@@ -222,7 +202,6 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
@@ -254,7 +233,6 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right"
                         app:tint="@color/color_text_hint" />
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -307,9 +285,7 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_right"
                         app:tint="@color/color_text_hint" />
-
                 </RelativeLayout>
-
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
@@ -343,10 +319,7 @@
                             android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_video_adm_dl" />
                     </RadioGroup>
-
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
@@ -379,10 +352,7 @@
                             android:buttonTint="?attr/colorPrimary"
                             android:text="@string/app_dialog_dl_radio_only_video" />
                     </RadioGroup>
-
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
@@ -406,10 +376,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </androidx.cardview.widget.CardView>
-
-
         </LinearLayout>
-
-
     </RelativeLayout>
 </layout>

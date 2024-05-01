@@ -1,30 +1,19 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.bilibilias.android.application)
+    alias(libs.plugins.bilibilias.android.application.compose)
+    alias(libs.plugins.bilibilias.android.application.jacoco)
+    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
 
-ksp {
-    arg("ModuleName", project.name)
-}
 android {
     namespace = "com.imcys.bilibilias"
-    compileSdk = 34
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
-        minSdk = 21
-        // noinspecton ExpiredTargetSdkVersion
-        targetSdk = 34
         versionCode = 204
         versionName = "2.0.41"
-        // multiDexEnabled true
-//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
-//        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
-
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
@@ -35,8 +24,6 @@ android {
 
     buildTypes {
         debug {
-            // 混淆
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -56,38 +43,13 @@ android {
             )
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
+            baselineProfile.automaticGenerationDuringBuild = true
         }
-    }
-
-    lint {
-        baseline = file("lint-baseline.xml")
-        abortOnError = false
-        checkReleaseBuilds = false
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
         compose = true
-    }
-
-    dataBinding {
-        enable = true
-    }
-
-    viewBinding {
-        enable = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
+        dataBinding = true
     }
 
     packaging {
@@ -104,33 +66,68 @@ android {
 kapt {
     correctErrorTypes = true
 }
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
-}
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":model_ffmpeg"))
-    implementation(project(":tool_log_export"))
-    implementation(libs.androidx.activity)
+    implementation(projects.feature.login)
+    implementation(projects.feature.home)
+    implementation(projects.feature.tool)
+    implementation(projects.feature.download)
+    implementation(projects.feature.user)
+
+    implementation(projects.core.common)
+    implementation(projects.core.crash)
+    implementation(projects.core.datastore)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.network)
+    implementation(projects.core.download)
+    implementation(projects.core.ui)
+    implementation(projects.core.data)
+
+    implementation(projects.common)
+    implementation(projects.toolLogExport)
+
+    implementation(libs.androidx.activity.compose)
+    implementation("androidx.compose.ui:ui-viewbinding")
+    implementation(libs.androidx.compose.material3.adaptive)
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.compose.runtime.tracing)
+    implementation(libs.androidx.core.ktx)
+
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.tracing.ktx)
+    implementation(libs.androidx.window.core)
+    implementation(libs.coil.kt)
 
     ksp(libs.deeprecopy.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
-    implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
-    ksp(libs.hilt.compiler)
 
-    ksp(libs.kcomponent.compiler)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(libs.androidx.activity.ktx)
+
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+}
+baselineProfile {
+    // Don't build on every iteration of a full assemble.
+    // Instead enable generation directly for the release build variant.
+    automaticGenerationDuringBuild = false
+}
+
+dependencyGuard {
+    configuration("releaseRuntimeClasspath")
 }

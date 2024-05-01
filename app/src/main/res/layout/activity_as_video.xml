@@ -5,12 +5,9 @@
 
 
     <data>
-
         <import type="android.view.View" />
 
         <import type="android.graphics.Color" />
-
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
 
         <variable
             name="VideoBaseBean"
@@ -83,7 +80,6 @@
                         android:id="@+id/as_video_asJzvdStd"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:imageUrl="@{VideoBaseBean.data.pic}"
                         android:transitionName="videoPic"
                         app:layout_collapseMode="parallax"
                         app:showPlayButton="false" />
@@ -168,14 +164,12 @@
                                 android:contentDescription="点赞按钮"
                                 android:src="@drawable/ic_as_video_like"
                                 android:tint="@color/as_like_seletor"
-                                app:isSelected="@{ArchiveHasLikeBean.data == 1}"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.like)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -195,14 +189,12 @@
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
                                 android:tint="@color/as_like_seletor"
-                                app:isSelected="@{ArchiveCoinsBean.multiply != 0}"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.coin)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -223,14 +215,12 @@
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"
                                 android:tint="@color/as_like_seletor"
-                                app:isSelected="@{ArchiveFavouredBean.favoured}"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.favorite)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -254,7 +244,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
-                                android:text="@{NumberUtils.digitalConversion(VideoBaseBean.data.stat.share)}"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -277,7 +266,6 @@
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:imageUrl="@{UserCardBean.data.card.face}"
                         android:src="@mipmap/ic_launcher"
                         app:round="20dp">
 
@@ -301,7 +289,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{NumberUtils.digitalConversion(UserCardBean.data.card.fans)  +`粉丝  `+NumberUtils.digitalConversion(UserCardBean.data.archive_count)+`投稿`}"
                             android:textColor="@color/color_text_hint"
                             android:textSize="12sp" />
 

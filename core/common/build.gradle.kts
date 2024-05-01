@@ -15,6 +15,7 @@ dependencies {
     api("com.squareup.okio:okio:3.9.0")
     api(libs.napier)
     api(libs.devappx)
+    api(libs.toaster)
     implementation(kotlin("reflect"))
     implementation(libs.androidx.preference.ktx)
 }

@@ -7,7 +7,6 @@
         <variable
             name="ListBean"
             type="com.imcys.bilibilias.common.base.model.common.BangumiFollowList.DataBean.ListBean" />
-
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -27,7 +26,6 @@
             <androidx.constraintlayout.utils.widget.ImageFilterView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:imageUrl="@{ListBean.cover}"
                 android:scaleType="centerCrop"
                 app:round="3dp" />
 
@@ -41,8 +39,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
 
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@{ListBean.badge_info.bg_color}">
+                    android:layout_height="wrap_content">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"

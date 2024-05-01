@@ -2,7 +2,6 @@
 androidxComposeCompiler = "1.5.12"
 androidGradlePlugin = "8.3.2"
 androidTools = "31.3.2"
-androidFilePicker = "1.0.1"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.2.4"
 androidx-junit = "1.1.5"
@@ -14,7 +13,6 @@ banner = "2.2.3"
 bottomsheetdialogCompose = "1.4.1"
 brv = "1.5.8"
 coil = "2.6.0"
-customQrGenerator = "2.0.0-alpha01"
 deeprecopy-compiler = "0.0.1-Beta-3"
 constraintlayout = "2.1.4"
 coreKtx = "1.13.0"
@@ -24,7 +22,6 @@ dfm = "0.9.25"
 espresso-core = "3.5.1"
 ffmpegcommand = "1.3.2"
 flexbox = "3.0.0"
-fragmentKtx = "1.6.2"
 glide = "4.16.0"
 hilt = "2.51.1"
 androidxHiltNavigationCompose = "1.2.0"
@@ -50,7 +47,6 @@ dependencyGuard = "0.5.0"
 napier = "2.7.1"
 okdownload = "1.0.7"
 okhttp = "4.12.0"
-preferenceKtx = "1.2.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
@@ -65,15 +61,18 @@ androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
 voyager = "1.1.0-alpha04"
 preferenceKtxVersion = "1.2.1"
+androidXMetrics = "1.0.0-beta01"
+androidxProfileinstaller = "1.3.1"
+androidxWindowManager = "1.3.0-beta01"
 [libraries]
-androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "androidxWindowManager" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidxProfileinstaller" }
+androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidXMetrics" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
-androidx-ui-viewbinding = { module = "androidx.compose.ui:ui-viewbinding", version.ref = "uiViewbinding" }
-atomicfu-gradle-plugin = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
-custom-qr-generator = { module = "com.github.alexzhirkevich:custom-qr-generator", version.ref = "customQrGenerator" }
 devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
@@ -154,6 +153,10 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
+
+lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidTools" }
+lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
+lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 
 mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
 

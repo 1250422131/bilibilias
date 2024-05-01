@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="data"
             type="com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel.Data" />
@@ -24,7 +23,6 @@
         <androidx.constraintlayout.utils.widget.ImageFilterView
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:imageUrl="@{data.face}"
             app:round="35dp" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
