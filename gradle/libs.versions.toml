@@ -49,6 +49,7 @@ dependencyGuard = "0.5.0"
 napier = "2.7.1"
 okdownload = "1.0.7"
 okhttp = "4.12.0"
+okio = "3.9.0"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
@@ -91,6 +92,7 @@ monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
