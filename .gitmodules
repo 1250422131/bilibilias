@@ -1,3 +1,6 @@
 [submodule "okdownload"]
 	path = okdownload
 	url = https://github.com/SOCK-MAGIC/okdownload.git
+[submodule "okdownload1"]
+	path = okdownload1
+	url = https://github.com/SOCK-MAGIC/okdownload
