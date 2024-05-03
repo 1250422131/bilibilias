@@ -47,12 +47,11 @@ include(":core:ui")
 // include(":core:screenshot-testing")
 
 include(":okdownload:okdownload")
-include(":okdownload:okdownload-connection-okhttp")
 
 include(":feature:home")
 include(":feature:tool")
 include(":feature:download")
- include(":feature:user")
+include(":feature:user")
 include(":feature:splash")
 // include(":feature:settings")
 // include(":lint")
