@@ -1,15 +1,15 @@
-﻿package com.imcys.bilibilias.feature.tool
+package com.imcys.bilibilias.feature.tool
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
+import com.imcys.bilibilias.core.common.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
-import com.imcys.bilibilias.core.download.FileDownload
 import com.imcys.bilibilias.core.download.DownloadRequest
+import com.imcys.bilibilias.core.download.FileDownload
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
