@@ -11,7 +11,6 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
-import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,10 +19,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
     override val layoutId: Int = R.layout.activity_play_history
-
-    // 自动装配
-    @Inject
-    lateinit var playHistoryAdapter: PlayHistoryAdapter
 
     @Inject
     lateinit var networkService: NetworkService
@@ -46,7 +41,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
 
     private fun initPlayHistory() {
         binding.apply {
-            playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
@@ -55,7 +49,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
                     max = it.data.cursor.max
                     viewAt = it.data.cursor.view_at
                     playHistoryDataMutableList.addAll(it.data.list)
-                    playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
                 }
             }
 
@@ -75,7 +68,6 @@ class PlayHistoryActivity : BaseActivity<ActivityPlayHistoryBinding>() {
                 max = it.data.cursor.max
                 viewAt = it.data.cursor.view_at
                 playHistoryDataMutableList.addAll(it.data.list)
-                playHistoryAdapter.submitList(playHistoryDataMutableList + mutableListOf())
             }
 
         }

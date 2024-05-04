@@ -33,7 +33,6 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
-import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -512,36 +511,6 @@ object DialogUtils {
     }
 
     /**
-     * 加载视频音质列表
-     *  @param dashVideoPlayBean DashVideoPlayBean
-     */
-    private fun loadVideoToneQualityList(
-        context: Context,
-        dashVideoPlayBean: DashVideoPlayBean,
-        selectedResult: (audio: DashVideoPlayBean.DataBean.DashBean.AudioBean) -> Unit,
-    ): BottomSheetDialog {
-        val binding = DialogToneQualityBinding.inflate(LayoutInflater.from(context))
-
-        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
-        // 设置布局
-        bottomSheetDialog.setContentView(binding.root)
-
-        initDialogBehaviorBinding(binding.dialogToneQualityBar, context, binding.root.parent)
-
-        binding.apply {
-            dialogToneQualityRv.adapter =
-                VideoToneQualityAdapter(dashVideoPlayBean.data.dash.audio, selectedResult)
-            dialogToneQualityRv.layoutManager = LinearLayoutManager(context)
-
-            dialogToneQualityFinishBt.setOnClickListener {
-                bottomSheetDialog.cancel()
-            }
-        }
-
-        return bottomSheetDialog
-    }
-
-    /**
      * 下载弹幕文件
      */
     fun downloadDMDialog(
@@ -673,15 +642,6 @@ object DialogUtils {
 //                        }
 //                    }.show()
 //                }
-
-                // 设置音质选择
-//                dialogDlAudioTypeTx.setOnClickListener {
-//                    loadVideoToneQualityList(context, baseVideo) {
-//                        toneQuality = it.id
-//                        dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
-//                    }.show()
-//                }
-
             }
 
 
@@ -881,15 +841,6 @@ object DialogUtils {
                     dialogDlVideoTypeTx.text = typeName
                 }.show()
             }
-
-            // 设置音质选择
-            dialogDlAudioTypeTx.setOnClickListener {
-                loadVideoToneQualityList(context, dashVideoPlayBean) {
-                    toneQuality = it.id
-                    dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
-                }.show()
-            }
-
             val sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context).apply {
                     when (getInt("user_download_tool_list", 1)) {
@@ -1084,10 +1035,7 @@ object DialogUtils {
 
             // 设置音质选择
             dialogDlAudioTypeLy.setOnClickListener {
-                loadVideoToneQualityList(context, dashVideoPlayBean) {
-                    toneQuality = it.id
-                    dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
-                }.show()
+
             }
 
             val sharedPreferences =
