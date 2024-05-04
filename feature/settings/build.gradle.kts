@@ -5,16 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.sockmagic.login"
+    namespace = "com.imcys.bilibilias.feature.settings"
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.network)
-    implementation(projects.core.datastore)
-
-    implementation(libs.qrose)
-
+    implementation(libs.compose.settings)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

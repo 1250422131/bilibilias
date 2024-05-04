@@ -50,10 +50,12 @@ napier = "2.7.1"
 okdownload = "1.0.7"
 okhttp = "4.12.0"
 okio = "3.9.0"
+qrose = "1.0.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
 srl-core = "1.7.2.4"
 toaster = "12.6"
+uiTiles = "2.1.0"
 uiTimateBarX = "0.8.1"
 uiViewbinding = "1.6.6"
 wireGradlePlugin = "4.9.9"
@@ -93,6 +95,8 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "uiTiles" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
