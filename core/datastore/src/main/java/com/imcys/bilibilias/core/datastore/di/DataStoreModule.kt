@@ -7,8 +7,10 @@ import androidx.datastore.dataStoreFile
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.datastore.LoginInfoSerializer
-import com.imcys.bilibilias.core.datastore.proto.LoginInfo
+import com.imcys.bilibilias.core.datastore.LoginInfo
+import com.imcys.bilibilias.core.datastore.UserPreferences
+import com.imcys.bilibilias.core.datastore.login.LoginInfoSerializer
+import com.imcys.bilibilias.core.datastore.preferences.UserPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +36,20 @@ class DataStoreModule {
             scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
         ) {
             context.dataStoreFile("login_info.pb")
+        }
+
+    @Provides
+    @Singleton
+    internal fun providesLoginInfoDataStor1e(
+        @ApplicationContext context: Context,
+        @Dispatcher(AsDispatchers.IO) ioDispatcher: CoroutineDispatcher,
+        @ApplicationScope scope: CoroutineScope,
+        userPreferencesSerializer: UserPreferencesSerializer,
+    ): DataStore<UserPreferences> =
+        DataStoreFactory.create(
+            serializer = userPreferencesSerializer,
+            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+        ) {
+            context.dataStoreFile("user_preferences.pb")
         }
 }

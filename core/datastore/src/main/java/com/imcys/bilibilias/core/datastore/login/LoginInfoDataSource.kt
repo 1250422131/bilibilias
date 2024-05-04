@@ -1,8 +1,8 @@
-﻿package com.imcys.bilibilias.core.datastore
+﻿package com.imcys.bilibilias.core.datastore.login
 
 import androidx.datastore.core.DataStore
-import com.imcys.bilibilias.core.datastore.proto.Cookie
-import com.imcys.bilibilias.core.datastore.proto.LoginInfo
+import com.imcys.bilibilias.core.datastore.Cookie
+import com.imcys.bilibilias.core.datastore.LoginInfo
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

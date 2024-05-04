@@ -11,7 +11,7 @@ import coil.decode.VideoFrameDecoder
 import coil.util.DebugLogger
 import com.imcys.bilibilias.core.common.utils.ofMap
 import com.imcys.bilibilias.core.common.utils.print
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.Box
 import com.imcys.bilibilias.core.model.Response
 import com.imcys.bilibilias.core.network.BuildConfig
@@ -30,7 +30,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
-import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
