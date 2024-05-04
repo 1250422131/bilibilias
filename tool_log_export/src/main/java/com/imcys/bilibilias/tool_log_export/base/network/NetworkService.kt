@@ -9,14 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class NetworkService @Inject constructor(
-   private val httpClient: HttpClient
+    private val httpClient: HttpClient
 ) {
-    private val ioDispatcher = Dispatchers.IO
 
     suspend fun getBangumiFollow(vmid: Long, type: Int, pn: Int, ps: Int): BangumiFollowList =
         runCatchingOnWithContextIo {
@@ -28,7 +26,7 @@ class NetworkService @Inject constructor(
         noinline block: suspend CoroutineScope.() -> T
     ): T {
         return runCatching {
-            withContext(ioDispatcher, block)
+            withContext(Dispatchers.IO, block)
         }.getOrElse {
             val clazz = T::class
             val constructors = clazz.constructors

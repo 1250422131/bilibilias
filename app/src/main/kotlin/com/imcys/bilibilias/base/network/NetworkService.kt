@@ -10,11 +10,9 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
-import com.imcys.bilibilias.common.base.model.user.AsUserLoginModel
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.model.user.ResponseResult
 import com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.home.ui.model.BangumiPlayBean
 import com.imcys.bilibilias.home.ui.model.BangumiSeasonBean
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -36,7 +34,6 @@ import com.imcys.bilibilias.home.ui.model.VideoBaseBean
 import com.imcys.bilibilias.home.ui.model.VideoCoinAddBean
 import com.imcys.bilibilias.home.ui.model.VideoPageListData
 import com.imcys.bilibilias.home.ui.model.VideoPlayBean
-import com.imcys.bilibilias.home.ui.viewmodel.AsLoginBsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -55,7 +52,6 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkService @Inject constructor(
-    private val ktHttpUtils: KtHttpUtils,
     private val httpClient: HttpClient,
 ) {
 
@@ -302,24 +298,6 @@ class NetworkService @Inject constructor(
         ).body()
     }
 
-    suspend fun n32(bvid: String): LikeVideoBean = runCatchingOnWithContextIo {
-        ktHttpUtils.addHeader(
-            COOKIE,
-            BaseApplication.dataKv.decodeString(COOKIES, "")!!,
-        )
-            .addParam("like", "2")
-            .addParam("bvid", bvid)
-            .asyncPost(BilibiliApi.videLikePath)
-    }
-
-    suspend fun n33(bvid: String): VideoCoinAddBean = runCatchingOnWithContextIo {
-        ktHttpUtils
-            .addParam("bvid", bvid)
-            .addParam("multiply", "2")
-            .addParam("csrf", BaseApplication.dataKv.decodeString("bili_jct", "")!!)
-            .asyncPost(BilibiliApi.videoCoinAddPath)
-    }
-
     suspend fun n35(toString: String, addMediaIds: String): CollectionResultBean =
         runCatchingOnWithContextIo {
             httpClient.get(BilibiliApi.videoCollectionSetPath) {
@@ -327,30 +305,6 @@ class NetworkService @Inject constructor(
                 parameter("add_media_ids", addMediaIds)
                 parameter("type", "2")
             }.body()
-        }
-
-    suspend fun n36(
-        asCookie: String?,
-        asLoginInfo: AsLoginBsViewModel.AsLoginInfo
-    ): AsUserLoginModel =
-        runCatchingOnWithContextIo {
-            ktHttpUtils.addHeader(COOKIE, asCookie!!).asyncPostJson(
-                "${BiliBiliAsApi.serviceTestApi}users/login",
-                asLoginInfo,
-            )
-        }
-
-    suspend fun n37(asCookie: String?): UserBiliBiliCookieModel = runCatchingOnWithContextIo {
-        ktHttpUtils.addHeader(COOKIE, asCookie!!)
-            .asyncGet("${BiliBiliAsApi.serviceTestApi}BiliBiliCookie")
-    }
-
-    suspend fun n39(asCookie: String?, data: UserBiliBiliCookieModel.Data): ResponseResult =
-        runCatchingOnWithContextIo {
-            ktHttpUtils.addHeader(COOKIE, asCookie!!).asyncDeleteJson(
-                "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
-                data,
-            )
         }
 
     private suspend inline fun <reified T> runCatchingOnWithContextIo(

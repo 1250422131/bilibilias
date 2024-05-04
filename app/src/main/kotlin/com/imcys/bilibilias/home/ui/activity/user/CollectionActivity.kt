@@ -11,7 +11,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.databinding.ActivityCollectionBinding
-import com.imcys.bilibilias.home.ui.adapter.CollectionDataAdapter
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
 import com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -26,8 +25,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
     private var pn = 0
     private var collectionDataMutableList = mutableListOf<CollectionDataBean.DataBean.MediasBean>()
 
-    @Inject
-    lateinit var collectionDataAd: CollectionDataAdapter
     private lateinit var createCollectionList: UserCreateCollectionBean.DataBean.ListBean
 
     @Inject
@@ -44,7 +41,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
 
     private fun initCollectionRv() {
         binding.apply {
-            collectionRecyclerView.adapter = collectionDataAd
             collectionRecyclerView.layoutManager =
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             collectionRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -120,7 +116,6 @@ class CollectionActivity : BaseActivity<ActivityCollectionBinding>() {
         launchUI {
             val userCollection = networkService.getUserCollection(listBean.id, ++pn)
             userCollection.data.medias?.also { collectionDataMutableList.addAll(it) }
-            collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
         }
     }
 

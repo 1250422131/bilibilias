@@ -19,7 +19,6 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.base.utils.http.*
 import com.imcys.bilibilias.common.network.danmaku.*
 import com.imcys.bilibilias.danmaku.change.*
 import com.imcys.bilibilias.home.ui.activity.*
@@ -433,30 +432,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      * @param bvid String
      */
     private fun cancelLikeVideo(view: View, bvid: String) {
-        val context = view.context
-
-        viewModelScope.launchIO {
-            val likeVideoBean = networkService.n32(bvid)
-
-            launchUI {
-                when (likeVideoBean.code) {
-//                    0 -> {
-//                        (context as AsVideoActivity).binding.apply {
-//                            archiveHasLikeBean?.data = 0
-//                            asVideoLikeBt.isSelected = false
-//                        }
-//                    }
-
-                    65004 -> {
-                        likeVideo(view, bvid)
-                    }
-
-                    else -> {
-                        asToast(context, likeVideoBean.message)
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -464,16 +439,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      * @param bvid String
      */
     fun videoCoinAdd(view: View, bvid: String) {
-        val context = view.context
-
-        viewModelScope.launchIO {
-            networkService.n33(bvid)
-
-            launchUI {
-//                (context as AsVideoActivity).binding.archiveCoinsBean?.multiply = 2
-//                context.binding.asVideoThrowBt.isSelected = true
-            }
-        }
     }
 
     /**

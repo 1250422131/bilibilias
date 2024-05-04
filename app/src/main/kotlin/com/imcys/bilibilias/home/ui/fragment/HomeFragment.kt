@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
@@ -21,12 +20,9 @@ import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -104,24 +100,6 @@ class HomeFragment : BaseFragment() {
      */
     @Detainted
     fun initHomeAd() {
-        val userGoogleADSwitch =
-            PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean("user_google_ad_switch", true)
-
-        if (userGoogleADSwitch) {
-            launchIO {
-                val oldHomeAdBean = getOldHomeAdBean()
-                // 切换主线程
-                launchUI {
-                    val adapter = OldHomeAdAdapter()
-                    fragmentHomeBinding.fragmentHomeAdRv.adapter = adapter
-                    fragmentHomeBinding.fragmentHomeAdRv.layoutManager =
-                        LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-
-                    adapter.submitList(oldHomeAdBean.data)
-                }
-            }
-        }
     }
 
     /**
@@ -219,11 +197,7 @@ class HomeFragment : BaseFragment() {
      * 送出此版本的数据信息
      */
     private fun postAppData(sha: String, md5: String, crc: String) {
-        HttpUtils.get(
-            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java,
-        ) {
-        }
+
     }
 
     /**

@@ -5,8 +5,6 @@ import android.graphics.Color
 import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
-import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 
 /**
  * Html化
@@ -23,7 +21,6 @@ fun String.toHtml(): String {
 }
 
 fun String.toColorInt(): Int = Color.parseColor(this)
-
 
 /**
  * 取中间字符串，需要提供开始截取的位置和结束截取的位置
@@ -52,7 +49,7 @@ fun String.extract(startString: String, endString: String): String {
  * @param type String
  * @return String
  */
- fun String.toAsDownloadSavePath(
+fun String.toAsDownloadSavePath(
     context: Context,
     avid: String = "",
     bvid: String = "",
@@ -63,7 +60,6 @@ fun String.extract(startString: String, endString: String): String {
     title: String = "",
     type: String = "",
 ): String {
-
     val savePath = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
 
     var downloadName =
@@ -79,13 +75,12 @@ fun String.extract(startString: String, endString: String): String {
         title
     )
     downloadName = downloadName.replace("{TYPE}", type)
-    downloadName = downloadName.replace("""\s""".toRegex(),"_")
-    downloadName = downloadName.replace("""\n""".toRegex(),"_")
-    downloadName = downloadName.replace("""\\""".toRegex(),"_")
+    downloadName = downloadName.replace("""\s""".toRegex(), "_")
+    downloadName = downloadName.replace("""\n""".toRegex(), "_")
+    downloadName = downloadName.replace("""\\""".toRegex(), "_")
 
-    return "${savePath}/$downloadName"
+    return "$savePath/$downloadName"
 }
-
 
 /**
  * 转换为FFmpeg命令
@@ -107,11 +102,4 @@ fun String.toAsFFmpeg(
             replace("{VIDEO_MERGE_PATH}", videoMergePath)
         }
     return cmd.split(" ").toTypedArray()
-
-
 }
-
-
-
-
-

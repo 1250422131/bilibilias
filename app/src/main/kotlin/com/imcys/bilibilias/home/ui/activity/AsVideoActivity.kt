@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -38,8 +37,6 @@ import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
 import com.imcys.bilibilias.databinding.ActivityAsVideoBinding
-import com.imcys.bilibilias.home.ui.adapter.BangumiSubsectionAdapter
-import com.imcys.bilibilias.home.ui.adapter.SubsectionAdapter
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -264,7 +261,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                     if (epRegex.containsMatchIn(this)) {
                         // 加载番剧视频列表
                         epid = epRegex.find(this)?.value?.toLong()!!
-                        loadBangumiVideoList()
                     }
                 } else {
                     // 加载视频播放信息
@@ -316,56 +312,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
         val bean =
             http.get("${BilibiliApi.archiveCoinsPath}?bvid=$bvid").body<ResBean<ArchiveCoinsBean>>()
         binding.archiveCoinsBean = bean.data
-    }
-
-    /**
-     * 加载番剧视频列表信息
-     *
-     */
-    private fun loadBangumiVideoList() {
-        launchIO {
-
-            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
-            launchUI { isMember(bangumiSeasonBean) }
-
-            // 获取真实的cid
-            bangumiSeasonBean.result.episodes.forEach { episode ->
-                if (episode.bvid == bvid) {
-                    cid = episode.cid
-                }
-            }
-
-            launchUI {
-                binding.apply {
-                    // 如果就只有一个子集，就不要显示子集列表了
-                    if (bangumiSeasonBean.result.episodes.size == 1) {
-                        asVideoSubsectionRv.visibility =
-                            View.GONE
-                    }
-
-                    // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
-                    asVideoBangumiCd.visibility = View.VISIBLE
-                    asVideoCd.visibility = View.GONE
-                    this.bangumiSeasonBean = bangumiSeasonBean
-
-                    asVideoSubsectionRv.adapter =
-                        BangumiSubsectionAdapter(
-                            bangumiSeasonBean.result.episodes.toMutableList(),
-                            cid,
-                        ) { data, _ ->
-                            // 这里需要判断子集选择，我们得确定这并不是一个会员视频。或者说用户有会员可以去播放
-                            updateBangumiInformation(data)
-                        }
-
-                    asVideoSubsectionRv.layoutManager =
-                        LinearLayoutManager(
-                            this@AsVideoActivity,
-                            LinearLayoutManager.HORIZONTAL,
-                            false,
-                        )
-                }
-            }
-        }
     }
 
     /**
@@ -459,20 +405,6 @@ class AsVideoActivity : BaseActivity<ActivityAsVideoBinding>() {
                     if (videoPlayListData.data.size == 1) asVideoSubsectionRv.visibility = View.GONE
 
                     binding.videoPageListData = videoPlayListData
-                    asVideoSubsectionRv.adapter =
-                            // 将子集切换后的逻辑交给activity完成
-                        SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
-                            // 更新CID刷新播放页面
-                            cid = data.cid
-                            // 暂停播放
-                            changeFaButtonToPlay()
-                            // 刷新播放器
-                            loadVideoPlay("video")
-                            // 清空弹幕
-                            asDanmaku.release()
-                            // 更新弹幕
-                            loadDanmakuFlameMaster()
-                        }
 
                     asVideoSubsectionRv.layoutManager =
                         LinearLayoutManager(
