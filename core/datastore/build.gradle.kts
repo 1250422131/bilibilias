@@ -14,7 +14,7 @@ android {
 }
 
 dependencies {
-    api("androidx.datastore:datastore:1.1.1")
+    api(libs.androidx.datastore)
 //    api(libs.androidx.dataStore.core)
     api(projects.core.datastoreProto)
     api(projects.core.model)
