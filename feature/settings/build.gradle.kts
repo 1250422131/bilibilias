@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.core.datastore)
 
     implementation(libs.compose.settings)
