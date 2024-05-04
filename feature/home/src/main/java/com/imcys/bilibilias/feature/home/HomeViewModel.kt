@@ -2,7 +2,7 @@
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.network.repository.BiliBiliAsRepository
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import com.imcys.bilibilias.core.network.utils.WBIUtils

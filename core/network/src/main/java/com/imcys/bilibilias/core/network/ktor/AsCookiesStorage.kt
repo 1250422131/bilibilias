@@ -1,6 +1,6 @@
 ﻿package com.imcys.bilibilias.core.network.ktor
 
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
