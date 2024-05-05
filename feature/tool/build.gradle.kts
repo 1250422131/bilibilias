@@ -1,4 +1,4 @@
-﻿plugins {
+plugins {
     alias(libs.plugins.bilibilias.android.feature)
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)

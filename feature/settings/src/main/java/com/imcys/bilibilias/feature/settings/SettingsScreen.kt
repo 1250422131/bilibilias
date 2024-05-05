@@ -19,6 +19,7 @@ import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.core.common.download.DefaultConfig
+import io.github.aakira.napier.Napier
 
 object SettingScreen : Screen {
     @Composable
@@ -57,6 +58,7 @@ fun SettingContent(
                 SettingsGroup(title = { Text(text = "通用") }) {
                     val activityResultLauncher =
                         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
+                            Napier.d { "选择的路径 ${it?.path}" }
                             onChangeStoragePath(it?.path ?: DefaultConfig.defaultStorePath)
                         }
                     SettingsMenuLink(
@@ -68,7 +70,7 @@ fun SettingContent(
 
                     SettingsMenuLink(
                         title = { Text(text = "文件命名规则") },
-                        subtitle = { Text(text = "路径") }
+                        subtitle = { Text(text = settingsUiState.settings.fileNameRule) }
                     ) {
                     }
                     SettingsMenuLink(title = { Text(text = "还原文件存储路径") }) {
@@ -77,11 +79,15 @@ fun SettingContent(
                     SettingsMenuLink(title = { Text(text = "还原文件命名规则") }) {
                         onChangeNameRule(DefaultConfig.defaultNameRule)
                     }
-                    SettingsMenuLink(title = { Text(text = "下载完成后自动合并") }) {
-                        onChangeAutoMerge(!settingsUiState.settings.autoMerge)
+                    SettingsSwitch(
+                        state = settingsUiState.settings.autoMerge,
+                        title = { Text(text = "下载完成后自动合并") }) {
+                        onChangeAutoMerge(it)
                     }
-                    SettingsMenuLink(title = { Text(text = "下载完成自动导入B站") }) {
-                        onChangeAutoImport(!settingsUiState.settings.autoImport)
+                    SettingsSwitch(
+                        state = settingsUiState.settings.autoImport,
+                        title = { Text(text = "下载完成自动导入B站") }) {
+                        onChangeAutoImport(it)
                     }
                     SettingsMenuLink(
                         title = { Text(text = "合并时的FFmpeg命令") },
@@ -96,9 +102,10 @@ fun SettingContent(
                 }
                 SettingsGroup(title = { Text(text = "隐私政策") }) {
                     SettingsSwitch(
-                        state = false,
+                        state = settingsUiState.settings.shouldAppcenter,
                         title = { Text(text = "允许使用 Microsoft AppCenter") },
                     ) {
+                        onChangeWill(it)
                     }
                 }
             }

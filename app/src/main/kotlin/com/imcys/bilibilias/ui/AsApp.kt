@@ -28,6 +28,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
@@ -37,22 +38,21 @@ import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
-import com.imcys.bilibilias.core.designsystem.theme.AsTheme
+import com.imcys.bilibilias.home.ui.activity.LocalNetworkMonitor
 import com.imcys.bilibilias.navigation.TopLevelDestination
-import com.imcys.bilibilias.navigation.tabs.HomeTab
+import com.imcys.bilibilias.navigation.tabs.ToolTab
 
-class MainScreen(private val networkMonitor: NetworkMonitor) : Screen {
+class MainScreen : Screen {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @Composable
     override fun Content() {
         val activity = LocalContext.current.getActivity()
+        val networkMonitor = LocalNetworkMonitor.currentOrThrow
         val appState = rememberNiaAppState(
             networkMonitor = networkMonitor,
             windowSizeClass = calculateWindowSizeClass(activity)
         )
-        AsTheme {
-            AsApp(appState)
-        }
+        AsApp(appState)
     }
 }
 
@@ -85,7 +85,7 @@ internal fun AsApp(
     modifier: Modifier = Modifier
 ) {
     TabNavigator(
-        HomeTab,
+        ToolTab,
         tabDisposable = {
             TabDisposable(
                 navigator = it,

@@ -52,7 +52,6 @@ private fun Project.configureVoyager() {
         add("implementation", libs.findLibrary("voyager-navigator").get())
         add("implementation", libs.findLibrary("voyager-screenModel").get())
         add("implementation", libs.findLibrary("voyager-bottomSheetNavigator").get())
-        add("implementation", libs.findLibrary("voyager-tabNavigator").get())
         add("implementation", libs.findLibrary("voyager-transitions").get())
         add("implementation", libs.findLibrary("voyager-hilt").get())
     }
