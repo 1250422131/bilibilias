@@ -75,8 +75,8 @@ dependencies {
     implementation(projects.feature.user)
     implementation(projects.feature.settings)
 
+    implementation(projects.core.analytics)
     implementation(projects.core.common)
-    implementation(projects.core.crash)
     implementation(projects.core.datastore)
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
@@ -112,9 +112,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
 
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 
     implementation(libs.androidx.activity.ktx)
 
@@ -122,6 +119,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.voyager.tabNavigator)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.
