@@ -20,6 +20,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
@@ -40,6 +41,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     @Inject
     lateinit var networkMonitor: NetworkMonitor
 
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
     private val viewModel by viewModels<MainActivityViewModel>()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)

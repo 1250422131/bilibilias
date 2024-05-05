@@ -16,12 +16,10 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.baidu.mobstat.StatService
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.network.NetworkService
@@ -367,14 +365,6 @@ object DialogUtils {
         properties["copyright"] = copyright.toString()
         properties["downloadTool"] = mDownloadTool
         properties["downloadType"] = mDownloadType
-        StatService.onEvent(
-            App.context,
-            "AnalysisVideo",
-            // No need to translate
-            "解析视频",
-            1,
-            properties,
-        )
     }
 
     /**
@@ -395,7 +385,6 @@ object DialogUtils {
         toneQuality: Int,
         videoBaseBean: VideoBaseBean,
         qn: Int,
-        fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
         networkService: NetworkService
     ) {
@@ -943,7 +932,6 @@ object DialogUtils {
                     toneQuality,
                     videoBaseBean,
                     selectDefinition,
-                    80,
                     videoPageMutableList,
                     networkService
                 )
