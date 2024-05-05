@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.common.download
 
 object DefaultConfig {
-    const val defaultNameRule = "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}"
+    const val defaultNameRule = "{TITLE}/{P_TITLE}_{CID}"
     const val defaultStorePath = "bilibilias/download"
+    const val defaultCommand = "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}"
 }

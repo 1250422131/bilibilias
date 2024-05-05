@@ -15,7 +15,8 @@ class AsPreferencesDataSource @Inject constructor(
             it.fileNameRule,
             it.autoMerge,
             it.autoImportToBilibili,
-            it.shouldAppcenter
+            it.shouldAppcenter,
+            it.command
         )
     }
 
@@ -37,5 +38,9 @@ class AsPreferencesDataSource @Inject constructor(
 
     suspend fun setShouldAppcenter(enable: Boolean) {
         userPreferences.updateData { it.copy(shouldAppcenter = enable) }
+    }
+
+    suspend fun setCommand(command: String) {
+        userPreferences.updateData { it.copy(command = command) }
     }
 }

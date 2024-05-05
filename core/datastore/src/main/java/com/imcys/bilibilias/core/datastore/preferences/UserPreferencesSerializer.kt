@@ -12,7 +12,8 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
         fileStoragePath = DefaultConfig.defaultStorePath,
         fileNameRule = DefaultConfig.defaultNameRule,
         autoMerge = true,
-        shouldAppcenter = true
+        shouldAppcenter = true,
+        command = DefaultConfig.defaultCommand
     )
 
     override suspend fun readFrom(input: InputStream): UserPreferences {
