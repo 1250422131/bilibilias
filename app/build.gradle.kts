@@ -73,6 +73,7 @@ dependencies {
     implementation(projects.feature.tool)
     implementation(projects.feature.download)
     implementation(projects.feature.user)
+    implementation(projects.feature.settings)
 
     implementation(projects.core.common)
     implementation(projects.core.crash)
@@ -120,7 +121,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+    implementation(libs.voyager.tabNavigator)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

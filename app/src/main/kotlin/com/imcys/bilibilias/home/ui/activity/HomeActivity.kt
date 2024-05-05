@@ -9,7 +9,10 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.metrics.performance.JankStats
 import androidx.preference.PreferenceManager
 import cafe.adriel.voyager.core.screen.Screen
@@ -38,6 +41,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     lateinit var networkMonitor: NetworkMonitor
 
     private val viewModel by viewModels<MainActivityViewModel>()
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,13 +65,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 onDispose {}
             }
             AsTheme {
-                if (viewModel.isLogin) {
-                    Navigator(screen = MainScreen(networkMonitor))
-                } else {
-                    val navigationToMain: () -> Screen = { MainScreen(networkMonitor) }
-                    Navigator(
-                        LoginScreen(navigationToMain)
-                    )
+                CompositionLocalProvider(
+                    LocalNetworkMonitor provides networkMonitor
+                ) {
+                    val mainScreen = MainScreen()
+                    if (viewModel.isLogin) {
+                        Navigator(screen = mainScreen)
+                    } else {
+                        val navigationToMain: () -> Screen = { mainScreen }
+                        Navigator(
+                            LoginScreen(navigationToMain)
+                        )
+                    }
                 }
             }
         }
@@ -84,10 +94,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exit()
-            return false
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            exit()
+//            return false
+//        }
         return super.onKeyDown(keyCode, event)
     }
 
@@ -122,6 +132,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
         }
     }
 }
+
+internal val LocalNetworkMonitor = staticCompositionLocalOf<NetworkMonitor?> { null }
 
 /**
  * The default light scrim, as defined by androidx and the platform:
