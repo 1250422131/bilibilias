@@ -6,6 +6,7 @@ data class UserData(
     val autoMerge: Boolean,
     val autoImport: Boolean,
     val shouldAppcenter: Boolean,
+    val command: String,
 //    val themeBrand: ThemeBrand,
 //    val darkThemeConfig: DarkThemeConfig,
 )

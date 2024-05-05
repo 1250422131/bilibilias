@@ -20,10 +20,11 @@ class SettingsViewModel @Inject constructor(
         SettingsUiState.Success(
             settings = UserEditableSettings(
                 fileStoragePath = it.fileStoragePath,
-                fileNameRule = it.fileNameRule,
+                folderNameRule = it.fileNameRule,
                 autoMerge = it.autoMerge,
                 autoImport = it.autoImport,
-                shouldAppcenter = it.shouldAppcenter
+                shouldAppcenter = it.shouldAppcenter,
+                command = it.command
             )
         )
     }.stateIn(
@@ -61,13 +62,20 @@ class SettingsViewModel @Inject constructor(
             asPreferencesDataSource.setShouldAppcenter(useAppcenter)
         }
     }
+
+    fun updateMergeCommand(command: String) {
+        viewModelScope.launch {
+            asPreferencesDataSource.setCommand(command)
+        }
+    }
 }
 
 data class UserEditableSettings(
     val fileStoragePath: String,
-    val fileNameRule: String,
+    val folderNameRule: String,
     val autoMerge: Boolean,
     val autoImport: Boolean,
+    val command: String,
     val shouldAppcenter: Boolean,
 )
 
