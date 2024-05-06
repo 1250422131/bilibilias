@@ -8,14 +8,38 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.addCallback
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.core.designsystem.reveal.circularReveal
+import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivitySplashBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
+
 private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
 
 @AndroidEntryPoint
@@ -101,5 +125,48 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 toHome()
             }
         }
+    }
+}
+
+@Composable
+fun DDDD() {
+    val configuration = LocalConfiguration.current
+
+    val isVisible = remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        isVisible.value = !isVisible.value
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = (configuration.screenHeightDp * .3).dp)
+            .circularReveal(
+                isVisible.value,
+                durationMillis = 1000,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painterResource(R.mipmap.ic_launcher_foreground),
+            contentDescription = null,
+            modifier = Modifier
+                .width(120.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+        )
+        Text(
+            text = stringResource(R.string.app_name),
+            modifier = Modifier.clipToBounds(),
+            fontSize = 56.sp,
+            color = MaterialTheme.colorScheme.primary,
+            softWrap = false
+        )
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+private fun PPPP() {
+    AsTheme {
+        DDDD()
     }
 }

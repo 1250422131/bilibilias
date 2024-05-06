@@ -8,7 +8,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 
 class SplashHelper : ConstraintHelper {
 
-
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attributeSet: AttributeSet) : super(context, attributeSet)
