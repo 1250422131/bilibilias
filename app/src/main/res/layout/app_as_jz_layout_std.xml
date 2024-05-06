@@ -253,11 +253,6 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <master.flame.danmaku.ui.widget.DanmakuView
-        android:id="@+id/as_jzvdstd_DanmakuView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <FrameLayout
         android:id="@+id/as_jzvdstd_poster_fl"
         android:layout_width="match_parent"

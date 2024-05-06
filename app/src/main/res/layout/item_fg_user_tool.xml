@@ -4,11 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="ItemFgUserToolViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.ItemFgUserToolViewModel" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +30,6 @@
                     android:layout_weight="1"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:gravity="center"
-                    android:onClick="@{(view)->ItemFgUserToolViewModel.goToCollection(view)}"
                     android:orientation="vertical"
                     android:padding="10dp">
 
@@ -60,7 +54,6 @@
                     android:layout_weight="1"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:gravity="center"
-                    android:onClick="@{(view)->ItemFgUserToolViewModel.goToPlayHistory(view)}"
                     android:orientation="vertical"
                     android:padding="10dp">
 
@@ -86,7 +79,6 @@
                     android:layout_weight="1"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:gravity="center"
-                    android:onClick="@{(view)->ItemFgUserToolViewModel.goToBangumiFollowr(view)}"
                     android:orientation="vertical"
                     android:padding="10dp">
 

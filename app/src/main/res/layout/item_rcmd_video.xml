@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="ItemBean"
-            type="com.imcys.bilibilias.home.ui.model.HomeRCMDVideoBean.DataBean.ItemBean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -67,7 +63,6 @@
                                 android:ellipsize="end"
                                 android:lines="2"
                                 android:maxEms="8"
-                                android:text="@{ItemBean.title}"
                                 android:textColor="#FFFFFF"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />

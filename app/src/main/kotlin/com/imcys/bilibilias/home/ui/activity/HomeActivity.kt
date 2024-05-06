@@ -17,7 +17,7 @@ import androidx.metrics.performance.JankStats
 import androidx.preference.PreferenceManager
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
-import com.baidu.mobstat.StatService
+
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
@@ -83,17 +83,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
                 }
             }
         }
-        startBaiDuService()
-    }
-
-    /**
-     * 百度统计
-     */
-    fun startBaiDuService() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val authorizedState = sharedPreferences.getBoolean("baidu_statistics_type", false)
-        StatService.setAuthorizedState(this, authorizedState)
-        StatService.start(this)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -113,7 +102,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             ).show()
             exitTime = System.currentTimeMillis()
         } else {
-            finishAll()
+            finish()
         }
     }
 

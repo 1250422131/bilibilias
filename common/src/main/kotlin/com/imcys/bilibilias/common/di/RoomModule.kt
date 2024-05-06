@@ -34,10 +34,4 @@ class RoomModule {
     fun provideDownloadFinishTaskDao(
         roomDatabase: AppDatabase,
     ) = roomDatabase.downloadFinishTaskDao()
-
-    @Provides
-    @Singleton
-    fun provideRoamDao(
-        roomDatabase: AppDatabase,
-    ) = roomDatabase.roamDao()
 }

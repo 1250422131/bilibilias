@@ -3,18 +3,14 @@ package com.imcys.bilibilias.tool_log_export.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.drake.brv.annotaion.AnimationType
-import com.drake.brv.utils.linear
-import com.drake.brv.utils.setup
 import com.imcys.bilibilias.tool_log_export.R
-import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
 import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
 import com.imcys.bilibilias.tool_log_export.data.model.ExportItemBean
 import com.imcys.bilibilias.tool_log_export.databinding.ActivityLogExportBinding
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 
-class LogExportActivity : LogExportBaseActivity() {
+class LogExportActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityLogExportBinding
 
@@ -24,16 +20,12 @@ class LogExportActivity : LogExportBaseActivity() {
         binding = DataBindingUtil.setContentView<ActivityLogExportBinding?>(
             this,
             R.layout.activity_log_export
-        ).apply {
-            logExportHomeTopLy.addStatusBarTopPadding()
-        }
+        )
 
         initView()
-
     }
 
     private fun initView() {
-
         loadRvData()
     }
 
@@ -47,20 +39,6 @@ class LogExportActivity : LogExportBaseActivity() {
                 "https://s1.ax1x.com/2023/02/06/pS6OIfg.png"
             )
         )
-
-
-        binding.logExportHomeRv.linear().setup {
-            //防抖动
-            setAnimation(AnimationType.SCALE)
-            addType<ExportItemBean>(R.layout.log_export_item_export_tool)
-
-            onClick(R.id.log_export_tool_item_ly) {
-                activateClickEvent(getModel())
-            }
-
-        }.models = exportItemBeans
-
-
     }
 
     private fun activateClickEvent(model: ExportItemBean) {
@@ -70,7 +48,6 @@ class LogExportActivity : LogExportBaseActivity() {
             }
 
             ExportItemEnum.VideoLog -> {
-
             }
         }
     }

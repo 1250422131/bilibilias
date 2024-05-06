@@ -2,13 +2,11 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.collection.mutableObjectListOf
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.model.download.CacheFile
 import com.imcys.bilibilias.core.model.download.Entry
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -19,7 +17,6 @@ import javax.inject.Singleton
 @OptIn(ExperimentalSerializationApi::class)
 @Singleton
 class FileManage @Inject constructor(
-    @ApplicationScope private val scope: CoroutineScope,
     @ApplicationContext private val context: Context,
     private val json: Json,
     private val fileDownload: FileDownload,

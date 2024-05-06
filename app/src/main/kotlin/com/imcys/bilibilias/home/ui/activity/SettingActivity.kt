@@ -11,7 +11,7 @@ import com.imcys.bilibilias.core.common.utils.setBiliBiliUri
 import com.imcys.bilibilias.core.common.utils.set保存路径
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+
 
 private const val SAVE_FILE_PATH_CODE = 1
 private const val IMPORT_FILE_PATH_CODE = 2
@@ -23,7 +23,7 @@ class SettingActivity : BaseActivity<ActivitySttingBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.settingTopLy.addStatusBarTopPadding()
+        binding.settingTopLy
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.setting_FrameLayout, settingsFragment)
