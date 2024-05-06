@@ -21,6 +21,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
+import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
@@ -69,6 +70,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>() {
             }
             AsTheme {
                 CompositionLocalProvider(
+                    LocalAnalyticsHelper provides analyticsHelper,
                     LocalNetworkMonitor provides networkMonitor
                 ) {
                     val mainScreen = MainScreen()
