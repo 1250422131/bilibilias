@@ -10,7 +10,4 @@ import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.kotlin.listener.createListener1
 import javax.inject.Inject
 
-class DownloadTaskExecute @Inject constructor() {
-
-}
 internal typealias TaskEnd = (viewinfo: ViewInfo, type: FileType) -> Unit

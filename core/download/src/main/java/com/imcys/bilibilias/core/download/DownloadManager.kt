@@ -1,11 +1,14 @@
 package com.imcys.bilibilias.core.download
 
+import android.app.DownloadManager
 import android.content.Context
+import android.net.Uri
 import androidx.collection.mutableObjectListOf
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import com.imcys.bilibilias.core.datastore.UserPreferences
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
@@ -39,24 +42,25 @@ val Context.downloadDir
     }
 
 @Singleton
-class FileDownload @Inject constructor(
+class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
+    private val userPreferences: UserPreferences,
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
 ) {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
     init {
+        DownloadManager.Request(Uri.EMPTY)
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
     }
 
-    val taskFlow = MutableStateFlow<ImmutableList<AsDownloadTask>>(persistentListOf())
     private val listener = createListener1(
-        taskStart = { task, model ->
+        taskStart = { task, _ ->
             Napier.d(tag = "listener") { "任务开始 $task" }
             val asTask = taskQueue.first { it.okTask === task }
             scope.launch {
@@ -86,7 +90,7 @@ class FileDownload @Inject constructor(
                 )
             }
         },
-        taskEnd = { task, cause, realCause, model ->
+        taskEnd = { task, cause, realCause, _ ->
             Napier.d(tag = "listener") { "任务结束 $task" }
             scope.launch {
                 downloadTaskDao.updateState(task.uri, getState(task))
@@ -105,12 +109,17 @@ class FileDownload @Inject constructor(
     fun download(request: DownloadRequest) {
         Napier.d { "下载任务详情: $request" }
         scope.launch {
-            val (detail, streamUrl) = get视频详情和流链接(request)
-            dispatcherTaskType(
-                streamUrl,
-                request,
-                detail.pages.single { it.cid == request.viewInfo.cid }
-            )
+            try {
+                val (detail, streamUrl) = get视频详情和流链接(request)
+                dispatcherTaskType(
+                    streamUrl,
+                    request,
+                    detail.pages.single { it.cid == request.viewInfo.cid }
+                )
+            } catch (e: Exception) {
+                Napier.e(e, tag = "download") { "下载发生错误" }
+            }
+
 //            persistedFile(detail, request)
         }
     }
@@ -153,7 +162,7 @@ class FileDownload @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): AudioTask {
-        val task = AudioTask(streamUrl, request, page)
+        val task = AudioTask(streamUrl, request, page, customPath(request, page.part))
         taskQueue.add(task)
         return task
     }
@@ -172,9 +181,22 @@ class FileDownload @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): VideoTask {
-        val task = VideoTask(streamUrl, request, page)
+        val task = VideoTask(streamUrl, request, page, customPath(request, page.part))
         taskQueue.add(task)
         return task
+    }
+
+    /**
+     * {AV} {BV} {CID} {TITLE} {P_TITLE}
+     */
+    private fun customPath(request: DownloadRequest, part: String): String {
+        val info = request.viewInfo
+        return userPreferences.fileNameRule
+            .replace("{AV}", info.aid.toString())
+            .replace("{BV}", info.bvid)
+            .replace("{CID}", info.cid.toString())
+            .replace("{TITLE}", info.title)
+            .replace("{P_TITLE}", part)
     }
 
     private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
@@ -263,10 +285,5 @@ class FileDownload @Inject constructor(
 
     // endregion
     fun cancle(task: AsDownloadTask) {
-    }
-
-    private fun reverseType(fileType: FileType) = when (fileType) {
-        FileType.VIDEO -> FileType.AUDIO
-        FileType.AUDIO -> FileType.VIDEO
     }
 }
