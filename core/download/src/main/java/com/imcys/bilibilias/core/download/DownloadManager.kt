@@ -25,11 +25,8 @@ import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.Util
 import com.liulishuo.okdownload.kotlin.listener.createListener1
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.io.File
@@ -162,7 +159,7 @@ class DownloadManager @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): AudioTask {
-        val task = AudioTask(streamUrl, request, page, customPath(request, page.part))
+        val task = AudioTask(streamUrl, request, page, customFolderPath(request, page.part))
         taskQueue.add(task)
         return task
     }
@@ -181,7 +178,7 @@ class DownloadManager @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): VideoTask {
-        val task = VideoTask(streamUrl, request, page, customPath(request, page.part))
+        val task = VideoTask(streamUrl, request, page, customFolderPath(request, page.part))
         taskQueue.add(task)
         return task
     }
@@ -189,7 +186,7 @@ class DownloadManager @Inject constructor(
     /**
      * {AV} {BV} {CID} {TITLE} {P_TITLE}
      */
-    private fun customPath(request: DownloadRequest, part: String): String {
+    private fun customFolderPath(request: DownloadRequest, part: String): String {
         val info = request.viewInfo
         return userPreferences.fileNameRule
             .replace("{AV}", info.aid.toString())
