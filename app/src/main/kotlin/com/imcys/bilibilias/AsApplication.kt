@@ -27,7 +27,7 @@ class AsApplication : Application(), ImageLoaderFactory {
         Toaster.init(this)
         Napier.base(DebugAntilog())
         profileVerifierLogger()
-        appCenter()
+        appCenter(this)
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()

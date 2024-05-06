@@ -35,7 +35,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.332">
+            app:layout_constraintVertical_bias="0.3">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="120dp"
