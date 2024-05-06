@@ -32,13 +32,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.imcys.bilibilias.LocalNetworkMonitor
 import com.imcys.bilibilias.core.common.utils.getActivity
-import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
-import com.imcys.bilibilias.home.ui.activity.LocalNetworkMonitor
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import com.imcys.bilibilias.navigation.tabs.ToolTab
 

@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.splash
+package com.imcys.bilibilias.splash
 
 import androidx.lifecycle.ViewModel
 import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class SplashViewModel @Inject constructor(
     private val loginInfoDataSource: LoginInfoDataSource
 ) : ViewModel() {
     internal val isLogin = runBlocking { loginInfoDataSource.loginState.first() }
