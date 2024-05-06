@@ -26,11 +26,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/app_activity_bangumi_follow_title" />
-
-            <me.dkzwm.widget.srl.SmoothRefreshLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/bangumi_follow_rv"
                     android:layout_width="match_parent"
@@ -38,11 +33,6 @@
                     android:padding="20dp">
 
                 </androidx.recyclerview.widget.RecyclerView>
-
-
-            </me.dkzwm.widget.srl.SmoothRefreshLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

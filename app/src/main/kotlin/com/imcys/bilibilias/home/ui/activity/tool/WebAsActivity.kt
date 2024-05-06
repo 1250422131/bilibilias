@@ -14,7 +14,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.databinding.ActivityWebAsBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class WebAsActivity : BaseActivity<ActivityWebAsBinding>() {
                 setHomeButtonEnabled(true)
             }
 
-            webAsTopLy.addStatusBarTopPadding()
+            webAsTopLy
         }
     }
 

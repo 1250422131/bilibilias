@@ -28,7 +28,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
-        android:name=".base.app.AsApplication"
+        android:name=".AsApplication"
         android:allowBackup="true"
         android:configChanges="locale"
         android:dataExtractionRules="@xml/data_extraction_rules"

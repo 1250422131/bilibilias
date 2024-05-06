@@ -27,7 +27,7 @@ class DownloadModule {
     ): OkDownload = trace("OkDownload") {
         OkDownload.Builder(application)
             .connectionFactory(
-                DownloadOkHttpConnection.Factory().setBuilder(okHttpClient.get().newBuilder())
+                DownloadOkHttpConnection.Factory().setClient(okHttpClient.get())
             )
             .downloadDispatcher(DownloadDispatcher(executorService))
             .build().also {

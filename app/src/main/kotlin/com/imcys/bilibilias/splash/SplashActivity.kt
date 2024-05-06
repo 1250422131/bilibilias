@@ -8,13 +8,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.addCallback
-import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.ActivitySplashBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,24 +57,24 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     private fun applyPermission(content: String) {
-        DialogUtils.dialog(
-            this,
-            getString(R.string.app_permission_application_title),
-            content,
-            getString(R.string.app_permission_application_confirm),
-            getString(R.string.app_permission_application_cancel),
-            false,
-            positiveButtonClickListener = {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
-                )
-            },
-            negativeButtonClickListener = {
-                finishAll()
-            },
-        ).show()
+//        DialogUtils.dialog(
+//            this,
+//            getString(R.string.app_permission_application_title),
+//            content,
+//            getString(R.string.app_permission_application_confirm),
+//            getString(R.string.app_permission_application_cancel),
+//            false,
+//            positiveButtonClickListener = {
+//                ActivityCompat.requestPermissions(
+//                    this,
+//                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+//                    REQUEST_CODE_WRITE_EXTERNAL_STORAGE,
+//                )
+//            },
+//            negativeButtonClickListener = {
+//                finish()
+//            },
+//        ).show()
     }
 
     private fun toHome() {

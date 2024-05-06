@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.databinding.ItemHomeBannerBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -31,7 +30,7 @@ class OldHomeBeanAdapter(
         private val bannerTitle = binding.itemHomeBannerTitle
         private val bannerImage = binding.itemHomeBannerImage
         fun bind(aggregatingData: HomeBanner) {
-            val position = bindingAdapterPosition
+            val position = position
             bannerTitle.text = aggregatingData.textList[position]
             bannerImage.load(aggregatingData.imgUrlList[position])
             itemView.setOnClickListener {
@@ -96,15 +95,6 @@ class OldHomeBeanAdapter(
             token: Int,
             context: Context,
         ) {
-            Thread {
-                var getPost: String = postData
-                if (token == 1) {
-                    val biliJct = BaseApplication.dataKv.decodeString("bili_kct", "")
-
-                    getPost = getPost.replace("{token}", biliJct!!)
-                    println(getPost)
-                }
-            }.start()
         }
     }
 }

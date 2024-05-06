@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="data"
-            type="com.imcys.bilibilias.common.base.model.user.UserBiliBiliCookieModel.Data" />
-
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -35,7 +31,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{data.name}"
                 android:textSize="18sp" />
 
             <androidx.cardview.widget.CardView

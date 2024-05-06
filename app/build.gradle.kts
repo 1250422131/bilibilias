@@ -101,17 +101,14 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing.ktx)
     implementation(libs.androidx.window.core)
-    implementation(libs.coil.kt)
 
-    ksp(libs.deeprecopy.compiler)
-    ksp(libs.hilt.compiler)
+    implementation(libs.coil.kt)
+    implementation(libs.coil.compose)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
     implementation(libs.work.runtime.ktx)
-
-    implementation(libs.material)
 
     implementation(libs.androidx.activity.ktx)
 
@@ -123,6 +120,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    baselineProfile(projects.benchmarks)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

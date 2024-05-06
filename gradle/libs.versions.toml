@@ -44,8 +44,7 @@ lottie = "6.4.0"
 material = "1.12.0"
 mmkv = "1.3.4"
 moleculeGradlePlugin = "1.4.2"
-monitor = "1.7.0"
-mtjSdkCircle = "4.0.7.5"
+monitor = "1.8.0"
 dependencyGuard = "0.5.0"
 napier = "2.7.1"
 okdownload = "1.0.7"
@@ -81,27 +80,34 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
+
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
+
 devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
+
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 ffmpegcommand = { module = "com.github.AnJoiner:FFmpegCommand", version.ref = "ffmpegcommand" }
 
 molecule-gradle-plugin = { module = "app.cash.molecule:molecule-gradle-plugin", version.ref = "moleculeGradlePlugin" }
+
 monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
+
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "uiTiles" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
+qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "uiTiles" }
+
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
+
 work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
@@ -124,28 +130,19 @@ asBottomDialog = { group = "com.github.1250422131", name = "AsBottomDialog", ver
 
 banner = { group = "io.github.youth5201314", name = "banner", version.ref = "banner" }
 
-brv = { group = "com.github.liangjingkanji", name = "BRV", version.ref = "brv" }
-
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
-deeprecopy-compiler = { group = "com.imcys.deeprecopy", name = "compiler", version.ref = "deeprecopy-compiler" }
-deeprecopy-core = { group = "com.imcys.deeprecopy", name = "core", version.ref = "deeprecopy-compiler" }
-
-dfm = { group = "com.github.ctiao", name = "dfm", version.ref = "dfm" }
-
-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
@@ -164,30 +161,17 @@ ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serializatio
 
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
-mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
-
 lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = "androidTools" }
 lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 
-mtj-sdk-circle = { group = "com.baidu.mobstat", name = "mtj-sdk-circle", version.ref = "mtjSdkCircle" }
-
-okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
-
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
-
-srl-core = { group = "com.github.dkzwm", name = "srl-core", version.ref = "srl-core" }
-srl-ext-classics = { group = "com.github.dkzwm", name = "srl-ext-classics", version.ref = "srl-core" }
-srl-ext-material = { group = "com.github.dkzwm", name = "srl-ext-material", version.ref = "srl-core" }
-
-uiTimateBarX = { group = "com.gitee.zackratos", name = "UltimateBarX", version.ref = "uiTimateBarX" }
 
 voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }
 voyager-bottomSheetNavigator = { group = "cafe.adriel.voyager", name = "voyager-bottom-sheet-navigator", version.ref = "voyager" }
 voyager-tabNavigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
-voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyager" }
 voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }

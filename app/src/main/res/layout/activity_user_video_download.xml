@@ -71,23 +71,12 @@
                         android:textSize="16sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-                <me.dkzwm.widget.srl.SmoothRefreshLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/user_video_rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:padding="20dp" />
-
-                </me.dkzwm.widget.srl.SmoothRefreshLayout>
-
             </LinearLayout>
-
-
         </FrameLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

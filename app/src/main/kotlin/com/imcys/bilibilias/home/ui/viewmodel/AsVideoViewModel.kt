@@ -10,25 +10,14 @@ import androidx.lifecycle.*
 import androidx.preference.*
 import com.imcys.asbottomdialog.bottomdialog.*
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.common.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
-import com.imcys.bilibilias.common.network.danmaku.*
 import com.imcys.bilibilias.danmaku.change.*
 import com.imcys.bilibilias.home.ui.activity.*
-import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
 import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.*
 import dagger.hilt.android.lifecycle.*
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okio.*
@@ -40,18 +29,11 @@ import javax.inject.*
  */
 
 @HiltViewModel
-class AsVideoViewModel @Inject constructor(private val danmakuRepository: DanmakuRepository) :
+class AsVideoViewModel @Inject constructor() :
     ViewModel() {
 
-    @Inject
-    lateinit var http: HttpClient
-
-    @Inject
-    lateinit var networkService: NetworkService
-
-
     fun toUserPage(view: View, mid: String) {
-        UserInfoActivity.actionStart(view.context, mid.toLong())
+
     }
 
     /**
@@ -65,40 +47,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         videoPageListData: VideoPageListData,
     ) {
         val context = view.context
-        val loadDialog = DialogUtils.loadDialog(context).apply { show() }
+
 
         viewModelScope.launchUI {
             if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                //并发
-                val dashVideoPlayDeferred =
-                    async { networkService.viewDash(context.bvid, context.cid, 64) }
-                val dashBangumiPlayDeferred =
-                    async { networkService.pgcPlayUrl(context.cid, 64) }
 
-                // 等待两个请求的结果
-                val dashVideoPlayBean = dashVideoPlayDeferred.await()
-                val dashBangumiPlay = dashBangumiPlayDeferred.await()
-
-                // 这里再检验一次，是否为404内容
-                if (dashVideoPlayBean.code == 0) {
-                    DialogUtils.downloadVideoDialog(
-                        context,
-                        videoBaseBean,
-                        videoPageListData,
-                        dashVideoPlayBean,
-                        networkService
-                    ).show()
-                } else if (dashBangumiPlay.code == 0) {
-                    DialogUtils.downloadVideoDialog(
-                        context,
-                        videoBaseBean,
-                        videoPageListData,
-                        dashBangumiPlay.toDashVideoPlayBean(),
-                        networkService
-                    ).show()
-                }
-
-                loadDialog.cancel()
             } else {
                 AsDialog.init(context).build {
                     config = {
@@ -129,55 +82,10 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
     ) {
         val context = view.context
 
-        val loadDialog = DialogUtils.loadDialog(context).apply { show() }
+
 
         viewModelScope.launchUI {
-            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
-                //并发
-                val dashVideoPlayDeferred =
-                    async { networkService.viewDash(context.bvid, context.cid, 94) }
-                val dashBangumiPlayDeferred =
-                    async { networkService.pgcPlayUrl(context.cid, 64) }
 
-                // 等待两个请求的结果
-                val dashVideoPlayBean = dashVideoPlayDeferred.await()
-                val dashBangumiPlay = dashBangumiPlayDeferred.await()
-
-                // 这里再检验一次，是否为404内容
-                if (dashVideoPlayBean.code == 0) {
-                    DialogUtils.downloadVideoDialog(
-                        context,
-                        videoBaseBean,
-                        bangumiSeasonBean,
-                        dashVideoPlayBean,
-                        networkService
-                    ).show()
-                } else if (dashBangumiPlay.code == 0) {
-                    DialogUtils.downloadVideoDialog(
-                        context,
-                        videoBaseBean,
-                        bangumiSeasonBean,
-                        dashBangumiPlay.toDashVideoPlayBean(),
-                        networkService
-                    ).show()
-                }
-
-                loadDialog.cancel()
-            } else {
-                AsDialog.init(context).build {
-                    config = {
-                        title = "止步于此"
-                        content =
-                            "鉴于你的账户未转正，请前往B站完成答题，否则无法为您提供缓存服务。\n" +
-                                    "作者也是B站UP主，见到了许多盗取视频现象，更有甚者缓存番剧后发布内容到其他平台。\n" +
-                                    "而你的账户甚至是没有转正的，bilibilias自然不会想提供服务。"
-                        positiveButtonText = "知道了"
-                        positiveButton = {
-                            it.cancel()
-                        }
-                    }
-                }.show()
-            }
         }
     }
 
@@ -190,77 +98,14 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
-        networkService: NetworkService
     ) {
-        DialogUtils.downloadVideoDialog(
-            context,
-            videoBaseBean,
-            videoPageListData,
-            dashVideoPlayBean,
-            networkService
-        ).show()
     }
 
     fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
-        val context = view.context
-
-        DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
-            viewModelScope.launchIO {
-                val danmakuByte = networkService.getDanmuBytes((context as AsVideoActivity).cid)
-
-
-                when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
-                    R.id.dialog_dl_dm_ass -> {
-                        saveAssDanmaku(
-                            context,
-                            danmakuByte,
-                            videoBaseBean,
-                        )
-                    }
-
-                    R.id.dialog_dl_dm_xml -> {
-                        saveDanmaku(context, danmakuByte, videoBaseBean)
-                    }
-
-                    else -> throw Exception("意外的选项")
-                }
-            }
-        }.show()
     }
 
-    private val _danmakuState = MutableStateFlow(AsVideoState())
-    val danmakuState = _danmakuState.asStateFlow()
     fun downloadCCAss(view: View, avid: Long, cid: Long) {
-        val context = view.context
-        val dialogLoad = DialogUtils.loadDialog(context)
-        dialogLoad.show()
-        viewModelScope.launchIO {
-            val bvId = NewVideoNumConversionUtils.av2bv(avid)
-            danmakuRepository.getCideoInfoV2(avid, cid).collect { result ->
-                when (result) {
-                    is Result.Error -> TODO()
-                    Result.Loading -> {}
-                    is Result.Success -> {
-                        _danmakuState.update {
-                            it.copy(videoInfoV2 = result.data.data)
-                        }
-                        launchUI {
-                            dialogLoad.cancel()
-                            DialogUtils.downloadCCAssDialog(context, result.data.data) {
-                                saveCCAss(
-                                    bvId,
-                                    cid,
-                                    result.data.data.name,
-                                    it.lan,
-                                    it.subtitleUrl,
-                                    context
-                                )
-                            }.show()
-                        }
-                    }
-                }
-            }
-        }
+
     }
 
     /**
@@ -274,7 +119,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         subtitleUrl: String,
         context: Context,
     ) {
-        val dialogLoad = DialogUtils.loadDialog(context)
+
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val savePath = sharedPreferences.getString(
@@ -291,21 +136,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
 
         viewModelScope.launchIO {
-            val videoCCInfo = http.get(subtitleUrl).body<VideoCCInfo>()
-
-            assFile.writeText(
-                CCJsonToAss.jsonToAss(
-                    videoCCInfo,
-                    title,
-                    "1920",
-                    "1080",
-                    context,
-                ),
-            )
-
             launchUI {
-                dialogLoad.cancel()
-                asToast(context, "下载字幕储存于\n$fileName")
+
                 // 通知下载成功
                 Analytics.trackEvent(context.getString(R.string.download_barrage))
             }
@@ -332,15 +164,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
 
-        val decompressBytes =
-            context.decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-
-        val outputStream = FileOutputStream(assFile)
-        decompressBytes.also {
-            outputStream.write(it)
-            it.clone()
-        }
-
         assFile.writeText(
             DmXmlToAss.xmlToAss(
                 assFile.readText(),
@@ -352,10 +175,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         )
 
         viewModelScope.launchUI {
-            asToast(
-                context,
-                "下载弹幕储存于\n$fileName",
-            )
             // 通知下载成功
             Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
@@ -369,8 +188,6 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             context.getExternalFilesDir("download").toString(),
         )
 
-        val bufferedSink: BufferedSink?
-
         val dest = File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml")
         // 检查是否存在文件夹
         val parentDir = dest.parentFile
@@ -379,18 +196,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml").createNewFile()
         }
 
-        val sink = dest.sink() // 打开目标文件路径的sink
-        val decompressBytes =
-            context.decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
-        bufferedSink = sink.buffer()
-        decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
-        bufferedSink.close()
-
         viewModelScope.launchUI {
-            asToast(
-                context,
-                "下载弹幕储存于\n$savePath/${(context.bvid)}/${context.cid}_danmu.xml",
-            )
             // 通知下载成功
             Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
@@ -401,37 +207,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      * @param bvid String aid
      */
     fun likeVideo(view: View, bvid: String) {
-        val context = view.context
 
-        viewModelScope.launchUI {
-            val likeVideoBean = networkService.videoLike(bvid)
-
-//            if ((context as AsVideoActivity).binding.archiveHasLikeBean?.data == 0) {
-//                when (likeVideoBean.code) {
-//                    0 -> {
-//                        context.binding.archiveHasLikeBean?.data = 1
-//                        context.binding.asVideoLikeBt.isSelected = true
-//                    }
-//
-//                    65006 -> {
-//                        cancelLikeVideo(view, bvid)
-//                    }
-//
-//                    else -> {
-//                        asToast(context, likeVideoBean.message)
-//                    }
-//                }
-//            } else {
-//                cancelLikeVideo(view, bvid)
-//            }
-        }
-    }
-
-    /**
-     * 取消对视频的点赞
-     * @param bvid String
-     */
-    private fun cancelLikeVideo(view: View, bvid: String) {
     }
 
     /**
@@ -446,27 +222,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      */
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(view: View, avid: Long) {
-        val context = view.context
-//        (context as AsVideoActivity).binding.apply {
-//            viewModelScope.launchIO {
-//                val userCreateCollectionBean = networkService.n34()
-//
-//                launchUI {
-//                    if (userCreateCollectionBean.code == 0) {
-//                        DialogUtils.loadUserCreateCollectionDialog(
-//                            context,
-//                            userCreateCollectionBean,
-//                            { _, _ ->
-//                            },
-//                            { selects ->
-//                                // 选取完成了收藏文件夹
-//                                setCollection(context, selects, avid)
-//                            },
-//                        ).show()
-//                    }
-//                }
-//            }
-//        }
+
     }
 
     /**
@@ -507,15 +263,5 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      * @param addMediaIds String
      */
     private fun addCollection(context: AsVideoActivity, addMediaIds: String, avid: Long) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val collectionResultBean = networkService.n35(avid.toString(), addMediaIds)
-
-            if (collectionResultBean.code == 0) {
-//                context.binding.archiveFavouredBean?.isFavoured = true
-//                context.binding.asVideoCollectionBt.isSelected = true
-            } else {
-                asToast(context, "收藏失败${collectionResultBean.code}")
-            }
-        }
     }
 }
