@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -43,10 +41,6 @@
         </provider>
 
         <activity
-            android:name=".home.ui.activity.tool.WebAsActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".home.ui.activity.DonateActivity"
             android:exported="false" />
         <activity
@@ -54,50 +48,18 @@
             android:exported="false" />
 
         <activity
-            android:name=".home.ui.activity.SettingActivity"
-            android:exported="false" />
-        <activity
             android:name=".home.ui.activity.AsVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
-            android:name=".home.ui.activity.HomeActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="mtj0f9d51ff82" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".splash.SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SplashOverlay">
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="keyboardHidden|smallestScreenSize"
-            android:exported="false"
-            android:theme="@style/Theme.BILIBILIAS" />
     </application>
-
 </manifest>
