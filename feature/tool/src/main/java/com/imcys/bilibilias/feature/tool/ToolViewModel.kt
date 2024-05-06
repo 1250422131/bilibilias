@@ -9,7 +9,7 @@ import com.imcys.bilibilias.core.common.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadRequest
-import com.imcys.bilibilias.core.download.FileDownload
+import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
@@ -27,7 +27,7 @@ class ToolViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getStreamWithVideoDetailUseCase: GetStreamWithVideoDetailUseCase,
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
-    private val fileDownload: FileDownload,
+    private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
 ) : ViewModel() {
     val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
@@ -44,7 +44,7 @@ class ToolViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchResultUiState.Loading)
 
     fun download(request: DownloadRequest) {
-        fileDownload.download(request)
+        downloadManager.download(request)
     }
 
     fun onSearchQueryChanged(query: String) {

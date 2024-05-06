@@ -10,12 +10,13 @@ import java.io.File
 class VideoTask(
     streamUrl: VideoStreamUrl,
     request: DownloadRequest,
-    val page: ViewDetail.Pages
+    page: ViewDetail.Pages,
+    path: String
 ) : AsDownloadTask(request.viewInfo, streamUrl, request, page.part) {
 
     override val priority = 99
     override val fileType = FileType.VIDEO
-    override val destFile = File(request.buildFullPath(), "video.mp4")
+    override val destFile = File(path, "video.mp4")
     override val okTask = createTask(downloadUrl, destFile, priority)
     override fun getStrategy(streamUrl: VideoStreamUrl, request: DownloadRequest): String {
         val videos = streamUrl.dash.video.groupBy { it.id }[request.format.quality]

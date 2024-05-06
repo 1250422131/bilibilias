@@ -3,7 +3,7 @@ package com.imcys.bilibilias.feature.download
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
-import com.imcys.bilibilias.core.download.FileDownload
+import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DownloadViewModel @Inject constructor(
-    private val fileDownload: FileDownload,
+    private val downloadManager: DownloadManager,
     private val downloadTaskDao: DownloadTaskDao,
 ) : ViewModel() {
     val taskFlow = downloadTaskDao.loadAllDownloadFlow()
@@ -37,6 +37,6 @@ class DownloadViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, persistentListOf())
 
     fun onCancle(task: AsDownloadTask) {
-        fileDownload.cancle(task)
+        downloadManager.cancle(task)
     }
 }
