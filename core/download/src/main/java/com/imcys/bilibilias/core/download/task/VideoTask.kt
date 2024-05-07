@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.core.download.task
 
 import com.imcys.bilibilias.core.download.DownloadRequest
-import com.imcys.bilibilias.core.download.buildFullPath
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
@@ -11,7 +10,7 @@ class VideoTask(
     streamUrl: VideoStreamUrl,
     request: DownloadRequest,
     page: ViewDetail.Pages,
-    path: String
+    path: String,
 ) : AsDownloadTask(request.viewInfo, streamUrl, request, page.part) {
 
     override val priority = 99

@@ -29,8 +29,17 @@ data class DownloadTaskEntity(
     val contentLength: Long = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
+    companion object {
+        const val UNKNOWN_TOTAL_OFFSET = -1L
+        const val UNKNOWN_PROGRESS = 0f
+    }
+
     @Ignore
-    val progress = bytesSentTotal / contentLength.toFloat()
+    val progress = when (contentLength) {
+        UNKNOWN_TOTAL_OFFSET -> UNKNOWN_PROGRESS
+        0L -> if (bytesSentTotal == 0L) 1f else UNKNOWN_PROGRESS
+        else -> bytesSentTotal * 1.0f / contentLength
+    }
 
     @Ignore
     val isCompelete = bytesSentTotal == contentLength

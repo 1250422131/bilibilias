@@ -1,14 +1,13 @@
 package com.imcys.bilibilias.core.download
 
-import android.app.DownloadManager
 import android.content.Context
-import android.net.Uri
 import androidx.collection.mutableObjectListOf
 import androidx.core.net.toUri
+import androidx.tracing.trace
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.datastore.UserPreferences
+import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
@@ -22,14 +21,23 @@ import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.core.Util
+import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection
+import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
 import com.liulishuo.okdownload.kotlin.listener.createListener1
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
+import okhttp3.OkHttpClient
 import java.io.File
+import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,16 +49,28 @@ val Context.downloadDir
 @Singleton
 class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
+    @ApplicationContext application: Context,
+    okHttpClient: dagger.Lazy<OkHttpClient>,
+    executorService: ExecutorService,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
-    private val userPreferences: UserPreferences,
+    private val userPreferences: AsPreferencesDataSource,
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
 ) {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
     init {
-        DownloadManager.Request(Uri.EMPTY)
+        trace("OkDownload") {
+            OkDownload.Builder(application)
+                .connectionFactory(
+                    DownloadOkHttpConnection.Factory().setClient(okHttpClient.get())
+                )
+                .downloadDispatcher(DownloadDispatcher(executorService))
+                .build().also {
+                    OkDownload.setSingletonInstance(it)
+                }
+        }
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
@@ -96,9 +116,15 @@ class DownloadManager @Inject constructor(
                 val tasks = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid)
                 val v = tasks.find { it.fileType == FileType.VIDEO }
                 val a = tasks.find { it.fileType == FileType.AUDIO }
-                if (v != null && a != null) {
-                    defaultGroupTaskCall.execute(GroupTask(v, a))
+                Napier.d(cause.name, realCause, "下载完成")
+                v?.let { v1 ->
+                    a?.let { a1 ->
+                        defaultGroupTaskCall.execute(GroupTask(v1, a1))
+                    }
                 }
+//                if (v != null && a != null) {
+//                    defaultGroupTaskCall.execute(GroupTask(v, a))
+//                }
             }
         }
     )
@@ -159,7 +185,7 @@ class DownloadManager @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): AudioTask {
-        val task = AudioTask(streamUrl, request, page, customFolderPath(request, page.part))
+        val task = AudioTask(streamUrl, request, page, customFoldername(request, page.part))
         taskQueue.add(task)
         return task
     }
@@ -178,7 +204,7 @@ class DownloadManager @Inject constructor(
         request: DownloadRequest,
         page: ViewDetail.Pages
     ): VideoTask {
-        val task = VideoTask(streamUrl, request, page, customFolderPath(request, page.part))
+        val task = VideoTask(streamUrl, request, page, customFoldername(request, page.part))
         taskQueue.add(task)
         return task
     }
@@ -186,14 +212,18 @@ class DownloadManager @Inject constructor(
     /**
      * {AV} {BV} {CID} {TITLE} {P_TITLE}
      */
-    private fun customFolderPath(request: DownloadRequest, part: String): String {
+    private fun customFoldername(request: DownloadRequest, part: String): String {
         val info = request.viewInfo
-        return userPreferences.fileNameRule
-            .replace("{AV}", info.aid.toString())
-            .replace("{BV}", info.bvid)
-            .replace("{CID}", info.cid.toString())
-            .replace("{TITLE}", info.title)
-            .replace("{P_TITLE}", part)
+
+        val customPath = runBlocking {
+            userPreferences.userData.first().fileNameRule
+                .replace("{AV}", info.aid.toString())
+                .replace("{BV}", info.bvid)
+                .replace("{CID}", info.cid.toString())
+                .replace("{TITLE}", info.title)
+                .replace("{P_TITLE}", part)
+        }
+        return "${DevUtils.getContext().downloadDir}${File.separator}$customPath"
     }
 
     private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
