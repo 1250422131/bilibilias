@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.datastore.di
+package com.imcys.bilibilias.core.datastore.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore

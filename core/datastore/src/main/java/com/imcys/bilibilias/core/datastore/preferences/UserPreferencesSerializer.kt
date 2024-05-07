@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
 
-class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
+internal class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferences> {
     override val defaultValue = UserPreferences(
         fileStoragePath = DefaultConfig.defaultStorePath,
         fileNameRule = DefaultConfig.defaultNameRule,

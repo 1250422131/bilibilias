@@ -23,7 +23,7 @@ interface DownloadTaskDao {
             insertTask(t)
         } else {
             updateTask(
-                t.copy(
+                task.copy(
                     uri = t.uri,
                     created = t.created,
                     subTitle = t.subTitle,
