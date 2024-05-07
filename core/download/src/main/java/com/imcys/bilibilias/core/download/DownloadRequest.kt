@@ -11,8 +11,10 @@ data class DownloadRequest(
 )
 
 data class Format(val codecid: Int, val taskType: TaskType, val quality: Int)
-internal fun DownloadRequest.buildFilename()=
+
+internal fun DownloadRequest.buildFilename() =
     "${DevUtils.getContext().downloadDir}_${viewInfo.bvid}_"
+
 internal fun DownloadRequest.buildFullPath() =
     "${buildBasePath()}${File.separator}${format.quality}"
 

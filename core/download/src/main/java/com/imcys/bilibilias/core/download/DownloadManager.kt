@@ -3,7 +3,6 @@ package com.imcys.bilibilias.core.download
 import android.content.Context
 import androidx.collection.mutableObjectListOf
 import androidx.core.net.toUri
-import androidx.tracing.trace
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
@@ -21,12 +20,8 @@ import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.core.Util
-import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection
-import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher
 import com.liulishuo.okdownload.kotlin.listener.createListener1
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -35,9 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
-import okhttp3.OkHttpClient
 import java.io.File
-import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -124,7 +117,7 @@ class DownloadManager @Inject constructor(
                 dispatcherTaskType(
                     streamUrl,
                     request,
-                    detail.pages.single { it.cid == request.viewInfo.cid }
+                    detail
                 )
             } catch (e: Exception) {
                 Napier.e(e, tag = "download") { "下载发生错误" }
@@ -137,66 +130,66 @@ class DownloadManager @Inject constructor(
     private fun dispatcherTaskType(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        page: ViewDetail.Pages
+        viewDetail: ViewDetail
     ) {
         scope.launch {
             when (request.format.taskType) {
-                TaskType.ALL -> handleAllTask(streamUrl, request, page)
-                TaskType.VIDEO -> handleVideoTask(streamUrl, request, page)
-                TaskType.AUDIO -> handleAudioTask(streamUrl, request, page)
+                TaskType.ALL -> handleAllTask(streamUrl, request, viewDetail)
+                TaskType.VIDEO -> handleVideoTask(streamUrl, request, viewDetail)
+                TaskType.AUDIO -> handleAudioTask(streamUrl, request, viewDetail)
             }
         }
+    }
+
+    private fun createTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+        fileType: FileType,
+    ): AsDownloadTask {
+        val page = viewDetail.pages.single { it.cid == request.viewInfo.cid }
+        val path = if (viewDetail.pages.size == 1) {
+            "${viewDetail.title}"
+        } else {
+            "${viewDetail.title}${File.separator}${page.part}"
+        }
+        val fullPath = "${DevUtils.getContext().downloadDir}${File.separator}$path"
+        return when (fileType) {
+            FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
+            FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
+        }.also(taskQueue::add)
     }
 
     private fun handleAllTask(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        page: ViewDetail.Pages
+        viewDetail: ViewDetail
     ) {
-        val video = createVideoTask(streamUrl, request, page)
-        val audio = createAudioTask(streamUrl, request, page)
+        val video = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
+        val audio = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
         DownloadTask.enqueue(arrayOf(video.okTask, audio.okTask), listener)
     }
 
     private fun handleAudioTask(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        page: ViewDetail.Pages
+        viewDetail: ViewDetail
     ) {
-        val task = createVideoTask(streamUrl, request, page)
+        val task = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
         task.okTask.enqueue(listener)
-    }
-
-    private fun createAudioTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        page: ViewDetail.Pages
-    ): AudioTask {
-        val task = AudioTask(streamUrl, request, page, customFoldername(request, page.part))
-        taskQueue.add(task)
-        return task
     }
 
     private fun handleVideoTask(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
-        page: ViewDetail.Pages
+        viewDetail: ViewDetail
     ) {
-        val task = createVideoTask(streamUrl, request, page)
+        val task = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
         task.okTask.enqueue(listener)
     }
 
-    private fun createVideoTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        page: ViewDetail.Pages
-    ): VideoTask {
-        val task = VideoTask(streamUrl, request, page, customFoldername(request, page.part))
-        taskQueue.add(task)
-        return task
-    }
-
     /**
+     * todo 优化路径逻辑，当视频没有子集时可以考虑直接使用当前视频名
      * {AV} {BV} {CID} {TITLE} {P_TITLE}
      */
     private fun customFoldername(request: DownloadRequest, part: String): String {
