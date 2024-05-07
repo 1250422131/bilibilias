@@ -84,11 +84,12 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.data)
 
+    implementation(projects.okdownload.okdownload)
+
     implementation(projects.common)
     implementation(projects.toolLogExport)
 
     implementation(libs.androidx.activity.compose)
-    implementation("androidx.compose.ui:ui-viewbinding")
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)

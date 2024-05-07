@@ -49,9 +49,6 @@ val Context.downloadDir
 @Singleton
 class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
-    @ApplicationContext application: Context,
-    okHttpClient: dagger.Lazy<OkHttpClient>,
-    executorService: ExecutorService,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
@@ -61,16 +58,6 @@ class DownloadManager @Inject constructor(
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
     init {
-        trace("OkDownload") {
-            OkDownload.Builder(application)
-                .connectionFactory(
-                    DownloadOkHttpConnection.Factory().setClient(okHttpClient.get())
-                )
-                .downloadDispatcher(DownloadDispatcher(executorService))
-                .build().also {
-                    OkDownload.setSingletonInstance(it)
-                }
-        }
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
