@@ -14,14 +14,16 @@ object FFmpegUtil {
     fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String?> {
         return buildCommandParams {
             append("-i")
-            append(videoFile)
+            append("\"$videoFile\"")
+
             append("-i")
-            append(audioFile)
+            append("\"$audioFile\"")
+
             append("-c:v")
             append("copy")
             append("-c:a")
             append("copy")
-            append(muxFile)
+            append("\"$muxFile\"")
         }
     }
 }
