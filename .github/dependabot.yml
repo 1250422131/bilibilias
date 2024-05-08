@@ -12,14 +12,6 @@ updates:
       - jitpack
       - maven-google
       - gradle-plugin
-      
-  - package-ecosystem: gradle
-    directory: "/"
-    schedule:
-      interval: daily
-      time: "21:00"
-    open-pull-requests-limit: 10
-    target-branch: develop_compose
 
 registries:
   jitpack:
