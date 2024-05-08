@@ -18,13 +18,8 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import cn.jzvd.JZUtils
 import cn.jzvd.JzvdStd
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.R
 import com.microsoft.appcenter.analytics.Analytics
-import master.flame.danmaku.controller.IDanmakuView
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -47,7 +42,6 @@ open class AsJzvdStd : JzvdStd {
 
     private lateinit var jzbdStdInfo: JzbdStdInfo
     var stopTime: Long = 0
-    val asDanmaku: IDanmakuView = findViewById(R.id.as_jzvdstd_DanmakuView)
     private var startLinearLayout: LinearLayout = findViewById(R.id.start_layout)
     protected val asJzvdstdPosterFL: FrameLayout = findViewById(R.id.as_jzvdstd_poster_fl)
     private var asJzvdstdPicDlBt: TextView = findViewById(R.id.as_jzvdstd_pic_dl_bt)
@@ -61,9 +55,6 @@ open class AsJzvdStd : JzvdStd {
 
     fun updatePoster(url: String) {
         posterImageUrl = url
-        Glide.with(this.context)
-            .load(url)
-            .into(this.posterImageView)
     }
 
 
@@ -136,39 +127,6 @@ open class AsJzvdStd : JzvdStd {
     }
 
     private fun downloadPic() {
-
-
-        Glide.with(this.context).asBitmap().load(posterImageUrl)
-            .into(object : SimpleTarget<Bitmap?>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap?>?,
-                ) {
-                    val photoDir = File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath,
-                        "BILIBILIAS"
-                    )
-                    if (!photoDir.exists()) {
-                        photoDir.mkdirs()
-                    }
-                    val fileName = "${System.currentTimeMillis()}.jpg"
-                    val photo = File(photoDir, fileName)
-                    try {
-                        val fos = FileOutputStream(photo)
-                        resource.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                        fos.flush()
-                        fos.close()
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                    //通知相册感谢
-                    updatePhotoMedia(photo, this@AsJzvdStd.context)
-                    asToast(this@AsJzvdStd.context, "已经储存到相册了")
-                }
-            })
-
     }
 
     //更新图库

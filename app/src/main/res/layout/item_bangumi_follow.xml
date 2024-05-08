@@ -3,10 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-        <variable
-            name="ListBean"
-            type="com.imcys.bilibilias.common.base.model.common.BangumiFollowList.DataBean.ListBean" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -45,7 +41,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
-                        android:text="@{ListBean.badge}"
                         android:textColor="@color/white" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -61,7 +56,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{ListBean.title}"
                 android:textSize="20sp" />
 
             <TextView
@@ -70,22 +64,18 @@
                 android:layout_marginTop="20dp"
                 android:ellipsize="end"
                 android:letterSpacing="0"
-                android:maxLines="2"
-                android:text="@{ListBean.summary}"
-                android:textSize="15sp" />
+                android:maxLines="2"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@{ListBean.season_type_name + ` | ` +ListBean.areas[0].name}"
                 android:textColor="@color/color_text_hint"
                 android:textSize="15sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{ListBean.progress + ` | ` +ListBean.new_ep.index_show}"
                 android:textColor="@color/color_text_hint"
                 android:textSize="15sp" />
 

@@ -7,13 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.imcys.bilibilias.common.data.dao.DownloadFinishTaskDao
-import com.imcys.bilibilias.common.data.dao.RoamDao
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
-import com.imcys.bilibilias.common.data.entity.RoamInfo
 
 @Database(
     entities = [
-        DownloadFinishTaskInfo::class, RoamInfo::class,
+        DownloadFinishTaskInfo::class,
     ],
     version = 2,
     exportSchema = false,
@@ -21,8 +19,6 @@ import com.imcys.bilibilias.common.data.entity.RoamInfo
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun downloadFinishTaskDao(): DownloadFinishTaskDao
-
-    abstract fun roamDao(): RoamDao
 
     companion object {
 
@@ -73,8 +69,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     DB_NAME,
                 )
-                    // 是否允许在主线程进行查询
-                    .allowMainThreadQueries()
                     // 数据库升级异常之后的回滚
                     .fallbackToDestructiveMigration()
                     .addMigrations(MIGRATION_1_2)

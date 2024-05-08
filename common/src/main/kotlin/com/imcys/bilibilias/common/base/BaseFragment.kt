@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.baidu.mobstat.StatService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -35,14 +34,4 @@ abstract class BaseFragment : Fragment(), BaseFragmentInit {
     }
 
     override fun initObserveViewModel() = Unit
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onPageStart(requireActivity(), TAG)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        StatService.onPageEnd(context, TAG)
-    }
 }

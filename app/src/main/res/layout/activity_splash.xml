@@ -13,17 +13,6 @@
         android:theme="@style/Theme.SplashOverlay"
         tools:context=".splash.ui.SplashActivity">
 
-        <com.imcys.bilibilias.base.helper.SplashHelper
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="splash_linearLayoutCompat"
-            app:layout_constraintBottom_toTopOf="@+id/splash_linearLayoutCompat"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/splash_linearLayoutCompat"
             android:layout_width="0dp"
@@ -35,7 +24,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.332">
+            app:layout_constraintVertical_bias="0.3">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="120dp"

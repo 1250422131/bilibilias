@@ -3,7 +3,6 @@ package com.imcys.bilibilias.home.ui.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class VideoCCInfo(
     @SerialName("background_alpha")

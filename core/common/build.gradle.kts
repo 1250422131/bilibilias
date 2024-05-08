@@ -12,7 +12,7 @@ android {
 dependencies {
     api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.collections.immutable)
-    api("com.squareup.okio:okio:3.9.0")
+    api(libs.okio)
     api(libs.napier)
     api(libs.devappx)
     api(libs.toaster)

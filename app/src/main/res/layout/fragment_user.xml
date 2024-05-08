@@ -86,13 +86,6 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
-                        android:id="@+id/fragment_user_works_csr"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:sr_enableLoadMore="true"
-                        app:sr_enableRefresh="false">
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -120,15 +113,8 @@
                                 android:layout_height="match_parent" />
 
                         </LinearLayout>
-
-
-                    </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </FrameLayout>
 </layout>

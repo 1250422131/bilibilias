@@ -2,54 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-
     <data>
-        <import type="android.view.View" />
-
-        <import type="android.graphics.Color" />
-
-        <variable
-            name="VideoBaseBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoBaseBean" />
-
-        <variable
-            name="UserCardBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCardBean" />
-
-        <variable
-            name="AsVideoViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel" />
-
-
-        <variable
-            name="BangumiSeasonBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiSeasonBean" />
-
-        <variable
-            name="VideoPlayBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPlayBean" />
-
-        <variable
-            name="VideoPageListData"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData" />
-
-        <variable
-            name="BangumiPlayBean"
-            type="com.imcys.bilibilias.home.ui.model.BangumiPlayBean" />
-
-        <variable
-            name="ArchiveHasLikeBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveHasLikeBean" />
-
-
-        <variable
-            name="ArchiveCoinsBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveCoinsBean" />
-
-        <variable
-            name="ArchiveFavouredBean"
-            type="com.imcys.bilibilias.home.ui.model.ArchiveFavouredBean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -124,8 +77,8 @@
                         android:layout_marginEnd="50dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:onLongClick="@{(view)->AsVideoViewModel.addClipboardMessage(view,VideoBaseBean.data.title)}"
-                        android:text="@{VideoBaseBean.data.title}"
+
+
                         android:textColor="@color/black"
                         android:textSize="30sp"
                         android:textStyle="bold" />
@@ -136,7 +89,7 @@
                         android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="4"
-                        android:text="@{VideoBaseBean.data.desc}"
+
                         android:textColor="@color/home_bottom_nav_seletor"
                         android:textSize="19sp"
                         android:textStyle="bold" />
@@ -153,7 +106,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{(view) -> AsVideoViewModel.likeVideo(view,VideoBaseBean.data.bvid)}"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -179,8 +131,7 @@
                             android:id="@+id/as_video_throw_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:onClick="@{(view)->AsVideoViewModel.videoCoinAdd(view,VideoBaseBean.data.bvid)}">
+                            android:layout_weight="1">
 
 
                             <ImageView
@@ -206,7 +157,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:onClick="@{(view)->AsVideoViewModel.loadCollectionView(view,VideoBaseBean.data.aid)}">
+                       >
 
 
                             <ImageView
@@ -260,7 +211,7 @@
                     android:layout_marginTop="35dp"
                     android:orientation="horizontal"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:onClick="@{(view)->AsVideoViewModel.toUserPage(view,UserCardBean.data.card.mid)}"
+
                     android:visibility="visible">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
@@ -282,7 +233,7 @@
                             android:id="@+id/as_video_user_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{VideoBaseBean.data.owner.name}"
+
                             android:textSize="16sp"
                             android:transitionName="videoTitle" />
 
@@ -332,7 +283,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->AsVideoViewModel.downloadVideo(view,VideoBaseBean,VideoPageListData)}"
+
                                 android:text="@string/app_activity_as_video_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
@@ -350,7 +301,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_cc_ass_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->AsVideoViewModel.downloadCCAss(view,VideoBaseBean.data.aid,VideoBaseBean.data.cid)}"
+
                                 android:src="@drawable/ic_as_cc"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
@@ -369,7 +320,6 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_danmu_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->AsVideoViewModel.downloadDanMu(view,VideoBaseBean)}"
                                 android:src="@drawable/ic_as_danmu"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
@@ -407,7 +357,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_video_dl_bt_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->AsVideoViewModel.downloadBangumiVideo(view,VideoBaseBean,BangumiSeasonBean)}"
+
                                 android:text="@string/app_activity_as_bangumi_dl_bt_text"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
@@ -425,7 +375,7 @@
                                 android:layout_height="60dp"
                                 android:background="@drawable/as_danmu_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                                android:onClick="@{(view)->AsVideoViewModel.downloadDanMu(view,VideoBaseBean)}"
+
                                 android:src="@drawable/ic_as_danmu"
                                 android:textSize="15sp"
                                 android:textStyle="bold"

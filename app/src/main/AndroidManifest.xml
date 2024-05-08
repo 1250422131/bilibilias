@@ -3,35 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"
-        tools:ignore="ScopedStorage" />
-    <uses-permission
-        android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".base.app.App"
+        android:name=".AsApplication"
         android:allowBackup="true"
         android:configChanges="locale"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -41,44 +28,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BILIBILIAS"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="34">
-        <activity
-            android:name=".privacy.PrivacyActivity"
-            android:exported="false"
-            android:theme="@style/Theme.BILIBILIAS" />
-        <activity
-            android:name=".home.ui.activity.user.UserVideoDownloadActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.user.UserInfoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.tool.MergeVideoActivity"
-            android:exported="false" />
-
-        <meta-data
-            android:name="BaiduMobAd_STAT_ID"
-            android:value="0f9d51ff82" /> <!-- 渠道商编号 -->
-        <meta-data
-            android:name="BaiduMobAd_CHANNEL"
-            android:value="@string/app_channel" /> <!-- 是否开启错误日志统计，默认为false -->
-        <meta-data
-            android:name="BaiduMobAd_EXCEPTION_LOG"
-            android:value="true" /> <!-- 日志仅在wifi网络下发送，默认为false -->
-        <meta-data
-            android:name="BaiduMobAd_ONLY_WIFI"
-            android:value="false" /> <!-- 是否获取基站位置信息 ,默认为true -->
-        <meta-data
-            android:name="BaiduMobAd_CELL_LOCATION"
-            android:value="true" /> <!-- 是否获取GPS位置信息，默认为true -->
-        <meta-data
-            android:name="BaiduMobAd_GPS_LOCATION"
-            android:value="true" /> <!-- 是否获取WIFI位置信息，默认为true -->
-        <meta-data
-            android:name="BaiduMobAd_WIFI_LOCATION"
-            android:value="true" />
-
+        android:usesCleartextTraffic="true">
+        <profileable
+            android:shell="true"
+            tools:targetApi="UPSIDE_DOWN_CAKE" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.imcys.bilibilias.fileProvider"
@@ -90,37 +43,12 @@
         </provider>
 
         <activity
-            android:name=".home.ui.activity.tool.WebAsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.favlist.FavListActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".home.ui.activity.user.BangumiFollowActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".home.ui.activity.DonateActivity"
             android:exported="false" />
         <activity
             android:name=".home.ui.activity.DedicateActivity"
             android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.user.PlayHistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.user.CollectionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.SettingActivity"
-            android:exported="false" />
+
         <activity
             android:name=".home.ui.activity.AsVideoActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -128,42 +56,12 @@
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
-            android:name=".home.ui.activity.HomeActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/*" />
-            </intent-filter>
-            <!-- 按如下格式添加整个intent-filter块，其中data字段只能有一个，其内容是mtj拼接上您的appkey -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="mtj0f9d51ff82" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".splash.SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.SplashOverlay">
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="keyboardHidden|smallestScreenSize"
-            android:exported="false"
-            android:theme="@style/Theme.BILIBILIAS" />
     </application>
-
 </manifest>

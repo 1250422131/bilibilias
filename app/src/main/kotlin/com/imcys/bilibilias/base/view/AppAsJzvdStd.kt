@@ -8,7 +8,6 @@ import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
-import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
 
@@ -58,8 +57,6 @@ class AppAsJzvdStd : AsJzvdStd {
             sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
         if (!danmakuSwitch) {
-            //隐藏弹幕
-            asDanmaku.hide()
             appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
         }
 
@@ -75,10 +72,8 @@ class AppAsJzvdStd : AsJzvdStd {
             //注意，这里是变动前的标志
             if (danmakuSwitch) {
                 appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
-                asDanmaku.hide()
             } else {
                 appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_on)
-                asDanmaku.show()
             }
         }
     }
@@ -90,14 +85,6 @@ class AppAsJzvdStd : AsJzvdStd {
         posterImageView.visibility = View.GONE
         asJzvdstdPosterFL.setBackgroundColor(resources.getColor(R.color.white))
         appAsJzStdLoadImage.visibility = View.VISIBLE
-        Glide.with(context).asGif()
-            .apply {
-                when ((0..1).random()) {
-                    0 -> load(com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_1)
-                    1 -> load(com.imcys.bilibilias.common.R.drawable.ic_public_load_play_iloli_2)
-                }
-            }
-            .into(appAsJzStdLoadImage)
 
     }
 
