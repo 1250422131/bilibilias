@@ -4,9 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.imcys.deeprecopy.an.EnhancedData
 
-@EnhancedData
 @Entity(tableName = "as_download_finish_task")
 data class DownloadFinishTaskInfo(
     @PrimaryKey(autoGenerate = true)

@@ -1,9 +1,15 @@
 package com.imcys.bilibilias.core.common.utils
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
 import java.util.concurrent.AbstractExecutorService
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+
+object ExecutorUtil {
+    val executorService = Dispatchers.IO.asExecutor().asNonTerminatingExecutorService()
+}
 
 fun Executor.asNonTerminatingExecutorService(): ExecutorService =
     object : Executor by this, AbstractExecutorService() {

@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.core.network.repository
 
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.login.NavigationBar
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll

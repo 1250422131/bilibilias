@@ -73,9 +73,10 @@ dependencies {
     implementation(projects.feature.tool)
     implementation(projects.feature.download)
     implementation(projects.feature.user)
+    implementation(projects.feature.settings)
 
+    implementation(projects.core.analytics)
     implementation(projects.core.common)
-    implementation(projects.core.crash)
     implementation(projects.core.datastore)
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
@@ -83,11 +84,12 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.data)
 
+    implementation(projects.okdownload.okdownload)
+
     implementation(projects.common)
     implementation(projects.toolLogExport)
 
     implementation(libs.androidx.activity.compose)
-    implementation("androidx.compose.ui:ui-viewbinding")
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
@@ -100,27 +102,27 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing.ktx)
     implementation(libs.androidx.window.core)
-    implementation(libs.coil.kt)
 
-    ksp(libs.deeprecopy.compiler)
-    ksp(libs.hilt.compiler)
+    implementation(libs.coil.kt)
+    implementation(libs.coil.compose)
 
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
     implementation(libs.work.runtime.ktx)
 
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
     implementation(libs.androidx.activity.ktx)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation("com.github.alexzhirkevich:custom-qr-generator:2.0.0-alpha01")
+    implementation(libs.voyager.tabNavigator)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+
+    baselineProfile(projects.benchmarks)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

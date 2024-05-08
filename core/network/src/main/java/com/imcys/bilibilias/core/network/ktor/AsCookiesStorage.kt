@@ -1,12 +1,12 @@
 ﻿package com.imcys.bilibilias.core.network.ktor
 
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-import com.imcys.bilibilias.core.datastore.proto.Cookie as AsCookie
+import com.imcys.bilibilias.core.datastore.Cookie as AsCookie
 import io.ktor.http.Cookie as KtorCookie
 
 class AsCookiesStorage @Inject constructor(private val loginInfoDataSource: LoginInfoDataSource) :

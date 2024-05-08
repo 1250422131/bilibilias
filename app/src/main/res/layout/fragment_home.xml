@@ -4,11 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="FragmentHomeViewModel"
-            type="com.imcys.bilibilias.home.ui.viewmodel.home.HomeCardIntent" />
-
     </data>
 
 
@@ -16,11 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".home.ui.fragment.HomeFragment">
-
-        <me.dkzwm.widget.srl.SmoothRefreshLayout
-            android:id="@+id/fragment_main_sr"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/fragment_home_nestedScrollView"
@@ -88,7 +78,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToNewVersionDoc(view)}"
                             android:orientation="vertical"
                             android:padding="20dp">
 
@@ -155,7 +144,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToDedicatePage(view)}"
                             android:orientation="vertical"
                             android:padding="20dp">
 
@@ -216,7 +204,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToDonate(view)}"
                             android:orientation="vertical"
                             android:padding="20dp">
 
@@ -281,7 +268,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:letterSpacing="0.1"
-                                    android:onClick="@{(view)->FragmentHomeViewModel.toDonateList(view)}"
                                     android:text="@string/app_fragment_home_donate_list"
                                     android:textColor="?attr/colorPrimary"
                                     tools:ignore="HardcodedText" />
@@ -294,7 +280,6 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/home_item_bg"
                             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                            android:onClick="@{(view)->FragmentHomeViewModel.goToCommunity(view)}"
                             android:orientation="vertical"
                             android:padding="20dp">
 
@@ -406,6 +391,5 @@
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
-        </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </FrameLayout>
 </layout>

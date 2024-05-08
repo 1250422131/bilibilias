@@ -14,7 +14,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
 import com.imcys.bilibilias.core.common.utils.getBiliBiliUri
 import com.imcys.bilibilias.core.common.utils.get保存路径
@@ -123,24 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val mUri = getBiliBiliUri()
                 // 判断是否有权限
                 if (!Uri.parse(mUri).isUriAuthorized(requireContext())) {
-                    // 申请权限
-                    DialogUtils.dialog(
-                        requireContext(),
-                        "授权须知",
-                        "简答来讲，这项功能需要你授权下文件的读写权限，BILIBILIAS仅仅会利用此权限实现导入番剧。",
-                        "同意授权",
-                        "拒绝授权",
-                        true,
-                        positiveButtonClickListener = {
-//                            FileUriUtils.startFor(
-//                                "/storage/emulated/0/Android/data/tv.danmaku.bili",
-//                                context as Activity,
-//                                IMPORT_FILE_PATH_CODE,
-//                            )
-                        },
-                        negativeButtonClickListener = {
-                        },
-                    ).show()
+
                     false
                 } else {
                     true
@@ -154,40 +136,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun 还原下载路径() {
         findPreference<Preference>(还原下载路径)!!.setOnPreferenceClickListener {
-            DialogUtils.dialog(
-                requireContext(),
-                "警告",
-                "是否还原默认下载地址",
-                "是",
-                "否",
-                true,
-                positiveButtonClickListener = {
-                    restoreDownloadAddress()
-                    更新保存路径(requireContext().downloadDir.absolutePath)
-                },
-                negativeButtonClickListener = {
-                },
-            ).show()
+
             true
         }
     }
 
     private fun 还原命名规则() {
         findPreference<Preference>(还原命名规则)!!.setOnPreferenceClickListener {
-            DialogUtils.dialog(
-                requireContext(),
-                "警告",
-                "是否还原默认命名规则",
-                "是",
-                "否",
-                true,
-                positiveButtonClickListener = {
-                    restoreVideoNameRule()
-                    Toaster.show("恢复成功，返回页面重新进入可见")
-                },
-                negativeButtonClickListener = {
-                },
-            ).show()
+
             true
         }
     }

@@ -13,7 +13,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.datastore)
 
-    implementation("io.github.alexzhirkevich:qrose:1.0.1")
+    implementation(libs.qrose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

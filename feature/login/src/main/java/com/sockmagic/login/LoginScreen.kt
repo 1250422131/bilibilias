@@ -54,7 +54,7 @@ private fun LoginContent(
             val navigator = LocalNavigator.currentOrThrow
             SideEffect {
                 if (model.isSuccess) {
-                navigator.push(navigationToMain())
+                    navigator.push(navigationToMain())
                 }
             }
             val context = LocalContext.current

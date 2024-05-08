@@ -16,11 +16,11 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.network)
     implementation(projects.core.ffmpeg)
+    implementation(projects.core.datastore)
 
     implementation(libs.kotlinx.datetime)
 
     implementation(projects.okdownload.okdownload)
-    implementation(projects.okdownload.okdownloadConnectionOkhttp)
 
     implementation("com.lazygeniouz:dfc:1.0.8")
 

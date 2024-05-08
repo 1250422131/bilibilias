@@ -22,17 +22,10 @@
             tools:ignore="MissingConstraints">
 
         </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
-
-
-        <me.dkzwm.widget.srl.SmoothRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/donate_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp" />
-        </me.dkzwm.widget.srl.SmoothRefreshLayout>
     </LinearLayout>
 </layout>

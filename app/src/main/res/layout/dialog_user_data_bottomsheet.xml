@@ -3,14 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-
-        <variable
-            name="DataBean"
-            type="com.imcys.bilibilias.base.model.user.UserInfoBean" />
-
-        <import type="android.view.View" />
-
     </data>
 
     <RelativeLayout
@@ -79,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{DataBean.data.name}"
+
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
 
@@ -88,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{`Level`+DataBean.data.level}"
+
                 android:textStyle="bold" />
 
 
@@ -97,9 +89,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="13dp"
-                android:text="@{DataBean.data.level &lt; 2 ? `暂时不支持未转正用户`:``}"
+
                 android:textStyle="bold"
-                android:visibility="@{DataBean.data.level &lt; 2 ? View.VISIBLE :View.GONE}" />
+             />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,7 +102,6 @@
                 android:layout_marginRight="40dp"
                 android:ellipsize="end"
                 android:lines="1"
-                android:text="@{DataBean.data.sign}"
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView

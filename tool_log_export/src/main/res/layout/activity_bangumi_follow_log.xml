@@ -5,11 +5,6 @@
     tools:ignore="ResourceName">
 
     <data>
-
-        <variable
-            name="BangumiFollowList"
-            type="com.imcys.bilibilias.common.base.model.common.BangumiFollowList" />
-
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -53,7 +48,6 @@
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{`总追番数：` + BangumiFollowList.data.total}"
                         android:textColor="?attr/colorPrimary" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

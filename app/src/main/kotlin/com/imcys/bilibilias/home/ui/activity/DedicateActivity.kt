@@ -41,7 +41,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.home.ui.model.DedicateBean
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,7 +84,8 @@ class DedicateActivity : ComponentActivity() {
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                     )
-                }) { innerPadding ->
+                }
+            ) { innerPadding ->
                 Column(
                     Modifier
                         .fillMaxSize()
@@ -98,7 +98,6 @@ class DedicateActivity : ComponentActivity() {
                     }
                 }
             }
-
         }
     }
 
@@ -123,7 +122,8 @@ class DedicateActivity : ComponentActivity() {
             Row(Modifier.fillMaxSize()) {
                 Column(Modifier.padding(top = 20.dp)) {
                     AsyncImage(
-                        model = dedicate.face, contentDescription = "头像",
+                        model = dedicate.face,
+                        contentDescription = "头像",
                         Modifier
                             .padding(start = 20.dp)
                             .size(50.dp)
@@ -227,15 +227,5 @@ class DedicateActivity : ComponentActivity() {
                 ""
             ),
         )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatService.onResume(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatService.onPause(this)
     }
 }

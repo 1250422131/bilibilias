@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.imcys.bilibilias.core.common.molecule.MoleculeViewModel
-import com.imcys.bilibilias.core.datastore.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter

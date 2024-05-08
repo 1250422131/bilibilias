@@ -6,10 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.tracing.trace
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
@@ -30,7 +27,7 @@ fun rememberNiaAppState(
         coroutineScope,
     ) {
         AsAppState(
-            networkMonitor=networkMonitor,
+            networkMonitor = networkMonitor,
             windowSizeClass = windowSizeClass,
             coroutineScope = coroutineScope,
         )

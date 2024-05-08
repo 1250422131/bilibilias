@@ -1,13 +1,12 @@
 package com.imcys.bilibilias.base
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import com.baidu.mobstat.StatService
-import com.imcys.bilibilias.common.base.AbsActivity
 import com.imcys.bilibilias.common.base.BaseActivityInit
 
-abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseActivityInit {
+abstract class BaseActivity<DB : ViewDataBinding> : AppCompatActivity(), BaseActivityInit {
     protected lateinit var binding: DB
         private set
 
@@ -16,7 +15,6 @@ abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseActivityI
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<DB>(this, layoutId)
-        statusBarOnly(this)
         initView()
         initData()
         initObserveViewModel()
@@ -27,11 +25,9 @@ abstract class BaseActivity<DB : ViewDataBinding> : AbsActivity(), BaseActivityI
     override fun initObserveViewModel() = Unit
     override fun onResume() {
         super.onResume()
-        StatService.onResume(this)
     }
 
     override fun onPause() {
         super.onPause()
-        StatService.onPause(this)
     }
 }
