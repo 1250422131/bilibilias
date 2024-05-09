@@ -12,8 +12,8 @@ import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
-import com.imcys.bilibilias.core.download.task.getState
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
@@ -71,7 +71,7 @@ class DownloadManager @Inject constructor(
                     fileType = asTask.fileType,
                     subTitle = asTask.subTitle,
                     title = info.title,
-                    state = getState(task),
+                    state = State.RUNNING,
                 )
                 downloadTaskDao.insertOrUpdate(taskEntity)
             }
@@ -81,25 +81,27 @@ class DownloadManager @Inject constructor(
             scope.launch {
                 downloadTaskDao.updateProgressAndState(
                     task.uri,
-                    getState(task),
+                    State.RUNNING,
                     currentOffset,
                     totalLength
                 )
             }
         },
         taskEnd = { task, cause, realCause, _ ->
-            Napier.d(tag = "listener") { "任务结束 $task" }
+            Napier.d(tag = "listener", throwable = realCause) { "任务结束 $cause-$task" }
             scope.launch {
-                downloadTaskDao.updateState(task.uri, getState(task))
                 val asDownloadTask = taskQueue.first { it.okTask === task }
+                downloadTaskDao.updateState(
+                    task.uri,
+                    if (realCause == null) State.COMPLETED else State.ERROR
+                )
                 val info = asDownloadTask.viewInfo
                 val tasks = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid)
                 val v = tasks.find { it.fileType == FileType.VIDEO }
                 val a = tasks.find { it.fileType == FileType.AUDIO }
-                Napier.d(cause.name, realCause, "下载完成")
-                v?.let { v1 ->
-                    a?.let { a1 ->
-                        defaultGroupTaskCall.execute(GroupTask(v1, a1))
+                if (v != null && v.state == State.COMPLETED) {
+                    if (a != null && a.state == State.COMPLETED) {
+                        defaultGroupTaskCall.execute(GroupTask(v, a))
                     }
                 }
 //                if (v != null && a != null) {
@@ -147,9 +149,11 @@ class DownloadManager @Inject constructor(
         viewDetail: ViewDetail,
         fileType: FileType,
     ): AsDownloadTask {
-        val page = viewDetail.pages.single { it.cid == request.viewInfo.cid }
+        val info = request.viewInfo
+        val page = viewDetail.pages.single { it.cid == info.cid }
         val path = if (viewDetail.pages.size == 1) {
             "${viewDetail.title}"
+            "${info.bvid}${File.separator}${info.cid}"
         } else {
             "${viewDetail.title}${File.separator}${page.part}"
         }

@@ -1,5 +1,5 @@
 package com.imcys.bilibilias.core.ffmpeg
 
 interface IFFmpegWork {
-    fun execute(command: String)
+    fun execute(command: Array<String>)
 }
