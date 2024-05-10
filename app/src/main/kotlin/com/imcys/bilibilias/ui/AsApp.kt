@@ -76,7 +76,7 @@ fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
             }
             LaunchedEffect(message) {
                 message?.let {
-                    toasterState.show(message = it)
+                    toasterState.show(message = it.message)
                 }
             }
             AsApp(appState = appState, modifier = modifier, toasterState = toasterState)
@@ -108,7 +108,12 @@ internal fun AsApp(
                 testTagsAsResourceId = true
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = { Toaster(state = toasterState, modifier = Modifier.navigationBarsPadding()) },
+            snackbarHost = {
+                Toaster(
+                    state = toasterState,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            },
             bottomBar = {
                 AsBottomBar(
                     destinations = appState.topLevelDestinations,
