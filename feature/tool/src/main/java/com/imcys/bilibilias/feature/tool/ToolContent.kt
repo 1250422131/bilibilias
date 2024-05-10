@@ -40,8 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
@@ -61,20 +59,22 @@ fun ToolContent(
     onDownload: (DownloadRequest) -> Unit,
     onSetting: () -> Unit
 ) {
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            actions = {
-                IconButton(onClick = onSetting) {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = "设置",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(onClick = onSetting) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "设置",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
-            }
-        )
-    }) { paddingValues ->
+            )
+        },
+    ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             TextField(
                 value = searchQuery,
