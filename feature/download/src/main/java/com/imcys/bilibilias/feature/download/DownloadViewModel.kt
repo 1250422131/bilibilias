@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.download.DownloadManager
-import com.imcys.bilibilias.core.download.task.AsDownloadTask
+import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -34,9 +34,10 @@ class DownloadViewModel @Inject constructor(
                 )
             }
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, persistentListOf())
+        .map { it.groupBy { it.viewInfo.cid } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, persistentMapOf())
 
-    fun onCancle(task: AsDownloadTask) {
-        downloadManager.cancle(task)
+    fun onDelete(viewInfo: ViewInfo, fileType: FileType) {
+        downloadManager.delete(viewInfo, fileType)
     }
 }

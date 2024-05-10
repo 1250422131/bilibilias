@@ -1,0 +1,63 @@
+package com.imcys.bilibilias.feature.download
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
+import com.imcys.bilibilias.core.designsystem.component.AsButton
+import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.video.Aid
+import com.imcys.bilibilias.core.model.video.Bvid
+import com.imcys.bilibilias.core.model.video.Cid
+import com.imcys.bilibilias.core.model.video.ViewInfo
+import io.github.aakira.napier.Napier
+
+class ChoicesScreen(
+    private val aid: Aid,
+    private val bvid: Bvid,
+    private val cid: Cid,
+    private val fileType: FileType
+) : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel: DownloadViewModel = getViewModel()
+        val sheetNavigator = LocalBottomSheetNavigator.current
+        Napier.d { System.identityHashCode(viewModel).toString() + "haha" }
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsButton(
+                onClick = {
+                    viewModel.onDelete(ViewInfo(aid, bvid, cid, ""), fileType)
+                    sheetNavigator.hide()
+                },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(text = "删除")
+            }
+            AsButton(
+                onClick = {
+                    sheetNavigator.hide()
+                },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(text = "播放")
+            }
+        }
+    }
+}
