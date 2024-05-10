@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.AlertDialog
@@ -51,7 +52,14 @@ object DownloadRoute1 : Screen {
         val viewModel: DownloadViewModel = getViewModel()
         Napier.d { System.identityHashCode(viewModel).toString() + "haha" }
         val taskQueue by viewModel.taskFlow.collectAsState()
-        BottomSheetNavigator {
+        BottomSheetNavigator(
+            sheetShape = RoundedCornerShape(
+                topStart = 28.0.dp,
+                topEnd = 28.0.dp,
+                bottomEnd = 0.0.dp,
+                bottomStart = 0.0.dp
+            )
+        ) {
             DownloadScreen(taskQueue)
         }
     }
