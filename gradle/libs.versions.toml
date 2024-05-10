@@ -54,6 +54,7 @@ okio = "3.9.0"
 qrose = "1.0.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
+sonner = "0.3.5"
 srl-core = "1.7.2.4"
 toaster = "12.6"
 uiTiles = "2.2.0"
@@ -102,6 +103,7 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }

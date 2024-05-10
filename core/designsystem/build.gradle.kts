@@ -30,4 +30,6 @@ dependencies {
 //    testImplementation(libs.roborazzi)
 //    testImplementation(projects.core.screenshotTesting)
     testImplementation(projects.core.testing)
+
+    api(libs.sonner)
 }

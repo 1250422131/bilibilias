@@ -27,7 +27,7 @@ sealed class AsDownloadTask(
         return DownloadTask.Builder(url, file)
             .setPassIfAlreadyCompleted(false)
             .setAutoCallbackToUIThread(false)
-            .setMinIntervalMillisCallbackProcess(500)
+            .setMinIntervalMillisCallbackProcess(50)
             .setReadBufferSize(16.mb.inWholeBytes.toInt())
             .setFlushBufferSize(32.mb.inWholeBytes.toInt())
             .setHeaderMapFields(
