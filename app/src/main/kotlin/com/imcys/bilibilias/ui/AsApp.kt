@@ -3,20 +3,17 @@ package com.imcys.bilibilias.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,11 +25,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import com.imcys.bilibilias.LocalNetworkMonitor
+import com.dokar.sonner.Toaster
+import com.dokar.sonner.ToasterState
+import com.dokar.sonner.rememberToasterState
+import com.imcys.bilibilias.MainActivityViewModel
 import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
@@ -40,15 +40,17 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import com.imcys.bilibilias.navigation.tabs.ToolTab
+import kotlin.time.Duration.Companion.days
 
 class MainScreen : Screen {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     @Composable
     override fun Content() {
+        val viewModel: MainActivityViewModel = getViewModel()
         val activity = LocalContext.current.getActivity()
-        val networkMonitor = LocalNetworkMonitor.currentOrThrow
         val appState = rememberNiaAppState(
-            networkMonitor = networkMonitor,
+            viewModel.toastMachine,
+            networkMonitor = viewModel.networkMonitor,
             windowSizeClass = calculateWindowSizeClass(activity)
         )
         AsApp(appState)
@@ -59,19 +61,25 @@ class MainScreen : Screen {
 fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
     AsBackground {
         AsGradientBackground {
-            val snackbarHostState = remember { SnackbarHostState() }
+            val toasterState = rememberToasterState(appState.coroutineScope)
 
             val isOffline by appState.isOffline.collectAsStateWithLifecycle()
+            val message by appState.message.collectAsStateWithLifecycle()
 
             LaunchedEffect(isOffline) {
                 if (isOffline) {
-                    snackbarHostState.showSnackbar(
+                    toasterState.show(
                         message = "⚠\uFE0F 您没有连接到互联网",
-                        duration = SnackbarDuration.Indefinite,
+                        duration = Long.MAX_VALUE.days,
                     )
                 }
             }
-            AsApp(appState = appState, modifier = modifier, snackbarHostState = snackbarHostState)
+            LaunchedEffect(message) {
+                message?.let {
+                    toasterState.show(message = it)
+                }
+            }
+            AsApp(appState = appState, modifier = modifier, toasterState = toasterState)
         }
     }
 }
@@ -80,7 +88,7 @@ fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
 @Composable
 internal fun AsApp(
     appState: AsAppState,
-    snackbarHostState: SnackbarHostState,
+    toasterState: ToasterState,
     modifier: Modifier = Modifier
 ) {
     TabNavigator(
@@ -100,7 +108,7 @@ internal fun AsApp(
                 testTagsAsResourceId = true
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { Toaster(state = toasterState, modifier = Modifier.navigationBarsPadding()) },
             bottomBar = {
                 AsBottomBar(
                     destinations = appState.topLevelDestinations,

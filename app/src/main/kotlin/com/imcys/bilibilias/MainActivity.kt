@@ -14,6 +14,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
+import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.splash.SplashScreen
@@ -24,9 +25,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
-
-    @Inject
-    lateinit var networkMonitor: NetworkMonitor
 
     @Inject
     lateinit var analyticsHelper: AnalyticsHelper
@@ -55,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             AsTheme {
                 CompositionLocalProvider(
                     LocalAnalyticsHelper provides analyticsHelper,
-                    LocalNetworkMonitor provides networkMonitor
                 ) {
                     Navigator(
                         screen = SplashScreen,
@@ -86,8 +83,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-internal val LocalNetworkMonitor = staticCompositionLocalOf<NetworkMonitor?> { null }
 
 /**
  * The default light scrim, as defined by androidx and the platform:

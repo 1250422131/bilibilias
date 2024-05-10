@@ -13,10 +13,8 @@ android {
 
 dependencies {
     api(projects.core.common)
-    implementation(projects.core.database)
-    implementation(projects.core.network)
     implementation(projects.core.ffmpeg)
-    implementation(projects.core.datastore)
+    implementation(projects.core.data)
 
     implementation(libs.kotlinx.datetime)
 
