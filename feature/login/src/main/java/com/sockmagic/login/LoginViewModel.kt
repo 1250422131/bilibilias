@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.imcys.bilibilias.core.common.molecule.MoleculeViewModel
+import com.imcys.bilibilias.core.common.molecule.BaseViewModel
 import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource,
-) : MoleculeViewModel<LoginEvent, LoginModel>() {
+) : BaseViewModel<LoginEvent, LoginModel>() {
     @Composable
     override fun models(events: Flow<LoginEvent>): LoginModel {
         return LoginPresenter(events, loginRepository, loginInfoDataSource)
