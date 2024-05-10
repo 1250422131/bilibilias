@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.collection.mutableObjectListOf
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
@@ -17,6 +18,7 @@ import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
@@ -295,6 +297,30 @@ class DownloadManager @Inject constructor(
     }
 
     // endregion
-    fun cancle(task: AsDownloadTask) {
+
+    fun delete(info: ViewInfo, fileType: FileType) {
+        scope.launch {
+            val taskByInfo = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid, fileType)
+            taskByInfo?.uri?.toFile()?.delete()
+            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
+            if (taskByInfo != null) {
+                downloadTaskDao.delete(taskByInfo)
+            }
+        }
+    }
+
+    private fun deleteEmptyDirectoriesOfFolder(folder: File) {
+        if (folder.listFiles()?.size == 0) {
+            folder.delete()
+        } else {
+            for (fileEntry in folder.listFiles()) {
+                if (fileEntry.isDirectory) {
+                    deleteEmptyDirectoriesOfFolder(fileEntry)
+                    if (fileEntry.listFiles() != null && fileEntry.listFiles()?.size == 0) {
+                        fileEntry.delete()
+                    }
+                }
+            }
+        }
     }
 }

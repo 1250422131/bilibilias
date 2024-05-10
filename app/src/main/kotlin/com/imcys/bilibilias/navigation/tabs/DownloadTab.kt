@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.imcys.bilibilias.feature.download.DownloadRoute
+import com.imcys.bilibilias.feature.download.DownloadRoute1
 import com.imcys.bilibilias.navigation.TopLevelDestination
 
 object DownloadTab : Tab {
@@ -26,6 +26,8 @@ object DownloadTab : Tab {
 
     @Composable
     override fun Content() {
-        DownloadRoute()
+        with(DownloadRoute1){
+            Content()
+        }
     }
 }
