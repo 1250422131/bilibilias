@@ -20,7 +20,7 @@ import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import io.github.aakira.napier.Napier
 
-class ChoicesScreen(
+internal class ChoicesScreen(
     private val aid: Aid,
     private val bvid: Bvid,
     private val cid: Cid,
