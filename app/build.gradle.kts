@@ -74,6 +74,7 @@ dependencies {
     implementation(projects.feature.download)
     implementation(projects.feature.user)
     implementation(projects.feature.settings)
+    implementation(projects.feature.player)
 
     implementation(projects.core.analytics)
     implementation(projects.core.common)

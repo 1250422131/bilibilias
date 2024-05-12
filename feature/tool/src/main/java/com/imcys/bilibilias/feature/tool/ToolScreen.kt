@@ -8,7 +8,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.imcys.bilibilias.core.download.DownloadRequest
 
 @Composable
-fun ToolRoute(onSetting: () -> Unit) {
+fun ToolRoute(
+    onSetting: () -> Unit,
+    onPlayer: () -> Unit
+) {
     val viewmodel: ToolViewModel = hiltViewModel()
     val searchQuery by viewmodel.searchQuery.collectAsState()
     val uiState by viewmodel.searchResultUiState.collectAsState()
