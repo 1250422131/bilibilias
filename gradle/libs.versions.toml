@@ -1,4 +1,5 @@
 [versions]
+akdanmaku = "1.0.3"
 androidxComposeCompiler = "1.5.13"
 androidGradlePlugin = "8.4.0"
 androidTools = "31.4.0"
@@ -43,6 +44,7 @@ ktor = "2.3.11"
 androidxLifecycle = "2.7.0"
 lottie = "6.4.0"
 material = "1.12.0"
+media3Exoplayer = "1.3.1"
 mmkv = "1.3.4"
 moleculeGradlePlugin = "1.4.2"
 monitor = "1.8.0"
@@ -71,10 +73,16 @@ preferenceKtxVersion = "1.2.1"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
 androidxWindowManager = "1.3.0-beta02"
+materialVersion = "1.12.0"
 [libraries]
+akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
+
 androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "androidxWindowManager" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidXMetrics" }
@@ -103,8 +111,9 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
+
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 
@@ -202,6 +211,7 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 work-testing = { group = "androidx.work", name = "work-testing", version = "work" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
