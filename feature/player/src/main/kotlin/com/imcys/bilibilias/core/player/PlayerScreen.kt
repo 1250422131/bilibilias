@@ -7,11 +7,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.PlayerView
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 
@@ -38,6 +43,26 @@ fun PlayerContent(player: AsVideoPlayer) {
                 update = {},
                 modifier = Modifier.height(200.dp)
             )
+        }
+        val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, e ->
+                when (e) {
+                    Lifecycle.Event.ON_RESUME -> player.playerView.onResume()
+                    Lifecycle.Event.ON_PAUSE -> player.playerView.onPause()
+                    Lifecycle.Event.ON_DESTROY -> player.onDestroy()
+                    Lifecycle.Event.ON_START,
+                    Lifecycle.Event.ON_CREATE,
+                    Lifecycle.Event.ON_STOP,
+                    Lifecycle.Event.ON_ANY -> Unit
+                }
+            }
+
+            lifecycleOwner.lifecycle.addObserver(observer)
+
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
         }
     }
 }
