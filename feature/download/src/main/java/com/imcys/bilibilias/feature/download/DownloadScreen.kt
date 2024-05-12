@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.feature.download
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -33,8 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
@@ -44,24 +44,20 @@ import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.video.Cid
-import io.github.aakira.napier.Napier
 
-object DownloadRoute1 : Screen {
-    @Composable
-    override fun Content() {
-        val viewModel: DownloadViewModel = getViewModel()
-        Napier.d { System.identityHashCode(viewModel).toString() + "haha" }
-        val taskQueue by viewModel.taskFlow.collectAsState()
-        BottomSheetNavigator(
-            sheetShape = RoundedCornerShape(
-                topStart = 28.0.dp,
-                topEnd = 28.0.dp,
-                bottomEnd = 0.0.dp,
-                bottomStart = 0.0.dp
-            )
-        ) {
-            DownloadScreen(taskQueue)
-        }
+@Composable
+fun DownloadRoute(onPlayer: (vUri: Uri, aUri: Uri) -> Unit) {
+    val viewModel: DownloadViewModel = hiltViewModel()
+    val taskQueue by viewModel.taskFlow.collectAsState()
+    BottomSheetNavigator(
+        sheetShape = RoundedCornerShape(
+            topStart = 28.0.dp,
+            topEnd = 28.0.dp,
+            bottomEnd = 0.0.dp,
+            bottomStart = 0.0.dp
+        )
+    ) {
+        DownloadScreen(taskQueue, onPlayer)
     }
 }
 
@@ -69,6 +65,7 @@ object DownloadRoute1 : Screen {
 @Composable
 internal fun DownloadScreen(
     uiState: Map<Cid, List<DownloadTask>>,
+    navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit,
 ) {
     var edit by remember { mutableStateOf(false) }
     Scaffold(
@@ -87,7 +84,7 @@ internal fun DownloadScreen(
         ) {
             uiState.forEach { (_, v) ->
                 items(v) { item ->
-                    DownloadTaskItem(task = item)
+                    DownloadTaskItem(task = item, navigationToPlayer)
                 }
                 item {
                     HorizontalDivider()
@@ -97,35 +94,15 @@ internal fun DownloadScreen(
     }
 }
 
-@Composable
-fun ConfirmDeleteTaskDialog(
-    isShow: Boolean,
-    onconfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    if (isShow) {
-        AlertDialog(onDismissRequest = onDismiss, confirmButton = {
-            AsButton(onClick = onconfirm) {
-                Text("确定")
-            }
-        }, modifier = modifier, dismissButton = {
-            AsButton(onClick = onDismiss) {
-                Text("取消")
-            }
-        })
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadTaskItem(task: DownloadTask) {
+fun DownloadTaskItem(task: DownloadTask, navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit) {
     val sheetNavigator = LocalBottomSheetNavigator.current
     ListItem(
         modifier = Modifier.combinedClickable {
             val info = task.viewInfo
             sheetNavigator.show(
-                ChoicesScreen(info.aid, info.bvid, info.cid, task.fileType)
+                ChoicesScreen(info.aid, info.bvid, info.cid, task.fileType, navigationToPlayer)
             )
         },
         leadingContent = {
