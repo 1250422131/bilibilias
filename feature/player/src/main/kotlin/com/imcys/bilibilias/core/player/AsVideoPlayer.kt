@@ -1,15 +1,8 @@
 package com.imcys.bilibilias.core.player
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.FloatRange
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -17,7 +10,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -33,6 +25,7 @@ class AsVideoPlayer @Inject constructor(
         .build()
 
     init {
+
         playerView.player = exoPlayer
     }
 
@@ -47,6 +40,10 @@ class AsVideoPlayer @Inject constructor(
     fun addMediaSource(source: MediaSource) {
         exoPlayer.addMediaSource(source)
         exoPlayer.prepare()
+    }
+
+    fun onDestroy() {
+        exoPlayer.release()
     }
 
     fun mediaSource(vUri: Uri, aUri: Uri): MediaSource {
