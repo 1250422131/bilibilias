@@ -20,33 +20,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.childContext
+import com.arkivanov.decompose.defaultComponentContext
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.designsystem.reveal.circularReveal
-import com.imcys.bilibilias.ui.MainScreen
-import com.sockmagic.login.LoginScreen
+import com.imcys.bilibilias.navigation.DefaultRootComponent
+import com.imcys.bilibilias.startup.StartupComponent
+import com.imcys.bilibilias.ui.AsApp
+import com.imcys.bilibilias.ui.AsAppState
 import kotlinx.coroutines.delay
 
-object SplashScreen : Screen {
-    @Composable
-    override fun Content() {
-        val viewModel: SplashViewModel = getViewModel()
-        SplashContent(viewModel.isLogin)
-    }
-}
-
 @Composable
-fun SplashContent(login: Boolean) {
-    val configuration = LocalConfiguration.current
+fun SplashContent(
+    component: SplashComponent,
+    onNavigationToLogin: () -> Unit,
+    onNavigationToRoot: () -> Unit
+) {
     val isVisible = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         isVisible.value = !isVisible.value
         delay(300)
     }
-    val navigator = LocalNavigator.currentOrThrow
+    val configuration = LocalConfiguration.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,11 +56,10 @@ fun SplashContent(login: Boolean) {
                 isVisible.value,
                 durationMillis = 1000,
                 finishedListener = {
-                    val mainScreen = MainScreen()
-                    if (login) {
-                        navigator.replaceAll(mainScreen)
+                    if (component.isLogin) {
+                        onNavigationToRoot()
                     } else {
-                        navigator.push(LoginScreen({ mainScreen }))
+                        onNavigationToLogin()
                     }
                 }
             ),
@@ -79,5 +79,33 @@ fun SplashContent(login: Boolean) {
             color = MaterialTheme.colorScheme.primary,
             softWrap = false
         )
+    }
+}
+
+@Composable
+fun RootContent(
+    component: StartupComponent,
+    appState: AsAppState,
+    componentContext: ComponentContext,
+    modifier: Modifier = Modifier
+) {
+    Children(
+        stack = component.stack,
+        modifier = modifier,
+        animation = stackAnimation(animator = fade() + scale()),
+    ) {
+        when (val child = it.instance) {
+            is StartupComponent.Child.SplashChild -> SplashContent(
+                child.component,
+                component::onLoginClicked,
+                component::onRootClicked
+            )
+
+            StartupComponent.Child.LoginChild -> Unit
+            StartupComponent.Child.RootChild -> {
+                val rootComponent = remember { DefaultRootComponent(componentContext.childContext("root")) }
+                AsApp(appState, rootComponent)
+            }
+        }
     }
 }
