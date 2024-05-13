@@ -124,6 +124,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     baselineProfile(projects.benchmarks)
+    implementation(libs.decompose)
+    implementation(libs.decompose.compose)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.
