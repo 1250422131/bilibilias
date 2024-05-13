@@ -12,8 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,9 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tracing.trace
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
@@ -37,8 +32,6 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
-import com.imcys.bilibilias.MainActivityViewModel
-import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
@@ -50,21 +43,6 @@ import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.navigation.RootComponent
 import kotlin.time.Duration.Companion.days
-
-class MainScreen : Screen {
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-    @Composable
-    override fun Content() {
-        val viewModel: MainActivityViewModel = getViewModel()
-        val activity = LocalContext.current.getActivity()
-        val appState = rememberNiaAppState(
-            viewModel.toastMachine,
-            networkMonitor = viewModel.networkMonitor,
-            windowSizeClass = calculateWindowSizeClass(activity)
-        )
-//        AsApp(appState)
-    }
-}
 
 @Composable
 fun AsApp(appState: AsAppState, component: RootComponent, modifier: Modifier = Modifier) {

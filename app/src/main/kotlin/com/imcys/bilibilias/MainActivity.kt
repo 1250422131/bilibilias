@@ -6,31 +6,22 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.metrics.performance.JankStats
-import cafe.adriel.voyager.hilt.getViewModel
-import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.defaultComponentContext
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.plus
-import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
-import com.arkivanov.decompose.extensions.compose.stack.animation.scale
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
-import com.imcys.bilibilias.core.common.utils.getActivity
+import com.imcys.bilibilias.core.data.toast.ToastMachine
+import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
-import com.imcys.bilibilias.navigation.DefaultRootComponent
-import com.imcys.bilibilias.ui.AsApp
+import com.imcys.bilibilias.splash.RootContent
+import com.imcys.bilibilias.startup.StartupComponent
 import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -43,7 +34,16 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var analyticsHelper: AnalyticsHelper
 
-    @OptIn(ExperimentalDecomposeApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
+    @Inject
+    lateinit var toastMachine: ToastMachine
+
+    @Inject
+    lateinit var startupComponentFactory: StartupComponent.Factory
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -65,18 +65,19 @@ class MainActivity : AppCompatActivity() {
                 )
                 onDispose {}
             }
-            val rootComponent = DefaultRootComponent(componentContext = defaultComponentContext())
+
+            val componentContext = defaultComponentContext()
+            val rootComponent = startupComponentFactory(componentContext)
             AsTheme {
                 CompositionLocalProvider(
                     LocalAnalyticsHelper provides analyticsHelper,
                 ) {
-                    val viewModel: MainActivityViewModel = hiltViewModel()
                     val appState = rememberNiaAppState(
-                        viewModel.toastMachine,
-                        networkMonitor = viewModel.networkMonitor,
+                        toastMachine = toastMachine,
+                        networkMonitor = networkMonitor,
                         windowSizeClass = calculateWindowSizeClass(this)
                     )
-                    AsApp(appState, rootComponent)
+                    RootContent(rootComponent, appState, componentContext)
                 }
             }
         }
