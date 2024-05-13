@@ -1,13 +1,16 @@
 package com.imcys.bilibilias.ui
 
-import androidx.compose.foundation.layout.Box
+import android.content.Intent
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -24,11 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.tracing.trace
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.TabDisposable
-import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
@@ -38,8 +43,12 @@ import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
-import com.imcys.bilibilias.navigation.TopLevelDestination
-import com.imcys.bilibilias.navigation.tabs.ToolTab
+import com.imcys.bilibilias.feature.download.DownloadRoute
+import com.imcys.bilibilias.feature.home.HomeRoute
+import com.imcys.bilibilias.feature.tool.ToolRoute
+import com.imcys.bilibilias.home.ui.activity.DedicateActivity
+import com.imcys.bilibilias.home.ui.activity.DonateActivity
+import com.imcys.bilibilias.navigation.RootComponent
 import kotlin.time.Duration.Companion.days
 
 class MainScreen : Screen {
@@ -53,12 +62,12 @@ class MainScreen : Screen {
             networkMonitor = viewModel.networkMonitor,
             windowSizeClass = calculateWindowSizeClass(activity)
         )
-        AsApp(appState)
+//        AsApp(appState)
     }
 }
 
 @Composable
-fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
+fun AsApp(appState: AsAppState, component: RootComponent, modifier: Modifier = Modifier) {
     AsBackground {
         AsGradientBackground {
             val toasterState = rememberToasterState(appState.coroutineScope)
@@ -79,7 +88,11 @@ fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
                     toasterState.show(message = it.message)
                 }
             }
-            AsApp(appState = appState, modifier = modifier, toasterState = toasterState)
+            AsApp(
+                toasterState = toasterState,
+                component = component,
+                modifier = modifier
+            )
         }
     }
 }
@@ -87,92 +100,144 @@ fun AsApp(appState: AsAppState, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun AsApp(
-    appState: AsAppState,
     toasterState: ToasterState,
+    component: RootComponent,
     modifier: Modifier = Modifier
 ) {
-    TabNavigator(
-        ToolTab,
-        tabDisposable = {
-            TabDisposable(
-                navigator = it,
-                tabs = appState.topLevelTabs
+    NavigationTrackingSideEffect(component)
+    Scaffold(
+        containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier.semantics {
+            testTagsAsResourceId = true
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        snackbarHost = {
+            Toaster(
+                state = toasterState,
+                modifier = Modifier.navigationBarsPadding()
+            )
+        },
+        bottomBar = {
+            AsBottomBar(
+                component = component,
+                modifier = Modifier.testTag("AsBottomBar"),
             )
         }
-    ) {
-        NavigationTrackingSideEffect(tabNavigator = it)
-        Scaffold(
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            modifier = modifier.semantics {
-                testTagsAsResourceId = true
-            },
-            contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = {
-                Toaster(
-                    state = toasterState,
-                    modifier = Modifier.navigationBarsPadding()
-                )
-            },
-            bottomBar = {
-                AsBottomBar(
-                    destinations = appState.topLevelDestinations,
-                    onNavigateToDestination = appState::navigateToTopLevelDestination,
-                    currentDestination = appState::currentDestination,
-                    modifier = Modifier.testTag("AsBottomBar"),
-                    tabNavigator = it
+    ) { innerPadding ->
+        Surface(
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
+            RootContent(component)
+        }
+    }
+}
+
+@Composable
+private fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
+    Children(
+        stack = component.stack,
+        modifier = modifier,
+        animation = stackAnimation(fade()),
+    ) { child ->
+        when (child.instance) {
+            RootComponent.Child.HomeChild -> {
+                val context = LocalContext.current
+                HomeRoute(
+                    onSalute = {
+                        val intent = Intent(context, DedicateActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    onDonation = {
+                        val intent = Intent(context, DonateActivity::class.java)
+                        context.startActivity(intent)
+                    }
                 )
             }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding)
-            ) {
-                CurrentTab()
+
+            RootComponent.Child.ToolChild -> {
+                ToolRoute(
+                    onSetting = { },
+                    onPlayer = { }
+                )
             }
+
+            RootComponent.Child.DownloadChild -> {
+                DownloadRoute(
+                    onPlayer = { vUri, aUri -> }
+                )
+            }
+
+            RootComponent.Child.UserChild -> Unit
         }
     }
 }
 
 @Composable
 private fun AsBottomBar(
-    destinations: List<TopLevelDestination>,
-    onNavigateToDestination: (TabNavigator, TopLevelDestination) -> Unit,
-    currentDestination: (TabNavigator, TopLevelDestination) -> Boolean,
+    component: RootComponent,
     modifier: Modifier = Modifier,
-    tabNavigator: TabNavigator,
 ) {
-    AsNavigationBar(
-        modifier = modifier,
-    ) {
-        destinations.forEach { destination ->
-            val selected = currentDestination(tabNavigator, destination)
-            AsNavigationBarItem(
-                selected = selected,
-                onClick = { onNavigateToDestination(tabNavigator, destination) },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = destination.unselectedIcon),
-                        contentDescription = null,
-                    )
-                },
-                selectedIcon = {
-                    Icon(
-                        painter = painterResource(id = destination.selectedIcon),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                label = {
-                    Text(
-                        stringResource(destination.iconTextId),
-                        color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
-                    )
-                },
-                alwaysShowLabel = selected,
-                modifier = Modifier,
-            )
-        }
+    val stack by component.stack.subscribeAsState()
+    val activeComponent = stack.active.instance
+    AsNavigationBar(modifier.testTag("AsBottomBar")) {
+        AsNavigationBarItem(
+            RootComponent.Child.HomeChild.unselectedIcon,
+            RootComponent.Child.HomeChild.selectedIcon,
+            RootComponent.Child.HomeChild.title,
+            { activeComponent is RootComponent.Child.HomeChild },
+            component::onHomeTabClicked
+        )
+        AsNavigationBarItem(
+            RootComponent.Child.ToolChild.unselectedIcon,
+            RootComponent.Child.ToolChild.selectedIcon,
+            RootComponent.Child.ToolChild.title,
+            { activeComponent is RootComponent.Child.ToolChild },
+            component::onToolTabClicked
+        )
+        AsNavigationBarItem(
+            RootComponent.Child.DownloadChild.unselectedIcon,
+            RootComponent.Child.DownloadChild.selectedIcon,
+            RootComponent.Child.DownloadChild.title,
+            { activeComponent is RootComponent.Child.DownloadChild },
+            component::onDownloadTabClicked
+        )
+//        AsNavigationBarItem(activeComponent,{activeComponent is RootComponent.Child.UserChild},component::onHomeTabClicked)
     }
+}
+
+@Composable
+private fun RowScope.AsNavigationBarItem(
+    @DrawableRes unselectedIcon: Int,
+    @DrawableRes selectedIcon: Int,
+    @StringRes title: Int,
+    selected: () -> Boolean,
+    onNavigation: () -> Unit
+) {
+    AsNavigationBarItem(
+        selected = selected(),
+        onClick = onNavigation,
+        icon = {
+            Icon(
+                painter = painterResource(id = unselectedIcon),
+                contentDescription = null,
+            )
+        },
+        selectedIcon = {
+            Icon(
+                painter = painterResource(id = selectedIcon),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        label = {
+            Text(
+                stringResource(title),
+                color = if (selected()) MaterialTheme.colorScheme.primary else Color.Unspecified
+            )
+        },
+        alwaysShowLabel = selected(),
+        modifier = Modifier,
+    )
 }
