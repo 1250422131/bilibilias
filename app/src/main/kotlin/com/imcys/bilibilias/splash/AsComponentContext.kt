@@ -6,6 +6,7 @@ import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.arkivanov.decompose.ComponentContext
+import com.imcys.bilibilias.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +28,7 @@ abstract class AsComponentContext<Event, Model>(
     }
 
     fun take(event: Event) {
+        R.string.app_name
         if (!events.tryEmit(event)) {
             error("Event buffer overflow.")
         }
