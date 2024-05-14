@@ -3,6 +3,7 @@ package com.imcys.bilibilias.navigation
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.feature.home.HomeComponent
+import com.imcys.bilibilias.feature.tool.ToolComponent
 
 interface RootComponent {
 
@@ -15,7 +16,7 @@ interface RootComponent {
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
 
-        data object ToolChild : Child()
+        data class ToolChild(val component: ToolComponent) : Child()
 
         data object DownloadChild : Child()
 

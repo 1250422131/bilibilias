@@ -37,6 +37,7 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.feature.download.DownloadRoute
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.home.HomeRoute
+import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.feature.tool.ToolRoute
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
@@ -118,10 +119,10 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
         stack = component.stack,
         modifier = modifier,
         animation = stackAnimation(fade()),
-    ) { child ->
-        when (val instance = child.instance) {
+    ) {
+        when (val child = it.instance) {
             is RootComponent.Child.HomeChild -> {
-                HomeContent(instance.component)
+                HomeContent(child.component)
 //                HomeRoute(
 //                    onSalute = {
 //                        val intent = Intent(context, DedicateActivity::class.java)
@@ -134,7 +135,8 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
 //                )
             }
 
-            RootComponent.Child.ToolChild -> {
+          is  RootComponent.Child.ToolChild -> {
+              ToolContent(component = child.component)
                 ToolRoute(
                     onSetting = { },
                     onPlayer = { }
