@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.splash
+package com.imcys.bilibilias.feature.splash
 
 import com.arkivanov.decompose.ComponentContext
 

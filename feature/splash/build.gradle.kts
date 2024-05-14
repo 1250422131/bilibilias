@@ -9,6 +9,11 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.datastore)
+
+    implementation(libs.decompose)
+    implementation(libs.decompose.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
