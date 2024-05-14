@@ -68,7 +68,7 @@ voyager = "1.1.0-alpha04"
 preferenceKtxVersion = "1.2.1"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
-androidxWindowManager = "1.3.0-beta02"
+androidxWindowManager = "1.3.0-rc01"
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
