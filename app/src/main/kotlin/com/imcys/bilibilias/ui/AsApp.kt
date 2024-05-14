@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.ui
 
 import android.content.Intent
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -37,11 +35,13 @@ import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.feature.download.DownloadRoute
+import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.home.HomeRoute
 import com.imcys.bilibilias.feature.tool.ToolRoute
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.navigation.RootComponent
+import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlin.time.Duration.Companion.days
 
 @Composable
@@ -119,19 +119,19 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
         modifier = modifier,
         animation = stackAnimation(fade()),
     ) { child ->
-        when (child.instance) {
-            RootComponent.Child.HomeChild -> {
-                val context = LocalContext.current
-                HomeRoute(
-                    onSalute = {
-                        val intent = Intent(context, DedicateActivity::class.java)
-                        context.startActivity(intent)
-                    },
-                    onDonation = {
-                        val intent = Intent(context, DonateActivity::class.java)
-                        context.startActivity(intent)
-                    }
-                )
+        when (val instance = child.instance) {
+            is RootComponent.Child.HomeChild -> {
+                HomeContent(instance.component)
+//                HomeRoute(
+//                    onSalute = {
+//                        val intent = Intent(context, DedicateActivity::class.java)
+//                        context.startActivity(intent)
+//                    },
+//                    onDonation = {
+//                        val intent = Intent(context, DonateActivity::class.java)
+//                        context.startActivity(intent)
+//                    }
+//                )
             }
 
             RootComponent.Child.ToolChild -> {
@@ -161,23 +161,17 @@ private fun AsBottomBar(
     val activeComponent = stack.active.instance
     AsNavigationBar(modifier.testTag("AsBottomBar")) {
         AsNavigationBarItem(
-            RootComponent.Child.HomeChild.unselectedIcon,
-            RootComponent.Child.HomeChild.selectedIcon,
-            RootComponent.Child.HomeChild.title,
+            TopLevelDestination.HOME,
             { activeComponent is RootComponent.Child.HomeChild },
             component::onHomeTabClicked
         )
         AsNavigationBarItem(
-            RootComponent.Child.ToolChild.unselectedIcon,
-            RootComponent.Child.ToolChild.selectedIcon,
-            RootComponent.Child.ToolChild.title,
+            TopLevelDestination.TOOL,
             { activeComponent is RootComponent.Child.ToolChild },
             component::onToolTabClicked
         )
         AsNavigationBarItem(
-            RootComponent.Child.DownloadChild.unselectedIcon,
-            RootComponent.Child.DownloadChild.selectedIcon,
-            RootComponent.Child.DownloadChild.title,
+            TopLevelDestination.DOWNLOAD,
             { activeComponent is RootComponent.Child.DownloadChild },
             component::onDownloadTabClicked
         )
@@ -187,9 +181,7 @@ private fun AsBottomBar(
 
 @Composable
 private fun RowScope.AsNavigationBarItem(
-    @DrawableRes unselectedIcon: Int,
-    @DrawableRes selectedIcon: Int,
-    @StringRes title: Int,
+    destination: TopLevelDestination,
     selected: () -> Boolean,
     onNavigation: () -> Unit
 ) {
@@ -198,20 +190,20 @@ private fun RowScope.AsNavigationBarItem(
         onClick = onNavigation,
         icon = {
             Icon(
-                painter = painterResource(id = unselectedIcon),
+                painter = painterResource(id = destination.unselectedIconId),
                 contentDescription = null,
             )
         },
         selectedIcon = {
             Icon(
-                painter = painterResource(id = selectedIcon),
+                painter = painterResource(id = destination.selectedIconId),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         },
         label = {
             Text(
-                stringResource(title),
+                stringResource(destination.iconTextId),
                 color = if (selected()) MaterialTheme.colorScheme.primary else Color.Unspecified
             )
         },

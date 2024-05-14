@@ -3,6 +3,7 @@ package com.imcys.bilibilias.startup
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.feature.splash.SplashComponent
 
 interface StartupComponent {
     val stack: Value<ChildStack<*, Child>>

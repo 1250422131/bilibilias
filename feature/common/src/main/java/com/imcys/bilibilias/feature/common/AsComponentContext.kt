@@ -1,18 +1,24 @@
-package com.imcys.bilibilias.core.common.molecule
+package com.imcys.bilibilias.feature.common
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class BaseViewModel<Event, Model> : ViewModel() {
-    private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+interface IComponentContext<Event, Model> {
+    val models: StateFlow<Model>
+    fun take(event: Event)
+}
+
+abstract class AsComponentContext<Event, Model>(
+    componentContext: ComponentContext
+) : ComponentContext by componentContext {
+    protected val scope = CoroutineScope(AndroidUiDispatcher.Main)
 
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.

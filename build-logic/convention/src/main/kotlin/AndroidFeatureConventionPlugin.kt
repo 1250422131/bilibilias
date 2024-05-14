@@ -12,7 +12,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             pluginManager.apply {
                 apply("bilibilias.android.library")
                 apply("bilibilias.android.hilt")
-                apply("app.cash.molecule")
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig {
