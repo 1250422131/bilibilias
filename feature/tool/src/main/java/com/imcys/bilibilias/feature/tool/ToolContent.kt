@@ -40,6 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
@@ -48,6 +50,20 @@ import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
+
+@Composable
+fun ToolContent(component: ToolComponent) {
+    val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
+    val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
+    ToolContent(
+        searchQuery = searchQuery,
+        onSearchQueryChanged = component::onSearchQueryChanged,
+        onClearSearches = component::clearSearches,
+        searchResultUiState = searchResultUiState,
+        onDownload = component::download,
+        onSetting = { }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

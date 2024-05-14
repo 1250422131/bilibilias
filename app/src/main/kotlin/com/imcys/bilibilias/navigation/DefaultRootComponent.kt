@@ -9,10 +9,12 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.feature.home.DefaultHomeComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
+import com.imcys.bilibilias.feature.tool.ToolComponent
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
-    private val homeComponentFactory: HomeComponent.Factory
+    private val homeComponentFactory: HomeComponent.Factory,
+    private val toolComponentFactory: ToolComponent.Factory
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -47,7 +49,12 @@ class DefaultRootComponent(
                     )
                 )
 
-                Config.Tool -> RootComponent.Child.ToolChild
+                is Config.Tool -> RootComponent.Child.ToolChild(
+                    toolComponentFactory(
+                        componentContext
+                    )
+                )
+
                 Config.Download -> RootComponent.Child.DownloadChild
                 Config.User -> error("")
             }
