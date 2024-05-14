@@ -63,11 +63,9 @@ android {
         includeInBundle = true
     }
 }
-kapt {
-    correctErrorTypes = true
-}
 
 dependencies {
+    implementation(projects.feature.splash)
     implementation(projects.feature.login)
     implementation(projects.feature.home)
     implementation(projects.feature.tool)
@@ -117,15 +115,16 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.voyager.tabNavigator)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
     baselineProfile(projects.benchmarks)
+
     implementation(libs.decompose)
     implementation(libs.decompose.compose)
+
+    implementation(libs.sonner)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.

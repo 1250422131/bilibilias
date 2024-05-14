@@ -7,9 +7,12 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.feature.home.DefaultHomeComponent
+import com.imcys.bilibilias.feature.home.HomeComponent
 
 class DefaultRootComponent(
     componentContext: ComponentContext,
+    private val homeComponentFactory: HomeComponent.Factory
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -38,20 +41,18 @@ class DefaultRootComponent(
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         trace("Navigation: $config") {
             when (config) {
-                Config.Home -> RootComponent.Child.HomeChild
+                is Config.Home -> RootComponent.Child.HomeChild(
+                    homeComponentFactory(
+                        componentContext
+                    )
+                )
+
                 Config.Tool -> RootComponent.Child.ToolChild
                 Config.Download -> RootComponent.Child.DownloadChild
                 Config.User -> error("")
             }
         }
 
-    //    private fun listComponent(componentContext: ComponentContext): ListComponent =
-//        DefaultListComponent(
-//            componentContext = componentContext,
-//            onItemSelected = { item: String -> // Supply dependencies and callbacks
-//                navigation.push(Config.Details(item = item)) // Push the details component
-//            },
-//        )
     private sealed interface Config {
         data object Home : Config
         data object Tool : Config

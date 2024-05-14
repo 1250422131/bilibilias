@@ -83,5 +83,9 @@ gradlePlugin {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
+        register("logicComponents") {
+            id = "bilibilias.logic.components"
+            implementationClass = "MoleculeLogicComponents"
+        }
     }
 }
