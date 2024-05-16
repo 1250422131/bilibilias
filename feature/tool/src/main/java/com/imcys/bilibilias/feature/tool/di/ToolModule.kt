@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface ToolModule {
+interface DownloadModule {
 
     @Binds
     fun componentFactory(impl: DefaultToolComponent.Factory): ToolComponent.Factory

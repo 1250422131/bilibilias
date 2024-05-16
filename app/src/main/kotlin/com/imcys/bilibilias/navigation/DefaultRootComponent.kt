@@ -7,6 +7,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.feature.download.DownloadComponent
 import com.imcys.bilibilias.feature.home.DefaultHomeComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
@@ -14,7 +15,8 @@ import com.imcys.bilibilias.feature.tool.ToolComponent
 class DefaultRootComponent(
     componentContext: ComponentContext,
     private val homeComponentFactory: HomeComponent.Factory,
-    private val toolComponentFactory: ToolComponent.Factory
+    private val toolComponentFactory: ToolComponent.Factory,
+    private val downloadComponentFactory: DownloadComponent.Factory,
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -55,7 +57,12 @@ class DefaultRootComponent(
                     )
                 )
 
-                Config.Download -> RootComponent.Child.DownloadChild
+                is Config.Download -> RootComponent.Child.DownloadChild(
+                    downloadComponentFactory(
+                        componentContext
+                    )
+                )
+
                 Config.User -> error("")
             }
         }
