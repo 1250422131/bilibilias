@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,30 +34,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.common.utils.DataUnit
-import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.video.Cid
 
 @Composable
-fun DownloadRoute(onPlayer: (vUri: Uri, aUri: Uri) -> Unit) {
-    val viewModel: DownloadViewModel = hiltViewModel()
-    val taskQueue by viewModel.taskFlow.collectAsState()
-    BottomSheetNavigator(
-        sheetShape = RoundedCornerShape(
-            topStart = 28.0.dp,
-            topEnd = 28.0.dp,
-            bottomEnd = 0.0.dp,
-            bottomStart = 0.0.dp
-        )
-    ) {
-        DownloadScreen(taskQueue, onPlayer)
-    }
+fun DownloadRoute(component: DownloadComponent) {
+    val taskQueue by component.taskFlow.collectAsStateWithLifecycle()
+    DownloadScreen(taskQueue, {vUri, aUri ->  })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

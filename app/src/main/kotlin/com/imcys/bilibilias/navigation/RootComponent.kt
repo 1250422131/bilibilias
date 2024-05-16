@@ -2,6 +2,7 @@ package com.imcys.bilibilias.navigation
 
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.feature.download.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 
@@ -18,7 +19,7 @@ interface RootComponent {
 
         data class ToolChild(val component: ToolComponent) : Child()
 
-        data object DownloadChild : Child()
+        data class DownloadChild(val component: DownloadComponent) : Child()
 
         data object UserChild : Child()
     }

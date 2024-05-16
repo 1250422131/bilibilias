@@ -143,10 +143,8 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                 )
             }
 
-            RootComponent.Child.DownloadChild -> {
-                DownloadRoute(
-                    onPlayer = { vUri, aUri -> }
-                )
+           is RootComponent.Child.DownloadChild -> {
+                DownloadRoute(component = child.component)
             }
 
             RootComponent.Child.UserChild -> Unit
