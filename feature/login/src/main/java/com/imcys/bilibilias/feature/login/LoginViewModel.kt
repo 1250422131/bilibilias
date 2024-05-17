@@ -1,4 +1,4 @@
-package com.sockmagic.login
+package com.imcys.bilibilias.feature.login
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,18 +19,6 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-
-@HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository,
-    private val loginInfoDataSource: LoginInfoDataSource,
-    componentContext: ComponentContext,
-) : AsComponentContext<LoginEvent, LoginModel>(componentContext) {
-    @Composable
-    override fun models(events: Flow<LoginEvent>): LoginModel {
-        return LoginPresenter(events, loginRepository, loginInfoDataSource)
-    }
-}
 
 @Composable
 fun LoginPresenter(

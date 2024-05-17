@@ -1,4 +1,4 @@
-package com.sockmagic.login
+package com.imcys.bilibilias.feature.login
 
 import androidx.compose.ui.graphics.painter.Painter
 

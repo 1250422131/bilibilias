@@ -1,5 +1,7 @@
-package com.imcys.bilibilias.startup
+package com.imcys.bilibilias.startup.di
 
+import com.imcys.bilibilias.startup.DefaultStartupComponent
+import com.imcys.bilibilias.startup.StartupComponent
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

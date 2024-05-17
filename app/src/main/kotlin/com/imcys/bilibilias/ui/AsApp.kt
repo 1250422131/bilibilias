@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui
 
-import android.content.Intent
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -16,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,11 +34,8 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.feature.download.DownloadRoute
 import com.imcys.bilibilias.feature.home.HomeContent
-import com.imcys.bilibilias.feature.home.HomeRoute
 import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.feature.tool.ToolRoute
-import com.imcys.bilibilias.home.ui.activity.DedicateActivity
-import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlin.time.Duration.Companion.days
@@ -123,27 +118,13 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
         when (val child = it.instance) {
             is RootComponent.Child.HomeChild -> {
                 HomeContent(child.component)
-//                HomeRoute(
-//                    onSalute = {
-//                        val intent = Intent(context, DedicateActivity::class.java)
-//                        context.startActivity(intent)
-//                    },
-//                    onDonation = {
-//                        val intent = Intent(context, DonateActivity::class.java)
-//                        context.startActivity(intent)
-//                    }
-//                )
             }
 
-          is  RootComponent.Child.ToolChild -> {
-              ToolContent(component = child.component)
-                ToolRoute(
-                    onSetting = { },
-                    onPlayer = { }
-                )
+            is RootComponent.Child.ToolChild -> {
+                ToolContent(component = child.component)
             }
 
-           is RootComponent.Child.DownloadChild -> {
+            is RootComponent.Child.DownloadChild -> {
                 DownloadRoute(component = child.component)
             }
 
@@ -175,7 +156,6 @@ private fun AsBottomBar(
             { activeComponent is RootComponent.Child.DownloadChild },
             component::onDownloadTabClicked
         )
-//        AsNavigationBarItem(activeComponent,{activeComponent is RootComponent.Child.UserChild},component::onHomeTabClicked)
     }
 }
 

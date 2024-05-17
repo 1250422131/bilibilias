@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sockmagic.login"
+    namespace = "com.imcys.bilibilias.feature.login"
 }
 
 dependencies {

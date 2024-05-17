@@ -1,4 +1,4 @@
-package com.sockmagic.login
+package com.imcys.bilibilias.feature.login
 
 import android.content.Context
 import android.content.Intent
@@ -31,7 +31,7 @@ object QRUtil {
         } catch (_: FileNotFoundException) {
         } catch (_: IOException) {
         } finally {
-//            goToQRScan(context)
+            goToQRScan(context)
         }
     }
 

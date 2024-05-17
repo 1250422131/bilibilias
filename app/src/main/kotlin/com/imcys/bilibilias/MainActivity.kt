@@ -10,18 +10,16 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
-import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
-import com.imcys.bilibilias.splash.RootContent
 import com.imcys.bilibilias.startup.StartupComponent
+import com.imcys.bilibilias.startup.StartupContent
 import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val componentContext = defaultComponentContext()
-            val rootComponent = startupComponentFactory(componentContext)
+            val startupComponent = startupComponentFactory(componentContext)
             AsTheme {
                 CompositionLocalProvider(
                     LocalAnalyticsHelper provides analyticsHelper,
@@ -77,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                         networkMonitor = networkMonitor,
                         windowSizeClass = calculateWindowSizeClass(this)
                     )
-                    RootContent(rootComponent, appState, componentContext)
+                    StartupContent(startupComponent, appState)
                 }
             }
         }

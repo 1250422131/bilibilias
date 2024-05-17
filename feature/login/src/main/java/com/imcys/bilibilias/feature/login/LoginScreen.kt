@@ -1,4 +1,4 @@
-package com.sockmagic.login
+package com.imcys.bilibilias.feature.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,26 +21,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import io.github.alexzhirkevich.qrose.toImageBitmap
 
-class LoginScreen(private val navigationToMain: () -> Screen) : Screen {
-    @Composable
-    override fun Content() {
-        val viewModel: LoginViewModel = getViewModel()
-        val model by viewModel.models.collectAsState()
-        LoginContent(model, navigationToMain, viewModel::take)
-    }
+@Composable
+fun LoginContent(
+    component: LoginComponent,
+    modifier: Modifier = Modifier,
+    onNavigationToRoot: () -> Unit
+) {
+    val model by component.models.collectAsStateWithLifecycle()
+    LoginContent(model = model, onEvent = component::take)
 }
 
 @Composable
 private fun LoginContent(
     model: LoginModel,
-    navigationToMain: () -> Screen,
     onEvent: (LoginEvent) -> Unit
 ) {
     Scaffold { innerPadding ->
@@ -51,11 +47,7 @@ private fun LoginContent(
                 .padding(top = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val navigator = LocalNavigator.currentOrThrow
             SideEffect {
-                if (model.isSuccess) {
-                    navigator.push(navigationToMain())
-                }
             }
             val context = LocalContext.current
             LaunchedEffect(model.qrCodePainter) {

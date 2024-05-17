@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.feature.download
 
-import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
@@ -17,12 +16,12 @@ import dagger.assisted.AssistedInject
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class DefaultDownloadComponent @AssistedInject constructor(
-    @Assisted componentContext: ComponentContext, private val downloadManager: DownloadManager,
+    @Assisted componentContext: ComponentContext,
+    private val downloadManager: DownloadManager,
     private val downloadTaskDao: DownloadTaskDao,
 ) : DownloadComponent, AsComponentContext2(componentContext) {
     override val taskFlow = downloadTaskDao.loadAllDownloadFlow()
@@ -55,6 +54,6 @@ class DefaultDownloadComponent @AssistedInject constructor(
     interface Factory : DownloadComponent.Factory {
         override fun invoke(
             componentContext: ComponentContext,
-        ): DownloadComponent
+        ): DefaultDownloadComponent
     }
 }
