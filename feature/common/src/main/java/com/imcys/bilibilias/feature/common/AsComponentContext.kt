@@ -8,7 +8,6 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,15 +24,15 @@ abstract class AsComponentContext2(componentContext: ComponentContext) :
 
 abstract class AsComponentContext<Event, Model>(
     componentContext: ComponentContext
-) : IComponentContext<Event, Model>, ComponentContext by componentContext {
-    protected val scope = CoroutineScope(AndroidUiDispatcher.Main)
+) : IComponentContext<Event, Model>, AsComponentContext2(componentContext) {
+    private val moleculeScope = CoroutineScope(AndroidUiDispatcher.Main)
 
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.
     private val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
 
     override val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
-        scope.launchMolecule(mode = RecompositionMode.ContextClock) {
+        moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
             models(events)
         }
     }

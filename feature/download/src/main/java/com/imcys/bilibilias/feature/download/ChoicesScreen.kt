@@ -34,13 +34,11 @@ internal class ChoicesScreen(
 ) : Screen {
     @Composable
     override fun Content() {
-        val viewModel: DownloadViewModel = getViewModel()
-        val sheetNavigator = LocalBottomSheetNavigator.current
-        Napier.d { System.identityHashCode(viewModel).toString() + "haha" }
+//        val viewModel: DownloadViewModel = getViewModel()
         val list = remember { mutableStateListOf<DownloadTaskEntity>() }
         LaunchedEffect(aid, cid) {
             list.clear()
-            list.addAll(viewModel.getPlayerInfo(aid, bvid, cid))
+//            list.addAll(viewModel.getPlayerInfo(aid, bvid, cid))
         }
         Column(
             modifier = Modifier,
@@ -48,8 +46,8 @@ internal class ChoicesScreen(
         ) {
             AsButton(
                 onClick = {
-                    viewModel.onDelete(ViewInfo(aid, bvid, cid, ""), fileType)
-                    sheetNavigator.hide()
+//                    viewModel.onDelete(ViewInfo(aid, bvid, cid, ""), fileType)
+//                    sheetNavigator.hide()
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -66,7 +64,6 @@ internal class ChoicesScreen(
                     v?.let { v1 ->
                         a?.let { navigationToPlayer(v1.uri, it.uri) }
                     }
-                    sheetNavigator.hide()
                 },
                 modifier = Modifier
                     .padding(8.dp)

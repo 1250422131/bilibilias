@@ -7,7 +7,9 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.feature.login.LoginComponent
 import com.imcys.bilibilias.feature.splash.SplashComponent
+import com.imcys.bilibilias.navigation.RootComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -15,6 +17,8 @@ import dagger.assisted.AssistedInject
 class DefaultStartupComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val splashFactory: SplashComponent.Factory,
+    private val rootFactory: RootComponent.Factory,
+    private val loginFactory: LoginComponent.Factory,
 ) : StartupComponent, ComponentContext by componentContext {
     private val navigation = StackNavigation<Config>()
     override val stack: Value<ChildStack<*, StartupComponent.Child>> =
@@ -37,8 +41,8 @@ class DefaultStartupComponent @AssistedInject constructor(
     private fun child(config: Config, componentContext: ComponentContext): StartupComponent.Child =
         when (config) {
             Config.Splash -> StartupComponent.Child.SplashChild(splashFactory(componentContext))
-            Config.Login -> StartupComponent.Child.LoginChild
-            Config.Root -> StartupComponent.Child.RootChild
+            Config.Login -> StartupComponent.Child.LoginChild(loginFactory(componentContext))
+            Config.Root -> StartupComponent.Child.RootChild(rootFactory(componentContext))
         }
 
     private sealed interface Config {

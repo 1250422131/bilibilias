@@ -1,4 +1,4 @@
-package com.sockmagic.login
+package com.imcys.bilibilias.feature.login
 
 import android.annotation.SuppressLint
 import android.content.Context

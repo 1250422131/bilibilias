@@ -86,13 +86,10 @@ internal fun DownloadScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DownloadTaskItem(task: DownloadTask, navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit) {
-    val sheetNavigator = LocalBottomSheetNavigator.current
     ListItem(
         modifier = Modifier.combinedClickable {
             val info = task.viewInfo
-            sheetNavigator.show(
-                ChoicesScreen(info.aid, info.bvid, info.cid, task.fileType, navigationToPlayer)
-            )
+
         },
         leadingContent = {
             AsCard(modifier = Modifier.size(80.dp)) {

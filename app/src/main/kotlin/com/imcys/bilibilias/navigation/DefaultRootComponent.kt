@@ -8,12 +8,14 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.feature.download.DownloadComponent
-import com.imcys.bilibilias.feature.home.DefaultHomeComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.assisted.Assisted
 
-class DefaultRootComponent(
-    componentContext: ComponentContext,
+class DefaultRootComponent @AssistedInject constructor(
+    @Assisted componentContext: ComponentContext,
     private val homeComponentFactory: HomeComponent.Factory,
     private val toolComponentFactory: ToolComponent.Factory,
     private val downloadComponentFactory: DownloadComponent.Factory,
@@ -72,5 +74,12 @@ class DefaultRootComponent(
         data object Tool : Config
         data object Download : Config
         data object User : Config
+    }
+
+    @AssistedFactory
+    interface Factory : RootComponent.Factory {
+        override fun invoke(
+            componentContext: ComponentContext,
+        ): DefaultRootComponent
     }
 }
