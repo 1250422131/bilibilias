@@ -20,15 +20,15 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.module.graph) apply true
+    alias(libs.plugins.secrets) apply false
 }
-
-beforeEvaluate {
-    tasks {
-        register<Exec>("submodulesUpdate") {
-            description = "Updates (and inits) git submodules"
-            commandLine = listOf("git", "submodule", "update", "--init", "--recursive")
-            group = "Build Setup"
+// Task to print all the module paths in the project e.g. :core:data
+// Used by module graph generator script
+tasks.register("printModulePaths") {
+    subprojects {
+        if (subprojects.size == 0) {
+            println(this.path)
         }
     }
 }
-
