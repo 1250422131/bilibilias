@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
+    alias(libs.plugins.bilibilias.logic.components)
 }
 
 android {
@@ -117,7 +118,6 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 
     baselineProfile(projects.benchmarks)
 

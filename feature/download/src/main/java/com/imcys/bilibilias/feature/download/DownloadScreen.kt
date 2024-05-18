@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.common.utils.DataUnit
 import com.imcys.bilibilias.core.designsystem.component.AsCard

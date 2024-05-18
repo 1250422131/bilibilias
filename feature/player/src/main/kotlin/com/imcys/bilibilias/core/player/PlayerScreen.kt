@@ -16,8 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.util.UnstableApi
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
@@ -26,11 +24,11 @@ import kotlin.reflect.typeOf
 class PlayerScreen(
     private val vUri: Uri,
     private val aUri: Uri,
-) : Screen {
+)  {
     @Composable
-    override fun Content() {
-        val viewModel: PlayerViewModel = getViewModel()
-        PlayerContent(viewModel.player)
+    fun Content() {
+//        val viewModel: PlayerViewModel = getViewModel()
+//        PlayerContent(viewModel.player)
     }
 }
 

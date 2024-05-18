@@ -7,23 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.DataBindingUtil.setContentView
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.tool_log_export.R
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Cover
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Evaluate
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Progress
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.SeasonID
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.SeasonTitle
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.SeasonTypeName
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Subtitle
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Subtitle14
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Summary
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.Title
-import com.imcys.bilibilias.tool_log_export.data.mEnum.BangumiFollowLogHeader.TotalCount
-import com.imcys.bilibilias.tool_log_export.data.model.BangumiFollowLogHeaderBean
-import com.imcys.bilibilias.tool_log_export.databinding.ActivityBangumiFollowLogBinding
-import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils
-import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils.addCell
-import com.imcys.bilibilias.tool_log_export.utils.ExportDialogUtils
 import dagger.hilt.android.AndroidEntryPoint
 import jxl.format.Alignment
 import jxl.format.Border
@@ -34,22 +17,23 @@ import jxl.write.WritableCellFormat
 import jxl.write.WritableFont
 import jxl.write.WritableSheet
 import kotlin.math.ceil
+import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils
 
 @AndroidEntryPoint
 class BangumiFollowLogActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityBangumiFollowLogBinding
+//    lateinit var binding: ActivityBangumiFollowLogBinding
 
-    var selectedLogHeaders = mutableListOf<BangumiFollowLogHeaderBean>()
+//    var selectedLogHeaders = mutableListOf<BangumiFollowLogHeaderBean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_bangumi_follow_log)
-        binding = DataBindingUtil.setContentView<ActivityBangumiFollowLogBinding?>(
-            this,
-            R.layout.activity_bangumi_follow_log,
-        )
+//        setContentView(R.layout.activity_bangumi_follow_log)
+//        binding = DataBindingUtil.setContentView<ActivityBangumiFollowLogBinding?>(
+//            this,
+//            R.layout.activity_bangumi_follow_log,
+//        )
 
         initView()
     }
@@ -62,16 +46,16 @@ class BangumiFollowLogActivity : AppCompatActivity() {
         // 加载选中表头的rv
 //        initSelectedLogHeaders()
         // 绑定完成按钮事件
-        bindingFinishEvent()
+//        bindingFinishEvent()
     }
 
     private fun bindingFinishEvent() {
-        binding.apply {
-            // 绑定完成
-            bangumiFollowLogFinishBt.setOnClickListener {
-                createExcel()
-            }
-        }
+//        binding.apply {
+//            // 绑定完成
+//            bangumiFollowLogFinishBt.setOnClickListener {
+//                createExcel()
+//            }
+//        }
     }
 
     private fun createExcel() {
@@ -97,18 +81,18 @@ class BangumiFollowLogActivity : AppCompatActivity() {
         sheet.setRowView(0, 340)
 
         // 创建标题栏
-        selectedLogHeaders.forEachIndexed { index, bangumiFollowLogHeaderBean ->
-            sheet.addCell(
-                Label(
-                    index,
-                    0,
-                    bangumiFollowLogHeaderBean.title,
-                    arial14format,
-                ) as WritableCell?,
-            )
-            // 列宽
-            sheet.setColumnView(index, 300)
-        }
+//        selectedLogHeaders.forEachIndexed { index, bangumiFollowLogHeaderBean ->
+//            sheet.addCell(
+//                Label(
+//                    index,
+//                    0,
+//                    bangumiFollowLogHeaderBean.title,
+//                    arial14format,
+//                ) as WritableCell?,
+//            )
+//            // 列宽
+//            sheet.setColumnView(index, 300)
+//        }
 
 //        launchUI {
 //            val loadTitle by lazy { mutableStateOf("开始获取数据") }

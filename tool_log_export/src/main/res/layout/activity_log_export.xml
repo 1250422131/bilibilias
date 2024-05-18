@@ -20,11 +20,5 @@
             android:layout_height="wrap_content"
             app:title="@string/tool_log_export_home_title" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/log_export_home_rv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="20dp" />
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

@@ -6,28 +6,24 @@ androidTools = "31.4.0"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.2.4"
 androidx-junit = "1.1.5"
-annotation = "1.8.0"
+androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 bottomsheetdialogCompose = "1.4.1"
-brv = "1.5.8"
 coil = "2.6.0"
-collection = "1.4.0"
+androidxCollection = "1.4.0"
 datastore = "1.1.1"
 decompose = "3.0.0"
-deeprecopy-compiler = "0.0.1-Beta-3"
 constraintlayout = "2.1.4"
 coreKtx = "1.13.1"
 detekt = "1.23.5"
 devappx = "2.4.6"
 dfm = "0.9.25"
-espresso-core = "3.5.1"
 ffmpegcommand = "1.3.2"
 ffmpegKitFull = "6.0-2"
-flexbox = "3.0.0"
 glide = "4.16.0"
 hilt = "2.51.1"
 androidxHiltNavigationCompose = "1.2.0"
@@ -44,9 +40,7 @@ ksp = "1.9.24-1.0.20"
 ktor = "2.3.11"
 androidxLifecycle = "2.8.0"
 lottie = "6.4.0"
-material = "1.12.0"
 media3Exoplayer = "1.3.1"
-mmkv = "1.3.4"
 moleculeGradlePlugin = "1.4.3"
 monitor = "1.8.0"
 dependencyGuard = "0.5.0"
@@ -58,28 +52,37 @@ qrose = "1.0.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
 sonner = "0.3.5"
-srl-core = "1.7.2.4"
 toaster = "12.6"
-uiTiles = "2.2.0"
-uiTimateBarX = "0.8.1"
-uiViewbinding = "1.6.6"
 wireGradlePlugin = "4.9.9"
 work = "2.9.0"
 androidxActivity = "1.9.0"
 androidxComposeBom = "2024.05.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
-voyager = "1.1.0-alpha04"
-preferenceKtxVersion = "1.2.1"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
 androidxWindowManager = "1.3.0-beta02"
 materialVersion = "1.12.0"
+androidxTestCore = "1.5.0"
+androidxTestExt = "1.1.5"
+androidxTestRules = "1.5.0"
+androidxTestRunner = "1.5.2"
+androidxUiAutomator = "2.3.0"
+androidxEspresso = "3.5.1"
+composeSettings = "2.2.0"
 [libraries]
+
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
-androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
-androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
+androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
 
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
@@ -88,7 +91,6 @@ androidx-window-core = { group = "androidx.window", name = "window-core", versio
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidXMetrics" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
-androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
@@ -102,7 +104,6 @@ devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-
 
 ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 ffmpegcommand = { module = "com.github.AnJoiner:FFmpegCommand", version.ref = "ffmpegcommand" }
@@ -122,7 +123,7 @@ sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "uiTiles" }
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
 
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 
@@ -159,7 +160,6 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
@@ -185,13 +185,6 @@ lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.re
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
 
-voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }
-voyager-bottomSheetNavigator = { group = "cafe.adriel.voyager", name = "voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tabNavigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
-voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
-
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
@@ -216,7 +209,6 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 work-testing = { group = "androidx.work", name = "work-testing", version = "work" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }

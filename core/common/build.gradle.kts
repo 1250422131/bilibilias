@@ -16,5 +16,4 @@ dependencies {
     api(libs.devappx)
     api(libs.toaster)
     implementation(kotlin("reflect"))
-    implementation(libs.androidx.preference.ktx)
 }

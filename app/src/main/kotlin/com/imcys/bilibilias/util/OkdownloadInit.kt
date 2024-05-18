@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.util
 
 import android.content.Context
-import androidx.compose.ui.util.trace
+import androidx.tracing.trace
 import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.OkDownloadProvider
 import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection
