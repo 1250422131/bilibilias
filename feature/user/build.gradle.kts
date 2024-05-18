@@ -15,9 +15,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.datastore)
 
-//    implementation(libs.coil.compose)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

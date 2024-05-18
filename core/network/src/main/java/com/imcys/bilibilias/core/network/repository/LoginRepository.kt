@@ -45,5 +45,7 @@ class LoginRepository @Inject constructor(
         }
     }
 
-    suspend fun getBilibiliHome() = client.get(BILIBILI_URL)
+    suspend fun getBilibiliHome(): Unit {
+        client.get(BILIBILI_URL)
+    }
 }

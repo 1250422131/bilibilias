@@ -24,28 +24,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.core.common.download.DefaultConfig
 import io.github.aakira.napier.Napier
 
-object SettingScreen : Screen {
+object SettingScreen  {
     @Composable
-    override fun Content() {
-        val viewModel: SettingsViewModel = getViewModel()
-        val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
-        SettingContent(
-            settingsUiState = settingsUiState,
-            onChangeStoragePath = viewModel::updateFileStoragePath,
-            onChangeNameRule = viewModel::updateFileNameRule,
-            onChangeAutoMerge = viewModel::updateAutoMerge,
-            onChangeAutoImport = viewModel::updateAutoImportToBilibili,
-            onChangeWill = viewModel::updateShouldAppcenter,
-            onChangeCommand = viewModel::updateMergeCommand
-        )
+    fun Content() {
+//        val viewModel: SettingsViewModel = getViewModel()
+//        val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+//        SettingContent(
+//            settingsUiState = settingsUiState,
+//            onChangeStoragePath = viewModel::updateFileStoragePath,
+//            onChangeNameRule = viewModel::updateFileNameRule,
+//            onChangeAutoMerge = viewModel::updateAutoMerge,
+//            onChangeAutoImport = viewModel::updateAutoImportToBilibili,
+//            onChangeWill = viewModel::updateShouldAppcenter,
+//            onChangeCommand = viewModel::updateMergeCommand
+//        )
     }
 }
 

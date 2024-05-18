@@ -13,9 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.model.download.FileType
@@ -31,9 +28,9 @@ internal class ChoicesScreen(
     private val cid: Cid,
     private val fileType: FileType,
     private val navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit
-) : Screen {
+)  {
     @Composable
-    override fun Content() {
+     fun Content() {
 //        val viewModel: DownloadViewModel = getViewModel()
         val list = remember { mutableStateListOf<DownloadTaskEntity>() }
         LaunchedEffect(aid, cid) {
