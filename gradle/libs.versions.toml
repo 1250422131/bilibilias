@@ -226,6 +226,7 @@ secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugi
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
 bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
 bilibilias-android-application-jacoco = { id = "bilibilias.android.application.jacoco", version = "unspecified" }
+bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
 bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }

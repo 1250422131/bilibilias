@@ -1,7 +1,10 @@
+import com.imcys.bilibilias.AsBuildType
+
 plugins {
     alias(libs.plugins.bilibilias.android.application)
     alias(libs.plugins.bilibilias.android.application.compose)
     alias(libs.plugins.bilibilias.android.application.jacoco)
+    alias(libs.plugins.bilibilias.android.application.flavors)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
@@ -20,36 +23,38 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        flavorDimensions += project.name
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
         debug {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            applicationIdSuffix = AsBuildType.DEBUG.applicationIdSuffix
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
         }
 
         release {
-            // 混淆
             isMinifyEnabled = true
-            // 移除无用的resource文件
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            applicationIdSuffix = AsBuildType.RELEASE.applicationIdSuffix
+            // To publish on the Play store a private signing key is required, but to allow anyone
+            // who clones the code to sign and run the release variant, use the debug signing key.
+            // TODO: Abstract the signing configuration to a separate file to avoid hardcoding this.
+            signingConfig = signingConfigs.named("debug").get()
+            baselineProfile.automaticGenerationDuringBuild = true
+
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
-            baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 
     buildFeatures {
-        compose = true
         dataBinding = true
     }
 
@@ -58,10 +63,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    dependenciesInfo {
-        includeInApk = true
-        includeInBundle = true
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
 }
 
@@ -133,5 +138,5 @@ baselineProfile {
 }
 
 dependencyGuard {
-    configuration("releaseRuntimeClasspath")
+    configuration("prodReleaseRuntimeClasspath")
 }
