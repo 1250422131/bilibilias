@@ -87,5 +87,9 @@ gradlePlugin {
             id = "bilibilias.logic.components"
             implementationClass = "MoleculeLogicComponents"
         }
+        register("androidFlavors") {
+            id = "bilibilias.android.application.flavors"
+            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
     }
 }
