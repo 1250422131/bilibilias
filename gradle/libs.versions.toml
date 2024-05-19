@@ -236,4 +236,5 @@ bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecifi
 bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
 bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
 bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }
-bilibilias-logic-components = { id = "bilibilias.logic.components", version = "unspecified" }
+bilibilias-android-application-decompose = { id = "bilibilias.android.application.decompose", version = "unspecified" }
+bilibilias-android-library-decompose = { id = "bilibilias.android.library.decompose", version = "unspecified" }
