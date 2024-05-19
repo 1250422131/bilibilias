@@ -5,11 +5,11 @@ plugins {
     alias(libs.plugins.bilibilias.android.application.compose)
     alias(libs.plugins.bilibilias.android.application.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
+    alias(libs.plugins.bilibilias.android.application.decompose)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
-    alias(libs.plugins.bilibilias.logic.components)
 }
 
 android {

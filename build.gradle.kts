@@ -2,6 +2,8 @@ buildscript {
     dependencies {
         classpath(libs.wire.gradle.plugin)
         classpath(libs.molecule.gradle.plugin)
+        classpath("com.android.tools.build:gradle:8.4.0")
+
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")

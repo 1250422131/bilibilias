@@ -83,9 +83,13 @@ gradlePlugin {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
-        register("logicComponents") {
-            id = "bilibilias.logic.components"
-            implementationClass = "MoleculeLogicComponents"
+        register("androidApplicationDecompose") {
+            id = "bilibilias.android.application.decompose"
+            implementationClass = "AndroidApplicationDecomposeConventionPlugin"
+        }
+        register("androidLibraryDecompose") {
+            id = "bilibilias.android.library.decompose"
+            implementationClass = "AndroidLibraryDecomposeConventionPlugin"
         }
         register("androidFlavors") {
             id = "bilibilias.android.application.flavors"
