@@ -18,6 +18,7 @@ package com.liulishuo.okdownload;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -35,7 +36,8 @@ import com.liulishuo.okdownload.core.file.ProcessFileStrategy;
 @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
 public class OkDownload {
 
-    @SuppressLint("StaticFieldLeak") static volatile OkDownload singleton;
+    @SuppressLint("StaticFieldLeak")
+    static volatile OkDownload singleton;
 
     private final DownloadDispatcher downloadDispatcher;
     private final CallbackDispatcher callbackDispatcher;
@@ -47,13 +49,19 @@ public class OkDownload {
 
     private final Context context;
 
-    @Nullable DownloadMonitor monitor;
+    @Nullable
+    DownloadMonitor monitor;
 
-    OkDownload(Context context, DownloadDispatcher downloadDispatcher,
-               CallbackDispatcher callbackDispatcher, DownloadStore store,
-               DownloadConnection.Factory connectionFactory,
-               DownloadOutputStream.Factory outputStreamFactory,
-               ProcessFileStrategy processFileStrategy, DownloadStrategy downloadStrategy) {
+    OkDownload(
+            Context context,
+            DownloadDispatcher downloadDispatcher,
+            CallbackDispatcher callbackDispatcher,
+            DownloadStore store,
+            DownloadConnection.Factory connectionFactory,
+            DownloadOutputStream.Factory outputStreamFactory,
+            ProcessFileStrategy processFileStrategy,
+            DownloadStrategy downloadStrategy
+    ) {
         this.context = context;
         this.downloadDispatcher = downloadDispatcher;
         this.callbackDispatcher = callbackDispatcher;
@@ -66,55 +74,63 @@ public class OkDownload {
         this.downloadDispatcher.setDownloadStore(Util.createRemitDatabase(store));
     }
 
-    public DownloadDispatcher downloadDispatcher() { return downloadDispatcher; }
+    public DownloadDispatcher downloadDispatcher() {
+        return downloadDispatcher;
+    }
 
-    public CallbackDispatcher callbackDispatcher() { return callbackDispatcher; }
+    public CallbackDispatcher callbackDispatcher() {
+        return callbackDispatcher;
+    }
 
-    public BreakpointStore breakpointStore() { return breakpointStore; }
+    public BreakpointStore breakpointStore() {
+        return breakpointStore;
+    }
 
-    public DownloadConnection.Factory connectionFactory() { return connectionFactory; }
+    public DownloadConnection.Factory connectionFactory() {
+        return connectionFactory;
+    }
 
-    public DownloadOutputStream.Factory outputStreamFactory() { return outputStreamFactory; }
+    public DownloadOutputStream.Factory outputStreamFactory() {
+        return outputStreamFactory;
+    }
 
-    public ProcessFileStrategy processFileStrategy() { return processFileStrategy; }
+    public ProcessFileStrategy processFileStrategy() {
+        return processFileStrategy;
+    }
 
-    public DownloadStrategy downloadStrategy() { return downloadStrategy; }
+    public DownloadStrategy downloadStrategy() {
+        return downloadStrategy;
+    }
 
-    public Context context() { return this.context; }
+    public Context context() {
+        return this.context;
+    }
 
     public void setMonitor(@Nullable DownloadMonitor monitor) {
         this.monitor = monitor;
     }
 
-    @Nullable public DownloadMonitor getMonitor() {
+    @Nullable
+    public DownloadMonitor getMonitor() {
         return monitor;
     }
 
     public static OkDownload with() {
         if (singleton == null) {
-            synchronized (OkDownload.class) {
-                if (singleton == null) {
-                    if (OkDownloadProvider.context == null) {
-                        throw new IllegalStateException("context == null");
-                    }
-                    singleton = new Builder(OkDownloadProvider.context).build();
-                }
-            }
+            throw new IllegalStateException("OkDownload == null");
         }
         return singleton;
     }
 
-    public static void setSingletonInstance(@NonNull OkDownload okDownload) {
-        if (singleton != null) {
-            throw new IllegalArgumentException(("OkDownload must be null."));
-        }
-
-        synchronized (OkDownload.class) {
-            if (singleton != null) {
-                throw new IllegalArgumentException(("OkDownload must be null."));
+    public static OkDownload with(Context context) {
+        if (singleton == null) {
+            synchronized (OkDownload.class) {
+                if (singleton == null) {
+                    singleton = new Builder(context).build();
+                }
             }
-            singleton = okDownload;
         }
+        return singleton;
     }
 
     public static class Builder {
@@ -201,9 +217,16 @@ public class OkDownload {
                 downloadStrategy = new DownloadStrategy();
             }
 
-            OkDownload okDownload = new OkDownload(context, downloadDispatcher, callbackDispatcher,
-                    downloadStore, connectionFactory, outputStreamFactory, processFileStrategy,
-                    downloadStrategy);
+            OkDownload okDownload = new OkDownload(
+                    context,
+                    downloadDispatcher,
+                    callbackDispatcher,
+                    downloadStore,
+                    connectionFactory,
+                    outputStreamFactory,
+                    processFileStrategy,
+                    downloadStrategy
+            );
 
             okDownload.setMonitor(monitor);
 

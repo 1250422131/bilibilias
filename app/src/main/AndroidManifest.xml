@@ -35,7 +35,7 @@
             tools:targetApi="UPSIDE_DOWN_CAKE" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.imcys.bilibilias.fileProvider"
+            android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
