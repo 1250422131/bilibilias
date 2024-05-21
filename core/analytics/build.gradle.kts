@@ -11,7 +11,9 @@ android {
 dependencies {
     implementation(libs.androidx.compose.runtime)
 
-    implementation(libs.appcenter.crashes)
-    implementation(libs.appcenter.analytics)
-    implementation(libs.appcenter.distribute)
+    implementation(libs.umeng.common)
+    implementation(libs.umeng.asms)
+    implementation(libs.umeng.abtest)
+    prodImplementation(platform(libs.firebase.bom))
+    prodImplementation(libs.firebase.analytics)
 }
