@@ -35,7 +35,6 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.feature.download.DownloadRoute
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.tool.ToolContent
-import com.imcys.bilibilias.feature.tool.ToolRoute
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlin.time.Duration.Companion.days

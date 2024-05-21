@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -41,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
@@ -119,15 +122,12 @@ fun ToolContent(
                         contentPadding = PaddingValues(4.dp)
                     ) {
                         item {
-                            val context = LocalContext.current
-                            AsTextButton(
-                                onClick = {
-//                                    AsVideoActivity.actionStart(
-//                                        context,
-//                                        searchResultUiState.bvid
-//                                    )
-                                },
-                                text = { Text(text = "点击进入详情页") }
+                            AsyncImage(
+                                model = searchResultUiState.face,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .clip(CircleShape)
                             )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->

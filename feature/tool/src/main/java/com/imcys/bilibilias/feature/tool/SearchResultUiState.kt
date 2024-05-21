@@ -13,11 +13,12 @@ sealed interface SearchResultUiState {
         val bvid: String,
         val cid: Long,
         val collection: List<View>,
+        val face: String,
     ) : SearchResultUiState
 }
 
 data class View(val cid: Long, val title: String, val videoStreamDesc: VideoStreamDesc)
-data class VideoStreamDesc(val descriptionQuality: List<Description>,)
+data class VideoStreamDesc(val descriptionQuality: List<Description>)
 
 data class Description(val desc: String, val quality: Int)
 data class Codecs(val quality: Int, val useAV1: Boolean, val useH264: Boolean, val useH265: Boolean)

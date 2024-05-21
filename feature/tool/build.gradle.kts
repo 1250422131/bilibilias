@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.common)
+
     implementation(projects.core.domain)
     implementation(projects.core.download)
 

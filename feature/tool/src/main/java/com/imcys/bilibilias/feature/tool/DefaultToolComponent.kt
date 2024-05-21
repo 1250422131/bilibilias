@@ -1,13 +1,7 @@
 package com.imcys.bilibilias.feature.tool
 
-import androidx.annotation.MainThread
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.operator.map
-import com.arkivanov.decompose.value.subscribe
 import com.arkivanov.decompose.value.update
 import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
@@ -17,26 +11,24 @@ import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.imcys.bilibilias.feature.common.AsComponentContext2
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import com.arkivanov.essenty.instancekeeper.getOrCreate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.builtins.serializer
 
 class DefaultToolComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -44,7 +36,7 @@ class DefaultToolComponent @AssistedInject constructor(
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
-) : ToolComponent, ComponentContext by componentContext {
+) : ToolComponent, AsComponentContext2(componentContext) {
     private val _searchQuery = MutableStateFlow("")
     override val searchQuery = _searchQuery.asStateFlow()
 
@@ -65,7 +57,6 @@ class DefaultToolComponent @AssistedInject constructor(
     )
 
     override fun download(request: DownloadRequest) {
-
         downloadManager.download(request)
     }
 
@@ -109,7 +100,13 @@ class DefaultToolComponent @AssistedInject constructor(
                     val collection = detail.pages.zip(descs).map {
                         View(it.first.cid, it.first.part, it.second)
                     }
-                    SearchResultUiState.Success(detail.aid, detail.bvid, detail.cid, collection)
+                    SearchResultUiState.Success(
+                        detail.aid,
+                        detail.bvid,
+                        detail.cid,
+                        collection,
+                        detail.owner.face
+                    )
                 }
             }
         }
@@ -129,7 +126,13 @@ class DefaultToolComponent @AssistedInject constructor(
                         View(it.first.cid, it.first.longTitle, it.second)
                     }
                     val episode = detail.episodes.first()
-                    SearchResultUiState.Success(episode.aid, episode.bvid, episode.cid, collection)
+                    SearchResultUiState.Success(
+                        episode.aid,
+                        episode.bvid,
+                        episode.cid,
+                        collection,
+                        detail.upInfo.avatar
+                    )
                 }
             }
         }
