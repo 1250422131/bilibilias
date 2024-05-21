@@ -2,8 +2,7 @@ buildscript {
     dependencies {
         classpath(libs.wire.gradle.plugin)
         classpath(libs.molecule.gradle.plugin)
-        classpath("com.android.tools.build:gradle:8.4.0")
-
+        classpath(libs.google.oss.licenses.plugin)
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
@@ -25,6 +24,9 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.module.graph) apply true
     alias(libs.plugins.secrets) apply false
+    alias(libs.plugins.gms) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.firebase.perf) apply false
 }
 // Task to print all the module paths in the project e.g. :core:data
 // Used by module graph generator script

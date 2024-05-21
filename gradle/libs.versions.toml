@@ -1,7 +1,7 @@
 [versions]
 akdanmaku = "1.0.3"
 androidxComposeCompiler = "1.5.14"
-androidGradlePlugin = "8.4.0"
+androidGradlePlugin = "8.3.2"
 androidTools = "31.4.0"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.2.4"
@@ -12,6 +12,7 @@ appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
+tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
 coil = "2.6.0"
 androidxCollection = "1.4.0"
@@ -68,6 +69,12 @@ androidxEspresso = "3.5.1"
 composeSettings = "2.2.0"
 moduleGraph = "2.5.0"
 secrets = "2.0.1"
+firebaseBom = "33.0.0"
+firebaseCrashlyticsPlugin = "3.0.1"
+firebasePerfPlugin = "1.4.2"
+googleOss = "17.0.1"
+googleOssPlugin = "0.10.6"
+gmsPlugin = "4.4.1"
 [libraries]
 
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
@@ -93,6 +100,10 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
+tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
+umeng-common= { module = "com.umeng.umsdk:common", version = "9.4.7" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
+umeng-abtest= { module = "com.umeng.umsdk:abtest", version = "1.0.0" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
@@ -152,6 +163,16 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
+
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-cloud-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-performance = { group = "com.google.firebase", name = "firebase-perf-ktx" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
+google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
+google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
@@ -222,11 +243,15 @@ baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacr
 room = { id = "androidx.room", version.ref = "room" }
 module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
 bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
 bilibilias-android-application-jacoco = { id = "bilibilias.android.application.jacoco", version = "unspecified" }
 bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
+bilibilias-android-application-bugly = { id = "bilibilias.android.application.bugly", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
 bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }

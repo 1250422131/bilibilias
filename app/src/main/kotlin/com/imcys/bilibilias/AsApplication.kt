@@ -4,7 +4,6 @@ import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.hjq.toast.Toaster
-import com.imcys.bilibilias.util.AppCenter
 import com.imcys.bilibilias.util.OkdownloadInit
 import dagger.hilt.android.HiltAndroidApp
 import io.github.aakira.napier.DebugAntilog
@@ -17,17 +16,17 @@ class AsApplication : Application(), ImageLoaderFactory {
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     @Inject
-    lateinit var appCenter: AppCenter
+    lateinit var bugly: Bugly
 
     @Inject
-    lateinit var okdownloadInit: OkdownloadInit
+    lateinit var okdownload: OkdownloadInit
 
     override fun onCreate() {
         super.onCreate()
         Toaster.init(this)
         Napier.base(DebugAntilog())
-        appCenter(this)
-        okdownloadInit()
+        bugly()
+        okdownload()
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()

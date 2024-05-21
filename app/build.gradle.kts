@@ -6,10 +6,12 @@ plugins {
     alias(libs.plugins.bilibilias.android.application.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
     alias(libs.plugins.bilibilias.android.application.decompose)
+    alias(libs.plugins.bilibilias.android.application.bugly)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 android {

@@ -95,5 +95,9 @@ gradlePlugin {
             id = "bilibilias.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
+        register("androidBugly") {
+            id = "bilibilias.android.application.bugly"
+            implementationClass = "AndroidApplicationBuglyConventionPlugin"
+        }
     }
 }
