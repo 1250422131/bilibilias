@@ -1,0 +1,504 @@
+/*
+ * Copyright (c) 2017 LingoChamp Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.liulishuo.okdownload.core;
+
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.StatFs;
+import android.provider.OpenableColumns;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import android.util.Log;
+
+import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.OkDownload;
+import com.liulishuo.okdownload.core.breakpoint.BlockInfo;
+import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo;
+import com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnCache;
+import com.liulishuo.okdownload.core.breakpoint.DownloadStore;
+import com.liulishuo.okdownload.core.connection.DownloadConnection;
+import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection;
+import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
+
+import org.jetbrains.annotations.Contract;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import kotlinx.coroutines.Dispatchers;
+
+public class Util {
+
+    // request method
+    public static final String METHOD_HEAD = "HEAD";
+
+    // request header fields.
+    public static final String RANGE = "Range";
+    public static final String IF_MATCH = "If-Match";
+    public static final String USER_AGENT = "User-Agent";
+
+    // response header fields.
+    public static final String CONTENT_LENGTH = "Content-Length";
+    public static final String CONTENT_RANGE = "Content-Range";
+    public static final String ETAG = "Etag";
+    public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+    public static final String ACCEPT_RANGES = "Accept-Ranges";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
+
+    // response header value.
+    public static final String VALUE_CHUNKED = "chunked";
+    public static final int CHUNKED_CONTENT_LENGTH = -1;
+
+    // response special code.
+    public static final int RANGE_NOT_SATISFIABLE = 416;
+
+    public interface Logger {
+        void e(String tag, String msg, Exception e);
+
+        void w(String tag, String msg);
+
+        void d(String tag, String msg);
+
+        void i(String tag, String msg);
+    }
+
+    public static class EmptyLogger implements Logger {
+        @Override
+        public void e(String tag, String msg, Exception e) {
+        }
+
+        @Override
+        public void w(String tag, String msg) {
+        }
+
+        @Override
+        public void d(String tag, String msg) {
+        }
+
+        @Override
+        public void i(String tag, String msg) {
+        }
+    }
+
+    @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
+    private static Logger logger = new EmptyLogger();
+
+    /**
+     * Enable logger used for okdownload, and print each log with {@link Log}.
+     */
+    public static void enableConsoleLog() {
+        logger = null;
+    }
+
+    /**
+     * Set the logger which using on okdownload.
+     * default one is {@link EmptyLogger}.
+     *
+     * @param l if provide logger is {@code null} we will using {@link Log} as default.
+     */
+    public static void setLogger(@Nullable Logger l) {
+        logger = l;
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public static void e(String tag, String msg, Exception e) {
+        if (logger != null) {
+            logger.e(tag, msg, e);
+            return;
+        }
+
+        Log.e(tag, msg, e);
+    }
+
+    public static void w(String tag, String msg) {
+        if (logger != null) {
+            logger.w(tag, msg);
+            return;
+        }
+
+        Log.w(tag, msg);
+    }
+
+    public static void d(String tag, String msg) {
+        if (logger != null) {
+            logger.d(tag, msg);
+            return;
+        }
+
+        Log.d(tag, msg);
+    }
+
+    public static void i(String tag, String msg) {
+        if (logger != null) {
+            logger.i(tag, msg);
+            return;
+        }
+
+        Log.i(tag, msg);
+    }
+
+    // For avoid mock whole android framework methods on unit-test.
+    public static boolean isEmpty(@Nullable CharSequence str) {
+        return str == null || str.length() == 0;
+    }
+
+    public static ThreadFactory threadFactory(final String name, final boolean daemon) {
+        return new ThreadFactory() {
+            @Override
+            public Thread newThread(@NonNull Runnable runnable) {
+                final Thread result = new Thread(runnable, name);
+                result.setDaemon(daemon);
+                return result;
+            }
+        };
+    }
+
+    @Nullable
+    public static String md5(String string) {
+        byte[] hash = null;
+        try {
+            hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ignored) {
+        }
+
+        if (hash != null) {
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                if ((b & 0xFF) < 0x10) hex.append('0');
+                hex.append(Integer.toHexString(b & 0xFF));
+            }
+            return hex.toString();
+        }
+
+        return null;
+    }
+
+    public static boolean isCorrectFull(long fetchedLength, long contentLength) {
+        return fetchedLength == contentLength;
+    }
+
+    public static void resetBlockIfDirty(BlockInfo info) {
+        boolean isDirty = false;
+
+        if (info.getCurrentOffset() < 0) {
+            isDirty = true;
+        } else if (info.getCurrentOffset() > info.getContentLength()) {
+            isDirty = true;
+        }
+
+        if (isDirty) {
+            w("resetBlockIfDirty", "block is dirty so have to reset: " + info);
+            info.resetBlock();
+        }
+    }
+
+    public static long getFreeSpaceBytes(@NonNull StatFs statFs) {
+        // NEED CHECK PERMISSION?
+        long freeSpaceBytes;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            freeSpaceBytes = statFs.getAvailableBytes();
+        } else {
+            //noinspection deprecation
+            freeSpaceBytes = statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
+        }
+
+        return freeSpaceBytes;
+    }
+
+    /**
+     * @param si whether using SI unit refer to International System of Units.
+     */
+    public static String humanReadableBytes(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    public static @NonNull DownloadStore createDefaultDatabase(Context context) {
+        // You can import through com.liulishuo.okdownload:sqlite:{version}
+        final String storeOnSqliteClassName
+                = "com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite";
+
+        try {
+            final Constructor constructor = Class.forName(storeOnSqliteClassName)
+                    .getDeclaredConstructor(Context.class);
+            return (DownloadStore) constructor.newInstance(context);
+        } catch (ClassNotFoundException ignored) {
+        } catch (InstantiationException ignored) {
+        } catch (IllegalAccessException ignored) {
+        } catch (NoSuchMethodException ignored) {
+        } catch (InvocationTargetException ignored) {
+        }
+
+        return new BreakpointStoreOnCache();
+    }
+
+    public static @NonNull DownloadStore createRemitDatabase(@NonNull DownloadStore originStore) {
+        DownloadStore finalStore = originStore;
+        try {
+            final Method createRemitSelf = originStore.getClass()
+                    .getMethod("createRemitSelf");
+            finalStore = (DownloadStore) createRemitSelf.invoke(originStore);
+        } catch (IllegalAccessException ignored) {
+        } catch (NoSuchMethodException ignored) {
+        } catch (InvocationTargetException ignored) {
+        }
+
+        Util.d("Util", "Get final download store is " + finalStore);
+        return finalStore;
+    }
+
+    public static @NonNull DownloadConnection.Factory createDefaultConnectionFactory() {
+        final String okhttpConnectionClassName
+                = "com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection$Factory";
+        try {
+            final Constructor constructor = Class.forName(okhttpConnectionClassName)
+                    .getDeclaredConstructor();
+            return (DownloadConnection.Factory) constructor.newInstance();
+        } catch (ClassNotFoundException ignored) {
+        } catch (InstantiationException ignored) {
+        } catch (IllegalAccessException ignored) {
+        } catch (NoSuchMethodException ignored) {
+        } catch (InvocationTargetException ignored) {
+        }
+
+        return new DownloadOkHttpConnection.Factory();
+    }
+
+
+    /**
+     * 检查 下载文件块
+     *
+     * @param task
+     * @param info
+     * @param instanceLength
+     * @param isAcceptRange
+     */
+    public static void assembleBlock(@NonNull DownloadTask task, @NonNull BreakpointInfo info,
+                                     long instanceLength,
+                                     boolean isAcceptRange) {
+        final int blockCount;
+
+        Util.d("OkdownloadUtil", "检查块 instanceLength: " + instanceLength + " ,isAcceptRange: " + isAcceptRange);
+
+        if (OkDownload.with().downloadStrategy().isUseMultiBlock(isAcceptRange)) {
+            blockCount = OkDownload.with().downloadStrategy()
+                    .determineBlockCount(task, instanceLength);
+        } else {
+            blockCount = 1;
+        }
+
+        info.resetBlockInfos();
+        final long eachLength = instanceLength / blockCount;
+        long startOffset = 0;
+        long contentLength = 0;
+        for (int i = 0; i < blockCount; i++) {
+            startOffset = startOffset + contentLength;
+            if (i == 0) {
+                // first block
+                final long remainLength = instanceLength % blockCount;
+                contentLength = eachLength + remainLength;
+            } else {
+                contentLength = eachLength;
+            }
+
+            Util.d("OkdownloadUtil", "添加下载块数据 i: " + i + " ,startOffset：" + startOffset + " ,contentLength: " + contentLength);
+            final BlockInfo blockInfo = new BlockInfo(startOffset, contentLength);
+            info.addBlock(blockInfo);
+        }
+    }
+
+    public static long parseContentLength(@Nullable String contentLength) {
+        if (contentLength == null) return CHUNKED_CONTENT_LENGTH;
+
+        try {
+            return Long.parseLong(contentLength);
+        } catch (NumberFormatException ignored) {
+            Util.d("Util", "parseContentLength failed parse for '" + contentLength + "'");
+        }
+
+        return CHUNKED_CONTENT_LENGTH;
+    }
+
+    public static boolean isNetworkNotOnWifiType(ConnectivityManager manager) {
+        if (manager == null) {
+            Util.w("Util", "failed to get connectivity manager!");
+            return true;
+        }
+
+        //noinspection MissingPermission, because we check permission accessable when invoked
+        @SuppressLint("MissingPermission") final NetworkInfo info = manager.getActiveNetworkInfo();
+
+        return info == null || info.getType() != ConnectivityManager.TYPE_WIFI;
+    }
+
+    public static boolean checkPermission(String permission) {
+        final int perm = OkDownload.with().context().checkCallingOrSelfPermission(permission);
+        return perm == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static long parseContentLengthFromContentRange(@Nullable String contentRange) {
+        if (contentRange == null || contentRange.length() == 0) return CHUNKED_CONTENT_LENGTH;
+        final String pattern = "bytes (\\d+)-(\\d+)/\\d+";
+        try {
+            final Pattern r = Pattern.compile(pattern);
+            final Matcher m = r.matcher(contentRange);
+            if (m.find()) {
+                final long rangeStart = Long.parseLong(m.group(1));
+                final long rangeEnd = Long.parseLong(m.group(2));
+                return rangeEnd - rangeStart + 1;
+            }
+        } catch (Exception e) {
+            Util.w("Util", "parse content-length from content-range failed " + e);
+        }
+        return CHUNKED_CONTENT_LENGTH;
+    }
+
+    public static boolean isUriContentScheme(@NonNull Uri uri) {
+        return uri.getScheme().equals(ContentResolver.SCHEME_CONTENT);
+    }
+
+    public static boolean isUriFileScheme(@NonNull Uri uri) {
+        return uri.getScheme().equals(ContentResolver.SCHEME_FILE);
+    }
+
+    @Nullable
+    public static String getFilenameFromContentUri(@NonNull Uri contentUri) {
+        final ContentResolver resolver = OkDownload.with().context().getContentResolver();
+        final Cursor cursor = resolver.query(contentUri, null, null, null, null);
+        if (cursor != null) {
+            try {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (columnIndex >= 0) {
+                    return cursor.getString(columnIndex);
+                }
+                return "";
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return null;
+    }
+
+    //    @SuppressFBWarnings(value = "DMI")
+    @NonNull
+    public static File getParentFile(final File file) {
+        final File candidate = file.getParentFile();
+        return candidate == null ? new File("/") : candidate;
+    }
+
+    public static long getSizeFromContentUri(@NonNull Uri contentUri) {
+        final ContentResolver resolver = OkDownload.with().context().getContentResolver();
+        final Cursor cursor = resolver.query(contentUri, null, null, null, null);
+        if (cursor != null) {
+            try {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (columnIndex >= 0) {
+                    return cursor.getLong(columnIndex);
+                }
+                return 0;
+            } finally {
+                cursor.close();
+            }
+        }
+        return 0;
+    }
+
+    public static boolean isNetworkAvailable(ConnectivityManager manager) {
+        if (manager == null) {
+            Util.w("Util", "failed to get connectivity manager!");
+            return true;
+        }
+
+        //noinspection MissingPermission, because we check permission accessable when invoked
+        @SuppressLint("MissingPermission") final NetworkInfo info = manager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
+    public static void inspectUserHeader(@NonNull Map<String, List<String>> headerField)
+            throws IOException {
+        if (headerField.containsKey(IF_MATCH) || headerField.containsKey(RANGE)) {
+            throw new IOException(IF_MATCH + " and " + RANGE + " only can be handle by internal!");
+        }
+    }
+
+    public static void addUserRequestHeaderField(@NonNull Map<String, List<String>> userHeaderField,
+                                                 @NonNull DownloadConnection connection)
+            throws IOException {
+        inspectUserHeader(userHeaderField);
+        addRequestHeaderFields(userHeaderField, connection);
+    }
+
+    public static void addRequestHeaderFields(
+            @NonNull Map<String, List<String>> headerFields,
+            @NonNull DownloadConnection connection) {
+        for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+            String key = entry.getKey();
+            List<String> values = entry.getValue();
+            for (String value : values) {
+                connection.addHeader(key, value);
+            }
+        }
+    }
+
+    public static void addDefaultUserAgent(@NonNull final DownloadConnection connection) {
+        final String userAgent = "OkDownload/" + "2323";
+        connection.addHeader(USER_AGENT, userAgent);
+    }
+    private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = new ThreadPoolExecutor(0,
+            Integer.MAX_VALUE,
+            60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+            Util.threadFactory("okdownload", false));
+    @NonNull
+    @Contract(" -> new")
+    public static ExecutorService createThreadPool() {
+        return DEFAULT_EXECUTOR_SERVICE;
+    }
+}
