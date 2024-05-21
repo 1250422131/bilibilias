@@ -16,16 +16,12 @@ class AsApplication : Application(), ImageLoaderFactory {
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     @Inject
-    lateinit var bugly: Bugly
-
-    @Inject
     lateinit var okdownload: OkdownloadInit
 
     override fun onCreate() {
         super.onCreate()
         Toaster.init(this)
         Napier.base(DebugAntilog())
-        bugly()
         okdownload()
     }
 

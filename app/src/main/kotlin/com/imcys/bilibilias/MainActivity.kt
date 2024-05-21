@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
 
-    @Inject
-    lateinit var analyticsHelper: AnalyticsHelper
+//    @Inject
+//    lateinit var analyticsHelper: AnalyticsHelper
 
     @Inject
     lateinit var networkMonitor: NetworkMonitor
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             val startupComponent = startupComponentFactory(componentContext)
             AsTheme {
                 CompositionLocalProvider(
-                    LocalAnalyticsHelper provides analyticsHelper,
+//                    LocalAnalyticsHelper provides analyticsHelper,
                 ) {
                     val appState = rememberNiaAppState(
                         toastMachine = toastMachine,
