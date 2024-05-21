@@ -12,6 +12,7 @@ appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
+startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
 coil = "2.6.0"
@@ -82,6 +83,7 @@ androidx-annotation = { module = "androidx.annotation:annotation", version.ref =
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
