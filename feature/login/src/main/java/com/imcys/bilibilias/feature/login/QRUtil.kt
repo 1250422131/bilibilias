@@ -14,14 +14,14 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 
-object QRUtil {
+internal object QRUtil {
 
     fun saveQRCode(bitmap: Bitmap, context: Context) {
         val bili =
             File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "bili"
-            )
+            ).apply { if (!exists()) createNewFile() }
         try {
             val photo = File(bili, "BILIBILIAS-QR-Code.png")
             photo.outputStream().use { out ->
@@ -47,6 +47,7 @@ object QRUtil {
         }
     }
 }
+
 fun Bitmap.addWhiteBorder(borderSize: Int): Bitmap {
     val bmpWithBorder = Bitmap.createBitmap(
         getWidth() + borderSize * 2,

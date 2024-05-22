@@ -27,9 +27,7 @@ import io.github.alexzhirkevich.qrose.toImageBitmap
 
 @Composable
 fun LoginContent(
-    component: LoginComponent,
-    modifier: Modifier = Modifier,
-    onNavigationToRoot: () -> Unit
+    component: LoginComponent
 ) {
     val model by component.models.collectAsStateWithLifecycle()
     LoginContent(model = model, onEvent = component::take)
