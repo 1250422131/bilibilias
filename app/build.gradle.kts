@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
     kotlin("kapt")
 }
 
@@ -86,8 +87,8 @@ android {
         enable = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
+    composeCompiler {
+        enableStrongSkippingMode = true
     }
 
     packaging {
