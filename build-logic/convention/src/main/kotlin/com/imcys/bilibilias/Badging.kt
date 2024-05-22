@@ -1,5 +1,6 @@
 package com.imcys.bilibilias
-//import com.android.SdkConstants
+
+import com.android.SdkConstants
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
@@ -21,6 +22,7 @@ import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.kotlin.dsl.register
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecOperations
+import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
@@ -91,14 +93,14 @@ fun Project.configureBadgingTasks(
                 apk.set(
                     variant.artifacts.get(SingleArtifact.APK_FROM_BUNDLE),
                 )
-//                aapt2Executable.set(
-//                    File(
-//                        baseExtension.sdkDirectory,
-//                        "${SdkConstants.FD_BUILD_TOOLS}/" +
-//                            "${baseExtension.buildToolsVersion}/" +
-//                            SdkConstants.FN_AAPT2,
-//                    ),
-//                )
+                aapt2Executable.set(
+                    File(
+                        baseExtension.sdkDirectory,
+                        "${SdkConstants.FD_BUILD_TOOLS}/" +
+                                "${baseExtension.buildToolsVersion}/" +
+                                SdkConstants.FN_AAPT2,
+                    ),
+                )
 
                 badging.set(
                     project.layout.buildDirectory.file(

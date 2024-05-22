@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.feature.login
 
+import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.core.content.contentValuesOf
 import com.hjq.toast.Toaster
 import io.github.aakira.napier.Napier
@@ -29,11 +31,10 @@ internal object QRUtil {
             MediaStore.Images.Media.DATE_ADDED to millis / 1000L,
             MediaStore.Images.Media.DATE_MODIFIED to millis / 1000L,
             MediaStore.Images.Media.DATE_TAKEN to millis,
+            MediaStore.Images.Media.IS_PENDING to 1,
         )
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(
-                MediaStore.VOLUME_EXTERNAL_PRIMARY
-            )
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
@@ -52,7 +53,7 @@ internal object QRUtil {
             }
 
             contentValues.clear()
-            contentValues.put(MediaStore.Video.Media.IS_PENDING, 0)
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
             resolver.update(contentUri, contentValues, null, null)
         } catch (e: FileNotFoundException) {
             Napier.d(e) { "文件未发现" }
@@ -73,6 +74,49 @@ internal object QRUtil {
         } else {
             Toaster.show("呜哇，您好像没有安装Bilibili")
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun getExistingImageUriOrNullQ(context: Context): Uri? {
+
+        val projection = arrayOf(
+            MediaStore.MediaColumns._ID,
+            MediaStore.MediaColumns.DISPLAY_NAME, // unused (for verification use only)
+            MediaStore.MediaColumns.RELATIVE_PATH, // unused (for verification use only)
+            MediaStore.MediaColumns.DATE_MODIFIED // used to set signature for Glide
+        )
+
+        val selection = "${MediaStore.MediaColumns.RELATIVE_PATH}='Pictures/bili/' AND " +
+                "${MediaStore.MediaColumns.DISPLAY_NAME}='BILIBILIAS-QR-Code.png' "
+
+        context.contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            selection,
+            null,
+            null
+        ).use { c ->
+            if (c != null && c.moveToFirst()) {
+                do {
+                    val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+                    val displayName =
+                        c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val relativePath =
+                        c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH))
+                    val lastModifiedDate =
+                        c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED))
+
+                    val imageUri =
+                        ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+
+                    print("image uri update $displayName $relativePath $imageUri ($lastModifiedDate)")
+
+//                    return imageUri
+                } while (c.moveToNext())
+            }
+        }
+        print("image not created yet")
+        return null
     }
 }
 
