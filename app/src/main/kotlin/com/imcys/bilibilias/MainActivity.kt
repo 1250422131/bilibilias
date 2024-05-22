@@ -6,17 +6,21 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.metrics.performance.JankStats
-import cafe.adriel.voyager.navigator.Navigator
+import com.arkivanov.decompose.defaultComponentContext
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
+import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
-import com.imcys.bilibilias.splash.SplashScreen
+import com.imcys.bilibilias.startup.StartupComponent
+import com.imcys.bilibilias.startup.StartupContent
+import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,12 +29,19 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
 
+//    @Inject
+//    lateinit var analyticsHelper: AnalyticsHelper
+
     @Inject
     lateinit var networkMonitor: NetworkMonitor
 
     @Inject
-    lateinit var analyticsHelper: AnalyticsHelper
+    lateinit var toastMachine: ToastMachine
 
+    @Inject
+    lateinit var startupComponentFactory: StartupComponent.Factory
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,15 +63,19 @@ class MainActivity : AppCompatActivity() {
                 )
                 onDispose {}
             }
+
+            val componentContext = defaultComponentContext()
+            val startupComponent = startupComponentFactory(componentContext)
             AsTheme {
                 CompositionLocalProvider(
-                    LocalAnalyticsHelper provides analyticsHelper,
-                    LocalNetworkMonitor provides networkMonitor
+//                    LocalAnalyticsHelper provides analyticsHelper,
                 ) {
-                    Navigator(
-                        screen = SplashScreen,
-                        onBackPressed = { true }
+                    val appState = rememberNiaAppState(
+                        toastMachine = toastMachine,
+                        networkMonitor = networkMonitor,
+                        windowSizeClass = calculateWindowSizeClass(this)
                     )
+                    StartupContent(startupComponent, appState)
                 }
             }
         }
@@ -86,8 +101,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-internal val LocalNetworkMonitor = staticCompositionLocalOf<NetworkMonitor?> { null }
 
 /**
  * The default light scrim, as defined by androidx and the platform:

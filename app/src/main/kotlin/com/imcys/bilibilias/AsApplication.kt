@@ -4,9 +4,7 @@ import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.hjq.toast.Toaster
-import com.imcys.bilibilias.util.AppCenter
 import com.imcys.bilibilias.util.OkdownloadInit
-import com.imcys.bilibilias.util.ProfileVerifierLogger
 import dagger.hilt.android.HiltAndroidApp
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -18,21 +16,13 @@ class AsApplication : Application(), ImageLoaderFactory {
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 
     @Inject
-    lateinit var profileVerifierLogger: ProfileVerifierLogger
-
-    @Inject
-    lateinit var appCenter: AppCenter
-
-    @Inject
-    lateinit var okdownloadInit: OkdownloadInit
+    lateinit var okdownload: OkdownloadInit
 
     override fun onCreate() {
         super.onCreate()
         Toaster.init(this)
         Napier.base(DebugAntilog())
-        profileVerifierLogger()
-        appCenter(this)
-        okdownloadInit()
+        okdownload()
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()

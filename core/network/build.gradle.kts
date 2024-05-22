@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 
-    implementation(libs.androidx.compose.runtime)
+//    implementation(libs.androidx.compose.runtime)
 
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)

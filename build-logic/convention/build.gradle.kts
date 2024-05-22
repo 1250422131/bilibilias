@@ -83,5 +83,21 @@ gradlePlugin {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
+        register("androidApplicationDecompose") {
+            id = "bilibilias.android.application.decompose"
+            implementationClass = "AndroidApplicationDecomposeConventionPlugin"
+        }
+        register("androidLibraryDecompose") {
+            id = "bilibilias.android.library.decompose"
+            implementationClass = "AndroidLibraryDecomposeConventionPlugin"
+        }
+        register("androidFlavors") {
+            id = "bilibilias.android.application.flavors"
+            implementationClass = "AndroidApplicationFlavorsConventionPlugin"
+        }
+        register("androidBugly") {
+            id = "bilibilias.android.application.bugly"
+            implementationClass = "AndroidApplicationBuglyConventionPlugin"
+        }
     }
 }

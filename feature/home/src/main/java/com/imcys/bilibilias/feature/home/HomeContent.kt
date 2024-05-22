@@ -36,9 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.load
 import com.imcys.bilibilias.core.common.utils.ApkVerify
-import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
 import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
@@ -50,12 +50,18 @@ import com.youth.banner.indicator.CircleIndicator
 import dev.utils.app.AppUtils
 
 @Composable
-fun HomeContent(
+fun HomeContent(component: HomeComponent) {
+    val model by component.models.collectAsStateWithLifecycle()
+    HomeContent({}, {}, model.homeBanner, model.updateNotice, onEvent = component::take)
+}
+
+@Composable
+private fun HomeContent(
     onSalute: () -> Unit,
     onDonation: () -> Unit,
-    exitLogin: () -> Unit,
     homeBanner: HomeBanner,
     updateNotice: UpdateNotice,
+    onEvent: (HomeEvent) -> Unit
 ) {
     Scaffold { innerPadding ->
         val context = LocalContext.current
@@ -143,7 +149,7 @@ fun HomeContent(
                         resId = R.drawable.ic_home_logout,
                         title = "退出登录",
                         desc = "退出账号登录",
-                        exitLogin
+                        { onEvent(HomeEvent.Logout) }
                     )
                 }
             }

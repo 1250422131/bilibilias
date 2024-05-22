@@ -29,9 +29,9 @@ import coil.compose.AsyncImage
 
 @Composable
 fun UserRoute() {
-    val viewModel: UserViewModel = hiltViewModel()
-    val modelState by viewModel.models.collectAsState()
-    UserScreen(modelState, viewModel::take)
+//    val viewModel: UserViewModel = hiltViewModel()
+//    val modelState by viewModel.models.collectAsState()
+//    UserScreen(modelState, viewModel::take)
 }
 
 @Composable

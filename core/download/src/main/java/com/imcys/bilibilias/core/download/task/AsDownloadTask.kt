@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.download.task
 
+import com.imcys.bilibilias.core.common.utils.DataSize.Companion.mb
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
@@ -24,8 +25,11 @@ sealed class AsDownloadTask(
         priority: Int,
     ): DownloadTask {
         return DownloadTask.Builder(url, file)
-            .setPassIfAlreadyCompleted(true)
+            .setPassIfAlreadyCompleted(false)
             .setAutoCallbackToUIThread(false)
+            .setMinIntervalMillisCallbackProcess(50)
+            .setReadBufferSize(16.mb.inWholeBytes.toInt())
+            .setFlushBufferSize(32.mb.inWholeBytes.toInt())
             .setHeaderMapFields(
                 mapOf(
                     "User-Agent" to

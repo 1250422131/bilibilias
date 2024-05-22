@@ -28,7 +28,6 @@ internal fun Project.configureAndroidCompose(
             add("androidTestImplementation", platform(bom))
             add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
             add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
-            configureVoyager()
         }
 
         testOptions {
@@ -44,16 +43,6 @@ internal fun Project.configureAndroidCompose(
             freeCompilerArgs += buildComposeMetricsParameters()
             freeCompilerArgs += stabilityConfiguration()
         }
-    }
-}
-
-private fun Project.configureVoyager() {
-    dependencies {
-        add("implementation", libs.findLibrary("voyager-navigator").get())
-        add("implementation", libs.findLibrary("voyager-screenModel").get())
-        add("implementation", libs.findLibrary("voyager-bottomSheetNavigator").get())
-        add("implementation", libs.findLibrary("voyager-transitions").get())
-        add("implementation", libs.findLibrary("voyager-hilt").get())
     }
 }
 

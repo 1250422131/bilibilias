@@ -105,24 +105,12 @@
                         android:text="@string/tool_activity_bangumi_follow_log_header_context"
                         android:textColor="?attr/colorPrimary" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/bangumi_follow_log_selectedLogHeaders_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp" />
-
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="@string/tool_activity_bangumi_follow_log_header_optional"
                         android:textColor="?attr/colorPrimary" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/bangumi_follow_log_defaultLogHeaders_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -1,11 +1,17 @@
+import com.imcys.bilibilias.AsBuildType
+
 plugins {
     alias(libs.plugins.bilibilias.android.application)
     alias(libs.plugins.bilibilias.android.application.compose)
     alias(libs.plugins.bilibilias.android.application.jacoco)
+    alias(libs.plugins.bilibilias.android.application.flavors)
+    alias(libs.plugins.bilibilias.android.application.decompose)
+//    alias(libs.plugins.bilibilias.android.application.bugly)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
+//    id("com.google.gms.google-services")
 }
 
 android {
@@ -19,36 +25,38 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        flavorDimensions += project.name
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
         debug {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            applicationIdSuffix = AsBuildType.DEBUG.applicationIdSuffix
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
         }
 
         release {
-            // 混淆
             isMinifyEnabled = true
-            // 移除无用的resource文件
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            applicationIdSuffix = AsBuildType.RELEASE.applicationIdSuffix
+            // To publish on the Play store a private signing key is required, but to allow anyone
+            // who clones the code to sign and run the release variant, use the debug signing key.
+            // TODO: Abstract the signing configuration to a separate file to avoid hardcoding this.
+            signingConfig = signingConfigs.named("debug").get()
+            baselineProfile.automaticGenerationDuringBuild = true
+
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
-            baselineProfile.automaticGenerationDuringBuild = true
         }
     }
 
     buildFeatures {
-        compose = true
         dataBinding = true
     }
 
@@ -57,23 +65,22 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
-    dependenciesInfo {
-        includeInApk = true
-        includeInBundle = true
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
-}
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
+    implementation(projects.feature.splash)
     implementation(projects.feature.login)
     implementation(projects.feature.home)
     implementation(projects.feature.tool)
     implementation(projects.feature.download)
     implementation(projects.feature.user)
     implementation(projects.feature.settings)
+    implementation(projects.feature.player)
 
     implementation(projects.core.analytics)
     implementation(projects.core.common)
@@ -116,13 +123,15 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.voyager.tabNavigator)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 
     baselineProfile(projects.benchmarks)
+
+    implementation(libs.decompose)
+    implementation(libs.decompose.compose)
+
+    implementation(libs.sonner)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.
@@ -131,5 +140,5 @@ baselineProfile {
 }
 
 dependencyGuard {
-    configuration("releaseRuntimeClasspath")
+    configuration("prodReleaseRuntimeClasspath")
 }

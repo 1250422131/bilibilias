@@ -1,7 +1,6 @@
-﻿package com.imcys.bilibilias.feature.tool
+package com.imcys.bilibilias.feature.tool
 
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
-import com.imcys.bilibilias.core.model.video.SupportFormat
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 
 sealed interface SearchResultUiState {
@@ -14,11 +13,12 @@ sealed interface SearchResultUiState {
         val bvid: String,
         val cid: Long,
         val collection: List<View>,
+        val face: String,
     ) : SearchResultUiState
 }
 
 data class View(val cid: Long, val title: String, val videoStreamDesc: VideoStreamDesc)
-data class VideoStreamDesc(val descriptionQuality: List<Description>, )
+data class VideoStreamDesc(val descriptionQuality: List<Description>)
 
 data class Description(val desc: String, val quality: Int)
 data class Codecs(val quality: Int, val useAV1: Boolean, val useH264: Boolean, val useH265: Boolean)

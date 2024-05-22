@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import cn.jzvd.Jzvd
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
@@ -51,30 +50,30 @@ class AppAsJzvdStd : AsJzvdStd {
 
 
     private fun bingAppAsJzStdDanmakuButtonEvent() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val danmakuSwitch =
-            sharedPreferences.getBoolean("user_video_danmaku_switch", true)
+//        val danmakuSwitch =
+//            sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
-        if (!danmakuSwitch) {
-            appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
-        }
+//        if (!danmakuSwitch) {
+//            appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
+//        }
 
         appAsJzStdDanmakuButton.setOnClickListener {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-            val danmakuSwitch =
-                sharedPreferences.getBoolean("user_video_danmaku_switch", true)
+//            val danmakuSwitch =
+//                sharedPreferences.getBoolean("user_video_danmaku_switch", true)
 
-            sharedPreferences.edit {
-                putBoolean("user_video_danmaku_switch", !danmakuSwitch)
-            }
+//            sharedPreferences.edit {
+//                putBoolean("user_video_danmaku_switch", !danmakuSwitch)
+//            }
             //注意，这里是变动前的标志
-            if (danmakuSwitch) {
-                appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
-            } else {
-                appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_on)
-            }
+//            if (danmakuSwitch) {
+//                appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_off)
+//            } else {
+//                appAsJzStdDanmakuButton.setImageResource(com.imcys.bilibilias.common.R.drawable.ic_asplay_barrage_on)
+//            }
         }
     }
 

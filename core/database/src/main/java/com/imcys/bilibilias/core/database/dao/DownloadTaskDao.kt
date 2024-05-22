@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.database.dao
 
 import android.net.Uri
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -89,4 +90,7 @@ interface DownloadTaskDao {
 
     @Query("SELECT * FROM download_task_list")
     fun loadAllDownloadList(): List<DownloadTaskEntity>
+
+    @Delete
+    fun delete(entity: DownloadTaskEntity)
 }

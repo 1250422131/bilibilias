@@ -2,14 +2,16 @@ plugins {
     alias(libs.plugins.bilibilias.android.feature)
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.library.jacoco)
+    alias(libs.plugins.bilibilias.android.library.decompose)
 }
 
 android {
-    namespace = "com.sockmagic.login"
+    namespace = "com.imcys.bilibilias.feature.login"
 }
 
 dependencies {
-    implementation(projects.core.common)
+    implementation(projects.feature.common)
+
     implementation(projects.core.network)
     implementation(projects.core.datastore)
 
@@ -17,5 +19,5 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

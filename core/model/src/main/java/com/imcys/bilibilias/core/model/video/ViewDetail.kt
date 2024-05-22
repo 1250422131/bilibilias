@@ -89,7 +89,6 @@ data class ViewDetail(
     val videos: Int = 0,
     @SerialName("vt_display")
     val vtDisplay: String = "",
-    // https://www.bilibili.com/bangumi/play/ep809844
     @SerialName("redirect_url")
     val redirectUrl: String? = null
 ) {

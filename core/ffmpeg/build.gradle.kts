@@ -15,4 +15,5 @@ dependencies {
     implementation(projects.core.common)
 
     implementation(libs.ffmpegcommand)
+    implementation(libs.ffmpeg.kit.full)
 }

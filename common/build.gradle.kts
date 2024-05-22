@@ -16,7 +16,6 @@ android {
 
 dependencies {
     implementation(project(":core:network"))
-    api(libs.androidx.preference.ktx)
 
     /**
      * jxl库
@@ -63,5 +62,4 @@ dependencies {
     implementation(libs.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }
