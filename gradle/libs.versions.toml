@@ -104,7 +104,7 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common= { module = "com.umeng.umsdk:common", version = "9.4.7" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
 umeng-abtest= { module = "com.umeng.umsdk:abtest", version = "1.0.0" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
