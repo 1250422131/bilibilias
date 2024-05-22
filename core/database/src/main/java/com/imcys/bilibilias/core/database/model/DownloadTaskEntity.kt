@@ -15,6 +15,7 @@ import kotlinx.datetime.Instant
 @Entity(
     tableName = "download_task_list",
 )
+// todo 记录错误信息
 data class DownloadTaskEntity(
     val uri: Uri,
     val created: Instant,
@@ -24,16 +25,11 @@ data class DownloadTaskEntity(
     @ColumnInfo("file_type") val fileType: FileType,
     @ColumnInfo(name = "sub_title") val subTitle: String,
     val title: String,
-    val state: State,
+    var state: State = State.PENDING,
     val bytesSentTotal: Long = 0,
     val contentLength: Long = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
-    companion object {
-        const val UNKNOWN_TOTAL_OFFSET = -1L
-        const val UNKNOWN_PROGRESS = 0f
-    }
-
     @Ignore
     val progress = when (contentLength) {
         UNKNOWN_TOTAL_OFFSET -> UNKNOWN_PROGRESS
@@ -63,5 +59,9 @@ data class DownloadTaskEntity(
         result = 31 * result + cid.hashCode()
         result = 31 * result + fileType.hashCode()
         return result
+    }
+    companion object {
+        const val UNKNOWN_TOTAL_OFFSET = -1L
+        const val UNKNOWN_PROGRESS = 0f
     }
 }

@@ -120,16 +120,16 @@ class AsVideoViewModel @Inject constructor() :
         context: Context,
     ) {
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
-        val fileName = "$savePath/$bvId/${cid}_cc_$lang.ass"
+//        val savePath = sharedPreferences.getString(
+//            "user_download_save_path",
+//            context.getExternalFilesDir("download").toString(),
+//        )
+        val fileName = "$/$bvId/${cid}_cc_$lang.ass"
         val assFile = File(fileName)
 
-        val folderFile = File("$savePath/$bvId")
+        val folderFile = File("$/$bvId")
         // 检查是否存在文件夹
         if (!folderFile.exists()) folderFile.mkdirs()
 
@@ -149,16 +149,16 @@ class AsVideoViewModel @Inject constructor() :
         bytes: ByteArray,
         videoBaseBean: VideoBaseBean,
     ) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
-        val fileName = "$savePath/${(context.bvid)}/${context.cid}_danmu.ass"
+//        val savePath = sharedPreferences.getString(
+//            "user_download_save_path",
+//            context.getExternalFilesDir("download").toString(),
+//        )
+        val fileName = "/${(context.bvid)}/${context.cid}_danmu.ass"
         val assFile = File(fileName)
 
-        val folderFile = File("$savePath/${(context.bvid)}")
+        val folderFile = File("$/${(context.bvid)}")
         // 检查是否存在文件夹
         if (!folderFile.exists()) folderFile.mkdirs()
 
@@ -181,19 +181,19 @@ class AsVideoViewModel @Inject constructor() :
     }
 
     fun saveDanmaku(context: AsVideoActivity, bytes: ByteArray, videoBaseBean: VideoBaseBean) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
+//        val savePath = sharedPreferences.getString(
+//            "user_download_save_path",
+//            context.getExternalFilesDir("download").toString(),
+//        )
 
-        val dest = File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml")
+        val dest = File("$${(context.bvid)}/${context.cid}_danmu.xml")
         // 检查是否存在文件夹
         val parentDir = dest.parentFile
         if (parentDir != null && !parentDir.exists()) parentDir.mkdirs()
         if (!FileUtils.isFileExists(dest)) {
-            File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml").createNewFile()
+            File("$/${(context.bvid)}/${context.cid}_danmu.xml").createNewFile()
         }
 
         viewModelScope.launchUI {

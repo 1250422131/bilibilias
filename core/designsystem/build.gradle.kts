@@ -21,7 +21,7 @@ dependencies {
     api(libs.androidx.compose.runtime)
     api(libs.androidx.compose.ui.util)
 
-    implementation(libs.coil.compose)
+    api(libs.coil.compose)
 
     testImplementation(libs.androidx.compose.ui.test)
 //    testImplementation(libs.accompanist.testharness)

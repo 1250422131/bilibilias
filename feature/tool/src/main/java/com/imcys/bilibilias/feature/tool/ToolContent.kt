@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -40,8 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
@@ -50,6 +53,20 @@ import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
+
+@Composable
+fun ToolContent(component: ToolComponent) {
+    val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
+    val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
+    ToolContent(
+        searchQuery = searchQuery,
+        onSearchQueryChanged = component::onSearchQueryChanged,
+        onClearSearches = component::clearSearches,
+        searchResultUiState = searchResultUiState,
+        onDownload = component::download,
+        onSetting = { }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,20 +78,22 @@ fun ToolContent(
     onDownload: (DownloadRequest) -> Unit,
     onSetting: () -> Unit
 ) {
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            actions = {
-                IconButton(onClick = onSetting) {
-                    Icon(
-                        Icons.Default.Settings,
-                        contentDescription = "设置",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(onClick = onSetting) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "设置",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
-            }
-        )
-    }) { paddingValues ->
+            )
+        },
+    ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             TextField(
                 value = searchQuery,
@@ -103,15 +122,12 @@ fun ToolContent(
                         contentPadding = PaddingValues(4.dp)
                     ) {
                         item {
-                            val context = LocalContext.current
-                            AsTextButton(
-                                onClick = {
-//                                    AsVideoActivity.actionStart(
-//                                        context,
-//                                        searchResultUiState.bvid
-//                                    )
-                                },
-                                text = { Text(text = "点击进入详情页") }
+                            AsyncImage(
+                                model = searchResultUiState.face,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .clip(CircleShape)
                             )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->

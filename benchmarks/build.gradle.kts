@@ -1,3 +1,5 @@
+import com.imcys.bilibilias.configureFlavors
+
 plugins {
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.bilibilias.android.test)
@@ -16,7 +18,16 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
+    // Use the same flavor dimensions as the application to allow generating Baseline Profiles on prod,
+    // which is more close to what will be shipped to users (no fake data), but has ability to run the
+    // benchmarks on demo, so we benchmark on stable data.
+    configureFlavors(this) { flavor ->
+        buildConfigField(
+            "String",
+            "APP_FLAVOR_SUFFIX",
+            "\"${flavor.applicationIdSuffix ?: ""}\""
+        )
+    }
     testOptions.managedDevices.devices {
         create<com.android.build.api.dsl.ManagedVirtualDevice>("pixel6Api33") {
             device = "Pixel 6"
@@ -35,15 +46,14 @@ baselineProfile {
 
     // Don't use a connected device but rely on a GMD for consistency between local and CI builds.
     useConnectedDevices = false
-
 }
 
 dependencies {
     implementation(libs.androidx.benchmark.macro)
-//    implementation(libs.androidx.test.core)
-//    implementation(libs.androidx.test.espresso.core)
-//    implementation(libs.androidx.test.ext)
-//    implementation(libs.androidx.test.rules)
-//    implementation(libs.androidx.test.runner)
-//    implementation(libs.androidx.test.uiautomator)
+    implementation(libs.androidx.test.core)
+    implementation(libs.androidx.test.espresso.core)
+    implementation(libs.androidx.test.ext)
+    implementation(libs.androidx.test.rules)
+    implementation(libs.androidx.test.runner)
+    implementation(libs.androidx.test.uiautomator)
 }

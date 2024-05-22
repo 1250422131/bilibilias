@@ -12,11 +12,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
-    implementation(projects.core.database)
-    implementation(projects.core.network)
+    api(projects.core.common)
     implementation(projects.core.ffmpeg)
-    implementation(projects.core.datastore)
+    implementation(projects.core.data)
 
     implementation(libs.kotlinx.datetime)
 
@@ -28,5 +26,5 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }

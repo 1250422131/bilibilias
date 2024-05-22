@@ -2,21 +2,25 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.collection.mutableObjectListOf
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.data.toast.AsToastState
+import com.imcys.bilibilias.core.data.toast.AsToastType
+import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
-import com.imcys.bilibilias.core.download.task.getState
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
@@ -28,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import java.io.File
 import javax.inject.Inject
@@ -45,69 +48,14 @@ class DownloadManager @Inject constructor(
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
-    private val userPreferences: AsPreferencesDataSource,
-    private val defaultGroupTaskCall: DefaultGroupTaskCall,
-) {
-    private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
+    private val listener: AsDownloadListener,
+) {
     init {
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
     }
-
-    private val listener = createListener1(
-        taskStart = { task, _ ->
-            Napier.d(tag = "listener") { "任务开始 $task" }
-            val asTask = taskQueue.first { it.okTask === task }
-            scope.launch {
-                val info = asTask.viewInfo
-                val taskEntity = DownloadTaskEntity(
-                    uri = asTask.destFile.toUri(),
-                    created = Clock.System.now(),
-                    aid = info.aid,
-                    bvid = info.bvid,
-                    cid = info.cid,
-                    fileType = asTask.fileType,
-                    subTitle = asTask.subTitle,
-                    title = info.title,
-                    state = getState(task),
-                )
-                downloadTaskDao.insertOrUpdate(taskEntity)
-            }
-        },
-        progress = { task, currentOffset, totalLength ->
-            Napier.d(tag = "listener") { "任务中 $task $currentOffset-$totalLength" }
-            scope.launch {
-                downloadTaskDao.updateProgressAndState(
-                    task.uri,
-                    getState(task),
-                    currentOffset,
-                    totalLength
-                )
-            }
-        },
-        taskEnd = { task, cause, realCause, _ ->
-            Napier.d(tag = "listener") { "任务结束 $task" }
-            scope.launch {
-                downloadTaskDao.updateState(task.uri, getState(task))
-                val asDownloadTask = taskQueue.first { it.okTask === task }
-                val info = asDownloadTask.viewInfo
-                val tasks = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid)
-                val v = tasks.find { it.fileType == FileType.VIDEO }
-                val a = tasks.find { it.fileType == FileType.AUDIO }
-                Napier.d(cause.name, realCause, "下载完成")
-                v?.let { v1 ->
-                    a?.let { a1 ->
-                        defaultGroupTaskCall.execute(GroupTask(v1, a1))
-                    }
-                }
-//                if (v != null && a != null) {
-//                    defaultGroupTaskCall.execute(GroupTask(v, a))
-//                }
-            }
-        }
-    )
 
     fun download(request: DownloadRequest) {
         Napier.d { "下载任务详情: $request" }
@@ -147,9 +95,11 @@ class DownloadManager @Inject constructor(
         viewDetail: ViewDetail,
         fileType: FileType,
     ): AsDownloadTask {
-        val page = viewDetail.pages.single { it.cid == request.viewInfo.cid }
+        val info = request.viewInfo
+        val page = viewDetail.pages.single { it.cid == info.cid }
         val path = if (viewDetail.pages.size == 1) {
             "${viewDetail.title}"
+            "${info.bvid}${File.separator}${info.cid}"
         } else {
             "${viewDetail.title}${File.separator}${page.part}"
         }
@@ -157,7 +107,7 @@ class DownloadManager @Inject constructor(
         return when (fileType) {
             FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
             FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
-        }.also(taskQueue::add)
+        }.also(listener::add)
     }
 
     private fun handleAllTask(
@@ -186,24 +136,6 @@ class DownloadManager @Inject constructor(
     ) {
         val task = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
         task.okTask.enqueue(listener)
-    }
-
-    /**
-     * todo 优化路径逻辑，当视频没有子集时可以考虑直接使用当前视频名
-     * {AV} {BV} {CID} {TITLE} {P_TITLE}
-     */
-    private fun customFoldername(request: DownloadRequest, part: String): String {
-        val info = request.viewInfo
-
-        val customPath = runBlocking {
-            userPreferences.userData.first().fileNameRule
-                .replace("{AV}", info.aid.toString())
-                .replace("{BV}", info.bvid)
-                .replace("{CID}", info.cid.toString())
-                .replace("{TITLE}", info.title)
-                .replace("{P_TITLE}", part)
-        }
-        return "${DevUtils.getContext().downloadDir}${File.separator}$customPath"
     }
 
     private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
@@ -291,6 +223,30 @@ class DownloadManager @Inject constructor(
     }
 
     // endregion
-    fun cancle(task: AsDownloadTask) {
+
+    fun delete(info: ViewInfo, fileType: FileType) {
+        scope.launch {
+            val taskByInfo = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid, fileType)
+            taskByInfo?.uri?.toFile()?.delete()
+            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
+            if (taskByInfo != null) {
+                downloadTaskDao.delete(taskByInfo)
+            }
+        }
+    }
+
+    private fun deleteEmptyDirectoriesOfFolder(folder: File) {
+        if (folder.listFiles()?.size == 0) {
+            folder.delete()
+        } else {
+            for (fileEntry in folder.listFiles()) {
+                if (fileEntry.isDirectory) {
+                    deleteEmptyDirectoriesOfFolder(fileEntry)
+                    if (fileEntry.listFiles() != null && fileEntry.listFiles()?.size == 0) {
+                        fileEntry.delete()
+                    }
+                }
+            }
+        }
     }
 }

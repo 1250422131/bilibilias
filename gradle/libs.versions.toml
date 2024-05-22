@@ -1,31 +1,30 @@
 [versions]
-androidxComposeCompiler = "1.5.13"
+akdanmaku = "1.0.3"
+androidxComposeCompiler = "1.5.14"
 androidGradlePlugin = "8.4.1"
 androidTools = "31.4.1"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.2.4"
 androidx-junit = "1.1.5"
-annotation = "1.8.0"
+androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
+startupRuntime = "1.1.1"
+tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
-brv = "1.5.8"
 coil = "2.6.0"
-collection = "1.4.0"
+androidxCollection = "1.4.0"
 datastore = "1.1.1"
-deeprecopy-compiler = "0.0.1-Beta-3"
+decompose = "3.0.0"
 constraintlayout = "2.1.4"
 coreKtx = "1.13.1"
 detekt = "1.23.5"
 devappx = "2.4.6"
-dfm = "0.9.25"
-espresso-core = "3.5.1"
 ffmpegcommand = "1.3.2"
-flexbox = "3.0.0"
-glide = "4.16.0"
+ffmpegKitFull = "6.0-2"
 hilt = "2.51.1"
 androidxHiltNavigationCompose = "1.2.0"
 jiaozivideoplayer = "7.7.2.3300"
@@ -41,47 +40,75 @@ ksp = "1.9.24-1.0.20"
 ktor = "2.3.11"
 androidxLifecycle = "2.8.0"
 lottie = "6.4.0"
-material = "1.12.0"
-mmkv = "1.3.4"
+media3Exoplayer = "1.3.1"
 moleculeGradlePlugin = "1.4.3"
 monitor = "1.8.0"
 dependencyGuard = "0.5.0"
 napier = "2.7.1"
-okdownload = "1.0.7"
 okhttp = "4.12.0"
 okio = "3.9.0"
 qrose = "1.0.1"
 room = "2.6.1"
 rxFFmpeg = "4.9.0-lite"
-srl-core = "1.7.2.4"
+sonner = "0.3.5"
 toaster = "12.6"
-uiTiles = "2.2.0"
-uiTimateBarX = "0.8.1"
-uiViewbinding = "1.6.6"
 wireGradlePlugin = "4.9.9"
 work = "2.9.0"
 androidxActivity = "1.9.0"
 androidxComposeBom = "2024.05.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
-voyager = "1.1.0-alpha04"
-preferenceKtxVersion = "1.2.1"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
 androidxWindowManager = "1.3.0-beta02"
+androidxTestCore = "1.5.0"
+androidxTestExt = "1.1.5"
+androidxTestRules = "1.5.0"
+androidxTestRunner = "1.5.2"
+androidxUiAutomator = "2.3.0"
+androidxEspresso = "3.5.1"
+composeSettings = "2.2.0"
+moduleGraph = "2.5.0"
+secrets = "2.0.1"
+firebaseBom = "33.0.0"
+firebaseCrashlyticsPlugin = "3.0.1"
+firebasePerfPlugin = "1.4.2"
+googleOss = "17.0.1"
+googleOssPlugin = "0.10.6"
+gmsPlugin = "4.4.1"
 [libraries]
-androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
-androidx-collection = { module = "androidx.collection:collection", version.ref = "collection" }
+
+akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
+androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
+
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
+
 androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "androidxWindowManager" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidXMetrics" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
-androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtxVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
+tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
+umeng-common= { module = "com.umeng.umsdk:common", version = "9.4.7" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
+umeng-abtest= { module = "com.umeng.umsdk:abtest", version = "1.0.0" }
+
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 
 devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
 
@@ -89,6 +116,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
+ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 ffmpegcommand = { module = "com.github.AnJoiner:FFmpegCommand", version.ref = "ffmpegcommand" }
 
 molecule-gradle-plugin = { module = "app.cash.molecule:molecule-gradle-plugin", version.ref = "moleculeGradlePlugin" }
@@ -102,9 +130,11 @@ okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", versio
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
+
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "uiTiles" }
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
 
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 
@@ -136,17 +166,27 @@ coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-cloud-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-performance = { group = "com.google.firebase", name = "firebase-perf-ktx" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
+google-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "googleOss" }
+google-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "googleOssPlugin" }
+
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
 
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
@@ -166,13 +206,6 @@ lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
-
-voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
-voyager-screenModel = { group = "cafe.adriel.voyager", name = "voyager-screenmodel", version.ref = "voyager" }
-voyager-bottomSheetNavigator = { group = "cafe.adriel.voyager", name = "voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tabNavigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
-voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
@@ -202,7 +235,7 @@ work-testing = { group = "androidx.work", name = "work-testing", version = "work
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -210,10 +243,17 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
 room = { id = "androidx.room", version.ref = "room" }
+module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
 bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
 bilibilias-android-application-jacoco = { id = "bilibilias.android.application.jacoco", version = "unspecified" }
+bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
+bilibilias-android-application-bugly = { id = "bilibilias.android.application.bugly", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
 bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }
@@ -223,3 +263,5 @@ bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecifi
 bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
 bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
 bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }
+bilibilias-android-application-decompose = { id = "bilibilias.android.application.decompose", version = "unspecified" }
+bilibilias-android-library-decompose = { id = "bilibilias.android.library.decompose", version = "unspecified" }
