@@ -16,7 +16,8 @@ fun StartupContent(
         val child = it.instance
         when (child) {
             is StartupComponent.Child.LoginChild -> LoginContent(
-                component = child.component
+                component = child.component,
+                onNavigationToRoot = component::onRootClicked
             )
 
             is StartupComponent.Child.RootChild -> AsApp(
@@ -26,8 +27,8 @@ fun StartupContent(
 
             is StartupComponent.Child.SplashChild -> SplashContent(
                 component = child.component,
-                onNavigationToLogin = { component.onLoginClicked() },
-                onNavigationToRoot = { component.onRootClicked() }
+                onNavigationToLogin = component::onLoginClicked,
+                onNavigationToRoot = component::onRootClicked
             )
         }
     }

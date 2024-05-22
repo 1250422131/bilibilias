@@ -50,10 +50,13 @@ private fun LoginPresenter(
     var key by remember { mutableStateOf("") }
     var isSuccess by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
+    // FIXME: 避免多次跳转的到扫码页面
+    var requiredGoto by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         val (qrcodeKey, url) = loginRepository.获取二维码()
         key = qrcodeKey
         qrUrl = url
+        requiredGoto = true
     }
 
     LaunchedEffect(key) {
@@ -76,10 +79,13 @@ private fun LoginPresenter(
                     val (qrcodeKey, url) = loginRepository.获取二维码()
                     key = qrcodeKey
                     qrUrl = url
+                    requiredGoto = true
                 }
+
+                LoginEvent.RequiedGoto -> requiredGoto = false
             }
         }
     }
     val painter = rememberQrCodePainter(data = qrUrl)
-    return LoginModel(isSuccess, message, painter)
+    return LoginModel(isSuccess, message, painter, false)
 }
