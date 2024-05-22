@@ -181,21 +181,22 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                 )
                 if (saveUriPath != null) {
                     // 走SAF
-                    var dlFileDocument = DocumentFile.fromTreeUri(
-                        OkDownloadProvider.context,
-                        Uri.parse(saveUriPath)
-                    )
-                    launchIO {
-                       // 无需等待
-                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
-                       val docList = mPath.split("/")
-                       docList.forEachIndexed { index, name ->
-                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                           if (index == docList.size - 1) {
-                               dlFileDocument?.delete()
-                           }
-                       }
-                   }
+                    asToast(OkDownloadProvider.context,"SAF尚不支持删除，请手动删除本地文件。")
+//                    var dlFileDocument = DocumentFile.fromTreeUri(
+//                        OkDownloadProvider.context,
+//                        Uri.parse(saveUriPath)
+//                    )
+//                    launchIO {
+//                       // 无需等待
+//                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
+//                       val docList = mPath.split("/")
+//                       docList.forEachIndexed { index, name ->
+//                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+//                           if (index == docList.size - 1) {
+//                               dlFileDocument?.delete()
+//                           }
+//                       }
+//                   }
                 } else {
                     // 走普通删除
                     launchIO {

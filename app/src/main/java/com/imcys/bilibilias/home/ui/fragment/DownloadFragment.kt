@@ -18,6 +18,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -191,6 +192,7 @@ class DownloadFragment : BaseFragment() {
                     it.cancel()
                 }
                 neutralButton = {
+                    asToast(requireContext(),"如果是自定义路径请手动删除，APP无法完成删除。")
                     deleteSelectTaskAndFile()
                     it.cancel()
                 }
@@ -216,21 +218,21 @@ class DownloadFragment : BaseFragment() {
                 )
                 if (saveUriPath != null) {
                     // 走SAF
-                    var dlFileDocument = DocumentFile.fromTreeUri(
-                        OkDownloadProvider.context,
-                        Uri.parse(saveUriPath)
-                    )
-                    launchIO {
-                        // 无需等待
-                        val mPath = it.savePath.replace("/storage/emulated/0/", "")
-                        val docList = mPath.split("/")
-                        docList.forEachIndexed { index, name ->
-                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                            if (index == docList.size - 1) {
-                                dlFileDocument?.delete()
-                            }
-                        }
-                    }
+//                    var dlFileDocument = DocumentFile.fromTreeUri(
+//                        OkDownloadProvider.context,
+//                        Uri.parse(saveUriPath)
+//                    )
+//                    launchIO {
+//                        // 无需等待
+//                        val mPath = it.savePath.replace("/storage/emulated/0/", "")
+//                        val docList = mPath.split("/")
+//                        docList.forEachIndexed { index, name ->
+//                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+//                            if (index == docList.size - 1) {
+//                                dlFileDocument?.delete()
+//                            }
+//                        }
+//                    }
                 } else {
                     // 走普通删除
                     launchIO {
