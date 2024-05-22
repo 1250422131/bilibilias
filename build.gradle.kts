@@ -27,6 +27,7 @@ plugins {
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
+    alias(libs.plugins.compose) apply false
 }
 // Task to print all the module paths in the project e.g. :core:data
 // Used by module graph generator script

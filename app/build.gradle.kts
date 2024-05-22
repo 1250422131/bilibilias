@@ -139,6 +139,8 @@ baselineProfile {
     automaticGenerationDuringBuild = false
 }
 
+// dependencyGuardBaseline
+// dependencyGuard
 dependencyGuard {
     configuration("prodReleaseRuntimeClasspath")
 }
