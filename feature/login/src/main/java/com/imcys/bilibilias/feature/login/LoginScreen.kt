@@ -27,16 +27,18 @@ import io.github.alexzhirkevich.qrose.toImageBitmap
 
 @Composable
 fun LoginContent(
-    component: LoginComponent
+    component: LoginComponent,
+    onNavigationToRoot: () -> Unit
 ) {
     val model by component.models.collectAsStateWithLifecycle()
-    LoginContent(model = model, onEvent = component::take)
+    LoginContent(model = model, onNavigationToRoot = onNavigationToRoot, onEvent = component::take)
 }
 
 @Composable
 private fun LoginContent(
     model: LoginModel,
-    onEvent: (LoginEvent) -> Unit
+    onEvent: (LoginEvent) -> Unit,
+    onNavigationToRoot: () -> Unit
 ) {
     Scaffold { innerPadding ->
         Column(
@@ -46,6 +48,9 @@ private fun LoginContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SideEffect {
+                if (model.isSuccess) {
+                    onNavigationToRoot()
+                }
             }
             val context = LocalContext.current
             LaunchedEffect(model.qrCodePainter) {
