@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.bilibilias.android.application.compose)
     alias(libs.plugins.bilibilias.android.application.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
-    alias(libs.plugins.bilibilias.android.application.decompose)
+    alias(libs.plugins.bilibilias.multiplatform.decompose)
 //    alias(libs.plugins.bilibilias.android.application.bugly)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)

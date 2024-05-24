@@ -116,7 +116,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.HomeChild -> {
-                HomeContent(child.component)
+                HomeContent(component = child.component)
             }
 
             is RootComponent.Child.ToolChild -> {
