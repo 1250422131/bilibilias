@@ -24,6 +24,6 @@ registries:
     url: "https://maven.google.com"
     replaces-base: true
   jitpack:
-    type: "jitpack-repository"
+    type: "maven-repository"
     url: "https://jitpack.io"
     replaces-base: true
