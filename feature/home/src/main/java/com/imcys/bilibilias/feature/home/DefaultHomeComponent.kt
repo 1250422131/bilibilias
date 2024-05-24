@@ -18,6 +18,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 class DefaultHomeComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -25,7 +26,12 @@ class DefaultHomeComponent @AssistedInject constructor(
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource
 ) : HomeComponent {
+    override val models: StateFlow<HomeUiState>
+        get() = TODO("Not yet implemented")
 
+    override fun take(event: HomeEvent) {
+        TODO("Not yet implemented")
+    }
 //    @Composable
 //    override fun models(events: Flow<HomeEvent>): HomeUiState {
 //        var notice by remember { mutableStateOf(UpdateNotice()) }
