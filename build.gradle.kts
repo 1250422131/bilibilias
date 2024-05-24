@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
-        classpath(libs.wire.gradle.plugin)
-        classpath(libs.molecule.gradle.plugin)
+        classpath(libs.wire.gradlePlugin)
         classpath(libs.google.oss.licenses.plugin)
     }
     repositories {

@@ -3,6 +3,7 @@ package com.imcys.bilibilias
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
@@ -49,14 +50,15 @@ internal fun Project.configureAndroidCompose(
 //            .onlyIfTrue().flatMap { rootProject.layout.buildDirectory.dir("compose-reports") }
 //            .let(reportsDestination::set)
 
-        stabilityConfigurationFile.set(rootProject.layout.projectDirectory.file("compose_compiler_config.conf"))
-        metricsDestination.set(layout.buildDirectory.dir("compose-metrics"))
-        reportsDestination.set(layout.buildDirectory.dir("compose-reports"))
+        stabilityConfigurationFile =
+            rootProject.layout.projectDirectory.file("compose_compiler_config.conf")
+        metricsDestination = layout.buildDirectory.dir("compose-metrics")
+        reportsDestination = layout.buildDirectory.dir("compose-reports")
 
-        generateFunctionKeyMetaClasses.set(true)
-        includeSourceInformation.set(true)
-        enableNonSkippingGroupOptimization.set(true)
-        enableStrongSkippingMode.set(true)
-        includeTraceMarkers.set(true)
+        generateFunctionKeyMetaClasses = true
+        includeSourceInformation = true
+        enableNonSkippingGroupOptimization = true
+        enableStrongSkippingMode = true
+        includeTraceMarkers = true
     }
 }

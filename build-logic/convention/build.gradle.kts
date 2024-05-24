@@ -13,9 +13,10 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
-tasks.withType<KotlinCompile>().configureEach {
+
+kotlin {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 
@@ -85,14 +86,9 @@ gradlePlugin {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
-        register("androidApplicationDecompose") {
-            id = "bilibilias.android.application.decompose"
-            implementationClass = "AndroidApplicationDecomposeConventionPlugin"
-        }
-        register("androidLibraryDecompose") {
-            // Multiplatform decompose
-            id = "bilibilias.android.library.decompose"
-            implementationClass = "AndroidLibraryDecomposeConventionPlugin"
+        register("multiplatformLibraryDecompose") {
+            id = "bilibilias.multiplatform.decompose"
+            implementationClass = "MultiplatformDecomposeConventionPlugin"
         }
         register("androidFlavors") {
             id = "bilibilias.android.application.flavors"

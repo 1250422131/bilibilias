@@ -5,12 +5,14 @@ androidTools = "31.4.1"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.2.4"
 androidx-junit = "1.1.5"
+androidDesugarJdkLibs = "2.0.4"
 androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
 appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
+dokarSheets = "0.6.0-alpha02"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
@@ -40,7 +42,6 @@ ktor = "2.3.11"
 androidxLifecycle = "2.8.0"
 lottie = "6.4.0"
 media3Exoplayer = "1.3.1"
-moleculeGradlePlugin = "1.4.3"
 monitor = "1.8.0"
 dependencyGuard = "0.5.0"
 napier = "2.7.1"
@@ -76,7 +77,7 @@ googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
 gmsPlugin = "4.4.1"
 [libraries]
-
+android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
@@ -101,6 +102,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
+dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common = { module = "com.umeng.umsdk:common", version = "9.4.7" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
@@ -118,8 +120,6 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 ffmpegcommand = { module = "com.github.AnJoiner:FFmpegCommand", version.ref = "ffmpegcommand" }
 
-molecule-gradle-plugin = { module = "app.cash.molecule:molecule-gradle-plugin", version.ref = "moleculeGradlePlugin" }
-
 monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
 
@@ -127,7 +127,7 @@ napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-wire-gradle-plugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
+wire-gradlePlugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
 sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
@@ -264,5 +264,4 @@ bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecifi
 bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
 bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
 bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }
-bilibilias-android-application-decompose = { id = "bilibilias.android.application.decompose", version = "unspecified" }
-bilibilias-android-library-decompose = { id = "bilibilias.android.library.decompose", version = "unspecified" }
+bilibilias-multiplatform-decompose = { id = "bilibilias.multiplatform.decompose", version = "unspecified" }

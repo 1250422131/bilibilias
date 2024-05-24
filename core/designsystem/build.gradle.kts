@@ -12,7 +12,7 @@ android {
 }
 
 dependencies {
-//    lintPublish(projects.lint)
+    lintPublish(projects.lint)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
@@ -22,6 +22,8 @@ dependencies {
     api(libs.androidx.compose.ui.util)
 
     api(libs.coil.compose)
+
+    api(libs.dokar.sheets)
 
     testImplementation(libs.androidx.compose.ui.test)
 //    testImplementation(libs.accompanist.testharness)

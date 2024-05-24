@@ -51,8 +51,8 @@ import dev.utils.app.AppUtils
 
 @Composable
 fun HomeContent(component: HomeComponent) {
-    val model by component.models.collectAsStateWithLifecycle()
-    HomeContent({}, {}, model.homeBanner, model.updateNotice, onEvent = component::take)
+//    val model by component.models.collectAsStateWithLifecycle()
+//    HomeContent({}, {}, model.homeBanner, model.updateNotice, onEvent = component::take)
 }
 
 @Composable

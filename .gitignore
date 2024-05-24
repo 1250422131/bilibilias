@@ -50,3 +50,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Kotlin
+.kotlin

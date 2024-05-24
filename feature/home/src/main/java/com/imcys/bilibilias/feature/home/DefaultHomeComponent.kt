@@ -24,32 +24,32 @@ class DefaultHomeComponent @AssistedInject constructor(
     private val asRepository: BiliBiliAsRepository,
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource
-) : HomeComponent, AsComponentContext<HomeEvent, HomeUiState>(componentContext) {
+) : HomeComponent {
 
-    @Composable
-    override fun models(events: Flow<HomeEvent>): HomeUiState {
-        var notice by remember { mutableStateOf(UpdateNotice()) }
-        var banner by remember { mutableStateOf(HomeBanner()) }
-        LaunchedEffect(Unit) {
-            banner = asRepository.getHomeBanner()
-            notice = asRepository.getUpdateNotice()
-        }
-        LaunchedEffect(Unit) {
-            loginRepository.getBilibiliHome()
-            val bar = loginRepository.导航栏用户信息()
-            loginInfoDataSource.setMid(bar.mid)
-            loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
-        }
-
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    HomeEvent.Logout -> loginInfoDataSource.setLoginState(false)
-                }
-            }
-        }
-        return HomeUiState(notice, banner)
-    }
+//    @Composable
+//    override fun models(events: Flow<HomeEvent>): HomeUiState {
+//        var notice by remember { mutableStateOf(UpdateNotice()) }
+//        var banner by remember { mutableStateOf(HomeBanner()) }
+//        LaunchedEffect(Unit) {
+//            banner = asRepository.getHomeBanner()
+//            notice = asRepository.getUpdateNotice()
+//        }
+//        LaunchedEffect(Unit) {
+//            loginRepository.getBilibiliHome()
+//            val bar = loginRepository.导航栏用户信息()
+//            loginInfoDataSource.setMid(bar.mid)
+//            loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
+//        }
+//
+//        LaunchedEffect(Unit) {
+//            events.collect { event ->
+//                when (event) {
+//                    HomeEvent.Logout -> loginInfoDataSource.setLoginState(false)
+//                }
+//            }
+//        }
+//        return HomeUiState(notice, banner)
+//    }
 
     @AssistedFactory
     interface Factory : HomeComponent.Factory {
