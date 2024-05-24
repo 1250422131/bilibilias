@@ -106,7 +106,7 @@ dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarShee
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common = { module = "com.umeng.umsdk:common", version = "9.4.7" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
-umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.0" }
+umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
