@@ -1,9 +1,11 @@
 package com.imcys.bilibilias.feature.home
 
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.feature.common.IComponentContext
+import kotlinx.coroutines.flow.StateFlow
 
-interface HomeComponent  {
+interface HomeComponent {
+    val models: StateFlow<HomeUiState>
+    fun take(event: HomeEvent)
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,
