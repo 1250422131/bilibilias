@@ -105,7 +105,7 @@ bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-comp
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.1" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
 umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
