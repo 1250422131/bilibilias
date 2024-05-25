@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.feature.download
 
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
@@ -9,12 +11,13 @@ import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.ViewInfo
-import com.imcys.bilibilias.feature.common.AsComponentContext2
+import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -23,7 +26,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val downloadManager: DownloadManager,
     private val downloadTaskDao: DownloadTaskDao,
-) : DownloadComponent, AsComponentContext2(componentContext) {
+) : DownloadComponent, BaseViewModel<Unit, Unit>(componentContext) {
     override val taskFlow = downloadTaskDao.loadAllDownloadFlow()
         .map {
             Napier.d { it.joinToString("\n") }
@@ -40,7 +43,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
             }
         }
         .map { it.groupBy { it.viewInfo.cid } }
-        .stateIn(scope, SharingStarted.Lazily, persistentMapOf())
+        .stateIn(viewModelScope, SharingStarted.Lazily, persistentMapOf())
 
     override suspend fun getPlayerInfo(aid: Aid, bvid: Bvid, cid: Cid): List<DownloadTaskEntity> {
         return downloadTaskDao.getTaskByInfo(aid, bvid, cid)
@@ -48,6 +51,11 @@ class DefaultDownloadComponent @AssistedInject constructor(
 
     override fun onDelete(viewInfo: ViewInfo, fileType: FileType) {
         downloadManager.delete(viewInfo, fileType)
+    }
+
+    @Composable
+    override fun models(events: Flow<Unit>) {
+        TODO("Not yet implemented")
     }
 
     @AssistedFactory

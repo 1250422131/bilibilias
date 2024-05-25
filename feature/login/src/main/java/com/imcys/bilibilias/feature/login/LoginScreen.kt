@@ -30,8 +30,8 @@ fun LoginContent(
     component: LoginComponent,
     onNavigationToRoot: () -> Unit
 ) {
-//    val model by component.models.collectAsStateWithLifecycle()
-//    LoginContent(model = model, onNavigationToRoot = onNavigationToRoot, onEvent = component::take)
+    val model by component.models.collectAsStateWithLifecycle()
+    LoginContent(model = model, onNavigationToRoot = onNavigationToRoot, onEvent = component::take)
 }
 
 @Composable

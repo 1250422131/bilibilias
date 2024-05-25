@@ -2,7 +2,6 @@ buildscript {
     dependencies {
         classpath(libs.wire.gradlePlugin)
         classpath(libs.google.oss.licenses.plugin)
-        classpath(libs.molecule.gradlePlugin)
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")

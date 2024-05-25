@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.feature.tool
 
+import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.decompose.value.update
@@ -11,7 +12,7 @@ import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.network.repository.VideoRepository
-import com.imcys.bilibilias.feature.common.AsComponentContext2
+import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
 import dagger.assisted.Assisted
@@ -36,7 +37,7 @@ class DefaultToolComponent @AssistedInject constructor(
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
-) : ToolComponent, AsComponentContext2(componentContext) {
+) : ToolComponent, BaseViewModel<Unit, Unit>(componentContext) {
     private val _searchQuery = MutableStateFlow("")
     override val searchQuery = _searchQuery.asStateFlow()
 
@@ -143,5 +144,10 @@ class DefaultToolComponent @AssistedInject constructor(
         override fun invoke(
             componentContext: ComponentContext,
         ): DefaultToolComponent
+    }
+
+    @Composable
+    override fun models(events: Flow<Unit>) {
+        TODO("Not yet implemented")
     }
 }

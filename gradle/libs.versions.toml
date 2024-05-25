@@ -13,7 +13,6 @@ asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 dokarSheets = "0.6.0-alpha02"
-moleculeGradlePlugin = "1.4.3"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
@@ -104,7 +103,6 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
-molecule-gradlePlugin = { module = "app.cash.molecule:molecule-gradle-plugin", version.ref = "moleculeGradlePlugin" }
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common = { module = "com.umeng.umsdk:common", version = "9.4.7" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }

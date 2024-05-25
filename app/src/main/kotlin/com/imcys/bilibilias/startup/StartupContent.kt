@@ -13,8 +13,7 @@ fun StartupContent(
     appState: AsAppState
 ) {
     Children(stack = component.stack) {
-        val child = it.instance
-        when (child) {
+        when (val child = it.instance) {
             is StartupComponent.Child.LoginChild -> LoginContent(
                 component = child.component,
                 onNavigationToRoot = component::onRootClicked

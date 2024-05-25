@@ -73,6 +73,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.common)
     implementation(projects.feature.splash)
     implementation(projects.feature.login)
     implementation(projects.feature.home)
@@ -96,7 +97,9 @@ dependencies {
     implementation(projects.common)
     implementation(projects.toolLogExport)
 
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.activity.compose) {
+        exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
+    }
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
