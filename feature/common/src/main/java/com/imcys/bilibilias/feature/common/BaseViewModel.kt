@@ -1,27 +1,22 @@
 package com.imcys.bilibilias.feature.common
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.feature.common.molecule.AndroidUiDispatcher
 import com.imcys.bilibilias.feature.common.molecule.RecompositionMode
 import com.imcys.bilibilias.feature.common.molecule.launchMolecule
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
-@Deprecated("")
-abstract class AsComponentContext2(componentContext: ComponentContext) :
-    ComponentContext by componentContext {
-    protected val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-}
 
-abstract class AsComponentContext<Event, Model>(
-    componentContext: ComponentContext
-) : AsComponentContext2(componentContext) {
-    private val moleculeScope = CoroutineScope(AndroidUiDispatcher.Main)
-    protected val scope2 = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
+    ComponentContext by componentContext,
+    ViewModel() {
+    private val moleculeScope =
+        CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
 
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.

@@ -6,5 +6,4 @@ data class LoginModel(
     val isSuccess: Boolean,
     val message: String,
     val qrCodePainter: Painter,
-    val requiredGoTO: Boolean
 )

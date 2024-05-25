@@ -19,7 +19,21 @@ fun updatePhotoMedias(
     vararg files: File,
     callback: (String, Uri) -> Unit = { _, _ -> }
 ) {
-    MediaScannerConnection.scanFile(context, files.map { it.path }.toTypedArray(), null) { path, uri ->
+    MediaScannerConnection.scanFile(
+        context,
+        files.map { it.path }.toTypedArray(),
+        null
+    ) { path, uri ->
+        callback(path, uri)
+    }
+}
+
+fun updatePhotoMedias(
+    context: Context,
+    uri: Uri,
+    callback: (String, Uri) -> Unit = { _, _ -> }
+) {
+    MediaScannerConnection.scanFile(context, arrayOf(uri.path), null) { path, uri ->
         callback(path, uri)
     }
 }
