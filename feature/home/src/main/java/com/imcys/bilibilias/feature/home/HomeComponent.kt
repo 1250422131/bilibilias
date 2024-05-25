@@ -13,6 +13,7 @@ import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.repository.BiliBiliAsRepository
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import com.imcys.bilibilias.core.network.utils.WBIUtils
+import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,32 +24,32 @@ class HomeComponent @AssistedInject constructor(
     private val asRepository: BiliBiliAsRepository,
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource
-) /*: AsComponentContext<HomeEvent, HomeUiState>(componentContext)*/ {
+) : BaseViewModel<HomeEvent, HomeUiState>(componentContext) {
 
-//    @Composable
-//    override fun models(events: Flow<HomeEvent>): HomeUiState {
-//        var notice by remember { mutableStateOf(UpdateNotice()) }
-//        var banner by remember { mutableStateOf(HomeBanner()) }
-//        LaunchedEffect(Unit) {
-//            banner = asRepository.getHomeBanner()
-//            notice = asRepository.getUpdateNotice()
-//        }
-//        LaunchedEffect(Unit) {
-//            loginRepository.getBilibiliHome()
-//            val bar = loginRepository.导航栏用户信息()
-//            loginInfoDataSource.setMid(bar.mid)
-//            loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
-//        }
-//
-//        LaunchedEffect(Unit) {
-//            events.collect { event ->
-//                when (event) {
-//                    HomeEvent.Logout -> loginInfoDataSource.setLoginState(false)
-//                }
-//            }
-//        }
-//        return HomeUiState(notice, banner)
-//    }
+    @Composable
+    override fun models(events: Flow<HomeEvent>): HomeUiState {
+        var notice by remember { mutableStateOf(UpdateNotice()) }
+        var banner by remember { mutableStateOf(HomeBanner()) }
+        LaunchedEffect(Unit) {
+            banner = asRepository.getHomeBanner()
+            notice = asRepository.getUpdateNotice()
+        }
+        LaunchedEffect(Unit) {
+            loginRepository.getBilibiliHome()
+            val bar = loginRepository.导航栏用户信息()
+            loginInfoDataSource.setMid(bar.mid)
+            loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
+        }
+
+        LaunchedEffect(Unit) {
+            events.collect { event ->
+                when (event) {
+                    HomeEvent.Logout -> loginInfoDataSource.setLoginState(false)
+                }
+            }
+        }
+        return HomeUiState(notice, banner)
+    }
 
     @AssistedFactory
     interface Factory {
