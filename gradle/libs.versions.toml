@@ -22,7 +22,7 @@ datastore = "1.1.1"
 decompose = "3.0.0"
 constraintlayout = "2.1.4"
 coreKtx = "1.13.1"
-detekt = "1.23.5"
+detekt = "1.23.6"
 devappx = "2.4.6"
 ffmpegcommand = "1.3.2"
 ffmpegKitFull = "6.0-2"
@@ -104,9 +104,9 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
-umeng-common = { module = "com.umeng.umsdk:common", version = "9.4.7" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.4.0" }
-umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.0" }
+umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.1" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
+umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
