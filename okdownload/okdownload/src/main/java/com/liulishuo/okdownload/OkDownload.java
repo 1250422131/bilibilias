@@ -122,15 +122,18 @@ public class OkDownload {
         return singleton;
     }
 
-    public static OkDownload with(Context context) {
-        if (singleton == null) {
-            synchronized (OkDownload.class) {
-                if (singleton == null) {
-                    singleton = new Builder(context).build();
-                }
-            }
+    @NonNull
+    public static void setSingletonInstance(@NonNull OkDownload okDownload) {
+        if (singleton != null) {
+            throw new IllegalArgumentException("OkDownload must be null.");
         }
-        return singleton;
+
+        synchronized (OkDownload.class) {
+            if (singleton != null) {
+                throw new IllegalArgumentException("OkDownload must be null.");
+            }
+            singleton = okDownload;
+        }
     }
 
     public static class Builder {

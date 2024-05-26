@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.feature.download
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,26 +30,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.common.utils.DataUnit
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
-import com.imcys.bilibilias.core.model.video.Cid
+import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
 
 @Composable
-fun DownloadRoute(component: DownloadComponent) {
-    val taskQueue by component.taskFlow.collectAsStateWithLifecycle()
-    DownloadScreen(taskQueue, {vUri, aUri ->  })
+fun DownloadContent(component: DownloadComponent) {
+    val model by component.models.collectAsStateWithLifecycle()
+    val dialogSlot by component.dialogSlot.subscribeAsState()
+    dialogSlot.child?.instance?.let {
+        BottomSheetContent(it)
+    }
+    DownloadScreen(model = model, onEvent = component::take, component::onSettingsClicked)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DownloadScreen(
-    uiState: Map<Cid, List<DownloadTask>>,
-    navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit,
+    model: Model,
+    onEvent: (Event) -> Unit,
+    onSettingsClicked: () -> Unit,
 ) {
     var edit by remember { mutableStateOf(false) }
     Scaffold(
@@ -69,9 +71,9 @@ internal fun DownloadScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            uiState.forEach { (_, v) ->
+            model.entities.forEach { v ->
                 items(v) { item ->
-                    DownloadTaskItem(task = item, navigationToPlayer)
+                    DownloadTaskItem(task = item, onSettingsClicked)
                 }
                 item {
                     HorizontalDivider()
@@ -83,12 +85,9 @@ internal fun DownloadScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadTaskItem(task: DownloadTask, navigationToPlayer: (vUri: Uri, aUri: Uri) -> Unit) {
+fun DownloadTaskItem(task: DownloadTask, onSettingsClicked: () -> Unit) {
     ListItem(
-        modifier = Modifier.combinedClickable {
-            val info = task.viewInfo
-
-        },
+        modifier = Modifier.combinedClickable { onSettingsClicked() },
         leadingContent = {
             AsCard(modifier = Modifier.size(80.dp)) {
                 Box(

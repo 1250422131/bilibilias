@@ -15,6 +15,7 @@ class OkDownloadInitializer : Initializer<OkDownload> {
             )
             .downloadDispatcher(DownloadDispatcher(resolve.injectExecutorService()))
             .build()
+            .also(OkDownload::setSingletonInstance)
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> {

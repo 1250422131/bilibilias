@@ -48,7 +48,6 @@ class DownloadManager @Inject constructor(
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
-
     private val listener: AsDownloadListener,
 ) {
     init {
@@ -81,6 +80,7 @@ class DownloadManager @Inject constructor(
         viewDetail: ViewDetail
     ) {
         scope.launch {
+            Napier.d { "任务类型 ${request.format.taskType}" }
             when (request.format.taskType) {
                 TaskType.ALL -> handleAllTask(streamUrl, request, viewDetail)
                 TaskType.VIDEO -> handleVideoTask(streamUrl, request, viewDetail)
@@ -104,6 +104,7 @@ class DownloadManager @Inject constructor(
             "${viewDetail.title}${File.separator}${page.part}"
         }
         val fullPath = "${DevUtils.getContext().downloadDir}${File.separator}$path"
+        Napier.d { "创建任务 $fullPath" }
         return when (fileType) {
             FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
             FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
