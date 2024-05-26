@@ -68,7 +68,6 @@ class AsDownloadListener @Inject constructor(
         toast(realCause, asDownloadTask)
 
         scope.launch {
-
             downloadTaskDao.updateState(
                 task.uri,
                 if (realCause == null) State.COMPLETED else State.ERROR

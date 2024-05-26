@@ -32,7 +32,7 @@ import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
-import com.imcys.bilibilias.feature.download.DownloadRoute
+import com.imcys.bilibilias.feature.download.DownloadContent
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.navigation.RootComponent
@@ -124,7 +124,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             }
 
             is RootComponent.Child.DownloadChild -> {
-                DownloadRoute(component = child.component)
+                DownloadContent(component = child.component)
             }
 
             RootComponent.Child.UserChild -> Unit
