@@ -3,13 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="UpStatBeam"
-            type="com.imcys.bilibilias.home.ui.model.UpStatBeam" />
-
-        <variable
-            name="UserCardBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCardBean" />
 
     </data>
 

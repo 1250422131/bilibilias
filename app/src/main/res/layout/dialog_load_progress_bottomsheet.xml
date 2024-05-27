@@ -43,15 +43,6 @@
 
 
         </LinearLayout>
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_url="https://assets10.lottiefiles.com/packages/lf20_imw8dd3h.json" />
-
-
         <ProgressBar
             android:id="@+id/dialog_load_progressBar"
             android:progressDrawable="@drawable/dialog_load_progress"

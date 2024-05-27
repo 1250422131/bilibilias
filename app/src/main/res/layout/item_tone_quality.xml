@@ -5,11 +5,6 @@
 
     <data>
 
-
-        <variable
-            name="AudioBean"
-            type="com.imcys.bilibilias.home.ui.model.DashVideoPlayBean.DataBean.DashBean.AudioBean" />
-
     </data>
 
     <androidx.cardview.widget.CardView
@@ -27,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:textColor="@{AudioBean.selected == 0 ? @color/black  : @color/white}"
             android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

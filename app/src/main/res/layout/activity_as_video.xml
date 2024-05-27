@@ -2,13 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <data>
-    </data>
+
+    <data></data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/as_video_appbar"
@@ -23,26 +22,10 @@
                 android:theme="@style/asVideoToolStyle"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-                    <com.imcys.bilibilias.base.view.AppAsJzvdStd
-                        android:id="@+id/as_video_asJzvdStd"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:transitionName="videoPic"
-                        app:layout_collapseMode="parallax"
-                        app:showPlayButton="false" />
-
-
-                </FrameLayout>
-
-
+                    android:layout_height="match_parent"></FrameLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
-
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -89,8 +72,6 @@
                         android:layout_marginTop="10dp"
                         android:ellipsize="end"
                         android:maxLines="4"
-
-                        android:textColor="@color/home_bottom_nav_seletor"
                         android:textSize="19sp"
                         android:textStyle="bold" />
 
@@ -115,7 +96,6 @@
                                 android:backgroundTint="@color/white"
                                 android:contentDescription="点赞按钮"
                                 android:src="@drawable/ic_as_video_like"
-                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -139,7 +119,6 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_throw"
-                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -156,8 +135,7 @@
                             android:id="@+id/as_video_collection_ly"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                       >
+                            android:layout_weight="1">
 
 
                             <ImageView
@@ -165,7 +143,6 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_as_video_collec"
-                                android:tint="@color/as_like_seletor"
                                 tools:ignore="UseAppTint" />
 
                             <TextView
@@ -209,8 +186,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
-                    android:orientation="horizontal"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:orientation="horizontal"
 
                     android:visibility="visible">
 
@@ -299,9 +276,7 @@
                             <androidx.constraintlayout.utils.widget.ImageFilterButton
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:background="@drawable/as_cc_ass_dl_bg"
                                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
-
                                 android:src="@drawable/ic_as_cc"
                                 android:textSize="15sp"
                                 android:textStyle="bold"

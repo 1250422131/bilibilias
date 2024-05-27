@@ -23,7 +23,6 @@
                 android:id="@+id/web_as_materialToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:menu="@menu/tool_web_toolbar_menu"
                 app:title="@string/app_activity_web_as_title" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 

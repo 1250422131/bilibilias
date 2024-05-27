@@ -21,10 +21,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":app")
 
-include(":common")
-include(":tool_log_export")
-
-// include(":app-nia-catalog")
 include(":benchmarks")
 include(":core:analytics")
 include(":core:common")

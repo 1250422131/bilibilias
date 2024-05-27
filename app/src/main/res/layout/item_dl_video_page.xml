@@ -7,10 +7,6 @@
     <data>
 
 
-        <variable
-            name="DataBean"
-            type="com.imcys.bilibilias.home.ui.model.VideoPageListData.DataBean" />
-
     </data>
 
     <androidx.cardview.widget.CardView
@@ -28,8 +24,6 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:text="@{DataBean.part}"
-            android:textColor="@{DataBean.selected == 0 ? @color/black  : @color/white}"
             android:textSize="15sp"
 
             android:textStyle="bold"

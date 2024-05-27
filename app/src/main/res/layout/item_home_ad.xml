@@ -5,11 +5,6 @@
 
     <data>
 
-        <variable
-            name="Data"
-            type="com.imcys.bilibilias.home.ui.model.OldHomeAdBean.Data" />
-
-        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +16,6 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/log_export_tool_item_bg"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:orientation="vertical"
             android:padding="20dp"
@@ -49,7 +43,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{Data.title}"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -58,7 +51,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="@{Data.longTitle}"
                         android:textColor="@color/black" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -74,8 +66,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{Data.content}"
-                    android:visibility="@{Data.content == `` ? View.GONE : View.VISIBLE}"
                     tools:ignore="HardcodedText" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>

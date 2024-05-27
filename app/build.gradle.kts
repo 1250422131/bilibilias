@@ -9,8 +9,7 @@ plugins {
 //    alias(libs.plugins.bilibilias.android.application.bugly)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
-    alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
+    alias(libs.plugins.buildconfig)
 //    id("com.google.gms.google-services")
 }
 
@@ -56,10 +55,6 @@ android {
         }
     }
 
-    buildFeatures {
-        dataBinding = true
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -93,9 +88,6 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(projects.okdownload.okdownload)
-
-    implementation(projects.common)
-    implementation(projects.toolLogExport)
 
     implementation(libs.androidx.activity.compose) {
         exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")

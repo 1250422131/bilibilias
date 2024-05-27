@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="ListBean"
-            type="com.imcys.bilibilias.home.ui.model.UserCreateCollectionBean.DataBean.ListBean" />
 
     </data>
 
@@ -25,8 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:text="@{ListBean.title}"
-            android:textColor="@{ListBean.selected == 0 ? @color/black  : @color/white}"
             android:textSize="15sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>

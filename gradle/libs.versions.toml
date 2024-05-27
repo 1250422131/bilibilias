@@ -12,6 +12,7 @@ appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
+buildconfig="5.3.5"
 dokarSheets = "0.6.0-alpha02"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
@@ -249,6 +250,7 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
 bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
