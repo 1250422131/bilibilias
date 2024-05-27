@@ -4,10 +4,6 @@
 
     <data>
 
-        <variable
-            name="OldDonateBean"
-            type="com.imcys.bilibilias.home.ui.model.OldDonateBean" />
-
     </data>
 
     <LinearLayout
@@ -37,8 +33,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:letterSpacing="0"
-            android:text="@{OldDonateBean.Surplus + `/` + OldDonateBean.Total}"></TextView>
-
+            android:letterSpacing="0" />
     </LinearLayout>
 </layout>

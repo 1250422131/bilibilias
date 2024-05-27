@@ -4,11 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.imcys.bilibilias.common.base.extend.LongKt" />
-
-        <variable
-            name="MediasBean"
-            type="com.imcys.bilibilias.home.ui.model.CollectionDataBean.DataBean.MediasBean" />
 
     </data>
 
@@ -53,7 +48,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
                             android:padding="2dp"
-                            android:text="@{LongKt.timeStampDateStr(MediasBean.fav_time,`MM-dd`)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
@@ -72,7 +66,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="@{MediasBean.title}"
                         android:textSize="14dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>

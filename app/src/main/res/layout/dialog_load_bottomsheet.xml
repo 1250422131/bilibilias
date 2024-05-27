@@ -23,8 +23,6 @@
                 android:layout_height="match_parent"
                 android:background="?attr/colorPrimaryVariant"
                 android:orientation="vertical" />
-
-
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
@@ -39,17 +37,6 @@
                 android:text="@string/app_dialog_load_bottomsheet_loading"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />
-
-
         </LinearLayout>
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="match_parent"
-            android:layout_height="380dp"
-            android:padding="25dp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_url="https://assets10.lottiefiles.com/packages/lf20_imw8dd3h.json" />
     </LinearLayout>
-
 </RelativeLayout>

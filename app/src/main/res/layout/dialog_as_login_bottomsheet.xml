@@ -66,7 +66,6 @@
                     android:id="@+id/dg_as_login_email_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/as_login_mail"
                     android:drawableTint="?attr/colorPrimary"
                     android:hint="请输入邮箱"
                     android:imeOptions="actionNext"
@@ -86,7 +85,6 @@
                     android:id="@+id/dg_as_login_pw_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/as_login_lock"
                     android:drawableTint="?attr/colorPrimary"
                     android:hint="请输入密码"
 

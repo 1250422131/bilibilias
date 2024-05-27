@@ -42,20 +42,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/bilibilias_file_paths" />
         </provider>
-
-        <activity
-            android:name=".home.ui.activity.DonateActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.ui.activity.DedicateActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".home.ui.activity.AsVideoActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="fullSensor"
-            android:theme="@style/Theme.BILIBILIAS.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

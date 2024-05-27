@@ -66,7 +66,7 @@ object DmXmlToAss {
             // 遍历每一条
 
             var oldDmPosition = 0 // 旧的弹幕位置
-            var oldDmType = DanmakuType.BottomDanmaku // 旧的弹幕类型
+            var oldDmType = DanmakuType.Bottom // 旧的弹幕类型
 
             for (i in 0 until ds.length) {
                 val danmakuElement = ds.item(i)
@@ -95,7 +95,7 @@ object DmXmlToAss {
                 }
 
                 val positionInfo =
-                    if (danmakuInfos[1] == "5" && oldDmType == DanmakuType.TopDanmaku) {
+                    if (danmakuInfos[1] == "5" && oldDmType == DanmakuType.Top) {
                         // 这种情况下就是说顶部弹幕连起来了
                         oldDmPosition += 30
                         endTime = CCJsonToAss.formatSeconds(danmakuInfos[0].toDouble() + 4)
@@ -115,11 +115,11 @@ object DmXmlToAss {
 
                 // 记录本次弹幕类型
                 oldDmType = when (danmakuInfos[1]) {
-                    "1", "2", "3" -> DanmakuType.OrdinaryDanmaku
-                    "5" -> DanmakuType.TopDanmaku
-                    "4" -> DanmakuType.BottomDanmaku
-                    "6" -> DanmakuType.ReverseDanmaku
-                    else -> DanmakuType.OrdinaryDanmaku
+                    "1", "2", "3" -> DanmakuType.Ordinary
+                    "5" -> DanmakuType.Top
+                    "4" -> DanmakuType.Bottom
+                    "6" -> DanmakuType.Reverse
+                    else -> DanmakuType.Ordinary
                 }
 
                 val textContent = danmakuElement.textContent

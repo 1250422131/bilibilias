@@ -5,10 +5,6 @@
     tools:ignore="MissingDefaultResource">
 
     <data>
-
-        <variable
-            name="LiveRoomDataBean"
-            type="java.lang.Void" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

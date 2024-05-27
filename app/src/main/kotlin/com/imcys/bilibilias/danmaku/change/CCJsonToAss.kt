@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.danmaku.change
 
 import android.content.Context
-import com.imcys.bilibilias.home.ui.model.VideoCCInfo
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
@@ -28,26 +27,26 @@ object CCJsonToAss {
         ScaledBorderAndShadow: no
         """.trimIndent()
 
-    fun jsonToAss(
-        videoCCInfo: VideoCCInfo,
-        title: String,
-        playResX: String,
-        playResY: String,
-        context: Context,
-    ): String {
-        // 组装头部信息
-        val headersInfo = buildHeadersInfo(title, playResX, playResY)
-
-        val fontStyleInfo = getFontStyleInfo()
-
-        val ccInfo = buildCCInfo(videoCCInfo)
-
-        // 封装身体
-        return """$headersInfo
-                  $fontStyleInfo
-                  $ccInfo
-        """.trimIndent()
-    }
+//    fun jsonToAss(
+//        videoCCInfo: VideoCCInfo,
+//        title: String,
+//        playResX: String,
+//        playResY: String,
+//        context: Context,
+//    ): String {
+//        // 组装头部信息
+//        val headersInfo = buildHeadersInfo(title, playResX, playResY)
+//
+//        val fontStyleInfo = getFontStyleInfo()
+//
+//        val ccInfo = buildCCInfo(videoCCInfo)
+//
+//        // 封装身体
+//        return """$headersInfo
+//                  $fontStyleInfo
+//                  $ccInfo
+//        """.trimIndent()
+//    }
 
     fun getFontStyleInfo(): String {
         return """
@@ -71,18 +70,18 @@ object CCJsonToAss {
     /**
      * 构建字幕体
      */
-    private fun buildCCInfo(videoCCInfo: VideoCCInfo): String {
-        var danmakus = getFormat()
-        videoCCInfo.body.forEach {
-            val startTime = formatSeconds(it.from)
-            // 6秒延迟
-            val endTime = formatSeconds(it.to)
-
-            danmakus += "Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
-        }
-
-        return danmakus
-    }
+//    private fun buildCCInfo(videoCCInfo: VideoCCInfo): String {
+//        var danmakus = getFormat()
+//        videoCCInfo.body.forEach {
+//            val startTime = formatSeconds(it.from)
+//            // 6秒延迟
+//            val endTime = formatSeconds(it.to)
+//
+//            danmakus += "Dialogue: 0,$startTime,$endTime,Large,,0000,0000,0000,,{\\pos(960,1050)\\c&H000000&}${it.content}\n"
+//        }
+//
+//        return danmakus
+//    }
 
     /**
      * 时间格式化
