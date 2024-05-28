@@ -30,6 +30,4 @@ internal fun DownloadTaskEntity.mapToTask(): DownloadTask {
     )
 }
 
-sealed interface Event {
-    data class DeleteFile(val viewInfo: ViewInfo, val fileType: FileType) : Event
-}
+sealed interface Event
