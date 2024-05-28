@@ -12,7 +12,10 @@ android {
 dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
-//    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
+
+    implementation(libs.gsyvideoplayer.java)
+    implementation(libs.gsyvideoplayer.exo2)
+
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.akdanmaku)
 

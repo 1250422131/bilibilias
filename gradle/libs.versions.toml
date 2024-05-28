@@ -14,6 +14,7 @@ atomicfu = "0.24.0"
 banner = "2.2.3"
 buildconfig="5.3.5"
 dokarSheets = "0.6.0-alpha02"
+gsyvideoplayer = "v8.6.0-release-jitpack"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
@@ -104,6 +105,10 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
+
+gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
+gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
+
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.1" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
