@@ -14,8 +14,9 @@ import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.download.DownloadManager
+import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.common.BaseViewModel
-import com.imcys.bilibilias.feature.download.sheet.DefaultDialogComponent
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -27,8 +28,8 @@ import kotlinx.serialization.Serializable
 
 class DefaultDownloadComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val downloadManager: DownloadManager,
     private val downloadTaskDao: DownloadTaskDao,
+    private val dialogComponentFactory: DialogComponent.Factory
 ) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
 
     private val dialogNavigation = SlotNavigation<BottomConfig>()
@@ -36,28 +37,24 @@ class DefaultDownloadComponent @AssistedInject constructor(
     override val dialogSlot: Value<ChildSlot<*, DialogComponent>> =
         childSlot(
             source = dialogNavigation,
-            serializer = null,
+            serializer = BottomConfig.serializer(),
             handleBackButton = true,
         ) { config, childComponentContext ->
-            DefaultDialogComponent(
-                componentContext = childComponentContext,
-                onDismissed = dialogNavigation::dismiss,
-            )
+            dialogComponentFactory(childComponentContext, config.info, config.fileType, dialogNavigation::dismiss)
         }
 
-    override fun onSettingsClicked() {
-        showDialog()
+    override fun onSettingsClicked(info: ViewInfo, fileType: FileType) {
+        showDialog(info, fileType)
     }
 
-    private fun showDialog() {
-        dialogNavigation.activate(BottomConfig)
+    private fun showDialog(info: ViewInfo, fileType: FileType) {
+        dialogNavigation.activate(BottomConfig(info, fileType))
     }
 
     @Composable
     override fun models(events: Flow<Event>): Model {
         return PresentationLogic(
             events,
-            downloadManager,
             downloadTaskDao.loadAllDownloadFlow()
         )
     }
@@ -65,16 +62,12 @@ class DefaultDownloadComponent @AssistedInject constructor(
     @Composable
     private fun PresentationLogic(
         events: Flow<Event>,
-        downloadManager: DownloadManager,
         loadAllDownloadFlow: Flow<List<DownloadTaskEntity>>
     ): Model {
         val entities by loadAllDownloadFlow.collectAsState(initial = emptyList())
 
         LaunchedEffect(Unit) {
             events.collect { event ->
-                when (event) {
-                    is Event.DeleteFile -> downloadManager.delete(event.viewInfo, event.fileType)
-                }
             }
         }
 
@@ -90,7 +83,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
     }
 
     @Serializable
-    private data object BottomConfig
+    private data class BottomConfig(val info: ViewInfo, val fileType: FileType)
 
     @AssistedFactory
     interface Factory : DownloadComponent.Factory {

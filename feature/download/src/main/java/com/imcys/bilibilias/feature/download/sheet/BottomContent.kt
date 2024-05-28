@@ -33,7 +33,9 @@ internal fun BottomSheetContent(component: DialogComponent) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsButton(
-                onClick = {},
+                onClick = {
+//                    component.take(DialogComponent.Event.DeleteFile())
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()

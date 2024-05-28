@@ -37,6 +37,8 @@ import com.imcys.bilibilias.core.common.utils.DataUnit
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
+import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
 
 @Composable
@@ -54,7 +56,7 @@ fun DownloadContent(component: DownloadComponent) {
 internal fun DownloadScreen(
     model: Model,
     onEvent: (Event) -> Unit,
-    onSettingsClicked: () -> Unit,
+    onSettingsClicked: (ViewInfo, FileType) -> Unit,
 ) {
     var edit by remember { mutableStateOf(false) }
     Scaffold(
@@ -85,9 +87,9 @@ internal fun DownloadScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadTaskItem(task: DownloadTask, onSettingsClicked: () -> Unit) {
+fun DownloadTaskItem(task: DownloadTask, onSettingsClicked: (ViewInfo, FileType) -> Unit) {
     ListItem(
-        modifier = Modifier.combinedClickable { onSettingsClicked() },
+        modifier = Modifier.combinedClickable { onSettingsClicked(task.viewInfo, task.fileType) },
         leadingContent = {
             AsCard(modifier = Modifier.size(80.dp)) {
                 Box(
