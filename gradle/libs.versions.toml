@@ -12,7 +12,7 @@ appcompat = "1.6.1"
 asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
-buildconfig="5.3.5"
+buildconfig = "5.3.5"
 dokarSheets = "0.6.0-alpha02"
 gsyvideoplayer = "v8.6.0-release-jitpack"
 startupRuntime = "1.1.1"
@@ -212,6 +212,7 @@ lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
+molecule = { module = "app.cash.molecule:molecule-runtime", version = "2.0.0" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
