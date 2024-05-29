@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.player
+package com.imcys.bilibilias.feature.player
 
 import android.content.Context
 import android.net.Uri

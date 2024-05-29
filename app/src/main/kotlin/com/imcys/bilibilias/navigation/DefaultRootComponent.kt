@@ -7,7 +7,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
-import com.imcys.bilibilias.feature.download.DownloadComponent
+import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.AssistedFactory

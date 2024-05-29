@@ -31,6 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.common.utils.DataUnit
@@ -39,16 +42,38 @@ import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.feature.download.component.DownloadComponent
+import com.imcys.bilibilias.feature.download.component.DownloadTask
+import com.imcys.bilibilias.feature.download.component.Event
+import com.imcys.bilibilias.feature.download.component.Model
 import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
+import com.imcys.bilibilias.feature.player.PlayerContent
 
 @Composable
 fun DownloadContent(component: DownloadComponent) {
+    Children(
+        stack = component.stack,
+        animation = stackAnimation(fade()),
+    ) {
+        when (val child = it.instance) {
+            DownloadComponent.Child.DownloadChild -> DownloadScreen(component)
+            is DownloadComponent.Child.PlayerChild -> PlayerContent(child.component)
+        }
+    }
+}
+
+@Composable
+internal fun DownloadScreen(component: DownloadComponent) {
     val model by component.models.collectAsStateWithLifecycle()
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.let {
         BottomSheetContent(it)
     }
-    DownloadScreen(model = model, onEvent = component::take, component::onSettingsClicked)
+    DownloadScreen(
+        model = model,
+        onEvent = component::take,
+        onSettingsClicked = component::onSettingsClicked,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +100,10 @@ internal fun DownloadScreen(
         ) {
             model.entities.forEach { v ->
                 items(v) { item ->
-                    DownloadTaskItem(task = item, onSettingsClicked)
+                    DownloadTaskItem(
+                        task = item,
+                        onSettingsClicked = onSettingsClicked
+                    )
                 }
                 item {
                     HorizontalDivider()
@@ -87,7 +115,10 @@ internal fun DownloadScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadTaskItem(task: DownloadTask, onSettingsClicked: (ViewInfo, FileType) -> Unit) {
+fun DownloadTaskItem(
+    task: DownloadTask,
+    onSettingsClicked: (ViewInfo, FileType) -> Unit
+) {
     ListItem(
         modifier = Modifier.combinedClickable { onSettingsClicked(task.viewInfo, task.fileType) },
         leadingContent = {

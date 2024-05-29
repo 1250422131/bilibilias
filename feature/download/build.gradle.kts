@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.feature.common)
+    implementation(projects.feature.player)
 
     implementation(projects.core.download)
     implementation(projects.core.database)

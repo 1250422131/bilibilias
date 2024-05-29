@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.feature.download.di
 
-import com.imcys.bilibilias.feature.download.DefaultDownloadComponent
-import com.imcys.bilibilias.feature.download.DownloadComponent
+import com.imcys.bilibilias.feature.download.component.DefaultDownloadComponent
+import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.sheet.DefaultDialogComponent
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
 import dagger.Binds

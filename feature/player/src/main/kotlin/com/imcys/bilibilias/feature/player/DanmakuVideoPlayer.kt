@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.player
+package com.imcys.bilibilias.feature.player
 
 import android.content.Context
 import android.util.AttributeSet
@@ -26,7 +26,6 @@ import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
 import tv.danmaku.ijk.media.exo2.ExoSourceManager
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Qualifier
 
 @UnstableApi
 @AndroidEntryPoint
@@ -45,7 +44,7 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer, ExoMediaSourceInterceptListen
     private var mergingMediaSource: MediaSource? = null
 
     @Inject
-    private lateinit var dataSource: DataSource.Factory
+    lateinit var dataSource: DataSource.Factory
 
     override fun init(context: Context) {
         super.init(context)

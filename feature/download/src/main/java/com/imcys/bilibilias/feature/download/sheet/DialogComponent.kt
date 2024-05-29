@@ -6,9 +6,12 @@ import com.imcys.bilibilias.core.model.video.ViewInfo
 
 interface DialogComponent {
     fun onDismissClicked()
+    fun onNavigationToPlayer()
+
     fun take(event: Event)
+
     sealed interface Event {
-        data class DeleteFile(val viewInfo: ViewInfo, val fileType: FileType) : Event
+        data object DeleteFile : Event
     }
 
     interface Factory {
@@ -16,7 +19,8 @@ interface DialogComponent {
             componentContext: ComponentContext,
             info: ViewInfo,
             fileType: FileType,
-            onDismissed: () -> Unit
+            onDismissed: () -> Unit,
+            onNavigationToPlayer: () -> Unit,
         ): DialogComponent
     }
 }
