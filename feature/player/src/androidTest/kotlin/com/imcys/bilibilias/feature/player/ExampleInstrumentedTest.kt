@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.player
+package com.imcys.bilibilias.feature.player
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

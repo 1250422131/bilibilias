@@ -1,10 +1,9 @@
-package com.imcys.bilibilias.feature.download
+package com.imcys.bilibilias.feature.download.component
 
 import android.net.Uri
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
-import kotlinx.collections.immutable.ImmutableList
 
 data class Model(val entities: List<List<DownloadTask>>)
 

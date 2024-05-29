@@ -34,7 +34,7 @@ internal fun BottomSheetContent(component: DialogComponent) {
         ) {
             AsButton(
                 onClick = {
-//                    component.take(DialogComponent.Event.DeleteFile())
+                    component.take(DialogComponent.Event.DeleteFile)
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -44,7 +44,7 @@ internal fun BottomSheetContent(component: DialogComponent) {
                 Text(text = "删除")
             }
             AsButton(
-                onClick = {},
+                onClick = { component.onNavigationToPlayer() },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()

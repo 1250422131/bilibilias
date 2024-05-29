@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.player.di
+package com.imcys.bilibilias.feature.player.di
 
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
@@ -21,6 +21,9 @@ class PlayerModule {
         okhttpClient: OkHttpClient,
     ): DataSource.Factory = OkHttpDataSource.Factory(okhttpClient)
         .setDefaultRequestProperties(mapOf("Referrer" to "https://www.bilibili.com"))
-        .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0")
+        .setUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+        )
         .setCacheControl(CacheControl.FORCE_CACHE)
 }
+
