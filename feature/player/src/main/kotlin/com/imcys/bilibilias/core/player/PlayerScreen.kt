@@ -16,15 +16,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.util.UnstableApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.serializer
-import kotlin.reflect.typeOf
+import androidx.media3.datasource.DataSink
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.TransferListener
+import androidx.media3.exoplayer.source.MediaSource
+import com.shuyu.gsyvideoplayer.player.PlayerFactory
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
+import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
+import tv.danmaku.ijk.media.exo2.ExoSourceManager
+import java.io.File
+
 
 class PlayerScreen(
     private val vUri: Uri,
     private val aUri: Uri,
-)  {
+) {
     @Composable
     fun Content() {
 //        val viewModel: PlayerViewModel = getViewModel()
@@ -65,5 +71,16 @@ fun PlayerContent(player: AsVideoPlayer) {
                 lifecycleOwner.lifecycle.removeObserver(observer)
             }
         }
+    }
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+fun KKK(modifier: Modifier = Modifier) {
+    AndroidView(factory = {
+        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+        DanmakuVideoPlayer(it)
+    }) {
+
     }
 }
