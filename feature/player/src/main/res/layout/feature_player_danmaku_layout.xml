@@ -8,9 +8,7 @@
         android:id="@+id/surface_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
-
-    </RelativeLayout>
+        android:gravity="center"></RelativeLayout>
 
     <com.kuaishou.akdanmaku.ui.DanmakuView
         android:id="@+id/danmaku_view"
@@ -82,8 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingRight="10dp"
-                android:scaleType="center"
-                android:src="@drawable/custom_enlarge" />
+                android:scaleType="center" />
 
         </LinearLayout>
 

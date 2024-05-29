@@ -11,6 +11,7 @@ class MultiplatformDecomposeConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(libs.findLibrary("decompose").get())
                 "implementation"(libs.findLibrary("decompose.compose").get())
+                "implementation"(libs.findLibrary("molecule").get())
             }
         }
     }
