@@ -7,7 +7,7 @@ import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
-import com.imcys.bilibilias.feature.player.PlayerComponent
+import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface DownloadComponent {
@@ -18,7 +18,7 @@ interface DownloadComponent {
 
     fun take(event: Event)
     fun onSettingsClicked(info: ViewInfo, fileType: FileType)
-    fun onPlayerClicked()
+    fun onPlayerClicked(info: ViewInfo, fileType: FileType,)
 
     sealed class Child {
         data object DownloadChild : Child()

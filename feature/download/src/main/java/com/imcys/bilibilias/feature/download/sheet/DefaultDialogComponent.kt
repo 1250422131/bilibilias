@@ -17,7 +17,8 @@ class DefaultDialogComponent @AssistedInject constructor(
     @Assisted private val viewInfo: ViewInfo,
     @Assisted private val fileType: FileType,
     @Assisted("dismissed") private val onDismissed: () -> Unit,
-    @Assisted("navigation") private val onNavigationToPlayer: () -> Unit,
+    @Assisted("navigation")
+    private val onNavigationToPlayer: (info: ViewInfo, fileType: FileType) -> Unit,
     private val downloadManager: DownloadManager
 ) : DialogComponent, BaseViewModel<DialogComponent.Event, Unit>(componentContext) {
     @Composable
@@ -39,7 +40,7 @@ class DefaultDialogComponent @AssistedInject constructor(
     }
 
     override fun onNavigationToPlayer() {
-        onNavigationToPlayer.invoke()
+        onNavigationToPlayer.invoke(viewInfo, fileType)
     }
 
     @AssistedFactory
@@ -49,7 +50,8 @@ class DefaultDialogComponent @AssistedInject constructor(
             info: ViewInfo,
             fileType: FileType,
             @Assisted("dismissed") onDismissed: () -> Unit,
-            @Assisted("navigation") onNavigationToPlayer: () -> Unit,
+            @Assisted("navigation")
+            onNavigationToPlayer: (info: ViewInfo, fileType: FileType) -> Unit,
         ): DefaultDialogComponent
     }
 }

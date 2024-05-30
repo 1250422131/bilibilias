@@ -20,7 +20,7 @@ interface DialogComponent {
             info: ViewInfo,
             fileType: FileType,
             onDismissed: () -> Unit,
-            onNavigationToPlayer: () -> Unit,
+            onNavigationToPlayer: (info: ViewInfo, fileType: FileType) -> Unit,
         ): DialogComponent
     }
 }

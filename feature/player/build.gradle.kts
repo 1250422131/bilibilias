@@ -10,8 +10,9 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.network)
     implementation(projects.feature.common)
+    implementation(projects.core.network)
+    implementation(projects.core.database)
 
     implementation(libs.androidx.media3.datasource.okhttp)
 
