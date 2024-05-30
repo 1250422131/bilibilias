@@ -1,14 +1,18 @@
 package com.imcys.bilibilias.feature.player
 
 import android.content.Context
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.OptIn
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSink
 import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.TransferListener
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
@@ -18,10 +22,12 @@ import com.kuaishou.akdanmaku.render.SimpleRenderer
 import com.kuaishou.akdanmaku.render.TypedDanmakuRenderer
 import com.kuaishou.akdanmaku.ui.DanmakuPlayer
 import com.kuaishou.akdanmaku.ui.DanmakuView
+import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.aakira.napier.Napier
 import tv.danmaku.ijk.media.exo2.ExoMediaSourceInterceptListener
 import tv.danmaku.ijk.media.exo2.ExoSourceManager
 import java.io.File
@@ -29,7 +35,10 @@ import javax.inject.Inject
 
 @UnstableApi
 @AndroidEntryPoint
-class DanmakuVideoPlayer : StandardGSYVideoPlayer, ExoMediaSourceInterceptListener {
+class DanmakuVideoPlayer :
+    StandardGSYVideoPlayer,
+    ExoMediaSourceInterceptListener,
+    DefaultLifecycleObserver {
     constructor(context: Context) : super(context)
     constructor(context: Context, fullFlag: Boolean) : super(context, fullFlag)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -42,24 +51,37 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer, ExoMediaSourceInterceptListen
     private lateinit var danmakuView: DanmakuView
 
     private var mergingMediaSource: MediaSource? = null
+    private val progressiveSource =
+        ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
 
     @Inject
     lateinit var dataSource: DataSource.Factory
+    private lateinit var videoPlayer: StandardGSYVideoPlayer
 
-    override fun init(context: Context) {
-        super.init(context)
-        findViewById<DanmakuView>(R.id.danmaku_view).apply {
-            danmakuView = this
-            this@DanmakuVideoPlayer.danmakuPlayer.bindView(this)
-        }
+    private var orientationUtils: OrientationUtils? = null
+
+    init {
         ExoSourceManager.setExoMediaSourceInterceptListener(this)
     }
 
-    fun setMediaSource(videoUrl: String, audioUrl: String) {
-        val videoSource = createMediaSource(videoUrl)
-        val audioSource = createMediaSource(audioUrl)
+    override fun init(context: Context) {
+        super.init(context)
+        videoPlayer = findViewById(R.id.video_player)
+        videoPlayer.setUp("", false, "")
+//        videoPlayer.setThumbImageView(imageView);
+    }
 
-        mergingMediaSource = MergingMediaSource(true, false, videoSource, audioSource)
+    fun setMediaSource(uris: List<Uri>) {
+        Napier.d { uris.toString() }
+        when (uris.size) {
+            2 -> mergingMediaSource = MergingMediaSource(
+                createMediaSource(uris[0]),
+                createMediaSource(uris[1]),
+            )
+
+            1 -> mergingMediaSource = MergingMediaSource(createMediaSource(uris.first()))
+            else -> Napier.d { "源数量 ${uris.size}" }
+        }
     }
 
     override fun onPrepared() {
@@ -235,18 +257,41 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer, ExoMediaSourceInterceptListen
 //        }
     }
 
+    override fun onCreate(owner: LifecycleOwner) {
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+    }
+
     /**
      * 模拟添加弹幕数据
      */
     private fun addDanmaku(islive: Boolean) {
     }
 
-    private fun createMediaSource(url: String) = ProgressiveMediaSource.Factory(dataSource)
-        .createMediaSource(
-            MediaItem.Builder()
-                .setUri(url)
-                .build()
-        )
+    private fun createMediaSource(uri: Uri) = progressiveSource.createMediaSource(
+        MediaItem.Builder()
+            .setUri(uri)
+            .build()
+    )
+
+    private fun createMediaSource(url: String) = progressiveSource.createMediaSource(
+        MediaItem.Builder()
+            .setUri(url)
+            .build()
+    )
 
     @OptIn(UnstableApi::class)
     override fun getMediaSource(

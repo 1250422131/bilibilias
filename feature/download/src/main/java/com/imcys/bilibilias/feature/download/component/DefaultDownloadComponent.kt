@@ -21,7 +21,7 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
-import com.imcys.bilibilias.feature.player.PlayerComponent
+import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -70,7 +70,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
         Config.Download -> DownloadComponent.Child.DownloadChild
         is Config.Player -> DownloadComponent.Child.PlayerChild(
             playerComponentFactory(
-                componentContext
+                componentContext, config.info, config.fileType
             )
         )
     }
@@ -79,8 +79,11 @@ class DefaultDownloadComponent @AssistedInject constructor(
         showDialog(info, fileType)
     }
 
-    override fun onPlayerClicked() {
-        navigation.push(Config.Player(""))
+    override fun onPlayerClicked(
+        info: ViewInfo,
+        fileType: FileType,
+    ) {
+        navigation.push(Config.Player(info, fileType))
     }
 
     @Composable
@@ -126,7 +129,10 @@ class DefaultDownloadComponent @AssistedInject constructor(
         data object Download : Config
 
         @Serializable
-        data class Player(val name: String) : Config
+        data class Player(
+            val info: ViewInfo,
+            val fileType: FileType,
+        ) : Config
     }
 
     @AssistedFactory

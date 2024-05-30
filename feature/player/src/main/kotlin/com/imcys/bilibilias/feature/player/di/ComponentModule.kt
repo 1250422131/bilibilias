@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.feature.player.di
 
-import com.imcys.bilibilias.feature.player.DefaultPlayerComponent
-import com.imcys.bilibilias.feature.player.PlayerComponent
+import com.imcys.bilibilias.feature.player.component.DefaultPlayerComponent
+import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
