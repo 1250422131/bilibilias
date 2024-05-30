@@ -111,7 +111,7 @@ gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlaye
 gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
 
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
-umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.1" }
+umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.2" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
 umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
