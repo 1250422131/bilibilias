@@ -9,7 +9,6 @@ androidDesugarJdkLibs = "2.0.4"
 androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
 appcompat = "1.6.1"
-asBottomDialog = "0.0.1beta10"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 buildconfig = "5.3.5"
@@ -106,6 +105,7 @@ androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-mac
 
 bottomsheetdialog-compose = { module = "com.holix.android:bottomsheetdialog-compose", version.ref = "bottomsheetdialogCompose" }
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
 gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
 gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
@@ -136,8 +136,6 @@ okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", versio
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 wire-gradlePlugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
 
-sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
-
 qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
 
 compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
@@ -161,8 +159,6 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 appcenter-crashes = { group = "com.microsoft.appcenter", name = "appcenter-crashes", version.ref = "appcenter" }
 appcenter-analytics = { group = "com.microsoft.appcenter", name = "appcenter-analytics", version.ref = "appcenter" }
 appcenter-distribute = { group = "com.microsoft.appcenter", name = "appcenter-distribute", version.ref = "appcenter" }
-
-asBottomDialog = { group = "com.github.1250422131", name = "AsBottomDialog", version.ref = "asBottomDialog" }
 
 banner = { group = "io.github.youth5201314", name = "banner", version.ref = "banner" }
 
