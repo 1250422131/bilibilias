@@ -17,6 +17,8 @@ interface RootComponent {
     val currentDestination: RootComponent.Child
     val currentTopLevelDestination: TopLevelDestination?
 
+    val shouldShowBottomBar: Boolean
+
     fun onHomeTabClicked()
     fun onToolTabClicked()
     fun onDownloadTabClicked()

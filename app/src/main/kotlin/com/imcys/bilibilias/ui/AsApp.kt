@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -58,11 +59,11 @@ fun AsApp(
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
 ) {
-//    val shouldShowGradientBackground =
-//        appState.currentTopLevelDestination == TopLevelDestination.FOR_YOU
+    val shouldShowGradientBackground =
+        component.currentTopLevelDestination == TopLevelDestination.TOOL
     AsBackground(modifier = modifier) {
         AsGradientBackground(
-            gradientColors = if (false) {
+            gradientColors = if (shouldShowGradientBackground) {
                 LocalGradientColors.current
             } else {
                 GradientColors()
@@ -107,23 +108,26 @@ internal fun AsApp(
     NavigationTrackingSideEffect(component)
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
+
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
-            item(
-                selected = activeComponent is RootComponent.Child.HomeChild,
-                onClick = component::onHomeTabClicked,
-                destination = TopLevelDestination.HOME
-            )
-            item(
-                selected = activeComponent is RootComponent.Child.ToolChild,
-                onClick = component::onToolTabClicked,
-                destination = TopLevelDestination.TOOL
-            )
-            item(
-                selected = activeComponent is RootComponent.Child.DownloadChild,
-                onClick = component::onDownloadTabClicked,
-                destination = TopLevelDestination.DOWNLOAD
-            )
+            if (component.shouldShowBottomBar) {
+                item(
+                    selected = activeComponent is RootComponent.Child.HomeChild,
+                    onClick = component::onHomeTabClicked,
+                    destination = TopLevelDestination.HOME
+                )
+                item(
+                    selected = activeComponent is RootComponent.Child.ToolChild,
+                    onClick = component::onToolTabClicked,
+                    destination = TopLevelDestination.TOOL
+                )
+                item(
+                    selected = activeComponent is RootComponent.Child.DownloadChild,
+                    onClick = component::onDownloadTabClicked,
+                    destination = TopLevelDestination.DOWNLOAD
+                )
+            }
         },
         modifier = Modifier.testTag("AsNavItem"),
         windowAdaptiveInfo = windowAdaptiveInfo,
@@ -153,7 +157,9 @@ internal fun AsApp(
                         ),
                     ),
             ) {
-                RootContent(component)
+                Box(modifier = Modifier.consumeWindowInsets(WindowInsets(0, 0, 0, 0))) {
+                    RootContent(component)
+                }
             }
         }
     }
