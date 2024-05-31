@@ -34,6 +34,7 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
 import com.imcys.bilibilias.feature.download.DownloadContent
 import com.imcys.bilibilias.feature.home.HomeContent
+import com.imcys.bilibilias.feature.player.PlayerContent
 import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
@@ -124,10 +125,14 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             }
 
             is RootComponent.Child.DownloadChild -> {
-                DownloadContent(component = child.component)
+                DownloadContent(
+                    component = child.component,
+                    navigationToPlayer = component::onPlayedTabClicked
+                )
             }
 
             RootComponent.Child.UserChild -> Unit
+            is RootComponent.Child.PlayerChild -> PlayerContent(component = child.component)
         }
     }
 }
@@ -139,20 +144,21 @@ private fun AsBottomBar(
 ) {
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
+    component.currentTopLevelDestination
     AsNavigationBar(modifier.testTag("AsBottomBar")) {
         AsNavigationBarItem(
             TopLevelDestination.HOME,
-            { activeComponent is RootComponent.Child.HomeChild },
+            activeComponent is RootComponent.Child.HomeChild,
             component::onHomeTabClicked
         )
         AsNavigationBarItem(
             TopLevelDestination.TOOL,
-            { activeComponent is RootComponent.Child.ToolChild },
+            activeComponent is RootComponent.Child.ToolChild,
             component::onToolTabClicked
         )
         AsNavigationBarItem(
             TopLevelDestination.DOWNLOAD,
-            { activeComponent is RootComponent.Child.DownloadChild },
+            activeComponent is RootComponent.Child.DownloadChild,
             component::onDownloadTabClicked
         )
     }
@@ -161,11 +167,11 @@ private fun AsBottomBar(
 @Composable
 private fun RowScope.AsNavigationBarItem(
     destination: TopLevelDestination,
-    selected: () -> Boolean,
+    selected: Boolean,
     onNavigation: () -> Unit
 ) {
     AsNavigationBarItem(
-        selected = selected(),
+        selected = selected,
         onClick = onNavigation,
         icon = {
             Icon(
@@ -183,10 +189,10 @@ private fun RowScope.AsNavigationBarItem(
         label = {
             Text(
                 stringResource(destination.iconTextId),
-                color = if (selected()) MaterialTheme.colorScheme.primary else Color.Unspecified
+                color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
             )
         },
-        alwaysShowLabel = selected(),
+        alwaysShowLabel = selected,
         modifier = Modifier,
     )
 }

@@ -50,24 +50,22 @@ import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
 import com.imcys.bilibilias.feature.player.PlayerContent
 
 @Composable
-fun DownloadContent(component: DownloadComponent) {
-    Children(
-        stack = component.stack,
-        animation = stackAnimation(fade()),
-    ) {
-        when (val child = it.instance) {
-            DownloadComponent.Child.DownloadChild -> DownloadScreen(component)
-            is DownloadComponent.Child.PlayerChild -> PlayerContent(child.component)
-        }
-    }
+fun DownloadContent(
+    component: DownloadComponent,
+    navigationToPlayer: (viewInfo: ViewInfo) -> Unit
+) {
+    DownloadScreen(component = component, navigationToPlayer = navigationToPlayer)
 }
 
 @Composable
-internal fun DownloadScreen(component: DownloadComponent) {
+internal fun DownloadScreen(
+    component: DownloadComponent,
+    navigationToPlayer: (viewInfo: ViewInfo) -> Unit
+) {
     val model by component.models.collectAsStateWithLifecycle()
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.let {
-        BottomSheetContent(it)
+        BottomSheetContent(it, navigationToPlayer)
     }
     DownloadScreen(
         model = model,

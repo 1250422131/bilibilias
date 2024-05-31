@@ -12,18 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface DownloadComponent {
     val models: StateFlow<Model>
-
-    val stack: Value<ChildStack<*, Child>>
     val dialogSlot: Value<ChildSlot<*, DialogComponent>>
 
     fun take(event: Event)
     fun onSettingsClicked(info: ViewInfo, fileType: FileType)
-    fun onPlayerClicked(info: ViewInfo, fileType: FileType,)
-
-    sealed class Child {
-        data object DownloadChild : Child()
-        data class PlayerChild(val component: PlayerComponent) : Child()
-    }
 
     interface Factory {
         operator fun invoke(
