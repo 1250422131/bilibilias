@@ -8,11 +8,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.ExperimentalMaterial3AdaptiveNavigationSuiteApi
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 
@@ -117,7 +128,97 @@ fun AsNavigationRailItem(
 }
 
 /**
- * Now in Android navigation default values.
+ * navigation suite scaffold with item and content slots.
+ * Wraps Material 3 [NavigationSuiteScaffold].
+ *
+ * @param modifier Modifier to be applied to the navigation suite scaffold.
+ * @param navigationSuiteItems A slot to display multiple items via [AsNavigationSuiteScope].
+ * @param windowAdaptiveInfo The window adaptive info.
+ * @param content The app content inside the scaffold.
+ */
+@Composable
+fun AsNavigationSuiteScaffold(
+    navigationSuiteItems: AsNavigationSuiteScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    content: @Composable () -> Unit,
+) {
+    val layoutType = NavigationSuiteScaffoldDefaults
+        .calculateFromAdaptiveInfo(windowAdaptiveInfo)
+    val navigationSuiteItemColors = NavigationSuiteItemColors(
+        navigationBarItemColors = NavigationBarItemDefaults.colors(
+            selectedIconColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = AsNavigationDefaults.navigationContentColor(),
+            selectedTextColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = AsNavigationDefaults.navigationContentColor(),
+            indicatorColor = AsNavigationDefaults.navigationIndicatorColor(),
+        ),
+        navigationRailItemColors = NavigationRailItemDefaults.colors(
+            selectedIconColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = AsNavigationDefaults.navigationContentColor(),
+            selectedTextColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = AsNavigationDefaults.navigationContentColor(),
+            indicatorColor = AsNavigationDefaults.navigationIndicatorColor(),
+        ),
+        navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(
+            selectedIconColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedIconColor = AsNavigationDefaults.navigationContentColor(),
+            selectedTextColor = AsNavigationDefaults.navigationSelectedItemColor(),
+            unselectedTextColor = AsNavigationDefaults.navigationContentColor(),
+        ),
+    )
+
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            AsNavigationSuiteScope(
+                navigationSuiteScope = this,
+                navigationSuiteItemColors = navigationSuiteItemColors,
+            ).run(navigationSuiteItems)
+        },
+        layoutType = layoutType,
+        containerColor = Color.Transparent,
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
+            navigationBarContentColor = AsNavigationDefaults.navigationContentColor(),
+            navigationRailContainerColor = Color.Transparent,
+        ),
+        modifier = modifier,
+    ) {
+        content()
+    }
+}
+
+/**
+ * A wrapper around [NavigationSuiteScope] to declare navigation items.
+ */
+class AsNavigationSuiteScope internal constructor(
+    private val navigationSuiteScope: NavigationSuiteScope,
+    private val navigationSuiteItemColors: NavigationSuiteItemColors,
+) {
+    fun item(
+        selected: Boolean,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        icon: @Composable () -> Unit,
+        selectedIcon: @Composable () -> Unit = icon,
+        label: @Composable (() -> Unit)? = null,
+    ) = navigationSuiteScope.item(
+        selected = selected,
+        onClick = onClick,
+        icon = {
+            if (selected) {
+                selectedIcon()
+            } else {
+                icon()
+            }
+        },
+        label = label,
+        colors = navigationSuiteItemColors,
+        modifier = modifier,
+    )
+}
+
+/**
+ * navigation default values.
  */
 object AsNavigationDefaults {
     @Composable
@@ -132,7 +233,7 @@ object AsNavigationDefaults {
 
 @ThemePreviews
 @Composable
-fun NiaNavigationBarPreview() {
+fun AsNavigationBarPreview() {
     val items = listOf("For you", "Saved", "Interests")
     val icons = listOf(
         Icons.Default.LooksOne,

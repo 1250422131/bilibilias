@@ -4,6 +4,7 @@ import androidx.tracing.trace
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.value.Value
@@ -28,6 +29,9 @@ class DefaultRootComponent @AssistedInject constructor(
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
+
+    override val currentDestination: RootComponent.Child
+        get() = stack.active.instance
 
     override val currentTopLevelDestination: TopLevelDestination?
         get() {

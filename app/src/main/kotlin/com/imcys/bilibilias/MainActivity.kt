@@ -7,14 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
 import com.hjq.toast.Toaster
-import com.imcys.bilibilias.core.analytics.AnalyticsHelper
-import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
@@ -41,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var startupComponentFactory: StartupComponent.Factory
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -72,8 +68,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     val appState = rememberNiaAppState(
                         toastMachine = toastMachine,
-                        networkMonitor = networkMonitor,
-                        windowSizeClass = calculateWindowSizeClass(this)
+                        networkMonitor = networkMonitor
                     )
                     StartupContent(startupComponent, appState)
                 }
