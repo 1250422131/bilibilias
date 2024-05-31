@@ -69,6 +69,7 @@ class DanmakuVideoPlayer :
         videoPlayer = findViewById(R.id.video_player)
         videoPlayer.setUp("", false, "")
 //        videoPlayer.setThumbImageView(imageView);
+        startPlayLogic()
     }
 
     fun setMediaSource(uris: List<Uri>) {

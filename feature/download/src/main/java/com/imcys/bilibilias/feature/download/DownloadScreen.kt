@@ -47,7 +47,6 @@ import com.imcys.bilibilias.feature.download.component.DownloadTask
 import com.imcys.bilibilias.feature.download.component.Event
 import com.imcys.bilibilias.feature.download.component.Model
 import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
-import com.imcys.bilibilias.feature.player.PlayerContent
 
 @Composable
 fun DownloadContent(
