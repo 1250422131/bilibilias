@@ -18,15 +18,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.imcys.bilibilias.core.designsystem.reveal.circularReveal
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashContent(
     component: SplashComponent,
-    onNavigationToLogin: () -> Unit,
-    onNavigationToRoot: () -> Unit
+    navigationToLogin: () -> Unit,
+    navigationToTool: () -> Unit
 ) {
     val isVisible = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -43,9 +42,9 @@ fun SplashContent(
                 durationMillis = 1000,
                 finishedListener = {
                     if (component.isLogin) {
-                        onNavigationToRoot()
+                        navigationToTool()
                     } else {
-                        onNavigationToLogin()
+                        navigationToLogin()
                     }
                 }
             ),
