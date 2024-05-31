@@ -3,18 +3,25 @@ package com.imcys.bilibilias.navigation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
+import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 
 interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
 
+    //    val currentDestination: NavDestination?
+//        @Composable get() = navController
+//            .currentBackStackEntryAsState().value?.destination
+    val currentTopLevelDestination: TopLevelDestination?
+
     fun onHomeTabClicked()
     fun onToolTabClicked()
     fun onDownloadTabClicked()
-
+    fun onPlayedTabClicked(viewInfo: ViewInfo)
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
 
@@ -22,8 +29,11 @@ interface RootComponent {
 
         data class DownloadChild(val component: DownloadComponent) : Child()
 
+        data class PlayerChild(val component: PlayerComponent) : Child()
+
         data object UserChild : Child()
     }
+
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,

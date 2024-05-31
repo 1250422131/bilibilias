@@ -10,10 +10,6 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
-import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
@@ -36,15 +32,6 @@ class DefaultDownloadComponent @AssistedInject constructor(
     private val dialogComponentFactory: DialogComponent.Factory,
     private val playerComponentFactory: PlayerComponent.Factory
 ) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
-    private val navigation = StackNavigation<Config>()
-    override val stack: Value<ChildStack<*, DownloadComponent.Child>> =
-        childStack(
-            source = navigation,
-            serializer = Config.serializer(),
-            initialConfiguration = Config.Download,
-            handleBackButton = true,
-            childFactory = ::child,
-        )
 
     private val dialogNavigation = SlotNavigation<BottomConfig>()
 
@@ -59,31 +46,11 @@ class DefaultDownloadComponent @AssistedInject constructor(
                 config.info,
                 config.fileType,
                 dialogNavigation::dismiss,
-                onNavigationToPlayer = ::onPlayerClicked
             )
         }
 
-    private fun child(
-        config: Config,
-        componentContext: ComponentContext
-    ): DownloadComponent.Child = when (config) {
-        Config.Download -> DownloadComponent.Child.DownloadChild
-        is Config.Player -> DownloadComponent.Child.PlayerChild(
-            playerComponentFactory(
-                componentContext, config.info, config.fileType
-            )
-        )
-    }
-
     override fun onSettingsClicked(info: ViewInfo, fileType: FileType) {
         showDialog(info, fileType)
-    }
-
-    override fun onPlayerClicked(
-        info: ViewInfo,
-        fileType: FileType,
-    ) {
-        navigation.push(Config.Player(info, fileType))
     }
 
     @Composable

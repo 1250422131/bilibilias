@@ -6,7 +6,7 @@ import com.imcys.bilibilias.core.model.video.ViewInfo
 
 interface DialogComponent {
     fun onDismissClicked()
-    fun onNavigationToPlayer()
+    fun navigationToPlayer(): ViewInfo
 
     fun take(event: Event)
 
@@ -20,7 +20,6 @@ interface DialogComponent {
             info: ViewInfo,
             fileType: FileType,
             onDismissed: () -> Unit,
-            onNavigationToPlayer: (info: ViewInfo, fileType: FileType) -> Unit,
         ): DialogComponent
     }
 }
