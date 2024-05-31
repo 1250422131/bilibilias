@@ -7,12 +7,15 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
+import com.imcys.bilibilias.feature.login.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
+import com.imcys.bilibilias.feature.splash.SplashComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,12 +23,15 @@ import dagger.assisted.AssistedInject
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 
+@Suppress("LongParameterList")
 class DefaultRootComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val homeComponentFactory: HomeComponent.Factory,
     private val toolComponentFactory: ToolComponent.Factory,
     private val downloadComponentFactory: DownloadComponent.Factory,
-    private val playerComponentFactory: PlayerComponent.Factory
+    private val playerComponentFactory: PlayerComponent.Factory,
+    private val splashComponentFactory: SplashComponent.Factory,
+    private val loginComponentFactory: LoginComponent.Factory,
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -52,7 +58,7 @@ class DefaultRootComponent @AssistedInject constructor(
         childStack(
             source = navigation,
             serializer = Config.serializer(),
-            initialConfiguration = Config.Tool,
+            initialConfiguration = Config.Splash,
             handleBackButton = true,
             childFactory = ::child,
         )
@@ -71,6 +77,10 @@ class DefaultRootComponent @AssistedInject constructor(
 
     override fun onPlayedTabClicked(viewInfo: ViewInfo) {
         navigation.bringToFront(Config.Player(viewInfo))
+    }
+
+    override fun onLoginTabClicked() {
+        navigation.push(Config.Login)
     }
 
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
@@ -102,6 +112,18 @@ class DefaultRootComponent @AssistedInject constructor(
                         FileType.VIDEO
                     )
                 )
+
+                Config.Login -> RootComponent.Child.LoginChild(
+                    loginComponentFactory(
+                        componentContext
+                    )
+                )
+
+                Config.Splash -> RootComponent.Child.SplashChild(
+                    splashComponentFactory(
+                        componentContext
+                    )
+                )
             }
         }
 
@@ -112,6 +134,8 @@ class DefaultRootComponent @AssistedInject constructor(
         data object Download : Config
         data object User : Config
         data class Player(val info: ViewInfo) : Config
+        data object Splash : Config
+        data object Login : Config
     }
 
     @AssistedFactory

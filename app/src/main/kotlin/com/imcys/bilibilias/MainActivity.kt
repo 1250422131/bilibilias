@@ -6,7 +6,6 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.metrics.performance.JankStats
@@ -15,8 +14,8 @@ import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
-import com.imcys.bilibilias.startup.StartupComponent
-import com.imcys.bilibilias.startup.StartupContent
+import com.imcys.bilibilias.navigation.RootComponent
+import com.imcys.bilibilias.ui.AsApp
 import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var toastMachine: ToastMachine
 
     @Inject
-    lateinit var startupComponentFactory: StartupComponent.Factory
+    lateinit var rootComponentFactory: RootComponent.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             val componentContext = defaultComponentContext()
-            val startupComponent = startupComponentFactory(componentContext)
             AsTheme {
                 CompositionLocalProvider(
 //                    LocalAnalyticsHelper provides analyticsHelper,
@@ -70,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                         toastMachine = toastMachine,
                         networkMonitor = networkMonitor
                     )
-                    StartupContent(startupComponent, appState)
+                    AsApp(appState, rootComponentFactory(componentContext))
                 }
             }
         }
