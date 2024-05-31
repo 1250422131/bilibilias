@@ -7,7 +7,6 @@ import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
-import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import kotlinx.coroutines.flow.StateFlow
 
 interface DownloadComponent {

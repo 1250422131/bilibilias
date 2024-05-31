@@ -17,7 +17,6 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
-import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,7 +29,6 @@ class DefaultDownloadComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val downloadTaskDao: DownloadTaskDao,
     private val dialogComponentFactory: DialogComponent.Factory,
-    private val playerComponentFactory: PlayerComponent.Factory
 ) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
 
     private val dialogNavigation = SlotNavigation<BottomConfig>()
