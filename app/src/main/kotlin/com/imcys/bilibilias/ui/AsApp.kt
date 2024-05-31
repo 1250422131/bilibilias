@@ -1,14 +1,23 @@
 package com.imcys.bilibilias.ui
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,8 +39,10 @@ import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
-import com.imcys.bilibilias.core.designsystem.component.AsNavigationBar
-import com.imcys.bilibilias.core.designsystem.component.AsNavigationBarItem
+import com.imcys.bilibilias.core.designsystem.component.AsNavigationSuiteScaffold
+import com.imcys.bilibilias.core.designsystem.component.AsNavigationSuiteScope
+import com.imcys.bilibilias.core.designsystem.theme.GradientColors
+import com.imcys.bilibilias.core.designsystem.theme.LocalGradientColors
 import com.imcys.bilibilias.feature.download.DownloadContent
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.player.PlayerContent
@@ -41,9 +52,22 @@ import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlin.time.Duration.Companion.days
 
 @Composable
-fun AsApp(appState: AsAppState, component: RootComponent, modifier: Modifier = Modifier) {
-    AsBackground {
-        AsGradientBackground {
+fun AsApp(
+    appState: AsAppState,
+    component: RootComponent,
+    modifier: Modifier = Modifier,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+) {
+//    val shouldShowGradientBackground =
+//        appState.currentTopLevelDestination == TopLevelDestination.FOR_YOU
+    AsBackground(modifier = modifier) {
+        AsGradientBackground(
+            gradientColors = if (false) {
+                LocalGradientColors.current
+            } else {
+                GradientColors()
+            },
+        ) {
             val toasterState = rememberToasterState(appState.coroutineScope)
 
             val isOffline by appState.isOffline.collectAsStateWithLifecycle()
@@ -65,45 +89,72 @@ fun AsApp(appState: AsAppState, component: RootComponent, modifier: Modifier = M
             AsApp(
                 toasterState = toasterState,
                 component = component,
-                modifier = modifier
+                modifier = modifier,
+                windowAdaptiveInfo = windowAdaptiveInfo,
             )
         }
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class,)
 @Composable
 internal fun AsApp(
     toasterState: ToasterState,
     component: RootComponent,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     NavigationTrackingSideEffect(component)
-    Scaffold(
-        containerColor = Color.Transparent,
-        contentColor = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier.semantics {
-            testTagsAsResourceId = true
-        },
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        snackbarHost = {
-            Toaster(
-                state = toasterState,
-                modifier = Modifier.navigationBarsPadding()
+    val stack by component.stack.subscribeAsState()
+    val activeComponent = stack.active.instance
+    AsNavigationSuiteScaffold(
+        navigationSuiteItems = {
+            item(
+                selected = activeComponent is RootComponent.Child.HomeChild,
+                onClick = component::onHomeTabClicked,
+                destination = TopLevelDestination.HOME
+            )
+            item(
+                selected = activeComponent is RootComponent.Child.ToolChild,
+                onClick = component::onToolTabClicked,
+                destination = TopLevelDestination.TOOL
+            )
+            item(
+                selected = activeComponent is RootComponent.Child.DownloadChild,
+                onClick = component::onDownloadTabClicked,
+                destination = TopLevelDestination.DOWNLOAD
             )
         },
-        bottomBar = {
-            AsBottomBar(
-                component = component,
-                modifier = Modifier.testTag("AsBottomBar"),
-            )
-        }
-    ) { innerPadding ->
-        Surface(
-            modifier = Modifier
-                .padding(innerPadding)
-        ) {
-            RootContent(component)
+        modifier = Modifier.testTag("AsNavItem"),
+        windowAdaptiveInfo = windowAdaptiveInfo,
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            modifier = modifier.semantics {
+                testTagsAsResourceId = true
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = {
+                Toaster(
+                    state = toasterState,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            },
+        ) { innerPadding ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(
+                            WindowInsetsSides.Horizontal,
+                        ),
+                    ),
+            ) {
+                RootContent(component)
+            }
         }
     }
 }
@@ -137,62 +188,28 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
     }
 }
 
-@Composable
-private fun AsBottomBar(
-    component: RootComponent,
+private fun AsNavigationSuiteScope.item(
+    selected: Boolean,
+    onClick: () -> Unit,
+    destination: TopLevelDestination,
     modifier: Modifier = Modifier,
 ) {
-    val stack by component.stack.subscribeAsState()
-    val activeComponent = stack.active.instance
-    component.currentTopLevelDestination
-    AsNavigationBar(modifier.testTag("AsBottomBar")) {
-        AsNavigationBarItem(
-            TopLevelDestination.HOME,
-            activeComponent is RootComponent.Child.HomeChild,
-            component::onHomeTabClicked
-        )
-        AsNavigationBarItem(
-            TopLevelDestination.TOOL,
-            activeComponent is RootComponent.Child.ToolChild,
-            component::onToolTabClicked
-        )
-        AsNavigationBarItem(
-            TopLevelDestination.DOWNLOAD,
-            activeComponent is RootComponent.Child.DownloadChild,
-            component::onDownloadTabClicked
-        )
-    }
-}
-
-@Composable
-private fun RowScope.AsNavigationBarItem(
-    destination: TopLevelDestination,
-    selected: Boolean,
-    onNavigation: () -> Unit
-) {
-    AsNavigationBarItem(
+    item(
         selected = selected,
-        onClick = onNavigation,
+        onClick = onClick,
+        modifier = modifier,
         icon = {
             Icon(
-                painter = painterResource(id = destination.unselectedIconId),
+                painterResource(destination.unselectedIconId),
                 contentDescription = null,
             )
         },
         selectedIcon = {
             Icon(
-                painter = painterResource(id = destination.selectedIconId),
+                painterResource(destination.selectedIconId),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
             )
         },
-        label = {
-            Text(
-                stringResource(destination.iconTextId),
-                color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
-            )
-        },
-        alwaysShowLabel = selected,
-        modifier = Modifier,
+        label = { Text(stringResource(destination.iconTextId)) },
     )
 }

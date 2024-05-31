@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.ui
 
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -20,20 +18,17 @@ import kotlinx.coroutines.flow.stateIn
 @Composable
 fun rememberNiaAppState(
     toastMachine: ToastMachine,
-    windowSizeClass: WindowSizeClass,
     networkMonitor: NetworkMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): AsAppState {
     return remember(
         toastMachine,
-        windowSizeClass,
         networkMonitor,
         coroutineScope,
     ) {
         AsAppState(
             toastMachine = toastMachine,
             networkMonitor = networkMonitor,
-            windowSizeClass = windowSizeClass,
             coroutineScope = coroutineScope,
         )
     }
@@ -43,12 +38,8 @@ fun rememberNiaAppState(
 class AsAppState(
     toastMachine: ToastMachine,
     val coroutineScope: CoroutineScope,
-    val windowSizeClass: WindowSizeClass,
     networkMonitor: NetworkMonitor,
 ) {
-    val shouldShowBottomBar: Boolean
-        get() = windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact
-
     val isOffline = networkMonitor.isOnline
         .map(Boolean::not)
         .stateIn(

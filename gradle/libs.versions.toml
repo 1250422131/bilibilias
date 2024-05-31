@@ -59,6 +59,7 @@ androidxActivity = "1.9.0"
 androidxComposeBom = "2024.05.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-alpha10"
+androidxComposeMaterial3AdaptiveNavigationSuite= "1.3.0-beta01"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
 androidxWindowManager = "1.3.0"
@@ -217,6 +218,7 @@ androidx-compose-foundation-layout = { group = "androidx.compose.foundation", na
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-navigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
 androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "androidxComposeMaterial3Adaptive" }
 androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "androidxComposeMaterial3Adaptive" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }

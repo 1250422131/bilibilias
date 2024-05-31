@@ -12,10 +12,7 @@ import com.imcys.bilibilias.feature.tool.ToolComponent
 interface RootComponent {
 
     val stack: Value<ChildStack<*, Child>>
-
-    //    val currentDestination: NavDestination?
-//        @Composable get() = navController
-//            .currentBackStackEntryAsState().value?.destination
+    val currentDestination: RootComponent.Child
     val currentTopLevelDestination: TopLevelDestination?
 
     fun onHomeTabClicked()
