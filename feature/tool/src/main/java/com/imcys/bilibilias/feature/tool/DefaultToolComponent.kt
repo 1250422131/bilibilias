@@ -1,9 +1,10 @@
 package com.imcys.bilibilias.feature.tool
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.SavedStateHandle
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.value.operator.map
-import com.arkivanov.decompose.value.update
+import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
 import com.imcys.bilibilias.core.common.utils.NewVideoNumConversionUtils
@@ -38,6 +39,10 @@ class DefaultToolComponent @AssistedInject constructor(
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
 ) : ToolComponent, BaseViewModel<Unit, Unit>(componentContext) {
+
+    private val savedState = instanceKeeper.getOrCreate(::SavedState)
+    private val _searchQuery2 = savedState.getStateFlow()
+
     private val _searchQuery = MutableStateFlow("")
     override val searchQuery = _searchQuery.asStateFlow()
 
@@ -62,6 +67,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }
 
     override fun onSearchQueryChanged(query: String) {
+        savedState.set(query)
         _searchQuery.update { query }
     }
 
@@ -150,4 +156,13 @@ class DefaultToolComponent @AssistedInject constructor(
     override fun models(events: Flow<Unit>) {
         TODO("Not yet implemented")
     }
+}
+
+private class SavedState : InstanceKeeper.Instance {
+    private val flows = MutableStateFlow<String>("")
+    fun set(value: String) {
+        flows.value = value
+    }
+
+    fun getStateFlow() = flows.asStateFlow()
 }
