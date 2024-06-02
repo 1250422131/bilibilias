@@ -8,6 +8,7 @@ import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.login.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
+import com.imcys.bilibilias.feature.settings.SettingsComponent
 import com.imcys.bilibilias.feature.splash.SplashComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 
@@ -24,6 +25,7 @@ interface RootComponent {
     fun onDownloadTabClicked()
     fun onPlayedTabClicked(viewInfo: ViewInfo)
     fun onLoginTabClicked()
+    fun onSettingsTabClicked()
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
 
@@ -36,6 +38,7 @@ interface RootComponent {
         data object UserChild : Child()
         data class SplashChild(val component: SplashComponent) : Child()
         data class LoginChild(val component: LoginComponent) : Child()
+        data class SettingsChild(val component: SettingsComponent) : Child()
     }
 
     interface Factory {

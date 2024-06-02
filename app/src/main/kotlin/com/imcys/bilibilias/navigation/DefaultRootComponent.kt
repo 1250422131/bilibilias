@@ -15,6 +15,7 @@ import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.login.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
+import com.imcys.bilibilias.feature.settings.SettingsComponent
 import com.imcys.bilibilias.feature.splash.SplashComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.Assisted
@@ -32,6 +33,7 @@ class DefaultRootComponent @AssistedInject constructor(
     private val playerComponentFactory: PlayerComponent.Factory,
     private val splashComponentFactory: SplashComponent.Factory,
     private val loginComponentFactory: LoginComponent.Factory,
+    private val settingsComponentFactory: SettingsComponent.Factory
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -90,6 +92,10 @@ class DefaultRootComponent @AssistedInject constructor(
         navigation.push(Config.Login)
     }
 
+    override fun onSettingsTabClicked() {
+        navigation.push(Config.Settings)
+    }
+
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         trace("Navigation: $config") {
             when (config) {
@@ -131,6 +137,12 @@ class DefaultRootComponent @AssistedInject constructor(
                         componentContext
                     )
                 )
+
+                Config.Settings -> RootComponent.Child.SettingsChild(
+                    settingsComponentFactory(
+                        componentContext
+                    )
+                )
             }
         }
 
@@ -156,6 +168,9 @@ class DefaultRootComponent @AssistedInject constructor(
 
         @Serializable
         data object Login : Config
+
+        @Serializable
+        data object Settings : Config
     }
 
     @AssistedFactory

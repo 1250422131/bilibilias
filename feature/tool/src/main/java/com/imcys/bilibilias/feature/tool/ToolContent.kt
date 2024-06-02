@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,11 +41,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
@@ -53,9 +52,10 @@ import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
+import kotlin.reflect.KFunction0
 
 @Composable
-fun ToolContent(component: ToolComponent) {
+fun ToolContent(component: ToolComponent, navigationToSettings: KFunction0<Unit>) {
     val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
     val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
     ToolContent(
@@ -64,7 +64,7 @@ fun ToolContent(component: ToolComponent) {
         onClearSearches = component::clearSearches,
         searchResultUiState = searchResultUiState,
         onDownload = component::download,
-        onSetting = { }
+        onSetting = navigationToSettings
     )
 }
 
@@ -99,6 +99,7 @@ fun ToolContent(
                 value = searchQuery,
                 onValueChange = onSearchQueryChanged,
                 modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "搜索") },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         Icon(

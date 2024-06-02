@@ -46,6 +46,7 @@ import com.imcys.bilibilias.feature.download.DownloadContent
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.login.LoginContent
 import com.imcys.bilibilias.feature.player.PlayerContent
+import com.imcys.bilibilias.feature.settings.SettingContent
 import com.imcys.bilibilias.feature.splash.SplashContent
 import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.navigation.RootComponent
@@ -177,7 +178,10 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                 HomeContent(component = child.component)
 
             is RootComponent.Child.ToolChild ->
-                ToolContent(component = child.component)
+                ToolContent(
+                    component = child.component,
+                    navigationToSettings = component::onSettingsTabClicked
+                )
 
             is RootComponent.Child.DownloadChild ->
                 DownloadContent(
@@ -197,6 +201,8 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                 navigationToLogin = component::onLoginTabClicked,
                 navigationToTool = component::onToolTabClicked
             )
+
+            is RootComponent.Child.SettingsChild -> SettingContent(component = child.component)
         }
     }
 }
