@@ -7,7 +7,7 @@ internal object DanmakuUtil {
     private val tempDM = "temp_dm.xml"
     private val cachePath = DevUtils.getContext().cacheDir.path
     fun writer(byteArray: ByteArray) {
-        File(tempDM, cachePath).writeBytes(byteArray)
+        File(cachePath, tempDM).writeBytes(byteArray)
     }
 
     fun parseFile() {

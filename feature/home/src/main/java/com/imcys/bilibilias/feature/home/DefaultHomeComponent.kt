@@ -57,8 +57,8 @@ class DefaultHomeComponent @AssistedInject constructor(
     }
 
     @AssistedFactory
-    interface Factory {
-        operator fun invoke(
+    interface Factory : HomeComponent.Factory {
+        override fun invoke(
             componentContext: ComponentContext,
         ): DefaultHomeComponent
     }
