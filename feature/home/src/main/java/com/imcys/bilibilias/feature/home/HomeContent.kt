@@ -30,17 +30,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.load
 import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
-import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.youth.banner.Banner
@@ -51,16 +50,15 @@ import dev.utils.app.AppUtils
 
 @Composable
 fun HomeContent(component: HomeComponent) {
-//    val model by component.models.collectAsStateWithLifecycle()
-//    HomeContent({}, {}, model.homeBanner, model.updateNotice, onEvent = component::take)
+    val model by component.models.collectAsStateWithLifecycle()
+    HomeContent({}, {}, model, onEvent = component::take)
 }
 
 @Composable
 private fun HomeContent(
     onSalute: () -> Unit,
     onDonation: () -> Unit,
-    homeBanner: HomeBanner,
-    updateNotice: UpdateNotice,
+    model: HomeComponent.Model,
     onEvent: (HomeEvent) -> Unit
 ) {
     Scaffold { innerPadding ->
@@ -85,7 +83,7 @@ private fun HomeContent(
                             .clip(RoundedCornerShape(8.dp))
                     ) { banner ->
                         banner.setAdapter(object :
-                            BannerImageAdapter<String>(homeBanner.imgUrlList) {
+                            BannerImageAdapter<String>(model.homeBanner.imgUrlList) {
                             override fun onBindView(
                                 holder: BannerImageHolder,
                                 data: String,
@@ -94,7 +92,7 @@ private fun HomeContent(
                             ) {
                                 holder.imageView.load(data)
                                 holder.itemView.setOnClickListener {
-                                    val uri = Uri.parse(homeBanner.dataList[position])
+                                    val uri = Uri.parse(model.homeBanner.dataList[position])
                                     val intent = Intent(Intent.ACTION_VIEW, uri)
                                     AppUtils.startActivity(intent)
                                 }
@@ -154,7 +152,7 @@ private fun HomeContent(
                 }
             }
         }
-        DetectUpdateLogs(updateNotice)
+        DetectUpdateLogs(model.updateNotice)
     }
 }
 
