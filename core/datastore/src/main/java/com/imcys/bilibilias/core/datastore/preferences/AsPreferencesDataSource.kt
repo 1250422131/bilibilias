@@ -12,7 +12,7 @@ class AsPreferencesDataSource @Inject constructor(
     val userData = userPreferences.data.map {
         UserData(
             it.fileStoragePath,
-            it.fileNameRule,
+            it.fileNamingRule,
             it.autoMerge,
             it.autoImportToBilibili,
             it.shouldAppcenter,
@@ -20,12 +20,12 @@ class AsPreferencesDataSource @Inject constructor(
         )
     }
 
-    suspend fun setFileStoragePath(path: String) {
+    suspend fun setFileStoragePath(path: String?) {
         userPreferences.updateData { it.copy(fileStoragePath = path) }
     }
 
-    suspend fun setFileNameRule(rule: String) {
-        userPreferences.updateData { it.copy(fileNameRule = rule) }
+    suspend fun setFileNameRule(rule: String?) {
+        userPreferences.updateData { it.copy(fileNamingRule = rule) }
     }
 
     suspend fun setAutoMerge(enable: Boolean) {
