@@ -109,27 +109,25 @@ internal fun AsApp(
     NavigationTrackingSideEffect(component)
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
-
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
-            if (component.shouldShowBottomBar) {
-                item(
-                    selected = activeComponent is RootComponent.Child.HomeChild,
-                    onClick = component::onHomeTabClicked,
-                    destination = TopLevelDestination.HOME
-                )
-                item(
-                    selected = activeComponent is RootComponent.Child.ToolChild,
-                    onClick = component::onToolTabClicked,
-                    destination = TopLevelDestination.TOOL
-                )
-                item(
-                    selected = activeComponent is RootComponent.Child.DownloadChild,
-                    onClick = component::onDownloadTabClicked,
-                    destination = TopLevelDestination.DOWNLOAD
-                )
-            }
+            item(
+                selected = activeComponent is RootComponent.Child.HomeChild,
+                onClick = component::onHomeTabClicked,
+                destination = TopLevelDestination.HOME
+            )
+            item(
+                selected = activeComponent is RootComponent.Child.ToolChild,
+                onClick = component::onToolTabClicked,
+                destination = TopLevelDestination.TOOL
+            )
+            item(
+                selected = activeComponent is RootComponent.Child.DownloadChild,
+                onClick = component::onDownloadTabClicked,
+                destination = TopLevelDestination.DOWNLOAD
+            )
         },
+        shouldShowBottomBar = component.shouldShowBottomBar,
         modifier = Modifier.testTag("AsNavItem"),
         windowAdaptiveInfo = windowAdaptiveInfo,
     ) {

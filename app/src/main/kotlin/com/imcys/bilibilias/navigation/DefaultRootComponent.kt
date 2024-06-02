@@ -38,7 +38,7 @@ class DefaultRootComponent @AssistedInject constructor(
 
     private val navigation = StackNavigation<Config>()
     override val shouldShowBottomBar: Boolean
-        get() = when (stack.active.instance) {
+        get() = when (currentDestination) {
             is RootComponent.Child.HomeChild,
             is RootComponent.Child.ToolChild,
             is RootComponent.Child.DownloadChild -> true

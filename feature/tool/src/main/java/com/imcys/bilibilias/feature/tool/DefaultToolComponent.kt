@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.serialization.builtins.serializer
 
 class DefaultToolComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -39,14 +39,13 @@ class DefaultToolComponent @AssistedInject constructor(
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
 ) : ToolComponent, BaseViewModel<Unit, Unit>(componentContext) {
-
+    private var state = stateKeeper.consume(key = "SAVED_STATE", strategy = String.serializer()) ?: ""
     private val savedState = instanceKeeper.getOrCreate(::SavedState)
-    private val _searchQuery2 = savedState.getStateFlow()
+    private val _searchQuery = savedState.getStateFlow()
 
-    private val _searchQuery = MutableStateFlow("")
-    override val searchQuery = _searchQuery.asStateFlow()
+    override val searchQuery = _searchQuery
 
-    override val searchResultUiState = searchQuery.map {
+    override val searchResultUiState = _searchQuery.map {
         InputParseUtil.searchType(it)
     }.flatMapLatest {
         when (it) {
@@ -68,11 +67,10 @@ class DefaultToolComponent @AssistedInject constructor(
 
     override fun onSearchQueryChanged(query: String) {
         savedState.set(query)
-        _searchQuery.update { query }
     }
 
     override fun clearSearches() {
-        _searchQuery.update { "" }
+        savedState.set("")
     }
 
     private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> {
@@ -161,6 +159,7 @@ class DefaultToolComponent @AssistedInject constructor(
 private class SavedState : InstanceKeeper.Instance {
     private val flows = MutableStateFlow<String>("")
     fun set(value: String) {
+        SavedStateHandle
         flows.value = value
     }
 
