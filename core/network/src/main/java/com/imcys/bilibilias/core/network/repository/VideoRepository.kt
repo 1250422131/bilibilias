@@ -6,38 +6,24 @@ import com.imcys.bilibilias.core.model.video.ArchiveFavoured
 import com.imcys.bilibilias.core.model.video.ArchiveLike
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
-import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BilibiliApi
-import com.imcys.bilibilias.core.network.di.WrapperClient
 import com.imcys.bilibilias.core.network.di.requireCSRF
 import com.imcys.bilibilias.core.network.di.requireWbi
 import com.imcys.bilibilias.core.network.utils.parameterAVid
 import com.imcys.bilibilias.core.network.utils.parameterAid
 import com.imcys.bilibilias.core.network.utils.parameterBVid
 import com.imcys.bilibilias.core.network.utils.parameterCid
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import io.ktor.client.request.prepareGet
-import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.request
-import io.ktor.http.HttpHeaders
-import io.ktor.http.isSuccess
-import io.ktor.util.cio.writeChannel
-import io.ktor.utils.io.copyAndClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
-import java.io.File
 import javax.inject.Inject
 
 class VideoRepository @Inject constructor(
-    wrapperClient: WrapperClient
+    private val client: HttpClient,
 ) {
-    private val client = wrapperClient.client
     suspend fun shortLink(url: String): String {
         return client.get(url)
             .request
