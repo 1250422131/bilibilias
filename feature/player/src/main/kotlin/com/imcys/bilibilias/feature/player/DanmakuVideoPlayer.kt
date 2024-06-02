@@ -6,8 +6,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.OptIn
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSink
@@ -17,6 +15,8 @@ import androidx.media3.datasource.TransferListener
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.extractor.DefaultExtractorsFactory
+import com.imcys.bilibilias.core.common.utils.getActivity
 import com.kuaishou.akdanmaku.DanmakuConfig
 import com.kuaishou.akdanmaku.render.SimpleRenderer
 import com.kuaishou.akdanmaku.render.TypedDanmakuRenderer
@@ -37,8 +37,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DanmakuVideoPlayer :
     StandardGSYVideoPlayer,
-    ExoMediaSourceInterceptListener,
-    DefaultLifecycleObserver {
+    ExoMediaSourceInterceptListener{
     constructor(context: Context) : super(context)
     constructor(context: Context, fullFlag: Boolean) : super(context, fullFlag)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -56,9 +55,10 @@ class DanmakuVideoPlayer :
 
     @Inject
     lateinit var dataSource: DataSource.Factory
+    private val defaultDataSource = DefaultDataSource.Factory(context)
     private lateinit var videoPlayer: StandardGSYVideoPlayer
 
-    private var orientationUtils: OrientationUtils? = null
+    private lateinit var orientationUtils: OrientationUtils
 
     init {
         ExoSourceManager.setExoMediaSourceInterceptListener(this)
@@ -67,22 +67,15 @@ class DanmakuVideoPlayer :
     override fun init(context: Context) {
         super.init(context)
         videoPlayer = findViewById(R.id.video_player)
-        videoPlayer.setUp("", false, "")
+        orientationUtils = OrientationUtils(context.getActivity(), videoPlayer)
 //        videoPlayer.setThumbImageView(imageView);
-        startPlayLogic()
     }
 
     fun setMediaSource(uris: List<Uri>) {
-        Napier.d { uris.toString() }
-        when (uris.size) {
-            2 -> mergingMediaSource = MergingMediaSource(
-                createMediaSource(uris[0]),
-                createMediaSource(uris[1]),
-            )
-
-            1 -> mergingMediaSource = MergingMediaSource(createMediaSource(uris.first()))
-            else -> Napier.d { "源数量 ${uris.size}" }
-        }
+        if (uris.isEmpty()) return
+        Napier.d { "源数量 ${uris.size}" }
+        setUp(uris.first().path, false, null)
+        mergingMediaSource = mergeSource(uris)
     }
 
     override fun onPrepared() {
@@ -128,13 +121,6 @@ class DanmakuVideoPlayer :
 
     override fun onClick(v: View) {
         super.onClick(v)
-        when (v.id) {
-//            R.id.send_danmaku -> addDanmaku(true)
-//            R.id.toogle_danmaku -> {
-//                mDanmaKuShow = !mDanmaKuShow
-//                resolveDanmakuShow()
-//            }
-        }
     }
 
     override fun cloneParams(from: GSYBaseVideoPlayer, to: GSYBaseVideoPlayer) {
@@ -258,28 +244,20 @@ class DanmakuVideoPlayer :
 //        }
     }
 
-    override fun onCreate(owner: LifecycleOwner) {
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-    }
-
-    override fun onPause(owner: LifecycleOwner) {
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-    }
-
     /**
      * 模拟添加弹幕数据
      */
     private fun addDanmaku(islive: Boolean) {
+    }
+
+    private fun mergeSource(uris: List<Uri>): MediaSource {
+        val extractorsFactory = DefaultExtractorsFactory()
+        val ms = mutableListOf<MediaSource>()
+        for (uri in uris) {
+            ms += ProgressiveMediaSource.Factory(defaultDataSource, extractorsFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
+        }
+        return MergingMediaSource(*ms.toTypedArray<MediaSource>())
     }
 
     private fun createMediaSource(uri: Uri) = progressiveSource.createMediaSource(
@@ -311,7 +289,7 @@ class DanmakuVideoPlayer :
         readTimeoutMillis: Int,
         mapHeadData: MutableMap<String, String>?,
         allowCrossProtocolRedirects: Boolean
-    ): DataSource.Factory? = dataSource
+    ): DataSource.Factory? = defaultDataSource
 
     @OptIn(UnstableApi::class)
     override fun cacheWriteDataSinkFactory(CachePath: String?, url: String?): DataSink.Factory? =

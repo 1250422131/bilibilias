@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.gsyvideoplayer.exo2)
 
     implementation(libs.akdanmaku)
+//    implementation("com.github.bytedance:danmaku-render-engine:0.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

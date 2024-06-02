@@ -68,8 +68,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlin.reflect.typeOf
 
-data class WrapperClient(val client: HttpClient)
-
 internal val requireWbi = AttributeKey<Boolean>("requireWbi")
 internal val requireCSRF = AttributeKey<Boolean>("requireCSRF")
 
@@ -133,7 +131,7 @@ class NetworkModule2 {
         asCookiesStorage: AsCookiesStorage,
         loginInfoDataSource: LoginInfoDataSource,
         okHttpClient: OkHttpClient
-    ): WrapperClient {
+    ): HttpClient {
         val client = HttpClient(
             OkHttp.create { preconfigured = okHttpClient }
         ) {
@@ -147,7 +145,7 @@ class NetworkModule2 {
                 level = JsonAwareLogLevel.BODY
                 filter {
                     it.url.host == BilibiliApi.API_HOST ||
-                        it.url.host == BiliBiliAsApi.API_HOST
+                            it.url.host == BiliBiliAsApi.API_HOST
                 }
             }
             install(HttpCookies) {
@@ -167,7 +165,7 @@ class NetworkModule2 {
         client.plugin(HttpSend).intercept { request ->
             wbiIntercept(request, loginInfoDataSource)
         }
-        return WrapperClient(client)
+        return client
     }
 
     private suspend fun Sender.wbiIntercept(
@@ -223,8 +221,8 @@ class NetworkModule2 {
                 throw ApiIOException(
                     box.code,
                     box.message +
-                        "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
-                        "\n链接: ${request.request.url}",
+                            "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
+                            "\n链接: ${request.request.url}",
                     box.data?.ofMap()?.print()
                 )
             }
