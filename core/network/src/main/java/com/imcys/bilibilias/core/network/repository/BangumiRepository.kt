@@ -1,20 +1,19 @@
-﻿package com.imcys.bilibilias.core.network.repository
+package com.imcys.bilibilias.core.network.repository
 
 import com.imcys.bilibilias.core.model.bangumi.BangumiDetail
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
-import com.imcys.bilibilias.core.network.di.WrapperClient
 import com.imcys.bilibilias.core.network.utils.parameterAVid
 import com.imcys.bilibilias.core.network.utils.parameterCid
 import com.imcys.bilibilias.core.network.utils.parameterEPid
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import javax.inject.Inject
 
 class BangumiRepository @Inject constructor(
-    wrapperClient: WrapperClient
+    private val client: HttpClient,
 ) {
-    private val client = wrapperClient.client
     suspend fun 获取剧集详情(epid: Long): BangumiDetail {
         return client.get("pgc/view/web/season") {
             parameterEPid(epid)

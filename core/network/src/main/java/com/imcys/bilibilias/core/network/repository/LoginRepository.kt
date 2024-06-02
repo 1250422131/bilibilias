@@ -6,7 +6,8 @@ import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll
 import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BilibiliApi
-import com.imcys.bilibilias.core.network.di.WrapperClient
+
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -15,10 +16,9 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
-    wrapperClient: WrapperClient,
+    private val client: HttpClient,
     private val loginInfoDataSource: LoginInfoDataSource
 ) {
-    private val client = wrapperClient.client
     suspend fun 获取二维码(): QrcodeGenerate {
         return client.get(BilibiliApi.WEB_QRCODE_GENERATE).body<QrcodeGenerate>()
     }
