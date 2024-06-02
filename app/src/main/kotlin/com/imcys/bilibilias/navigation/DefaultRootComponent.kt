@@ -136,12 +136,25 @@ class DefaultRootComponent @AssistedInject constructor(
 
     @Serializable
     private sealed interface Config {
+        @Serializable
         data object Home : Config
+
+        @Serializable
         data object Tool : Config
+
+        @Serializable
         data object Download : Config
+
+        @Serializable
         data object User : Config
+
+        @Serializable
         data class Player(val info: ViewInfo) : Config
+
+        @Serializable
         data object Splash : Config
+
+        @Serializable
         data object Login : Config
     }
 
