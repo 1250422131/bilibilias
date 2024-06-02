@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.core.model.data
 
 data class UserData(
-    val fileStoragePath: String,
-    val fileNameRule: String,
+    val fileStoragePath: String?,
+    val fileNamingRule: String?,
     val autoMerge: Boolean,
     val autoImport: Boolean,
     val shouldAppcenter: Boolean,

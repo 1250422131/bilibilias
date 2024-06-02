@@ -4,8 +4,8 @@ option java_package = "com.imcys.bilibilias.core.datastore";
 option java_multiple_files = true;
 
 message UserPreferences {
-    string fileStoragePath = 1;
-    string fileNameRule = 2;
+    optional string fileStoragePath = 1;
+    optional string fileNamingRule = 2;
     bool autoMerge = 3;
     bool autoImportToBilibili = 4;
     string command = 5;
