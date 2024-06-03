@@ -1,7 +1,10 @@
 package com.imcys.bilibilias.feature.tool
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
@@ -30,7 +33,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.serialization.builtins.serializer
 
 class DefaultToolComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -38,8 +40,8 @@ class DefaultToolComponent @AssistedInject constructor(
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
-) : ToolComponent, BaseViewModel<Unit, Unit>(componentContext) {
-    private var state = stateKeeper.consume(key = "SAVED_STATE", strategy = String.serializer()) ?: ""
+) : ToolComponent, ViewModel(), ComponentContext by componentContext {
+
     private val savedState = instanceKeeper.getOrCreate(::SavedState)
     private val _searchQuery = savedState.getStateFlow()
 
@@ -56,7 +58,7 @@ class DefaultToolComponent @AssistedInject constructor(
             SearchType.None -> flowOf(SearchResultUiState.EmptyQuery)
         }
     }.stateIn(
-        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+        viewModelScope,
         SharingStarted.Eagerly,
         SearchResultUiState.Loading
     )
@@ -148,11 +150,6 @@ class DefaultToolComponent @AssistedInject constructor(
         override fun invoke(
             componentContext: ComponentContext,
         ): DefaultToolComponent
-    }
-
-    @Composable
-    override fun models(events: Flow<Unit>) {
-        TODO("Not yet implemented")
     }
 }
 
