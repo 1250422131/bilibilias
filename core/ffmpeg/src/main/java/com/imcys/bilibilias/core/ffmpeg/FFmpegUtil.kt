@@ -11,7 +11,7 @@ object FFmpegUtil {
      * @return 合成后的文件
      * ffmpeg -i video.mp4 -i audio.m4a -c:v copy -c:a copy output.mp4
      */
-    fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String?> {
+    fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String> {
         return buildCommandParams {
             append("-i")
             append("\"$videoFile\"")
