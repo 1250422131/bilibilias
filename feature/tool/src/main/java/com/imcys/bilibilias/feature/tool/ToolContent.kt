@@ -43,6 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
@@ -56,6 +58,7 @@ import kotlin.reflect.KFunction0
 
 @Composable
 fun ToolContent(component: ToolComponent, navigationToSettings: KFunction0<Unit>) {
+//    viewModel(modelClass = )
     val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
     val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
     ToolContent(
