@@ -14,8 +14,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
-class MixingInterceptor @AssistedInject constructor(
+class MixingInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userPreferences: AsPreferencesDataSource,
     private val ifFmpegWork: IFFmpegWork,

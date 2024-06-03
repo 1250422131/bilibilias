@@ -14,8 +14,9 @@ import okio.buffer
 import okio.sink
 import okio.source
 import java.io.File
+import javax.inject.Inject
 
-class MoveFileInterceptor @AssistedInject constructor(
+class MoveFileInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userPreferences: AsPreferencesDataSource,
 ) : Interceptor<String> {

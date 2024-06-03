@@ -1,22 +1,13 @@
 package com.imcys.bilibilias.core.download
 
 import android.content.Context
-import androidx.collection.mutableObjectListOf
 import androidx.core.net.toFile
-import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.data.toast.AsToastState
-import com.imcys.bilibilias.core.data.toast.AsToastType
-import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
-import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
-import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.download.task.VideoTask
 import com.imcys.bilibilias.core.model.download.FileType
-import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
@@ -25,14 +16,11 @@ import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.Util
-import com.liulishuo.okdownload.kotlin.listener.createListener1
 import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
