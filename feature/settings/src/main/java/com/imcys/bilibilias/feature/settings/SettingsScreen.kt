@@ -12,6 +12,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,7 +43,7 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding.calculateTopPadding())
+                .padding(innerPadding)
                 .scrollable(rememberScrollState(), Orientation.Vertical)
         ) {
             SettingsGroup(
@@ -91,12 +93,13 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
                     state = model.autoMerge,
                     title = { Text(text = "下载完成后自动合并") }
                 ) {
-                    onEvent(UserEditEvent.onChangeAutoMerge)
+                    onEvent(UserEditEvent.onChangeAutoMerge(it))
                 }
                 SettingsSwitch(
                     state = model.autoImport,
                     title = { Text(text = "下载完成自动导入B站") }
-                ) {onEvent(UserEditEvent.onChangeAutoImport)
+                ) {
+                    onEvent(UserEditEvent.onChangeAutoImport(it))
                 }
                 var command by remember {
                     mutableStateOf<String?>(null)
@@ -132,12 +135,15 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
                 }
             }
 
-            SettingsGroup(title = { Text(text = "隐私政策") }) {
+            SettingsGroup(
+                title = { Text(text = "隐私政策") },
+                modifier = Modifier
+            ) {
                 SettingsSwitch(
                     state = model.shouldAppcenter,
                     title = { Text(text = "允许使用 Microsoft AppCenter") },
                 ) {
-                    onEvent(UserEditEvent.onChangeWill)
+                    onEvent(UserEditEvent.onChangeWill(it))
                 }
             }
         }
@@ -169,12 +175,12 @@ fun SimpleDialog(
                 Card {
                     Text(
                         text = helpText,
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 8.dp),
+                        modifier = Modifier.padding(8.dp),
                     )
-                    TextField(
+                    OutlinedTextField(
                         value = textFieldHint,
-                        onValueChange = onEdit
+                        onValueChange = onEdit,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
             }

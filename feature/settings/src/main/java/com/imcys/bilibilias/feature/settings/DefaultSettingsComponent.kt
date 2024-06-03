@@ -30,7 +30,7 @@ class DefaultSettingsComponent @AssistedInject constructor(
         var shouldAppcenter by remember { mutableStateOf(false) }
         var command by remember { mutableStateOf("") }
         LaunchedEffect(Unit) {
-            asPreferencesDataSource.userData.map {
+            asPreferencesDataSource.userData.collect {
                 fileStoragePath = it.fileStoragePath
                 fileNamingRule = it.fileNamingRule
                 autoMerge = it.autoMerge
@@ -42,18 +42,23 @@ class DefaultSettingsComponent @AssistedInject constructor(
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
-                    UserEditEvent.onChangeAutoImport ->
-                        asPreferencesDataSource.setAutoImportToBilibili(!autoImport)
+                    is UserEditEvent.onChangeAutoImport ->
+                        asPreferencesDataSource.setAutoImportToBilibili(event.state)
 
-                    UserEditEvent.onChangeAutoMerge -> asPreferencesDataSource.setAutoMerge(!autoMerge)
-                    UserEditEvent.onChangeCommand -> asPreferencesDataSource.setCommand(command)
+                    is UserEditEvent.onChangeAutoMerge ->
+                        asPreferencesDataSource.setAutoMerge(event.state)
+
+                    is UserEditEvent.onChangeCommand ->
+                        asPreferencesDataSource.setCommand(command)
+
                     is UserEditEvent.onChangeFileNamingRule ->
                         asPreferencesDataSource.setFileNameRule(event.rule)
 
                     is UserEditEvent.onChangeStoragePath ->
                         asPreferencesDataSource.setFileStoragePath(event.path)
 
-                    UserEditEvent.onChangeWill -> asPreferencesDataSource.setShouldAppcenter(!shouldAppcenter)
+                    is UserEditEvent.onChangeWill ->
+                        asPreferencesDataSource.setShouldAppcenter(event.state)
                 }
             }
         }
