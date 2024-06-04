@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.ffmpeg
+package com.imcys.bilibilias.core.ffmpeg
 
 object FFmpegUtil {
     /**
@@ -9,10 +9,13 @@ object FFmpegUtil {
      * @param duration  视频时长
      * @param muxFile   目标文件
      * @return 合成后的文件
-     * ffmpeg -i video.mp4 -i audio.m4a -c:v copy -c:a copy output.mp4
+     * ffmpeg -y -i video.mp4 -i audio.m4a -c:v copy -c:a copy output.mp4
      */
     fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String> {
         return buildCommandParams {
+            append("ffmpeg")
+            append("-y")
+
             append("-i")
             append("\"$videoFile\"")
 
@@ -24,6 +27,28 @@ object FFmpegUtil {
             append("-c:a")
             append("copy")
             append("\"$muxFile\"")
+        }
+    }
+
+    /**
+     * ffmpeg -y -i video.mp4 -i audio.m4a -vcodec copy -acodec copy output.mp4
+     */
+    fun mixAudioVideo2(videoFile: String, audioFile: String, muxFile: String): Array<String> {
+        return buildCommandParams {
+            append("-y")
+
+            append("-i")
+            append("$videoFile")
+
+            append("-i")
+            append("$audioFile")
+
+            append("-vcodec")
+            append("copy")
+            append("-acodec")
+            append("copy")
+
+            append("$muxFile")
         }
     }
 }
