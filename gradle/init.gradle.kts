@@ -24,7 +24,7 @@ rootProject {
                         "android" to "true",
                     ),
                 )
-                licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+//                licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
             }
             format("kts") {
                 target("**/*.kts")
