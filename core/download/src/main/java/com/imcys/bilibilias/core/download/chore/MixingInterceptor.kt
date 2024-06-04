@@ -1,15 +1,17 @@
 package com.imcys.bilibilias.core.download.chore
 
 import android.content.Context
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.core.content.contentValuesOf
 import androidx.core.net.toFile
+import com.anggrayudi.storage.file.CreateMode
+import com.anggrayudi.storage.file.DocumentFileCompat
+import com.anggrayudi.storage.file.MimeType
+import com.anggrayudi.storage.file.makeFile
+import com.anggrayudi.storage.media.FileDescription
+import com.anggrayudi.storage.media.MediaStoreCompat
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.GroupTask
+import com.imcys.bilibilias.core.ffmpeg.FFmpegUtil
 import com.imcys.bilibilias.core.ffmpeg.IFFmpegWork
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
@@ -25,45 +27,53 @@ class MixingInterceptor @Inject constructor(
         userPreferences.userData.first().autoMerge
     }
 
+    // val command = arrayOf(
+    //            "-y",
+    //            "-i",
+    //            vFile.toFile().path,
+    //            "-i",
+    //            aFile.toFile().path,
+    //            "-vcodec", "copy", "-acodec", "copy",
+    //            "$contentUri",
+    //        )
     override fun intercept(message: GroupTask, chain: Interceptor.Chain) {
         Napier.d(tag = "Interceptor") { "合并视频 $enable, $message" }
         if (!enable) return
-        val resolver = context.contentResolver
-        val date = System.currentTimeMillis() / 1000
-        val contentValues = contentValuesOf(
-            MediaStore.Video.Media.DISPLAY_NAME to "${message.video.subTitle}.mp4",
-            MediaStore.Video.Media.RELATIVE_PATH to "${Environment.DIRECTORY_MOVIES}/biliAs",
-            MediaStore.Video.Media.IS_PENDING to 1,
-            MediaStore.Video.Media.MIME_TYPE to "video/mp4",
-            MediaStore.Video.Media.DATE_ADDED to date,
-            MediaStore.Video.Media.DATE_MODIFIED to date,
-        )
-        val collection =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Video.Media.getContentUri(
-                    MediaStore.VOLUME_EXTERNAL_PRIMARY
-                )
+        runBlocking {
+            val path = userPreferences.userData.first().fileStoragePath
+            Napier.d { "指定路径 $path" }
+            if (path != null) {
+                指定写入路径(message)
             } else {
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                没有指定写入路径(message)
             }
-        val contentUri = resolver.insert(collection, contentValues)
-        val vFile = message.video.uri
-        val aFile = message.audio.uri
-        val command = arrayOf(
-            "-y",
-            "-i",
-            vFile.toFile().path,
-            "-i",
-            aFile.toFile().path,
-            "-vcodec", "copy", "-acodec", "copy",
-            "$contentUri",
+        }
+    }
+
+    private suspend fun 指定写入路径(message: GroupTask) {
+        val grantedPaths = DocumentFileCompat.getAccessibleAbsolutePaths(context)
+        val path = grantedPaths.values.firstOrNull()?.firstOrNull() ?: return
+        val folder = DocumentFileCompat.fromFullPath(context, path, requiresWriteAccess = true)
+        val file = folder?.makeFile(context, "${message.video.subTitle}.mp4", MimeType.VIDEO)
+        val command = FFmpegUtil.mixAudioVideo2(
+            message.video.uri.toFile().path,
+            message.audio.uri.toFile().path,
+            file?.uri.toString()
         )
         ifFmpegWork.execute(command)
+    }
 
-        contentValues.clear()
-        contentValues.put(MediaStore.Video.Media.IS_PENDING, 0)
-        if (contentUri != null) {
-            resolver.update(contentUri, contentValues, null, null)
-        }
+    private suspend fun 没有指定写入路径(message: GroupTask) {
+        val mediaFile = MediaStoreCompat.createVideo(
+            context,
+            FileDescription("${message.video.subTitle}.mp4", "biliAs", MimeType.VIDEO),
+            mode = CreateMode.REPLACE
+        )
+        val command = FFmpegUtil.mixAudioVideo2(
+            message.video.uri.toFile().path,
+            message.audio.uri.toFile().path,
+            mediaFile?.uri.toString()
+        )
+        ifFmpegWork.execute(command)
     }
 }

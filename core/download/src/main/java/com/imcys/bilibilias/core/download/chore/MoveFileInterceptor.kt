@@ -27,24 +27,24 @@ class MoveFileInterceptor @Inject constructor(
     override fun intercept(message: String, chain: Interceptor.Chain) {
         Napier.d(tag = "Interceptor") { "移动文件 $enable, $message" }
         if (!enable) return
-        runBlocking {
-            DocumentFileCompat.fromTreeUri(
-                context,
-                Uri.parse(userPreferences.userData.first().fileStoragePath)
-            )
-        }?.let { document ->
-            val newFile = document.createFile("video/mp4", message)
-            Napier.d("findFile:" + newFile + " uri:" + newFile?.uri)
-
-            newFile?.uri?.let {
-                val inBuffer = File(message).source().buffer()
-                context.contentResolver.openOutputStream(it)?.let {
-                    it.sink().buffer().use {
-                        it.writeAll(inBuffer)
-                        inBuffer.close()
-                    }
-                }
-            }
-        }
+//        runBlocking {
+//            DocumentFileCompat.fromTreeUri(
+//                context,
+//                Uri.parse(userPreferences.userData.first().fileStoragePath)
+//            )
+//        }?.let { document ->
+//            val newFile = document.createFile("video/mp4", message)
+//            Napier.d("findFile:" + newFile + " uri:" + newFile?.uri)
+//
+//            newFile?.uri?.let {
+//                val inBuffer = File(message).source().buffer()
+//                context.contentResolver.openOutputStream(it)?.let {
+//                    it.sink().buffer().use {
+//                        it.writeAll(inBuffer)
+//                        inBuffer.close()
+//                    }
+//                }
+//            }
+//        }
     }
 }

@@ -4,6 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewModelScope
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.launchMolecule
+import app.cash.molecule.moleculeFlow
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
@@ -23,6 +28,8 @@ import dagger.assisted.AssistedInject
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 class DefaultDownloadComponent @AssistedInject constructor(
@@ -64,7 +71,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
         events: Flow<Event>,
         loadAllDownloadFlow: Flow<List<DownloadTaskEntity>>
     ): Model {
-        val entities by loadAllDownloadFlow.collectAsState(initial = emptyList())
+        val entities = remember { loadAllDownloadFlow }.collectAsState(initial = emptyList())
 
         LaunchedEffect(Unit) {
             events.collect { event ->
@@ -72,7 +79,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
         }
 
         return Model(
-            entities.groupBy { it.cid }
+            entities.value.groupBy { it.cid }
                 .values
                 .map {
                     Napier.d { it.joinToString("\n") }
