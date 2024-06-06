@@ -63,4 +63,4 @@ include(":okdownload:okdownload")
 // include(":sync:sync-test")
 // include(":ui-test-hilt-manifest")
 
-include(":feature:author-space")
+include(":feature:authorspace")
