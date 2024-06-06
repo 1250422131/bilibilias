@@ -45,7 +45,7 @@ private fun UnitedDetails() {
             Text(text = "title")
         },
         supportingContent = { },
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier,
         overlineContent = {}
     )
 }
