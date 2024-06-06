@@ -26,4 +26,6 @@ internal object BilibiliApi {
     const val COIN_ADD = "x/web-interface/coin/add"
     const val ARCHIVE_FAVOURED = "x/v2/fav/video/favoured"
     const val ARCHIVE_RESOURCE_FAVOURED = "/x/v3/fav/resource/deal"
+
+    const val SPACE_ARC_SEARCH = "x/space/wbi/arc/search"
 }
