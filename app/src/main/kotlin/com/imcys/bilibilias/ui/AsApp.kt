@@ -36,6 +36,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
+import com.imbys.bilibilias.feature.authorspace.AuthorSpaceContent
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationSuiteScaffold
@@ -178,7 +179,8 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             is RootComponent.Child.ToolChild ->
                 ToolContent(
                     component = child.component,
-                    navigationToSettings = component::onSettingsTabClicked
+                    navigationToSettings = component::onSettingsTabClicked,
+                    navigationToAuthorSpace = component::onAuthorSpaceTabClicked
                 )
 
             is RootComponent.Child.DownloadChild ->
@@ -201,6 +203,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             )
 
             is RootComponent.Child.SettingsChild -> SettingContent(component = child.component)
+            is RootComponent.Child.AuthorSpaceChild -> AuthorSpaceContent(component = child.component)
         }
     }
 }

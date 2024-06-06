@@ -43,21 +43,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
+import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
 import kotlin.reflect.KFunction0
+import kotlin.reflect.KFunction1
 
 @Composable
-fun ToolContent(component: ToolComponent, navigationToSettings: KFunction0<Unit>) {
+fun ToolContent(
+    component: ToolComponent,
+    navigationToSettings: () -> Unit,
+    navigationToAuthorSpace: (Mid) -> Unit,
+) {
     val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
     val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
     ToolContent(
@@ -66,7 +70,8 @@ fun ToolContent(component: ToolComponent, navigationToSettings: KFunction0<Unit>
         onClearSearches = component::clearSearches,
         searchResultUiState = searchResultUiState,
         onDownload = component::download,
-        onSetting = navigationToSettings
+        onSetting = navigationToSettings,
+        navigationToAuthorSpace = navigationToAuthorSpace
     )
 }
 
@@ -78,7 +83,8 @@ fun ToolContent(
     onClearSearches: () -> Unit,
     searchResultUiState: SearchResultUiState,
     onDownload: (DownloadRequest) -> Unit,
-    onSetting: () -> Unit
+    onSetting: () -> Unit,
+    navigationToAuthorSpace: (Mid) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -131,6 +137,7 @@ fun ToolContent(
                                 modifier = Modifier
                                     .size(70.dp)
                                     .clip(CircleShape)
+                                    .clickable { navigationToAuthorSpace(searchResultUiState.aid) }
                             )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->

@@ -112,7 +112,8 @@ class DefaultToolComponent @AssistedInject constructor(
                         detail.bvid,
                         detail.cid,
                         collection,
-                        detail.owner.face
+                        detail.owner.face,
+                        detail.owner.mid,
                     )
                 }
             }
@@ -138,7 +139,8 @@ class DefaultToolComponent @AssistedInject constructor(
                         episode.bvid,
                         episode.cid,
                         collection,
-                        detail.upInfo.avatar
+                        detail.upInfo.avatar,
+                        detail.upInfo.mid,
                     )
                 }
             }

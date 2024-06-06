@@ -9,7 +9,9 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
+import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
@@ -33,7 +35,8 @@ class DefaultRootComponent @AssistedInject constructor(
     private val playerComponentFactory: PlayerComponent.Factory,
     private val splashComponentFactory: SplashComponent.Factory,
     private val loginComponentFactory: LoginComponent.Factory,
-    private val settingsComponentFactory: SettingsComponent.Factory
+    private val settingsComponentFactory: SettingsComponent.Factory,
+    private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory
 ) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
@@ -96,28 +99,26 @@ class DefaultRootComponent @AssistedInject constructor(
         navigation.push(Config.Settings)
     }
 
+    override fun onAuthorSpaceTabClicked(mid: Mid) {
+        navigation.push(Config.AuthorSpace(mid))
+    }
+
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         trace("Navigation: $config") {
             when (config) {
+                is Config.User -> error("未实现用户页面")
                 is Config.Home -> RootComponent.Child.HomeChild(
-                    homeComponentFactory(
-                        componentContext
-                    )
+                    homeComponentFactory(componentContext)
                 )
 
                 is Config.Tool -> RootComponent.Child.ToolChild(
-                    toolComponentFactory(
-                        componentContext
-                    )
+                    toolComponentFactory(componentContext)
                 )
 
                 is Config.Download -> RootComponent.Child.DownloadChild(
-                    downloadComponentFactory(
-                        componentContext
-                    )
+                    downloadComponentFactory(componentContext)
                 )
 
-                Config.User -> error("")
                 is Config.Player -> RootComponent.Child.PlayerChild(
                     playerComponentFactory(
                         componentContext,
@@ -127,21 +128,19 @@ class DefaultRootComponent @AssistedInject constructor(
                 )
 
                 Config.Login -> RootComponent.Child.LoginChild(
-                    loginComponentFactory(
-                        componentContext
-                    )
+                    loginComponentFactory(componentContext)
                 )
 
                 Config.Splash -> RootComponent.Child.SplashChild(
-                    splashComponentFactory(
-                        componentContext
-                    )
+                    splashComponentFactory(componentContext)
                 )
 
                 Config.Settings -> RootComponent.Child.SettingsChild(
-                    settingsComponentFactory(
-                        componentContext
-                    )
+                    settingsComponentFactory(componentContext)
+                )
+
+                is Config.AuthorSpace -> RootComponent.Child.AuthorSpaceChild(
+                    authorSpaceComponentFactory(componentContext, config.mid)
                 )
             }
         }
@@ -171,6 +170,9 @@ class DefaultRootComponent @AssistedInject constructor(
 
         @Serializable
         data object Settings : Config
+
+        @Serializable
+        data class AuthorSpace(val mid: Mid) : Config
     }
 
     @AssistedFactory

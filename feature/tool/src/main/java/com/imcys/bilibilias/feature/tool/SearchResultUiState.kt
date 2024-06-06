@@ -14,6 +14,7 @@ sealed interface SearchResultUiState {
         val cid: Long,
         val collection: List<View>,
         val face: String,
+        val ownerId: Long,
     ) : SearchResultUiState
 }
 
