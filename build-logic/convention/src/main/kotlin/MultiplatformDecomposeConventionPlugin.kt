@@ -9,6 +9,8 @@ class MultiplatformDecomposeConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
             dependencies {
+                add("implementation", project(":feature:common"))
+
                 "implementation"(libs.findLibrary("decompose").get())
                 "implementation"(libs.findLibrary("decompose.compose").get())
                 "implementation"(libs.findLibrary("molecule").get())
