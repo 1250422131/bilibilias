@@ -1,5 +1,5 @@
 plugins {
-    `kotlin-dsl`
+    alias(libs.plugins.kotlin.dsl)
 }
 
 group = "com.imcys.bilibilias.buildlogic"
