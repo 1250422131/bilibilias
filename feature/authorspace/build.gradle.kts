@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.common)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
