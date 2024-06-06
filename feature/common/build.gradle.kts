@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.bilibilias.android.library.jacoco)
     alias(libs.plugins.bilibilias.android.library.compose)
     alias(libs.plugins.bilibilias.android.hilt)
-    alias(libs.plugins.bilibilias.multiplatform.decompose)
 }
 
 android {
@@ -14,6 +13,10 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    implementation(libs.decompose)
+    implementation(libs.decompose.compose)
+    implementation(libs.molecule)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
