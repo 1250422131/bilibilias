@@ -14,6 +14,7 @@ banner = "2.2.3"
 buildconfig = "5.3.5"
 gsyvideoplayer = "v8.6.0-release-jitpack"
 dokarSheets = "0.6.0-alpha03"
+androidxPaging = "3.3.0"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 bottomsheetdialogCompose = "1.4.1"
@@ -85,7 +86,12 @@ androidx-annotation = { module = "androidx.annotation:annotation", version.ref =
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPaging" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidxPaging" }
+
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
