@@ -58,7 +58,6 @@ import kotlin.reflect.KFunction0
 
 @Composable
 fun ToolContent(component: ToolComponent, navigationToSettings: KFunction0<Unit>) {
-//    viewModel(modelClass = )
     val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
     val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
     ToolContent(
