@@ -3,6 +3,8 @@ package com.imcys.bilibilias.navigation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
+import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
+import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
@@ -26,6 +28,7 @@ interface RootComponent {
     fun onPlayedTabClicked(viewInfo: ViewInfo)
     fun onLoginTabClicked()
     fun onSettingsTabClicked()
+    fun onAuthorSpaceTabClicked(mid: Mid)
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
 
@@ -39,6 +42,7 @@ interface RootComponent {
         data class SplashChild(val component: SplashComponent) : Child()
         data class LoginChild(val component: LoginComponent) : Child()
         data class SettingsChild(val component: SettingsComponent) : Child()
+        data class AuthorSpaceChild(val component: AuthorSpaceComponent) : Child()
     }
 
     interface Factory {

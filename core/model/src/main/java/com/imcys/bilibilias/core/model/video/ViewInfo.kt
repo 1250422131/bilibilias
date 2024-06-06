@@ -8,3 +8,4 @@ data class ViewInfo(val aid: Aid, val bvid: Bvid, val cid: Cid, val title: Strin
 typealias Cid = Long
 typealias Aid = Long
 typealias Bvid = String
+typealias Mid = Long

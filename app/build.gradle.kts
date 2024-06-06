@@ -77,6 +77,7 @@ dependencies {
     implementation(projects.feature.user)
     implementation(projects.feature.settings)
     implementation(projects.feature.player)
+    implementation(projects.feature.authorspace)
 
     implementation(projects.core.analytics)
     implementation(projects.core.common)
