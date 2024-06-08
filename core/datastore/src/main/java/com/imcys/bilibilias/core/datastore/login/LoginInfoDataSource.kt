@@ -15,6 +15,7 @@ class LoginInfoDataSource @Inject constructor(
     val refreshToken = loginInfo.data.map { it.refreshToken }
     val mixKey = loginInfo.data.map { it.mixKey }
     val mid = loginInfo.data.map { it.mid }
+    val finger = loginInfo.data.map { it.finger }
     suspend fun setMid(mid: Long) {
         loginInfo.updateData {
             it.copy(mid = mid)
@@ -44,6 +45,14 @@ class LoginInfoDataSource @Inject constructor(
     suspend fun setMixKey(key: String) {
         loginInfo.updateData {
             it.copy(mixKey = key)
+        }
+    }
+
+    suspend fun setFinger(key: String, value: String) {
+        loginInfo.updateData {
+            val new = it.finger.toMutableMap()
+            new[key] = value
+            it.copy(finger = new)
         }
     }
 }

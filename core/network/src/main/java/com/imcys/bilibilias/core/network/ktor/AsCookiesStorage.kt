@@ -1,6 +1,7 @@
 ﻿package com.imcys.bilibilias.core.network.ktor
 
 import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Url
@@ -12,6 +13,7 @@ import io.ktor.http.Cookie as KtorCookie
 class AsCookiesStorage @Inject constructor(private val loginInfoDataSource: LoginInfoDataSource) :
     CookiesStorage {
     override suspend fun addCookie(requestUrl: Url, cookie: KtorCookie) {
+        Napier.d { "${cookie.name}-${cookie.value}" }
         loginInfoDataSource.setCookie(cookie.mapToAsCookie())
         if (cookie.name == "SESSDATA") loginInfoDataSource.setLoginState(true)
     }

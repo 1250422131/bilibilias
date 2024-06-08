@@ -1,23 +1,37 @@
 package com.imcys.bilibilias.core.network.repository
 
+import android.content.Context
 import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.model.login.Finger
 import com.imcys.bilibilias.core.model.login.NavigationBar
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll
 import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BilibiliApi
-
+import com.imcys.bilibilias.core.network.buvidFp
+import com.imcys.bilibilias.core.network.payload
+import com.imcys.bilibilias.core.network.uuid
+import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.cookie
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.Cookie
+import io.ktor.http.cookies
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
     private val client: HttpClient,
-    private val loginInfoDataSource: LoginInfoDataSource
+    private val loginInfoDataSource: LoginInfoDataSource,
+    @ApplicationContext private val context: Context,
+    private val json: Json,
 ) {
     suspend fun 获取二维码(): QrcodeGenerate {
         return client.get(BilibiliApi.WEB_QRCODE_GENERATE).body<QrcodeGenerate>()
@@ -45,7 +59,26 @@ class LoginRepository @Inject constructor(
         }
     }
 
-    suspend fun getBilibiliHome(): Unit {
+    suspend fun getBilibiliHome() {
         client.get(BILIBILI_URL)
+        activeBuvid()
+    }
+
+    suspend fun activeBuvid() {
+        val finger = client.get("x/frontend/finger/spi").body<Finger>()
+        loginInfoDataSource.setFinger("buvid3", finger.b3)
+        loginInfoDataSource.setFinger("buvid4", finger.b4)
+
+        val payload = payload(context, json)
+
+        val res = client.post("https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi") {
+            cookie("buvid3", finger.b3)
+            cookie("buvid4", finger.b4)
+            cookie("_uuid ", uuid())
+            cookie("buvid_fp  ", buvidFp(payload))
+            setBody(payload)
+        }.bodyAsText()
+        // {"code":130212,"message":"130212","ttl":1,"data":null}
+        Napier.d { res }
     }
 }

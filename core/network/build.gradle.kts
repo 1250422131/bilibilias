@@ -35,4 +35,11 @@ dependencies {
     releaseImplementation(libs.monitor.no.op)
 
     implementation(libs.okhttp.brotli)
+
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+    testImplementation(libs.androidx.paging.common)
+
+    implementation("commons-codec:commons-codec:1.17.0")
+    implementation("com.goncalossilva:murmurhash:0.4.0")
 }

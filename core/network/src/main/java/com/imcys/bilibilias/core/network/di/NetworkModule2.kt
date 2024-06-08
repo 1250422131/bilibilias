@@ -37,6 +37,7 @@ import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.Sender
+import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.addDefaultResponseValidation
 import io.ktor.client.plugins.api.ClientPlugin
 import io.ktor.client.plugins.api.createClientPlugin
@@ -51,6 +52,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.AttributeKey
+import io.ktor.util.Attributes
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.flow.first
@@ -138,15 +140,18 @@ class NetworkModule2 {
             defaultRequest {
                 url(BilibiliApi.API_BILIBILI)
             }
-            BrowserUserAgent()
             addDefaultResponseValidation()
             JsonAwareLogging {
                 logger = asLogger
-                level = JsonAwareLogLevel.BODY
+                level = JsonAwareLogLevel.ALL
                 filter {
                     it.url.host == BilibiliApi.API_HOST ||
                             it.url.host == BiliBiliAsApi.API_HOST
                 }
+            }
+            install(UserAgent) {
+                agent =
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:32.0) Gecko/20100101 Firefox/32.0"
             }
             install(HttpCookies) {
                 storage = asCookiesStorage
