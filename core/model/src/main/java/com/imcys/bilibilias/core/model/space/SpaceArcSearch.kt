@@ -9,15 +9,15 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SpaceArcSearch(
     @SerialName("list")
-    val list: List = List(),
+    val list: VList = VList(),
     @SerialName("page")
     val page: Page = Page()
 ) {
 
     @Serializable
-    data class List(
+    data class VList(
         @SerialName("vlist")
-        val vlist: kotlin.collections.List<Vlist> = kotlin.collections.listOf()
+        val vlist: List<Vlist> = listOf()
     ) {
         @Serializable
         data class Vlist(

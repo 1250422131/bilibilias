@@ -9,6 +9,7 @@ message LoginInfo {
     string refreshToken = 3;
     string mixKey = 4;
     uint64 mid = 5;
+    map<string, string > finger = 6;
 }
 message Cookie {
     string name = 1;
