@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 fun SplashContent(
     component: SplashComponent,
     navigationToLogin: () -> Unit,
-    navigationToHome: () -> Unit
+    navigationToTool: () -> Unit
 ) {
     val isVisible = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -42,7 +42,7 @@ fun SplashContent(
                 durationMillis = 1000,
                 finishedListener = {
                     if (component.isLogin) {
-                        navigationToHome()
+                        navigationToTool()
                     } else {
                         navigationToLogin()
                     }
