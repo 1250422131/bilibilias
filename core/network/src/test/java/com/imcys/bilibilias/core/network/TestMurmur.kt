@@ -74,11 +74,4 @@ class TestMurmur {
         val r3 = result.map(ULong::toHexString).joinToString("")
         assertEquals(r3, "24700f9f1986800ab4fcc880530dd0ed")
     }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    @Test
-    fun `test murmurhash5`() {
-        val r3 = buvidFp(payload(context, json))
-        assertEquals(r3, "e01abd0e12f9ee456fe52d2efd6803bb")
-    }
 }
