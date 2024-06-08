@@ -152,7 +152,7 @@ private fun HomeContent(
                 }
             }
         }
-        DetectUpdateLogs(model.updateNotice)
+//        DetectUpdateLogs(model.updateNotice)
     }
 }
 
