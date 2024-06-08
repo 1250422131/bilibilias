@@ -199,7 +199,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             is RootComponent.Child.SplashChild -> SplashContent(
                 component = child.component,
                 navigationToLogin = component::onLoginTabClicked,
-                navigationToTool = component::onToolTabClicked
+                navigationToHome = component::onHomeTabClicked
             )
 
             is RootComponent.Child.SettingsChild -> SettingContent(component = child.component)
