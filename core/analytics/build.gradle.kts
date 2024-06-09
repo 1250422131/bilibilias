@@ -14,6 +14,4 @@ dependencies {
     implementation(libs.umeng.common)
     implementation(libs.umeng.asms)
     implementation(libs.umeng.abtest)
-    prodImplementation(platform(libs.firebase.bom))
-    prodImplementation(libs.firebase.analytics)
 }

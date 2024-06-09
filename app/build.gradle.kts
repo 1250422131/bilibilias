@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.buildconfig)
-//    id("com.google.gms.google-services")
 }
 
 android {
@@ -20,7 +19,8 @@ android {
         versionCode = 204
         versionName = "2.0.41"
         ndk {
-            abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            //noinspection ChromeOsAbiSupport
+            abiFilters += listOf("arm64-v8a")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
