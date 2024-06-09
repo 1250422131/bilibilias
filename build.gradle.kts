@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
         classpath(libs.wire.gradlePlugin)
-        classpath(libs.google.oss.licenses.plugin)
     }
     repositories {
         maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
@@ -23,9 +22,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.module.graph) apply true
     alias(libs.plugins.secrets) apply false
-    alias(libs.plugins.gms) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.buildconfig) apply false
 }

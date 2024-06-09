@@ -9,11 +9,16 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    packaging {
+        resources {
+//            excludes += "/**/*.kotlin_builtins" // (example)
+        }
+    }
 }
 
 dependencies {
     implementation(projects.core.common)
 
-    implementation(libs.ffmpegcommand)
     implementation(libs.ffmpeg.kit.full)
 }
