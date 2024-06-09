@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.feature.login
+package com.imcys.bilibilias.feature.login.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +10,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import com.imcys.bilibilias.feature.common.BaseViewModel
+import com.imcys.bilibilias.feature.login.LoginEvent
+import com.imcys.bilibilias.feature.login.LoginModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -21,11 +23,11 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-class LoginComponent @AssistedInject constructor(
+class DefaultLoginComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val loginRepository: LoginRepository,
     private val loginInfoDataSource: LoginInfoDataSource,
-) : BaseViewModel<LoginEvent, LoginModel>(componentContext) {
+) : LoginComponent, BaseViewModel<LoginEvent, LoginModel>(componentContext) {
 
     @Composable
     override fun models(events: Flow<LoginEvent>): LoginModel {
@@ -33,10 +35,10 @@ class LoginComponent @AssistedInject constructor(
     }
 
     @AssistedFactory
-    interface Factory {
-        operator fun invoke(
+    interface Factory : LoginComponent.Factory {
+        override fun invoke(
             componentContext: ComponentContext,
-        ): LoginComponent
+        ): DefaultLoginComponent
     }
 }
 

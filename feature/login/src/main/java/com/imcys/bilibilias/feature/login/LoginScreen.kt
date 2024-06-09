@@ -2,11 +2,16 @@ package com.imcys.bilibilias.feature.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,8 +26,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.bilibilias.core.designsystem.component.AsButton
+import com.imcys.bilibilias.feature.login.component.LoginComponent
 import io.github.alexzhirkevich.qrose.toImageBitmap
 
 @Composable
@@ -43,8 +50,10 @@ private fun LoginContent(
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(innerPadding)
-                .padding(top = 8.dp),
+                .padding(top = 8.dp)
+                .scrollable(rememberScrollState(), Orientation.Vertical),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SideEffect {
@@ -66,12 +75,19 @@ private fun LoginContent(
                     .size(130.dp)
                     .clickable { onEvent(LoginEvent.RefreshQrCode) }
             )
-            Text(text = model.message)
-            val modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
-                .fillMaxWidth()
-                .height(60.dp)
-            AsButton(onClick = { QRUtil.goToQRScan(context) }, modifier = modifier) {
+            Text(
+                text = model.message,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(16.dp)
+            )
+            AsButton(
+                onClick = { QRUtil.goToQRScan(context) },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
                 Text(text = "跳转扫码")
             }
             LoginNotice()
@@ -80,8 +96,8 @@ private fun LoginContent(
 }
 
 @Composable
-fun LoginNotice() {
-    Column(modifier = Modifier.padding(20.dp)) {
+fun LoginNotice(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(20.dp)) {
         Text(
             text = "登录后，你可以：",
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -92,6 +108,7 @@ fun LoginNotice() {
         Text(text = "· 下载更加高清，更高码率的视频")
         Text(text = "· 享受大会员权限视频和画质（如果你有）")
         Text(text = "· 缓存番剧，并且将番剧导入Bilibili，实现携带弹幕的离线播放")
+        Spacer(modifier = Modifier.height(20.dp))
         Text(text = "使用则代表你同意", modifier = Modifier.align(Alignment.CenterHorizontally))
         val color = MaterialTheme.colorScheme.primary
         val view = LocalView.current
