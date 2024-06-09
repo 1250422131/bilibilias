@@ -15,7 +15,7 @@ import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
-import com.imcys.bilibilias.feature.login.LoginComponent
+import com.imcys.bilibilias.feature.login.component.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
 import com.imcys.bilibilias.feature.settings.SettingsComponent
 import com.imcys.bilibilias.feature.splash.SplashComponent
