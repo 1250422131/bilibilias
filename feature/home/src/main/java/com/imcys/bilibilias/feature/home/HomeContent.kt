@@ -102,7 +102,7 @@ private fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        R.drawable.ic_home_trophy,
+                        R.drawable.feature_home_ic_home_trophy,
                         onClick = {
                             startActivityForUri(
                                 context,
@@ -115,7 +115,7 @@ private fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        R.drawable.ic_home_trophy,
+                        R.drawable.feature_home_ic_home_trophy,
                         onClick = onSalute,
                         title = "致敬",
                         desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
@@ -123,7 +123,7 @@ private fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        R.drawable.ic_home_red_envelopes,
+                        R.drawable.feature_home_ic_home_red_envelopes,
                         onClick = onDonation,
                         title = "捐款",
                         desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
@@ -131,7 +131,7 @@ private fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        R.drawable.ic_home_rabbit,
+                        R.drawable.feature_home_ic_home_rabbit,
                         onClick = {
                             startActivityForUri(
                                 context,
@@ -144,7 +144,7 @@ private fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        resId = R.drawable.ic_home_logout,
+                        resId = R.drawable.feature_home_ic_home_logout,
                         title = "退出登录",
                         desc = "退出账号登录",
                         { onEvent(HomeEvent.Logout) }

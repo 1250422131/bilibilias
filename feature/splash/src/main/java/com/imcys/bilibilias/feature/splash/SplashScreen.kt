@@ -51,7 +51,7 @@ fun SplashContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painterResource(R.drawable.ic_launcher_foreground),
+            painterResource(R.drawable.feature_splash_ic_launcher_foreground),
             contentDescription = null,
             modifier = Modifier
                 .width(120.dp),
