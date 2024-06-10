@@ -49,6 +49,18 @@ jobs:
           -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
           -Pandroid.experimental.androidTest.numManagedDeviceShards=1
           -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
+
+      # 签名apk
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -69,3 +81,7 @@ jobs:
           asset_path: app/build/outputs/apk/demo/release/app-demo-release.apk
           asset_name: app-demo-release.apk
           asset_content_type: application/vnd.android.package-archive
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release.tar.gz,foo/*.txt"
+          bodyFile: "body.md"
