@@ -7,9 +7,9 @@ import androidx.benchmark.macro.StartupMode.COLD
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import com.imcys.bilibilias.baselineprofile.PACKAGE_NAME
-import com.imcys.bilibilias.baselineprofile.allowNotifications
-import com.imcys.bilibilias.baselineprofile.startActivityAndAllowNotifications
+import com.imcys.bilibilias.PACKAGE_NAME
+import com.imcys.bilibilias.allowNotifications
+import com.imcys.bilibilias.startActivityAndAllowNotifications
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
