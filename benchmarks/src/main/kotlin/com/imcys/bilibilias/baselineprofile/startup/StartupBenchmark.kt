@@ -53,6 +53,6 @@ class StartupBenchmark {
     ) {
         startActivityAndAllowNotifications()
         // Waits until the content is ready to capture Time To Full Display
-//        forYouWaitForContent()
+        // forYouWaitForContent()
     }
 }
