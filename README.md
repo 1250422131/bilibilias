@@ -1,6 +1,5 @@
 <div align="center">
 
-![](https://github.com/1250422131/bilibilias/blob/develop/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
 # BILIBILIAS
 
