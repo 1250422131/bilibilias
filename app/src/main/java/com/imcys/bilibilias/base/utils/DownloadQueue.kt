@@ -13,6 +13,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.app.App.Companion.context
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.model.task.deepCopy
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
@@ -329,12 +330,18 @@ class DownloadQueue @Inject constructor() {
                 null,
             )
 
+            var safPath = ""
             val path = if (value == null) {
                 task.savePath
             } else {
                 val documentFile =
-                    DocumentFile.fromSingleUri(OkDownloadProvider.context, Uri.parse(value))
-                "/storage/emulated/0/" + documentFile!!.uri.path?.replace(
+                    DocumentFile.fromSingleUri(OkDownloadProvider.context, Uri.parse(value))!!
+                safPath = (documentFile.uri.toString() + Uri.encode(task.savePath.replace(
+                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                    ""
+                )))
+
+                "/storage/emulated/0/" + documentFile.uri.path?.replace(
                     Regex("/tree/.*:"),
                     ""
                 )!! + task.savePath.replace(
@@ -350,6 +357,7 @@ class DownloadQueue @Inject constructor() {
                 videoBvid = videoBvid,
                 videoCid = cid,
                 savePath = path,
+                safPath = safPath,
                 fileType = task.fileType,
             )
 
@@ -1042,9 +1050,8 @@ class DownloadQueue @Inject constructor() {
     @SuppressLint("NotifyDataSetChanged")
     fun updateAdapter() {
         // 通知 RecyclerView 适配器数据发生了改变
-
         downloadTaskAdapter?.apply {
-            submitList((currentTasks + queue).map { it.copy() })
+            submitList((currentTasks + queue).map { it.deepCopy() })
         }
     }
 

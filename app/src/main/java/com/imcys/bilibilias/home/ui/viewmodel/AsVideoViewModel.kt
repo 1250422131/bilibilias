@@ -3,9 +3,11 @@ package com.imcys.bilibilias.home.ui.viewmodel
 import android.annotation.*
 import android.content.*
 import android.content.Context.CLIPBOARD_SERVICE
+import android.net.Uri
 import android.os.*
 import android.view.*
 import android.widget.*
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.*
 import androidx.preference.*
 import com.imcys.asbottomdialog.bottomdialog.*
@@ -18,13 +20,16 @@ import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
+import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
 import com.imcys.bilibilias.common.base.utils.http.*
 import com.imcys.bilibilias.common.network.danmaku.*
 import com.imcys.bilibilias.danmaku.change.*
 import com.imcys.bilibilias.home.ui.activity.*
 import com.imcys.bilibilias.home.ui.activity.user.UserInfoActivity
 import com.imcys.bilibilias.home.ui.model.*
+import com.liulishuo.okdownload.OkDownloadProvider
 import com.microsoft.appcenter.analytics.*
 import dagger.hilt.android.lifecycle.*
 import io.ktor.client.*
@@ -303,10 +308,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                     context,
                 ),
             )
+            moveFileToDlUriPath("$savePath/$bvId/${cid}_cc_$lang.ass")
 
             launchUI {
                 dialogLoad.cancel()
-                asToast(context, "下载字幕储存于\n$fileName")
+                asToast(context, "下载字幕储存于：存储目录/$bvId/${cid}_cc_$lang.ass")
                 // 通知下载成功
                 Analytics.trackEvent(context.getString(R.string.download_barrage))
             }
@@ -351,11 +357,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                 context,
             ),
         )
-
+        moveFileToDlUriPath("$savePath/${(context.bvid)}/${context.cid}_danmu.ass")
         viewModelScope.launchUI {
             asToast(
                 context,
-                "下载弹幕储存于\n$fileName",
+                "下载弹幕储存于\n存储目录/${(context.bvid)}/${context.cid}_danmu.ass",
             )
             // 通知下载成功
             Analytics.trackEvent(context.getString(R.string.download_barrage))
@@ -387,10 +393,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
         bufferedSink.close()
 
+        moveFileToDlUriPath("$savePath/${(context.bvid)}/${context.cid}_danmu.xml")
         viewModelScope.launchUI {
             asToast(
                 context,
-                "下载弹幕储存于\n$savePath/${(context.bvid)}/${context.cid}_danmu.xml",
+                "下载弹幕储存于\n存储路径/${(context.bvid)}/${context.cid}_danmu.xml",
             )
             // 通知下载成功
             Analytics.trackEvent(context.getString(R.string.download_barrage))
@@ -570,4 +577,71 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             }
         }
     }
+
+    private fun moveFileToDlUriPath(oldPath: String) {
+        val result = runCatching {
+            launchIO {
+                val sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                val saveUriPath = sharedPreferences.getString(
+                    "user_download_save_uri_path",
+                    null,
+                )
+
+                if (saveUriPath != null) {
+                    var dlFileDocument = DocumentFile.fromTreeUri(
+                        OkDownloadProvider.context,
+                        Uri.parse(saveUriPath)
+                    )!!
+
+                    val docList = oldPath.replace(
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        ""
+                    ).split("/")
+
+                    docList.forEachIndexed { index, name ->
+                        // 是不是最后尾部
+                        if (index != docList.size - 1) {
+                            dlFileDocument = if (!dlFileDocument.hasSubDirectory(name)) {
+                                dlFileDocument.createDirectory(name)!!
+                            } else {
+                                dlFileDocument.findFile(name)!!
+                            }
+                        } else {
+                            dlFileDocument =
+                                dlFileDocument.createFile(
+                                    "application/${name.split(".").last()}",
+                                    name
+                                )!!
+                            val copyResult = AppFilePathUtils.copySafFile(
+                                oldPath,
+                                dlFileDocument.uri,
+                                OkDownloadProvider.context
+                            )
+
+                            if (copyResult) {
+                                FileUtils.deleteFile(oldPath)
+                            } else {
+                                launchUI {
+                                    asToast(
+                                        OkDownloadProvider.context,
+                                        "移动失败，文件会被保留在原路径"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (result.isFailure) {
+            launchUI {
+                asToast(
+                    OkDownloadProvider.context,
+                    "移动失败，文件会被保留在初始路径，请在删除后重新下载"
+                )
+            }
+        }
+    }
+
 }

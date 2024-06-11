@@ -4,11 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -17,14 +20,19 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
+import com.liulishuo.okdownload.OkDownloadProvider.context
 import com.tencent.mmkv.MMKV
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
-    private val REQUEST_CODE_POST_NOTIFICATIONS = 1
+    private val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 1
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private val MANAGE_EXTERNAL_STORAGES = arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
 
     private var isFirstLoaded = false
     private var delayedHandler: Handler? = null
@@ -35,9 +43,29 @@ class SplashActivity : BaseActivity() {
         setContentView(R.layout.activity_splash)
         // 首先检查是否已经授予了储存权限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // 安卓13废弃对写入权限检测
-            // TODO 将准备改为SAF，届时不在对软件检查储存权限
-            toHome()
+            if (!Environment.isExternalStorageManager()) {
+                DialogUtils.dialog(
+                    this,
+                    getString(R.string.app_permission_application_title),
+                    "下面将授权所有文件访问权限，你可以不这么做，但是如果你自定义了下载存储路径，那么是无法在APP内唤起系统播放下载的视频的。",
+                    getString(R.string.app_permission_application_confirm),
+                    getString(R.string.app_permission_application_cancel),
+                    false,
+                    positiveButtonClickListener = {
+                        val intent = Intent(
+                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                        )
+                        intent.setData(Uri.parse("package:$packageName"))
+                        startActivity(intent)
+                        toHome()
+                    },
+                    negativeButtonClickListener = {
+                    },
+                ).show()
+
+            } else {
+                toHome()
+            }
         } else {
             getSavePermissions()
         }
@@ -56,6 +84,7 @@ class SplashActivity : BaseActivity() {
         super.onDestroy()
         delayedHandler?.removeCallbacksAndMessages(null)
     }
+
 
     private fun getSavePermissions() {
         if (ContextCompat.checkSelfPermission(
@@ -168,6 +197,14 @@ class SplashActivity : BaseActivity() {
             REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> {
                 // 如果权限被授予，则可以进行相应的操作
                 toHome()
+            }
+
+            MANAGE_EXTERNAL_STORAGE_REQUEST_CODE -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    toHome()
+                } else {
+                    asToast(this, "自定义路径后你将无法直接跳转播放视频！")
+                }
             }
         }
     }
