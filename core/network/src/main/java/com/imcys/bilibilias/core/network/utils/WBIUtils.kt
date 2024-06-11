@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.network.utils
+package com.imcys.bilibilias.core.network.utils
 
 import com.imcys.bilibilias.core.network.Parameter
 import io.ktor.http.encodeURLParameter
@@ -24,17 +24,15 @@ object WBIUtils {
     }
 
     fun encWbi(params: List<Parameter>, mixinKey: String): List<Parameter> {
-        val parameters =
-            mutableListOf(Parameter("wts", (System.currentTimeMillis() / 1000).toString())).apply {
-                addAll(params)
-                sortBy { it.name }
-            }
+        val parameters = sortedSetOf<Parameter>(compareBy { it.name }).apply {
+            add(Parameter("wts", ((System.currentTimeMillis() / 1000).toString())))
+            addAll(params)
+        }
 
         val param = parameters.joinToString("&") { (k, v) ->
             k + "=" + v.encodeURLParameter()
-        }
-        val wbiSign = md5Hash(param + mixinKey)
-        parameters += Parameter("w_rid", wbiSign)
+        } + mixinKey
+        parameters += Parameter("w_rid", md5Hash(param))
         return parameters.map { Parameter(it.name, it.value) }
     }
 
