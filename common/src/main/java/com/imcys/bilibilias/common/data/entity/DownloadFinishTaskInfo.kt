@@ -17,11 +17,12 @@ data class DownloadFinishTaskInfo(
     @ColumnInfo(name = "video_avid") var videoAvid: Long,
     @ColumnInfo(name = "video_cid") var videoCid: Long,
     @ColumnInfo(name = "save_path") var savePath: String,
+    @ColumnInfo(name = "saf_path") var safPath: String,
     @ColumnInfo(name = "file_type") var fileType: Int,
     @ColumnInfo(name = "addtime") var addTime: Long = System.currentTimeMillis(),
     @Ignore var showEdit: Boolean = false, // 显示编辑状态
     @Ignore var selectState: Boolean = false, // 选中状态
 ) {
 
-    constructor() : this(0, "", "", "", 0, 0, "", 0)
+    constructor() : this(0, "", "", "", 0, 0, "", "", 0)
 }

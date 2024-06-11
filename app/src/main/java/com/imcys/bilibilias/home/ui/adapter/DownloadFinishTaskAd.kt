@@ -3,6 +3,7 @@ package com.imcys.bilibilias.home.ui.adapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +16,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.common.base.utils.asLogD
-import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.common.base.extend.launchIO
+import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.DownloadFinishTaskInfo
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
 import com.imcys.bilibilias.databinding.ItemDownloadTaskFinishBinding
 import com.liulishuo.okdownload.OkDownloadProvider
+import com.liulishuo.okdownload.OkDownloadProvider.context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+
 
 class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTaskInfo, ViewHolder>(
 
@@ -99,7 +103,12 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                     itemDlFinishTaskEditCheckBox.isChecked = task.selectState
                     return@setOnClickListener
                 }
-                if (FileUtils.isFileExists(File(task.savePath))) {
+                val safExist = task.safPath.isNotEmpty() && DocumentFile.fromSingleUri(
+                    context,
+                    Uri.parse(task.safPath)
+                )?.exists() == true
+
+                if (FileUtils.isFileExists(File(task.savePath)) || safExist) {
                     AsDialog.init(holder.itemView.context)
                         .setTitle("文件操作")
                         .setContent("请选择下面的按钮")
@@ -127,21 +136,21 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                             } else {
                                 "audio/*"
                             }
+                            val fileUri = FileProvider.getUriForFile(
+                                holder.itemView.context,
+                                "com.imcys.bilibilias.fileProvider",
+                                File(task.savePath),
+                            )
+
                             val intent = Intent()
                             intent.apply {
                                 action = Intent.ACTION_VIEW
-                                setDataAndType(
-                                    FileProvider.getUriForFile(
-                                        holder.itemView.context,
-                                        "com.imcys.bilibilias.fileProvider",
-                                        File(task.savePath),
-                                    ),
-                                    fileType,
-                                )
+                                setDataAndType(fileUri, fileType,)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 holder.itemView.context.startActivity(this)
                             }
+
                         }
                         .setNegativeButton("取消") {
                             it.cancel()
@@ -173,7 +182,7 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
             }.setNeutralButton("删除记录和文件") {
                 deleteTaskRecords(task.id)
                 val sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
+                    PreferenceManager.getDefaultSharedPreferences(context)
 
                 val saveUriPath = sharedPreferences.getString(
                     "user_download_save_uri_path",
@@ -181,27 +190,33 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                 )
                 if (saveUriPath != null) {
                     // 走SAF
-                    asToast(OkDownloadProvider.context,"SAF尚不支持删除，请手动删除本地文件。")
-//                    var dlFileDocument = DocumentFile.fromTreeUri(
-//                        OkDownloadProvider.context,
-//                        Uri.parse(saveUriPath)
-//                    )
-//                    launchIO {
-//                       // 无需等待
-//                       val mPath = task.savePath.replace("/storage/emulated/0/", "")
-//                       val docList = mPath.split("/")
-//                       docList.forEachIndexed { index, name ->
-//                           dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-//                           if (index == docList.size - 1) {
-//                               dlFileDocument?.delete()
-//                           }
-//                       }
-//                   }
-                } else {
-                    // 走普通删除
+                    var dlFileDocument = DocumentFile.fromTreeUri(
+                        context,
+                        Uri.parse(saveUriPath)
+                    )
                     launchIO {
-                        FileUtils.delete(task.savePath)
+                        // 无需等待
+                        val mPath = task.savePath.replace("/storage/emulated/0/", "")
+                        val docList = mPath.split("/")
+                        docList.forEachIndexed { index, name ->
+                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
+                            if (index == docList.size - 1) {
+                                if (dlFileDocument?.isFile == true && dlFileDocument?.isDirectory != true && dlFileDocument?.name == docList.last()) {
+                                    dlFileDocument?.delete()
+                                } else {
+                                    launchUI {
+                                        asToast(
+                                            context,
+                                            task.videoTitle + "删除失败，请自行手动删除，这可能与修改存储路径有关系。"
+                                        )
+                                    }
+                                }
+
+                            }
+                        }
                     }
+                } else {
+                    FileUtils.delete(task.savePath)
                 }
                 it.cancel()
             }
