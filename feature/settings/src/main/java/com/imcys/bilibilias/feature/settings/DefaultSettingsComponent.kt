@@ -14,7 +14,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class DefaultSettingsComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -63,11 +62,11 @@ class DefaultSettingsComponent @AssistedInject constructor(
             }
         }
         return UserEditableSettings(
-            fileStoragePath ?: DefaultConfig.defaultStorePath,
-            fileNamingRule ?: DefaultConfig.defaultNamingRule,
+            fileStoragePath ?: DefaultConfig.DEFAULT_STORE_PATH,
+            fileNamingRule ?: DefaultConfig.DEFAULT_NAMING_RULE,
             autoMerge,
             autoImport,
-            command ?: DefaultConfig.defaultCommand,
+            command ?: DefaultConfig.DEFAULT_COMMAND,
             shouldAppcenter
         )
     }
