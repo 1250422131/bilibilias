@@ -33,148 +33,148 @@ val Context.downloadDir
 
 @Singleton
 class DownloadManager
-    @Inject
-    constructor(
-        @ApplicationScope private val scope: CoroutineScope,
-        private val videoRepository: VideoRepository,
-        private val danmakuRepository: DanmakuRepository,
-        private val downloadTaskDao: DownloadTaskDao,
-        private val listener: AsDownloadListener,
-    ) {
-        init {
-            if (BuildConfig.DEBUG) {
-                Util.enableConsoleLog()
-            }
+@Inject
+constructor(
+    @ApplicationScope private val scope: CoroutineScope,
+    private val videoRepository: VideoRepository,
+    private val danmakuRepository: DanmakuRepository,
+    private val downloadTaskDao: DownloadTaskDao,
+    private val listener: AsDownloadListener,
+) {
+    init {
+        if (BuildConfig.DEBUG) {
+            Util.enableConsoleLog()
         }
+    }
 
-        fun download(request: DownloadRequest) {
-            Napier.d { "下载任务详情: $request" }
-            scope.launch {
-                try {
-                    val (detail, streamUrl) = get视频详情和流链接(request)
-                    dispatcherTaskType(
-                        streamUrl,
-                        request,
-                        detail,
-                    )
-                } catch (e: Exception) {
-                    Napier.e(e, tag = "download") { "下载发生错误" }
-                }
+    fun download(request: DownloadRequest) {
+        Napier.d { "下载任务详情: $request" }
+        scope.launch {
+            try {
+                val (detail, streamUrl) = get视频详情和流链接(request)
+                dispatcherTaskType(
+                    streamUrl,
+                    request,
+                    detail,
+                )
+            } catch (e: Exception) {
+                Napier.e(e, tag = "download") { "下载发生错误" }
+            }
 
 //            persistedFile(detail, request)
+        }
+    }
+
+    private fun dispatcherTaskType(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+    ) {
+        scope.launch {
+            Napier.d { "任务类型 ${request.format.taskType}" }
+            when (request.format.taskType) {
+                TaskType.ALL -> handleAllTask(streamUrl, request, viewDetail)
+                TaskType.VIDEO -> handleVideoTask(streamUrl, request, viewDetail)
+                TaskType.AUDIO -> handleAudioTask(streamUrl, request, viewDetail)
             }
         }
+    }
 
-        private fun dispatcherTaskType(
-            streamUrl: VideoStreamUrl,
-            request: DownloadRequest,
-            viewDetail: ViewDetail,
-        ) {
-            scope.launch {
-                Napier.d { "任务类型 ${request.format.taskType}" }
-                when (request.format.taskType) {
-                    TaskType.ALL -> handleAllTask(streamUrl, request, viewDetail)
-                    TaskType.VIDEO -> handleVideoTask(streamUrl, request, viewDetail)
-                    TaskType.AUDIO -> handleAudioTask(streamUrl, request, viewDetail)
-                }
+    private fun createTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+        fileType: FileType,
+    ): AsDownloadTask {
+        val info = request.viewInfo
+        val page = viewDetail.pages.single { it.cid == info.cid }
+        val path =
+            if (viewDetail.pages.size == 1) {
+                "${viewDetail.title}"
+                "${info.bvid}${File.separator}${info.cid}"
+            } else {
+                "${viewDetail.title}${File.separator}${page.part}"
             }
-        }
+        val fullPath = "${DevUtils.getContext().downloadDir}${File.separator}$path"
+        Napier.d { "创建任务 $fullPath" }
+        return when (fileType) {
+            FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
+            FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
+        }.also(listener::add)
+    }
 
-        private fun createTask(
-            streamUrl: VideoStreamUrl,
-            request: DownloadRequest,
-            viewDetail: ViewDetail,
-            fileType: FileType,
-        ): AsDownloadTask {
-            val info = request.viewInfo
-            val page = viewDetail.pages.single { it.cid == info.cid }
-            val path =
-                if (viewDetail.pages.size == 1) {
-                    "${viewDetail.title}"
-                    "${info.bvid}${File.separator}${info.cid}"
-                } else {
-                    "${viewDetail.title}${File.separator}${page.part}"
-                }
-            val fullPath = "${DevUtils.getContext().downloadDir}${File.separator}$path"
-            Napier.d { "创建任务 $fullPath" }
-            return when (fileType) {
-                FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
-                FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
-            }.also(listener::add)
-        }
+    private fun handleAllTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+    ) {
+        val video = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
+        val audio = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
+        DownloadTask.enqueue(arrayOf(video.okTask, audio.okTask), listener)
+    }
 
-        private fun handleAllTask(
-            streamUrl: VideoStreamUrl,
-            request: DownloadRequest,
-            viewDetail: ViewDetail,
-        ) {
-            val video = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
-            val audio = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
-            DownloadTask.enqueue(arrayOf(video.okTask, audio.okTask), listener)
-        }
+    private fun handleAudioTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+    ) {
+        val task = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
+        task.okTask.enqueue(listener)
+    }
 
-        private fun handleAudioTask(
-            streamUrl: VideoStreamUrl,
-            request: DownloadRequest,
-            viewDetail: ViewDetail,
-        ) {
-            val task = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
-            task.okTask.enqueue(listener)
-        }
+    private fun handleVideoTask(
+        streamUrl: VideoStreamUrl,
+        request: DownloadRequest,
+        viewDetail: ViewDetail,
+    ) {
+        val task = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
+        task.okTask.enqueue(listener)
+    }
 
-        private fun handleVideoTask(
-            streamUrl: VideoStreamUrl,
-            request: DownloadRequest,
-            viewDetail: ViewDetail,
-        ) {
-            val task = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
-            task.okTask.enqueue(listener)
-        }
-
-        private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
-            val detail = scope.async { videoRepository.获取视频详细信息(request.viewInfo.bvid) }
-            val streamUrl =
-                scope.async {
-                    videoRepository.videoStreamingURL(
-                        request.viewInfo.aid,
-                        request.viewInfo.bvid,
-                        request.viewInfo.cid,
-                    )
-                }
-            return detail.await() to streamUrl.await()
-        }
-
-        private fun persistedFile(
-            detail: ViewDetail,
-            request: DownloadRequest,
-        ) {
-            scope.launch {
-                val cid = detail.cid
-                val path = request.buildBasePath()
-                saveDmFile(path, cid)
-                saveEntryFile(detail, cid, path)
+    private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
+        val detail = scope.async { videoRepository.获取视频详细信息(request.viewInfo.bvid) }
+        val streamUrl =
+            scope.async {
+                videoRepository.videoStreamingURL(
+                    request.viewInfo.aid,
+                    request.viewInfo.bvid,
+                    request.viewInfo.cid,
+                )
             }
-        }
+        return detail.await() to streamUrl.await()
+    }
 
-        private fun saveDmFile(
-            path: String,
-            cid: Long,
-        ) {
-            scope.launch {
-                val bytes = danmakuRepository.getRealTimeDanmaku(cid)
-                File(path, "danmaku.xml").writeBytes(bytes)
-            }
+    private fun persistedFile(
+        detail: ViewDetail,
+        request: DownloadRequest,
+    ) {
+        scope.launch {
+            val cid = detail.cid
+            val path = request.buildBasePath()
+            saveDmFile(path, cid)
+            saveEntryFile(detail, cid, path)
         }
+    }
 
-        // region entry.json
-        private fun saveEntryFile(
-            detail: ViewDetail,
-            cid: Long,
-            path: String,
-        ) {
-            val page = detail.pages.single { it.cid == cid }
-            val content =
-                """
+    private fun saveDmFile(
+        path: String,
+        cid: Long,
+    ) {
+        scope.launch {
+            val bytes = danmakuRepository.getRealTimeDanmaku(cid)
+            File(path, "danmaku.xml").writeBytes(bytes)
+        }
+    }
+
+    // region entry.json
+    private fun saveEntryFile(
+        detail: ViewDetail,
+        cid: Long,
+        path: String,
+    ) {
+        val page = detail.pages.single { it.cid == cid }
+        val content =
+            """
                 {
                     "media_type": 2,
                     "has_dash_audio": true,
@@ -222,38 +222,38 @@ class DownloadManager
                         "download_subtitle": "${page.part}"
                     }
                 }
-                """.trimIndent()
-            File(path, "entry.json").writeText(content)
-        }
+            """.trimIndent()
+        File(path, "entry.json").writeText(content)
+    }
 
-        // endregion
+    // endregion
 
-        fun delete(
-            info: ViewInfo,
-            fileType: FileType,
-        ) {
-            scope.launch {
-                val taskByInfo = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid, fileType)
-                taskByInfo?.uri?.toFile()?.delete()
-                deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
-                if (taskByInfo != null) {
-                    downloadTaskDao.delete(taskByInfo)
-                }
+    fun delete(
+        info: ViewInfo,
+        fileType: FileType,
+    ) {
+        scope.launch {
+            val taskByInfo = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid, fileType)
+            taskByInfo?.uri?.toFile()?.delete()
+            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
+            if (taskByInfo != null) {
+                downloadTaskDao.delete(taskByInfo)
             }
         }
+    }
 
-        private fun deleteEmptyDirectoriesOfFolder(folder: File) {
-            if (folder.listFiles()?.size == 0) {
-                folder.delete()
-            } else {
-                for (fileEntry in folder.listFiles()) {
-                    if (fileEntry.isDirectory) {
-                        deleteEmptyDirectoriesOfFolder(fileEntry)
-                        if (fileEntry.listFiles() != null && fileEntry.listFiles()?.size == 0) {
-                            fileEntry.delete()
-                        }
+    private fun deleteEmptyDirectoriesOfFolder(folder: File) {
+        if (folder.listFiles()?.size == 0) {
+            folder.delete()
+        } else {
+            for (fileEntry in folder.listFiles()) {
+                if (fileEntry.isDirectory) {
+                    deleteEmptyDirectoriesOfFolder(fileEntry)
+                    if (fileEntry.listFiles() != null && fileEntry.listFiles()?.size == 0) {
+                        fileEntry.delete()
                     }
                 }
             }
         }
     }
+}
