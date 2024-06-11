@@ -25,10 +25,10 @@ jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
 kcomponent-compiler = "v1.0.8-rc5"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 kotlinx-coroutines-android = "1.8.0"
 kotlinxSerializationCbor = "1.6.3"
-ksp = "1.9.23-1.0.19"
+ksp = "2.0.0-1.0.21"
 ktor = "2.3.9"
 lifecycle = "2.7.0"
 lottie = "6.4.0"
@@ -53,7 +53,7 @@ uiTimateBarX = "0.8.1"
 work-runtime-ktx = "2.9.0"
 xutils = "3.9.0"
 activity-compose = "1.8.2"
-compose-bom = "2024.02.02"
+compose-bom = "2024.05.00"
 activity = "1.8.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -173,3 +173,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

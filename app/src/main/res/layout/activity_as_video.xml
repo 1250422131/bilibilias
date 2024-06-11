@@ -141,6 +141,7 @@
                         android:ellipsize="end"
                         android:maxLines="4"
                         android:text="@{VideoBaseBean.data.desc}"
+                        android:onLongClick="@{(view)->AsVideoViewModel.addVideoTipClipboardMessage(view,VideoBaseBean.data.desc)}"
                         android:textColor="@color/home_bottom_nav_seletor"
                         android:textSize="19sp"
                         android:textStyle="bold" />

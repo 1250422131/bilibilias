@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
     kotlin("kapt")
 }
 
@@ -20,7 +21,7 @@ android {
         // noinspecton ExpiredTargetSdkVersion
         targetSdk = 34
         versionCode = 204
-        versionName = "2.0.42"
+        versionName = "2.0.43"
         // multiDexEnabled true
 //        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
 //        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
@@ -86,8 +87,8 @@ android {
         enable = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11-dev-k1.9.23-96ef9dc6af1"
+    composeCompiler {
+        enableStrongSkippingMode = true
     }
 
     packaging {
