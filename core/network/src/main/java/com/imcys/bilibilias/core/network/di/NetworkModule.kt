@@ -33,7 +33,6 @@ import github.leavesczy.monitor.MonitorInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.Sender
@@ -52,7 +51,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.AttributeKey
-import io.ktor.util.Attributes
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.coroutines.flow.first
@@ -75,7 +73,7 @@ internal val requireCSRF = AttributeKey<Boolean>("requireCSRF")
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule2 {
+class NetworkModule {
     @Provides
     @Singleton
     fun imageLoader(

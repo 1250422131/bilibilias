@@ -61,7 +61,7 @@ class LoginRepository @Inject constructor(
 
     suspend fun getBilibiliHome() {
         client.get(BILIBILI_URL)
-        activeBuvid()
+//        activeBuvid()
     }
 
     suspend fun activeBuvid() {
