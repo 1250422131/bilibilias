@@ -1,19 +1,12 @@
 package com.imcys.bilibilias.core.download.chore
 
 import android.content.Context
-import android.net.Uri
 import com.imcys.bilibilias.core.common.download.DefaultConfig
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
-import com.lazygeniouz.dfc.file.DocumentFileCompat
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import okio.buffer
-import okio.sink
-import okio.source
-import java.io.File
 import javax.inject.Inject
 
 class MoveFileInterceptor @Inject constructor(
@@ -21,7 +14,7 @@ class MoveFileInterceptor @Inject constructor(
     private val userPreferences: AsPreferencesDataSource,
 ) : Interceptor<String> {
     override val enable = runBlocking {
-        userPreferences.userData.first().fileStoragePath != DefaultConfig.defaultStorePath
+        userPreferences.userData.first().fileStoragePath != DefaultConfig.DEFAULT_STORE_PATH
     }
 
     override fun intercept(message: String, chain: Interceptor.Chain) {
