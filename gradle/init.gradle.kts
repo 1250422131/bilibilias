@@ -19,14 +19,14 @@ rootProject {
             kotlin {
                 target("**/*.kt")
                 targetExclude("**/build/**/*.kt")
-                ktlint(ktlintVersion)
-                    .editorConfigOverride(
-                        mapOf(
-                            "android" to "true",
-                            "indent_size" to 4,
-                            "ktlint_standard_function-naming" to "disabled",
-                        ),
-                    )
+//                ktlint(ktlintVersion)
+//                    .editorConfigOverride(
+//                        mapOf(
+//                            "android" to "true",
+//                            "indent_size" to 4,
+//                            "ktlint_standard_function-naming" to "disabled",
+//                        ),
+//                    )
 //                licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
             }
             format("kts") {
