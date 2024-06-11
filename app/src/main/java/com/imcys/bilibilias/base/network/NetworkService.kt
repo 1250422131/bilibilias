@@ -347,7 +347,9 @@ class NetworkService @Inject constructor(
     }
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr").body()
+        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr") {
+            refererBILIHarder()
+        }.body()
     }
 
     //    suspend fun n20(i: Int): UserWorksBean = runCatchingOnWithContextIo {

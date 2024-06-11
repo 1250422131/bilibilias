@@ -18,6 +18,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.data.entity.deepCopy
 import com.imcys.bilibilias.common.data.repository.DownloadFinishTaskRepository
@@ -227,7 +228,16 @@ class DownloadFragment : BaseFragment() {
                         docList.forEachIndexed { index, name ->
                             dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
                             if (index == docList.size - 1) {
-                                dlFileDocument?.delete()
+                                if (dlFileDocument?.isFile == true && dlFileDocument?.isDirectory != true && dlFileDocument?.name == docList.last()) {
+                                    dlFileDocument?.delete()
+                                } else {
+                                    launchUI {
+                                        asToast(
+                                            OkDownloadProvider.context,
+                                            it.videoTitle + "删除失败，请自行手动删除，这可能与修改存储路径有关系。"
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

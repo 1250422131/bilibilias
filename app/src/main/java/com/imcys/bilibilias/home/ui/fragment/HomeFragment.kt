@@ -259,6 +259,7 @@ class HomeFragment : BaseFragment() {
                 getString(R.string.app_HomeFragment_loadVersionData_title),
                 oldUpdateDataBean.gxnotice,
                 getString(R.string.app_HomeFragment_loadVersionData_positiveButtonText),
+
                 getString(R.string.app_HomeFragment_loadVersionData_negativeButtonText),
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {

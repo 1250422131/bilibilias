@@ -205,7 +205,7 @@ class ToolFragment : BaseFragment() {
         }
 
         // ep过滤
-        val epRegex = Regex("""(?<=ep)([0-9]+)""")
+        val epRegex = Regex("""^(?<=ep)([0-9]+)""")
         // 判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
             loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
