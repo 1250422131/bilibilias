@@ -60,6 +60,13 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+        # 还能设置build-tools version，29.0.3好像不支持了
+        env:
+          # override default build-tools version (29.0.3) -- optional
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      # build-tools可能不存在，用step查看下支持哪些
+      - run: ls /usr/local/lib/android/sdk/build-tools/
 
       - name: Create Release
         id: create_release
