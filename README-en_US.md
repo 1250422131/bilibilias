@@ -1,8 +1,9 @@
 <div align="center">
 
-![](https://github.com/1250422131/bilibilias/blob/develop/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
 # BILIBILIAS
+
+![bilibilias](https://socialify.git.ci/1250422131/bilibilias/image?description=1&descriptionEditable=%E4%BE%BF%E6%8D%B7%E7%9A%84%E7%BC%93%E5%AD%98B%E7%AB%99%E8%A7%86%E9%A2%91%E5%92%8C%E7%95%AA%E5%89%A7&font=Inter&forks=1&language=1&logo=https%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fim_new%2F18b70b81972a79923f179106c406910a351201307.png&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto)
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
