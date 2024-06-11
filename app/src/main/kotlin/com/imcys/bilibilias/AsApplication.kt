@@ -11,7 +11,9 @@ import io.github.aakira.napier.Napier
 import javax.inject.Inject
 
 @HiltAndroidApp
-class AsApplication : Application(), ImageLoaderFactory {
+class AsApplication :
+    Application(),
+    ImageLoaderFactory {
     @Inject
     lateinit var imageLoader: dagger.Lazy<ImageLoader>
 

@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     val appState = rememberNiaAppState(
                         toastMachine = toastMachine,
-                        networkMonitor = networkMonitor
+                        networkMonitor = networkMonitor,
                     )
                     AsApp(appState, rootComponentFactory(componentContext))
                 }

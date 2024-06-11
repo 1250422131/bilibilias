@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.danmaku.change
 
-import android.content.Context
 import java.text.DecimalFormat
 import java.util.concurrent.TimeUnit
 
@@ -48,8 +47,7 @@ object CCJsonToAss {
 //        """.trimIndent()
 //    }
 
-    fun getFontStyleInfo(): String {
-        return """
+    fun getFontStyleInfo(): String = """
         [V4+ Styles]
         Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
         Style: Small,Microsoft YaHei,36,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
@@ -57,17 +55,14 @@ object CCJsonToAss {
         Style: Large,Microsoft YaHei,64,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
         Style: Larger,Microsoft YaHei,72,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
         Style: ExtraLarge,Microsoft YaHei,90,&H00FFFFFF, &H00FFFFFF, &H00000000, &H00000000, 0, 0, 0, 0, 100, 100, 0.00, 0.00, 1, 1, 0, 2, 20, 20, 20, 0
-        """.trimIndent()
-    }
+    """.trimIndent()
 
-    fun getFormat(): String {
-        return """
+    fun getFormat(): String = """
         [Events]
         Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-        """.trimIndent()
-    }
+    """.trimIndent()
 
-    /**
+/**
      * 构建字幕体
      */
 //    private fun buildCCInfo(videoCCInfo: VideoCCInfo): String {
@@ -83,7 +78,7 @@ object CCJsonToAss {
 //        return danmakus
 //    }
 
-    /**
+/**
      * 时间格式化
      */
     fun formatSeconds(seconds: Double): String {
