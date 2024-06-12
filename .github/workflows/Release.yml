@@ -71,31 +71,26 @@ jobs:
       - name: rename apk
         run: |
           cd app/build/outputs/apk/demo/release
-          ls
           mv app-demo-release-unsigned-signed.apk Bilibili-As-Lite-${{ github.ref_name }}.apk
           ls
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: ${{ github.ref }}
           tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
           draft: true
           prerelease: false
 
       - name: Upload app
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/apk/demo/release/app-demo-release.apk
-          asset_name: app-demo-release.apk
+          files: app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
+          asset_name: Bilibili-As-Lite-${{ github.ref_name }}.apk
           asset_content_type: application/vnd.android.package-archive
-      - uses: ncipollo/release-action@v1
-        with:
-          artifacts: "release.tar.gz,foo/*.txt"
-          bodyFile: "body.md"
