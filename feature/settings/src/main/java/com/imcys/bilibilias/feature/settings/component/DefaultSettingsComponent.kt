@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.feature.settings
+package com.imcys.bilibilias.feature.settings.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,6 +10,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.common.download.DefaultConfig
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.feature.common.BaseViewModel
+import com.imcys.bilibilias.feature.settings.UserEditEvent
+import com.imcys.bilibilias.feature.settings.UserEditableSettings
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
