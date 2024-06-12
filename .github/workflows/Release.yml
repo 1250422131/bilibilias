@@ -60,7 +60,6 @@ jobs:
         name: Sign app APK
         id: sign_app
         with:
-          output: app/build/signed
           releaseDirectory: app/build/outputs/apk/demo/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
@@ -69,12 +68,9 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      # build-tools可能不存在，用step查看下支持哪些
-      - run: ls /usr/local/lib/android/sdk/build-tools/
-
       - name: rename apk
         run: |
-          cd app/build/signed
+          cd app/build/outputs/apk/demo/release
           mv app-demo-release.apk Bilibili-As-Lite-${{  github.ref_name }}.apk
           ls
 
