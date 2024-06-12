@@ -2,13 +2,16 @@ package com.imcys.bilibilias.feature.settings.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.common.download.DefaultConfig
+import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_COMMAND
+import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
+import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_STORE_PATH
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
+import com.imcys.bilibilias.core.model.data.UserData
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.settings.UserEditEvent
 import com.imcys.bilibilias.feature.settings.UserEditableSettings
@@ -19,27 +22,24 @@ import kotlinx.coroutines.flow.Flow
 
 class DefaultSettingsComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val asPreferencesDataSource: AsPreferencesDataSource
+    private val asPreferencesDataSource: AsPreferencesDataSource,
+    private val loginInfoDataSource: LoginInfoDataSource,
 ) : SettingsComponent, BaseViewModel<UserEditEvent, UserEditableSettings>(componentContext) {
 
     @Composable
     override fun models(events: Flow<UserEditEvent>): UserEditableSettings {
-        var fileStoragePath by remember { mutableStateOf<String?>(null) }
-        var fileNamingRule by remember { mutableStateOf<String?>(null) }
-        var autoMerge by remember { mutableStateOf(false) }
-        var autoImport by remember { mutableStateOf(false) }
-        var shouldAppcenter by remember { mutableStateOf(false) }
-        var command by remember { mutableStateOf("") }
-        LaunchedEffect(Unit) {
-            asPreferencesDataSource.userData.collect {
-                fileStoragePath = it.fileStoragePath
-                fileNamingRule = it.fileNamingRule
-                autoMerge = it.autoMerge
-                autoImport = it.autoImport
-                shouldAppcenter = it.shouldAppcenter
-                command = it.command
-            }
-        }
+        val userData by asPreferencesDataSource.userData.collectAsState(
+            initial = UserData(
+                storagePath = DEFAULT_STORE_PATH,
+                namingRule = DEFAULT_NAMING_RULE,
+                autoMerge = true,
+                autoImport = false,
+                shouldAppcenter = true,
+                command = DEFAULT_COMMAND
+
+            ),
+            context = viewModelScope.coroutineContext
+        )
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
@@ -49,27 +49,29 @@ class DefaultSettingsComponent @AssistedInject constructor(
                     is UserEditEvent.onChangeAutoMerge ->
                         asPreferencesDataSource.setAutoMerge(event.state)
 
-                    is UserEditEvent.onChangeCommand ->
-                        asPreferencesDataSource.setCommand(command)
+                    is UserEditEvent.onEditCommand ->
+                        asPreferencesDataSource.setCommand(event.text)
 
-                    is UserEditEvent.onChangeFileNamingRule ->
+                    is UserEditEvent.onEditNamingRule ->
                         asPreferencesDataSource.setFileNameRule(event.rule)
 
-                    is UserEditEvent.onChangeStoragePath ->
+                    is UserEditEvent.onSelectedStoragePath ->
                         asPreferencesDataSource.setFileStoragePath(event.path)
 
                     is UserEditEvent.onChangeWill ->
                         asPreferencesDataSource.setShouldAppcenter(event.state)
+
+                    UserEditEvent.onLogout -> loginInfoDataSource.setLoginState(false)
                 }
             }
         }
         return UserEditableSettings(
-            fileStoragePath ?: DefaultConfig.DEFAULT_STORE_PATH,
-            fileNamingRule ?: DefaultConfig.DEFAULT_NAMING_RULE,
-            autoMerge,
-            autoImport,
-            command ?: DefaultConfig.DEFAULT_COMMAND,
-            shouldAppcenter
+            storagePath = userData.storagePath ?: DEFAULT_STORE_PATH,
+            namingRule = userData.namingRule ?: DEFAULT_NAMING_RULE,
+            autoMerge = true,
+            autoImport = false,
+            command = userData.command ?: DEFAULT_COMMAND,
+            shouldAppcenter = true
         )
     }
 
