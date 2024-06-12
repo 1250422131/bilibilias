@@ -23,9 +23,7 @@ class MixingInterceptor @Inject constructor(
     private val userPreferences: AsPreferencesDataSource,
     private val ifFmpegWork: IFFmpegWork,
 ) : Interceptor<GroupTask> {
-    override val enable = runBlocking {
-        userPreferences.userData.first().autoMerge
-    }
+    override val enable = true
 
     // val command = arrayOf(
     //            "-y",
@@ -40,7 +38,7 @@ class MixingInterceptor @Inject constructor(
         Napier.d(tag = "Interceptor") { "合并视频 $enable, $message" }
         if (!enable) return
         runBlocking {
-            val path = userPreferences.userData.first().fileStoragePath
+            val path = userPreferences.userData.first().storagePath
             Napier.d { "指定路径 $path" }
             if (path != null) {
                 指定写入路径(message)

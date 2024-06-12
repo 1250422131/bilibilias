@@ -8,6 +8,6 @@ message UserPreferences {
     optional string fileNamingRule = 2;
     bool autoMerge = 3;
     bool autoImportToBilibili = 4;
-    string command = 5;
+    optional string command = 5;
     bool shouldAppcenter = 15;
 }

@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.feature.settings
 
 data class UserEditableSettings(
-    val fileStoragePath: String,
-    val folderNameRule: String,
+    val storagePath: String,
+    val namingRule: String,
     val autoMerge: Boolean,
     val autoImport: Boolean,
     val command: String,

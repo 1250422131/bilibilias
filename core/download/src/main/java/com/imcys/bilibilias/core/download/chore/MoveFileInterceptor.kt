@@ -14,7 +14,7 @@ class MoveFileInterceptor @Inject constructor(
     private val userPreferences: AsPreferencesDataSource,
 ) : Interceptor<String> {
     override val enable = runBlocking {
-        userPreferences.userData.first().fileStoragePath != DefaultConfig.DEFAULT_STORE_PATH
+        userPreferences.userData.first().storagePath != DefaultConfig.DEFAULT_STORE_PATH
     }
 
     override fun intercept(message: String, chain: Interceptor.Chain) {

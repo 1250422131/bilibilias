@@ -40,7 +40,7 @@ class AsPreferencesDataSource @Inject constructor(
         userPreferences.updateData { it.copy(shouldAppcenter = enable) }
     }
 
-    suspend fun setCommand(command: String) {
+    suspend fun setCommand(command: String?) {
         userPreferences.updateData { it.copy(command = command) }
     }
 }
