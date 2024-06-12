@@ -72,7 +72,7 @@ jobs:
         run: |
           cd app/build/outputs/apk/demo/release
           ls
-          mv app-demo-release-*.apk Bilibili-As-Lite-${{  github.ref_name }}.apk
+          mv app-demo-release-unsigned-signed.apk Bilibili-As-Lite-${{ github.ref_name }}.apk
           ls
 
       - name: Create Release
