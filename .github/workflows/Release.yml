@@ -14,6 +14,11 @@ jobs:
     timeout-minutes: 120
 
     steps:
+      - name: GitHub Tag Name example
+        run: |
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -51,22 +56,27 @@ jobs:
           -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
 
       # 签名apk
-      - uses: r0adkll/sign-android-release@v1
+      - uses: noriban/sign-android-release@v5.1
         name: Sign app APK
         id: sign_app
         with:
+          output: app/build/signed
           releaseDirectory: app/build/outputs/apk/demo/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-        # 还能设置build-tools version，29.0.3好像不支持了
         env:
-          # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "34.0.0"
 
       # build-tools可能不存在，用step查看下支持哪些
       - run: ls /usr/local/lib/android/sdk/build-tools/
+
+      - name: rename apk
+        run: |
+          cd app/build/signed
+          mv app-demo-release.apk Bilibili-As-Lite-${{  github.ref_name }}.apk
+          ls
 
       - name: Create Release
         id: create_release
