@@ -49,7 +49,7 @@ class DefaultHomeComponent @AssistedInject constructor(
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
-                    HomeEvent.Logout -> loginInfoDataSource.setLoginState(false)
+                    else -> Unit
                 }
             }
         }

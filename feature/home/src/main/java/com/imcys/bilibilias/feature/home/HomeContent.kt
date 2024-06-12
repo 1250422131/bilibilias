@@ -142,14 +142,6 @@ private fun HomeContent(
                         desc = "如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
                     )
                 }
-                item {
-                    HomeCard(
-                        resId = R.drawable.feature_home_ic_home_logout,
-                        title = "退出登录",
-                        desc = "退出账号登录",
-                        { onEvent(HomeEvent.Logout) }
-                    )
-                }
             }
         }
 //        DetectUpdateLogs(model.updateNotice)
