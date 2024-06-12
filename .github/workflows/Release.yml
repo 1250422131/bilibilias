@@ -71,7 +71,8 @@ jobs:
       - name: rename apk
         run: |
           cd app/build/outputs/apk/demo/release
-          mv app-demo-release.apk Bilibili-As-Lite-${{  github.ref_name }}.apk
+          ls
+          mv app-demo-release-*.apk Bilibili-As-Lite-${{  github.ref_name }}.apk
           ls
 
       - name: Create Release
