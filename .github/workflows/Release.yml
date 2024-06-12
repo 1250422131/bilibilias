@@ -92,5 +92,3 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           files: app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
-          asset_name: Bilibili-As-Lite-${{ github.ref_name }}.apk
-          asset_content_type: application/vnd.android.package-archive
