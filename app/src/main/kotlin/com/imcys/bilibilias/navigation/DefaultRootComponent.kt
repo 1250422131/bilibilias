@@ -17,7 +17,7 @@ import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.login.component.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
-import com.imcys.bilibilias.feature.settings.SettingsComponent
+import com.imcys.bilibilias.feature.settings.component.SettingsComponent
 import com.imcys.bilibilias.feature.splash.SplashComponent
 import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.Assisted

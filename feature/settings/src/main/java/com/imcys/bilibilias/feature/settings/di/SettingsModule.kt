@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.feature.settings.di
 
-import com.imcys.bilibilias.feature.settings.DefaultSettingsComponent
-import com.imcys.bilibilias.feature.settings.SettingsComponent
+import com.imcys.bilibilias.feature.settings.component.DefaultSettingsComponent
+import com.imcys.bilibilias.feature.settings.component.SettingsComponent
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
