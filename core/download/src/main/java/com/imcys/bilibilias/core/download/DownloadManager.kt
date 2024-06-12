@@ -2,8 +2,10 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.core.net.toFile
+import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
+import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.VideoTask
@@ -16,11 +18,14 @@ import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.Util
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,15 +36,16 @@ val Context.downloadDir
             mkdirs()
         }
 
+@Suppress("LongParameterList")
 @Singleton
-class DownloadManager
-@Inject
-constructor(
+class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
+    @ApplicationContext private val context: Context,
     private val videoRepository: VideoRepository,
     private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
     private val listener: AsDownloadListener,
+    private val asPreferencesDataSource: AsPreferencesDataSource,
 ) {
     init {
         if (BuildConfig.DEBUG) {
@@ -60,8 +66,6 @@ constructor(
             } catch (e: Exception) {
                 Napier.e(e, tag = "download") { "下载发生错误" }
             }
-
-//            persistedFile(detail, request)
         }
     }
 
@@ -88,20 +92,52 @@ constructor(
     ): AsDownloadTask {
         val info = request.viewInfo
         val page = viewDetail.pages.single { it.cid == info.cid }
-        val path =
-            if (viewDetail.pages.size == 1) {
-                "${viewDetail.title}"
-                "${info.bvid}${File.separator}${info.cid}"
-            } else {
-                "${viewDetail.title}${File.separator}${page.part}"
-            }
-        val fullPath = "${DevUtils.getContext().downloadDir}${File.separator}$path"
-        Napier.d { "创建任务 $fullPath" }
+        val path = getStoragePath() + File.separator + getSubfolder(viewDetail)
         return when (fileType) {
-            FileType.VIDEO -> VideoTask(streamUrl, request, page, fullPath)
-            FileType.AUDIO -> AudioTask(streamUrl, request, page, fullPath)
+            FileType.VIDEO -> VideoTask(
+                streamUrl,
+                info,
+                page,
+                path,
+                request.format.quality,
+                request.format.codecid
+            )
+
+            FileType.AUDIO -> AudioTask(streamUrl, request.viewInfo, page, path)
         }.also(listener::add)
     }
+
+    private fun getStoragePath() = runBlocking {
+        val userData = asPreferencesDataSource.userData.first()
+        userData.storagePath?.let {
+            return@runBlocking it
+        }
+        context.downloadDir.path
+    }
+
+    /**
+     *  AV号: {AV}
+     *  BV号: {BV}
+     *  CID号: {CID}
+     *  视频标题: {TITLE}
+     *  分P标题: {P_TITLE}
+     */
+    private fun getSubfolder(detail: ViewDetail): String = runBlocking {
+        val userData = asPreferencesDataSource.userData.first()
+        val namingRule = userData.namingRule
+        if (namingRule == null) {
+            replaceTemplate(DEFAULT_NAMING_RULE, detail)
+        } else {
+            replaceTemplate(namingRule, detail)
+        }
+    }
+
+    private fun replaceTemplate(template: String, info: ViewDetail) = template
+        .replace("{AV}", info.aid.toString())
+        .replace("{BV}", info.bvid)
+        .replace("{CID}", info.cid.toString())
+        .replace("{TITLE}", info.title.toString())
+        .replace("{P_TITLE}", info.toString())
 
     private fun handleAllTask(
         streamUrl: VideoStreamUrl,
