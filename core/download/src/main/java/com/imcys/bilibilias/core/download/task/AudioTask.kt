@@ -11,10 +11,11 @@ class AudioTask(
     info: ViewInfo,
     page: ViewDetail.Pages,
     path: String,
-) : AsDownloadTask(info, streamUrl, page.part) {
+) : AsDownloadTask(info, page.part) {
     override val priority = 100
     override val fileType = FileType.AUDIO
     override val destFile = File(path, "audio.aac")
+    override val downloadUrl: String = getStrategy(streamUrl)
     override val okTask = createTask(downloadUrl, destFile, priority)
     override fun getStrategy(streamUrl: VideoStreamUrl): String {
         return streamUrl.dash.audio.maxBy { it.id }.baseUrl

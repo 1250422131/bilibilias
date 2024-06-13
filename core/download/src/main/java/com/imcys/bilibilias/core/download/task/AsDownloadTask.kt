@@ -9,14 +9,13 @@ import java.io.File
 
 sealed class AsDownloadTask(
     val viewInfo: ViewInfo,
-    streamUrl: VideoStreamUrl,
     val subTitle: String,
 ) {
     internal abstract val priority: Int
     internal abstract val destFile: File
     abstract val fileType: FileType
     internal abstract val okTask: DownloadTask
-    internal val downloadUrl = getStrategy(streamUrl)
+    internal abstract val downloadUrl: String
 
     protected fun createTask(
         url: String,
@@ -32,7 +31,7 @@ sealed class AsDownloadTask(
             .setHeaderMapFields(
                 mapOf(
                     "User-Agent" to
-                            listOf("Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36"),
+                        listOf("Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36"),
                     "Referer" to listOf("https://www.bilibili.com/")
                 )
             )

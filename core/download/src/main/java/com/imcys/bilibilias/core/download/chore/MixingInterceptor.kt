@@ -8,6 +8,9 @@ import com.anggrayudi.storage.file.MimeType
 import com.anggrayudi.storage.file.makeFile
 import com.anggrayudi.storage.media.FileDescription
 import com.anggrayudi.storage.media.MediaStoreCompat
+import com.imcys.bilibilias.core.data.toast.AsToastState
+import com.imcys.bilibilias.core.data.toast.AsToastType
+import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.ffmpeg.FFmpegUtil
@@ -21,7 +24,8 @@ import javax.inject.Inject
 class MixingInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userPreferences: AsPreferencesDataSource,
-    private val ifFmpegWork: IFFmpegWork,
+    private val ffmpegWork: IFFmpegWork,
+    private val toastMachine: ToastMachine,
 ) : Interceptor<GroupTask> {
     override val enable = true
 
@@ -38,6 +42,7 @@ class MixingInterceptor @Inject constructor(
         Napier.d(tag = "Interceptor") { "合并视频 $enable, $message" }
         if (!enable) return
         runBlocking {
+            toastMachine.show("开始合并视频: ${message.video.subTitle}")
             val path = userPreferences.userData.first().storagePath
             Napier.d { "指定路径 $path" }
             if (path != null) {
@@ -58,7 +63,21 @@ class MixingInterceptor @Inject constructor(
             message.audio.uri.toFile().path,
             file?.uri.toString()
         )
-        ifFmpegWork.execute(command)
+        ffmpegWork.execute(command, {
+            toastMachine.show(
+                AsToastState(
+                    "合并成功: ${message.video.subTitle}",
+                    AsToastType.Success
+                )
+            )
+        }, {
+            toastMachine.show(
+                AsToastState(
+                    "合并失败: ${message.video.subTitle}",
+                    AsToastType.Error
+                )
+            )
+        })
     }
 
     private suspend fun 没有指定写入路径(message: GroupTask) {
@@ -72,6 +91,20 @@ class MixingInterceptor @Inject constructor(
             message.audio.uri.toFile().path,
             mediaFile?.uri.toString()
         )
-        ifFmpegWork.execute(command)
+        ffmpegWork.execute(command, {
+            toastMachine.show(
+                AsToastState(
+                    "合并成功: ${message.video.subTitle}",
+                    AsToastType.Success
+                )
+            )
+        }, {
+            toastMachine.show(
+                AsToastState(
+                    "合并失败: ${message.video.subTitle}",
+                    AsToastType.Error
+                )
+            )
+        })
     }
 }
