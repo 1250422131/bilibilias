@@ -14,10 +14,8 @@ val CHANNEL_ID_DOWNLOAD = "com.imcys.bilibilias.DOWNLOAD_CHANNEL"
 
 class DownloadNotification @Inject constructor(
     @ApplicationContext private val context: Context,
-
-    ) {
+) {
     val builder = NotificationCompat.Builder(context, CHANNEL_ID_DOWNLOAD)
-
         .setGroup(GROUP_KEY_DOWNLOAD_EMAIL)
         .setPriority(NotificationCompat.PRIORITY_LOW)
 

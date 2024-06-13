@@ -13,11 +13,12 @@ class VideoTask(
     path: String,
     private val quality: Int,
     private val codecid: Int,
-) : AsDownloadTask(info, streamUrl, page.part) {
+) : AsDownloadTask(info, page.part) {
 
     override val priority = 99
     override val fileType = FileType.VIDEO
     override val destFile = File(path, "video.mp4")
+    override val downloadUrl: String = getStrategy(streamUrl)
     override val okTask = createTask(downloadUrl, destFile, priority)
     override fun getStrategy(streamUrl: VideoStreamUrl): String {
         val videos = streamUrl.dash.video.groupBy { it.id }[quality]

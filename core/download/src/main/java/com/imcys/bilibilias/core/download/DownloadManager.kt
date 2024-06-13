@@ -2,6 +2,9 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.core.net.toFile
+import com.anggrayudi.storage.file.DocumentFileCompat
+import com.anggrayudi.storage.file.MimeType
+import com.anggrayudi.storage.file.makeFile
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
@@ -9,6 +12,7 @@ import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.VideoTask
+import com.imcys.bilibilias.core.ffmpeg.FFmpegUtil
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
@@ -54,6 +58,9 @@ class DownloadManager @Inject constructor(
     }
 
     fun download(request: DownloadRequest) {
+        val k1 = DocumentFileCompat.getAccessibleAbsolutePaths(context)
+        val k2 = DocumentFileCompat.getAccessibleUris(context)
+        val k3 = DocumentFileCompat.getStorageIds(context)
         Napier.d { "下载任务详情: $request" }
         scope.launch {
             try {
@@ -92,7 +99,7 @@ class DownloadManager @Inject constructor(
     ): AsDownloadTask {
         val info = request.viewInfo
         val page = viewDetail.pages.single { it.cid == info.cid }
-        val path = getStoragePath() + File.separator + getSubfolder(viewDetail)
+        val path = getStoragePath() + File.separator + getSubfolder(viewDetail, page.part)
         return when (fileType) {
             FileType.VIDEO -> VideoTask(
                 streamUrl,
@@ -108,6 +115,7 @@ class DownloadManager @Inject constructor(
     }
 
     private fun getStoragePath() = runBlocking {
+
         val userData = asPreferencesDataSource.userData.first()
         userData.storagePath?.let {
             return@runBlocking it
@@ -122,22 +130,22 @@ class DownloadManager @Inject constructor(
      *  视频标题: {TITLE}
      *  分P标题: {P_TITLE}
      */
-    private fun getSubfolder(detail: ViewDetail): String = runBlocking {
+    private fun getSubfolder(detail: ViewDetail, pTitle: String): String = runBlocking {
         val userData = asPreferencesDataSource.userData.first()
         val namingRule = userData.namingRule
         if (namingRule == null) {
-            replaceTemplate(DEFAULT_NAMING_RULE, detail)
+            replaceTemplate(DEFAULT_NAMING_RULE, detail, pTitle)
         } else {
-            replaceTemplate(namingRule, detail)
+            replaceTemplate(namingRule, detail, pTitle)
         }
     }
 
-    private fun replaceTemplate(template: String, info: ViewDetail) = template
+    private fun replaceTemplate(template: String, info: ViewDetail, pTitle: String) = template
         .replace("{AV}", info.aid.toString())
         .replace("{BV}", info.bvid)
         .replace("{CID}", info.cid.toString())
-        .replace("{TITLE}", info.title.toString())
-        .replace("{P_TITLE}", info.toString())
+        .replace("{TITLE}", info.title)
+        .replace("{P_TITLE}", pTitle)
 
     private fun handleAllTask(
         streamUrl: VideoStreamUrl,
