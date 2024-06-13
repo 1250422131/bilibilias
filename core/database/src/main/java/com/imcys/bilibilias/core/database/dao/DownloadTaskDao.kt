@@ -14,12 +14,13 @@ import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
+import com.imcys.bilibilias.core.model.video.ViewInfo
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DownloadTaskDao {
     suspend fun insertOrUpdate(t: DownloadTaskEntity) {
-        val task = getTaskByInfo(t.aid, t.bvid, t.cid, t.fileType)
+        val task = getTaskBy(t.aid, t.bvid, t.cid, t.fileType)
         if (task == null) {
             insertTask(t)
         } else {
@@ -47,7 +48,7 @@ interface DownloadTaskDao {
     suspend fun updateTask(downloadTaskEntity: DownloadTaskEntity)
 
     @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type=:fileType")
-    suspend fun getTaskByInfo(
+    suspend fun getTaskBy(
         aid: Aid,
         bvid: Bvid,
         cid: Cid,
@@ -55,14 +56,14 @@ interface DownloadTaskDao {
     ): DownloadTaskEntity?
 
     @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid")
-    suspend fun getTaskByInfo(
+    suspend fun getTaskBy(
         aid: Aid,
         bvid: Bvid,
         cid: Cid,
     ): List<DownloadTaskEntity>
 
     @Query("SELECT * FROM download_task_list WHERE uri = :uri")
-    suspend fun getTaskByUri(uri: Uri): DownloadTaskEntity
+    suspend fun getTaskBy(uri: Uri): DownloadTaskEntity
 
     @Query(
         "UPDATE download_task_list " +

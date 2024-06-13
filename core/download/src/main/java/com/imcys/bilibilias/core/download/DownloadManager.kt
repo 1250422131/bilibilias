@@ -269,7 +269,7 @@ class DownloadManager @Inject constructor(
         fileType: FileType,
     ) {
         scope.launch {
-            val taskByInfo = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid, fileType)
+            val taskByInfo = downloadTaskDao.getTaskBy(info.aid, info.bvid, info.cid, fileType)
             taskByInfo?.uri?.toFile()?.delete()
             deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
             if (taskByInfo != null) {

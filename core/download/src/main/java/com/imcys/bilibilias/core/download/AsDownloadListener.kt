@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.lang.Exception
 import javax.inject.Inject
-
+private const val TAG = "DownloadManager"
 class AsDownloadListener @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val downloadTaskDao: DownloadTaskDao,
@@ -38,7 +38,7 @@ class AsDownloadListener @Inject constructor(
     }
 
     override fun taskStart(task: DownloadTask, model: Listener1Assist.Listener1Model) {
-        Napier.d(tag = "taskStart") { "任务开始 $task" }
+        Napier.d(tag = TAG) { "任务开始 $task" }
         val asTask = taskQueue.first { it.okTask === task }
         scope.launch {
             val info = asTask.viewInfo
@@ -63,7 +63,7 @@ class AsDownloadListener @Inject constructor(
         realCause: Exception?,
         model: Listener1Assist.Listener1Model
     ) {
-        Napier.d(tag = "taskEnd", throwable = realCause) { "任务结束 $cause-${task.file?.path}" }
+        Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.file?.path}" }
         val asDownloadTask = taskQueue.first { it.okTask === task }
         toast(realCause, asDownloadTask)
 
@@ -73,7 +73,7 @@ class AsDownloadListener @Inject constructor(
                 if (realCause == null) State.COMPLETED else State.ERROR
             )
             val info = asDownloadTask.viewInfo
-            val tasks = downloadTaskDao.getTaskByInfo(info.aid, info.bvid, info.cid)
+            val tasks = downloadTaskDao.getTaskBy(info.aid, info.bvid, info.cid)
             val v = tasks.find { it.fileType == FileType.VIDEO }
             val a = tasks.find { it.fileType == FileType.AUDIO }
             if (v != null && v.state == State.COMPLETED) {
@@ -97,7 +97,7 @@ class AsDownloadListener @Inject constructor(
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
-        Napier.d(tag = "progress") { "任务中 ${task.filename} $currentOffset-$totalLength" }
+        Napier.d(tag = TAG) { "任务中 ${task.filename} $currentOffset-$totalLength" }
         scope.launch {
             downloadTaskDao.updateProgressAndState(
                 task.uri,
