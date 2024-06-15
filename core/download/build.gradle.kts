@@ -22,7 +22,7 @@ dependencies {
 
     implementation("com.lazygeniouz:dfc:1.0.8")
 
-    implementation("com.anggrayudi:storage:1.5.5")
+    implementation(libs.simple.storage)
 
     implementation(libs.okhttp)
 

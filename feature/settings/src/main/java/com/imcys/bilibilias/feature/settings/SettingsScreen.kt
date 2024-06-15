@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.feature.settings
 
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
-import com.alorma.compose.settings.ui.SettingsSwitch
 import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.feature.settings.component.SettingsComponent
 import io.github.aakira.napier.Napier
@@ -46,21 +45,14 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
                 .padding(innerPadding)
                 .scrollable(rememberScrollState(), Orientation.Vertical)
         ) {
+            val context = LocalContext.current
             SettingsGroup(
                 title = { Text(text = "通用") }
             ) {
-                val activityResultLauncher =
-                    rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
-                        Napier.d { "选择的路径 ${it?.path}" }
-                        onEvent(UserEditEvent.onSelectedStoragePath(it?.path))
-                    }
-                SettingsMenuLink(
-                    title = { Text(text = "文件储存路径") },
-                    subtitle = { Text(text = model.storagePath) }
-                ) {
-                    activityResultLauncher.launch(null)
-                }
+                FileStorageMenuLink(model.storagePath, onEvent)
+
                 NamingRuleMenuLink(model.namingRule, onEvent)
+
                 SettingsMenuLink(title = { Text(text = "还原文件存储路径") }) {
                     onEvent(UserEditEvent.onSelectedStoragePath(null))
                 }
@@ -70,7 +62,6 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
 
                 FFmpegCommandMenuLink(model.command, onEvent)
 
-                val context = LocalContext.current
                 SettingsMenuLink(title = { Text(text = "退出登录") }) {
                     onEvent(UserEditEvent.onLogout)
                     context.getActivity().finish()
@@ -93,6 +84,29 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
 //                }
 //            }
         }
+    }
+}
+
+@Composable
+fun FileStorageMenuLink(path: String, onEvent: (UserEditEvent) -> Unit) {
+    val context = LocalContext.current
+    val activityResultLauncher =
+        rememberLauncherForActivityResult(AsOpenDocumentTree()) {
+            Napier.d { "选择的路径 ${it?.toString()}" }
+            if (it != null) {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
+
+            onEvent(UserEditEvent.onSelectedStoragePath(it?.toString()))
+        }
+    SettingsMenuLink(
+        title = { Text(text = "文件储存路径") },
+        subtitle = { Text(text = path) }
+    ) {
+        activityResultLauncher.launch(null)
     }
 }
 

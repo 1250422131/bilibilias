@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.media.MediaScannerConnection
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import java.io.File
 
 tailrec fun Context.getActivity(): Activity = when (this) {
+    is ComponentActivity -> this
     is Activity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> error("Permissions should be called in the context of an Activity")
