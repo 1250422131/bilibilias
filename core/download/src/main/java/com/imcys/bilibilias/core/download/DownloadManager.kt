@@ -2,9 +2,10 @@ package com.imcys.bilibilias.core.download
 
 import android.content.Context
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import com.anggrayudi.storage.file.DocumentFileCompat
-import com.anggrayudi.storage.file.MimeType
 import com.anggrayudi.storage.file.makeFile
+import com.anggrayudi.storage.file.makeFolder
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
@@ -12,7 +13,6 @@ import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.AudioTask
 import com.imcys.bilibilias.core.download.task.VideoTask
-import com.imcys.bilibilias.core.ffmpeg.FFmpegUtil
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
@@ -39,6 +39,7 @@ val Context.downloadDir
         File(filesDir.parent, "download").apply {
             mkdirs()
         }
+private const val TAG = "DownloadManager"
 
 @Suppress("LongParameterList")
 @Singleton
@@ -58,9 +59,6 @@ class DownloadManager @Inject constructor(
     }
 
     fun download(request: DownloadRequest) {
-        val k1 = DocumentFileCompat.getAccessibleAbsolutePaths(context)
-        val k2 = DocumentFileCompat.getAccessibleUris(context)
-        val k3 = DocumentFileCompat.getStorageIds(context)
         Napier.d { "下载任务详情: $request" }
         scope.launch {
             try {
@@ -75,7 +73,33 @@ class DownloadManager @Inject constructor(
             }
         }
     }
-
+    fun findFullPath(path: String): String {
+        var path = path
+        path = path.substring(5)
+        var index = 0
+        val result = StringBuilder("/storage")
+        run {
+            var i = 0
+            while (i < path.length) {
+                if (path[i] != ':') {
+                    result.append(path[i])
+                } else {
+                    index = ++i
+                    result.append('/')
+                    break
+                }
+                i++
+            }
+        }
+        for (i in index until path.length) {
+            result.append(path[i])
+        }
+        return if (result.substring(9, 16).equals("primary", ignoreCase = true)) {
+            result.substring(0, 8) + "/emulated/0/" + result.substring(17)
+        } else {
+            result.toString()
+        }
+    }
     private fun dispatcherTaskType(
         streamUrl: VideoStreamUrl,
         request: DownloadRequest,
@@ -115,7 +139,6 @@ class DownloadManager @Inject constructor(
     }
 
     private fun getStoragePath() = runBlocking {
-
         val userData = asPreferencesDataSource.userData.first()
         userData.storagePath?.let {
             return@runBlocking it
