@@ -4,11 +4,11 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     registries: "*"
     labels: [ "version update" ]
     groups:
@@ -22,8 +22,4 @@ registries:
   maven-google:
     type: "maven-repository"
     url: "https://maven.google.com"
-    replaces-base: true
-  jitpack:
-    type: "maven-repository"
-    url: "https://jitpack.io"
     replaces-base: true
