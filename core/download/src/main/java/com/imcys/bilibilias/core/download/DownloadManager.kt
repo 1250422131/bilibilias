@@ -1,35 +1,34 @@
 package com.imcys.bilibilias.core.download
 
 import android.content.Context
+import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.anggrayudi.storage.file.DocumentFileCompat
-import com.anggrayudi.storage.file.makeFile
-import com.anggrayudi.storage.file.makeFolder
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
-import com.imcys.bilibilias.core.download.task.AudioTask
-import com.imcys.bilibilias.core.download.task.VideoTask
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.TaskType
+import com.imcys.bilibilias.core.model.video.Aid
+import com.imcys.bilibilias.core.model.video.Audio
+import com.imcys.bilibilias.core.model.video.Bvid
+import com.imcys.bilibilias.core.model.video.Cid
+import com.imcys.bilibilias.core.model.video.Video
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewInfo
-import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.core.network.repository.VideoRepository
-import com.liulishuo.okdownload.DownloadTask
+import com.lazygeniouz.dfc.file.DocumentFileCompat
 import com.liulishuo.okdownload.core.Util
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,7 +46,6 @@ class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     @ApplicationContext private val context: Context,
     private val videoRepository: VideoRepository,
-    private val danmakuRepository: DanmakuRepository,
     private val downloadTaskDao: DownloadTaskDao,
     private val listener: AsDownloadListener,
     private val asPreferencesDataSource: AsPreferencesDataSource,
@@ -62,238 +60,154 @@ class DownloadManager @Inject constructor(
         Napier.d { "下载任务详情: $request" }
         scope.launch {
             try {
-                val (detail, streamUrl) = get视频详情和流链接(request)
-                dispatcherTaskType(
-                    streamUrl,
-                    request,
-                    detail,
-                )
-            } catch (e: Exception) {
-                Napier.e(e, tag = "download") { "下载发生错误" }
-            }
-        }
-    }
-    fun findFullPath(path: String): String {
-        var path = path
-        path = path.substring(5)
-        var index = 0
-        val result = StringBuilder("/storage")
-        run {
-            var i = 0
-            while (i < path.length) {
-                if (path[i] != ':') {
-                    result.append(path[i])
-                } else {
-                    index = ++i
-                    result.append('/')
-                    break
-                }
-                i++
-            }
-        }
-        for (i in index until path.length) {
-            result.append(path[i])
-        }
-        return if (result.substring(9, 16).equals("primary", ignoreCase = true)) {
-            result.substring(0, 8) + "/emulated/0/" + result.substring(17)
-        } else {
-            result.toString()
-        }
-    }
-    private fun dispatcherTaskType(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        viewDetail: ViewDetail,
-    ) {
-        scope.launch {
-            Napier.d { "任务类型 ${request.format.taskType}" }
-            when (request.format.taskType) {
-                TaskType.ALL -> handleAllTask(streamUrl, request, viewDetail)
-                TaskType.VIDEO -> handleVideoTask(streamUrl, request, viewDetail)
-                TaskType.AUDIO -> handleAudioTask(streamUrl, request, viewDetail)
-            }
-        }
-    }
-
-    private fun createTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        viewDetail: ViewDetail,
-        fileType: FileType,
-    ): AsDownloadTask {
-        val info = request.viewInfo
-        val page = viewDetail.pages.single { it.cid == info.cid }
-        val path = getStoragePath() + File.separator + getSubfolder(viewDetail, page.part)
-        return when (fileType) {
-            FileType.VIDEO -> VideoTask(
-                streamUrl,
-                info,
-                page,
-                path,
-                request.format.quality,
-                request.format.codecid
-            )
-
-            FileType.AUDIO -> AudioTask(streamUrl, request.viewInfo, page, path)
-        }.also(listener::add)
-    }
-
-    private fun getStoragePath() = runBlocking {
-        val userData = asPreferencesDataSource.userData.first()
-        userData.storagePath?.let {
-            return@runBlocking it
-        }
-        context.downloadDir.path
-    }
-
-    /**
-     *  AV号: {AV}
-     *  BV号: {BV}
-     *  CID号: {CID}
-     *  视频标题: {TITLE}
-     *  分P标题: {P_TITLE}
-     */
-    private fun getSubfolder(detail: ViewDetail, pTitle: String): String = runBlocking {
-        val userData = asPreferencesDataSource.userData.first()
-        val namingRule = userData.namingRule
-        if (namingRule == null) {
-            replaceTemplate(DEFAULT_NAMING_RULE, detail, pTitle)
-        } else {
-            replaceTemplate(namingRule, detail, pTitle)
-        }
-    }
-
-    private fun replaceTemplate(template: String, info: ViewDetail, pTitle: String) = template
-        .replace("{AV}", info.aid.toString())
-        .replace("{BV}", info.bvid)
-        .replace("{CID}", info.cid.toString())
-        .replace("{TITLE}", info.title)
-        .replace("{P_TITLE}", pTitle)
-
-    private fun handleAllTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        viewDetail: ViewDetail,
-    ) {
-        val video = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
-        val audio = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
-        DownloadTask.enqueue(arrayOf(video.okTask, audio.okTask), listener)
-    }
-
-    private fun handleAudioTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        viewDetail: ViewDetail,
-    ) {
-        val task = createTask(streamUrl, request, viewDetail, FileType.AUDIO)
-        task.okTask.enqueue(listener)
-    }
-
-    private fun handleVideoTask(
-        streamUrl: VideoStreamUrl,
-        request: DownloadRequest,
-        viewDetail: ViewDetail,
-    ) {
-        val task = createTask(streamUrl, request, viewDetail, FileType.VIDEO)
-        task.okTask.enqueue(listener)
-    }
-
-    private suspend fun get视频详情和流链接(request: DownloadRequest): Pair<ViewDetail, VideoStreamUrl> {
-        val detail = scope.async { videoRepository.获取视频详细信息(request.viewInfo.bvid) }
-        val streamUrl =
-            scope.async {
-                videoRepository.videoStreamingURL(
-                    request.viewInfo.aid,
-                    request.viewInfo.bvid,
-                    request.viewInfo.cid,
-                )
-            }
-        return detail.await() to streamUrl.await()
-    }
-
-    private fun persistedFile(
-        detail: ViewDetail,
-        request: DownloadRequest,
-    ) {
-        scope.launch {
-            val cid = detail.cid
-            val path = request.buildBasePath()
-            saveDmFile(path, cid)
-            saveEntryFile(detail, cid, path)
-        }
-    }
-
-    private fun saveDmFile(
-        path: String,
-        cid: Long,
-    ) {
-        scope.launch {
-            val bytes = danmakuRepository.getRealTimeDanmaku(cid)
-            File(path, "danmaku.xml").writeBytes(bytes)
-        }
-    }
-
-    // region entry.json
-    private fun saveEntryFile(
-        detail: ViewDetail,
-        cid: Long,
-        path: String,
-    ) {
-        val page = detail.pages.single { it.cid == cid }
-        val content =
-            """
-                {
-                    "media_type": 2,
-                    "has_dash_audio": true,
-                    "is_completed": true,
-                    "total_bytes": ${Int.MIN_VALUE},
-                    "downloaded_bytes": ${Int.MAX_VALUE},
-                    "title": "${detail.title}",
-                    "type_tag": "80",
-                    "cover": "${detail.pic}",
-                    "video_quality": 80,
-                    "prefered_video_quality": 80,
-                    "guessed_total_bytes": 0,
-                    "total_time_milli": ${detail.duration},
-                    "danmaku_count": ${detail.stat.danmaku},
-                    "time_update_stamp": ${System.currentTimeMillis()},
-                    "time_create_stamp": ${System.currentTimeMillis()},
-                    "can_play_in_advance": true,
-                    "interrupt_transform_temp_file": false,
-                    "quality_pithy_description": "4K",
-                    "quality_superscript": "",
-                    "cache_version_code": 7630200,
-                    "preferred_audio_quality": 0,
-                    "audio_quality": 0,
-                    "avid": ${detail.aid},
-                    "spid": 0,
-                    "seasion_id": 0,
-                    "bvid": "${detail.bvid}",
-                    "owner_id": ${detail.owner.mid},
-                    "owner_name": "${detail.owner.name}",
-                    "owner_avatar": "${detail.owner.face}",
-                    "page_data": {
-                        "cid": ${page.cid},
-                        "page": 1,
-                        "from": "${page.from}",
-                        "part": "${page.part}",
-                        "link": "${page.weblink}",
-                        "rich_vid": "",
-                        "vid": "${page.vid}",
-                        "has_alias": false,
-                        "tid": ${detail.tid},
-                        "width": ${page.dimension.width},
-                        "height": ${page.dimension.height},
-                        "rotate": ${page.dimension.rotate},
-                        "download_title": "视频已缓存完成",
-                        "download_subtitle": "${page.part}"
+                download(
+                    taksType = request.format.taskType,
+                    getDetail = { bvid: Bvid ->
+                        videoRepository.获取视频详细信息(bvid)
+                    },
+                    getDownloadUrl = { aid: Aid, bvid: Bvid, cid: Cid ->
+                        videoRepository.videoStreamingURL(
+                            aid,
+                            bvid,
+                            cid,
+                        )
+                    },
+                    videoStrategy = { sources, detail, page ->
+                        val format = request.format
+                        generate(sources, detail, page, format.quality, format.codecid)
+                    },
+                    audioStrategy = { sources, detail, page ->
+                        generate(sources, detail, page)
                     }
-                }
-            """.trimIndent()
-        File(path, "entry.json").writeText(content)
+                ).invoke(request.viewInfo)
+            } catch (e: Exception) {
+                Napier.e(e, TAG) { "下载发生错误" }
+            }
+        }
     }
 
-    // endregion
+    suspend fun download(
+        taksType: TaskType,
+        getDetail: suspend (bvid: Bvid) -> ViewDetail,
+        getDownloadUrl: suspend (aid: Aid, bvid: Bvid, cid: Cid) -> VideoStreamUrl,
+        videoStrategy: suspend (sources: List<Video>, detail: ViewDetail, page: ViewDetail.Pages) -> AsDownloadTask?,
+        audioStrategy: suspend (sources: List<Audio>, detail: ViewDetail, page: ViewDetail.Pages) -> AsDownloadTask?,
+    ): suspend (info: ViewInfo) -> TaskResult {
+        return {
+            var result: TaskResult = TaskResult.Success
+            val detail = getDetail(it.bvid)
+            val downloadUrl = getDownloadUrl(it.aid, it.bvid, it.cid)
+            val page = detail.pages.single { it.cid == it.cid }
+            val newTaskType = when (taksType) {
+                TaskType.ALL -> arrayOf(TaskType.VIDEO, TaskType.AUDIO)
+                TaskType.VIDEO -> arrayOf(TaskType.VIDEO)
+                TaskType.AUDIO -> arrayOf(TaskType.AUDIO)
+            }
+            newTaskType.forEach {
+                when (it) {
+                    TaskType.VIDEO -> {
+                        val task = videoStrategy(downloadUrl.dash.video, detail, page)
+                        if (task != null) task.also(listener::add)
+                        else {
+                            result = TaskResult.Failure
+                        }
+                    }
+
+                    TaskType.AUDIO -> {
+                        val task = audioStrategy(downloadUrl.dash.audio, detail, page)
+                        if (task != null) task.also(listener::add)
+                        else {
+                            result = TaskResult.Failure
+                        }
+                    }
+
+                    TaskType.ALL -> throw UnsupportedOperationException()
+                }
+            }
+            result
+        }
+    }
+
+    private suspend fun generate(
+        sources: List<Audio>,
+        detail: ViewDetail,
+        page: ViewDetail.Pages
+    ): AsDownloadTask? {
+        val url = sources.maxBy { it.id }.baseUrl
+        val info = ViewInfo(detail.aid, detail.bvid, detail.cid, detail.title)
+        val file = createFile(
+            System.currentTimeMillis().toString() + ".acc",
+            info,
+            page.part,
+            MimeType.AUDIO
+        )
+        return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, url, file)
+        else null
+
+    }
+
+    private suspend fun generate(
+        sources: List<Video>,
+        detail: ViewDetail,
+        page: ViewDetail.Pages,
+        quality: Int,
+        codecid: Int
+    ): AsDownloadTask? {
+        val videos = sources.groupBy { it.id }[quality] ?: error("没有所选清晰度")
+        val v = videos.singleOrNull { it.codecid == codecid }
+            ?: videos.maxBy { it.codecid }
+        val info = ViewInfo(detail.aid, detail.bvid, detail.cid, detail.title)
+        val file = createFile(
+            System.currentTimeMillis().toString() + ".mp4",
+            info,
+            page.part,
+            MimeType.VIDEO
+        )
+        return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, v.baseUrl, file)
+        else null
+    }
+
+    private suspend fun createFile(
+        defaultFilename: String,
+        viewInfo: ViewInfo,
+        subTitle: String,
+        mimeType: String,
+    ): Uri? {
+        val userData = asPreferencesDataSource.userData.first()
+        val path = userData.storagePath
+        return if (path == null) {
+            File(context.downloadDir, defaultFilename).toUri()
+        } else {
+            val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
+            val (foldername, filename) = generateFolderWithFile(viewInfo, subTitle)
+            tree.createDirectory(foldername)
+            val file = tree.createFile(mimeType, filename)
+            file?.uri
+        }
+    }
+
+    private suspend fun generateFolderWithFile(
+        info: ViewInfo,
+        subTitle: String
+    ): Pair<String, String> {
+        val userData = asPreferencesDataSource.userData.first()
+        var template = userData.namingRule ?: DEFAULT_NAMING_RULE
+        // 如果文件名的尾部是 / 则去掉
+        if (template.endsWith("/")) {
+            template = template.dropLast(1)
+        }
+        val path = template
+            .replace("{AV}", info.aid.toString())
+            .replace("{BV}", info.bvid)
+            .replace("{CID}", info.cid.toString())
+            .replace("{TITLE}", info.title)
+            .replace("{P_TITLE}", subTitle)
+
+        val index = template.indexOfFirst { it == '/' }
+        val foldername = path.substring(0, index)
+        val filename = path.substring(index + 1, template.length)
+        return foldername to filename
+    }
 
     fun delete(
         info: ViewInfo,

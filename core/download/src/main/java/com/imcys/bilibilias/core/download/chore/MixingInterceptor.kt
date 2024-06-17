@@ -2,12 +2,6 @@ package com.imcys.bilibilias.core.download.chore
 
 import android.content.Context
 import androidx.core.net.toFile
-import com.anggrayudi.storage.file.CreateMode
-import com.anggrayudi.storage.file.DocumentFileCompat
-import com.anggrayudi.storage.file.MimeType
-import com.anggrayudi.storage.file.makeFile
-import com.anggrayudi.storage.media.FileDescription
-import com.anggrayudi.storage.media.MediaStoreCompat
 import com.imcys.bilibilias.core.data.toast.AsToastState
 import com.imcys.bilibilias.core.data.toast.AsToastType
 import com.imcys.bilibilias.core.data.toast.ToastMachine
@@ -54,57 +48,57 @@ class MixingInterceptor @Inject constructor(
     }
 
     private suspend fun 指定写入路径(message: GroupTask) {
-        val grantedPaths = DocumentFileCompat.getAccessibleAbsolutePaths(context)
-        val path = grantedPaths.values.firstOrNull()?.firstOrNull() ?: return
-        val folder = DocumentFileCompat.fromFullPath(context, path, requiresWriteAccess = true)
-        val file = folder?.makeFile(context, "${message.video.subTitle}.mp4", MimeType.VIDEO)
-        val command = FFmpegUtil.mixAudioVideo2(
-            message.video.uri.toFile().path,
-            message.audio.uri.toFile().path,
-            file?.uri.toString()
-        )
-        ffmpegWork.execute(command, {
-            toastMachine.show(
-                AsToastState(
-                    "合并成功: ${message.video.subTitle}",
-                    AsToastType.Success
-                )
-            )
-        }, {
-            toastMachine.show(
-                AsToastState(
-                    "合并失败: ${message.video.subTitle}",
-                    AsToastType.Error
-                )
-            )
-        })
+//        val grantedPaths = DocumentFileCompat.getAccessibleAbsolutePaths(context)
+//        val path = grantedPaths.values.firstOrNull()?.firstOrNull() ?: return
+//        val folder = DocumentFileCompat.fromFullPath(context, path, requiresWriteAccess = true)
+//        val file = folder?.makeFile(context, "${message.video.subTitle}.mp4", MimeType.VIDEO)
+//        val command = FFmpegUtil.mixAudioVideo2(
+//            message.video.uri.toFile().path,
+//            message.audio.uri.toFile().path,
+//            file?.uri.toString()
+//        )
+//        ffmpegWork.execute(command, {
+//            toastMachine.show(
+//                AsToastState(
+//                    "合并成功: ${message.video.subTitle}",
+//                    AsToastType.Success
+//                )
+//            )
+//        }, {
+//            toastMachine.show(
+//                AsToastState(
+//                    "合并失败: ${message.video.subTitle}",
+//                    AsToastType.Error
+//                )
+//            )
+//        })
     }
 
     private suspend fun 没有指定写入路径(message: GroupTask) {
-        val mediaFile = MediaStoreCompat.createVideo(
-            context,
-            FileDescription("${message.video.subTitle}.mp4", "biliAs", MimeType.VIDEO),
-            mode = CreateMode.REPLACE
-        )
-        val command = FFmpegUtil.mixAudioVideo2(
-            message.video.uri.toFile().path,
-            message.audio.uri.toFile().path,
-            mediaFile?.uri.toString()
-        )
-        ffmpegWork.execute(command, {
-            toastMachine.show(
-                AsToastState(
-                    "合并成功: ${message.video.subTitle}",
-                    AsToastType.Success
-                )
-            )
-        }, {
-            toastMachine.show(
-                AsToastState(
-                    "合并失败: ${message.video.subTitle}",
-                    AsToastType.Error
-                )
-            )
-        })
+//        val mediaFile = MediaStoreCompat.createVideo(
+//            context,
+//            FileDescription("${message.video.subTitle}.mp4", "biliAs", MimeType.VIDEO),
+//            mode = CreateMode.REPLACE
+//        )
+//        val command = FFmpegUtil.mixAudioVideo2(
+//            message.video.uri.toFile().path,
+//            message.audio.uri.toFile().path,
+//            mediaFile?.uri.toString()
+//        )
+//        ffmpegWork.execute(command, {
+//            toastMachine.show(
+//                AsToastState(
+//                    "合并成功: ${message.video.subTitle}",
+//                    AsToastType.Success
+//                )
+//            )
+//        }, {
+//            toastMachine.show(
+//                AsToastState(
+//                    "合并失败: ${message.video.subTitle}",
+//                    AsToastType.Error
+//                )
+//            )
+//        })
     }
 }

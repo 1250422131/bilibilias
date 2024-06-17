@@ -22,8 +22,6 @@ dependencies {
 
     implementation("com.lazygeniouz:dfc:1.0.8")
 
-    implementation(libs.simple.storage)
-
     implementation(libs.okhttp)
 
     testImplementation(libs.junit)
