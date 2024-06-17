@@ -46,4 +46,8 @@ class AsDownloadTask {
             .setPriority(fileType.priority)
             .build()
     }
+
+    override fun toString(): String {
+        return "AsDownloadTask(subTitle='$subTitle', viewInfo=$viewInfo)"
+    }
 }
