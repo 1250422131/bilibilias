@@ -3,6 +3,7 @@
     alias(libs.plugins.bilibilias.android.library.jacoco)
     alias(libs.plugins.bilibilias.android.hilt)
     alias(libs.plugins.bilibilias.android.room)
+    alias(libs.plugins.bilibilias.multiplatform.sqlLin)
 }
 
 android {

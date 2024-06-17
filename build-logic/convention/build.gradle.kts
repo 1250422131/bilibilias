@@ -66,6 +66,10 @@ gradlePlugin {
             id = "bilibilias.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("multiplatformSqlLin") {
+            id = "bilibilias.multiplatform.sqlLin"
+            implementationClass = "AndroidSqlLinConventionPlugin"
+        }
         register("androidLint") {
             id = "bilibilias.android.lint"
             implementationClass = "AndroidLintConventionPlugin"
