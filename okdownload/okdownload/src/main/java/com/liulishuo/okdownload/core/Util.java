@@ -41,7 +41,6 @@ import com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnCache;
 import com.liulishuo.okdownload.core.breakpoint.DownloadStore;
 import com.liulishuo.okdownload.core.connection.DownloadConnection;
 import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection;
-import com.liulishuo.okdownload.core.dispatcher.DownloadDispatcher;
 
 import org.jetbrains.annotations.Contract;
 
@@ -63,8 +62,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import kotlinx.coroutines.Dispatchers;
 
 public class Util {
 

@@ -59,7 +59,7 @@ class DownloadManager @Inject constructor(
         Napier.d { "下载任务详情: $request" }
         scope.launch {
             try {
-                download(
+                val result = download(
                     taksType = request.format.taskType,
                     getDetail = { bvid: Bvid ->
                         videoRepository.获取视频详细信息(bvid)
@@ -97,6 +97,7 @@ class DownloadManager @Inject constructor(
             val detail = getDetail(it.bvid)
             val downloadUrl = getDownloadUrl(it.aid, it.bvid, it.cid)
             val page = detail.pages.single { it.cid == it.cid }
+            Napier.d { "选中的子集 $page" }
             val newTaskType = when (taksType) {
                 TaskType.ALL -> arrayOf(TaskType.VIDEO, TaskType.AUDIO)
                 TaskType.VIDEO -> arrayOf(TaskType.VIDEO)
@@ -106,6 +107,7 @@ class DownloadManager @Inject constructor(
                 when (it) {
                     TaskType.VIDEO -> {
                         val task = videoStrategy(downloadUrl.dash.video, detail, page)
+                        Napier.d { "视频任务 $task" }
                         if (task != null) {
                             task.also(listener::add)
                         } else {
@@ -115,6 +117,7 @@ class DownloadManager @Inject constructor(
 
                     TaskType.AUDIO -> {
                         val task = audioStrategy(downloadUrl.dash.audio, detail, page)
+                        Napier.d { "音频任务 $task" }
                         if (task != null) {
                             task.also(listener::add)
                         } else {
@@ -125,6 +128,7 @@ class DownloadManager @Inject constructor(
                     TaskType.ALL -> throw UnsupportedOperationException()
                 }
             }
+            Napier.d { "任务是否成功: $result, 任务类型: $taksType" }
             result
         }
     }
@@ -143,6 +147,7 @@ class DownloadManager @Inject constructor(
             MimeType.AUDIO,
             ".aac"
         )
+        Napier.d { "下载链接 ${url}" }
         return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, url, file)
         else null
     }
@@ -165,6 +170,7 @@ class DownloadManager @Inject constructor(
             MimeType.VIDEO,
             ".mp4"
         )
+        Napier.d { "清晰度 $quality, 编码器 $codecid, 下载链接 ${v.baseUrl}" }
         return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, v.baseUrl, file)
         else null
     }
@@ -178,6 +184,7 @@ class DownloadManager @Inject constructor(
     ): Uri? {
         val userData = asPreferencesDataSource.userData.first()
         val path = userData.storagePath
+        Napier.d { "存储路径: $path" }
         return if (path == null) {
             File(context.downloadDir, defaultFilename).toUri()
         } else {
@@ -186,10 +193,13 @@ class DownloadManager @Inject constructor(
             val folderFile = tree.findFile(foldername)
             val filenameWithExtension = filename + extension
             if (folderFile == null) {
+                Napier.d { "未创建文件夹 $foldername" }
                 val folder = tree.createDirectory(foldername)
                 folder?.findFile(filenameWithExtension)
             } else {
+                Napier.d { "已创建文件夹 $foldername" }
                 val findFile = folderFile.findFile(filenameWithExtension)
+                Napier.d { "已创建文件: ${findFile?.name}" }
                 if (findFile == null) folderFile.createFile(mimeType, filenameWithExtension)
                 else findFile
             }?.uri
@@ -202,6 +212,7 @@ class DownloadManager @Inject constructor(
     ): Pair<String, String> {
         val userData = asPreferencesDataSource.userData.first()
         var template = userData.namingRule ?: DEFAULT_NAMING_RULE
+        Napier.d { "命名规则: $template" }
         // 如果文件名的尾部是 / 则去掉
         if (template.endsWith("/")) {
             template = template.dropLast(1)
@@ -212,10 +223,10 @@ class DownloadManager @Inject constructor(
             .replace("{CID}", info.cid.toString())
             .replace("{TITLE}", info.title)
             .replace("{P_TITLE}", subTitle)
-
         val index = path.indexOfLast { it == '/' }
         val foldername = path.substring(0, index)
         val filename = path.substring(index + 1, path.length)
+        Napier.d { "文件夹: $foldername, 文件: $filename, 路径: $path" }
         return foldername to filename
     }
 
