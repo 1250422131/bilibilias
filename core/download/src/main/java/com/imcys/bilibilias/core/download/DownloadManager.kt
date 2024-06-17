@@ -26,7 +26,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
@@ -107,16 +106,18 @@ class DownloadManager @Inject constructor(
                 when (it) {
                     TaskType.VIDEO -> {
                         val task = videoStrategy(downloadUrl.dash.video, detail, page)
-                        if (task != null) task.also(listener::add)
-                        else {
+                        if (task != null) {
+                            task.also(listener::add)
+                        } else {
                             result = TaskResult.Failure
                         }
                     }
 
                     TaskType.AUDIO -> {
                         val task = audioStrategy(downloadUrl.dash.audio, detail, page)
-                        if (task != null) task.also(listener::add)
-                        else {
+                        if (task != null) {
+                            task.also(listener::add)
+                        } else {
                             result = TaskResult.Failure
                         }
                     }
@@ -136,14 +137,14 @@ class DownloadManager @Inject constructor(
         val url = sources.maxBy { it.id }.baseUrl
         val info = ViewInfo(detail.aid, detail.bvid, detail.cid, detail.title)
         val file = createFile(
-            System.currentTimeMillis().toString() + ".acc",
+            System.currentTimeMillis().toString() + ".aac",
             info,
             page.part,
-            MimeType.AUDIO
+            MimeType.AUDIO,
+            ".aac"
         )
         return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, url, file)
         else null
-
     }
 
     private suspend fun generate(
@@ -161,7 +162,8 @@ class DownloadManager @Inject constructor(
             System.currentTimeMillis().toString() + ".mp4",
             info,
             page.part,
-            MimeType.VIDEO
+            MimeType.VIDEO,
+            ".mp4"
         )
         return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, v.baseUrl, file)
         else null
@@ -172,6 +174,7 @@ class DownloadManager @Inject constructor(
         viewInfo: ViewInfo,
         subTitle: String,
         mimeType: String,
+        extension: String,
     ): Uri? {
         val userData = asPreferencesDataSource.userData.first()
         val path = userData.storagePath
@@ -180,9 +183,16 @@ class DownloadManager @Inject constructor(
         } else {
             val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
             val (foldername, filename) = generateFolderWithFile(viewInfo, subTitle)
-            val folder = tree.createDirectory(foldername)
-            val file = folder?.createFile(mimeType, filename)
-            file?.uri
+            val folderFile = tree.findFile(foldername)
+            val filenameWithExtension = filename + extension
+            if (folderFile == null) {
+                val folder = tree.createDirectory(foldername)
+                folder?.findFile(filenameWithExtension)
+            } else {
+                val findFile = folderFile.findFile(filenameWithExtension)
+                if (findFile == null) folderFile.createFile(mimeType, filenameWithExtension)
+                else findFile
+            }?.uri
         }
     }
 
@@ -203,9 +213,9 @@ class DownloadManager @Inject constructor(
             .replace("{TITLE}", info.title)
             .replace("{P_TITLE}", subTitle)
 
-        val index = template.indexOfFirst { it == '/' }
+        val index = path.indexOfLast { it == '/' }
         val foldername = path.substring(0, index)
-        val filename = path.substring(index + 1, template.length)
+        val filename = path.substring(index + 1, path.length)
         return foldername to filename
     }
 
