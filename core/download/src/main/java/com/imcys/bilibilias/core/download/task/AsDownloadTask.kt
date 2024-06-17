@@ -42,7 +42,7 @@ class AsDownloadTask {
                 )
             )
             .setConnectionCount(1)
-            .setFilename(fileType.filename)
+//            .setFilename(fileType.filename)
             .setPriority(fileType.priority)
             .build()
     }
