@@ -180,8 +180,8 @@ class DownloadManager @Inject constructor(
         } else {
             val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
             val (foldername, filename) = generateFolderWithFile(viewInfo, subTitle)
-            tree.createDirectory(foldername)
-            val file = tree.createFile(mimeType, filename)
+            val folder = tree.createDirectory(foldername)
+            val file = folder?.createFile(mimeType, filename)
             file?.uri
         }
     }
