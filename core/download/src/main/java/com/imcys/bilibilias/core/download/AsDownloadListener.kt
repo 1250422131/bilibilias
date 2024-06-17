@@ -24,7 +24,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.lang.Exception
 import javax.inject.Inject
+
 private const val TAG = "DownloadManager"
+
 class AsDownloadListener @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val downloadTaskDao: DownloadTaskDao,
@@ -35,6 +37,7 @@ class AsDownloadListener @Inject constructor(
 
     fun add(task: AsDownloadTask) {
         taskQueue.add(task)
+        task.okTask.enqueue(this)
     }
 
     override fun taskStart(task: DownloadTask, model: Listener1Assist.Listener1Model) {
@@ -42,18 +45,18 @@ class AsDownloadListener @Inject constructor(
         val asTask = taskQueue.first { it.okTask === task }
         scope.launch {
             val info = asTask.viewInfo
-            val taskEntity = DownloadTaskEntity(
-                uri = asTask.destFile.toUri(),
-                created = Clock.System.now(),
-                aid = info.aid,
-                bvid = info.bvid,
-                cid = info.cid,
-                fileType = asTask.fileType,
-                subTitle = asTask.subTitle,
-                title = info.title,
-                state = State.RUNNING,
-            )
-            downloadTaskDao.insertOrUpdate(taskEntity)
+//            val taskEntity = DownloadTaskEntity(
+//                uri = asTask.destFile.toUri(),
+//                created = Clock.System.now(),
+//                aid = info.aid,
+//                bvid = info.bvid,
+//                cid = info.cid,
+//                fileType = asTask.fileType,
+//                subTitle = asTask.subTitle,
+//                title = info.title,
+//                state = State.RUNNING,
+//            )
+//            downloadTaskDao.insertOrUpdate(taskEntity)
         }
     }
 
@@ -88,12 +91,12 @@ class AsDownloadListener @Inject constructor(
         realCause: Exception?,
         task: AsDownloadTask
     ) {
-        val toastState = if (realCause == null) {
-            AsToastState("${task.subTitle}·${task.fileType}下载成功", AsToastType.Normal)
-        } else {
-            AsToastState("${task.subTitle}·${task.fileType}下载失败", AsToastType.Error)
-        }
-        toastMachine.show(toastState)
+//        val toastState = if (realCause == null) {
+//            AsToastState("${task.subTitle}·${task.fileType}下载成功", AsToastType.Normal)
+//        } else {
+//            AsToastState("${task.subTitle}·${task.fileType}下载失败", AsToastType.Error)
+//        }
+//        toastMachine.show(toastState)
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {

@@ -1,28 +1,34 @@
 package com.imcys.bilibilias.core.download.task
 
+import android.net.Uri
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.mb
 import com.imcys.bilibilias.core.model.download.FileType
-import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.liulishuo.okdownload.DownloadTask
 import java.io.File
 
-sealed class AsDownloadTask(
-    val viewInfo: ViewInfo,
-    val subTitle: String,
-) {
-    internal abstract val priority: Int
-    internal abstract val destFile: File
-    abstract val fileType: FileType
-    internal abstract val okTask: DownloadTask
-    internal abstract val downloadUrl: String
+class AsDownloadTask {
+    val viewInfo: ViewInfo
+    val subTitle: String
+    internal val okTask: DownloadTask
 
-    protected fun createTask(
-        url: String,
-        file: File,
-        priority: Int,
+    constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, file: File) {
+        this.viewInfo = viewInfo
+        this.subTitle = subTitle
+        this.okTask = createTask(fileType, DownloadTask.Builder(url, file))
+    }
+
+    constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, uri: Uri) {
+        this.viewInfo = viewInfo
+        this.subTitle = subTitle
+        this.okTask = createTask(fileType, DownloadTask.Builder(url, uri))
+    }
+
+    private fun createTask(
+        fileType: FileType,
+        builder: DownloadTask.Builder
     ): DownloadTask {
-        return DownloadTask.Builder(url, file)
+        return builder
             .setPassIfAlreadyCompleted(false)
             .setAutoCallbackToUIThread(false)
             .setMinIntervalMillisCallbackProcess(50)
@@ -36,22 +42,9 @@ sealed class AsDownloadTask(
                 )
             )
             .setConnectionCount(1)
-            .setPriority(priority)
+//            .setFilename(fileType.filename)
+            .setPriority(fileType.priority)
+            .setFilenameFromResponse(false)
             .build()
-    }
-
-    abstract fun getStrategy(streamUrl: VideoStreamUrl): String
-    override fun toString(): String {
-        return buildString {
-            append(viewInfo.title)
-            append("@")
-            append(okTask.id.toString())
-            append("@")
-            append(okTask.url)
-            append("@")
-            append(okTask.getParentFile().toString())
-            append("/")
-            append(okTask.filenameHolder.get())
-        }
     }
 }
