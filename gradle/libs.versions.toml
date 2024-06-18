@@ -73,7 +73,7 @@ secrets = "2.0.1"
 firebaseBom = "33.0.0"
 firebaseCrashlyticsPlugin = "3.0.1"
 firebasePerfPlugin = "1.4.2"
-googleOss = "17.0.1"
+googleOss = "17.1.0"
 googleOssPlugin = "0.10.6"
 gmsPlugin = "4.4.2"
 [libraries]
