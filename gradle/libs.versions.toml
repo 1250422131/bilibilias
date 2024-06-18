@@ -75,7 +75,7 @@ firebaseCrashlyticsPlugin = "3.0.1"
 firebasePerfPlugin = "1.4.2"
 googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
-gmsPlugin = "4.4.1"
+gmsPlugin = "4.4.2"
 [libraries]
 
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
