@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.secrets) apply false
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.buildconfig) apply false
+    kotlin("plugin.power-assert") version "2.0.0"
 }
 
 // Task to print all the module paths in the project e.g. :core:data

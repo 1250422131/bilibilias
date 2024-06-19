@@ -3,12 +3,6 @@ package com.imcys.bilibilias.feature.download.component
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.lifecycle.viewModelScope
-import app.cash.molecule.RecompositionMode
-import app.cash.molecule.launchMolecule
-import app.cash.molecule.moleculeFlow
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
@@ -17,7 +11,8 @@ import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
-import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import com.imcys.bilibilias.core.database.dao.DownloadTaskDao2
+import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.common.BaseViewModel
@@ -28,14 +23,12 @@ import dagger.assisted.AssistedInject
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 class DefaultDownloadComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val downloadTaskDao: DownloadTaskDao,
     private val dialogComponentFactory: DialogComponent.Factory,
+    private val taskDao: DownloadTaskDao2,
 ) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
 
     private val dialogNavigation = SlotNavigation<BottomConfig>()
@@ -62,28 +55,26 @@ class DefaultDownloadComponent @AssistedInject constructor(
     override fun models(events: Flow<Event>): Model {
         return PresentationLogic(
             events,
-            downloadTaskDao.loadAllDownloadFlow()
+            taskDao.findAllFlow()
         )
     }
 
     @Composable
     private fun PresentationLogic(
         events: Flow<Event>,
-        loadAllDownloadFlow: Flow<List<DownloadTaskEntity>>
+        findAll: Flow<List<Task>>
     ): Model {
-        val entities = remember { loadAllDownloadFlow }.collectAsState(initial = emptyList())
-
+        val entities2 = findAll.collectAsState(initial = emptyList())
         LaunchedEffect(Unit) {
             events.collect { event ->
             }
         }
 
         return Model(
-            entities.value.groupBy { it.cid }
+            entities2.value.groupBy { it.cid }
                 .values
-                .map {
+                .onEach {
                     Napier.d { it.joinToString("\n") }
-                    it.map(DownloadTaskEntity::mapToTask)
                 }
                 .toImmutableList()
         )
