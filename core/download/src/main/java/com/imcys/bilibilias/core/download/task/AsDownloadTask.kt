@@ -8,19 +8,22 @@ import com.liulishuo.okdownload.DownloadTask
 import java.io.File
 
 class AsDownloadTask {
-    val viewInfo: ViewInfo
-    val subTitle: String
+    internal val viewInfo: ViewInfo
+    internal val subTitle: String
     internal val okTask: DownloadTask
+    internal val fileType: FileType
 
     constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, file: File) {
         this.viewInfo = viewInfo
         this.subTitle = subTitle
+        this.fileType = fileType
         this.okTask = createTask(fileType, DownloadTask.Builder(url, file))
     }
 
     constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, uri: Uri) {
         this.viewInfo = viewInfo
         this.subTitle = subTitle
+        this.fileType = fileType
         this.okTask = createTask(fileType, DownloadTask.Builder(url, uri))
     }
 
@@ -37,7 +40,7 @@ class AsDownloadTask {
             .setHeaderMapFields(
                 mapOf(
                     "User-Agent" to
-                        listOf("Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36"),
+                            listOf("Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36"),
                     "Referer" to listOf("https://www.bilibili.com/")
                 )
             )

@@ -37,6 +37,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.common.utils.DataUnit
+import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
@@ -113,11 +114,13 @@ internal fun DownloadScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DownloadTaskItem(
-    task: DownloadTask,
+    task: Task,
     onSettingsClicked: (ViewInfo, FileType) -> Unit
 ) {
     ListItem(
-        modifier = Modifier.combinedClickable { onSettingsClicked(task.viewInfo, task.fileType) },
+        modifier = Modifier.combinedClickable {
+            onSettingsClicked(ViewInfo(task.aid, task.bvid, task.cid, task.title), task.fileType)
+        },
         leadingContent = {
             AsCard(modifier = Modifier.size(80.dp)) {
                 Box(
