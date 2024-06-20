@@ -5,7 +5,10 @@ import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao2
+import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.database.model.Task
+import com.imcys.bilibilias.core.database.model.TaskEntity
+import com.imcys.bilibilias.core.database.util.TypeConverters
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.GroupTask
@@ -26,10 +29,11 @@ import javax.inject.Inject
 private const val TAG = "DownloadManager"
 
 class AsDownloadListener @Inject constructor(
-    private val downloadTaskDao: DownloadTaskDao,
+    @ApplicationScope private val scope: CoroutineScope,
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
     private val toastMachine: ToastMachine,
-    private val taskDao: DownloadTaskDao2,
+    private val taskDao2: DownloadTaskDao2,
+    private val taskDao: DownloadTaskDao
 ) : DownloadListener1() {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 
@@ -42,7 +46,7 @@ class AsDownloadListener @Inject constructor(
         Napier.d(tag = TAG) { "任务开始 $task" }
         val asTask = taskQueue.first { it.okTask === task }
         val info = asTask.viewInfo
-        val taskEntity = Task(
+        val taskEntity = DownloadTaskEntity(
             uri = asTask.okTask.uri,
             created = Clock.System.now(),
             aid = info.aid,
@@ -53,7 +57,9 @@ class AsDownloadListener @Inject constructor(
             title = info.title,
             state = State.RUNNING,
         )
-        taskDao.insertOrUpdateTask(taskEntity)
+        scope.launch {
+            taskDao.insertOrUpdate(taskEntity)
+        }
     }
 
     override fun taskEnd(
@@ -62,22 +68,25 @@ class AsDownloadListener @Inject constructor(
         realCause: Exception?,
         model: Listener1Assist.Listener1Model
     ) {
-        Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.file?.path}" }
-        val asDownloadTask = taskQueue.first { it.okTask === task }
-        toast(realCause, asDownloadTask)
+        scope.launch {
+            Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.file?.path}" }
+            Napier.d(tag = TAG) { task.uri.toString() }
+            val asDownloadTask = taskQueue.first { it.okTask === task }
+            toast(realCause, asDownloadTask)
 
-        taskDao.updateStateByUri(
-            if (realCause == null) State.COMPLETED else State.ERROR,
-            task.uri,
-        )
+            taskDao.updateStateByUri(
+                if (realCause == null) State.COMPLETED else State.ERROR,
+                task.uri,
+            )
 
-        val info = asDownloadTask.viewInfo
-        val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
-        val v = tasks.find { it.fileType == FileType.VIDEO }
-        val a = tasks.find { it.fileType == FileType.AUDIO }
-        if (v != null && v.state == State.COMPLETED) {
-            if (a != null && a.state == State.COMPLETED) {
-                defaultGroupTaskCall.execute(GroupTask(v, a))
+            val info = asDownloadTask.viewInfo
+            val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
+            val v = tasks.find { it.fileType == FileType.VIDEO }
+            val a = tasks.find { it.fileType == FileType.AUDIO }
+            if (v != null && v.state == State.COMPLETED) {
+                if (a != null && a.state == State.COMPLETED) {
+//                    defaultGroupTaskCall.execute(GroupTask(v, a))
+                }
             }
         }
     }
@@ -96,13 +105,15 @@ class AsDownloadListener @Inject constructor(
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
-        Napier.d(tag = TAG) { "任务中 ${task.filename} $currentOffset-$totalLength" }
-        taskDao.updateProgressWithStateByUri(
-            State.RUNNING,
-            currentOffset,
-            totalLength,
-            task.uri,
-        )
+        scope.launch {
+            Napier.d(tag = TAG) { "任务中 ${task.filename} $currentOffset-$totalLength" }
+            taskDao.updateProgressWithStateByUri(
+                State.RUNNING,
+                currentOffset,
+                totalLength,
+                task.uri,
+            )
+        }
     }
 
     override fun retry(task: DownloadTask, cause: ResumeFailedCause) = Unit

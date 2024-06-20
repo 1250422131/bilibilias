@@ -5,8 +5,9 @@ import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import kotlinx.collections.immutable.ImmutableList
 
-data class Model(val entities: List<List<Task>>)
+data class Model(val entities: ImmutableList<List<DownloadTaskEntity>>)
 
 data class DownloadTask(
     val id: Int,

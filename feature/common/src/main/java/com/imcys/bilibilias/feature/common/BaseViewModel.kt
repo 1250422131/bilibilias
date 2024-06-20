@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.StateFlow
 abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
     ComponentContext by componentContext,
     ViewModel() {
-    private val moleculeScope =
+    protected val moleculeScope =
         CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
 
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.
     private val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
 
-    val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
+    open val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
         moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
             models(events)
         }

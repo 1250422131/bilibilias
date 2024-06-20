@@ -7,10 +7,7 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import kotlinx.datetime.Instant
 
-internal object TypeConverters {
-    fun getRequiredConverters(): List<Class<*>> {
-        return emptyList()
-    }
+object TypeConverters {
 
     fun fileTypeToString(value: FileType): String {
         return when (value) {

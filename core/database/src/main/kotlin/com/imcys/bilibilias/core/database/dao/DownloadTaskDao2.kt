@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.core.database.dao
 
 import android.net.Uri
-import com.ctrip.sqllin.driver.openDatabase
 import com.ctrip.sqllin.dsl.Database
 import com.ctrip.sqllin.dsl.sql.X
 import com.ctrip.sqllin.dsl.sql.clause.AND
@@ -20,7 +19,6 @@ import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -30,6 +28,7 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
     private lateinit var selectStatement: SelectStatement<TaskEntity>
     private val channel = Channel<Unit>(Channel.CONFLATED)
     fun findAllFlow(): Flow<List<Task>> = flow {
+        channel.trySend(Unit)
         for (item in channel) {
             emit(findAll())
         }
@@ -64,6 +63,7 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         }
     }
 
+    // todo
     fun updateTask(t: Task) {
         database {
             TaskEntityTable { table ->
@@ -122,30 +122,30 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         channel.trySend(Unit)
     }
 
-    fun updateStateByUri(newState: State, uri: Uri) {
+    fun updateStateByUri(newState: String, u: String) {
         database {
             TaskEntityTable { table ->
                 table UPDATE SET {
-                    state = TypeConverters.stateToString(newState)
-                } WHERE (this.uri EQ uri.toString())
+                    state = newState
+                } WHERE (uri EQ u)
             }
         }
         channel.trySend(Unit)
     }
 
     fun updateProgressWithStateByUri(
-        newState: State,
+        newState: String,
         currentOffset: Long,
         totalLength: Long,
-        uri: Uri,
+        u: String,
     ) {
         database {
             TaskEntityTable { table ->
                 table UPDATE SET {
-                    state = TypeConverters.stateToString(newState)
+                    state = newState
                     bytesSentTotal = currentOffset
                     contentLength = totalLength
-                } WHERE (this.uri EQ uri.toString())
+                } WHERE (uri EQ u)
             }
         }
         channel.trySend(Unit)
