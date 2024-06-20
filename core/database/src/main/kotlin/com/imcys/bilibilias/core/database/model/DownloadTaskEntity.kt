@@ -25,7 +25,7 @@ data class DownloadTaskEntity(
     @ColumnInfo("file_type") val fileType: FileType,
     @ColumnInfo(name = "sub_title") val subTitle: String,
     val title: String,
-    var state: State = State.PENDING,
+    val state: State = State.PENDING,
     val bytesSentTotal: Long = 0,
     val contentLength: Long = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

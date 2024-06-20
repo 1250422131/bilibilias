@@ -29,22 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
-import com.imcys.bilibilias.core.common.utils.DataUnit
-import com.imcys.bilibilias.core.database.model.Task
+import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
-import com.imcys.bilibilias.feature.download.component.DownloadTask
 import com.imcys.bilibilias.feature.download.component.Event
 import com.imcys.bilibilias.feature.download.component.Model
 import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
@@ -63,6 +56,7 @@ internal fun DownloadScreen(
     navigationToPlayer: (viewInfo: ViewInfo) -> Unit
 ) {
     val model by component.models.collectAsStateWithLifecycle()
+    val model2 by component.uiState.collectAsStateWithLifecycle()
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.let {
         BottomSheetContent(it, navigationToPlayer)
@@ -71,6 +65,7 @@ internal fun DownloadScreen(
         model = model,
         onEvent = component::take,
         onSettingsClicked = component::onSettingsClicked,
+        model2 = model2
     )
 }
 
@@ -80,6 +75,7 @@ internal fun DownloadScreen(
     model: Model,
     onEvent: (Event) -> Unit,
     onSettingsClicked: (ViewInfo, FileType) -> Unit,
+    model2: List<DownloadTaskEntity>,
 ) {
     var edit by remember { mutableStateOf(false) }
     Scaffold(
@@ -96,16 +92,14 @@ internal fun DownloadScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            model.entities.forEach { v ->
-                items(v) { item ->
-                    DownloadTaskItem(
-                        task = item,
-                        onSettingsClicked = onSettingsClicked
-                    )
-                }
-                item {
-                    HorizontalDivider()
-                }
+            items(model2) { item ->
+                DownloadTaskItem(
+                    task = item,
+                    onSettingsClicked = onSettingsClicked
+                )
+            }
+            item {
+                HorizontalDivider()
             }
         }
     }
@@ -114,7 +108,7 @@ internal fun DownloadScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DownloadTaskItem(
-    task: Task,
+    task: DownloadTaskEntity,
     onSettingsClicked: (ViewInfo, FileType) -> Unit
 ) {
     ListItem(
@@ -144,7 +138,8 @@ fun DownloadTaskItem(
             )
         },
         supportingContent = {
-            Text("${task.state}·${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB")
+            Text(text = task.state.cn)
+//            Text("${task.state}·${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB")
         },
         trailingContent = {
             Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)

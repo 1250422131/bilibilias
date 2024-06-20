@@ -35,9 +35,9 @@ class DefaultPlayerComponent @AssistedInject constructor(
             DanmakuUtil.writer(bytes)
         }
         LaunchedEffect(Unit) {
-            downloadTaskDao.getTaskBy(viewInfo.aid, viewInfo.bvid, viewInfo.cid).map {
-                uris += it.uri
-            }
+//            downloadTaskDao.findByUri(viewInfo.aid, viewInfo.bvid, viewInfo.cid).map {
+//                uris += it.uri
+//            }
         }
 
         return PlayerComponent.Model(uris)

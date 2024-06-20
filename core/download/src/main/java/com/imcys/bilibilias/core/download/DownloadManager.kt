@@ -171,7 +171,7 @@ class DownloadManager @Inject constructor(
             ".mp4"
         )
         Napier.d { "清晰度 $quality, 编码器 $codecid, 下载链接 ${v.baseUrl}" }
-        return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, v.baseUrl, file)
+        return if (file != null) AsDownloadTask(info, page.part, FileType.VIDEO, v.baseUrl, file)
         else null
     }
 
@@ -235,7 +235,8 @@ class DownloadManager @Inject constructor(
         fileType: FileType,
     ) {
         scope.launch {
-            val taskByInfo = downloadTaskDao.getTaskBy(info.aid, info.bvid, info.cid, fileType)
+            val taskByInfo =
+                downloadTaskDao.findByIdWithFileType(info.aid, info.bvid, info.cid, fileType)
             taskByInfo?.uri?.toFile()?.delete()
             deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
             if (taskByInfo != null) {
@@ -245,10 +246,11 @@ class DownloadManager @Inject constructor(
     }
 
     private fun deleteEmptyDirectoriesOfFolder(folder: File) {
-        if (folder.listFiles()?.size == 0) {
+        val files = folder.listFiles() ?: return
+        if (files.size == 0) {
             folder.delete()
         } else {
-            for (fileEntry in folder.listFiles()) {
+            for (fileEntry in files) {
                 if (fileEntry.isDirectory) {
                     deleteEmptyDirectoriesOfFolder(fileEntry)
                     if (fileEntry.listFiles() != null && fileEntry.listFiles()?.size == 0) {
