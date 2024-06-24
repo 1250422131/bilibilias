@@ -61,7 +61,7 @@ internal object QRUtil {
         } catch (e: IOException) {
             Napier.w(e) { "二维码文件错误" }
         } finally {
-//            goToQRScan(context)
+            goToQRScan(context)
         }
     }
 
