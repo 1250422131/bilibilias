@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.download
+package com.imcys.bilibilias.core.download.media
 
 object MimeType {
     const val UNKNOWN = "*/*"

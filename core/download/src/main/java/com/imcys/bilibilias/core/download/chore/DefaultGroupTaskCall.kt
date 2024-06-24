@@ -17,7 +17,6 @@ class DefaultGroupTaskCall @Inject constructor(
     private fun getResponseWithInterceptorChain(groupTask: GroupTask) {
         val interceptors = mutableListOf<Interceptor<*>>()
         interceptors += mixingInterceptor
-        interceptors += moveFileInterceptor
         val chain = Interceptor.Chain(interceptors, 0)
         return chain.proceed(groupTask)
     }

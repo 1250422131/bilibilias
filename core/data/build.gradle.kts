@@ -12,6 +12,7 @@ android {
             isReturnDefaultValues = true
         }
     }
+    testFixtures.enable = true
 }
 
 dependencies {
@@ -22,4 +23,9 @@ dependencies {
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
+
+    testImplementation(testFixtures(projects.core.datastore))
+
+    kspTestFixtures(libs.hilt.compiler)
+    testFixturesImplementation(libs.hilt.android.testing)
 }

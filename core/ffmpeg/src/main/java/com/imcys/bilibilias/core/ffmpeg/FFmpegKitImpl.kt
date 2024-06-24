@@ -15,12 +15,41 @@ private const val TAG = "FFmpegKitImpl"
 class FFmpegKitImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : IFFmpegWork {
+    override fun execute(
+        inputVideo: String,
+        inputAudio: String,
+        output: String,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        val readVideo = FFmpegKitConfig.getSafParameterForRead(context, inputVideo.toUri())
+        val readAudio = FFmpegKitConfig.getSafParameterForRead(context, inputAudio.toUri())
+        val outputVideo = FFmpegKitConfig.getSafParameterForWrite(context, output.toUri())
+        val command = buildCommandParams {
+            append("-y")
+
+            append("-i")
+            append("$readVideo")
+
+            append("-i")
+            append("$readAudio")
+
+            append("-vcodec")
+            append("copy")
+            append("-acodec")
+            append("copy")
+
+            append("$outputVideo")
+        }
+        val session = FFmpegKit.executeWithArguments(command)
+        callback(session, onSuccess, onFailure)
+    }
+
     override fun execute(command: Array<String>, onSuccess: () -> Unit, onFailure: () -> Unit) {
         command[command.lastIndex] =
             FFmpegKitConfig.getSafParameterForWrite(context, command[command.lastIndex].toUri())
         val session = FFmpegKit.executeWithArguments(command)
         callback(session, onSuccess, onFailure)
-        FFmpegKitConfig.getLogRedirectionStrategy()
     }
 
     private fun callback(session: Session, onSuccess: () -> Unit, onFailure: () -> Unit) {

@@ -17,7 +17,9 @@ dependencies {
 
     implementation(libs.qrose)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
+    testImplementation(projects.core.testing)
+    testImplementation(testFixtures(projects.core.data))
+
+    androidTestImplementation(projects.core.testing)
+    androidTestImplementation(testFixtures(projects.core.model))
 }

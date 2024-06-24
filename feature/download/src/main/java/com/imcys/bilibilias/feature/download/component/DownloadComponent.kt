@@ -5,14 +5,16 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.StateFlow
 
 interface DownloadComponent {
     val models: StateFlow<Model>
-    val uiState: StateFlow<List<DownloadTaskEntity>>
+    val tasks: StateFlow<ImmutableList<ImmutableList<DownloadTaskEntity>>>
     val dialogSlot: Value<ChildSlot<*, DialogComponent>>
 
     fun take(event: Event)

@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.core.common.utils
 
+import dev.utils.app.AppUtils
+import dev.utils.common.DevCommonUtils
 import java.io.File
 import java.security.MessageDigest
 import java.util.zip.ZipEntry
@@ -13,17 +15,15 @@ object ApkVerify {
      * 通过检查签名文件classes.dex文件的哈希值来判断代码文件是否被篡改
      */
     fun apkVerifyWithSHA(apkPath: String): String {
-        val messageDigest = MessageDigest.getInstance(MessageDigestAlgorithm.SHA_1)
-        return HashUtils.getCheckSumFromFile(messageDigest, File(apkPath))
+        return AppUtils.getAppSignatureSHA1() ?: ""
     }
 
     /**
      * 通过检查apk包的MD5摘要值来判断代码文件是否被篡改
      */
     fun apkVerifyWithMD5(apkPath: String): Pair<String, Long> {
-        val messageDigest = MessageDigest.getInstance(MessageDigestAlgorithm.MD5)
         val file = File(apkPath)
-        return HashUtils.getCheckSumFromFile(messageDigest, file) to file.length()
+        return (AppUtils.getAppSignatureMD5() ?: "") to file.length()
     }
 
     /**

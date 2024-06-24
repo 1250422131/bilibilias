@@ -7,8 +7,10 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackCallback
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Mid
@@ -39,6 +41,16 @@ class DefaultRootComponent @AssistedInject constructor(
     private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory
 ) : RootComponent, ComponentContext by componentContext {
 
+    private val backCallback = BackCallback { /* Handle the back button */ }
+
+    init {
+        backHandler.register(backCallback)
+    }
+
+    private fun updateBackCallback() {
+        // Set isEnabled to true if you want to override the back button
+        backCallback.isEnabled = true // or false
+    }
     private val navigation = StackNavigation<Config>()
     override val shouldShowBottomBar: Boolean
         get() = when (currentDestination) {

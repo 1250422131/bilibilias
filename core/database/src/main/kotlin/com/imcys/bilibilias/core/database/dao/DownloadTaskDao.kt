@@ -1,11 +1,15 @@
 package com.imcys.bilibilias.core.database.dao
 
 import android.net.Uri
+import androidx.lifecycle.Transformations
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.MapColumn
+import androidx.room.MapInfo
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.model.download.FileType
@@ -14,9 +18,11 @@ import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 @Dao
 interface DownloadTaskDao {
+    @Transaction
     suspend fun insertOrUpdate(t: DownloadTaskEntity) {
         val task = findByIdWithFileType(t.aid, t.bvid, t.cid, t.fileType)
         if (task == null) {
@@ -42,7 +48,7 @@ interface DownloadTaskDao {
     @Update
     suspend fun updateTask(downloadTaskEntity: DownloadTaskEntity)
 
-    @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type=:fileType")
+    @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type = :fileType")
     suspend fun findByIdWithFileType(
         aid: Aid,
         bvid: Bvid,
@@ -65,21 +71,21 @@ interface DownloadTaskDao {
                 "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
                 "WHERE uri = :uri"
     )
-    fun updateProgressByUri(bytesSentTotal: Long, contentLength: Long, uri: Uri)
+    suspend fun updateProgressByUri(bytesSentTotal: Long, contentLength: Long, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
                 "SET state = :state " +
                 "WHERE uri = :uri"
     )
-    fun updateStateByUri(state: State, uri: Uri)
+    suspend fun updateStateByUri(state: State, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
                 "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
                 "WHERE uri = :uri"
     )
-    fun updateProgressWithStateByUri(
+    suspend fun updateProgressWithStateByUri(
         state: State,
         bytesSentTotal: Long,
         contentLength: Long,
@@ -89,6 +95,9 @@ interface DownloadTaskDao {
     @Query("SELECT * FROM download_task_list")
     fun findAllTask(): Flow<List<DownloadTaskEntity>>
 
+    @Query("SELECT * FROM download_task_list GROUP BY cid, id")
+    fun findAllTaskByGroupCid(): Flow<Map<@MapColumn("cid") Cid, List<DownloadTaskEntity>>>
+
     @Delete
-    fun delete(entity: DownloadTaskEntity)
+    suspend fun delete(entity: DownloadTaskEntity)
 }

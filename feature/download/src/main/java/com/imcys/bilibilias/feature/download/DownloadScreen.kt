@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
@@ -41,6 +43,7 @@ import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.component.Event
 import com.imcys.bilibilias.feature.download.component.Model
 import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun DownloadContent(
@@ -56,7 +59,7 @@ internal fun DownloadScreen(
     navigationToPlayer: (viewInfo: ViewInfo) -> Unit
 ) {
     val model by component.models.collectAsStateWithLifecycle()
-    val model2 by component.uiState.collectAsStateWithLifecycle()
+    val tasks by component.tasks.collectAsState()
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.let {
         BottomSheetContent(it, navigationToPlayer)
@@ -65,7 +68,7 @@ internal fun DownloadScreen(
         model = model,
         onEvent = component::take,
         onSettingsClicked = component::onSettingsClicked,
-        model2 = model2
+        tasks = tasks
     )
 }
 
@@ -75,7 +78,7 @@ internal fun DownloadScreen(
     model: Model,
     onEvent: (Event) -> Unit,
     onSettingsClicked: (ViewInfo, FileType) -> Unit,
-    model2: List<DownloadTaskEntity>,
+    tasks: ImmutableList<ImmutableList<DownloadTaskEntity>>,
 ) {
     var edit by remember { mutableStateOf(false) }
     Scaffold(
@@ -92,14 +95,16 @@ internal fun DownloadScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            items(model2) { item ->
-                DownloadTaskItem(
-                    task = item,
-                    onSettingsClicked = onSettingsClicked
-                )
-            }
-            item {
-                HorizontalDivider()
+            tasks.forEach {
+                items(it) { item ->
+                    DownloadTaskItem(
+                        task = item,
+                        onSettingsClicked = onSettingsClicked
+                    )
+                }
+                item {
+                    HorizontalDivider()
+                }
             }
         }
     }
@@ -109,6 +114,48 @@ internal fun DownloadScreen(
 @Composable
 fun DownloadTaskItem(
     task: DownloadTaskEntity,
+    onSettingsClicked: (ViewInfo, FileType) -> Unit
+) {
+    ListItem(
+        modifier = Modifier.combinedClickable {
+            onSettingsClicked(ViewInfo(task.aid, task.bvid, task.cid, task.title), task.fileType)
+        },
+        leadingContent = {
+            AsCard(modifier = Modifier.size(80.dp)) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = task.fileType.toString(),
+                        modifier = Modifier,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                    )
+                }
+            }
+        },
+        headlineContent = {
+            Text(
+                text = task.subTitle,
+                modifier = Modifier,
+                maxLines = 2,
+            )
+        },
+        supportingContent = {
+            Text(text = task.state.cn + "-" + task.progress)
+//            Text("${task.state}·${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB")
+        },
+        trailingContent = {
+            Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
+        },
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DownloadTaskItem(
+    task: Task,
     onSettingsClicked: (ViewInfo, FileType) -> Unit
 ) {
     ListItem(

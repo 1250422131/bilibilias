@@ -18,11 +18,11 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
                 // This is required to enable Room auto migrations.
                 // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
                 schemaDirectory("$projectDir/schemas")
+                generateKotlin = true
             }
 
             dependencies {
                 add("implementation", libs.findLibrary("room.runtime").get())
-                add("implementation", libs.findLibrary("room.ktx").get())
                 add("ksp", libs.findLibrary("room.compiler").get())
             }
         }
