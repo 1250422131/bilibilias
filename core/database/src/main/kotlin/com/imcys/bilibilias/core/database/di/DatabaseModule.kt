@@ -6,6 +6,8 @@ import com.ctrip.sqllin.driver.DatabaseConfiguration
 import com.ctrip.sqllin.driver.toDatabasePath
 import com.ctrip.sqllin.dsl.Database
 import com.imcys.bilibilias.core.database.AsDatabase
+import com.imcys.bilibilias.core.database.AsDatabase_Impl
+import com.imcys.bilibilias.core.database.instantiateImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,13 +22,12 @@ internal class DatabaseModule {
     @Singleton
     fun providesAsDatabase(
         @ApplicationContext context: Context,
-    ): AsDatabase = Room.databaseBuilder(
+    ): AsDatabase = Room.databaseBuilder<AsDatabase>(
         context,
-        AsDatabase::class.java,
         "as-database",
+        { AsDatabase::class.instantiateImpl() }
     )
-        .fallbackToDestructiveMigration()
-        .fallbackToDestructiveMigrationOnDowngrade()
+        .fallbackToDestructiveMigration(true)
         .build()
 
     @Provides

@@ -13,33 +13,21 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.contentValuesOf
 import com.hjq.toast.Toaster
+import dev.utils.app.ContentResolverUtils
+import dev.utils.app.MediaStoreUtils
+import dev.utils.app.image.ImageUtils
 import io.github.aakira.napier.Napier
 import java.io.FileNotFoundException
 import java.io.IOException
 
 internal object QRUtil {
-
+    private val RELATIVE_PATH = Environment.DIRECTORY_PICTURES + "/bili/"
     fun saveQRCode(bitmap: Bitmap, context: Context) {
-        val uri = getExistingImageUriOrNull(context)
-        val resolver = context.contentResolver
+        val uri = getExistingImageUriOrNull()
+        Napier.d { "已保存二维码 $uri" }
         if (uri == null) {
-            val millis = System.currentTimeMillis()
-            val contentValues = contentValuesOf(
-                MediaStore.Images.Media.TITLE to "BILIBILIAS-QR-Code",
-                MediaStore.Images.Media.DISPLAY_NAME to "BILIBILIAS-QR-Code.png",
-                MediaStore.Images.Media.DESCRIPTION to "BILIBILIAS-QR-Code",
-                MediaStore.Images.Media.MIME_TYPE to "image/png",
-                MediaStore.Images.Media.RELATIVE_PATH to "${Environment.DIRECTORY_PICTURES}/bili",
-                MediaStore.Images.Media.DATE_ADDED to millis / 1000L,
-                MediaStore.Images.Media.DATE_MODIFIED to millis / 1000L,
-                MediaStore.Images.Media.DATE_TAKEN to millis,
-            )
-            val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
-            val contentUri = resolver.insert(collection, contentValues)
+            val contentUri: Uri? =
+                MediaStoreUtils.createImageUri("BILIBILIAS-QR-Code.png", "image/*", RELATIVE_PATH)
             saveImage(context, contentUri, bitmap)
         } else {
             saveImage(context, uri, bitmap)
@@ -73,32 +61,27 @@ internal object QRUtil {
         } catch (e: IOException) {
             Napier.w(e) { "二维码文件错误" }
         } finally {
-            goToQRScan(context)
+//            goToQRScan(context)
         }
     }
 
-    private fun getExistingImageUriOrNull(context: Context): Uri? {
-        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-        val projection = arrayOf(MediaStore.MediaColumns._ID)
-        val selection = "${MediaStore.Images.Media.RELATIVE_PATH} = ? AND " +
-            "${MediaStore.MediaColumns.DISPLAY_NAME} = ? "
-        val selectionArgs = arrayOf("Pictures/bili/", "BILIBILIAS-QR-Code.png")
-
-        context.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArgs,
+    private fun getExistingImageUriOrNull(): Uri? {
+        ContentResolverUtils.query(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            arrayOf(MediaStore.Images.Media._ID),
+            "${MediaStore.Images.Media.DISPLAY_NAME} = ? AND ${MediaStore.Images.Media.RELATIVE_PATH} = ?",
+            arrayOf("BILIBILIAS-QR-Code.png", RELATIVE_PATH),
             null
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
-                return ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                return ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    id
+                )
             }
         }
         return null

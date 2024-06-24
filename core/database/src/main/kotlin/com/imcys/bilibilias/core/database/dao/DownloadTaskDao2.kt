@@ -14,6 +14,7 @@ import com.imcys.bilibilias.core.database.model.TaskEntityTable
 import com.imcys.bilibilias.core.database.util.TypeConverters
 import com.imcys.bilibilias.core.database.util.mapToTask
 import com.imcys.bilibilias.core.database.util.maptToTaskEntity
+import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
@@ -34,8 +35,8 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         }
     }
 
-    fun findAll(): List<Task> {
-        database {
+    suspend fun findAll(): List<Task> {
+        database suspendedScope {
             TaskEntityTable { table ->
                 selectStatement = table SELECT X
             }
@@ -43,7 +44,7 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         return selectStatement.getResults().map(TaskEntity::mapToTask)
     }
 
-    fun insertOrUpdateTask(t: Task) {
+    suspend fun insertOrUpdateTask(t: Task) {
         val tasks = findByIdWithFileType(t)
         if (tasks.isEmpty()) {
             insertTask(t)
@@ -63,9 +64,8 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         }
     }
 
-    // todo
-    fun updateTask(t: Task) {
-        database {
+    suspend fun updateTask(t: Task) {
+        database suspendedScope {
             TaskEntityTable { table ->
                 table UPDATE SET {
                     uri = t.uri.toString()
@@ -86,8 +86,8 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         channel.trySend(Unit)
     }
 
-    fun findById(aid: Aid, bvid: Bvid, cid: Cid): List<Task> {
-        database {
+    suspend fun findById(aid: Aid, bvid: Bvid, cid: Cid): List<Task> {
+        database suspendedScope {
             TaskEntityTable { table ->
                 selectStatement =
                     table SELECT WHERE((this.aid EQ aid) AND (this.bvid EQ bvid) AND (this.cid EQ cid))
@@ -96,8 +96,8 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         return selectStatement.getResults().map(TaskEntity::mapToTask)
     }
 
-    fun findByIdWithFileType(t: Task): List<Task> {
-        database {
+    suspend fun findByIdWithFileType(t: Task): List<Task> {
+        database suspendedScope {
             TaskEntityTable { table ->
                 selectStatement =
                     table SELECT
@@ -113,8 +113,8 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
     }
 
 
-    fun insertTask(t: Task) {
-        database {
+    suspend fun insertTask(t: Task) {
+        database suspendedScope {
             TaskEntityTable { table ->
                 table INSERT t.maptToTaskEntity()
             }
@@ -122,30 +122,74 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         channel.trySend(Unit)
     }
 
-    fun updateStateByUri(newState: String, u: String) {
+    suspend fun updateStateByUri(newState: State, u: Uri) {
         database {
             TaskEntityTable { table ->
                 table UPDATE SET {
-                    state = newState
-                } WHERE (uri EQ u)
+                    state = TypeConverters.stateToString(newState)
+                } WHERE (uri EQ u.toString())
             }
         }
         channel.trySend(Unit)
     }
 
-    fun updateProgressWithStateByUri(
-        newState: String,
+    suspend fun updateStateByIdWithFileType(
+        newState: State,
+        a: Aid,
+        b: Bvid,
+        c: Cid,
+        type: FileType
+    ) {
+        database suspendedScope {
+            TaskEntityTable { table ->
+                table UPDATE SET {
+                    state = TypeConverters.stateToString(newState)
+                } WHERE ((aid EQ a) AND
+                        (bvid EQ b) AND
+                        (cid EQ c) AND
+                        (fileType EQ TypeConverters.fileTypeToString(type)))
+            }
+        }
+        channel.trySend(Unit)
+    }
+
+    suspend fun updateProgressWithStateByUri(
+        newState: State,
         currentOffset: Long,
         totalLength: Long,
-        u: String,
+        u: Uri,
     ) {
         database {
             TaskEntityTable { table ->
                 table UPDATE SET {
-                    state = newState
+                    state = TypeConverters.stateToString(newState)
                     bytesSentTotal = currentOffset
                     contentLength = totalLength
-                } WHERE (uri EQ u)
+                } WHERE (uri EQ u.toString())
+            }
+        }
+        channel.trySend(Unit)
+    }
+
+    suspend fun updateProgressWithStateByIdWithFileType(
+        newState: State,
+        currentOffset: Long,
+        totalLength: Long,
+        a: Aid,
+        b: Bvid,
+        c: Cid,
+        type: FileType
+    ) {
+        database suspendedScope {
+            TaskEntityTable { table ->
+                table UPDATE SET {
+                    state = TypeConverters.stateToString(newState)
+                    bytesSentTotal = currentOffset
+                    contentLength = totalLength
+                } WHERE ((aid EQ a) AND
+                        (bvid EQ b) AND
+                        (cid EQ c) AND
+                        (fileType EQ TypeConverters.fileTypeToString(type)))
             }
         }
         channel.trySend(Unit)

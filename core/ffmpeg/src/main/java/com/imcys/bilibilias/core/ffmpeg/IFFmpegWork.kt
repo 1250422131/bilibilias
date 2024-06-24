@@ -6,4 +6,12 @@ interface IFFmpegWork {
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     )
+
+    fun execute(
+        inputVideo: String,
+        inputAudio: String,
+        output: String,
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    )
 }

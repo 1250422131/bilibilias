@@ -8,6 +8,7 @@ import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RU
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
+import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.TaskType
@@ -199,7 +200,7 @@ class DownloadManager @Inject constructor(
             } else {
                 Napier.d { "已创建文件夹 $foldername" }
                 val findFile = folderFile.findFile(filenameWithExtension)
-                Napier.d { "已创建文件: ${findFile?.name}" }
+                Napier.d { "发现文件: ${findFile?.name}" }
                 if (findFile == null) folderFile.createFile(mimeType, filenameWithExtension)
                 else findFile
             }?.uri

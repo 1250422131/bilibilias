@@ -11,6 +11,7 @@ android {
             isReturnDefaultValues = true
         }
     }
+    testFixtures.enable = true
 }
 
 dependencies {
@@ -20,4 +21,9 @@ dependencies {
     api(projects.core.model)
 
     implementation(projects.core.common)
+
+    kspTestFixtures(libs.hilt.compiler)
+    testFixturesImplementation(libs.hilt.android.testing)
+    testFixturesImplementation(projects.core.common)
+    testFixturesImplementation(projects.core.datastore)
 }

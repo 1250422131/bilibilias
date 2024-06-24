@@ -2,6 +2,7 @@ package com.imcys.bilibilias
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        backhandle()
         setContent {
             // Update the edge to edge configuration to match the theme
             // This is the same parameters as the default enableEdgeToEdge call, but we manually
@@ -85,13 +87,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var exitTime = 0L
-    private fun exit() {
-        if (System.currentTimeMillis() - exitTime > 2000) {
-            Toaster.show(R.string.app_HomeActivity_exit)
-            exitTime = System.currentTimeMillis()
-        } else {
-            finish()
-        }
+    private fun backhandle() {
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() - exitTime > 2000) {
+                        Toaster.show(R.string.app_HomeActivity_exit)
+                        exitTime = System.currentTimeMillis()
+                    } else {
+                        finish()
+                    }
+                }
+            }
+        )
     }
 }
 

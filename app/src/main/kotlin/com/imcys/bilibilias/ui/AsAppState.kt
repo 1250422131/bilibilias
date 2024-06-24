@@ -1,11 +1,12 @@
 package com.imcys.bilibilias.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.hjq.toast.Toaster
+import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
@@ -58,11 +59,15 @@ class AsAppState(
  * Stores information about navigation events to be used with JankStats
  */
 @Composable
-internal fun NavigationTrackingSideEffect(component: RootComponent) {
-    val stack by component.stack.subscribeAsState()
-    val action = stack.active
-    TrackDisposableJank(action) { metricsHolder ->
-        metricsHolder.state?.putState("Navigation", action.toString())
+internal fun NavigationTrackingSideEffect(child: RootComponent.Child) {
+    TrackDisposableJank(child) { metricsHolder ->
+        metricsHolder.state?.putState("Navigation", child.toString())
         onDispose {}
+    }
+}
+@Composable
+internal fun AsBackHandle(child: RootComponent){
+    BackHandler(child.currentTopLevelDestination !=null) {
+
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -32,8 +31,11 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
+import com.arkivanov.decompose.extensions.compose.stack.animation.plus
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.essenty.backhandler.BackHandler
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
@@ -80,9 +82,13 @@ fun AsApp(
             LaunchedEffect(isOffline) {
                 if (isOffline) {
                     toasterState.show(
+                        id = 0,
                         message = "⚠\uFE0F 您没有连接到互联网",
                         duration = Long.MAX_VALUE.days,
                     )
+                }
+                if (!isOffline) {
+                    toasterState.dismiss(0)
                 }
             }
             LaunchedEffect(message) {
@@ -108,9 +114,10 @@ internal fun AsApp(
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
-    NavigationTrackingSideEffect(component)
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
+    NavigationTrackingSideEffect(activeComponent)
+    AsBackHandle(component)
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
             item(
@@ -171,7 +178,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
     Children(
         stack = component.stack,
         modifier = modifier,
-        animation = stackAnimation(fade()),
+        animation = stackAnimation(slide() + fade()),
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.HomeChild ->
