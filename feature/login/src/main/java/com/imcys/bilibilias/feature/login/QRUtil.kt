@@ -13,6 +13,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.contentValuesOf
 import com.hjq.toast.Toaster
+import dev.DevUtils
+import dev.utils.app.AppUtils
 import dev.utils.app.ContentResolverUtils
 import dev.utils.app.MediaStoreUtils
 import dev.utils.app.image.ImageUtils
@@ -40,7 +42,7 @@ internal object QRUtil {
         val packageManager = context.packageManager
         val componentName = intent.resolveActivity(packageManager)
         if (componentName != null) {
-            context.startActivity(intent)
+            AppUtils.startActivity(intent)
         } else {
             Toaster.show("呜哇，您好像没有安装Bilibili")
         }
