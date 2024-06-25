@@ -63,3 +63,4 @@ include(":okdownload:okdownload")
 // include(":ui-test-hilt-manifest")
 
 include(":feature:authorspace")
+include(":ui-test-hilt-manifest")
