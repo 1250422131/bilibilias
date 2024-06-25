@@ -8,7 +8,7 @@ androidx-junit = "1.1.5"
 androidDesugarJdkLibs = "2.0.4"
 androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
-appcompat = "1.7.0"
+androidxAppcompat = "1.7.0"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 buildconfig = "5.3.5"
@@ -121,9 +121,7 @@ decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", ver
 
 devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
 
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-
-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
 
 ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 

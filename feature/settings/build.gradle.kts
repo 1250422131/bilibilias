@@ -18,6 +18,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
-
-    implementation(libs.simple.storage)
 }

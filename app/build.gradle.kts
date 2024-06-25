@@ -84,8 +84,6 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.data)
 
-    implementation(projects.okdownload.okdownload)
-
     implementation(libs.androidx.activity.compose) {
         exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
     }
@@ -105,9 +103,6 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
 
-    implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
-
     implementation(libs.work.runtime.ktx)
 
     implementation(libs.androidx.activity.ktx)
@@ -115,15 +110,34 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
+    implementation(libs.sonner)
+
+    ksp(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
+
+    debugImplementation(libs.androidx.compose.ui.testManifest)
+    debugImplementation(projects.uiTestHiltManifest)
+
+    testImplementation(projects.core.testing)
+    testImplementation(libs.androidx.compose.ui.test)
+//    testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(testFixtures(projects.core.data))
+
+//    testDemoImplementation(libs.robolectric)
+//    testDemoImplementation(libs.roborazzi)
+//    testDemoImplementation(projects.core.screenshotTesting)
+    testDemoImplementation(testFixtures(projects.core.data))
+
+    androidTestImplementation(projects.core.testing)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(testFixtures(projects.core.data))
+    androidTestImplementation(testFixtures(projects.core.datastore))
 
     baselineProfile(projects.benchmarks)
-
-    implementation(libs.decompose)
-    implementation(libs.decompose.compose)
-
-    implementation(libs.sonner)
 }
 baselineProfile {
     // Don't build on every iteration of a full assemble.
