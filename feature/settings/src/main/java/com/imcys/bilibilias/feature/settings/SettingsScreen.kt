@@ -2,6 +2,7 @@ package com.imcys.bilibilias.feature.settings
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
@@ -66,12 +71,12 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
                     onEvent(UserEditEvent.onLogout)
                     context.getActivity().finish()
                 }
-                SettingsGroup(title = { Text(text = "主题") }) {
-                }
-                SettingsGroup(title = { Text(text = "语言") }) {
-                }
+                ShareLogMenuLink(onEvent)
             }
-
+            SettingsGroup(title = { Text(text = "主题") }) {
+            }
+            SettingsGroup(title = { Text(text = "语言") }) {
+            }
 //            SettingsGroup(
 //                title = { Text(text = "隐私政策") },
 //                modifier = Modifier
@@ -83,6 +88,42 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
 //                    onEvent(UserEditEvent.onChangeWill(it))
 //                }
 //            }
+        }
+    }
+}
+
+@Composable
+fun ShareLogMenuLink(onEvent: (UserEditEvent) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    SettingsMenuLink(title = { Text(text = "分享日志") }) {
+        open = true
+    }
+    if (open) {
+        Dialog(
+            onDismissRequest = { open = false },
+            properties = DialogProperties()
+        ) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "log.txt",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { onEvent(UserEditEvent.ShareLog.NewLog) }
+                    )
+                    Text(
+                        text = "old_log.txt",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { onEvent(UserEditEvent.ShareLog.OldLog) }
+                    )
+                }
+            }
         }
     }
 }

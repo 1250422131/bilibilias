@@ -16,4 +16,6 @@ dependencies {
     api(libs.devappx)
     api(libs.toaster)
     implementation(libs.kotlin.reflect)
+
+    api("io.github.oshai:kotlin-logging-jvm:7.0.0")
 }

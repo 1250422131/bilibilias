@@ -8,4 +8,8 @@ sealed interface UserEditEvent {
     data class onChangeWill(val state: Boolean) : UserEditEvent
     data class onEditCommand(val text: String?) : UserEditEvent
     data object onLogout : UserEditEvent
+    sealed interface ShareLog : UserEditEvent {
+        data object NewLog : ShareLog
+        data object OldLog : ShareLog
+    }
 }
