@@ -59,6 +59,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Cache
+import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
@@ -120,6 +121,9 @@ class NetworkModule {
             .dispatcher(Dispatcher(executorService))
             .cache(Cache(File(context.cacheDir.path, "okhttp_cache"), 1024 * 1024 * 50))
             .addInterceptor(MonitorInterceptor())
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
             .build()
 
     @Singleton
