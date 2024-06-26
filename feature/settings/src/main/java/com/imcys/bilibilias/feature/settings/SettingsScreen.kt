@@ -35,7 +35,7 @@ import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.feature.settings.component.SettingsComponent
 import io.github.aakira.napier.Napier
-
+// todo 打开 dialog 的状态放在 viewmodel
 @Composable
 fun SettingContent(component: SettingsComponent) {
     val model by component.models.collectAsStateWithLifecycle()

@@ -2,7 +2,6 @@ package com.imcys.bilibilias.feature.download.component
 
 import android.net.Uri
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import kotlinx.collections.immutable.ImmutableList
@@ -15,7 +14,7 @@ data class DownloadTask(
     val subTitle: String,
     val fileType: FileType,
     val uri: Uri,
-    val progress: Float,
+    val progress: () -> Float,
     val state: String,
 )
 

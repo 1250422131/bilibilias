@@ -7,7 +7,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
@@ -51,6 +50,7 @@ class DefaultRootComponent @AssistedInject constructor(
         // Set isEnabled to true if you want to override the back button
         backCallback.isEnabled = true // or false
     }
+
     private val navigation = StackNavigation<Config>()
     override val shouldShowBottomBar: Boolean
         get() = when (currentDestination) {
@@ -67,7 +67,6 @@ class DefaultRootComponent @AssistedInject constructor(
         get() {
             var active: TopLevelDestination? = null
             stack.subscribe {
-                Napier.d { "TopLevelDestination" + it.toString() }
                 active = when (it.active.instance) {
                     is RootComponent.Child.HomeChild -> TopLevelDestination.HOME
                     is RootComponent.Child.ToolChild -> TopLevelDestination.TOOL
