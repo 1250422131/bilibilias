@@ -31,15 +31,17 @@ data class DownloadTaskEntity(
     val contentLength: Long = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
+
     @Ignore
-    val progress = when (contentLength) {
+    val progress: () -> Float = ::progressCalculation
+
+    @Ignore
+    val isCompelete = bytesSentTotal == contentLength
+    private fun progressCalculation() = when (contentLength) {
         UNKNOWN_TOTAL_OFFSET -> UNKNOWN_PROGRESS
         0L -> if (bytesSentTotal == 0L) 1f else UNKNOWN_PROGRESS
         else -> bytesSentTotal * 1.0f / contentLength
     }
-
-    @Ignore
-    val isCompelete = bytesSentTotal == contentLength
 
     companion object {
         const val UNKNOWN_TOTAL_OFFSET = -1L

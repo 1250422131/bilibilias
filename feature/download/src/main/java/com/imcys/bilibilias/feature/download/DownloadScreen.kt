@@ -143,7 +143,7 @@ fun DownloadTaskItem(
             )
         },
         supportingContent = {
-            Text(text = task.state.cn + "-" + task.progress)
+            Text(text = task.state.cn + "-" + task.progress())
 //            Text("${task.state}·${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB")
         },
         trailingContent = {
