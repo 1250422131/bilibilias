@@ -10,6 +10,7 @@ import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
 class DefaultDialogComponent @AssistedInject constructor(
@@ -24,10 +25,10 @@ class DefaultDialogComponent @AssistedInject constructor(
         LaunchedEffect(Unit) {
             events.collect {
                 when (it) {
-                    is DialogComponent.Event.DeleteFile -> downloadManager.delete(
-                        viewInfo,
-                        fileType
-                    )
+                    DialogComponent.Event.DeleteFile -> {
+                        downloadManager.delete(viewInfo, fileType)
+                        onDismissClicked()
+                    }
                 }
             }
         }
