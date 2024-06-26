@@ -37,9 +37,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
 ) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
 
     override val tasks: StateFlow<ImmutableList<ImmutableList<DownloadTaskEntity>>> =
-        taskDao.findAllTask()
-            .distinctUntilChanged()
-            .map { it.groupBy { it.cid } }
+        taskDao.findAllTaskByGroupCid()
             .map { it.values.map { it.toImmutableList() }.toImmutableList() }
             .stateIn(viewModelScope, SharingStarted.Eagerly, persistentListOf())
 

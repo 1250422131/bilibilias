@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
@@ -25,6 +26,9 @@ import com.lazygeniouz.dfc.file.DocumentFileCompat
 import com.liulishuo.okdownload.core.Util
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
+import dev.utils.app.ContentResolverUtils
+import dev.utils.app.MediaStoreUtils
+import dev.utils.app.UriUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -35,7 +39,7 @@ import javax.inject.Singleton
 
 val Context.downloadDir
     get() =
-        File(filesDir.parent, "download").apply {
+        File(getExternalFilesDir(null)!!.parent, "download").apply {
             mkdirs()
         }
 private const val TAG = "DownloadManager"
@@ -236,13 +240,28 @@ class DownloadManager @Inject constructor(
         fileType: FileType,
     ) {
         scope.launch {
-            val taskByInfo =
+            val task =
                 downloadTaskDao.findByIdWithFileType(info.aid, info.bvid, info.cid, fileType)
-            taskByInfo?.uri?.toFile()?.delete()
-            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
-            if (taskByInfo != null) {
-                downloadTaskDao.delete(taskByInfo)
+                    ?: return@launch
+            Napier.d { task.toString() }
+            val uri = task.uri
+            if (UriUtils.isFileScheme(uri)) {
+                if (uri.toFile().delete()) {
+                    Toaster.show("删除成功")
+                } else {
+                    Toaster.show("删除失败")
+                }
+            } else if (UriUtils.isContentScheme(uri)) {
+                if (ContentResolverUtils.deleteDocument(uri)) {
+                    Toaster.show("删除成功")
+                } else {
+                    Toaster.show("删除失败")
+                }
+            } else {
+                Napier.d { task.toString() }
             }
+            downloadTaskDao.delete(task)
+            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
         }
     }
 
@@ -261,4 +280,6 @@ class DownloadManager @Inject constructor(
             }
         }
     }
+
+    private fun uri(uri: Uri) = uri
 }

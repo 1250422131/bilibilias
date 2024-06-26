@@ -3,8 +3,11 @@ package com.imcys.bilibilias.feature.download.sheet
 import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import kotlinx.coroutines.flow.StateFlow
 
 interface DialogComponent {
+    val models: StateFlow<Unit>
+
     fun onDismissClicked()
     fun navigationToPlayer(): ViewInfo
 
