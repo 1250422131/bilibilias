@@ -1,10 +1,18 @@
 package com.imcys.bilibilias.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import com.arkivanov.essenty.backhandler.BackCallback
+import com.arkivanov.essenty.backhandler.BackHandler
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.common.utils.getActivity
@@ -12,10 +20,6 @@ import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.RootComponent
-import dev.DevUtils
-import dev.utils.app.AppUtils
-import dev.utils.app.DeviceUtils
-import dev.utils.app.assist.ActivityManagerAssist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -72,8 +76,36 @@ internal fun NavigationTrackingSideEffect(child: RootComponent.Child) {
 }
 
 @Composable
-internal fun AsBackHandle(child: RootComponent) {
-    BackHandler(child.currentTopLevelDestination != null) {
-        DevUtils.getContext().getActivity().finish()
+internal fun AsBackHandler(backHandler: BackHandler) {
+    val context = LocalContext.current
+    var exitTime by remember { mutableLongStateOf(0) }
+
+    BackHandler(backHandler) {
+        val currentTimeMillis = System.currentTimeMillis()
+        if (currentTimeMillis - exitTime > 2000) {
+            Toaster.show(R.string.app_HomeActivity_exit)
+            exitTime = currentTimeMillis
+        } else {
+            context.getActivity().finish()
+        }
+    }
+}
+
+@Composable
+internal fun BackHandler(backHandler: BackHandler, isEnabled: Boolean = true, onBack: () -> Unit) {
+    val currentOnBack by rememberUpdatedState(onBack)
+
+    val callback =
+        remember {
+            BackCallback(isEnabled = isEnabled) {
+                currentOnBack()
+            }
+        }
+
+    SideEffect { callback.isEnabled = isEnabled }
+
+    DisposableEffect(backHandler) {
+        backHandler.register(callback)
+        onDispose { backHandler.unregister(callback) }
     }
 }
