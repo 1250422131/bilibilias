@@ -7,10 +7,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.RootComponent
+import dev.DevUtils
+import dev.utils.app.AppUtils
+import dev.utils.app.DeviceUtils
+import dev.utils.app.assist.ActivityManagerAssist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -65,9 +70,10 @@ internal fun NavigationTrackingSideEffect(child: RootComponent.Child) {
         onDispose {}
     }
 }
-@Composable
-internal fun AsBackHandle(child: RootComponent){
-    BackHandler(child.currentTopLevelDestination !=null) {
 
+@Composable
+internal fun AsBackHandle(child: RootComponent) {
+    BackHandler(child.currentTopLevelDestination != null) {
+        DevUtils.getContext().getActivity().finish()
     }
 }
