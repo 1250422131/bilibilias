@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.tracing.trace
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -10,7 +11,9 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
+import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
@@ -24,6 +27,7 @@ import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.DevUtils
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 
@@ -38,20 +42,10 @@ class DefaultRootComponent @AssistedInject constructor(
     private val loginComponentFactory: LoginComponent.Factory,
     private val settingsComponentFactory: SettingsComponent.Factory,
     private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory
-) : RootComponent, ComponentContext by componentContext {
-
-    private val backCallback = BackCallback { /* Handle the back button */ }
-
-    init {
-        backHandler.register(backCallback)
-    }
-
-    private fun updateBackCallback() {
-        // Set isEnabled to true if you want to override the back button
-        backCallback.isEnabled = true // or false
-    }
+) : RootComponent, ComponentContext by componentContext  {
 
     private val navigation = StackNavigation<Config>()
+
     override val shouldShowBottomBar: Boolean
         get() = when (currentDestination) {
             is RootComponent.Child.HomeChild,

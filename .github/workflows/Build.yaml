@@ -196,7 +196,7 @@ jobs:
           arch: x86_64
           disable-animations: true
           disk-size: 6000M
-          heap-size: 600M
+          heap-size: 6000M
           script: ./gradlew connectedDemoDebugAndroidTest --daemon
 
       - name: Run local tests (including Roborazzi) for the combined coverage report (only API 30)

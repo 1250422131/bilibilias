@@ -35,7 +35,6 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.arkivanov.essenty.backhandler.BackHandler
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
@@ -117,7 +116,7 @@ internal fun AsApp(
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
     NavigationTrackingSideEffect(activeComponent)
-    AsBackHandle(component)
+    AsBackHandler(component.backHandler)
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
             item(
