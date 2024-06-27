@@ -15,9 +15,9 @@ plugins {
 android {
     namespace = "com.imcys.bilibilias"
     defaultConfig {
-        applicationId = "com.imcys.bilibilias"
-        versionCode = 204
-        versionName = "2.0.41"
+        applicationId = "com.imcys.bilibilias.lite"
+        versionCode = 11
+        versionName = "0.1.1"
         ndk {
             //noinspection ChromeOsAbiSupport
             abiFilters += listOf("arm64-v8a")
@@ -32,10 +32,9 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = AsBuildType.DEBUG.applicationIdSuffix
-            resValue("string", "app_name", "@string/app_name_debug")
-            resValue("string", "app_channel", "@string/app_channel_debug")
+            resValue("string", "app_name", "BILIBILIAS_DEBUG_LITE")
+            resValue("string", "app_channel", "Official Channel Debug")
         }
-
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -46,8 +45,8 @@ android {
             applicationIdSuffix = AsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
 
-            resValue("string", "app_name", "@string/app_name_release")
-            resValue("string", "app_channel", "@string/app_channel_release")
+            resValue("string", "app_name", "BILIBILIAS_LITE")
+            resValue("string", "app_channel", "Official Channel")
         }
     }
 
