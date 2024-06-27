@@ -80,12 +80,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref }}
           draft: false
           prerelease: false
           generate_release_notes: true
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
           files: |
             app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
 
