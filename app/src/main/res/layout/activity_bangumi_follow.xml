@@ -20,19 +20,13 @@
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
-            <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-                android:id="@+id/bangumi_follow_top_ly"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/bangumi_follow_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:title="@string/app_activity_bangumi_follow_title" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/bangumi_follow_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="20dp">
+                android:layout_height="match_parent"
+                android:padding="20dp">
 
-                </androidx.recyclerview.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
