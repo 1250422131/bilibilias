@@ -46,7 +46,7 @@ class AsDownloadListener @Inject constructor(
 
     override fun taskStart(task: DownloadTask, model: Listener1Assist.Listener1Model) {
         scope.launch {
-            Napier.d(tag = TAG) { "任务开始 $task" }
+            Napier.d(tag = TAG) { "任务开始 ${task.filename}" }
             val asTask = taskQueue.first { it.okTask === task }
             val info = asTask.viewInfo
             val taskEntity = DownloadTaskEntity(
@@ -127,7 +127,7 @@ class AsDownloadListener @Inject constructor(
         totalLength: Long
     ) {
         scope.launch {
-            Napier.d { "连接结束: ${task.filename}-${totalLength.bytes.toLong(DataUnit.MEGABYTES)}" }
+            Napier.d { "连接结束: ${task.filename}-$currentOffset-$totalLength" }
             taskDao.updateProgressByUri(
                 currentOffset,
                 totalLength,

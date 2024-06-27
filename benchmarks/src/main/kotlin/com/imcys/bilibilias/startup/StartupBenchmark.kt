@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.baselineprofile.startup
+package com.imcys.bilibilias.startup
 
 import androidx.benchmark.macro.BaselineProfileMode.Disable
 import androidx.benchmark.macro.BaselineProfileMode.Require

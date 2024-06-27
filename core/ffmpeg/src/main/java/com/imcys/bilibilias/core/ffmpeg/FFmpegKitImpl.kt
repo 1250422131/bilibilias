@@ -54,6 +54,7 @@ class FFmpegKitImpl @Inject constructor(
 
     private fun callback(session: Session, onSuccess: () -> Unit, onFailure: () -> Unit) {
         Napier.d(tag = TAG) { "合并命令 " + session.command }
+        session.allLogs
         if (ReturnCode.isSuccess(session.returnCode)) {
             Napier.d(tag = TAG) { "合并成功" }
             onSuccess()

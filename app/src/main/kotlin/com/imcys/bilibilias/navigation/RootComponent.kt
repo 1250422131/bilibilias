@@ -3,6 +3,7 @@ package com.imcys.bilibilias.navigation
 import androidx.activity.OnBackPressedDispatcher
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
@@ -31,6 +32,7 @@ interface RootComponent : ComponentContext {
     fun onLoginTabClicked()
     fun onSettingsTabClicked()
     fun onAuthorSpaceTabClicked(mid: Mid)
+    fun onBack()
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
 

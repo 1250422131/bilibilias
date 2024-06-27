@@ -19,6 +19,7 @@ import com.imcys.bilibilias.feature.download.sheet.DialogComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -38,7 +39,10 @@ class DefaultDownloadComponent @AssistedInject constructor(
 
     override val tasks: StateFlow<ImmutableList<ImmutableList<DownloadTaskEntity>>> =
         taskDao.findAllTaskByGroupCid()
-            .map { it.values.map { it.toImmutableList() }.toImmutableList() }
+            .map {
+                Napier.d { it.values.joinToString("\n") }
+                it.values.map { it.toImmutableList() }.toImmutableList()
+            }
             .stateIn(viewModelScope, SharingStarted.Eagerly, persistentListOf())
 
     private val dialogNavigation = SlotNavigation<BottomConfig>()
