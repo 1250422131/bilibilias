@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,14 +30,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import coil.load
 import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
@@ -82,37 +86,38 @@ private fun HomeContent(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
                     ) { banner ->
-                        banner.setAdapter(object :
-                            BannerImageAdapter<String>(model.homeBanner.imgUrlList) {
-                            override fun onBindView(
-                                holder: BannerImageHolder,
-                                data: String,
-                                position: Int,
-                                size: Int
-                            ) {
-                                holder.imageView.load(data)
-                                holder.itemView.setOnClickListener {
-                                    val uri = Uri.parse(model.homeBanner.dataList[position])
-                                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                                    AppUtils.startActivity(intent)
+                        banner.setAdapter(
+                            object : BannerImageAdapter<String>(model.homeBanner.imgUrlList) {
+                                override fun onBindView(
+                                    holder: BannerImageHolder,
+                                    data: String,
+                                    position: Int,
+                                    size: Int
+                                ) {
+                                    holder.imageView.load(data)
+                                    holder.itemView.setOnClickListener {
+                                        val uri = Uri.parse(model.homeBanner.dataList[position])
+                                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                                        AppUtils.startActivity(intent)
+                                    }
                                 }
                             }
-                        })
+                        )
                     }
                 }
-                item {
-                    HomeCard(
-                        R.drawable.feature_home_ic_home_trophy,
-                        onClick = {
-                            startActivityForUri(
-                                context,
-                                "https://support.qq.com/products/337496/change-log"
-                            )
-                        },
-                        title = "更新内容",
-                        desc = "2.0.4-玉衡-Beta发布"
-                    )
-                }
+//                item {
+//                    HomeCard(
+//                        R.drawable.feature_home_ic_home_trophy,
+//                        onClick = {
+//                            startActivityForUri(
+//                                context,
+//                                "https://support.qq.com/products/337496/change-log"
+//                            )
+//                        },
+//                        title = "更新内容",
+//                        desc = "2.0.4-玉衡-Beta发布"
+//                    )
+//                }
                 item {
                     HomeCard(
                         R.drawable.feature_home_ic_home_trophy,
@@ -122,12 +127,31 @@ private fun HomeContent(
                     )
                 }
                 item {
+                    var show by remember { mutableStateOf(false) }
                     HomeCard(
                         R.drawable.feature_home_ic_home_red_envelopes,
-                        onClick = onDonation,
+                        onClick = { show = true },
                         title = "捐款",
                         desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
                     )
+                    if (show) {
+                        Dialog(onDismissRequest = { show = false }) {
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                AsyncImage(
+                                    model = "https://view.misakamoe.com/donate/Alipay.jpg",
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                AsyncImage(
+                                    model = "https://view.misakamoe.com/donate/WeChat.jpg",
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                        }
+                    }
                 }
                 item {
                     HomeCard(
