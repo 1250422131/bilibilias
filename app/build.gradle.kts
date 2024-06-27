@@ -16,8 +16,8 @@ android {
     namespace = "com.imcys.bilibilias"
     defaultConfig {
         applicationId = "com.imcys.bilibilias.lite"
-        versionCode = 13
-        versionName = "0.1.3"
+        versionCode = 14
+        versionName = "0.1.4"
         ndk {
             //noinspection ChromeOsAbiSupport
             abiFilters += listOf("arm64-v8a")
