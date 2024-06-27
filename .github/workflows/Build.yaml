@@ -136,7 +136,7 @@ jobs:
 #          path: '**/build/outputs/roborazzi/*_compare.png'
 
       - name: Check lint
-        run: ./gradlew :app:lintProdRelease :app-nia-catalog:lintRelease :lint:lint
+        run: ./gradlew :app:lintProdRelease :lint:lint
 
       - name: Upload lint reports (HTML)
         if: always()
