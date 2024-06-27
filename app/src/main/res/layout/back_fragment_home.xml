@@ -7,11 +7,9 @@
 
     </data>
 
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".home.ui.fragment.HomeFragment">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,7 +45,6 @@
             </LinearLayout>
 
             <com.google.android.material.tabs.TabLayout
-
                 android:id="@+id/fragment_home_tab"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -78,7 +75,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="推荐" />
-
             </com.google.android.material.tabs.TabLayout>
 
             <LinearLayout
@@ -87,17 +83,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:gravity="center"
-                android:orientation="vertical">
-
-                <com.youth.banner.Banner
-
-                    android:id="@+id/fragment_home_banner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:banner_infinite_loop="true" />
-            </LinearLayout>
+                android:orientation="vertical"></LinearLayout>
         </LinearLayout>
-
-
     </FrameLayout>
 </layout>
