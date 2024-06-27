@@ -25,16 +25,6 @@
                 android:orientation="vertical"
                 tools:ignore="UselessParent">
 
-                <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-                    android:id="@+id/uv_download_top_ly"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="批量下载"
-                    tools:ignore="MissingConstraints">
-
-                </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
-
-
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/uv_download_top_edit"
                     android:layout_width="match_parent"

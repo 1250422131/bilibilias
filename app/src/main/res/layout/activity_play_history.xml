@@ -18,12 +18,6 @@
             android:orientation="vertical"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="0dp">
-
-            <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
-                android:id="@+id/play_history_top_ly"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:title="@string/app_activity_play_history_title" />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/play_history_top_rv"
                     android:layout_width="match_parent"
