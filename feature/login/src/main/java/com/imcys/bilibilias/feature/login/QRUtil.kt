@@ -73,8 +73,8 @@ internal object QRUtil {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
             else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             arrayOf(MediaStore.Images.Media._ID),
-            "${MediaStore.Images.Media.DISPLAY_NAME} = ? AND ${MediaStore.Images.Media.RELATIVE_PATH} = ?",
-            arrayOf("BILIBILIAS-QR-Code.png", RELATIVE_PATH),
+            "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
+            arrayOf("BILIBILIAS-QR-Code.png"),
             null
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
