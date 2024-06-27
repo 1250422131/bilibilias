@@ -20,10 +20,12 @@ import com.imcys.bilibilias.core.data.toast.ToastMachine
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.RootComponent
+import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlin.reflect.KFunction0
 
 @Composable
 fun rememberNiaAppState(
@@ -76,18 +78,25 @@ internal fun NavigationTrackingSideEffect(child: RootComponent.Child) {
 }
 
 @Composable
-internal fun AsBackHandler(backHandler: BackHandler) {
+internal fun AsBackHandler(
+    backHandler: BackHandler,
+    currentTopLevelDestination: TopLevelDestination?,
+    currentDestination: RootComponent.Child,
+    onBack: () -> Unit,
+) {
     val context = LocalContext.current
     var exitTime by remember { mutableLongStateOf(0) }
 
     BackHandler(backHandler) {
-        val currentTimeMillis = System.currentTimeMillis()
-        if (currentTimeMillis - exitTime > 2000) {
-            Toaster.show(R.string.app_HomeActivity_exit)
-            exitTime = currentTimeMillis
-        } else {
-            context.getActivity().finish()
-        }
+        if (currentTopLevelDestination != null || currentDestination is RootComponent.Child.LoginChild) {
+            val currentTimeMillis = System.currentTimeMillis()
+            if (currentTimeMillis - exitTime > 2000) {
+                Toaster.show(R.string.app_HomeActivity_exit)
+                exitTime = currentTimeMillis
+            } else {
+                context.getActivity().finish()
+            }
+        } else onBack()
     }
 }
 

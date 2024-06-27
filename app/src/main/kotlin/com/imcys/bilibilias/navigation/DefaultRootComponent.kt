@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.active
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
@@ -42,7 +43,7 @@ class DefaultRootComponent @AssistedInject constructor(
     private val loginComponentFactory: LoginComponent.Factory,
     private val settingsComponentFactory: SettingsComponent.Factory,
     private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory
-) : RootComponent, ComponentContext by componentContext  {
+) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -106,6 +107,10 @@ class DefaultRootComponent @AssistedInject constructor(
 
     override fun onAuthorSpaceTabClicked(mid: Mid) {
         navigation.push(Config.AuthorSpace(mid))
+    }
+
+    override fun onBack() {
+        navigation.pop()
     }
 
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =

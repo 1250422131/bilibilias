@@ -33,10 +33,8 @@ class AsDownloadTask {
     ): DownloadTask {
         return builder
             .setPassIfAlreadyCompleted(false)
-            .setAutoCallbackToUIThread(false)
+            .setAutoCallbackToUIThread(true)
             .setMinIntervalMillisCallbackProcess(50)
-            .setReadBufferSize(16.mb.inWholeBytes.toInt())
-            .setFlushBufferSize(32.mb.inWholeBytes.toInt())
             .setHeaderMapFields(
                 mapOf(
                     "User-Agent" to

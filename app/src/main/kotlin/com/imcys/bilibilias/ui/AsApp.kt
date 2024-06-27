@@ -116,7 +116,12 @@ internal fun AsApp(
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
     NavigationTrackingSideEffect(activeComponent)
-    AsBackHandler(component.backHandler)
+    AsBackHandler(
+        component.backHandler,
+        component.currentTopLevelDestination,
+        component.currentDestination,
+        component::onBack,
+    )
     AsNavigationSuiteScaffold(
         navigationSuiteItems = {
             item(

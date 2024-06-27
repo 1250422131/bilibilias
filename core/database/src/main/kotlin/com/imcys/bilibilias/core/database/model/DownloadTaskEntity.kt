@@ -32,19 +32,25 @@ data class DownloadTaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) {
 
-    @Ignore
-    val progress: () -> Float = ::progressCalculation
+    @get:Ignore
+    val progress: Float
+        get() = progressCalculation()
 
     @Ignore
     val isCompelete = bytesSentTotal == contentLength
-    private fun progressCalculation() = when (contentLength) {
+    private fun progressCalculation():Float = when (contentLength) {
         UNKNOWN_TOTAL_OFFSET -> UNKNOWN_PROGRESS
         0L -> if (bytesSentTotal == 0L) 1f else UNKNOWN_PROGRESS
         else -> bytesSentTotal * 1.0f / contentLength
+    }
+
+    override fun toString(): String {
+        return "DownloadTaskEntity(aid=$aid, bvid='$bvid', cid=$cid, fileType=$fileType, subTitle='$subTitle', state=$state, bytesSentTotal=$bytesSentTotal, contentLength=$contentLength, id=$id, created=$created)"
     }
 
     companion object {
         const val UNKNOWN_TOTAL_OFFSET = -1L
         const val UNKNOWN_PROGRESS = 0f
     }
+
 }
