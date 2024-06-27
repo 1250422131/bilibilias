@@ -74,21 +74,21 @@ jobs:
           mv app-demo-release-unsigned-signed.apk Bilibili-As-Lite-${{ github.ref_name }}.apk
           ls
 
-      - name: Create Release
+      - name: Create Release and Upload Release Asset
         id: create_release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ github.ref }}
+          name: Release ${{ github.ref }}
           tag_name: ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
-
-      - name: Upload app
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
+          generate_release_notes: true
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          files: app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
+          files: |
+            app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
+
+      - name: test command
+        run: |
+          echo "${{ fromJSON(steps.create_release.outputs.assets)[0].browser_download_url }}"
