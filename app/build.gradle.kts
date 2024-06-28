@@ -93,7 +93,6 @@ dependencies {
     implementation(libs.androidx.compose.runtime.tracing)
     implementation(libs.androidx.core.ktx)
 
-    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing.ktx)
