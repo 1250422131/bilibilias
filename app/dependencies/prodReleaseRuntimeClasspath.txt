@@ -239,8 +239,8 @@ com.squareup.okio:okio:3.9.0
 com.squareup.wire:wire-runtime-jvm:4.9.9
 com.squareup.wire:wire-runtime:4.9.9
 com.umeng.umsdk:abtest:1.0.1
-com.umeng.umsdk:asms:1.8.2
-com.umeng.umsdk:common:9.7.2
+com.umeng.umsdk:asms:1.8.3
+com.umeng.umsdk:common:9.7.3
 commons-codec:commons-codec:1.17.0
 io.antmedia:rtmp-client:3.2.0
 io.coil-kt:coil-base:2.6.0
@@ -261,8 +261,8 @@ io.github.dokar3:sheets-core-android:0.6.0-alpha03
 io.github.dokar3:sheets-core:0.6.0-alpha03
 io.github.dokar3:sheets-m3-android:0.6.0-alpha03
 io.github.dokar3:sheets-m3:0.6.0-alpha03
-io.github.dokar3:sonner-android:0.3.7
-io.github.dokar3:sonner:0.3.7
+io.github.dokar3:sonner-android:0.3.8
+io.github.dokar3:sonner:0.3.8
 io.github.leavesczy:monitor-no-op:1.8.1
 io.github.oshai:kotlin-logging-jvm:7.0.0
 io.github.youth5201314:banner:2.2.3

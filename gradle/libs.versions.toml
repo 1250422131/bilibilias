@@ -8,13 +8,13 @@ androidx-junit = "1.2.1"
 androidDesugarJdkLibs = "2.0.4"
 androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
-appcompat = "1.7.0"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 buildconfig = "5.3.5"
 gsyvideoplayer = "v8.6.0-release-jitpack"
 dokarSheets = "0.6.0-alpha03"
 androidxPaging = "3.3.0"
+androidxAppcompat = "1.7.0"
 startupRuntime = "1.1.1"
 tencentBugly = "4.1.9.3"
 coil = "2.6.0"
@@ -109,9 +109,9 @@ gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlaye
 
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 
-umeng-common= { module = "com.umeng.umsdk:common", version = "9.7.3" }
+umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.3" }
 umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.3" }
-umeng-abtest= { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
+umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
