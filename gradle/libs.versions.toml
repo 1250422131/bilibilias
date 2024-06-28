@@ -8,7 +8,7 @@ androidx-junit = "1.2.1"
 androidDesugarJdkLibs = "2.0.4"
 androidxAnnotation = "1.8.0"
 appcenter = "5.0.4"
-androidxAppcompat = "1.7.0"
+appcompat = "1.7.0"
 atomicfu = "0.24.0"
 banner = "2.2.3"
 buildconfig = "5.3.5"
@@ -48,7 +48,7 @@ okhttp = "4.12.0"
 okio = "3.9.0"
 qrose = "1.0.1"
 room = "2.7.0-alpha04"
-sonner = "0.3.7"
+sonner = "0.3.8"
 toaster = "12.6"
 wireGradlePlugin = "4.9.9"
 work = "2.9.0"
@@ -108,9 +108,10 @@ gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlaye
 gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
 
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
-umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.2" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.2" }
-umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
+
+umeng-common= { module = "com.umeng.umsdk:common", version = "9.7.3" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.3" }
+umeng-abtest= { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
