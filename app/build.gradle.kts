@@ -2,8 +2,8 @@ import com.imcys.bilibilias.AsBuildType
 
 plugins {
     alias(libs.plugins.bilibilias.android.application)
-    alias(libs.plugins.bilibilias.android.application.compose)
-    alias(libs.plugins.bilibilias.android.application.jacoco)
+    alias(libs.plugins.bilibilias.android.compose)
+    alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
     alias(libs.plugins.bilibilias.multiplatform.decompose)
 //    alias(libs.plugins.bilibilias.android.application.bugly)

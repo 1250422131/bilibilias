@@ -232,7 +232,8 @@ compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
-kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = {id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -247,15 +248,13 @@ buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }
 
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
-bilibilias-android-application-compose = { id = "bilibilias.android.application.compose", version = "unspecified" }
-bilibilias-android-application-jacoco = { id = "bilibilias.android.application.jacoco", version = "unspecified" }
+bilibilias-android-compose = { id = "bilibilias.android.compose", version = "unspecified" }
+bilibilias-android-jacoco = { id = "bilibilias.android.jacoco", version = "unspecified" }
 bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
 bilibilias-android-application-bugly = { id = "bilibilias.android.application.bugly", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
 bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }
-bilibilias-android-library-compose = { id = "bilibilias.android.library.compose", version = "unspecified" }
-bilibilias-android-library-jacoco = { id = "bilibilias.android.library.jacoco", version = "unspecified" }
 bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecified" }
 bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
 bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
