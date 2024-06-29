@@ -16,9 +16,6 @@ fun AsCard(
     Card(
         onClick = onClick,
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = Color(251, 114, 153)
-        ),
         content = content
     )
 }
@@ -30,9 +27,6 @@ fun AsCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = Color(251, 114, 153)
-        ),
         content = content
     )
 }
