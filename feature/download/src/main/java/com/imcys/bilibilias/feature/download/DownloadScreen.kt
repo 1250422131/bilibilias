@@ -3,6 +3,7 @@ package com.imcys.bilibilias.feature.download
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,16 +32,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
+import com.imcys.bilibilias.core.common.utils.DataUnit
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.database.model.Task
-import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.component.Event
@@ -118,45 +124,53 @@ fun DownloadTaskItem(
     task: DownloadTaskEntity,
     onSettingsClicked: (ViewInfo, FileType) -> Unit
 ) {
-    ListItem(
-        modifier = Modifier.combinedClickable {
-            onSettingsClicked(ViewInfo(task.aid, task.bvid, task.cid, task.title), task.fileType)
-        },
-        leadingContent = {
-            Card(
-                modifier = Modifier.size(80.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(251, 114, 153)
+    Column {
+        ListItem(
+            modifier = Modifier.combinedClickable {
+                onSettingsClicked(
+                    ViewInfo(task.aid, task.bvid, task.cid, task.title),
+                    task.fileType
                 )
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = task.fileType.toString(),
-                        modifier = Modifier,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+            },
+            leadingContent = {
+                Card(
+                    modifier = Modifier.size(80.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(251, 114, 153)
                     )
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = task.fileType.toString(),
+                            modifier = Modifier,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                        )
+                    }
                 }
-            }
-        },
-        headlineContent = {
-            Text(
-                text = task.subTitle,
-                modifier = Modifier,
-                maxLines = 2,
-            )
-        },
-        supportingContent = {
-            Text(text = task.state.cn + "-" + task.progress)
-//            Text("${task.state}·${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB")
-        },
-        trailingContent = {
-            Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
-        },
-    )
+            },
+            headlineContent = {
+                Text(
+                    text = task.subTitle,
+                    modifier = Modifier,
+                    maxLines = 2,
+                )
+            },
+            supportingContent = {
+                Text(text = "${task.state.cn}·")
+//            ${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB
+            },
+            trailingContent = {
+                Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
+            },
+        )
+        if (task.state == State.RUNNING) {
+            LinearProgressIndicator(progress = { task.progress })
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
