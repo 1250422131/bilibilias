@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.hilt)
-    alias(libs.plugins.bilibilias.android.library.jacoco)
+    alias(libs.plugins.bilibilias.android.jacoco)
 }
 
 android {

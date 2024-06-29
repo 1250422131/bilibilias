@@ -26,21 +26,17 @@ tasks {
 
 gradlePlugin {
     plugins {
-        register("androidApplicationCompose") {
-            id = "bilibilias.android.application.compose"
-            implementationClass = "AndroidApplicationComposeConventionPlugin"
+        register("androidCompose") {
+            id = "bilibilias.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
         }
         register("androidApplication") {
             id = "bilibilias.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("androidApplicationJacoco") {
-            id = "bilibilias.android.application.jacoco"
-            implementationClass = "AndroidApplicationJacocoConventionPlugin"
-        }
-        register("androidLibraryCompose") {
-            id = "bilibilias.android.library.compose"
-            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        register("androidJacoco") {
+            id = "bilibilias.android.jacoco"
+            implementationClass = "AndroidJacocoConventionPlugin"
         }
         register("androidLibrary") {
             id = "bilibilias.android.library"
@@ -49,10 +45,6 @@ gradlePlugin {
         register("androidFeature") {
             id = "bilibilias.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
-        }
-        register("androidLibraryJacoco") {
-            id = "bilibilias.android.library.jacoco"
-            implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
         register("androidTest") {
             id = "bilibilias.android.test"
@@ -78,7 +70,7 @@ gradlePlugin {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
-        register("multiplatformLibraryDecompose") {
+        register("multiplatformDecompose") {
             id = "bilibilias.multiplatform.decompose"
             implementationClass = "MultiplatformDecomposeConventionPlugin"
         }

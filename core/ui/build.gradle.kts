@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.library.compose)
-    alias(libs.plugins.bilibilias.android.library.jacoco)
+    alias(libs.plugins.bilibilias.android.compose)
+    alias(libs.plugins.bilibilias.android.jacoco)
 }
 
 android {
@@ -13,7 +13,7 @@ android {
 
 dependencies {
     api(libs.androidx.metrics)
-//    api(projects.core.analytics)
+    api(projects.core.analytics)
     api(projects.core.designsystem)
     api(projects.core.model)
 
