@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -121,7 +123,12 @@ fun DownloadTaskItem(
             onSettingsClicked(ViewInfo(task.aid, task.bvid, task.cid, task.title), task.fileType)
         },
         leadingContent = {
-            AsCard(modifier = Modifier.size(80.dp)) {
+            Card(
+                modifier = Modifier.size(80.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(251, 114, 153)
+                )
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -163,7 +170,12 @@ fun DownloadTaskItem(
             onSettingsClicked(ViewInfo(task.aid, task.bvid, task.cid, task.title), task.fileType)
         },
         leadingContent = {
-            AsCard(modifier = Modifier.size(80.dp)) {
+            Card(
+                modifier = Modifier.size(80.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(251, 114, 153)
+                )
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

@@ -7,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.imcys.bilibilias.feature.login.LoginContent
 import com.imcys.bilibilias.feature.login.LoginEvent
 import com.imcys.bilibilias.feature.login.LoginModel
+import io.github.alexzhirkevich.qrose.QrCodePainter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -22,7 +23,7 @@ private class PreviewComponent : LoginComponent {
         LoginModel(
             true,
             "hello",
-            ColorPainter(Color.Yellow)
+            QrCodePainter("https://github.com/alexzhirkevich/qrose")
         )
     )
 
