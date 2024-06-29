@@ -35,15 +35,12 @@ class AsDownloadTask {
             .setPassIfAlreadyCompleted(false)
             .setAutoCallbackToUIThread(true)
             .setMinIntervalMillisCallbackProcess(50)
-            .setHeaderMapFields(
-                mapOf(
-                    "User-Agent" to
-                            listOf("Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36"),
-                    "Referer" to listOf("https://www.bilibili.com/")
-                )
+            .addHeader(
+                "User-Agent",
+                "Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36",
             )
+            .addHeader("Referer", "https://www.bilibili.com/")
             .setConnectionCount(1)
-//            .setFilename(fileType.filename)
             .setPriority(fileType.priority)
             .build()
     }

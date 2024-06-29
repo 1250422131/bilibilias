@@ -816,8 +816,9 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
          *
          * @param key   the key of the field.
          * @param value the value of the field.
+         * @return
          */
-        public synchronized void addHeader(String key, String value) {
+        public synchronized Builder addHeader(String key, String value) {
             if (headerMapFields == null) headerMapFields = new HashMap<>();
             List<String> valueList = headerMapFields.get(key);
             if (valueList == null) {
@@ -825,6 +826,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
                 headerMapFields.put(key, valueList);
             }
             valueList.add(value);
+            return this;
         }
 
         /**
