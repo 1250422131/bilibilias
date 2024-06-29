@@ -14,6 +14,8 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.datastore)
 
+    implementation(libs.androidx.activity.compose)
+
     implementation(libs.compose.settings)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
