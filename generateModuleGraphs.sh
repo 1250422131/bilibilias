@@ -14,11 +14,13 @@ then
     exit 1
 fi
 
-# Check if the svgo command is available
-if ! command -v svgo &> /dev/null
+# Check if the dot command is available
+if ! command -v dot &> /dev/null
 then
-    echo "The 'svgo' command is not found. This is required to cleanup and compress SVGs."
-    echo "Installation instructions available at https://github.com/svg/svgo."
+    echo "The 'dot' command is not found. This is required to generate SVGs from the Graphviz files."
+    echo "Installation instructions:"
+    echo "  - On macOS: You can install Graphviz using Homebrew with the command: 'brew install graphviz'"
+    echo "  - On Ubuntu: You can install Graphviz using APT with the command: 'sudo apt-get install graphviz'"
     exit 1
 fi
 
@@ -96,18 +98,30 @@ echo "$module_paths" | while read -r module_path; do
         file_name="dep_graph${module_path//:/_}" # Replace colons with underscores
         file_name="${file_name//-/_}" # Replace dashes with underscores
 
-        check_and_create_readme "$module_path" "$file_name"
-
         # Generate the .gv file in a temporary location
         # </dev/null is used to stop ./gradlew from consuming input which prematurely ends the while loop
         ./gradlew generateModulesGraphvizText \
           -Pmodules.graph.output.gv="/tmp/${file_name}.gv" \
           -Pmodules.graph.of.module="${module_path}" </dev/null
 
-        # Convert to SVG using dot, and cleanup/compress using svgo
-        dot -Tsvg "/tmp/${file_name}.gv" |
-          svgo --multipass --pretty --output="docs/images/graphs/${file_name}.svg" -
-        # Remove the temporary .gv file
-        rm "/tmp/${file_name}.gv"
+        # Check gv file's existence
+        if [ -e "/tmp/${file_name}.gv" ]; then
+          # Convert to SVG using dot, remove unnecessary comments
+          svg_cleared=`dot -Tsvg "/tmp/${file_name}.gv" | sed -e 's/<!--.*//g' -e 's/-->.*//g' | tr -d '\0'`
+
+          # Check file is empty or not, if not empty run xmllint to reformat
+          # Save as svg file
+          if [ -n "$svg_cleared" ]; then
+            echo $svg_cleared | xmllint --format - > "docs/images/graphs/${file_name}.svg"
+          else
+            echo $svg_cleared > "docs/images/graphs/${file_name}.svg"
+          fi
+
+          # Create README.md
+          check_and_create_readme "$module_path" "$file_name"
+
+          # Remove tmp files
+          rm "/tmp/${file_name}.gv"
+        fi
     fi
 done
