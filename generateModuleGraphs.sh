@@ -43,6 +43,7 @@ done
 
 # Get the module paths
 module_paths=$(${GREP_COMMAND} -oP 'include\("\K[^"]+' settings.gradle.kts)
+echo "${module_path}"
 
 # Ensure the output directory exists
 mkdir -p docs/images/graphs/
