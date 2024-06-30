@@ -262,6 +262,7 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+
       - name: Install
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
@@ -273,7 +274,7 @@ jobs:
 
       - name: Generate Graphs
         run: |
-          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest :okdownload:okdownload
+          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
 
       - name: upload
         uses: actions/upload-artifact@v4
