@@ -254,7 +254,7 @@ jobs:
 
       - name: Generate Graphs
         run: |
-          generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
+          bash generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
       - name: test2
         run: |
           ls
