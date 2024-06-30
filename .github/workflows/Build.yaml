@@ -250,11 +250,17 @@ jobs:
       - name: Install
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
-          packages: graphviz grep
+          packages: graphviz ggrep
 
       - name: Generate Graphs
         run: |
-          bash generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
+          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
       - name: test2
         run: |
           ls
+
+      - name: test3
+        uses: actions/upload-artifact@v4
+        with:
+          path: 'docs/images/graphs/'
+ 
