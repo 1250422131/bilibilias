@@ -248,6 +248,9 @@ jobs:
 
       - name: Install svgo
         uses: actions/setup-node@v4
-        run: npm install -g svgo
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm install -g svgo
 
 
