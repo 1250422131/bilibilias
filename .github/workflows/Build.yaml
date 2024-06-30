@@ -237,3 +237,17 @@ jobs:
           compression-level: 1
           overwrite: false
           path: '**/build/reports/jacoco/'
+
+  generateModuleGraphs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install graphviz
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.2
+        with:
+          packages: graphviz
+
+      - name: Install svgo
+        uses: actions/setup-node@v4
+        run: npm install -g svgo
+
+
