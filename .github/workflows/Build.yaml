@@ -251,12 +251,10 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
           packages: graphviz grep
-      - name: test1
-        run: |
-          ls
+
       - name: Generate Graphs
         run: |
-          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
+          generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
       - name: test2
         run: |
           ls
