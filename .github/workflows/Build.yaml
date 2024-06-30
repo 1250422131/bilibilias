@@ -12,7 +12,6 @@ concurrency:
 
 jobs:
   test_and_apk:
-    if: false
     name: "Local tests and APKs"
     runs-on: ubuntu-latest
 
@@ -150,7 +149,6 @@ jobs:
         run: ./gradlew :app:checkProdReleaseBadging
 
   androidTest:
-    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 55
     strategy:
@@ -239,43 +237,3 @@ jobs:
           compression-level: 1
           overwrite: false
           path: '**/build/reports/jacoco/'
-
-  generateModuleGraphs:
-    name: "generate module graphs"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v3
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 21
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-      - name: Install
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.2
-        with:
-          packages: graphviz ggrep
-
-      - name: Generate Graphs
-        run: |
-          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
-      - name: test2
-        run: |
-          ls
-
-      - name: test3
-        uses: actions/upload-artifact@v4
-        with:
-          path: 'docs/images/graphs/'
-      - name: test4
-        run: |
-          cd 'docs/images/graphs/'
-          ls
- 
