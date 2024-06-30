@@ -53,3 +53,4 @@ google-services.json
 
 # Kotlin
 .kotlin
+.kotlinBuildReport
