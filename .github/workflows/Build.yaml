@@ -262,6 +262,10 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
           packages: graphviz grep ggrep
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+      - run: npm install -g svgo
 
       - name: Generate Graphs
         run: |
