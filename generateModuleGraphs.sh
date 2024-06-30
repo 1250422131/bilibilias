@@ -33,7 +33,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Get the module paths
-module_paths=$(ggrep -oP 'include\("\K[^"]+' settings.gradle.kts)
+module_paths=$(grep -oP 'include\("\K[^"]+' settings.gradle.kts)
 
 # Ensure the output directory exists
 mkdir -p docs/images/graphs/
@@ -77,9 +77,7 @@ echo "$module_paths" | while read -r module_path; do
 
         # Generate the .gv file in a temporary location
         # </dev/null is used to stop ./gradlew from consuming input which prematurely ends the while loop
-        ./gradlew generateModulesGraphvizText \
-          -Pmodules.graph.output.gv="/tmp/${file_name}.gv" \
-          -Pmodules.graph.of.module="${module_path}" </dev/null
+        ./gradlew generateModulesGraphvizText -Pmodules.graph.output.gv="/tmp/${file_name}.gv" -Pmodules.graph.of.module="${module_path}" </dev/null
 
         # Check gv file's existence
         if [ -e "/tmp/${file_name}.gv" ]; then
