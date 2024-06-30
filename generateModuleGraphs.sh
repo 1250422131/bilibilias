@@ -91,8 +91,8 @@ echo "$module_paths" | while read -r module_path; do
 
         touch "docs/images/graphs/${file_name}.svg"
         # Convert to SVG using dot, and cleanup/compress using svgo
-        dot -Tsvg "/tmp/${file_name}.gv" |
-          svgo --multipass --pretty --output="docs/images/graphs/${file_name}.svg"
+        dot -Tsvg "/tmp/${file_name}.gv" -O "docs/images/graphs/${file_name}.svg"
+#          svgo --multipass --pretty --output=
         # Remove the temporary .gv file
         rm "/tmp/${file_name}.gv"
     fi
