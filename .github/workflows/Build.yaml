@@ -252,6 +252,12 @@ jobs:
         with:
           packages: graphviz ggrep
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
       - name: Generate Graphs
         run: |
           ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest
@@ -263,4 +269,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: 'docs/images/graphs/'
+      - name: test4
+        run: |
+          cd 'docs/images/graphs/'
+          ls
  
