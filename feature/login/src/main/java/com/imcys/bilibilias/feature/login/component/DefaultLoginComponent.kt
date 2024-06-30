@@ -82,6 +82,6 @@ private fun LoginPresenter(
             }
         }
     }
-    val painter = rememberQrCodePainter(data = qrUrl)
-    return LoginModel(isSuccess, message, painter)
+
+    return LoginModel(isSuccess, message, qrUrl)
 }

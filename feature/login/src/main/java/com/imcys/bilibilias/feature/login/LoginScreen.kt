@@ -41,6 +41,7 @@ import com.dokar.sheets.rememberBottomSheetState
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsCard
 import com.imcys.bilibilias.feature.login.component.LoginComponent
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.qrose.toImageBitmap
 import kotlinx.coroutines.launch
 
@@ -88,8 +89,9 @@ private fun LoginContent(
                 }
             }
             val context = LocalContext.current
-            LaunchedEffect(model.qrCodePainter) {
-                val bitmap = model.qrCodePainter.toImageBitmap(2000, 2000)
+            val painter = rememberQrCodePainter(data = model.url)
+            LaunchedEffect(painter) {
+                val bitmap = painter.toImageBitmap(2000, 2000)
                     .asAndroidBitmap()
                     .addWhiteBorder(200)
                 QRUtil.saveQRCode(bitmap, context)
@@ -104,7 +106,7 @@ private fun LoginContent(
                     )
             ) {
                 Image(
-                    painter = model.qrCodePainter,
+                    painter = painter,
                     contentDescription = "登录二维码",
                     modifier = Modifier
                         .fillMaxSize()

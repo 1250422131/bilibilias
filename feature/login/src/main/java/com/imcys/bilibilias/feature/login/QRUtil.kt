@@ -29,7 +29,7 @@ internal object QRUtil {
         Napier.d { "已保存二维码 $uri" }
         if (uri == null) {
             val contentUri: Uri? =
-                MediaStoreUtils.createImageUri("BILIBILIAS-QR-Code.png", "image/*", RELATIVE_PATH)
+                MediaStoreUtils.createImageUri("BILIBILIAS-QR-Code", "image/png", RELATIVE_PATH)
             saveImage(context, contentUri, bitmap)
         } else {
             saveImage(context, uri, bitmap)
@@ -74,7 +74,7 @@ internal object QRUtil {
             else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             arrayOf(MediaStore.Images.Media._ID),
             "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
-            arrayOf("BILIBILIAS-QR-Code.png"),
+            arrayOf("BILIBILIAS-QR-Code"),
             null
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)

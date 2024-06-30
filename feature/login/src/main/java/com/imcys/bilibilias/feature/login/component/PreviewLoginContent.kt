@@ -23,7 +23,7 @@ private class PreviewComponent : LoginComponent {
         LoginModel(
             true,
             "hello",
-            QrCodePainter("https://github.com/alexzhirkevich/qrose")
+            "https://github.com/alexzhirkevich/qrose",
         )
     )
 
