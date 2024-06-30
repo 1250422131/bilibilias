@@ -273,7 +273,7 @@ jobs:
 
       - name: Generate Graphs
         run: |
-          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest :okdownload
+          ./generateModuleGraphs.sh --exclude-module :benchmarks --exclude-module :lint --exclude-module :ui-test-hilt-manifest :okdownload:okdownload
 
       - name: upload
         uses: actions/upload-artifact@v4

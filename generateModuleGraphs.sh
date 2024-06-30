@@ -96,7 +96,7 @@ echo "$module_paths" | while read -r module_path; do
         echo "TTTTTTTTTTTTTTTTTTT"
         cat "/tmp/${file_name}.gv"
         dot -Tsvg "/tmp/${file_name}.gv" |
-          svgo --multipass --pretty --output="docs/images/graphs/${file_name}.svg" -
+          svgo --multipass --pretty --output="docs/images/graphs/${file_name}.svg"
         # Remove the temporary .gv file
         echo "UUUUUUUUUUUUUUUUUUU"
         cat "docs/images/graphs/${file_name}.svg"
