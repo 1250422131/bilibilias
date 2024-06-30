@@ -25,15 +25,5 @@ plugins {
     alias(libs.plugins.secrets) apply false
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.buildconfig) apply false
-    kotlin("plugin.power-assert") version "2.0.0"
-}
-
-// Task to print all the module paths in the project e.g. :core:data
-// Used by module graph generator script
-tasks.register("printModulePaths") {
-    subprojects {
-        if (subprojects.size == 0) {
-            println(this.path)
-        }
-    }
+    kotlin("plugin.power-assert") version "2.0.0" apply false
 }
