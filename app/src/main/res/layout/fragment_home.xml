@@ -63,12 +63,6 @@
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="10dp"
                             app:cardElevation="0dp">
-
-                            <com.youth.banner.Banner
-                                android:id="@+id/fragment_home_banner"
-                                android:layout_width="match_parent"
-                                android:layout_height="180dp"
-                                app:banner_infinite_loop="true" />
                         </androidx.cardview.widget.CardView>
 
                         <LinearLayout
