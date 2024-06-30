@@ -14,6 +14,27 @@ then
     exit 1
 fi
 
+# Check if the svgo command is available
+if ! command -v svgo &> /dev/null
+then
+    echo "The 'svgo' command is not found. This is required to cleanup and compress SVGs."
+    echo "Installation instructions available at https://github.com/svg/svgo."
+    exit 1
+fi
+
+# Check for a version of grep which supports Perl regex.
+# On MacOS the OS installed grep doesn't support Perl regex so check for the existence of the
+# GNU version instead which is prefixed with 'g' to distinguish it from the OS installed version.
+    if grep -P "" /dev/null > /dev/null 2>&1; then
+    GREP_COMMAND=grep
+elif command -v ggrep &> /dev/null; then
+    GREP_COMMAND=ggrep
+else
+    echo "You don't have a version of 'grep' installed which supports Perl regular expressions."
+    echo "On MacOS you can install one using Homebrew with the command: 'brew install grep'"
+    exit 1
+fi
+
 # Initialize an array to store excluded modules
 excluded_modules=()
 
@@ -33,7 +54,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Get the module paths
-module_paths=$(grep -oP 'include\("\K[^"]+' settings.gradle.kts)
+module_paths=$(${GREP_COMMAND} -oP 'include\("\K[^"]+' settings.gradle.kts)
 
 # Ensure the output directory exists
 mkdir -p docs/images/graphs/
@@ -75,28 +96,18 @@ echo "$module_paths" | while read -r module_path; do
         file_name="dep_graph${module_path//:/_}" # Replace colons with underscores
         file_name="${file_name//-/_}" # Replace dashes with underscores
 
+        check_and_create_readme "$module_path" "$file_name"
+
         # Generate the .gv file in a temporary location
         # </dev/null is used to stop ./gradlew from consuming input which prematurely ends the while loop
-        ./gradlew generateModulesGraphvizText -Pmodules.graph.output.gv="/tmp/${file_name}.gv" -Pmodules.graph.of.module="${module_path}" </dev/null
+        ./gradlew generateModulesGraphvizText \
+          -Pmodules.graph.output.gv="/tmp/${file_name}.gv" \
+          -Pmodules.graph.of.module="${module_path}" </dev/null
 
-        # Check gv file's existence
-        if [ -e "/tmp/${file_name}.gv" ]; then
-          # Convert to SVG using dot, remove unnecessary comments
-          svg_cleared=`dot -Tsvg "/tmp/${file_name}.gv" | sed -e 's/<!--.*//g' -e 's/-->.*//g' | tr -d '\0'`
-
-          # Check file is empty or not, if not empty run xmllint to reformat
-          # Save as svg file
-          if [ -n "$svg_cleared" ]; then
-            echo $svg_cleared | xmllint --format - > "docs/images/graphs/${file_name}.svg"
-          else
-            echo $svg_cleared > "docs/images/graphs/${file_name}.svg"
-          fi
-
-          # Create README.md
-          check_and_create_readme "$module_path" "$file_name"
-
-          # Remove tmp files
-          rm "/tmp/${file_name}.gv"
-        fi
+        # Convert to SVG using dot, and cleanup/compress using svgo
+        dot -Tsvg "/tmp/${file_name}.gv" |
+          svgo --multipass --pretty --output="docs/images/graphs/${file_name}.svg" -
+        # Remove the temporary .gv file
+        rm "/tmp/${file_name}.gv"
     fi
 done

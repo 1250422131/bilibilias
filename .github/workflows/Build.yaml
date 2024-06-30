@@ -261,7 +261,7 @@ jobs:
       - name: Install
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
-          packages: graphviz ggrep
+          packages: graphviz grep ggrep
 
       - name: Generate Graphs
         run: |
