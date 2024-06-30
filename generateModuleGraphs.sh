@@ -22,7 +22,7 @@ then
     exit 1
 fi
 
-var GREP_COMMAND=grep
+GREP_COMMAND=grep
 # Initialize an array to store excluded modules
 excluded_modules=()
 
