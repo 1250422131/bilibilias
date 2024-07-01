@@ -22,6 +22,8 @@ then
     exit 1
 fi
 
+mkdir "tmp"
+
 GREP_COMMAND=grep
 # Initialize an array to store excluded modules
 excluded_modules=()
