@@ -266,7 +266,7 @@ jobs:
       - name: Install
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
-          packages: graphviz grep ggrep
+          packages: graphviz grep ggrep xmllint
       - uses: actions/setup-node@v4
         with:
           node-version: 21
