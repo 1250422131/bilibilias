@@ -29,9 +29,8 @@ class UserSpaceRepository @Inject constructor(
     suspend fun 查询用户投稿视频(mid: Long, pageNumber: Int): SpaceArcSearch {
         return client.get(BilibiliApi.SPACE_ARC_SEARCH) {
             attributes.put(requireWbi, true)
-//            header(HttpHeaders.Referrer, BILIBILI_URL)
-            header(HttpHeaders.Referrer, "https://message.bilibili.com/")
-            parameterMid(2)
+            header(HttpHeaders.Referrer, "https://space.bilibili.com")
+            parameterMid(mid)
             parameter("pn", pageNumber)
             parameter("ps", 30)
 //            parameter("tid", 0)

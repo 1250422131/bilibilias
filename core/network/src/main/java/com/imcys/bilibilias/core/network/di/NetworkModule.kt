@@ -23,6 +23,7 @@ import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogLevel
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogger
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogging
+import com.imcys.bilibilias.core.network.utils.TokenUtil
 import com.imcys.bilibilias.core.network.utils.WBIUtils
 import dagger.Module
 import dagger.Provides
@@ -30,6 +31,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
+import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
@@ -48,6 +50,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
+import io.ktor.http.ParametersBuilder
 import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.AttributeKey
@@ -151,8 +154,7 @@ class NetworkModule {
                 }
             }
             install(UserAgent) {
-                agent =
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:32.0) Gecko/20100101 Firefox/32.0"
+                agent = BROWSER_USER_AGENT
             }
             install(HttpCookies) {
                 storage = asCookiesStorage
@@ -188,10 +190,14 @@ class NetworkModule {
             val params = request.url.parameters
             val signatureParams = mutableListOf<Parameter>()
             for ((k, v) in params.entries()) {
-                signatureParams.add(Parameter(k, v.joinToString()))
+                signatureParams.add(Parameter(k, v.first()))
             }
-            val signature = WBIUtils.encWbi(signatureParams, loginInfoDataSource.mixKey.first())
-            val newParameter = ParametersBuilderImpl()
+            val signature = TokenUtil.genBiliSign(
+                signatureParams.associate { it.name to it.value }.toMutableMap(),
+                loginInfoDataSource.mixKey.first()
+            )
+            Napier.i(tag = "wbi") { signature.joinToString("\n") }
+            val newParameter = ParametersBuilder()
             for ((n, v) in signature) {
                 newParameter.append(n, v)
             }

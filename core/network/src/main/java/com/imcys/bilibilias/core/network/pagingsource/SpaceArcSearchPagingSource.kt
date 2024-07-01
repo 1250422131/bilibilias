@@ -18,7 +18,7 @@ class SpaceArcSearchPagingSource @AssistedInject constructor(
         try {
             val nextPageNumber = params.key ?: 1
             val response = userSpaceRepository.查询用户投稿视频(mid, nextPageNumber)
-            if ((nextPageNumber - 1) * 30 > response.page.count || response.page.count == 0) {
+            if (response.page.count == 0) {
                 return LoadResult.Invalid()
             }
             return LoadResult.Page(
