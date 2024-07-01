@@ -14,7 +14,7 @@ then
     exit 1
 fi
 
-GREP_COMMAND=ggrep
+GREP_COMMAND=grep
 
 # Initialize an array to store excluded modules
 excluded_modules=()
