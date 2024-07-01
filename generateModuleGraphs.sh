@@ -14,15 +14,19 @@ then
     exit 1
 fi
 
-# Check if the svgo command is available
-if ! command -v svgo &> /dev/null
-then
-    echo "The 'svgo' command is not found. This is required to cleanup and compress SVGs."
-    echo "Installation instructions available at https://github.com/svg/svgo."
+# Check for a version of grep which supports Perl regex.
+# On MacOS the OS installed grep doesn't support Perl regex so check for the existence of the
+# GNU version instead which is prefixed with 'g' to distinguish it from the OS installed version.
+    if grep -P "" /dev/null > /dev/null 2>&1; then
+    GREP_COMMAND=grep
+elif command -v ggrep &> /dev/null; then
+    GREP_COMMAND=ggrep
+else
+    echo "You don't have a version of 'grep' installed which supports Perl regular expressions."
+    echo "On MacOS you can install one using Homebrew with the command: 'brew install grep'"
     exit 1
 fi
 
-GREP_COMMAND=grep
 # Initialize an array to store excluded modules
 excluded_modules=()
 
@@ -56,21 +60,24 @@ check_and_create_readme() {
     readme_path=${readme_path//:/\/} # Replace colons with slashes
     readme_path="${readme_path}/README.md" #Append the filename
 
-    echo "Creating README.md for ${module_path}"
+    # Check if README.md exists and create it if not
+    if [[ ! -f "$readme_path" ]]; then
+        echo "Creating README.md for ${module_path}"
 
-    # Determine the depth of the module based on the number of colons
-    local depth=$(awk -F: '{print NF-1}' <<< "${module_path}")
+        # Determine the depth of the module based on the number of colons
+        local depth=$(awk -F: '{print NF-1}' <<< "${module_path}")
 
-    # Construct the relative image path with the correct number of "../"
-    local relative_image_path="../"
-    for ((i=1; i<$depth; i++)); do
-        relative_image_path+="../"
-    done
-    relative_image_path+="docs/images/graphs/${file_name}.svg"
+        # Construct the relative image path with the correct number of "../"
+        local relative_image_path="../"
+        for ((i=1; i<$depth; i++)); do
+            relative_image_path+="../"
+        done
+        relative_image_path+="docs/images/graphs/${file_name}.svg"
 
-    echo "# ${module_path} module" > "$readme_path"
-    echo "## Dependency graph" >> "$readme_path"
-    echo "![Dependency graph](${relative_image_path})" >> "$readme_path"
+        echo "# ${module_path} module" > "$readme_path"
+        echo "## Dependency graph" >> "$readme_path"
+        echo "![Dependency graph](${relative_image_path})" >> "$readme_path"
+    fi
 }
 
 # Loop through each module path
@@ -89,10 +96,11 @@ echo "$module_paths" | while read -r module_path; do
           -Pmodules.graph.output.gv="/tmp/${file_name}.gv" \
           -Pmodules.graph.of.module="${module_path}" </dev/null
 
-        touch "docs/images/graphs/${file_name}.svg"
-        # Convert to SVG using dot, and cleanup/compress using svgo
-        dot -Tsvg "/tmp/${file_name}.gv" -O "docs/images/graphs/${file_name}.svg"
-#          svgo --multipass --pretty --output=
+        # Convert to SVG using dot, remove unnecessary comments, and reformat
+        dot -Tsvg "/tmp/${file_name}.gv" |
+          sed 's/<!--/\x0<!--/g;s/-->/-->\x0/g' | grep -zv '^<!--' | tr -d '\0' |
+          xmllint --format - \
+          > "docs/images/graphs/${file_name}.svg"
         # Remove the temporary .gv file
         rm "/tmp/${file_name}.gv"
     fi
