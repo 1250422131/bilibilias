@@ -1,16 +1,18 @@
 package com.imcys.bilibilias.core.network
 
+import com.imcys.bilibilias.core.network.utils.TokenUtil
 import com.imcys.bilibilias.core.network.utils.WBIUtils
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class TestWbi {
-    val imgKey =
+    private val imgKey =
         "https://i0.hdslb.com/bfs/wbi/7cd084941338484aae1ad9425b84077c.png".replace(".png", "")
             .split('/').last()
-    val subKey =
+    private val subKey =
         "https://i0.hdslb.com/bfs/wbi/4932caff0ff746eab6f01bf08b70ac45.png".replace(".png", "")
             .split('/').last()
+    private val mix = imgKey + subKey
 
     @Test
     fun `test wbi1`() {
@@ -30,5 +32,16 @@ class TestWbi {
         )
         val s = WBIUtils.encWbi(list, mixinKey)
         println(s.joinToString("&") { it.name + '=' + it.value })
+    }
+
+    @Test
+    fun `测试 TokenUtils`() {
+        val map = mutableMapOf(
+            "foo" to "114",
+            "bar" to "514",
+            "zab" to "1919810",
+            "wts" to "1702204169"
+        )
+        TokenUtil.genBiliSign(map, mix)
     }
 }

@@ -2,8 +2,8 @@ package com.imcys.bilibilias.core.network.utils
 
 import com.imcys.bilibilias.core.network.Parameter
 import io.ktor.http.encodeURLParameter
-import java.math.BigInteger
-import java.security.MessageDigest
+import org.apache.commons.codec.digest.DigestUtils
+import java.util.StringJoiner
 
 /**
  * 签名算法
@@ -30,15 +30,28 @@ object WBIUtils {
         }
 
         val param = parameters.joinToString("&") { (k, v) ->
-            k + "=" + v.encodeURLParameter()
+            k.encodeURLParameter() + "=" + v.encodeURLParameter()
         } + mixinKey
-        parameters += Parameter("w_rid", md5Hash(param))
+        parameters += Parameter("w_rid", DigestUtils.md5Hex(param))
         return parameters.map { Parameter(it.name, it.value) }
     }
 
-    private fun md5Hash(str: String): String {
-        val md = MessageDigest.getInstance("MD5")
-        val bigInt = BigInteger(1, md.digest(str.toByteArray(Charsets.UTF_8)))
-        return String.format("%032x", bigInt)
+    fun encWbi2(params: List<Parameter>, mixinKey: String): List<Parameter> {
+        val map = sortedMapOf<String, String>(
+            "wts" to (System.currentTimeMillis() / 1000).toString()
+        ).apply {
+            params.forEach { put(it.name, it.value) }
+        }
+
+        val param = StringJoiner("&")
+        map.forEach { entry ->
+            param.add(
+                entry.key + "=" + entry.value.encodeURLParameter()
+            )
+        }
+        return map.map { Parameter(it.key, it.value) } +
+            Parameter(
+                "w_rid", DigestUtils.md5Hex(param.toString() + mixinKey)
+            )
     }
 }

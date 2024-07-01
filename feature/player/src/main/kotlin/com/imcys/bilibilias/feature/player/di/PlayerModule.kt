@@ -3,6 +3,8 @@ package com.imcys.bilibilias.feature.player.di
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
+import com.imcys.bilibilias.core.network.api.BILIBILI_URL
+import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +22,8 @@ class PlayerModule {
     fun provideOkhttpDataSource(
         okhttpClient: OkHttpClient,
     ): DataSource.Factory = OkHttpDataSource.Factory(okhttpClient)
-        .setDefaultRequestProperties(mapOf("Referrer" to "https://www.bilibili.com"))
-        .setUserAgent(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
-        )
+        .setDefaultRequestProperties(mapOf("Referrer" to BILIBILI_URL))
+        .setUserAgent(BROWSER_USER_AGENT)
         .setCacheControl(CacheControl.FORCE_CACHE)
 }
 
