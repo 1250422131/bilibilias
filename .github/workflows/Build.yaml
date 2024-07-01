@@ -274,6 +274,7 @@ jobs:
 
       - name: Generate Graphs
         run: |
+          chmod +x generateModuleGraphs.sh
           ./generateModuleGraphs.sh --exclude-module :benchmarks \
           --exclude-module :lint \
           --exclude-module :ui-test-hilt-manifest
