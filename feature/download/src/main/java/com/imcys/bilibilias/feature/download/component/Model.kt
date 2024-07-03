@@ -6,7 +6,10 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import kotlinx.collections.immutable.ImmutableList
 
-data class Model(val entities: ImmutableList<List<DownloadTaskEntity>>)
+data class Model(
+    val entities: ImmutableList<ImmutableList<DownloadTaskEntity>>,
+    val canDelete: Boolean,
+)
 
 data class DownloadTask(
     val id: Int,
@@ -30,4 +33,9 @@ internal fun DownloadTaskEntity.mapToTask(): DownloadTask {
     )
 }
 
-sealed interface Event
+sealed interface Event {
+    data class UserSelecte(val id: Int) : Event
+    data object ConfirmDeletion : Event
+    data object OpenDeleteOption : Event
+    data object CloseDeleteOption : Event
+}

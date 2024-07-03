@@ -8,6 +8,7 @@ import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
+import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
@@ -27,7 +28,6 @@ import com.liulishuo.okdownload.core.Util
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.DevUtils
 import dev.utils.app.ContentResolverUtils
-import dev.utils.app.MediaStoreUtils
 import dev.utils.app.UriUtils
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +60,7 @@ class DownloadManager @Inject constructor(
         }
     }
 
+    // todo 也许要重构
     fun download(request: DownloadRequest) {
         Napier.d { "下载任务详情: $request" }
         scope.launch {
@@ -69,12 +70,8 @@ class DownloadManager @Inject constructor(
                     getDetail = { bvid: Bvid ->
                         videoRepository.获取视频详细信息(bvid)
                     },
-                    getDownloadUrl = { aid: Aid, bvid: Bvid, cid: Cid ->
-                        videoRepository.videoStreamingURL(
-                            aid,
-                            bvid,
-                            cid,
-                        )
+                    getDownloadUrl = { aid, bvid, cid ->
+                        videoRepository.videoStreamingURL(aid, bvid, cid)
                     },
                     videoStrategy = { sources, detail, page ->
                         val format = request.format
@@ -152,9 +149,12 @@ class DownloadManager @Inject constructor(
             MimeType.AUDIO,
             ".aac"
         )
-        Napier.d { "下载链接 ${url}" }
-        return if (file != null) AsDownloadTask(info, page.part, FileType.AUDIO, url, file)
-        else null
+        Napier.d { "下载链接 $url" }
+        return if (file != null) {
+            AsDownloadTask(info, page.part, FileType.AUDIO, url, file)
+        } else {
+            null
+        }
     }
 
     private suspend fun generate(
@@ -176,8 +176,11 @@ class DownloadManager @Inject constructor(
             ".mp4"
         )
         Napier.d { "清晰度 $quality, 编码器 $codecid, 下载链接 ${v.baseUrl}" }
-        return if (file != null) AsDownloadTask(info, page.part, FileType.VIDEO, v.baseUrl, file)
-        else null
+        return if (file != null) {
+            AsDownloadTask(info, page.part, FileType.VIDEO, v.baseUrl, file)
+        } else {
+            null
+        }
     }
 
     private suspend fun createFile(
@@ -205,8 +208,11 @@ class DownloadManager @Inject constructor(
                 Napier.d { "已创建文件夹 $foldername" }
                 val findFile = folderFile.findFile(filenameWithExtension)
                 Napier.d { "发现文件: ${findFile?.name}" }
-                if (findFile == null) folderFile.createFile(mimeType, filenameWithExtension)
-                else findFile
+                if (findFile == null) {
+                    folderFile.createFile(mimeType, filenameWithExtension)
+                } else {
+                    findFile
+                }
             }?.uri
         }
     }
@@ -235,6 +241,14 @@ class DownloadManager @Inject constructor(
         return foldername to filename
     }
 
+    fun delete(ids: List<Int>) {
+        scope.launch {
+            downloadTaskDao.findByIds(ids).forEach {
+                delete(it)
+            }
+        }
+    }
+
     fun delete(
         info: ViewInfo,
         fileType: FileType,
@@ -243,26 +257,31 @@ class DownloadManager @Inject constructor(
             val task =
                 downloadTaskDao.findByIdWithFileType(info.aid, info.bvid, info.cid, fileType)
                     ?: return@launch
-            Napier.d { task.toString() }
-            val uri = task.uri
-            if (UriUtils.isFileScheme(uri)) {
-                if (uri.toFile().delete()) {
-                    Toaster.show("删除成功")
-                } else {
-                    Toaster.show("删除失败")
-                }
-            } else if (UriUtils.isContentScheme(uri)) {
-                if (ContentResolverUtils.deleteDocument(uri)) {
-                    Toaster.show("删除成功")
-                } else {
-                    Toaster.show("删除失败")
-                }
-            } else {
-                Napier.d { task.toString() }
-            }
-            downloadTaskDao.delete(task)
-            deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
+            delete(task)
         }
+    }
+
+    private suspend fun delete(taskEntity: DownloadTaskEntity) {
+        Napier.d { taskEntity.toString() }
+        val uri = taskEntity.uri
+        if (UriUtils.isFileScheme(uri)) {
+            if (uri.toFile().delete()) {
+                Toaster.show("删除成功")
+            } else {
+                Toaster.show("删除失败")
+            }
+        } else if (UriUtils.isContentScheme(uri)) {
+            if (ContentResolverUtils.deleteDocument(uri)) {
+                Toaster.show("删除成功")
+            } else {
+                Toaster.show("删除失败")
+            }
+        } else {
+            Napier.d { taskEntity.toString() }
+            throw IllegalArgumentException("task uri error")
+        }
+        downloadTaskDao.delete(taskEntity)
+        deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
     }
 
     private fun deleteEmptyDirectoriesOfFolder(folder: File) {
@@ -280,6 +299,4 @@ class DownloadManager @Inject constructor(
             }
         }
     }
-
-    private fun uri(uri: Uri) = uri
 }
