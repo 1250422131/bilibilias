@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.network.utils
 
 import com.imcys.bilibilias.core.network.Parameter
 import io.ktor.http.encodeURLParameter
+import java.net.URLEncoder
 import java.security.MessageDigest
 import java.util.StringJoiner
 import java.util.TreeMap
@@ -26,22 +27,17 @@ object TokenUtil {
         return sb.toString()
     }
 
-    private fun getBiliMixin(value: String): String {
-        requestToken?.let { return it }
-        val requestTokenBuilder = StringBuilder()
-        for (v in array) {
-            requestTokenBuilder.append(value[v])
-        }
-        return requestTokenBuilder.toString().substring(0, 32).also { requestToken = it }
-    }
-
-    suspend fun getParamStr(
-        params: MutableMap<String, String>,
+    fun getBiliMixin(
         imgKey: String,
         subKey: String
-    ): List<Parameter> {
-        val token = requestToken ?: getBiliMixin(imgKey + subKey)
-        return genBiliSign(params, token)
+    ): String {
+        requestToken?.let { return it }
+        val key = imgKey + subKey
+        val requestTokenBuilder = StringBuilder()
+        for (v in array) {
+            requestTokenBuilder.append(key[v])
+        }
+        return requestTokenBuilder.toString().substring(0, 32).also { requestToken = it }
     }
 
     fun genBiliSign(params: MutableMap<String, String>, secret: String): List<Parameter> {
@@ -49,10 +45,37 @@ object TokenUtil {
         val sortedParams = TreeMap(params)
         val stringBuilder = StringJoiner("&")
         for ((k, v) in sortedParams) {
-            stringBuilder.add(k + "=" + v.encodeURLParameter())
+            stringBuilder.add(k + "=" + v)
         }
         val dataStr = stringBuilder.toString() + secret
         params["w_rid"] = md5(dataStr)
-        return params.map { Parameter(it.key.encodeURLParameter(), it.value.encodeURLParameter()) }
+        return params.map {
+            URLEncoder.encode(it.key, "UTF-8") to
+                    URLEncoder.encode(it.value, "UTF-8")
+        }
+            .map { Parameter(it.first, it.second) }
+    }
+
+    fun genBiliSign2(params: MutableMap<String, String>, secret: String): MutableList<Parameter> {
+        val wts = System.currentTimeMillis() / 1000
+        params["wts"] = wts.toString()
+        val sortedParams = TreeMap(params)
+        val dataStrBuilder = StringBuilder()
+        for (k in sortedParams.keys) {
+            dataStrBuilder.append(k).append("=").append(sortedParams[k]).append("&")
+        }
+        var dataStr = dataStrBuilder.substring(0, dataStrBuilder.length - 1)
+        dataStr += secret
+        params["w_rid"] = md5(dataStr)
+        val result = mutableListOf<Parameter>()
+        for ((key, value) in params) {
+            result.add(
+                Parameter(
+                    URLEncoder.encode(key, "UTF-8"),
+                    URLEncoder.encode(value, "UTF-8")
+                )
+            )
+        }
+        return result
     }
 }
