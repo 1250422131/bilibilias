@@ -8,6 +8,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -53,7 +54,6 @@ internal fun Project.configureJacoco(
         val allDirectories: ListProperty<Directory> = myObjFactory.listProperty(Directory::class.java)
         val reportTask =
             tasks.register("create${variant.name.capitalize()}CombinedCoverageReport", JacocoReport::class) {
-
                 classDirectories.setFrom(
                     allJars,
                     allDirectories.map { dirs ->
@@ -63,8 +63,8 @@ internal fun Project.configureJacoco(
                     }
                 )
                 reports {
-                    xml.required.set(true)
-                    html.required.set(true)
+                    xml.required = true
+                    html.required = true
                 }
 
                 // TODO: This is missing files in src/debug/, src/prod, src/demo, src/demoDebug...
