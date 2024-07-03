@@ -53,7 +53,10 @@ internal fun Project.configureJacoco(
         val allJars: ListProperty<RegularFile> = myObjFactory.listProperty(RegularFile::class.java)
         val allDirectories: ListProperty<Directory> = myObjFactory.listProperty(Directory::class.java)
         val reportTask =
-            tasks.register("create${variant.name.capitalize()}CombinedCoverageReport", JacocoReport::class) {
+            tasks.register(
+                "create${variant.name.capitalize()}CombinedCoverageReport",
+                JacocoReport::class,
+            ) {
                 classDirectories.setFrom(
                     allJars,
                     allDirectories.map { dirs ->
@@ -78,7 +81,6 @@ internal fun Project.configureJacoco(
                         .matching { include("**/*.ec") }
                 )
             }
-
 
         variant.artifacts.forScope(ScopedArtifacts.Scope.PROJECT)
             .use(reportTask)
