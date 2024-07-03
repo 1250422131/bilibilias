@@ -51,7 +51,6 @@ class AsDownloadListener @Inject constructor(
             val info = asTask.viewInfo
             val taskEntity = DownloadTaskEntity(
                 uri = asTask.okTask.uri,
-                created = Clock.System.now(),
                 aid = info.aid,
                 bvid = info.bvid,
                 cid = info.cid,
