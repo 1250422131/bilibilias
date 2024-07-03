@@ -97,7 +97,7 @@ interface DownloadTaskDao {
     @Query("SELECT * FROM download_task_list GROUP BY cid, id")
     fun findAllTaskByGroupCid(): Flow<Map<@MapColumn("cid") Cid, List<DownloadTaskEntity>>>
 
-    @Query("SELECT * FROM download_task_list WHERE obj_id IN (:ids)")
+    @Query("SELECT * FROM download_task_list WHERE id IN (:ids)")
     suspend fun findByIds(ids: List<Int>): List<DownloadTaskEntity>
 
     @Delete

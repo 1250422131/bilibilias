@@ -117,7 +117,7 @@ fun ShareLogMenuLink(onEvent: (UserEditEvent) -> Unit) {
                             .clickable { onEvent(UserEditEvent.ShareLog.NewLog) }
                     )
                     Text(
-                        text = "old_log.txt",
+                        text = "old_log.txt（崩溃相关发这个）",
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable { onEvent(UserEditEvent.ShareLog.OldLog) }
