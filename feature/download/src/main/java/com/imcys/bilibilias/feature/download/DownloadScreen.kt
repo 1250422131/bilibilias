@@ -70,7 +70,7 @@ internal fun DownloadScreen(
     DownloadScreen(
         model = model,
         onEvent = component::take,
-        onSettingsClicked = component::onSettingsClicked,
+        onSettingsClicked = { info, type -> },
         component.selectedDeletes
     )
 }
