@@ -7,9 +7,7 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.model.download.FileType
-import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,21 +56,12 @@ class PreviewDownloadComponent : DownloadComponent {
         )
     )
     override val models: StateFlow<Model> = MutableStateFlow(
-        Model(persistentListOf(testList))
+        Model(persistentListOf(testList), true)
     )
-    override val tasks: StateFlow<ImmutableList<ImmutableList<DownloadTaskEntity>>> =
-        MutableStateFlow(persistentListOf(testList))
 
     override val dialogSlot: Value<ChildSlot<Unit, DialogComponent>> = MutableValue(ChildSlot())
 
     override fun take(event: Event) {}
 
-    override fun onSettingsClicked(info: ViewInfo, fileType: FileType) {}
-    override fun onSelected(id: Int) {
-        TODO("Not yet implemented")
-    }
-
     override val selectedDeletes = mutableStateListOf<Int>()
-
-
 }

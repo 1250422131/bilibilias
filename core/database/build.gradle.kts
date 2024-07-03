@@ -13,7 +13,7 @@ android {
 dependencies {
     api(projects.core.model)
 
-    implementation(libs.kotlinx.datetime)
+    api(libs.kotlinx.datetime)
 
     androidTestImplementation(projects.core.testing)
 }

@@ -12,6 +12,7 @@ import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.repository.BiliBiliAsRepository
 import com.imcys.bilibilias.core.network.repository.LoginRepository
+import com.imcys.bilibilias.core.network.utils.TokenUtil
 import com.imcys.bilibilias.core.network.utils.WBIUtils
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
@@ -43,7 +44,7 @@ class DefaultHomeComponent @AssistedInject constructor(
             loginRepository.getBilibiliHome()
             val bar = loginRepository.导航栏用户信息()
             loginInfoDataSource.setMid(bar.mid)
-            loginInfoDataSource.setMixKey(WBIUtils.getMixinKey(bar.imgKey, bar.subKey))
+            loginInfoDataSource.setMixKey(TokenUtil.getBiliMixin(bar.imgKey, bar.subKey))
         }
 
         LaunchedEffect(Unit) {

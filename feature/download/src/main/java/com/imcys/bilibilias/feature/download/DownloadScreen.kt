@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.feature.download
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +13,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,22 +27,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
-import com.imcys.bilibilias.core.common.utils.DataUnit
+import com.imcys.bilibilias.core.common.utils.selected
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
@@ -50,8 +49,8 @@ import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.component.Event
 import com.imcys.bilibilias.feature.download.component.Model
-import com.imcys.bilibilias.feature.download.sheet.BottomSheetContent
-import kotlinx.collections.immutable.ImmutableList
+import com.imcys.bilibilias.feature.download.component.PreviewDownloadComponent
+import kotlin.reflect.KFunction1
 
 @Composable
 fun DownloadContent(
@@ -67,16 +66,12 @@ internal fun DownloadScreen(
     navigationToPlayer: (viewInfo: ViewInfo) -> Unit
 ) {
     val model by component.models.collectAsStateWithLifecycle()
-    val tasks by component.tasks.collectAsState()
-    val dialogSlot by component.dialogSlot.subscribeAsState()
-    dialogSlot.child?.instance?.let {
-        BottomSheetContent(it, navigationToPlayer)
-    }
+
     DownloadScreen(
         model = model,
         onEvent = component::take,
         onSettingsClicked = component::onSettingsClicked,
-        tasks = tasks
+        component.selectedDeletes
     )
 }
 
@@ -86,15 +81,23 @@ internal fun DownloadScreen(
     model: Model,
     onEvent: (Event) -> Unit,
     onSettingsClicked: (ViewInfo, FileType) -> Unit,
-    tasks: ImmutableList<ImmutableList<DownloadTaskEntity>>,
+    selectedDeletes: List<Int>,
 ) {
-    var edit by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { /*TODO*/ },
+                title = {},
                 actions = {
-                    EditButton(edit, editable = { edit = true }, cancleSelection = { edit = false })
+                    if (model.canDelete) {
+                        IconButton(onClick = { onEvent(Event.ConfirmDeletion) }) {
+                            Icon(Icons.Default.Delete, contentDescription = null)
+                        }
+                    }
+                    EditButton(
+                        model.canDelete,
+                        editable = { onEvent(Event.OpenDeleteOption) },
+                        cancleSelection = { onEvent(Event.CloseDeleteOption) }
+                    )
                 }
             )
         }
@@ -103,11 +106,14 @@ internal fun DownloadScreen(
             modifier = Modifier.padding(paddingValues),
             contentPadding = PaddingValues(4.dp)
         ) {
-            tasks.forEach {
-                items(it) { item ->
+            model.entities.forEach {
+                items(it, key = { it.id }) { item ->
                     DownloadTaskItem(
                         task = item,
-                        onSettingsClicked = onSettingsClicked
+                        onSettingsClicked = onSettingsClicked,
+                        isOpenSelecte = model.canDelete,
+                        onSelecte = { onEvent(Event.UserSelecte(it)) },
+                        isSelected = selectedDeletes.selected(item.id)
                     )
                 }
                 item {
@@ -122,11 +128,14 @@ internal fun DownloadScreen(
 @Composable
 fun DownloadTaskItem(
     task: DownloadTaskEntity,
-    onSettingsClicked: (ViewInfo, FileType) -> Unit
+    onSettingsClicked: (ViewInfo, FileType) -> Unit,
+    isOpenSelecte: Boolean,
+    onSelecte: (Int) -> Unit,
+    isSelected: Boolean,
 ) {
     Column {
         ListItem(
-            modifier = Modifier.combinedClickable {
+            modifier = Modifier.clickable {
                 onSettingsClicked(
                     ViewInfo(task.aid, task.bvid, task.cid, task.title),
                     task.fileType
@@ -161,10 +170,13 @@ fun DownloadTaskItem(
             },
             supportingContent = {
                 Text(text = "${task.state.cn}·")
-//            ${task.uri.toFile().length().bytes.toLong(DataUnit.MEGABYTES)}MB
             },
             trailingContent = {
-                Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
+                if (isOpenSelecte) {
+                    Checkbox(checked = isSelected, onCheckedChange = { onSelecte(task.id) })
+                } else {
+                    Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
+                }
             },
         )
         if (task.state == State.RUNNING) {
@@ -177,7 +189,8 @@ fun DownloadTaskItem(
 @Composable
 fun DownloadTaskItem(
     task: Task,
-    onSettingsClicked: (ViewInfo, FileType) -> Unit
+    onSettingsClicked: (ViewInfo, FileType) -> Unit,
+    onSelected: KFunction1<Int, Unit>,
 ) {
     ListItem(
         modifier = Modifier.combinedClickable {
@@ -232,5 +245,12 @@ fun EditButton(
         }
     } else {
         AsTextButton(onClick = cancleSelection, text = { Text(text = "取消") })
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = false)
+@Composable
+private fun PreviewDownloadScreen() {
+    DownloadContent(component = PreviewDownloadComponent()) {
     }
 }

@@ -11,6 +11,7 @@ import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 @Entity(
@@ -19,13 +20,13 @@ import kotlinx.datetime.Instant
 // todo 记录错误信息
 data class DownloadTaskEntity(
     val uri: Uri,
-    val created: Instant,
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) val aid: Aid,
     @ColumnInfo(typeAffinity = ColumnInfo.TEXT) val bvid: Bvid,
     @ColumnInfo(typeAffinity = ColumnInfo.INTEGER) val cid: Cid,
     @ColumnInfo("file_type") val fileType: FileType,
     @ColumnInfo(name = "sub_title") val subTitle: String,
     val title: String,
+    val created: Instant = Clock.System.now(),
     val state: State = State.PENDING,
     val bytesSentTotal: Long = 0,
     val contentLength: Long = 0,
