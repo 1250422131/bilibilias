@@ -18,12 +18,14 @@ abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
     protected val moleculeScope =
         CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
 
+    open val recompositionMode = RecompositionMode.ContextClock
+
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.
     private val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
 
     open val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
-        moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
+        moleculeScope.launchMolecule(mode = recompositionMode) {
             models(events)
         }
     }
