@@ -11,6 +11,7 @@ interface Interceptor<T> {
         private val interceptors: List<Interceptor<*>>,
         private val index: Int = 0
     ) {
+        @Suppress("UNCHECKED_CAST")
         fun proceed(message: Any) {
             val next = Chain(interceptors, index + 1)
             try {
