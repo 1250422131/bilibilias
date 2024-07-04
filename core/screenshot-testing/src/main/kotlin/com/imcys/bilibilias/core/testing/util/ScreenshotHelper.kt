@@ -1,10 +1,32 @@
 package com.imcys.bilibilias.core.testing.util
+
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.test.DarkMode
+import androidx.compose.ui.test.DeviceConfigurationOverride
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.compose.ui.test.onRoot
+import androidx.test.ext.junit.rules.ActivityScenarioRule
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
+import com.github.takahirom.roborazzi.RoborazziOptions
+import com.github.takahirom.roborazzi.captureRoboImage
+import com.imcys.bilibilias.core.designsystem.theme.AsTheme
+import org.robolectric.RuntimeEnvironment
+
+@OptIn(ExperimentalRoborazziApi::class)
 val DefaultRoborazziOptions =
     RoborazziOptions(
         // Pixel-perfect matching
-        compareOptions = CompareOptions(changeThreshold = 0f),
+        compareOptions = RoborazziOptions.CompareOptions(changeThreshold = 0f),
         // Reduce the size of the PNGs
-        recordOptions = RecordOptions(resizeScale = 0.5),
+        recordOptions = RoborazziOptions.RecordOptions(resizeScale = 0.5),
     )
 
 enum class DefaultTestDevices(val description: String, val spec: String) {
@@ -76,7 +98,7 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
         CompositionLocalProvider(
             LocalInspectionMode provides true,
         ) {
-            NiaTheme(
+            AsTheme(
                 androidTheme = androidTheme,
                 darkTheme = darkMode,
                 disableDynamicTheming = !dynamicTheming,
@@ -118,11 +140,11 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.c
                 this.onRoot()
                     .captureRoboImage(
                         "src/test/screenshots/" +
-                                "$name/$filename" +
-                                "_$darkModeDesc" +
-                                "_$androidThemeDesc" +
-                                "_$dynamicThemingDesc" +
-                                ".png",
+                            "$name/$filename" +
+                            "_$darkModeDesc" +
+                            "_$androidThemeDesc" +
+                            "_$dynamicThemingDesc" +
+                            ".png",
                         roborazziOptions = DefaultRoborazziOptions,
                     )
             }
@@ -140,21 +162,21 @@ private fun generateDescription(
     dynamicTheming: Boolean,
 ): String {
     val description = "" +
-            if (shouldCompareDarkMode) {
-                if (darkMode) "Dark" else "Light"
-            } else {
-                ""
-            } +
-            if (shouldCompareAndroidTheme) {
-                if (androidTheme) " Android" else " Default"
-            } else {
-                ""
-            } +
-            if (shouldCompareDynamicColor) {
-                if (dynamicTheming) " Dynamic" else ""
-            } else {
-                ""
-            }
+        if (shouldCompareDarkMode) {
+            if (darkMode) "Dark" else "Light"
+        } else {
+            ""
+        } +
+        if (shouldCompareAndroidTheme) {
+            if (androidTheme) " Android" else " Default"
+        } else {
+            ""
+        } +
+        if (shouldCompareDynamicColor) {
+            if (dynamicTheming) " Dynamic" else ""
+        } else {
+            ""
+        }
 
     return description.trim()
 }
