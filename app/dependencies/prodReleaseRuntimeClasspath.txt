@@ -306,8 +306,8 @@ org.jetbrains.kotlin:kotlin-stdlib-common:2.0.0
 org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10
 org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10
 org.jetbrains.kotlin:kotlin-stdlib:2.0.0
-org.jetbrains.kotlinx:atomicfu-jvm:0.24.0
-org.jetbrains.kotlinx:atomicfu:0.24.0
+org.jetbrains.kotlinx:atomicfu-jvm:0.25.0
+org.jetbrains.kotlinx:atomicfu:0.25.0
 org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.7
 org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7
 org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1
