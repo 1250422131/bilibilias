@@ -79,7 +79,7 @@ class DownloadManager @Inject constructor(
                     },
                     audioStrategy = { sources, detail, page ->
                         generate(sources, detail, page)
-                    }
+                    },
                 ).invoke(request.viewInfo)
             } catch (e: Exception) {
                 Napier.e(e, TAG) { "下载发生错误" }
@@ -138,7 +138,7 @@ class DownloadManager @Inject constructor(
     private suspend fun generate(
         sources: List<Audio>,
         detail: ViewDetail,
-        page: ViewDetail.Pages
+        page: ViewDetail.Pages,
     ): AsDownloadTask? {
         val url = sources.maxBy { it.id }.baseUrl
         val info = ViewInfo(detail.aid, detail.bvid, detail.cid, detail.title)
@@ -147,7 +147,7 @@ class DownloadManager @Inject constructor(
             info,
             page.part,
             MimeType.AUDIO,
-            ".aac"
+            ".aac",
         )
         Napier.d { "下载链接 $url" }
         return if (file != null) {
@@ -162,7 +162,7 @@ class DownloadManager @Inject constructor(
         detail: ViewDetail,
         page: ViewDetail.Pages,
         quality: Int,
-        codecid: Int
+        codecid: Int,
     ): AsDownloadTask? {
         val videos = sources.groupBy { it.id }[quality] ?: error("没有所选清晰度")
         val v = videos.singleOrNull { it.codecid == codecid }
@@ -173,7 +173,7 @@ class DownloadManager @Inject constructor(
             info,
             page.part,
             MimeType.VIDEO,
-            ".mp4"
+            ".mp4",
         )
         Napier.d { "清晰度 $quality, 编码器 $codecid, 下载链接 ${v.baseUrl}" }
         return if (file != null) {
@@ -219,7 +219,7 @@ class DownloadManager @Inject constructor(
 
     private suspend fun generateFolderWithFile(
         info: ViewInfo,
-        subTitle: String
+        subTitle: String,
     ): Pair<String, String> {
         val userData = asPreferencesDataSource.userData.first()
         var template = userData.namingRule ?: DEFAULT_NAMING_RULE
