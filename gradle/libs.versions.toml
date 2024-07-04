@@ -261,3 +261,4 @@ bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecifi
 bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }
 bilibilias-multiplatform-decompose = { id = "bilibilias.multiplatform.decompose", version = "unspecified" }
 bilibilias-multiplatform-sqlLin = { id = "bilibilias.multiplatform.sqlLin", version = "unspecified" }
+bilibilias-android-testoptions = { id = "bilibilias.android.testoptions", version = "unspecified" }

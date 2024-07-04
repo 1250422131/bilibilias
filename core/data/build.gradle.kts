@@ -2,16 +2,11 @@ plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.android.testoptions)
 }
 
 android {
     namespace = "com.imcys.bilibilias.core.data"
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
-    }
     testFixtures.enable = true
 }
 

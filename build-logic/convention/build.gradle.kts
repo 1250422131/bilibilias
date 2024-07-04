@@ -82,5 +82,9 @@ gradlePlugin {
             id = "bilibilias.android.application.bugly"
             implementationClass = "AndroidApplicationBuglyConventionPlugin"
         }
+        register("androidApplicationTestOptionsUnitTests") {
+            id = "bilibilias.android.testoptions"
+            implementationClass = "AndroidTestOptionsUnitTestsConventionPlugin"
+        }
     }
 }

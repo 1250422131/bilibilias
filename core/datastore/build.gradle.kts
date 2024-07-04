@@ -6,11 +6,6 @@
 
 android {
     namespace = "com.imcys.bilibilias.core.datastore"
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
-    }
     testFixtures.enable = true
 }
 
