@@ -1,9 +1,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryExtension
-import com.imcys.bilibilias.applyPlugin
 import com.imcys.bilibilias.configureAndroidCompose
-import com.imcys.bilibilias.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -17,7 +15,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             val extension: CommonExtension<*, *, *, *, *, *> = when {
                 pluginManager.hasPlugin("com.android.application") -> the<ApplicationExtension>()
                 pluginManager.hasPlugin("com.android.library") -> the<LibraryExtension>()
-                else -> TODO("Need to apply bilibilias.android.application or bilibilias.android.library firstly.")
+                else -> TODO("This plugin is dependent on either bilibilias.android.application or bilibilias.android.library. Apply one of those plugins first.")
             }
             configureAndroidCompose(extension)
         }
