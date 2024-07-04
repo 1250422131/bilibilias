@@ -78,7 +78,9 @@ class DefaultDownloadComponent @AssistedInject constructor(
             Napier.d { it.values.joinToString("\n") }
             it.values.map { it.toImmutableList() }.toImmutableList()
         }.collectAsState(initial = persistentListOf())
+
         var canDelete by rememberSaveable { mutableStateOf(false) }
+
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
@@ -86,11 +88,13 @@ class DefaultDownloadComponent @AssistedInject constructor(
 
                     Event.ConfirmDeletion -> {
                         downloadManager.delete(selectedDeletes)
-                        selectedDeletes.clear()
                         canDelete = false
                     }
 
-                    Event.OpenDeleteOption -> canDelete = true
+                    Event.OpenDeleteOption -> {
+                        canDelete = true
+                        selectedDeletes.clear()
+                    }
                     Event.CloseDeleteOption -> canDelete = false
                 }
             }
