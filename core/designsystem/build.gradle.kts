@@ -29,10 +29,9 @@ dependencies {
     api(libs.dokar.sheets)
 
     testImplementation(libs.androidx.compose.ui.test)
-//    testImplementation(libs.accompanist.testharness)
-//    testImplementation(libs.hilt.android.testing)
-//    testImplementation(libs.robolectric)
-//    testImplementation(libs.roborazzi)
-//    testImplementation(projects.core.screenshotTesting)
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(projects.core.screenshotTesting)
     testImplementation(projects.core.testing)
 }
