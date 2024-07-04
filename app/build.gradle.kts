@@ -17,8 +17,8 @@ android {
     namespace = "com.imcys.bilibilias"
     defaultConfig {
         applicationId = "com.imcys.bilibilias.lite"
-        versionCode = 15
-        versionName = "0.1.5"
+        versionCode = 16
+        versionName = "0.1.6"
         ndk {
             //noinspection ChromeOsAbiSupport
             abiFilters += listOf("arm64-v8a")
@@ -115,13 +115,12 @@ dependencies {
 
     testImplementation(projects.core.testing)
     testImplementation(libs.androidx.compose.ui.test)
-//    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.hilt.android.testing)
     testImplementation(testFixtures(projects.core.data))
 
-//    testDemoImplementation(libs.robolectric)
-//    testDemoImplementation(libs.roborazzi)
-//    testDemoImplementation(projects.core.screenshotTesting)
+    testDemoImplementation(libs.robolectric)
+    testDemoImplementation(libs.roborazzi)
+    testDemoImplementation(projects.core.screenshotTesting)
     testDemoImplementation(testFixtures(projects.core.data))
 
     androidTestImplementation(projects.core.testing)
