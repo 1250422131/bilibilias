@@ -2,12 +2,13 @@
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.compose)
     alias(libs.plugins.bilibilias.android.jacoco)
+    alias(libs.plugins.bilibilias.android.testoptions)
 }
 
 android {
     namespace = "com.imcys.bilibilias.core.designsystem"
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    buildFeatures {
+        buildConfig = true
     }
 }
 

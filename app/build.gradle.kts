@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.bilibilias.android.compose)
     alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
+    alias(libs.plugins.bilibilias.android.testoptions)
     alias(libs.plugins.bilibilias.multiplatform.decompose)
 //    alias(libs.plugins.bilibilias.android.application.bugly)
     alias(libs.plugins.bilibilias.android.hilt)
@@ -53,11 +54,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
         }
     }
 }
