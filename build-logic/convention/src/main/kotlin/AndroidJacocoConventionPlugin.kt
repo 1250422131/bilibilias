@@ -16,23 +16,23 @@ class AndroidJacocoConventionPlugin : Plugin<Project> {
             apply(plugin = "jacoco")
 
             val androidExtension: CommonExtension<*, *, *, *, *, *> = when {
-                pluginManager.hasPlugin("com.android.application") -> {
-                    configureJacoco(the<ApplicationAndroidComponentsExtension>())
-                    the<BaseAppModuleExtension>()
-                }
+                pluginManager.hasPlugin("com.android.application") -> the<BaseAppModuleExtension>()
+                pluginManager.hasPlugin("com.android.library") -> the<LibraryExtension>()
+                else -> TODO("This plugin is dependent on either bilibilias.android.application or bilibilias.android.library. Apply one of those plugins first.")
+            }
 
-                pluginManager.hasPlugin("com.android.library") -> {
-                    configureJacoco(the<LibraryAndroidComponentsExtension>())
-                    the<LibraryExtension>()
-                }
-
-                else -> TODO("Need to apply bilibilias.android.application or bilibilias.android.library firstly.")
+            val jacocoExtension: AndroidComponentsExtension<*, *, *> = when {
+                pluginManager.hasPlugin("com.android.application") -> the<ApplicationAndroidComponentsExtension>()
+                pluginManager.hasPlugin("com.android.library") -> the<LibraryAndroidComponentsExtension>()
+                else -> TODO("This plugin is dependent on either bilibilias.android.application or bilibilias.android.library. Apply one of those plugins first.")
             }
 
             androidExtension.buildTypes.configureEach {
                 enableAndroidTestCoverage = true
                 enableUnitTestCoverage = true
             }
+
+            configureJacoco(jacocoExtension)
         }
     }
 }
