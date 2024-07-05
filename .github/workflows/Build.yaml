@@ -284,14 +284,8 @@ jobs:
           ./generateModuleGraphs.sh --exclude-module :benchmarks \
           --exclude-module :lint \
           --exclude-module :ui-test-hilt-manifest
-      - name: test
-        run: |
-          cd 'docs/images/graphs'
-          cat 'dep_graph_app.svg'
 
-      - name: Push New Module Graphs
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Upload Graphs
+        uses: actions/upload-artifact@v4
         with:
-          file_pattern: 'docs/images/graphs/dep_graph_*.svg'
-          disable_globbing: true
-          commit_message: "🤖 Updates module graphs"
+          path: 'docs/images/graphs/'
