@@ -265,9 +265,10 @@ jobs:
           gradle-home-cache-cleanup: false
 
       - name: Install Package
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.2
-        with:
-          packages: graphviz grep ggrep
+#        uses: awalsh128/cache-apt-pkgs-action@v1.4.2
+#        with:
+#          packages: graphviz grep ggrep
+        run: apt-get install graphviz
       - uses: actions/setup-node@v4
         with:
           node-version: 21.7.3
