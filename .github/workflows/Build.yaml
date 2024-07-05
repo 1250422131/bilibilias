@@ -270,7 +270,7 @@ jobs:
           packages: graphviz grep ggrep
       - uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: 21.7.3
       - run: npm install --no-fund -g svgo
 
       - name: Generate Module Graphs And README
