@@ -266,8 +266,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          validate-wrappers: true
-          gradle-home-cache-cleanup: true
+          validate-wrappers: false
+          gradle-home-cache-cleanup: false
 
       - name: Install Package
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
@@ -284,6 +284,10 @@ jobs:
           ./generateModuleGraphs.sh --exclude-module :benchmarks \
           --exclude-module :lint \
           --exclude-module :ui-test-hilt-manifest
+      - name: test
+        run: |
+          cd 'docs/images/graphs'
+          cat 'dep_graph_app.svg'
 
       - name: Push New Module Graphs
         uses: stefanzweifel/git-auto-commit-action@v5
