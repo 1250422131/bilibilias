@@ -6,9 +6,6 @@ plugins {
 
 android {
     namespace = "com.imcys.bilibilias.core.ui"
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 }
 
 dependencies {
@@ -19,10 +16,7 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-
     androidTestImplementation(projects.core.testing)
     androidTestImplementation(testFixtures(projects.core.model))
+    androidTestImplementation(libs.bundles.androidx.compose.ui.test)
 }

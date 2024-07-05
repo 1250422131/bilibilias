@@ -17,9 +17,10 @@ dependencies {
 
     implementation(libs.qrose)
 
-    testImplementation(projects.core.testing)
     testImplementation(testFixtures(projects.core.data))
-
-    androidTestImplementation(projects.core.testing)
     androidTestImplementation(testFixtures(projects.core.model))
+
+    testImplementation(projects.core.testing)
+    androidTestImplementation(libs.bundles.androidx.compose.ui.test)
+    androidTestImplementation(projects.core.testing)
 }

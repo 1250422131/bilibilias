@@ -14,10 +14,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 apply("bilibilias.android.hilt")
             }
             extensions.configure<LibraryExtension> {
-                defaultConfig {
-                    testInstrumentationRunner =
-                        "com.imcys.bilibilias.core.testing.AsTestRunner"
-                }
                 testOptions.animationsDisabled = true
                 configureGradleManagedDevices(this)
             }

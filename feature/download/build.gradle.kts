@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.core.download)
     implementation(projects.core.database)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
+    testImplementation(projects.core.testing)
+    androidTestImplementation(libs.bundles.androidx.compose.ui.test)
+    androidTestImplementation(projects.core.testing)
 }

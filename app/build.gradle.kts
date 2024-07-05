@@ -123,6 +123,7 @@ dependencies {
     testDemoImplementation(projects.core.screenshotTesting)
     testDemoImplementation(testFixtures(projects.core.data))
 
+    androidTestImplementation(kotlin("test"))
     androidTestImplementation(projects.core.testing)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test)
