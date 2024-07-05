@@ -246,7 +246,7 @@ jobs:
 
   generateModuleGraphs:
     name: 'generate module graphs'
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
