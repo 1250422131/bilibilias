@@ -76,32 +76,32 @@ jobs:
           disable_globbing: true
           commit_message: "🤖 Updates baselines for Dependency Guard"
 
-      #      - name: Run all local screenshot tests (Roborazzi)
-      #        id: screenshotsverify
-      #        continue-on-error: true
-      #        run: ./gradlew verifyRoborazziDemoDebug
+      - name: Run all local screenshot tests (Roborazzi)
+        id: screenshotsverify
+        continue-on-error: true
+        run: ./gradlew verifyRoborazziDemoDebug
 
-      #      - name: Prevent pushing new screenshots if this is a fork
-      #        id: checkfork_screenshots
-      #        continue-on-error: false
-      #        if: steps.screenshotsverify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
-      #        run: |
-      #          echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
+      - name: Prevent pushing new screenshots if this is a fork
+        id: checkfork_screenshots
+        continue-on-error: false
+        if: steps.screenshotsverify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
 
       # Runs if previous job failed
-      #      - name: Generate new screenshots if verification failed and it's a PR
-      #        id: screenshotsrecord
-      #        if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
-      #        run: |
-      #          ./gradlew recordRoborazziDemoDebug
+      - name: Generate new screenshots if verification failed and it's a PR
+        id: screenshotsrecord
+        if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
+        run: |
+          ./gradlew recordRoborazziDemoDebug
 
-      #      - name: Push new screenshots if available
-      #        uses: stefanzweifel/git-auto-commit-action@v5
-      #        if: steps.screenshotsrecord.outcome == 'success'
-      #        with:
-      #          file_pattern: '*/*.png'
-      #          disable_globbing: true
-      #          commit_message: "🤖 Updates screenshots"
+      - name: Push new screenshots if available
+        uses: stefanzweifel/git-auto-commit-action@v5
+        if: steps.screenshotsrecord.outcome == 'success'
+        with:
+          file_pattern: '*/*.png'
+          disable_globbing: true
+          commit_message: "🤖 Updates screenshots"
 
       # Run local tests after screenshot tests to avoid wrong UP-TO-DATE. TODO: Ignore screenshots.
       - name: Run local tests and create report
@@ -131,12 +131,12 @@ jobs:
           name: local-test-results
           path: '**/build/test-results/test*UnitTest/**.xml'
 
-      #      - name: Upload screenshot results (PNG)
-      #        if: always()
-      #        uses: actions/upload-artifact@v4
-      #        with:
-      #          name: screenshot-test-results
-      #          path: '**/build/outputs/roborazzi/*_compare.png'
+      - name: Upload screenshot results (PNG)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-results
+          path: '**/build/outputs/roborazzi/*_compare.png'
 
       - name: Check lint
         run: ./gradlew :app:lintProdRelease :lint:lint
@@ -284,3 +284,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: 'docs/images/graphs/'
+
+      - name: test
+        run: |
+          cd app
+          ls
+          cat README.md
