@@ -14,46 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 class PreviewDownloadComponent : DownloadComponent {
     private val testList = persistentListOf(
-        DownloadTaskEntity(
-            "0".toUri(),
-            0,
-            "0",
-            0,
-            FileType.AUDIO,
-            "subtitle",
-            "title",
-            id = 0
-        ),
-        DownloadTaskEntity(
-            "1".toUri(),
-            1,
-            "1",
-            1,
-            FileType.AUDIO,
-            "subtitle",
-            "title",
-            id = 1
-        ),
-        DownloadTaskEntity(
-            "2".toUri(),
-            2,
-            "2",
-            2,
-            FileType.AUDIO,
-            "subtitle",
-            "title",
-            id = 2
-        ),
-        DownloadTaskEntity(
-            "3".toUri(),
-            3,
-            "3",
-            3,
-            FileType.VIDEO,
-            "subtitle",
-            "title",
-            id = 3
-        )
+        DownloadTaskEntity.createTestDownloadTaskEntity(),
+        DownloadTaskEntity.createTestDownloadTaskEntity(),
+        DownloadTaskEntity.createTestDownloadTaskEntity(),
+        DownloadTaskEntity.createTestDownloadTaskEntity(),
     )
     override val models: StateFlow<Model> = MutableStateFlow(
         Model(persistentListOf(testList), true)
