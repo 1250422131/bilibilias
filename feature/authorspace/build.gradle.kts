@@ -12,11 +12,11 @@ android {
 dependencies {
     implementation(projects.core.network)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     testImplementation(libs.androidx.paging.common)
+
+    testImplementation(projects.core.testing)
+    androidTestImplementation(libs.bundles.androidx.compose.ui.test)
+    androidTestImplementation(projects.core.testing)
 }

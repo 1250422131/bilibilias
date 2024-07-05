@@ -245,12 +245,8 @@ jobs:
           path: '**/build/reports/jacoco/'
 
   generateModuleGraphs:
-    if: false
     name: 'generate module graphs'
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
+    runs-on: ubuntu-lates
 
     steps:
       - name: Checkout

@@ -3,12 +3,16 @@
     alias(libs.plugins.bilibilias.android.compose)
     alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.android.testoptions)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
     namespace = "com.imcys.bilibilias.core.designsystem"
     buildFeatures {
         buildConfig = true
+    }
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
@@ -29,9 +33,11 @@ dependencies {
     api(libs.dokar.sheets)
 
     testImplementation(libs.androidx.compose.ui.test)
+    testImplementation(libs.androidx.compose.ui.testManifest)
+
     testImplementation(libs.hilt.android.testing)
     testImplementation(libs.robolectric)
-    testImplementation(libs.roborazzi)
     testImplementation(projects.core.screenshotTesting)
-    testImplementation(projects.core.testing)
+
+    androidTestImplementation(libs.bundles.androidx.compose.ui.test)
 }
