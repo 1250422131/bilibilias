@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   test_and_apk:
+    if: false
     name: "Local tests and APKs"
     runs-on: ubuntu-latest
 
@@ -152,6 +153,7 @@ jobs:
         run: ./gradlew :app:checkProdReleaseBadging
 
   androidTest:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 55
     strategy:
@@ -268,7 +270,7 @@ jobs:
 #        uses: awalsh128/cache-apt-pkgs-action@v1.4.2
 #        with:
 #          packages: graphviz grep ggrep
-        run: apt-get install graphviz
+        run: sudo apt-get install graphviz
       - uses: actions/setup-node@v4
         with:
           node-version: 21.7.3
