@@ -258,14 +258,11 @@ jobs:
           distribution: 'zulu'
           java-version: 21
 
-      - uses: ./.github/actions/jemalloc-linux
-        id: cache-jemalloc
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          validate-wrappers: true
-          gradle-home-cache-cleanup: true
+          validate-wrappers: false
+          gradle-home-cache-cleanup: false
 
       - name: Install
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
