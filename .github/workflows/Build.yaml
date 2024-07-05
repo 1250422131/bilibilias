@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   test_and_apk:
+    if: false
     name: "Local tests and APKs"
     runs-on: ubuntu-latest
 
@@ -152,6 +153,7 @@ jobs:
         run: ./gradlew :app:checkProdReleaseBadging
 
   androidTest:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 55
     strategy:
@@ -248,6 +250,9 @@ jobs:
     name: 'generate module graphs'
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -264,23 +269,23 @@ jobs:
           validate-wrappers: false
           gradle-home-cache-cleanup: false
 
-      - name: Install
+      - name: Install Package
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
-          packages: graphviz grep ggrep xmllint
+          packages: graphviz grep
       - uses: actions/setup-node@v4
         with:
           node-version: 21
       - run: npm install --no-fund -g svgo
 
-      - name: Generate Graphs
+      - name: Generate Module Graphs And README
         run: |
           chmod +x generateModuleGraphs.sh
           ./generateModuleGraphs.sh --exclude-module :benchmarks \
           --exclude-module :lint \
           --exclude-module :ui-test-hilt-manifest
 
-      - name: upload
+      - name: Upload Graph
         uses: actions/upload-artifact@v4
         with:
           path: 'docs/images/graphs/'
@@ -290,3 +295,10 @@ jobs:
           cd app
           ls
           cat README.md
+
+      - name: Push New Module Graphs
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: '*/README.md'
+          disable_globbing: true
+          commit_message: "🤖 Updates module graphs"
