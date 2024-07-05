@@ -272,7 +272,7 @@ jobs:
       - name: Install Package
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
         with:
-          packages: graphviz grep
+          packages: graphviz grep ggrep
       - uses: actions/setup-node@v4
         with:
           node-version: 21
@@ -292,6 +292,6 @@ jobs:
       - name: Push New Module Graphs
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          file_pattern: '*/README.md docs/images/graphs/dep_graph_*.svg'
+          file_pattern: 'docs/images/graphs/dep_graph_*.svg'
           disable_globbing: true
           commit_message: "🤖 Updates module graphs"
