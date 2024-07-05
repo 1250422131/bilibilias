@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.database.model
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -13,6 +14,7 @@ import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import java.util.UUID
 
 @Entity(
     tableName = "download_task_list",
@@ -39,7 +41,7 @@ data class DownloadTaskEntity(
 
     @Ignore
     val isCompelete = bytesSentTotal == contentLength
-    private fun progressCalculation():Float = when (contentLength) {
+    private fun progressCalculation(): Float = when (contentLength) {
         UNKNOWN_TOTAL_OFFSET -> UNKNOWN_PROGRESS
         0L -> if (bytesSentTotal == 0L) 1f else UNKNOWN_PROGRESS
         else -> bytesSentTotal * 1.0f / contentLength
@@ -52,6 +54,20 @@ data class DownloadTaskEntity(
     companion object {
         const val UNKNOWN_TOTAL_OFFSET = -1L
         const val UNKNOWN_PROGRESS = 0f
+        fun createTestDownloadTaskEntity(): DownloadTaskEntity {
+            val uuid = UUID.randomUUID()
+            val uuidString = uuid.toString()
+            val uuidInt = uuid.timestamp()
+            return DownloadTaskEntity(
+                uuidString.toUri(),
+                uuidInt,
+                uuidString,
+                uuidInt,
+                FileType.AUDIO,
+                "subtitle",
+                "title",
+                id = uuidInt.toInt(),
+            )
+        }
     }
-
 }
