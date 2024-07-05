@@ -263,11 +263,14 @@ jobs:
           distribution: 'zulu'
           java-version: 21
 
+      - uses: ./.github/actions/jemalloc-linux
+        id: cache-jemalloc
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          validate-wrappers: false
-          gradle-home-cache-cleanup: false
+          validate-wrappers: true
+          gradle-home-cache-cleanup: true
 
       - name: Install Package
         uses: awalsh128/cache-apt-pkgs-action@v1.4.2
@@ -285,20 +288,9 @@ jobs:
           --exclude-module :lint \
           --exclude-module :ui-test-hilt-manifest
 
-      - name: Upload Graph
-        uses: actions/upload-artifact@v4
-        with:
-          path: 'docs/images/graphs/'
-
-      - name: test
-        run: |
-          cd app
-          ls
-          cat README.md
-
       - name: Push New Module Graphs
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          file_pattern: '*/README.md'
+          file_pattern: '*/README.md' 'docs/images/graphs/dep_graph_*.svg'
           disable_globbing: true
           commit_message: "🤖 Updates module graphs"
