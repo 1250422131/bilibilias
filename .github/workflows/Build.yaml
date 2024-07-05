@@ -12,7 +12,6 @@ concurrency:
 
 jobs:
   test_and_apk:
-    if: false
     name: "Local tests and APKs"
     runs-on: ubuntu-latest
 
@@ -153,7 +152,6 @@ jobs:
         run: ./gradlew :app:checkProdReleaseBadging
 
   androidTest:
-    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 55
     strategy:
