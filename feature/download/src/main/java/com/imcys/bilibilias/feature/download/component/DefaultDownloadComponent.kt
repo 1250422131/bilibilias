@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
@@ -65,7 +66,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
     override fun models(events: Flow<Event>): Model {
         return PresentationLogic(
             events,
-            taskDao.findAllTaskByGroupCid()
+            taskDao.findAllTaskByGroupCid(),
         )
     }
 
@@ -74,9 +75,11 @@ class DefaultDownloadComponent @AssistedInject constructor(
         events: Flow<Event>,
         findAllTaskByGroupCid: Flow<Map<Cid, List<DownloadTaskEntity>>>,
     ): Model {
-        val state by findAllTaskByGroupCid.map {
-            Napier.d { it.values.joinToString("\n") }
-            it.values.map { it.toImmutableList() }.toImmutableList()
+        val state by remember {
+            findAllTaskByGroupCid.map {
+                Napier.d { it.values.joinToString("\n") }
+                it.values.map { it.toImmutableList() }.toImmutableList()
+            }
         }.collectAsState(initial = persistentListOf())
 
         var canDelete by rememberSaveable { mutableStateOf(false) }
@@ -95,6 +98,7 @@ class DefaultDownloadComponent @AssistedInject constructor(
                         canDelete = true
                         selectedDeletes.clear()
                     }
+
                     Event.CloseDeleteOption -> canDelete = false
                 }
             }
