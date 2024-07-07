@@ -61,7 +61,7 @@ fun AsApp(
     appState: AsAppState,
     component: RootComponent,
     modifier: Modifier = Modifier,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val shouldShowGradientBackground =
         component.currentTopLevelDestination == TopLevelDestination.TOOL
@@ -127,17 +127,17 @@ internal fun AsApp(
             item(
                 selected = activeComponent is RootComponent.Child.HomeChild,
                 onClick = component::onHomeTabClicked,
-                destination = TopLevelDestination.HOME
+                destination = TopLevelDestination.HOME,
             )
             item(
                 selected = activeComponent is RootComponent.Child.ToolChild,
                 onClick = component::onToolTabClicked,
-                destination = TopLevelDestination.TOOL
+                destination = TopLevelDestination.TOOL,
             )
             item(
                 selected = activeComponent is RootComponent.Child.DownloadChild,
                 onClick = component::onDownloadTabClicked,
-                destination = TopLevelDestination.DOWNLOAD
+                destination = TopLevelDestination.DOWNLOAD,
             )
         },
         shouldShowBottomBar = component.shouldShowBottomBar,
@@ -154,7 +154,7 @@ internal fun AsApp(
             snackbarHost = {
                 Toaster(
                     state = toasterState,
-                    alignment = Alignment.TopCenter
+                    alignment = Alignment.TopCenter,
                 )
             },
         ) { innerPadding ->
@@ -182,7 +182,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
     Children(
         stack = component.stack,
         modifier = modifier,
-        animation = stackAnimation(slide() + fade()),
+        animation = stackAnimation { _ -> slide() + fade() },
     ) {
         when (val child = it.instance) {
             is RootComponent.Child.HomeChild ->
@@ -192,26 +192,26 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                 ToolContent(
                     component = child.component,
                     navigationToSettings = component::onSettingsTabClicked,
-                    navigationToAuthorSpace = component::onAuthorSpaceTabClicked
+                    navigationToAuthorSpace = component::onAuthorSpaceTabClicked,
                 )
 
             is RootComponent.Child.DownloadChild ->
                 DownloadContent(
                     component = child.component,
-                    navigationToPlayer = component::onPlayedTabClicked
+                    navigationToPlayer = component::onPlayedTabClicked,
                 )
 
             RootComponent.Child.UserChild -> Unit
             is RootComponent.Child.PlayerChild -> PlayerContent(component = child.component)
             is RootComponent.Child.LoginChild -> LoginContent(
                 component = child.component,
-                navigationToTool = component::onToolTabClicked
+                navigationToTool = component::onToolTabClicked,
             )
 
             is RootComponent.Child.SplashChild -> SplashContent(
                 component = child.component,
                 navigationToLogin = component::onLoginTabClicked,
-                navigationToTool = component::onHomeTabClicked
+                navigationToTool = component::onHomeTabClicked,
             )
 
             is RootComponent.Child.SettingsChild -> SettingContent(component = child.component)
