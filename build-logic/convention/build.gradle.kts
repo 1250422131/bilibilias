@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
 }
 
 tasks {
@@ -85,6 +86,10 @@ gradlePlugin {
         register("androidApplicationTestOptionsUnitTests") {
             id = "bilibilias.android.testoptions"
             implementationClass = "AndroidTestOptionsUnitTestsConventionPlugin"
+        }
+        register("androidDetekt") {
+            id = "bilibilias.kotlin.detekt"
+            implementationClass = "KotlinDetektConventionPlugin"
         }
     }
 }
