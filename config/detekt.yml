@@ -509,7 +509,7 @@ style:
   BracesOnIfStatements:
     active: false
     singleLine: 'never'
-    multiLine: 'consistent'
+    multiLine: 'always'
   BracesOnWhenStatements:
     active: false
     singleLine: 'necessary'
@@ -652,7 +652,7 @@ style:
   NestedClassesVisibility:
     active: true
   NewLineAtEndOfFile:
-    active: false
+    active: true
   NoTabs:
     active: false
   NullableBooleanCheck:
@@ -783,3 +783,334 @@ style:
     active: true
     excludeImports:
       - 'java.util.*'
+
+formatting:
+  active: true
+  android: false
+  autoCorrect: true
+  AnnotationOnSeparateLine:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  AnnotationSpacing:
+    active: true
+    autoCorrect: true
+  ArgumentListWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    maxLineLength: 120
+  BlockCommentInitialStarAlignment:
+    active: true
+    autoCorrect: true
+  ChainWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  ClassName:
+    active: false
+  CommentSpacing:
+    active: true
+    autoCorrect: true
+  CommentWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  ContextReceiverMapping:
+    active: false
+    autoCorrect: true
+    maxLineLength: 120
+    indentSize: 4
+  DiscouragedCommentLocation:
+    active: false
+    autoCorrect: true
+  EnumEntryNameCase:
+    active: true
+    autoCorrect: true
+  EnumWrapping:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  Filename:
+    active: true
+  FinalNewline:
+    active: true
+    autoCorrect: true
+    insertFinalNewLine: true
+  FunKeywordSpacing:
+    active: true
+    autoCorrect: true
+  FunctionName:
+    active: false
+  FunctionReturnTypeSpacing:
+    active: true
+    autoCorrect: true
+    maxLineLength: 120
+  FunctionSignature:
+    active: false
+    autoCorrect: true
+    forceMultilineWhenParameterCountGreaterOrEqualThan: 2147483647
+    functionBodyExpressionWrapping: 'default'
+    maxLineLength: 120
+    indentSize: 4
+  FunctionStartOfBodySpacing:
+    active: true
+    autoCorrect: true
+  FunctionTypeReferenceSpacing:
+    active: true
+    autoCorrect: true
+  IfElseBracing:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  IfElseWrapping:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  ImportOrdering:
+    active: true
+    autoCorrect: true
+    layout: '*,java.**,javax.**,kotlin.**,^'
+  Indentation:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  KdocWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  MaximumLineLength:
+    active: true
+    maxLineLength: 120
+    ignoreBackTickedIdentifier: false
+  ModifierListSpacing:
+    active: true
+    autoCorrect: true
+  ModifierOrdering:
+    active: true
+    autoCorrect: true
+  MultiLineIfElse:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  MultilineExpressionWrapping:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  NoBlankLineBeforeRbrace:
+    active: true
+    autoCorrect: true
+  NoBlankLineInList:
+    active: false
+    autoCorrect: true
+  NoBlankLinesInChainedMethodCalls:
+    active: true
+    autoCorrect: true
+  NoConsecutiveBlankLines:
+    active: true
+    autoCorrect: true
+  NoConsecutiveComments:
+    active: false
+  NoEmptyClassBody:
+    active: true
+    autoCorrect: true
+  NoEmptyFirstLineInClassBody:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  NoEmptyFirstLineInMethodBlock:
+    active: true
+    autoCorrect: true
+  NoLineBreakAfterElse:
+    active: true
+    autoCorrect: true
+  NoLineBreakBeforeAssignment:
+    active: true
+    autoCorrect: true
+  NoMultipleSpaces:
+    active: true
+    autoCorrect: true
+  NoSemicolons:
+    active: true
+    autoCorrect: true
+  NoSingleLineBlockComment:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  NoTrailingSpaces:
+    active: true
+    autoCorrect: true
+  NoUnitReturn:
+    active: true
+    autoCorrect: true
+  NoUnusedImports:
+    active: true
+    autoCorrect: true
+  NoWildcardImports:
+    active: true
+    packagesToUseImportOnDemandProperty: 'java.util.*,kotlinx.android.synthetic.**'
+  NullableTypeSpacing:
+    active: true
+    autoCorrect: true
+  PackageName:
+    active: true
+    autoCorrect: true
+  ParameterListSpacing:
+    active: false
+    autoCorrect: true
+  ParameterListWrapping:
+    active: true
+    autoCorrect: true
+    maxLineLength: 120
+    indentSize: 4
+  ParameterWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    maxLineLength: 120
+  PropertyName:
+    active: false
+  PropertyWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    maxLineLength: 120
+  SpacingAroundAngleBrackets:
+    active: true
+    autoCorrect: true
+  SpacingAroundColon:
+    active: true
+    autoCorrect: true
+  SpacingAroundComma:
+    active: true
+    autoCorrect: true
+  SpacingAroundCurly:
+    active: true
+    autoCorrect: true
+  SpacingAroundDot:
+    active: true
+    autoCorrect: true
+  SpacingAroundDoubleColon:
+    active: true
+    autoCorrect: true
+  SpacingAroundKeyword:
+    active: true
+    autoCorrect: true
+  SpacingAroundOperators:
+    active: true
+    autoCorrect: true
+  SpacingAroundParens:
+    active: true
+    autoCorrect: true
+  SpacingAroundRangeOperator:
+    active: true
+    autoCorrect: true
+  SpacingAroundUnaryOperator:
+    active: true
+    autoCorrect: true
+  SpacingBetweenDeclarationsWithAnnotations:
+    active: true
+    autoCorrect: true
+  SpacingBetweenDeclarationsWithComments:
+    active: true
+    autoCorrect: true
+  SpacingBetweenFunctionNameAndOpeningParenthesis:
+    active: true
+    autoCorrect: true
+  StringTemplate:
+    active: true
+    autoCorrect: true
+  StringTemplateIndent:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  TrailingCommaOnCallSite:
+    active: false
+    autoCorrect: true
+    useTrailingCommaOnCallSite: true
+  TrailingCommaOnDeclarationSite:
+    active: false
+    autoCorrect: true
+    useTrailingCommaOnDeclarationSite: true
+  TryCatchFinallySpacing:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  TypeArgumentListSpacing:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  TypeParameterListSpacing:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+  UnnecessaryParenthesesBeforeTrailingLambda:
+    active: true
+    autoCorrect: true
+  Wrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    maxLineLength: 120
+
+Compose:
+  ComposableAnnotationNaming:
+    active: true
+  ComposableNaming:
+    active: true
+  ComposableParamOrder:
+    active: true
+  CompositionLocalAllowlist:
+    active: true
+  CompositionLocalNaming:
+    active: true
+  ContentEmitterReturningValues:
+    active: true
+  ContentTrailingLambda:
+    active: true
+  DefaultsVisibility:
+    active: true
+  LambdaParameterInRestartableEffect:
+    active: true
+  Material2:
+    active: false
+  ModifierClickableOrder:
+    active: true
+  ModifierComposable:
+    active: true
+  ModifierComposed:
+    active: true
+  ModifierMissing:
+    active: true
+  ModifierNaming:
+    active: true
+  ModifierNotUsedAtRoot:
+    active: true
+  ModifierReused:
+    active: true
+  ModifierWithoutDefault:
+    active: true
+  MultipleEmitters:
+    active: true
+  MutableParams:
+    active: true
+  MutableStateAutoboxing:
+    active: true
+  MutableStateParam:
+    active: true
+  ParameterNaming:
+    active: true
+  PreviewAnnotationNaming:
+    active: true
+  PreviewPublic:
+    active: true
+  RememberMissing:
+    active: true
+  RememberContentMissing:
+    active: true
+  UnstableCollections:
+    active: false
+  ViewModelForwarding:
+    active: true
+  ViewModelInjection:
+    active: true

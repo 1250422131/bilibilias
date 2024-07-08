@@ -12,15 +12,3 @@ val Project.libs
 fun Project.applyPlugin(alias: String) {
     apply(plugin = libs.findPlugin(alias).get().get().pluginId)
 }
-
-internal fun Project.version(key: String): String = extensions
-    .getByType<VersionCatalogsExtension>()
-    .named("libs")
-    .findVersion(key)
-    .get()
-    .requiredVersion
-
-internal fun Project.versionInt(key: String) = version(key).toInt()
-
-internal val Project.COMPOSE_VERSION get() = version("compose")
-internal val Project.ANDROID_COMPILE_SDK_VERSION get() = versionInt("android.compilesdk")

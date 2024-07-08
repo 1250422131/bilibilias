@@ -19,6 +19,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
                 apply("bilibilias.android.lint")
+                apply("bilibilias.kotlin.detekt")
             }
 
             extensions.configure<LibraryExtension> {
