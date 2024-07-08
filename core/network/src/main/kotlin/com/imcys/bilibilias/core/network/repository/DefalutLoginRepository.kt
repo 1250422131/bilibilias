@@ -27,17 +27,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class LoginRepository @Inject constructor(
+class DefalutLoginRepository @Inject constructor(
     private val client: HttpClient,
     private val loginInfoDataSource: LoginInfoDataSource,
     @ApplicationContext private val context: Context,
     private val json: Json,
-) {
-    suspend fun 获取二维码(): QrcodeGenerate {
+) : LoginRepository {
+    override suspend fun 获取二维码(): QrcodeGenerate {
         return client.get(BilibiliApi.WEB_QRCODE_GENERATE).body<QrcodeGenerate>()
     }
 
-    suspend fun 轮询登录(key: String): QrcodePoll {
+    override suspend fun 轮询登录(key: String): QrcodePoll {
         val response = client.get(BilibiliApi.WEB_QRCODE_POLL) {
             parameter("qrcode_key", key)
         }.body<QrcodePoll>()
@@ -48,23 +48,23 @@ class LoginRepository @Inject constructor(
         return response
     }
 
-    suspend fun 导航栏用户信息(): NavigationBar {
+    override suspend fun 导航栏用户信息(): NavigationBar {
         return client.get(BilibiliApi.NAV_BAR).body()
     }
 
-    suspend fun exitLogin() {
+    override suspend fun exitLogin() {
         val cookie = loginInfoDataSource.cookieStore.first()["bili_jct"]
         client.post(BilibiliApi.EXIT) {
             parameter("biliCSRF", cookie?.value_)
         }
     }
 
-    suspend fun getBilibiliHome() {
+    override suspend fun getBilibiliHome() {
         client.get(BILIBILI_URL)
 //        activeBuvid()
     }
 
-    suspend fun activeBuvid() {
+    override suspend fun activeBuvid() {
         val buvids = client.get("x/frontend/finger/spi").body<Buvids>()
         loginInfoDataSource.setFinger("buvid3", buvids.b3)
         loginInfoDataSource.setFinger("buvid4", buvids.b4)
