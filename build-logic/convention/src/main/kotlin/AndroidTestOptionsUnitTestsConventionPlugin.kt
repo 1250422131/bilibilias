@@ -12,7 +12,7 @@ class AndroidTestOptionsUnitTestsConventionPlugin : Plugin<Project> {
         with(target) {
             val extension: CommonExtension<*, *, *, *, *, *> = when {
                 pluginManager.hasPlugin("com.android.application") -> the<ApplicationExtension>()
-                pluginManager.hasPlugin("com.android.library") -> the<com.android.build.api.dsl.LibraryExtension>()
+                pluginManager.hasPlugin("com.android.library") -> the<LibraryExtension>()
                 else -> TODO("This plugin is dependent on either bilibilias.android.application or bilibilias.android.library. Apply one of those plugins first.")
             }
             configureTestOptionsUnitTests(extension)
