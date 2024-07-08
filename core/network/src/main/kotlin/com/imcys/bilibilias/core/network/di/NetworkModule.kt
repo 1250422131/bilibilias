@@ -107,7 +107,7 @@ class NetworkModule {
     @Singleton
     fun provideBaseOkhttpClient(
         executorService: ExecutorService,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addNetworkInterceptor { chain ->
@@ -136,10 +136,10 @@ class NetworkModule {
         transform: ClientPlugin<Unit>,
         asCookiesStorage: AsCookiesStorage,
         loginInfoDataSource: LoginInfoDataSource,
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
     ): HttpClient {
         val client = HttpClient(
-            OkHttp.create { preconfigured = okHttpClient }
+            OkHttp.create { preconfigured = okHttpClient },
         ) {
             defaultRequest {
                 url(BilibiliApi.API_BILIBILI)
@@ -212,7 +212,7 @@ class NetworkModule {
     @Singleton
     fun provideTransformData(
         json: Json,
-        loginInfoDataSource: LoginInfoDataSource
+        loginInfoDataSource: LoginInfoDataSource,
     ): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { request, content, requestedType ->
             if (request.request.url.host == BiliBiliAsApi.API_HOST) return@transformResponseBody null
@@ -224,7 +224,7 @@ class NetworkModule {
 
             val box = json.decodeFromStream(
                 Box.serializer(serializer(requestedType.kotlinType!!)),
-                content.toInputStream()
+                content.toInputStream(),
             )
             if (box.code == ACCOUNT_NOT_LOGGED_IN) {
                 loginInfoDataSource.setLoginState(false)
@@ -235,7 +235,7 @@ class NetworkModule {
                     box.message +
                             "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
                             "\n链接: ${request.request.url}",
-                    box.data?.ofMap()?.print()
+                    box.data?.ofMap()?.print(),
                 )
             }
             box.data
