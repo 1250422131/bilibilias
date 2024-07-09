@@ -21,13 +21,14 @@ striktCore = "0.34.0"
 tencentBugly = "4.1.9.3"
 coil = "2.6.0"
 androidxCollection = "1.4.0"
-datastore = "1.1.1"
+androidxDataStore = "1.1.1"
 decompose = "3.1.0"
 coreKtx = "1.13.1"
 detekt = "1.23.6"
 devappx = "2.4.6"
 ffmpegKitFull = "6.0-2"
 hilt = "2.51.1"
+hiltExt = "1.2.0"
 jiaozivideoplayer = "7.7.2.3300"
 junit = "4.13.2"
 jxl = "2.6.12"
@@ -79,7 +80,8 @@ android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
-androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-dataStore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "androidxDataStore" }
 
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPaging" }
@@ -180,8 +182,11 @@ detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-form
 detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version = "0.4.5" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
 
@@ -271,16 +276,16 @@ bilibilias-android-jacoco = { id = "bilibilias.android.jacoco", version = "unspe
 bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
 bilibilias-android-application-bugly = { id = "bilibilias.android.application.bugly", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
-bilibilias-android-hilt = { id = "bilibilias.android.hilt", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }
 bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecified" }
 bilibilias-android-room = { id = "bilibilias.android.room", version = "unspecified" }
 bilibilias-android-test = { id = "bilibilias.android.test", version = "unspecified" }
 bilibilias-jvm-library = { id = "bilibilias.jvm.library", version = "unspecified" }
-bilibilias-multiplatform-decompose = { id = "bilibilias.multiplatform.decompose", version = "unspecified" }
-bilibilias-multiplatform-sqlLin = { id = "bilibilias.multiplatform.sqlLin", version = "unspecified" }
 bilibilias-android-testoptions = { id = "bilibilias.android.testoptions", version = "unspecified" }
-bilibilias-kotlin-detekt = { id = "bilibilias.kotlin.detekt", version = "unspecified" }
+bilibilias-hilt = { id = "bilibilias.hilt", version = "unspecified" }
+bilibilias-decompose = { id = "bilibilias.decompose", version = "unspecified" }
+bilibilias-sqlLin = { id = "bilibilias.sqlLin", version = "unspecified" }
+bilibilias-detekt = { id = "bilibilias.detekt", version = "unspecified" }
 
 [bundles]
 androidx-compose-ui-test = ["androidx-compose-ui-test", "androidx-compose-ui-testManifest"]

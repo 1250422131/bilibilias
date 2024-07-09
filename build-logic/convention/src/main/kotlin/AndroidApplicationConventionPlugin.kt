@@ -18,7 +18,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             apply(plugin = "com.android.application")
             apply(plugin = "org.jetbrains.kotlin.android")
             applyPlugin("bilibilias.android.lint")
-            applyPlugin("bilibilias.kotlin.detekt")
+            applyPlugin("bilibilias.detekt")
             applyPlugin("dependencyGuard")
 
             extensions.configure<ApplicationExtension> {

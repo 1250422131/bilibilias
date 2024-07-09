@@ -1,6 +1,6 @@
 ﻿plugins {
     alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.hilt)
     kotlin("plugin.power-assert")
 }
 

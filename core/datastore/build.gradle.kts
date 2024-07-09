@@ -1,7 +1,7 @@
 ﻿plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.jacoco)
-    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.hilt)
 }
 
 android {
@@ -10,8 +10,7 @@ android {
 }
 
 dependencies {
-    api(libs.androidx.datastore)
-//    api(libs.androidx.dataStore.core)
+    api(libs.androidx.dataStore)
     api(projects.core.datastoreProto)
     api(projects.core.model)
 

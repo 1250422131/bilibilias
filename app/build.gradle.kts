@@ -6,9 +6,9 @@ plugins {
     alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.android.application.flavors)
     alias(libs.plugins.bilibilias.android.testoptions)
-    alias(libs.plugins.bilibilias.multiplatform.decompose)
+    alias(libs.plugins.bilibilias.decompose)
 //    alias(libs.plugins.bilibilias.android.application.bugly)
-    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.buildconfig)
 }
