@@ -31,17 +31,28 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureGradleManagedDevices(this)
                 // The resource prefix is derived from the module name,
                 // so resources inside ":core:module1" must be prefixed with "core_module1_"
-                resourcePrefix = path.split("""\W""".toRegex()).drop(1).distinct().joinToString(separator = "_").lowercase() + "_"
+                resourcePrefix =
+                    path.split("""\W""".toRegex()).drop(1).distinct().joinToString(separator = "_")
+                        .lowercase() + "_"
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 configurePrintApksTask(this)
                 disableUnnecessaryAndroidTests(target)
             }
             dependencies {
-                add("androidTestImplementation", kotlin("test"))
-                add("testImplementation", kotlin("test"))
+                add("testImplementation", libs.findLibrary("strikt.core").get())
+
+                add("testImplementation", libs.findLibrary("mockk").get())
+
+                add("androidTestImplementation", libs.findLibrary("mockk.android").get())
+                add("androidTestImplementation", libs.findLibrary("mockk.agent").get())
+                add("testImplementation", libs.findLibrary("mockk.android").get())
+                add("testImplementation", libs.findLibrary("mockk.agent").get())
 
                 add("implementation", libs.findLibrary("androidx.tracing.ktx").get())
+
+                add("androidTestImplementation", kotlin("test"))
+                add("testImplementation", kotlin("test"))
             }
         }
     }

@@ -20,12 +20,4 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(testFixtures(projects.core.data))
     implementation(testFixtures(projects.core.datastore))
-
-    testImplementation("io.strikt:strikt-core:0.34.0")
-    val mockkVersion = "1.13.11"
-    testImplementation("io.mockk:mockk:${mockkVersion}")
-    androidTestImplementation("io.mockk:mockk-android:${mockkVersion}")
-    androidTestImplementation("io.mockk:mockk-agent:${mockkVersion}")
-    testImplementation("io.mockk:mockk-android:${mockkVersion}")
-    testImplementation("io.mockk:mockk-agent:${mockkVersion}")
 }

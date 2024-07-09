@@ -15,7 +15,9 @@ gsyvideoplayer = "v8.6.0-release-jitpack"
 dokarSheets = "0.6.0-alpha03"
 androidxPaging = "3.3.0"
 androidxAppcompat = "1.7.0"
+mockk = "1.13.11"
 startupRuntime = "1.1.1"
+striktCore = "0.34.0"
 tencentBugly = "4.1.9.3"
 coil = "2.6.0"
 androidxCollection = "1.4.0"
@@ -103,11 +105,17 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+
 dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
 sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
 gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
 gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
+
+strikt-core = { module = "io.strikt:strikt-core", version.ref = "striktCore" }
 
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
 
