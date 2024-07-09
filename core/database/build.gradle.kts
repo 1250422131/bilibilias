@@ -1,9 +1,9 @@
 ﻿plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.jacoco)
-    alias(libs.plugins.bilibilias.android.hilt)
+    alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.bilibilias.android.room)
-    alias(libs.plugins.bilibilias.multiplatform.sqlLin)
+    alias(libs.plugins.bilibilias.sqlLin)
 }
 
 android {

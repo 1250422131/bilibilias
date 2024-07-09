@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.named
 
 // detektGenerateConfig
 // detektBaseline
-class KotlinDetektConventionPlugin : Plugin<Project> {
+class DetektConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply(plugin = "io.gitlab.arturbosch.detekt")

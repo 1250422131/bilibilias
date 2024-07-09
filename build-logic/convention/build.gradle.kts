@@ -51,17 +51,9 @@ gradlePlugin {
             id = "bilibilias.android.test"
             implementationClass = "AndroidTestConventionPlugin"
         }
-        register("androidHilt") {
-            id = "bilibilias.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-        }
         register("androidRoom") {
             id = "bilibilias.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
-        }
-        register("multiplatformSqlLin") {
-            id = "bilibilias.multiplatform.sqlLin"
-            implementationClass = "MultiplatformSqlLinConventionPlugin"
         }
         register("androidLint") {
             id = "bilibilias.android.lint"
@@ -70,10 +62,6 @@ gradlePlugin {
         register("jvmLibrary") {
             id = "bilibilias.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
-        }
-        register("multiplatformDecompose") {
-            id = "bilibilias.multiplatform.decompose"
-            implementationClass = "MultiplatformDecomposeConventionPlugin"
         }
         register("androidFlavors") {
             id = "bilibilias.android.application.flavors"
@@ -87,9 +75,21 @@ gradlePlugin {
             id = "bilibilias.android.testoptions"
             implementationClass = "AndroidTestOptionsUnitTestsConventionPlugin"
         }
-        register("androidDetekt") {
-            id = "bilibilias.kotlin.detekt"
-            implementationClass = "KotlinDetektConventionPlugin"
+        register("hilt") {
+            id = "bilibilias.hilt"
+            implementationClass = "HiltConventionPlugin"
+        }
+        register("decompose") {
+            id = "bilibilias.decompose"
+            implementationClass = "DecomposeConventionPlugin"
+        }
+        register("detekt") {
+            id = libs.plugins.bilibilias.detekt.get().pluginId
+            implementationClass = "DetektConventionPlugin"
+        }
+        register("sqlLin") {
+            id = "bilibilias.sqlLin"
+            implementationClass = "SqlLinConventionPlugin"
         }
     }
 }

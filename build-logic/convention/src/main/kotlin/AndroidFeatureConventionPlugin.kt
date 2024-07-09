@@ -11,7 +11,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply {
                 apply("bilibilias.android.library")
-                apply("bilibilias.android.hilt")
+                apply("bilibilias.hilt")
             }
             extensions.configure<LibraryExtension> {
                 testOptions.animationsDisabled = true

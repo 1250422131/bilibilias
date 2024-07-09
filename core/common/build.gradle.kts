@@ -1,11 +1,6 @@
 plugins {
-    alias(libs.plugins.bilibilias.android.library)
-    alias(libs.plugins.bilibilias.android.jacoco)
-    alias(libs.plugins.bilibilias.android.hilt)
-}
-
-android {
-    namespace = "com.imcys.bilibilias.core.common"
+    alias(libs.plugins.bilibilias.jvm.library)
+    alias(libs.plugins.bilibilias.hilt)
 }
 
 dependencies {
@@ -17,5 +12,7 @@ dependencies {
     api(libs.toaster)
     implementation(libs.kotlin.reflect)
 
-    api("io.github.oshai:kotlin-logging-jvm:7.0.0")
+    implementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+//    testImplementation(libs.turbine)
 }
