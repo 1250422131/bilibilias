@@ -40,7 +40,7 @@ kotlinxCollections = "0.3.7"
 kotlinxDatetime = "0.6.0"
 ksp = "2.0.0-1.0.22"
 ktor = "2.3.12"
-androidxLifecycle = "2.8.2"
+androidxLifecycle = "2.8.3"
 lottie = "6.4.1"
 media3Exoplayer = "1.3.1"
 monitor = "1.8.1"
@@ -73,7 +73,7 @@ moduleGraph = "2.5.0"
 secrets = "2.0.1"
 sqllin = "1.3.2"
 robolectric = "4.12.2"
-roborazzi = "1.7.0"
+roborazzi = "1.21.0"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
