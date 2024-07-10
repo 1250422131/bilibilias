@@ -48,12 +48,14 @@ class SnackbarErrorMonitor @Inject constructor(val networkMonitor: NetworkMonito
      */
     private fun addErrorMessage(
         error: String,
+        type: MessageType,
         duration: Duration,
         actionPerformed: (() -> Unit)?,
     ): String? {
         if (error.isNotBlank()) {
             val newError = ErrorMessage(
-                error,
+                message = error,
+                messageType = type,
                 duration = duration,
                 actionPerformed = actionPerformed,
             )
@@ -65,26 +67,29 @@ class SnackbarErrorMonitor @Inject constructor(val networkMonitor: NetworkMonito
 
     override fun addShortErrorMessage(
         error: String,
+        type: MessageType,
         label: String?,
         action: (() -> Unit)?,
     ): String? {
-        return addErrorMessage(error, MessageDuration.Short, action)
+        return addErrorMessage(error, type, MessageDuration.Short, action)
     }
 
     override fun addLongErrorMessage(
         error: String,
+        type: MessageType,
         label: String?,
         action: (() -> Unit)?,
     ): String? {
-        return addErrorMessage(error, MessageDuration.Long, action)
+        return addErrorMessage(error, type, MessageDuration.Long, action)
     }
 
     override fun addIndefiniteErrorMessage(
         error: String,
+        type: MessageType,
         label: String?,
         action: (() -> Unit)?,
     ): String? {
-        return addErrorMessage(error, MessageDuration.Indefinite, action)
+        return addErrorMessage(error, type, MessageDuration.Indefinite, action)
     }
 
     /**

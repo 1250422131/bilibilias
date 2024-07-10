@@ -5,7 +5,6 @@ import javax.inject.Inject
 
 class DefaultGroupTaskCall @Inject constructor(
     private val mixingInterceptor: MixingInterceptor,
-    private val moveFileInterceptor: MoveFileInterceptor,
 ) {
     fun execute(groupTask: GroupTask) {
         try {

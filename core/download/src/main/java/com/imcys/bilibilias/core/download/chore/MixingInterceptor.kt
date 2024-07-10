@@ -8,9 +8,8 @@ import android.provider.MediaStore
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.data.toast.AsToastState
-import com.imcys.bilibilias.core.data.toast.AsToastType
-import com.imcys.bilibilias.core.data.toast.ToastMachine
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
+import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.GroupTask
@@ -24,7 +23,6 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 private const val RELATIVE_PATH = "Movies/biliAs/"
@@ -34,7 +32,7 @@ class MixingInterceptor @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val userPreferences: AsPreferencesDataSource,
     private val ffmpegWork: IFFmpegWork,
-    private val toastMachine: ToastMachine,
+    private val errorMonitor: ErrorMonitor,
 ) : Interceptor<GroupTask> {
     override val enable = true
 
@@ -42,7 +40,7 @@ class MixingInterceptor @Inject constructor(
         Napier.d(tag = "Interceptor") { "合并视频 $enable, $message" }
         if (!enable) return
         scope.launch {
-            toastMachine.show("开始合并视频: ${message.video.subTitle}")
+            errorMonitor.addShortErrorMessage("开始合并视频: ${message.video.subTitle}")
             val path = userPreferences.userData.first().storagePath
             Napier.d { "指定路径 $path" }
             if (path != null) {
@@ -64,20 +62,17 @@ class MixingInterceptor @Inject constructor(
             message.audio.uri.toString(),
             outputFile.uri.toString(),
             {
-                toastMachine.show(
-                    AsToastState(
-                        "合并成功: ${message.video.subTitle}",
-                        AsToastType.Success
-                    )
+                errorMonitor.addShortErrorMessage(
+                    "合并成功: ${message.video.subTitle}",
+                    MessageType.Success,
                 )
-            }, {
-                toastMachine.show(
-                    AsToastState(
-                        "合并失败: ${message.video.subTitle}",
-                        AsToastType.Error
-                    )
+            },
+            {
+                errorMonitor.addShortErrorMessage(
+                    "合并失败: ${message.video.subTitle}",
+                    MessageType.Error,
                 )
-            }
+            },
         )
     }
 
@@ -95,25 +90,23 @@ class MixingInterceptor @Inject constructor(
         val command = FFmpegUtil.mixAudioVideo2(
             message.video.uri.toFile().path,
             message.audio.uri.toFile().path,
-            contentUri.toString()
+            contentUri.toString(),
         )
         Napier.d { "合并命令 ${command.joinToString(" ")}" }
-        ffmpegWork.execute(command,
+        ffmpegWork.execute(
+            command,
             {
-                toastMachine.show(
-                    AsToastState(
-                        "合并成功: ${message.video.subTitle}",
-                        AsToastType.Success
-                    )
+                errorMonitor.addShortErrorMessage(
+                    "合并成功: ${message.video.subTitle}",
+                    MessageType.Success,
                 )
-            }, {
-                toastMachine.show(
-                    AsToastState(
-                        "合并失败: ${message.video.subTitle}",
-                        AsToastType.Error
-                    )
+            },
+            {
+                errorMonitor.addShortErrorMessage(
+                    "合并失败: ${message.video.subTitle}",
+                    MessageType.Error,
                 )
-            }
+            },
         )
     }
 
@@ -129,7 +122,7 @@ class MixingInterceptor @Inject constructor(
             ),
             "${MediaStore.Video.Media.DISPLAY_NAME} = ? AND ${MediaStore.Video.Media.RELATIVE_PATH} = ?",
             arrayOf("${message.video.subTitle}.mp4", RELATIVE_PATH),
-            null
+            null,
         )?.use { cursor ->
             Napier.d { "查询已合并文件是否存在" }
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
@@ -143,7 +136,7 @@ class MixingInterceptor @Inject constructor(
                 val path = cursor.getString(pathColumn)
                 val contentUri: Uri = ContentUris.withAppendedId(
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                    id
+                    id,
                 )
                 Napier.d { "查询结果: $id-$name-$path-$contentUri" }
                 return contentUri

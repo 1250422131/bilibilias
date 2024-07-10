@@ -8,18 +8,21 @@ import kotlinx.coroutines.flow.Flow
 interface ErrorMonitor {
     fun addShortErrorMessage(
         error: String,
+        type: MessageType = MessageType.Normal,
         label: String? = null,
         action: (() -> Unit)? = null,
     ): String?
 
     fun addLongErrorMessage(
         error: String,
+        type: MessageType = MessageType.Normal,
         label: String? = null,
         action: (() -> Unit)? = null,
     ): String?
 
     fun addIndefiniteErrorMessage(
         error: String,
+        type: MessageType = MessageType.Normal,
         label: String? = null,
         action: (() -> Unit)? = null,
     ): String?
