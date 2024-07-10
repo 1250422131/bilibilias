@@ -7,18 +7,39 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
 import com.hjq.toast.Toaster
-import com.imcys.bilibilias.core.data.toast.ToastMachine
+import com.imcys.bilibilias.core.analytics.AnalyticsHelper
+import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.ui.AsApp
 import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,14 +47,14 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
 
-//    @Inject
-//    lateinit var analyticsHelper: AnalyticsHelper
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
 
     @Inject
     lateinit var networkMonitor: NetworkMonitor
 
     @Inject
-    lateinit var toastMachine: ToastMachine
+    lateinit var errorMonitor: ErrorMonitor
 
     @Inject
     lateinit var rootComponentFactory: RootComponent.Factory
@@ -64,10 +85,10 @@ class MainActivity : AppCompatActivity() {
             val componentContext = defaultComponentContext()
             AsTheme {
                 CompositionLocalProvider(
-//                    LocalAnalyticsHelper provides analyticsHelper,
+                    LocalAnalyticsHelper provides analyticsHelper,
                 ) {
                     val appState = rememberNiaAppState(
-                        toastMachine = toastMachine,
+                        errorMonitor = errorMonitor,
                         networkMonitor = networkMonitor,
                     )
                     AsApp(appState, rootComponentFactory(componentContext))
@@ -114,3 +135,50 @@ private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
  * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:activity/activity/src/main/java/androidx/activity/EdgeToEdge.kt;l=40-44;drc=27e7d52e8604a080133e8b842db10c89b4482598
  */
 private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
+
+//@Preview
+//@Composable
+//fun ScaffoldWithCoroutinesSnackbar() {
+//    // decouple snackbar host state from scaffold state for demo purposes
+//    // this state, channel and flow is for demo purposes to demonstrate business logic layer
+//    val snackbarHostState = remember { SnackbarHostState() }
+//    // we allow only one snackbar to be in the queue here, hence conflated
+//    val channel = remember { Channel<Int>(Channel.CONFLATED) }
+//    LaunchedEffect(channel) {
+//        channel.receiveAsFlow().collect { index ->
+//            val result =
+//                snackbarHostState.showSnackbar(
+//                    message = "Snackbar # $index",
+//                    actionLabel = "Action on $index"
+//                )
+//            when (result) {
+//                SnackbarResult.ActionPerformed -> {
+//                    /* action has been performed */
+//                }
+//                SnackbarResult.Dismissed -> {
+//                    /* dismissed, no action needed */
+//                }
+//            }
+//        }
+//    }
+//    Scaffold(
+//        snackbarHost = { SnackbarHost(snackbarHostState) },
+//        floatingActionButton = {
+//            var clickCount by remember { mutableStateOf(0) }
+//            ExtendedFloatingActionButton(
+//                onClick = {
+//                    // offset snackbar data to the business logic
+//                    channel.trySend(++clickCount)
+//                }
+//            ) {
+//                Text("Show snackbar")
+//            }
+//        },
+//        content = { innerPadding ->
+//            Text(
+//                "Snackbar demo",
+//                modifier = Modifier.padding(innerPadding).fillMaxSize().wrapContentSize()
+//            )
+//        }
+//    )
+//}

@@ -16,11 +16,10 @@ dependencies {
     api(projects.core.datastore)
     api(projects.core.network)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-
     testImplementation(testFixtures(projects.core.datastore))
 
     kspTestFixtures(libs.hilt.compiler)
     testFixturesImplementation(libs.hilt.android.testing)
+
+    testImplementation(projects.core.testing)
 }

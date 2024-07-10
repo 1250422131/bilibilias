@@ -16,31 +16,30 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.common.utils.getActivity
-import com.imcys.bilibilias.core.data.toast.ToastMachine
+import com.imcys.bilibilias.core.data.util.ErrorMessage
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlin.reflect.KFunction0
 
 @Composable
 fun rememberNiaAppState(
-    toastMachine: ToastMachine,
+    errorMonitor: ErrorMonitor,
     networkMonitor: NetworkMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): AsAppState {
     return remember(
-        toastMachine,
+        errorMonitor,
         networkMonitor,
         coroutineScope,
     ) {
         AsAppState(
-            toastMachine = toastMachine,
-            networkMonitor = networkMonitor,
+            errorMonitor,
             coroutineScope = coroutineScope,
         )
     }
@@ -48,19 +47,16 @@ fun rememberNiaAppState(
 
 @Stable
 class AsAppState(
-    toastMachine: ToastMachine,
+    errorMonitor: ErrorMonitor,
     val coroutineScope: CoroutineScope,
-    networkMonitor: NetworkMonitor,
-) {
-    val isOffline = networkMonitor.isOnline
-        .map(Boolean::not)
-        .stateIn(
-            scope = coroutineScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false,
-        )
-    val message = toastMachine.message.stateIn(
-        coroutineScope,
+) : ErrorMonitor by errorMonitor {
+    val isOfflineState: StateFlow<Boolean> = isOffline.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false,
+    )
+    val snackbarMessage: StateFlow<ErrorMessage?> = errorMessage.stateIn(
+        scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = null,
     )

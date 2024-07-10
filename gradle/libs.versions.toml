@@ -75,6 +75,7 @@ secrets = "2.0.1"
 sqllin = "1.3.2"
 robolectric = "4.12.2"
 roborazzi = "1.21.0"
+testng = "6.9.6"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
@@ -250,6 +251,7 @@ room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", vers
 work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
