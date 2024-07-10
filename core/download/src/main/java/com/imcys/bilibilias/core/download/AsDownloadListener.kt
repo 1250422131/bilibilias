@@ -2,16 +2,10 @@ package com.imcys.bilibilias.core.download
 
 import androidx.collection.mutableObjectListOf
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.common.utils.DataSize.Companion.bytes
-import com.imcys.bilibilias.core.common.utils.DataSize.Companion.mb
-import com.imcys.bilibilias.core.common.utils.DataUnit
-import com.imcys.bilibilias.core.data.toast.AsToastState
-import com.imcys.bilibilias.core.data.toast.AsToastType
-import com.imcys.bilibilias.core.data.toast.ToastMachine
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
+import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
-import com.imcys.bilibilias.core.database.dao.DownloadTaskDao2
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.GroupTask
@@ -25,7 +19,6 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -34,7 +27,7 @@ private const val TAG = "DownloadManager"
 class AsDownloadListener @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
-    private val toastMachine: ToastMachine,
+    private val toastMachine: ErrorMonitor,
     private val taskDao: DownloadTaskDao,
 ) : DownloadListener1() {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
@@ -60,7 +53,7 @@ class AsDownloadListener @Inject constructor(
                 state = State.RUNNING,
             )
             taskDao.insertOrUpdate(taskEntity)
-            toastMachine.show("添加任务到下载队列")
+            toastMachine.addShortErrorMessage("添加任务到下载队列")
         }
     }
 
@@ -68,7 +61,7 @@ class AsDownloadListener @Inject constructor(
         task: DownloadTask,
         cause: EndCause,
         realCause: Exception?,
-        model: Listener1Assist.Listener1Model
+        model: Listener1Assist.Listener1Model,
     ) {
         scope.launch {
             Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.filename}" }
@@ -76,7 +69,7 @@ class AsDownloadListener @Inject constructor(
             val info = asTask.viewInfo
             taskDao.updateStateByUri(
                 if (realCause == null) State.COMPLETED else State.ERROR,
-                task.uri
+                task.uri,
             )
 
             val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
@@ -87,21 +80,21 @@ class AsDownloadListener @Inject constructor(
                     defaultGroupTaskCall.execute(GroupTask(v, a))
                 }
             }
-            toastMachine.show("添加任务到下载队列")
+            toastMachine.addShortErrorMessage("添加任务到下载队列")
         }
     }
 
     private fun toast(
         realCause: Exception?,
-        task: AsDownloadTask
+        task: AsDownloadTask,
     ) {
         val filename = task.okTask.filename
-        val toastState = if (realCause == null) {
-            AsToastState("${filename}·下载成功", AsToastType.Normal)
+        val messageWithType = if (realCause == null) {
+            "$filename·下载成功" to MessageType.Normal
         } else {
-            AsToastState("${filename}·下载失败", AsToastType.Error)
+            "$filename·下载失败" to MessageType.Error
         }
-        toastMachine.show(toastState)
+        toastMachine.addShortErrorMessage(messageWithType.first, messageWithType.second)
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
@@ -110,7 +103,7 @@ class AsDownloadListener @Inject constructor(
             taskDao.updateProgressByUri(
                 currentOffset,
                 totalLength,
-                task.uri
+                task.uri,
             )
         }
     }
@@ -123,14 +116,14 @@ class AsDownloadListener @Inject constructor(
         task: DownloadTask,
         blockCount: Int,
         currentOffset: Long,
-        totalLength: Long
+        totalLength: Long,
     ) {
         scope.launch {
             Napier.d { "连接结束: ${task.filename}-$currentOffset-$totalLength" }
             taskDao.updateProgressByUri(
                 currentOffset,
                 totalLength,
-                task.uri
+                task.uri,
             )
         }
     }

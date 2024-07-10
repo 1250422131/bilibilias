@@ -23,8 +23,4 @@ dependencies {
     implementation("com.lazygeniouz:dfc:1.0.8")
 
     implementation(libs.okhttp)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
 }
