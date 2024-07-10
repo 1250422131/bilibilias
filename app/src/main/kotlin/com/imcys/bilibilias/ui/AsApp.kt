@@ -258,11 +258,3 @@ private fun toastMessageTypeOf(type: MessageType): ToastType = when (type) {
     MessageType.Warning -> ToastType.Warning
     MessageType.Error -> ToastType.Error
 }
-
-private fun handleSnackbarResult(snackBarResult: Boolean, message: ErrorMessage) {
-    if (snackBarResult) {
-        message.actionPerformed?.invoke()
-    } else {
-        message.actionNotPerformed?.invoke()
-    }
-}
