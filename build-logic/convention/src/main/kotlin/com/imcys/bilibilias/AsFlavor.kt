@@ -16,7 +16,7 @@ enum class FlavorDimension {
 @Suppress("EnumEntryName")
 enum class AsFlavor(val dimension: FlavorDimension, val applicationIdSuffix: String? = null) {
     demo(FlavorDimension.contentType, applicationIdSuffix = ".demo"),
-    prod(FlavorDimension.contentType)
+    prod(FlavorDimension.contentType),
 }
 
 fun configureFlavors(
@@ -24,15 +24,18 @@ fun configureFlavors(
     flavorConfigurationBlock: ProductFlavor.(flavor: AsFlavor) -> Unit = {}
 ) {
     commonExtension.apply {
-        flavorDimensions += FlavorDimension.contentType.name
+        FlavorDimension.values().forEach { flavorDimension ->
+            flavorDimensions += flavorDimension.name
+        }
+
         productFlavors {
-            AsFlavor.values().forEach {
-                create(it.name) {
-                    dimension = it.dimension.name
-                    flavorConfigurationBlock(this, it)
+            AsFlavor.values().forEach { asFlavor ->
+                register(asFlavor.name) {
+                    dimension = asFlavor.dimension.name
+                    flavorConfigurationBlock(this, asFlavor)
                     if (this@apply is ApplicationExtension && this is ApplicationProductFlavor) {
-                        if (it.applicationIdSuffix != null) {
-                            applicationIdSuffix = it.applicationIdSuffix
+                        if (asFlavor.applicationIdSuffix != null) {
+                            applicationIdSuffix = asFlavor.applicationIdSuffix
                         }
                     }
                 }

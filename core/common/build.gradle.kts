@@ -1,6 +1,11 @@
 plugins {
-    alias(libs.plugins.bilibilias.jvm.library)
+    alias(libs.plugins.bilibilias.android.library)
+    alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.hilt)
+}
+
+android {
+    namespace = "com.imcys.bilibilias.core.common"
 }
 
 dependencies {

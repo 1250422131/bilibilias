@@ -105,6 +105,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.sonner)
+    androidTestImplementation(libs.testng)
 
     ksp(libs.hilt.compiler)
     kspTest(libs.hilt.compiler)

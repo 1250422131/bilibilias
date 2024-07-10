@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -35,10 +38,14 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.dokar.sonner.ToastType
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceContent
+import com.imcys.bilibilias.core.data.util.ErrorMessage
+import com.imcys.bilibilias.core.data.util.MessageDuration
+import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground
 import com.imcys.bilibilias.core.designsystem.component.AsNavigationSuiteScaffold
@@ -54,7 +61,6 @@ import com.imcys.bilibilias.feature.splash.SplashContent
 import com.imcys.bilibilias.feature.tool.ToolContent
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
-import kotlin.time.Duration.Companion.days
 
 @Composable
 fun AsApp(
@@ -73,28 +79,27 @@ fun AsApp(
                 GradientColors()
             },
         ) {
-            val toasterState = rememberToasterState(appState.coroutineScope)
-
-            val isOffline by appState.isOffline.collectAsStateWithLifecycle()
-            val message by appState.message.collectAsStateWithLifecycle()
-
-            LaunchedEffect(isOffline) {
-                if (isOffline) {
+            val snackbarMessage by appState.snackbarMessage.collectAsStateWithLifecycle()
+            val toasterState = rememberToasterState(appState.coroutineScope) {
+                snackbarMessage?.actionPerformed?.invoke()
+            }
+            SideEffect {
+                appState.offlineMessage = "⚠\uFE0F 您没有连接到互联网"
+            }
+            LaunchedEffect(snackbarMessage) {
+                snackbarMessage?.let {
                     toasterState.show(
-                        id = 0,
-                        message = "⚠\uFE0F 您没有连接到互联网",
-                        duration = Long.MAX_VALUE.days,
+                        message = it.message,
+                        id = it.id,
+                        type = toastMessageTypeOf(it.messageType),
+                        duration = it.duration,
                     )
-                }
-                if (!isOffline) {
-                    toasterState.dismiss(0)
-                }
-            }
-            LaunchedEffect(message) {
-                message?.let {
-                    toasterState.show(message = it.message)
+
+                    // Remove Message from Queue
+                    appState.clearErrorMessage(it.id)
                 }
             }
+
             AsApp(
                 toasterState = toasterState,
                 component = component,
@@ -244,4 +249,20 @@ private fun AsNavigationSuiteScope.item(
         },
         label = { Text(stringResource(destination.iconTextId)) },
     )
+}
+
+private fun toastMessageTypeOf(type: MessageType): ToastType = when (type) {
+    MessageType.Normal -> ToastType.Normal
+    MessageType.Success -> ToastType.Success
+    MessageType.Info -> ToastType.Info
+    MessageType.Warning -> ToastType.Warning
+    MessageType.Error -> ToastType.Error
+}
+
+private fun handleSnackbarResult(snackBarResult: Boolean, message: ErrorMessage) {
+    if (snackBarResult) {
+        message.actionPerformed?.invoke()
+    } else {
+        message.actionNotPerformed?.invoke()
+    }
 }
