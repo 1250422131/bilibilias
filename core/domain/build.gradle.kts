@@ -12,9 +12,7 @@ dependencies {
     api(projects.core.model)
     api(projects.core.network)
 
-//    testImplementation(projects.core.testing)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
+    testImplementation(projects.core.testing)
     androidTestImplementation(libs.androidx.test.espresso.core)
 
     testImplementation(projects.core.testing)

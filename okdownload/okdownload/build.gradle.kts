@@ -18,5 +18,4 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.collection)
     implementation(libs.androidx.startup.runtime)
-    testImplementation(libs.junit)
 }

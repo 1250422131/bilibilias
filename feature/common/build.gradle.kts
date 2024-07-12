@@ -18,7 +18,5 @@ dependencies {
     implementation(libs.decompose.compose)
     implementation(libs.molecule)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
 }
