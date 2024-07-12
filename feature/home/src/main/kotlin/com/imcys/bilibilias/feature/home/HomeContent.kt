@@ -55,22 +55,20 @@ import dev.utils.app.AppUtils
 @Composable
 fun HomeContent(component: HomeComponent) {
     val model by component.models.collectAsStateWithLifecycle()
-    HomeContent({}, {}, model, onEvent = component::take)
+    HomeContent(model = model)
 }
 
 @Composable
-private fun HomeContent(
-    onSalute: () -> Unit,
-    onDonation: () -> Unit,
+internal fun HomeContent(
     model: HomeComponent.Model,
-    onEvent: (HomeEvent) -> Unit
+    onSalute: () -> Unit = {},
 ) {
     Scaffold { innerPadding ->
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 item {
                     val lifecycleOwner = LocalLifecycleOwner.current
@@ -84,7 +82,7 @@ private fun HomeContent(
                         modifier = Modifier
                             .height(180.dp)
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp)),
                     ) { banner ->
                         banner.setAdapter(
                             object : BannerImageAdapter<String>(model.homeBanner.imgUrlList) {
@@ -92,7 +90,7 @@ private fun HomeContent(
                                     holder: BannerImageHolder,
                                     data: String,
                                     position: Int,
-                                    size: Int
+                                    size: Int,
                                 ) {
                                     holder.imageView.load(data)
                                     holder.itemView.setOnClickListener {
@@ -101,7 +99,7 @@ private fun HomeContent(
                                         AppUtils.startActivity(intent)
                                     }
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -123,7 +121,7 @@ private fun HomeContent(
                         R.drawable.feature_home_ic_home_trophy,
                         onClick = onSalute,
                         title = "致敬",
-                        desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户"
+                        desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户",
                     )
                 }
                 item {
@@ -132,7 +130,7 @@ private fun HomeContent(
                         R.drawable.feature_home_ic_home_red_envelopes,
                         onClick = { show = true },
                         title = "捐款",
-                        desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。"
+                        desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。",
                     )
                     if (show) {
                         Dialog(onDismissRequest = { show = false }) {
@@ -159,11 +157,11 @@ private fun HomeContent(
                         onClick = {
                             startActivityForUri(
                                 context,
-                                "https://support.qq.com/product/337496"
+                                "https://support.qq.com/product/337496",
                             )
                         },
                         title = "反馈问题",
-                        desc = "如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。"
+                        desc = "如果您遇到了问题或者需要新增功能，就可以在社区反馈给我们。",
                     )
                 }
             }
@@ -175,7 +173,7 @@ private fun HomeContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetectUpdateLogs(
-    updateNotice: UpdateNotice
+    updateNotice: UpdateNotice,
 ) {
     val context = LocalContext.current
     var openUpdateWindow by remember {
@@ -194,7 +192,7 @@ fun DetectUpdateLogs(
             onConfirm = {
                 startActivityForUri(context, updateNotice.url)
             },
-            onCancel = {}
+            onCancel = {},
         ) {
             Text(text = updateNotice.gxNotice)
         }
@@ -209,7 +207,7 @@ private fun detectAppUpdate(version: String, canUpdate: () -> Unit) {
 
 private fun postAndCheckSignatureMessage(
     context: Context,
-    postSignatureMessage: (String, Pair<String, Long>, String) -> Unit
+    postSignatureMessage: (String, Pair<String, Long>, String) -> Unit,
 ) {
     val apkPath = context.packageCodePath
     val sha = ApkVerify.apkVerifyWithSHA(apkPath)
@@ -233,7 +231,7 @@ private fun HomeCard(resId: Int, title: String, desc: String, onClick: () -> Uni
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(20.dp)
+                .padding(20.dp),
         ) {
             Icon(
                 painterResource(id = resId),
@@ -241,13 +239,13 @@ private fun HomeCard(resId: Int, title: String, desc: String, onClick: () -> Uni
                 modifier = Modifier
                     .size(50.dp)
                     .padding(10.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
             Column(modifier = Modifier.padding(start = 20.dp)) {
                 Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(
                     text = desc,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }
