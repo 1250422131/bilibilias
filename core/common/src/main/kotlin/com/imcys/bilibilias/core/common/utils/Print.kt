@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.common.utils
+package com.imcys.bilibilias.core.common.utils
 
 import kotlin.reflect.KProperty
 
