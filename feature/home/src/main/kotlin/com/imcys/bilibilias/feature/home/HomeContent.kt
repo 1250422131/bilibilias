@@ -42,7 +42,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.load
-import com.imcys.bilibilias.core.common.utils.ApkVerify
 import com.imcys.bilibilias.core.designsystem.component.AsModalBottomSheet
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
@@ -166,54 +165,7 @@ internal fun HomeContent(
                 }
             }
         }
-//        DetectUpdateLogs(model.updateNotice)
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DetectUpdateLogs(
-    updateNotice: UpdateNotice,
-) {
-    val context = LocalContext.current
-    var openUpdateWindow by remember {
-        mutableStateOf(false)
-    }
-    val sheetState = rememberModalBottomSheetState()
-    LaunchedEffect(Unit) {
-        detectAppUpdate(updateNotice.version) {
-            openUpdateWindow = true
-        }
-    }
-    if (openUpdateWindow) {
-        AsModalBottomSheet(
-            onDismissRequest = { openUpdateWindow = false },
-            sheetState,
-            onConfirm = {
-                startActivityForUri(context, updateNotice.url)
-            },
-            onCancel = {},
-        ) {
-            Text(text = updateNotice.gxNotice)
-        }
-    }
-}
-
-private fun detectAppUpdate(version: String, canUpdate: () -> Unit) {
-    if (BiliBiliAsApi.VERSION.toString() != version) {
-        canUpdate()
-    }
-}
-
-private fun postAndCheckSignatureMessage(
-    context: Context,
-    postSignatureMessage: (String, Pair<String, Long>, String) -> Unit,
-) {
-    val apkPath = context.packageCodePath
-    val sha = ApkVerify.apkVerifyWithSHA(apkPath)
-    val md5 = ApkVerify.apkVerifyWithMD5(apkPath)
-    val crc = ApkVerify.apkVerifyWithCRC(apkPath)
-    postSignatureMessage(sha, md5, crc)
 }
 
 private fun startActivityForUri(context: Context, uri: String) {

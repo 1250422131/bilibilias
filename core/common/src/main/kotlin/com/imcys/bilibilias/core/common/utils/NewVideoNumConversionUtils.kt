@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.common.utils
 
+// todo move to network
 object NewVideoNumConversionUtils {
     private const val XOR_CODE = 23442827791579
     private const val MASK_CODE = 2251799813685247
