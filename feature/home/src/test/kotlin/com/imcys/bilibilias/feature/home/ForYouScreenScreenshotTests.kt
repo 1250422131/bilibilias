@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
+import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
+import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.testing.util.DefaultTestDevices
 import com.imcys.bilibilias.core.testing.util.captureForDevice
 import com.imcys.bilibilias.core.testing.util.captureMultiDevice
@@ -38,9 +40,15 @@ class ForYouScreenScreenshotTests {
     }
 
     @Test
-    fun forYouScreenPopulatedFeed() {
+    fun homeContentPopulatedFeed() {
         composeTestRule.captureMultiDevice("ForYouScreenPopulatedFeed") {
             AsTheme {
+                HomeContent(
+                    HomeComponent.Model(
+                        UpdateNotice(),
+                        HomeBanner(),
+                    ),
+                )
 //                ForYouScreen(
 //                    isSyncing = false,
 //                    onboardingUiState = NotShown,
