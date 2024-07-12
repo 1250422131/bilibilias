@@ -97,14 +97,15 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
 
-    implementation(libs.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
 
     implementation(libs.androidx.activity.ktx)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.sonner)
+    implementation(libs.dokar.sonner)
+
     androidTestImplementation(libs.testng)
 
     ksp(libs.hilt.compiler)

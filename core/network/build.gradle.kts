@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.coil.video)
 
     implementation(libs.kotlinx.atomicfu)
+    implementation(libs.kotlinx.serialization.json)
 //    testImplementation(libs.kotlinx.coroutines.test)
 
     implementation(libs.ktor.client.core)

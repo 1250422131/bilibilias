@@ -9,7 +9,6 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.collections.immutable)
     api(libs.okio)
     api(libs.napier)
@@ -17,7 +16,8 @@ dependencies {
     api(libs.toaster)
     implementation(libs.kotlin.reflect)
 
+    testImplementation(kotlin("test"))
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)
-//    testImplementation(libs.turbine)
+    testImplementation(libs.turbine)
 }
