@@ -30,7 +30,6 @@ ffmpegKitFull = "6.0-2"
 hilt = "2.51.1"
 hiltExt = "1.2.0"
 jiaozivideoplayer = "7.7.2.3300"
-junit = "4.13.2"
 jxl = "2.6.12"
 jacoco = "0.8.7"
 kotlin = "2.0.0"
@@ -119,6 +118,7 @@ androidx-lifecycle-runtimeTesting = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
@@ -247,10 +247,9 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
+
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
-testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }

@@ -20,7 +20,7 @@ import com.imcys.bilibilias.core.rules.GrantPostNotificationsPermissionRule
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Before
+import kotlin.test.BeforeTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.properties.ReadOnlyProperty
@@ -73,7 +73,7 @@ class NavigationTest {
     private val brand = "brand"
     private val ok = "OK"
 
-    @Before
+    @BeforeTest
     fun setup() {
         hiltRule.inject()
     }
