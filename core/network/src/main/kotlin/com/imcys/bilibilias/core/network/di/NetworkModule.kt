@@ -15,7 +15,6 @@ import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
 import com.imcys.bilibilias.core.model.Box
 import com.imcys.bilibilias.core.model.Response
 import com.imcys.bilibilias.core.network.BuildConfig
-import com.imcys.bilibilias.core.network.Parameter
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import com.imcys.bilibilias.core.network.api.BilibiliApi
@@ -23,21 +22,17 @@ import com.imcys.bilibilias.core.network.ktor.AsCookiesStorage
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogLevel
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogger
 import com.imcys.bilibilias.core.network.ktor.plugin.logging.JsonAwareLogging
-import com.imcys.bilibilias.core.network.utils.TokenUtil
-import com.imcys.bilibilias.core.network.utils.WBIUtils
+import com.imcys.bilibilias.core.network.ktor.wbiIntercept
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import github.leavesczy.monitor.MonitorInterceptor
-import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.client.call.HttpClientCall
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpSend
-import io.ktor.client.plugins.Sender
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.addDefaultResponseValidation
 import io.ktor.client.plugins.api.ClientPlugin
@@ -46,17 +41,12 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.plugin
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.parameter
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
-import io.ktor.http.ParametersBuilder
-import io.ktor.http.ParametersBuilderImpl
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.jvm.javaio.toInputStream
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -77,6 +67,19 @@ internal val requireCSRF = AttributeKey<Boolean>("requireCSRF")
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
+    @OptIn(ExperimentalSerializationApi::class)
+    @Provides
+    @Singleton
+    fun provideJson(): Json = trace("AsJson") {
+        Json {
+            prettyPrint = true
+            ignoreUnknownKeys = true
+            // 使用默认值覆盖 null
+            coerceInputValues = true
+            prettyPrintIndent = "  "
+        }
+    }
+
     @Provides
     @Singleton
     fun imageLoader(
@@ -149,8 +152,7 @@ class NetworkModule {
                 logger = asLogger
                 level = JsonAwareLogLevel.ALL
                 filter {
-                    it.url.host == BilibiliApi.API_HOST ||
-                            it.url.host == BiliBiliAsApi.API_HOST
+                    it.url.host == BilibiliApi.API_HOST || it.url.host == BiliBiliAsApi.API_HOST
                 }
             }
             install(UserAgent) {
@@ -174,37 +176,6 @@ class NetworkModule {
             wbiIntercept(request, loginInfoDataSource)
         }
         return client
-    }
-
-    private suspend fun Sender.wbiIntercept(
-        request: HttpRequestBuilder,
-        loginInfoDataSource: LoginInfoDataSource,
-    ): HttpClientCall {
-        if (request.attributes.getOrNull(requireCSRF) == true) {
-            val cookie = loginInfoDataSource.cookieStore.first()["bili_jct"]
-            if (cookie != null) {
-                request.parameter("csrf", cookie.value_)
-            }
-        }
-        if (request.attributes.getOrNull(requireWbi) == true) {
-            val params = request.url.parameters
-            val signatureParams = mutableListOf<Parameter>()
-            for ((k, v) in params.entries()) {
-                signatureParams.add(Parameter(k, v.first()))
-            }
-            val signature = TokenUtil.genBiliSign(
-                signatureParams.associate { it.name to it.value }.toMutableMap(),
-                loginInfoDataSource.mixKey.first()
-            )
-            Napier.i(tag = "wbi") { signature.joinToString("\n") }
-            val newParameter = ParametersBuilder()
-            for ((n, v) in signature) {
-                newParameter.append(n, v)
-            }
-
-            request.url.encodedParameters = newParameter
-        }
-        return execute(request)
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -233,8 +204,8 @@ class NetworkModule {
                 throw ApiIOException(
                     box.code,
                     box.message +
-                            "网络接口: ${request.request.url.encodedPath} 发生解析错误" +
-                            "\n链接: ${request.request.url}",
+                        "网络接口: ${request.request.url.encodedPath} 发生解析错误 " +
+                        "\n链接: ${request.request.url}",
                     box.data?.ofMap()?.print(),
                 )
             }
