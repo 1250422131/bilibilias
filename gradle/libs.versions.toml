@@ -76,9 +76,12 @@ sqllin = "1.3.2"
 robolectric = "4.12.2"
 roborazzi = "1.21.0"
 testng = "6.9.6"
+truth = "1.4.2"
+turbine = "1.1.0"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
 androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
@@ -108,50 +111,6 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
-mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
-
-dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
-sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
-
-gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
-gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
-
-strikt-core = { module = "io.strikt:strikt-core", version.ref = "striktCore" }
-
-tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
-
-umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.3" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.3" }
-umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
-
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
-
-devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
-
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
-
-ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
-
-monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
-monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
-
-napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-wire-gradlePlugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
-
-qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
-
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
-
-toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
-
-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
-
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", version.ref = "androidxTracing" }
@@ -159,13 +118,26 @@ androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-runtimeTesting = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
-sqllin-dsl = { group = "com.ctrip.kotlin", name = "sqllin-dsl", version.ref = "sqllin" }
-sqllin-driver = { group = "com.ctrip.kotlin", name = "sqllin-driver", version.ref = "sqllin" }
-sqllin-processor = { group = "com.ctrip.kotlin", name = "sqllin-processor", version.ref = "sqllin" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
+androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-navigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
+androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "androidxComposeMaterial3Adaptive" }
+androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
+androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 appcenter-crashes = { group = "com.microsoft.appcenter", name = "appcenter-crashes", version.ref = "appcenter" }
 appcenter-analytics = { group = "com.microsoft.appcenter", name = "appcenter-analytics", version.ref = "appcenter" }
@@ -179,8 +151,32 @@ coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+
+dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
+dokar-sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
+devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
+
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version = "0.4.5" }
+
+ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
+
+gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
+gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
+
+napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+wire-gradlePlugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
+
+qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+
+compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
+
+toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
@@ -190,9 +186,6 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 jiaozivideoplayer = { group = "cn.jzvd", name = "jiaozivideoplayer", version.ref = "jiaozivideoplayer" }
-
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 jxl = { group = "net.sourceforge.jexcelapi", name = "jxl", version.ref = "jxl" }
 
@@ -221,27 +214,33 @@ lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.re
 
 molecule = { module = "app.cash.molecule:molecule-runtime", version = "2.0.0" }
 
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
-androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "androidxComposeMaterial3Adaptive" }
-androidx-compose-material3-navigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "androidxComposeMaterial3AdaptiveNavigationSuite" }
-androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "androidxComposeMaterial3Adaptive" }
-androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "androidxComposeMaterial3Adaptive" }
-androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
-androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
-androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
+monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+sqllin-dsl = { group = "com.ctrip.kotlin", name = "sqllin-dsl", version.ref = "sqllin" }
+sqllin-driver = { group = "com.ctrip.kotlin", name = "sqllin-driver", version.ref = "sqllin" }
+sqllin-processor = { group = "com.ctrip.kotlin", name = "sqllin-processor", version.ref = "sqllin" }
+
+strikt-core = { module = "io.strikt:strikt-core", version.ref = "striktCore" }
+
+tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
+
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+
+umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.3" }
+umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.3" }
+umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
