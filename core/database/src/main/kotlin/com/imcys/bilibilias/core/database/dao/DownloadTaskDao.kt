@@ -34,7 +34,7 @@ interface DownloadTaskDao {
                     state = t.state,
                     bytesSentTotal = t.bytesSentTotal,
                     contentLength = t.contentLength,
-                )
+                ),
             )
         }
     }
@@ -46,13 +46,13 @@ interface DownloadTaskDao {
     suspend fun updateTask(downloadTaskEntity: DownloadTaskEntity)
 
     @Query(
-        "SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type = :fileType"
+        "SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type = :fileType",
     )
     suspend fun findByIdWithFileType(
         aid: Aid,
         bvid: Bvid,
         cid: Cid,
-        fileType: FileType
+        fileType: FileType,
     ): DownloadTaskEntity?
 
     @Query("SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid")
@@ -67,22 +67,22 @@ interface DownloadTaskDao {
 
     @Query(
         "UPDATE download_task_list " +
-            "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-            "WHERE uri = :uri"
+                "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
+                "WHERE uri = :uri",
     )
     suspend fun updateProgressByUri(bytesSentTotal: Long, contentLength: Long, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
-            "SET state = :state " +
-            "WHERE uri = :uri"
+                "SET state = :state " +
+                "WHERE uri = :uri",
     )
     suspend fun updateStateByUri(state: State, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
-            "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-            "WHERE uri = :uri"
+                "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
+                "WHERE uri = :uri",
     )
     suspend fun updateProgressWithStateByUri(
         state: State,
@@ -100,6 +100,14 @@ interface DownloadTaskDao {
     @Query("SELECT * FROM download_task_list WHERE id IN (:ids)")
     suspend fun findByIds(ids: List<Int>): List<DownloadTaskEntity>
 
-    @Delete
-    suspend fun delete(entity: DownloadTaskEntity)
+    /**
+     * Deletes rows in the db matching the specified [ids]
+     */
+    @Query(
+        value = """
+            DELETE FROM download_task_list
+            WHERE id in (:ids)
+        """,
+    )
+    suspend fun delete(ids: List<Int>)
 }

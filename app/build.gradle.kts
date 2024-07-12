@@ -106,8 +106,6 @@ dependencies {
 
     implementation(libs.dokar.sonner)
 
-    androidTestImplementation(libs.testng)
-
     ksp(libs.hilt.compiler)
     kspTest(libs.hilt.compiler)
     kspAndroidTest(libs.hilt.compiler)

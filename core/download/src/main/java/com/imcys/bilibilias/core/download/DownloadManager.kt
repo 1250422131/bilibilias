@@ -280,7 +280,7 @@ class DownloadManager @Inject constructor(
             Napier.d { taskEntity.toString() }
             throw IllegalArgumentException("task uri error")
         }
-        downloadTaskDao.delete(taskEntity)
+        downloadTaskDao.delete(listOf(taskEntity.id))
         deleteEmptyDirectoriesOfFolder(DevUtils.getContext().downloadDir)
     }
 

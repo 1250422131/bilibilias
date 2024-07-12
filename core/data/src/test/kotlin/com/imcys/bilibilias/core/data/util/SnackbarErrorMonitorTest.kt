@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +22,7 @@ class SnackbarErrorMonitorTest {
 
     private var message: ErrorMessage? = null
 
-    @Before
+    @BeforeTest
     fun setup() {
         networkMonitor = TestNetworkMonitor()
         state = SnackbarErrorMonitor(networkMonitor)
