@@ -26,4 +26,3 @@ registries:
   gralde-plugin:
     type: maven-repository
     url: "https://plugins.gradle.org/m2/"
-    replaces-base: true
