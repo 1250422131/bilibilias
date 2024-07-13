@@ -64,7 +64,7 @@ jobs:
         # Runs if previous job failed
       - name: Generate new Dependency Guard baselines if verification failed and it's a PR
         id: dependencyguard_baseline
-        if: steps.dependencyguard_verify.outcome == 'failure' && github.event_name == 'pull_request'
+        if: steps.dependencyguard_verify.outcome == 'failure'
         run: |
           ./gradlew dependencyGuardBaseline
 
