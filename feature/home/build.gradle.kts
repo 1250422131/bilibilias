@@ -7,6 +7,7 @@
 
 android {
     namespace = "com.imcys.bilibilias.feature.home"
+    testFixtures.enable = true
 }
 
 dependencies {
