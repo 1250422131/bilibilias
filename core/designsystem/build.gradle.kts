@@ -8,9 +8,6 @@
 
 android {
     namespace = "com.imcys.bilibilias.core.designsystem"
-    buildFeatures {
-        buildConfig = true
-    }
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -6,6 +6,7 @@
 android {
     namespace = "com.imcys.bilibilias.core.datastore.proto"
 }
+
 wire {
     kotlin {
         sourcePath {
@@ -13,6 +14,7 @@ wire {
         }
     }
 }
+
 dependencies {
     implementation("com.squareup.wire:wire-runtime:4.9.9")
 }
