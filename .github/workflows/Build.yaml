@@ -64,7 +64,7 @@ jobs:
         # Runs if previous job failed
       - name: Generate new Dependency Guard baselines if verification failed and it's a PR
         id: dependencyguard_baseline
-        if: steps.dependencyguard_verify.outcome == 'failure'
+        if: steps.dependencyguard_verify.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
           ./gradlew dependencyGuardBaseline
 
@@ -86,12 +86,12 @@ jobs:
         continue-on-error: false
         if: steps.screenshotsverify.outcome == 'failure' && github.event.pull_request.head.repo.full_name != github.repository
         run: |
-          echo "::error::Screenshot tests failed."
+          echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
 
       # Runs if previous job failed
-      - name: Generate new screenshots if verification
+      - name: Generate new screenshots if verification and it's a PR
         id: screenshotsrecord
-        if: steps.screenshotsverify.outcome == 'failure'
+        if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
           ./gradlew recordRoborazziDemoDebug
 
