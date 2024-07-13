@@ -10,9 +10,9 @@ androidx.arch.core:core-common:2.2.0
 androidx.arch.core:core-runtime:2.2.0
 androidx.autofill:autofill:1.0.0
 androidx.cardview:cardview:1.0.0
-androidx.collection:collection-jvm:1.4.0
-androidx.collection:collection-ktx:1.4.0
-androidx.collection:collection:1.4.0
+androidx.collection:collection-jvm:1.4.1
+androidx.collection:collection-ktx:1.4.1
+androidx.collection:collection:1.4.1
 androidx.compose.animation:animation-android:1.7.0-beta04
 androidx.compose.animation:animation-core-android:1.7.0-beta04
 androidx.compose.animation:animation-core:1.7.0-beta04
