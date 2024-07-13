@@ -89,9 +89,9 @@ jobs:
           echo "::error::Screenshot tests failed, please create a PR in your fork first." && exit 1
 
       # Runs if previous job failed
-      - name: Generate new screenshots if verification failed and it's a PR
+      - name: Generate new screenshots if verification
         id: screenshotsrecord
-        if: steps.screenshotsverify.outcome == 'failure' && github.event_name == 'pull_request'
+        if: steps.screenshotsverify.outcome == 'failure'
         run: |
           ./gradlew recordRoborazziDemoDebug
 
