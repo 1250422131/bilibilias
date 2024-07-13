@@ -11,7 +11,6 @@ import com.imcys.bilibilias.core.testing.util.DefaultTestDevices
 import com.imcys.bilibilias.core.testing.util.captureForDevice
 import com.imcys.bilibilias.core.testing.util.captureMultiDevice
 import dagger.hilt.android.testing.HiltTestApplication
-import kotlin.test.BeforeTest
 import org.junit.Rule
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

@@ -35,8 +35,35 @@ class DownloadTaskDaoTest {
     fun closeDb() = db.close()
 
     @Test
-    fun kkk() = runTest {
+    fun downloadTaskDao_update_progress_by_uri() = runTest {
+        val downloadTaskEntities = testDownloadTaskEntity(1, cid = 1)
+        downloadTaskDao.insertTask(downloadTaskEntities)
 
+        val uri = "".toUri()
+        downloadTaskDao.updateProgressByUri(100, 200, uri)
+
+        val entity = downloadTaskDao.findByUri(uri)
+        assertEquals(100, entity.bytesSentTotal)
+        assertEquals(200, entity.contentLength)
+    }
+
+    @Test
+    fun downloadTaskDao_find_items_by_cids() = runTest {
+        val downloadTaskEntities = listOf(
+            testDownloadTaskEntity(1, cid = 1),
+            testDownloadTaskEntity(2, cid = 1),
+            testDownloadTaskEntity(3, cid = 2),
+            testDownloadTaskEntity(4, cid = 2),
+            testDownloadTaskEntity(5, cid = 3),
+        )
+        downloadTaskEntities.forEach {
+            downloadTaskDao.insertTask(it)
+        }
+
+        assertEquals(
+            downloadTaskEntities.groupBy { it.cid },
+            downloadTaskDao.findAllTaskByGroupCid().first(),
+        )
     }
 
     @Test
@@ -61,11 +88,12 @@ class DownloadTaskDaoTest {
 private fun testDownloadTaskEntity(
     id: Int,
     title: String = "",
+    cid: Long = 0,
 ) = DownloadTaskEntity(
     uri = "".toUri(),
     aid = 0,
     bvid = "",
-    cid = 0,
+    cid = cid,
     fileType = FileType.VIDEO,
     subTitle = "",
     title = title,
