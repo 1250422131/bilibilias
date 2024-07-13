@@ -10,7 +10,7 @@ android {
     namespace = "com.imcys.bilibilias.core.database"
     packaging {
         resources {
-            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/*"
         }
     }
 }
