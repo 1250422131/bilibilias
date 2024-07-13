@@ -6,6 +6,7 @@ plugins {
 
 android {
     namespace = "com.imcys.bilibilias.core.analytics"
+    testFixtures.enable = true
 }
 
 dependencies {
