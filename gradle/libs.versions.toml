@@ -75,7 +75,7 @@ sqllin = "1.3.2"
 robolectric = "4.12.2"
 roborazzi = "1.21.0"
 testng = "6.9.6"
-truth = "1.4.2"
+truth = "1.4.4"
 turbine = "1.1.0"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
