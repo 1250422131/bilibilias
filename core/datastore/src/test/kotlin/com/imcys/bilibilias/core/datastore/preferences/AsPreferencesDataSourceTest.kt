@@ -1,46 +1,41 @@
 package com.imcys.bilibilias.core.datastore.preferences
 
-import androidx.datastore.core.CorruptionException
+import com.imcys.bilibilias.core.datastore.InMemoryDataStore
 import com.imcys.bilibilias.core.datastore.UserPreferences
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.test.runTest
+import kotlin.test.assertNull
 
-class AsPreferencesDataSourceTest{
-    private val userPreferencesSerializer = UserPreferencesSerializer()
+class AsPreferencesDataSourceTest {
+    private val testScope = TestScope(UnconfinedTestDispatcher())
 
-    @Test
-    fun defaultUserPreferences_isEmpty() {
-//        assertEquals(
-//            userPreferencesSerializer.defaultValue.autoMerge,
-//        )
+    private lateinit var subject: AsPreferencesDataSource
+
+    @Before
+    fun setup() {
+        subject = AsPreferencesDataSource(InMemoryDataStore(UserPreferences()))
     }
 
     @Test
-    fun writingAndReadingUserPreferences_outputsCorrectValue() = runTest {
-        val expectedUserPreferences = userPreferences {
-            followedTopicIds.put("0", true)
-            followedTopicIds.put("1", true)
-        }
-
-        val outputStream = ByteArrayOutputStream()
-
-        expectedUserPreferences.writeTo(outputStream)
-
-        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-
-        val actualUserPreferences = userPreferencesSerializer.readFrom(inputStream)
-
-        assertEquals(
-            expectedUserPreferences,
-            actualUserPreferences,
-        )
+    fun fileStorangePathIsNullByDefault() = testScope.runTest {
+        assertNull(subject.userData.first().storagePath)
     }
 
-    @Test(expected = CorruptionException::class)
-    fun readingInvalidUserPreferences_throwsCorruptionException() = runTest {
-        userPreferencesSerializer.readFrom(ByteArrayInputStream(byteArrayOf(0)))
+    @Test
+    fun changeFileStoragePath_pathIsNotNull() = testScope.runTest {
+        val testPath = "test"
+        subject.setFileStoragePath(testPath)
+
+        assertEquals(testPath, subject.userData.first().storagePath)
+    }
+
+    @Test
+    fun commandIsNullByDefault() = testScope.runTest {
+        assertNull(subject.userData.first().command)
     }
 }

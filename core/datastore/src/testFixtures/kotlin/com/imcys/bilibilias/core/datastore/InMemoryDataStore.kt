@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.datastore.di
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.MutableStateFlow

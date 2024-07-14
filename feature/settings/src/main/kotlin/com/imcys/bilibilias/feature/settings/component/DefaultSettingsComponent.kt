@@ -45,7 +45,6 @@ class DefaultSettingsComponent @AssistedInject constructor(
                 autoImport = false,
                 shouldAppcenter = true,
                 command = DEFAULT_COMMAND
-
             ),
             context = viewModelScope.coroutineContext
         )

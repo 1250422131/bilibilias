@@ -2,39 +2,46 @@ package com.imcys.bilibilias.feature.settings
 
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.imcys.bilibilias.core.testing.util.MainDispatcherRule
+import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
 import com.imcys.bilibilias.feature.settings.component.DefaultSettingsComponent
 import com.imcys.bilibilias.feature.settings.component.SettingsComponent
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Rule
+import javax.inject.Inject
+import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.todo
 
+@HiltAndroidTest
 class SettingsComponentTest {
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
 
     private lateinit var component: SettingsComponent
 
-    @Before
+    @Inject
+    private lateinit var asPreferencesDataSource: AsPreferencesDataSource
+
+    @Inject
+    private lateinit var loginInfoDataSource: LoginInfoDataSource
+
+    @BeforeTest
     fun setup() {
+        hiltRule.inject()
+        InMemoryDataStore
         component =
             DefaultSettingsComponent(
                 componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-                TODO(),
-                TODO(),
+                asPreferencesDataSource,
+                loginInfoDataSource,
             )
     }
 
     @Test
     fun test() = runTest {
-
-    }
-
-    private fun createComponent(
-
-    ) {
 
     }
 }
