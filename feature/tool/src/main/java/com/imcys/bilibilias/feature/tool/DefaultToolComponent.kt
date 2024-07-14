@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.feature.tool
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,15 +14,11 @@ import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.network.repository.VideoRepository
-import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -158,7 +152,6 @@ class DefaultToolComponent @AssistedInject constructor(
 private class SavedState : InstanceKeeper.Instance {
     private val flows = MutableStateFlow<String>("")
     fun set(value: String) {
-        SavedStateHandle
         flows.value = value
     }
 
