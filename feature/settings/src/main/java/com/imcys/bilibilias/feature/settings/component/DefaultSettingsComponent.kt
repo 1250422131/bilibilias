@@ -2,14 +2,12 @@ package com.imcys.bilibilias.feature.settings.component
 
 import android.content.ClipData
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.hjq.toast.Toaster
@@ -26,14 +24,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.DevUtils
-import dev.utils.BuildConfig
-import dev.utils.app.ActivityUtils
 import dev.utils.app.AppUtils
-import dev.utils.app.AppUtils.getPackageName
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import java.io.File
-
 
 class DefaultSettingsComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,

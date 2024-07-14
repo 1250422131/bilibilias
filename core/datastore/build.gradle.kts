@@ -20,4 +20,6 @@ dependencies {
     testFixturesImplementation(libs.hilt.android.testing)
     testFixturesImplementation(projects.core.common)
     testFixturesImplementation(projects.core.datastore)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 }
