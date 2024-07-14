@@ -1,18 +1,10 @@
 package com.imcys.bilibilias.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.NoActivityResumedException
 import com.imcys.bilibilias.MainActivity
 import com.imcys.bilibilias.R
@@ -20,10 +12,10 @@ import com.imcys.bilibilias.core.rules.GrantPostNotificationsPermissionRule
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlin.test.BeforeTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.properties.ReadOnlyProperty
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 /**
