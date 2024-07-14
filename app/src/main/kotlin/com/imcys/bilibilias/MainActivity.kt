@@ -18,7 +18,7 @@ import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.ui.AsApp
-import com.imcys.bilibilias.ui.rememberNiaAppState
+import com.imcys.bilibilias.ui.rememberAsAppState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 CompositionLocalProvider(
                     LocalAnalyticsHelper provides analyticsHelper,
                 ) {
-                    val appState = rememberNiaAppState(
+                    val appState = rememberAsAppState(
                         errorMonitor = errorMonitor,
                     )
                     AsApp(appState, rootComponentFactory(componentContext))
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                         finish()
                     }
                 }
-            }
+            },
         )
     }
 }
