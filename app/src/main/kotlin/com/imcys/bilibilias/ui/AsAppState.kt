@@ -18,7 +18,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.data.util.ErrorMessage
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
-import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
@@ -30,16 +29,14 @@ import kotlinx.coroutines.flow.stateIn
 @Composable
 fun rememberNiaAppState(
     errorMonitor: ErrorMonitor,
-    networkMonitor: NetworkMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): AsAppState {
     return remember(
         errorMonitor,
-        networkMonitor,
         coroutineScope,
     ) {
         AsAppState(
-            errorMonitor,
+            errorMonitor = errorMonitor,
             coroutineScope = coroutineScope,
         )
     }

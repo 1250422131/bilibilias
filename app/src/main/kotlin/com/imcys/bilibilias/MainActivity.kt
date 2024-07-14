@@ -7,39 +7,19 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
-import com.imcys.bilibilias.core.data.util.NetworkMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.ui.AsApp
 import com.imcys.bilibilias.ui.rememberNiaAppState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -49,9 +29,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var analyticsHelper: AnalyticsHelper
-
-    @Inject
-    lateinit var networkMonitor: NetworkMonitor
 
     @Inject
     lateinit var errorMonitor: ErrorMonitor
@@ -89,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     val appState = rememberNiaAppState(
                         errorMonitor = errorMonitor,
-                        networkMonitor = networkMonitor,
                     )
                     AsApp(appState, rootComponentFactory(componentContext))
                 }
@@ -136,9 +112,9 @@ private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
  */
 private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
 
-//@Preview
-//@Composable
-//fun ScaffoldWithCoroutinesSnackbar() {
+// @Preview
+// @Composable
+// fun ScaffoldWithCoroutinesSnackbar() {
 //    // decouple snackbar host state from scaffold state for demo purposes
 //    // this state, channel and flow is for demo purposes to demonstrate business logic layer
 //    val snackbarHostState = remember { SnackbarHostState() }
@@ -181,4 +157,4 @@ private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
 //            )
 //        }
 //    )
-//}
+// }
