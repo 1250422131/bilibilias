@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 @Composable
-fun rememberNiaAppState(
+fun rememberAsAppState(
     errorMonitor: ErrorMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): AsAppState {
