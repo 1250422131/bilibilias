@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.feature.common
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -13,12 +11,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
-    ComponentContext by componentContext,
-    ViewModel() {
-    protected val moleculeScope =
-        CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+    ComponentContext by componentContext {
+    val viewModelScope = CoroutineScope(AndroidUiDispatcher.Main)
 
-    open val recompositionMode = RecompositionMode.ContextClock
+    protected val moleculeScope = CoroutineScope(AndroidUiDispatcher.Main)
+
+    protected open val recompositionMode = RecompositionMode.ContextClock
 
     // Events have a capacity large enough to handle simultaneous UI events, but
     // small enough to surface issues if they get backed up for some reason.

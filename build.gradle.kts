@@ -21,10 +21,9 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.power.assert) apply false
     alias(libs.plugins.module.graph) apply true
-    alias(libs.plugins.secrets) apply false
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.roborazzi) apply false
-    kotlin("plugin.power-assert") version "2.0.0" apply false
 }
