@@ -1,8 +1,7 @@
 ﻿package com.imcys.bilibilias.feature.tool.util
 
-// todo need test
 object InputParseUtil {
-    private val epRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=ep)([0-9]+)""") }
+    private val epRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=ep|eP|Ep|EP)([0-9]+)""") }
 
     // bv过滤
     private val bvRegex by lazy(LazyThreadSafetyMode.NONE) {
@@ -14,7 +13,7 @@ object InputParseUtil {
     }
 
     // av过滤
-    private val avRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=(av))([0-9]+)""") }
+    private val avRegex by lazy(LazyThreadSafetyMode.NONE) { Regex("""(?<=(av|aV|Av|AV))([0-9]+)""") }
 
     /**
      * 是否是番剧
@@ -23,23 +22,13 @@ object InputParseUtil {
     fun isBV(text: String) = bvRegex.containsMatchIn(text)
     fun isShortLink(text: String) = shortLink.containsMatchIn(text)
     fun isAV(text: String) = avRegex.containsMatchIn(text)
+
+    @Suppress("ReturnCount")
     fun searchType(text: String): SearchType {
-        val bv = getBvid(text)
-        if (bv != null) {
-            return SearchType.BV(bv)
-        }
-        val ep = getEpid(text)
-        if (ep != null) {
-            return SearchType.EP(ep)
-        }
-        val aid = getAid(text)
-        if (aid != null) {
-            return SearchType.AV(aid)
-        }
-        val link = getShortLink(text)
-        if (link != null) {
-            return SearchType.ShortLink(link)
-        }
+        getBvid(text)?.let { return SearchType.BV(it) }
+        getEpid(text)?.let { return SearchType.EP(it) }
+        getAid(text)?.let { return SearchType.AV(it) }
+        getShortLink(text)?.let { return SearchType.ShortLink(it) }
         return SearchType.None
     }
 

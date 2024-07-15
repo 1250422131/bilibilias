@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.feature.tool
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
@@ -8,7 +7,7 @@ import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.imcys.bilibilias.core.common.result.Result
 import com.imcys.bilibilias.core.common.result.asResult
-import com.imcys.bilibilias.core.common.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.feature.tool.util.ConversionUtil
 import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
@@ -84,7 +83,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }
 
     private fun handleAV(id: String): Flow<SearchResultUiState> {
-        val bvid = NewVideoNumConversionUtils.av2bv(id.toLong())
+        val bvid = ConversionUtil.av2bv(id.toLong())
         return handleBV(bvid)
     }
 

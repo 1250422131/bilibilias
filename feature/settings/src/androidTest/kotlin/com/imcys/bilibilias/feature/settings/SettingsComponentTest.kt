@@ -31,13 +31,6 @@ class SettingsComponentTest {
     @BeforeTest
     fun setup() {
         hiltRule.inject()
-        InMemoryDataStore
-        component =
-            DefaultSettingsComponent(
-                componentContext = DefaultComponentContext(lifecycle = LifecycleRegistry()),
-                asPreferencesDataSource,
-                loginInfoDataSource,
-            )
     }
 
     @Test
