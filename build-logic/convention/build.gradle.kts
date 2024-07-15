@@ -16,6 +16,7 @@ dependencies {
     compileOnly(libs.room.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.detekt.gradlePlugin)
+    compileOnly(libs.kotlin.power.assert.gradlePlugin)
 }
 
 tasks {
