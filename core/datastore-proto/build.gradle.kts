@@ -16,5 +16,5 @@ wire {
 }
 
 dependencies {
-    implementation("com.squareup.wire:wire-runtime:4.9.9")
+    implementation("com.squareup.wire:wire-runtime:5.0.0")
 }
