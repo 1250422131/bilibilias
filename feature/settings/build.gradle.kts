@@ -28,5 +28,5 @@ dependencies {
     // Allure support
     androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.5.4")
     // Jetpack Compose support
-    androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.5.4")
+    androidTestImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.5.5")
 }
