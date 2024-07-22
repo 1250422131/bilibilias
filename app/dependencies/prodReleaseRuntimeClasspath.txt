@@ -236,8 +236,8 @@ com.squareup.okhttp3:okhttp-brotli:4.12.0
 com.squareup.okhttp3:okhttp:4.12.0
 com.squareup.okio:okio-jvm:3.9.0
 com.squareup.okio:okio:3.9.0
-com.squareup.wire:wire-runtime-jvm:4.9.9
-com.squareup.wire:wire-runtime:4.9.9
+com.squareup.wire:wire-runtime-jvm:5.0.0
+com.squareup.wire:wire-runtime:5.0.0
 com.umeng.umsdk:abtest:1.0.1
 com.umeng.umsdk:asms:1.8.3
 com.umeng.umsdk:common:9.7.3
@@ -302,8 +302,8 @@ org.jetbrains.kotlin:kotlin-bom:1.8.22
 org.jetbrains.kotlin:kotlin-parcelize-runtime:1.9.22
 org.jetbrains.kotlin:kotlin-reflect:2.0.0
 org.jetbrains.kotlin:kotlin-stdlib-common:2.0.0
-org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10
-org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0
 org.jetbrains.kotlin:kotlin-stdlib:2.0.0
 org.jetbrains.kotlinx:atomicfu-jvm:0.25.0
 org.jetbrains.kotlinx:atomicfu:0.25.0
