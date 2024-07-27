@@ -1,28 +1,29 @@
 [versions]
 akdanmaku = "1.0.3"
 androidGradlePlugin = "8.5.1"
-androidTools = "31.5.0"
+androidTools = "31.5.1"
 androidxTracing = "1.3.0-alpha02"
 androidxMacroBenchmark = "1.3.0-beta01"
 androidx-junit = "1.2.1"
 androidDesugarJdkLibs = "2.0.4"
-androidxAnnotation = "1.8.0"
+androidxAnnotation = "1.8.1"
 appcenter = "5.0.4"
 atomicfu = "0.25.0"
-androidxPaging = "3.3.0"
+androidxPaging = "3.3.1"
 androidxAppcompat = "1.7.0"
-androidxCollection = "1.4.1"
+androidxCollection = "1.4.2"
 androidxDataStore = "1.1.1"
-androidxLifecycle = "2.8.3"
-androidxMedia3 = "1.3.1"
+androidxLifecycle = "2.8.4"
+androidxMedia3 = "1.4.0"
 androidxRoom = "2.7.0-alpha05"
-androidxActivity = "1.9.0"
+androidxActivity = "1.9.1"
 androidxComposeBom = "2024.06.00"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxComposeMaterial3Adaptive = "1.0.0-beta04"
 androidxComposeMaterial3AdaptiveNavigationSuite = "1.3.0-beta04"
 androidXMetrics = "1.0.0-beta01"
 androidxProfileinstaller = "1.3.1"
+androidxWork = "2.9.0"
 androidxWindowManager = "1.3.0"
 androidxTestCore = "1.6.1"
 androidxTestExt = "1.2.1"
@@ -32,18 +33,16 @@ androidxUiAutomator = "2.3.0"
 androidxEspresso = "3.6.1"
 banner = "2.2.3"
 buildconfig = "5.4.0"
-gsyvideoplayer = "v8.6.0-release-jitpack"
-dokarSheets = "0.6.0-alpha03"
-mockk = "1.13.12"
-startupRuntime = "1.1.1"
-striktCore = "0.35.1"
-tencentBugly = "4.1.9.3"
 coil = "2.7.0"
-decompose = "3.1.0"
 coreKtx = "1.13.1"
+composeSettings = "2.4.0"
+dokarSheets = "0.6.0-alpha03"
+decompose = "3.1.0"
 detekt = "1.23.6"
 devappx = "2.4.6"
+dependencyGuard = "0.5.0"
 ffmpegKitFull = "6.0-2"
+gsyvideoplayer = "v8.6.0-release-jitpack"
 hilt = "2.51.1"
 hiltExt = "1.2.0"
 jiaozivideoplayer = "7.7.2.3300"
@@ -59,37 +58,37 @@ ksp = "2.0.0-1.0.23"
 ktor = "2.3.12"
 lottie = "6.4.1"
 monitor = "1.8.1"
-dependencyGuard = "0.5.0"
+mockk = "1.13.12"
+moduleGraph = "2.5.0"
 napier = "2.7.1"
 okhttp = "4.12.0"
 okio = "3.9.0"
 qrose = "1.0.1"
-sonner = "0.3.8"
-toaster = "12.6"
-wireGradlePlugin = "5.0.0"
-work = "2.9.0"
-composeSettings = "2.4.0"
-moduleGraph = "2.5.0"
-sqllin = "1.3.2"
+wire = "5.0.0"
 robolectric = "4.13"
 roborazzi = "1.23.0"
-testng = "6.9.6"
-truth = "1.4.4"
+sonner = "0.3.8"
+sqllin = "1.3.2"
+startupRuntime = "1.1.1"
+striktCore = "0.35.1"
+toaster = "12.6"
 turbine = "1.1.0"
+truth = "1.4.4"
+tencentBugly = "4.1.9.3"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
-akdanmaku = { module = "com.kuaishou:akdanmaku", version.ref = "akdanmaku" }
+akdanmaku = { group = "com.kuaishou", name = "akdanmaku", version.ref = "akdanmaku" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
-androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotation" }
-androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidxCollection" }
 androidx-dataStore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
 androidx-dataStore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "androidxDataStore" }
 
-androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidxPaging" }
-androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPaging" }
-androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidxPaging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidxPaging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidxPaging" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidxPaging" }
 
-androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
@@ -98,14 +97,14 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
 
-androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidxMedia3" }
-androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "androidxMedia3" }
-androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "androidxMedia3" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
 
 androidx-window-core = { group = "androidx.window", name = "window-core", version.ref = "androidxWindowManager" }
-androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "androidxProfileinstaller" }
-androidx-metrics = { module = "androidx.metrics:metrics-performance", version.ref = "androidXMetrics" }
-androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivity" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
+androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidXMetrics" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidxActivity" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
 
@@ -116,8 +115,8 @@ androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-runtimeTesting = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 
-androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
-androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "work" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidxWork" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
@@ -150,32 +149,33 @@ coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
+decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 
-dokar-sheets = { module = "io.github.dokar3:sheets-m3", version.ref = "dokarSheets" }
-dokar-sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
-devappx = { module = "io.github.afkt:DevAppX", version.ref = "devappx" }
+dokar-sheets = { group = "io.github.dokar3", name = "sheets-m3", version.ref = "dokarSheets" }
+dokar-sonner = { group = "io.github.dokar3", name = "sonner", version.ref = "sonner" }
+devappx = { group = "io.github.afkt", name = "DevAppX", version.ref = "devappx" }
 
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version = "0.4.5" }
 
-ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
+ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
-gsyvideoplayer-exo2 = { module = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
-gsyvideoplayer-java = { module = "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
+gsyvideoplayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
+gsyvideoplayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
 
 napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-brotli = { group = "com.squareup.okhttp3", name = "okhttp-brotli", version.ref = "okhttp" }
-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
-wire-gradlePlugin = { module = "com.squareup.wire:wire-gradle-plugin", version.ref = "wireGradlePlugin" }
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+wire-gradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
+wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 
-qrose = { module = "io.github.alexzhirkevich:qrose", version.ref = "qrose" }
+qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
 
-compose-settings = { module = "com.github.alorma.compose-settings:ui-tiles", version.ref = "composeSettings" }
+compose-settings = { group = "com.github.alorma.compose-settings", name = "ui-tiles", version.ref = "composeSettings" }
 
-toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
+toaster = { group = "com.github.getActivity", name = "Toaster", version.ref = "toaster" }
 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
@@ -197,7 +197,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollections" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
-kotlinx-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
+kotlinx-atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
@@ -211,13 +211,14 @@ lint-api = { group = "com.android.tools.lint", name = "lint-api", version.ref = 
 lint-checks = { group = "com.android.tools.lint", name = "lint-checks", version.ref = "androidTools" }
 lint-tests = { group = "com.android.tools.lint", name = "lint-tests", version.ref = "androidTools" }
 
-molecule = { module = "app.cash.molecule:molecule-runtime", version = "2.0.0" }
+molecule = { group = "app.cash.molecule", name = "molecule-runtime", version = "2.0.0" }
 
 monitor = { group = "io.github.leavesczy", name = "monitor", version.ref = "monitor" }
 monitor-no-op = { group = "io.github.leavesczy", name = "monitor-no-op", version.ref = "monitor" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
-mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
@@ -230,25 +231,25 @@ sqllin-dsl = { group = "com.ctrip.kotlin", name = "sqllin-dsl", version.ref = "s
 sqllin-driver = { group = "com.ctrip.kotlin", name = "sqllin-driver", version.ref = "sqllin" }
 sqllin-processor = { group = "com.ctrip.kotlin", name = "sqllin-processor", version.ref = "sqllin" }
 
-strikt-core = { module = "io.strikt:strikt-core", version.ref = "striktCore" }
+strikt-core = { group = "io.strikt", name = "strikt-core", version.ref = "striktCore" }
 
-tencent-bugly = { module = "com.tencent.bugly:crashreport", version.ref = "tencentBugly" }
+tencent-bugly = { group = "com.tencent.bugly", name = "crashreport", version.ref = "tencentBugly" }
 
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
-umeng-common = { module = "com.umeng.umsdk:common", version = "9.7.3" }
-umeng-asms = { module = "com.umeng.umsdk:asms", version = "1.8.3" }
-umeng-abtest = { module = "com.umeng.umsdk:abtest", version = "1.0.1" }
+umeng-common = { group = "com.umeng.umsdk", name = "common", version = "9.7.3" }
+umeng-asms = { group = "com.umeng.umsdk", name = "asms", version = "1.8.3" }
+umeng-abtest = { group = "com.umeng.umsdk", name = "abtest", version = "1.0.1" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "androidxRoom" }
-compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
-kotlin-power-assert-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-power-assert", version.ref = "detekt" }
+kotlin-power-assert-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-power-assert", version.ref = "kotlin" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }

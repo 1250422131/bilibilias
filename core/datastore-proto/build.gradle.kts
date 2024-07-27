@@ -10,11 +10,11 @@ android {
 wire {
     kotlin {
         sourcePath {
-            srcDirs("src/main/proto")
+            srcDir(files("src/main/proto"))
         }
     }
 }
 
 dependencies {
-    implementation("com.squareup.wire:wire-runtime:5.0.0")
+    implementation(libs.wire.runtime)
 }
