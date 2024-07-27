@@ -21,7 +21,7 @@ enum class AsFlavor(val dimension: FlavorDimension, val applicationIdSuffix: Str
 
 fun configureFlavors(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
-    flavorConfigurationBlock: ProductFlavor.(flavor: AsFlavor) -> Unit = {}
+    flavorConfigurationBlock: ProductFlavor.(flavor: AsFlavor) -> Unit = {},
 ) {
     commonExtension.apply {
         FlavorDimension.values().forEach { flavorDimension ->
