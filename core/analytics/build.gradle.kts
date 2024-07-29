@@ -12,7 +12,7 @@ android {
 dependencies {
     implementation(libs.androidx.compose.runtime)
 
-    prodImplementation(libs.umeng.common)
-    prodImplementation(libs.umeng.asms)
-    prodImplementation(libs.umeng.abtest)
+    implementation(libs.umeng.common)
+    implementation(libs.umeng.asms)
+    implementation(libs.umeng.abtest)
 }
