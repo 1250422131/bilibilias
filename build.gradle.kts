@@ -26,5 +26,5 @@ plugins {
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.buildconfig) apply false
     alias(libs.plugins.roborazzi) apply false
-    id("dev.shreyaspatil.compose-compiler-report-generator") version "1.4.0" apply false
+    alias(libs.plugins.compose.compiler.report.generator) apply false
 }
