@@ -1,6 +1,6 @@
-androidx.activity:activity-compose:1.9.0
-androidx.activity:activity-ktx:1.9.0
-androidx.activity:activity:1.9.0
+androidx.activity:activity-compose:1.9.1
+androidx.activity:activity-ktx:1.9.1
+androidx.activity:activity:1.9.1
 androidx.annotation:annotation-experimental:1.4.1
 androidx.annotation:annotation-jvm:1.8.0
 androidx.annotation:annotation:1.8.0
@@ -241,7 +241,7 @@ com.squareup.wire:wire-runtime:5.0.0
 com.umeng.umsdk:abtest:1.0.1
 com.umeng.umsdk:asms:1.8.3
 com.umeng.umsdk:common:9.7.3
-commons-codec:commons-codec:1.17.0
+commons-codec:commons-codec:1.17.1
 io.antmedia:rtmp-client:3.2.0
 io.coil-kt:coil-base:2.7.0
 io.coil-kt:coil-compose-base:2.7.0
