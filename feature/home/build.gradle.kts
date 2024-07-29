@@ -24,7 +24,7 @@ dependencies {
     testImplementation(projects.core.screenshotTesting)
     testImplementation(testFixtures(projects.core.data))
     testImplementation(testFixtures(projects.core.analytics))
-    testDemoImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi)
 
     androidTestImplementation(projects.core.testing)
     androidTestImplementation(testFixtures(projects.core.model))

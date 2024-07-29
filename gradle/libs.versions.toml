@@ -36,6 +36,7 @@ buildconfig = "5.4.0"
 coil = "2.7.0"
 coreKtx = "1.13.1"
 composeSettings = "2.4.0"
+composeCompilerReport = "1.4.0"
 dokarSheets = "0.6.0-alpha03"
 decompose = "3.1.0"
 detekt = "1.23.6"
@@ -244,30 +245,32 @@ umeng-abtest = { group = "com.umeng.umsdk", name = "abtest", version = "1.0.1" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
+compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
+compose-compiler-report-gradlePlugin = { group = "dev.shreyaspatil.compose-compiler-report-generator", name = "gradle-plugin", version.ref = "composeCompilerReport" }
+detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "androidxRoom" }
-compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
-detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 kotlin-power-assert-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-power-assert", version.ref = "kotlin" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "androidxRoom" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
+compose-compiler-report-generator = { id = "dev.shreyaspatil.compose-compiler-report-generator", version.ref = "composeCompilerReport" }
+compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-power-assert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
-room = { id = "androidx.room", version.ref = "androidxRoom" }
-module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 kotlin-dsl = { id = "org.gradle.kotlin.kotlin-dsl", version.ref = "kotlinDsl" }
+module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }
+room = { id = "androidx.room", version.ref = "androidxRoom" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 
 bilibilias-android-application = { id = "bilibilias.android.application", version = "unspecified" }
@@ -286,6 +289,7 @@ bilibilias-hilt = { id = "bilibilias.hilt", version = "unspecified" }
 bilibilias-decompose = { id = "bilibilias.decompose", version = "unspecified" }
 bilibilias-sqlLin = { id = "bilibilias.sqlLin", version = "unspecified" }
 bilibilias-detekt = { id = "bilibilias.detekt", version = "unspecified" }
+bilibilias-compose-compiler-report = { id = "bilibilias.compose.compiler.report", version = "unspecified" }
 
 [bundles]
 androidx-compose-ui-test = ["androidx-compose-ui-test", "androidx-compose-ui-testManifest"]
