@@ -4,6 +4,7 @@ import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import com.hjq.toast.Toaster
+import com.imcys.bilibilias.sync.initializers.Sync
 import com.imcys.bilibilias.util.Logging
 import dagger.hilt.android.HiltAndroidApp
 import io.github.aakira.napier.DebugAntilog
@@ -25,6 +26,7 @@ class AsApplication :
         Toaster.init(this)
         Napier.base(DebugAntilog())
         logging()
+        Sync.initialize(context = this)
     }
 
     override fun newImageLoader(): ImageLoader = imageLoader.get()

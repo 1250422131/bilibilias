@@ -137,7 +137,7 @@ fun ToolContent(
                                 modifier = Modifier
                                     .size(70.dp)
                                     .clip(CircleShape)
-                                    .clickable { navigationToAuthorSpace(searchResultUiState.aid) }
+                                    .clickable { navigationToAuthorSpace(searchResultUiState.mid) }
                             )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->

@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.feature.tool
 
 import com.imcys.bilibilias.core.model.bangumi.BangumiStreamUrl
+import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 
 sealed interface SearchResultUiState {
@@ -12,6 +13,7 @@ sealed interface SearchResultUiState {
         val aid: Long,
         val bvid: String,
         val cid: Long,
+        val mid: Mid,
         val collection: List<View>,
         val face: String,
         val ownerId: Long,

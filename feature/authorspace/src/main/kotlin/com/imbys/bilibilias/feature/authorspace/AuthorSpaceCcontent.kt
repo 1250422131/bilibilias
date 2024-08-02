@@ -6,8 +6,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -16,6 +18,7 @@ import com.imcys.bilibilias.core.ui.UnitedDetails
 @Composable
 fun AuthorSpaceContent(component: AuthorSpaceComponent) {
     val lazyPagingItems = component.flow.collectAsLazyPagingItems()
+    val model by component.models.collectAsStateWithLifecycle()
     AuthorSpaceScreen(lazyPagingItems)
 }
 
@@ -28,7 +31,7 @@ private fun AuthorSpaceScreen(lazyPagingItems: LazyPagingItems<UnitedDetails>) {
                     text = "Waiting for items to load from the backend",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
                 )
             }
         }
@@ -44,7 +47,7 @@ private fun AuthorSpaceScreen(lazyPagingItems: LazyPagingItems<UnitedDetails>) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentWidth(Alignment.CenterHorizontally)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
                 )
             }
         }

@@ -174,7 +174,7 @@ class NetworkModule {
             }
         }
         client.plugin(HttpSend).intercept { request ->
-            wbiIntercept(request, usersDataSource)
+            wbiIntercept(request)
         }
         return client
     }

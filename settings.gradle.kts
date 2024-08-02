@@ -60,3 +60,4 @@ include(":lint")
 include(":okdownload:okdownload")
 
 include(":ui-test-hilt-manifest")
+include(":sync:work")

@@ -53,7 +53,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
-        SearchResultUiState.Loading
+        SearchResultUiState.Loading,
     )
 
     override fun download(request: DownloadRequest) {
@@ -104,6 +104,7 @@ class DefaultToolComponent @AssistedInject constructor(
                         detail.aid,
                         detail.bvid,
                         detail.cid,
+                        detail.owner.mid,
                         collection,
                         detail.owner.face,
                         detail.owner.mid,
@@ -131,6 +132,7 @@ class DefaultToolComponent @AssistedInject constructor(
                         episode.aid,
                         episode.bvid,
                         episode.cid,
+                        detail.upInfo.mid,
                         collection,
                         detail.upInfo.avatar,
                         detail.upInfo.mid,

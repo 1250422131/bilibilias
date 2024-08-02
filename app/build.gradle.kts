@@ -20,7 +20,7 @@ android {
         versionCode = 17
         versionName = "0.1.7"
         ndk {
-            //noinspection ChromeOsAbiSupport
+            // noinspection ChromeOsAbiSupport
             abiFilters += listOf("arm64-v8a")
         }
 
@@ -79,6 +79,8 @@ dependencies {
     implementation(projects.core.ui)
     implementation(projects.core.data)
 
+    implementation(projects.sync.work)
+
     implementation(libs.androidx.activity.compose) {
         exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
     }
@@ -97,7 +99,7 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
 
-    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.ktx)
 
     implementation(libs.androidx.activity.ktx)
 
