@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.datastore.preferences
 
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.InMemoryDataStore
 import com.imcys.bilibilias.core.datastore.UserPreferences
 import kotlinx.coroutines.flow.first

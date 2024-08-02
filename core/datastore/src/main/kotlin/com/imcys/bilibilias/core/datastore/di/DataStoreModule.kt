@@ -7,10 +7,12 @@ import androidx.datastore.dataStoreFile
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
-import com.imcys.bilibilias.core.datastore.LoginInfo
 import com.imcys.bilibilias.core.datastore.UserPreferences
-import com.imcys.bilibilias.core.datastore.login.LoginInfoSerializer
-import com.imcys.bilibilias.core.datastore.preferences.UserPreferencesSerializer
+import com.imcys.bilibilias.core.datastore.AsCookieStoreSerializer
+import com.imcys.bilibilias.core.datastore.model.AsCookieStore
+import com.imcys.bilibilias.core.datastore.UserPreferencesSerializer
+import com.imcys.bilibilias.core.datastore.UsersSerializer
+import com.imcys.bilibilias.core.datastore.model.Users
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +20,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.protobuf.ProtoBuf
 import javax.inject.Singleton
 
 @Module
@@ -25,22 +29,37 @@ import javax.inject.Singleton
 class DataStoreModule {
     @Provides
     @Singleton
-    internal fun providesLoginInfoDataStore(
+    internal fun providesAsCookieStoreDataStore(
         @ApplicationContext context: Context,
         @Dispatcher(AsDispatchers.IO) ioDispatcher: CoroutineDispatcher,
         @ApplicationScope scope: CoroutineScope,
-        loginInfoSerializer: LoginInfoSerializer,
-    ): DataStore<LoginInfo> =
+        asCookieStoreSerializer: AsCookieStoreSerializer,
+    ): DataStore<AsCookieStore> =
         DataStoreFactory.create(
-            serializer = loginInfoSerializer,
+            serializer = asCookieStoreSerializer,
             scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
         ) {
-            context.dataStoreFile("login_info.pb")
+            context.dataStoreFile("as_cookie.pb")
         }
 
     @Provides
     @Singleton
-    internal fun providesLoginInfoDataStor1e(
+    internal fun providesUsersDataStore(
+        @ApplicationContext context: Context,
+        @Dispatcher(AsDispatchers.IO) ioDispatcher: CoroutineDispatcher,
+        @ApplicationScope scope: CoroutineScope,
+        usersSerializer: UsersSerializer,
+    ): DataStore<Users> =
+        DataStoreFactory.create(
+            serializer = usersSerializer,
+            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
+        ) {
+            context.dataStoreFile("users.pb")
+        }
+
+    @Provides
+    @Singleton
+    internal fun providesUserPreferencesDataStor1e(
         @ApplicationContext context: Context,
         @Dispatcher(AsDispatchers.IO) ioDispatcher: CoroutineDispatcher,
         @ApplicationScope scope: CoroutineScope,
@@ -52,4 +71,9 @@ class DataStoreModule {
         ) {
             context.dataStoreFile("user_preferences.pb")
         }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    @Provides
+    @Singleton
+    internal fun providesProtobuf() = ProtoBuf { }
 }

@@ -3,7 +3,7 @@ package com.imcys.bilibilias.core.datastore.di
 import androidx.datastore.core.DataStore
 import com.imcys.bilibilias.core.datastore.InMemoryDataStore
 import com.imcys.bilibilias.core.datastore.UserPreferences
-import com.imcys.bilibilias.core.datastore.preferences.UserPreferencesSerializer
+import com.imcys.bilibilias.core.datastore.UserPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent

@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.UsersDataSource
 import com.imcys.bilibilias.core.network.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -16,14 +16,14 @@ import kotlinx.coroutines.flow.first
 fun UserPresenter(
     events: Flow<Event>,
     userRepository: UserRepository,
-    loginInfoDataSource: LoginInfoDataSource
+    usersDataSource: UsersDataSource,
 ): Model {
     var name by remember { mutableStateOf("") }
     var sign by remember { mutableStateOf("") }
     var faceUrl by remember { mutableStateOf("") }
     var fetchId: Int by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
-        val mid = loginInfoDataSource.mid.first()
+        val mid = usersDataSource.users.first().id
         val card = userRepository.用户名片信息(mid)
         name = card.card.name
         sign = card.card.sign

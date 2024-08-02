@@ -1,10 +1,7 @@
 package com.imcys.bilibilias.feature.settings
 
-import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
-import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
-import com.imcys.bilibilias.feature.settings.component.DefaultSettingsComponent
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.feature.settings.component.SettingsComponent
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -26,7 +23,7 @@ class SettingsComponentTest {
     private lateinit var asPreferencesDataSource: AsPreferencesDataSource
 
     @Inject
-    private lateinit var loginInfoDataSource: LoginInfoDataSource
+    private lateinit var asCookieStoreDataSource: AsCookieStoreDataSource
 
     @BeforeTest
     fun setup() {

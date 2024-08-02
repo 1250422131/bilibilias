@@ -9,7 +9,7 @@ import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RU
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
-import com.imcys.bilibilias.core.datastore.preferences.AsPreferencesDataSource
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.model.download.FileType

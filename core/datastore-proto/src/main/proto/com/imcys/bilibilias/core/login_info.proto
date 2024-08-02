@@ -10,8 +10,11 @@ message LoginInfo {
     string mixKey = 4;
     uint64 mid = 5;
     map<string, string > finger = 6;
+    string cookies = 7;
 }
 message Cookie {
     string name = 1;
     string value = 2;
+    optional string domain = 3;
+    optional string path = 4;
 }

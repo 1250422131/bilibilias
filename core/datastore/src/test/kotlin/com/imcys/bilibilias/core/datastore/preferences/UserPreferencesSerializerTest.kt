@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.datastore.preferences;
 
 import com.imcys.bilibilias.core.datastore.UserPreferences
+import com.imcys.bilibilias.core.datastore.UserPreferencesSerializer
 import kotlinx.coroutines.test.runTest
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

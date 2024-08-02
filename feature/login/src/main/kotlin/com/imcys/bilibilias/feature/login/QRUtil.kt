@@ -75,14 +75,14 @@ internal object QRUtil {
             arrayOf(MediaStore.Images.Media._ID),
             "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
             arrayOf("BILIBILIAS-QR-Code"),
-            null
+            null,
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
                 return ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
+                    id,
                 )
             }
         }
@@ -94,7 +94,7 @@ fun Bitmap.addWhiteBorder(borderSize: Int): Bitmap {
     val bmpWithBorder = Bitmap.createBitmap(
         getWidth() + borderSize * 2,
         getHeight() + borderSize * 2,
-        getConfig()
+        getConfig(),
     )
     val canvas = Canvas(bmpWithBorder)
     canvas.drawColor(Color.WHITE)
@@ -102,7 +102,7 @@ fun Bitmap.addWhiteBorder(borderSize: Int): Bitmap {
         borderSize.toFloat(),
         borderSize.toFloat(),
         (width + borderSize).toFloat(),
-        (height + borderSize).toFloat()
+        (height + borderSize).toFloat(),
     )
     canvas.drawBitmap(this, null, target, null)
     return bmpWithBorder

@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
 import com.imcys.bilibilias.core.network.repository.LoginRepository
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.login.LoginEvent
@@ -15,7 +15,6 @@ import com.imcys.bilibilias.feature.login.LoginModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.isActive
@@ -26,12 +25,12 @@ import kotlin.time.Duration.Companion.seconds
 class DefaultLoginComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val loginRepository: LoginRepository,
-    private val loginInfoDataSource: LoginInfoDataSource,
+    private val asCookieStoreDataSource: AsCookieStoreDataSource,
 ) : LoginComponent, BaseViewModel<LoginEvent, LoginModel>(componentContext) {
 
     @Composable
     override fun models(events: Flow<LoginEvent>): LoginModel {
-        return LoginPresenter(events, loginRepository, loginInfoDataSource)
+        return LoginPresenter(events, loginRepository, asCookieStoreDataSource)
     }
 
     @AssistedFactory
@@ -46,7 +45,7 @@ class DefaultLoginComponent @AssistedInject constructor(
 private fun LoginPresenter(
     events: Flow<LoginEvent>,
     loginRepository: LoginRepository,
-    loginInfoDataSource: LoginInfoDataSource
+    asCookieStoreDataSource: AsCookieStoreDataSource
 ): LoginModel {
     var qrUrl by remember { mutableStateOf("") }
     var key by remember { mutableStateOf("") }
@@ -67,7 +66,7 @@ private fun LoginPresenter(
                 ok = qrcodePoll.success
                 isSuccess = qrcodePoll.success
                 message = qrcodePoll.message
-                loginInfoDataSource.setRefreshToken(qrcodePoll.refreshToken)
+                // asCookieStoreDataSource.setRefreshToken(qrcodePoll.refreshToken)
             }
         }
     }

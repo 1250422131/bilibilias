@@ -7,7 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
+import com.imcys.bilibilias.core.datastore.UsersDataSource
 import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.repository.BiliBiliAsRepository
@@ -24,7 +25,8 @@ class DefaultHomeComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val asRepository: BiliBiliAsRepository,
     private val loginRepository: LoginRepository,
-    private val loginInfoDataSource: LoginInfoDataSource
+    private val asCookieStoreDataSource: AsCookieStoreDataSource,
+    private val usersDataSource: UsersDataSource,
 ) : HomeComponent, BaseViewModel<HomeEvent, HomeComponent.Model>(componentContext) {
 
     @Composable
@@ -42,8 +44,8 @@ class DefaultHomeComponent @AssistedInject constructor(
         LaunchedEffect(Unit) {
             loginRepository.getBilibiliHome()
             val bar = loginRepository.导航栏用户信息()
-            loginInfoDataSource.setMid(bar.mid)
-            loginInfoDataSource.setMixKey(TokenUtil.getBiliMixin(bar.imgKey, bar.subKey))
+            usersDataSource.setUserId(bar.mid)
+            usersDataSource.setMixKey(TokenUtil.getBiliMixin(bar.imgKey, bar.subKey))
         }
 
         LaunchedEffect(Unit) {

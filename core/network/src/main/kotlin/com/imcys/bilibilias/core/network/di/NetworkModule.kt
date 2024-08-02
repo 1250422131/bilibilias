@@ -11,7 +11,8 @@ import coil.decode.VideoFrameDecoder
 import coil.util.DebugLogger
 import com.imcys.bilibilias.core.common.utils.ofMap
 import com.imcys.bilibilias.core.common.utils.print
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
+import com.imcys.bilibilias.core.datastore.UsersDataSource
 import com.imcys.bilibilias.core.model.Box
 import com.imcys.bilibilias.core.model.Response
 import com.imcys.bilibilias.core.network.BuildConfig
@@ -138,7 +139,7 @@ class NetworkModule {
         json: Json,
         transform: ClientPlugin<Unit>,
         asCookiesStorage: AsCookiesStorage,
-        loginInfoDataSource: LoginInfoDataSource,
+        usersDataSource: UsersDataSource,
         okHttpClient: OkHttpClient,
     ): HttpClient {
         val client = HttpClient(
@@ -173,7 +174,7 @@ class NetworkModule {
             }
         }
         client.plugin(HttpSend).intercept { request ->
-            wbiIntercept(request, loginInfoDataSource)
+            wbiIntercept(request, usersDataSource)
         }
         return client
     }
@@ -183,7 +184,8 @@ class NetworkModule {
     @Singleton
     fun provideTransformData(
         json: Json,
-        loginInfoDataSource: LoginInfoDataSource,
+        asCookieStoreDataSource: AsCookieStoreDataSource,
+        usersDataSource: UsersDataSource,
     ): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { request, content, requestedType ->
             if (request.request.url.host == BiliBiliAsApi.API_HOST) return@transformResponseBody null
@@ -198,7 +200,7 @@ class NetworkModule {
                 content.toInputStream(),
             )
             if (box.code == ACCOUNT_NOT_LOGGED_IN) {
-                loginInfoDataSource.setLoginState(false)
+                usersDataSource.setLoginState(false)
             }
             if (box.code != SUCCESS) {
                 throw ApiIOException(
