@@ -8,10 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface AuthorSpaceComponent {
-    val models: StateFlow<Model>
     val flow: Flow<PagingData<UnitedDetails>>
+    val models: StateFlow<Model>
 
-    data class Model(val units: List<String>)
+    data class Model(val units: List<UnitedDetails>)
+
+    fun take(event: AuthorSpaceEvent)
+
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,
