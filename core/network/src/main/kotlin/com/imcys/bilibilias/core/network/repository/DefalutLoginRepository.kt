@@ -47,7 +47,7 @@ class DefalutLoginRepository @Inject constructor(
         return response
     }
 
-    override suspend fun 导航栏用户信息(): NavigationBar {
+    override suspend fun nav(): NavigationBar {
         return client.get(BilibiliApi.NAV_BAR).body()
     }
 

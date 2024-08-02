@@ -9,7 +9,7 @@ interface LoginRepository {
 
     suspend fun 轮询登录(key: String): QrcodePoll
 
-    suspend fun 导航栏用户信息(): NavigationBar
+    suspend fun nav(): NavigationBar
 
     suspend fun exitLogin()
 
