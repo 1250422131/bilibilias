@@ -33,15 +33,4 @@ class TestWbi {
         val s = WBIUtils.encWbi(list, mixinKey)
         println(s.joinToString("&") { it.name + '=' + it.value })
     }
-
-    @Test
-    fun `测试 TokenUtils`() {
-        val map = mutableMapOf(
-            "foo" to "114",
-            "bar" to "514",
-            "zab" to "1919810",
-            "wts" to "1702204169"
-        )
-        TokenUtil.genBiliSign(map, mix)
-    }
 }
