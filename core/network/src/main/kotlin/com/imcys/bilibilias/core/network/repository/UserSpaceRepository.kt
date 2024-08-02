@@ -2,7 +2,6 @@ package com.imcys.bilibilias.core.network.repository
 
 import com.imcys.bilibilias.core.model.space.FavouredFolder
 import com.imcys.bilibilias.core.model.space.SpaceArcSearch
-import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BilibiliApi
 import com.imcys.bilibilias.core.network.di.requireWbi
 import com.imcys.bilibilias.core.network.utils.parameterMid
@@ -13,8 +12,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
-import io.ktor.http.encodeURLParameter
-import io.ktor.util.appendIfNameAbsent
 import javax.inject.Inject
 
 class UserSpaceRepository @Inject constructor(
@@ -26,13 +23,13 @@ class UserSpaceRepository @Inject constructor(
         }.body()
     }
 
-    suspend fun 查询用户投稿视频(mid: Long, pageNumber: Int): SpaceArcSearch {
+    suspend fun 查询用户投稿视频(mid: Long, next: Int, size: Int): SpaceArcSearch {
         return client.get(BilibiliApi.SPACE_ARC_SEARCH) {
             attributes.put(requireWbi, true)
             header(HttpHeaders.Referrer, "https://www.bilibili.com")
             parameterMid(mid)
-            parameter("pn", pageNumber)
-            parameter("ps", 30)
+            parameter("pn", next)
+            parameter("ps", size.coerceAtMost(30))
         }.body()
     }
 }

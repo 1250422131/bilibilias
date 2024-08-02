@@ -15,19 +15,21 @@ class SpaceArcSearchPagingSource @AssistedInject constructor(
     @Assisted private val mid: Mid,
 ) : PagingSource<Int, SpaceArcSearch.VList.Vlist>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VList.Vlist> {
-        try {
+        return try {
             val nextPageNumber = params.key ?: 1
-            val response = userSpaceRepository.查询用户投稿视频(mid, nextPageNumber)
+
+            val response =
+                userSpaceRepository.查询用户投稿视频(mid, nextPageNumber, params.loadSize)
             if (response.page.count == 0) {
                 return LoadResult.Invalid()
             }
-            return LoadResult.Page(
+            LoadResult.Page(
                 data = response.list.vlist,
                 prevKey = null,
-                nextKey = response.page.pn + 1
+                nextKey = if (response.list.vlist.isNotEmpty()) nextPageNumber + 1 else null,
             )
         } catch (e: Exception) {
-            return LoadResult.Error(e)
+            LoadResult.Error(e)
         }
     }
 

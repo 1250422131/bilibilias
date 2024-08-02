@@ -2,11 +2,14 @@ package com.imbys.bilibilias.feature.authorspace
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.model.video.Mid
@@ -17,7 +20,6 @@ import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -26,10 +28,10 @@ class DefaultAuthorSpaceComponent @AssistedInject constructor(
     @Assisted private val mid: Mid,
     private val spaceArcSearchPagingSourceFactory: SpaceArcSearchPagingSource.Factory,
     private val userSpaceRepository: UserSpaceRepository,
-) : AuthorSpaceComponent, BaseViewModel<Unit, AuthorSpaceComponent.Model>(componentContext) {
+) : AuthorSpaceComponent, BaseViewModel<AuthorSpaceEvent, AuthorSpaceComponent.Model>(componentContext) {
     override val flow = Pager(
         PagingConfig(
-            pageSize = 1,
+            pageSize = 30,
             initialLoadSize = 1,
         ),
         1,
@@ -44,13 +46,13 @@ class DefaultAuthorSpaceComponent @AssistedInject constructor(
         .cachedIn(viewModelScope)
 
     @Composable
-    override fun models(events: Flow<Unit>): AuthorSpaceComponent.Model {
+    override fun models(events: Flow<AuthorSpaceEvent>): AuthorSpaceComponent.Model {
+        var index by remember { mutableIntStateOf(1) }
+        var unitedDetails = remember { mutableStateListOf<UnitedDetails>() }
         LaunchedEffect(Unit) {
-            val arc = userSpaceRepository.查询用户投稿视频(mid, 1)
-            Napier.d { arc.toString() }
-        }
 
-        return AuthorSpaceComponent.Model(emptyList())
+        }
+        return AuthorSpaceComponent.Model(unitedDetails)
     }
 
     @AssistedFactory
