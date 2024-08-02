@@ -1,7 +1,8 @@
 package com.imcys.bilibilias.feature.splash
 
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
+import com.imcys.bilibilias.core.datastore.UsersDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -10,9 +11,9 @@ import kotlinx.coroutines.runBlocking
 
 class SplashComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val loginInfoDataSource: LoginInfoDataSource
+    private val usersDataSource: UsersDataSource,
 ) : ComponentContext by componentContext {
-    val isLogin: Boolean = runBlocking { loginInfoDataSource.loginState.first() }
+    val isLogin: Boolean = runBlocking { usersDataSource.users.first().isLogined }
 
     @AssistedFactory
     interface Factory {

@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.core.network.repository
 
 import android.content.Context
-import com.imcys.bilibilias.core.datastore.login.LoginInfoDataSource
+import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
 import com.imcys.bilibilias.core.model.login.Buvids
 import com.imcys.bilibilias.core.model.login.NavigationBar
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
@@ -23,13 +23,12 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class DefalutLoginRepository @Inject constructor(
     private val client: HttpClient,
-    private val loginInfoDataSource: LoginInfoDataSource,
+    private val asCookieStoreDataSource: AsCookieStoreDataSource,
     @ApplicationContext private val context: Context,
     private val json: Json,
 ) : LoginRepository {
@@ -42,9 +41,9 @@ class DefalutLoginRepository @Inject constructor(
             parameter("qrcode_key", key)
         }.body<QrcodePoll>()
         val token = response.refreshToken
-        if (token.isNotEmpty()) {
-            loginInfoDataSource.setRefreshToken(token)
-        }
+        // if (token.isNotEmpty()) {
+        //     asCookieStoreDataSource.setRefreshToken(token)
+        // }
         return response
     }
 
@@ -53,10 +52,10 @@ class DefalutLoginRepository @Inject constructor(
     }
 
     override suspend fun exitLogin() {
-        val cookie = loginInfoDataSource.cookieStore.first()["bili_jct"]
-        client.post(BilibiliApi.EXIT) {
-            parameter("biliCSRF", cookie?.value_)
-        }
+        // val cookie = asCookieStoreDataSource.cookieStore.first()["bili_jct"]
+        // client.post(BilibiliApi.EXIT) {
+        //     parameter("biliCSRF", cookie?.value_)
+        // }
     }
 
     override suspend fun getBilibiliHome() {
@@ -66,8 +65,8 @@ class DefalutLoginRepository @Inject constructor(
 
     override suspend fun activeBuvid() {
         val buvids = client.get("x/frontend/finger/spi").body<Buvids>()
-        loginInfoDataSource.setFinger("buvid3", buvids.b3)
-        loginInfoDataSource.setFinger("buvid4", buvids.b4)
+        // asCookieStoreDataSource.setFinger("buvid3", buvids.b3)
+        // asCookieStoreDataSource.setFinger("buvid4", buvids.b4)
 
         val payload = payload(context, json)
 

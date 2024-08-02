@@ -1,8 +1,6 @@
-package com.imcys.bilibilias.core.datastore.preferences
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.Serializer
-import com.imcys.bilibilias.core.common.download.DefaultConfig
-import com.imcys.bilibilias.core.datastore.UserPreferences
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject

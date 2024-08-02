@@ -2,6 +2,7 @@
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.android.jacoco)
     alias(libs.plugins.bilibilias.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -15,6 +16,8 @@ dependencies {
     api(projects.core.model)
 
     implementation(projects.core.common)
+
+    implementation(libs.kotlinx.serialization.protobuf)
 
     kspTestFixtures(libs.hilt.compiler)
     testFixturesImplementation(libs.hilt.android.testing)

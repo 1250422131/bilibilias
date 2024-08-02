@@ -1,7 +1,6 @@
-package com.imcys.bilibilias.core.datastore.preferences
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
-import com.imcys.bilibilias.core.datastore.UserPreferences
 import com.imcys.bilibilias.core.model.data.UserData
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

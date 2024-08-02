@@ -90,11 +90,11 @@ private fun LoginContent(
             }
             val context = LocalContext.current
             val painter = rememberQrCodePainter(data = model.url)
-            LaunchedEffect(painter) {
+            LaunchedEffect(model.url) {
                 val bitmap = painter.toImageBitmap(2000, 2000)
                     .asAndroidBitmap()
                     .addWhiteBorder(200)
-                QRUtil.saveQRCode(bitmap, context)
+                QRUtil.saveQRCode(bitmap, context,)
             }
             AsCard(
                 modifier = Modifier
