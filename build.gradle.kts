@@ -3,7 +3,6 @@ buildscript {
         classpath(libs.wire.gradlePlugin)
     }
     repositories {
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         mavenCentral()
     }
 }

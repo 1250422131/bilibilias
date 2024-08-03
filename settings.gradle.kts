@@ -19,6 +19,7 @@ dependencyResolutionManagement {
         google()
     }
 }
+
 rootProject.name = "bilibilias"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
