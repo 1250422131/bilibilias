@@ -12,6 +12,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
+import com.imcys.bilibilias.core.common.utils.addOrRemove
+import com.imcys.bilibilias.core.download.DownloadManager
+import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.network.pagingsource.SpaceArcSearchPagingSource
 import com.imcys.bilibilias.core.network.repository.UserSpaceRepository
@@ -27,8 +30,9 @@ class DefaultAuthorSpaceComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     @Assisted private val mid: Mid,
     private val spaceArcSearchPagingSourceFactory: SpaceArcSearchPagingSource.Factory,
-    private val userSpaceRepository: UserSpaceRepository,
-) : AuthorSpaceComponent, BaseViewModel<AuthorSpaceEvent, AuthorSpaceComponent.Model>(componentContext) {
+    private val downloadManager: DownloadManager,
+) : AuthorSpaceComponent,
+    BaseViewModel<AuthorSpaceEvent, AuthorSpaceComponent.Model>(componentContext) {
     override val flow = Pager(
         PagingConfig(
             pageSize = 30,
@@ -40,17 +44,22 @@ class DefaultAuthorSpaceComponent @AssistedInject constructor(
     }.flow
         .map { pagingData ->
             pagingData.map {
-                UnitedDetails(it.pic, it.title)
+                UnitedDetails(it.pic, it.title, it.bvid)
             }
         }
         .cachedIn(viewModelScope)
 
     @Composable
     override fun models(events: Flow<AuthorSpaceEvent>): AuthorSpaceComponent.Model {
-        var index by remember { mutableIntStateOf(1) }
         var unitedDetails = remember { mutableStateListOf<UnitedDetails>() }
+        var selectedIds = remember { mutableStateListOf<Bvid>() }
         LaunchedEffect(Unit) {
-
+            events.collect { event ->
+                when (event) {
+                    AuthorSpaceEvent.DownloadAll -> downloadManager.download(selectedIds)
+                    is AuthorSpaceEvent.ChangeSelection -> selectedIds.addOrRemove(event.id)
+                }
+            }
         }
         return AuthorSpaceComponent.Model(unitedDetails)
     }
