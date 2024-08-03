@@ -1,0 +1,3 @@
+[submodule "XXPermissions"]
+	path = XXPermissions
+	url = https://github.com/SOCK-MAGIC/XXPermissions.git

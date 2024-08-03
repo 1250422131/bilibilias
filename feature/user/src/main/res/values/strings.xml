@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_fragment_user_title">用户</string>
+    <string name="app_item_fg_user_tool_favorites">收藏</string>
+    <string name="app_item_fg_user_tool_follow_series">追番</string>
+    <string name="app_item_fg_user_tool_play_history">观看</string>
+    <string name="app_item_fg_user_tool_coin_history">投币</string>
+    <string name="app_item_fg_user_card_data_fans">粉丝</string>
+    <string name="app_item_fg_user_card_data_friend">关注</string>
+    <string name="app_item_fg_user_card_data_liks">获赞</string>
+    <string name="app_item_fg_user_card_data_view">播放</string>
+</resources>
