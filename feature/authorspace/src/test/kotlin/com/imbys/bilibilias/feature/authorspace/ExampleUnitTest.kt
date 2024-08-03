@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:feature/authorspace/src/test/kotlin/com/imbys/bilibilias/feature/authorspace/ExampleUnitTest.kt
 package com.imbys.bilibilias.feature.author_space
+========
+package com.imcys.common
+>>>>>>>> c7819abd2aac55602832c43746a91a99d3f1b832:core/common/src/test/java/com/imcys/common/ExampleUnitTest.kt
 
 import org.junit.Test
 

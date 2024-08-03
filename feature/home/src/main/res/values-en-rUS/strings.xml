@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_version_doc">"2.0.2 supports the export of tracking records and web page parsing functions."</string>
+    <string name="app_fragment_home_donate_doc">BILIBILIAS servers will consume costs. Please have a cup of milk tea.</string>
+    <string name="app_fragment_home_donate">Donate</string>
+    <string name="app_fragment_home_salute">Salute List</string>
+    <string name="app_fragment_home_update_content">Update_content</string>
+    <string name="app_fragment_home_version">V2.0.2</string>
+    <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
+    <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
+    <string name="app_fragment_home_donate_text">Support the development</string>
+    <string name="app_fragment_home_donate_list">List of contributions</string>
+    <string name="app_fragment_home_feedback">Feedback</string>
+    <string name="app_fragment_home_feedback_text">Use rabbit nest to feedback</string>
+    <string name="app_fragment_home_feedback_doc">If you encounter problems or need new features, you can feed back to us in the community.</string>
+    <string name="app_fragment_home_logout_text">Log out of this account</string>
+    <string name="app_fragment_home_logout">Log out</string>
+    <string name="app_donate_doc">"BILIBILIAS has had back-end support since the beginning of its operation. We currently use student computers, but even so, there will be a monthly fee.\nTherefore, we hope that users of BILIBILIAS can support some expenses, such as breakfast, milk tea and lunch, which can meet most of the expenses of BILIBILIAS.\nFinally, I would like to thank all users who have donated and supported AS for BILIBILIAS.\nYou can donate anonymously and anonymously. It is recommended not to donate anonymously.\nBring contact information such as AS and QQ number. "</string>
+</resources>

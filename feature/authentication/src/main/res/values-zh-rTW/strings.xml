@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dialog_login_bottomsheet_title">選擇登入方法</string>
+    <string name="app_dialog_login_bottomsheet_option_1">Bilibili掃碼</string>
+    <string name="app_dialog_login_bottomsheet_option_2">BILIBILIAS雲端</string>
+    <string name="app_dialog_login_bottomsheet_text">登入後，你可以：</string>
+    <string name="app_dialog_login_bottomsheet_list_text_1">· 為了良好體驗，此版本必須完成登入</string>
+    <string name="app_dialog_login_bottomsheet_list_text_2">· 雲端帳號加密保存，切換設備無需重複登入。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_3">· 下載更加高清，更高碼率的視頻</string>
+    <string name="app_dialog_login_bottomsheet_list_text_4">· 享受大會員許可權視頻和畫質（如果你有）</string>
+    <string name="app_dialog_login_bottomsheet_list_text_5">· 緩存番劇，並且將番劇導入B站，實現攜帶彈幕的離線播放。</string>
+    <string name="app_dialog_login_bottomsheet_text2">使用則代表你同意</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_1">·Bilibili帳戶和社區相關協定</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_2">·《BILIBILIAS用戶協議》和《BILIBILIAS隱私協議》</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_3">·此APP沒有得到Bilibili許可，Bilibili對此概不負責。</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_4">·APP功能僅供學習使用參攷</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_5">·使用造成的任何後果BILIBILIAS概不負責</string>
+    <string name="app_dialog_login_qr_bottomsheet_title">掃碼登入</string>
+    <string name="app_dialog_login_qr_bottomsheet_finish">完成登入</string>
+    <string name="app_dialog_login_qr_bottomsheet_download">下載二維碼</string>
+    <string name="app_dialog_login_qr_bottomsheet_go">跳轉掃碼</string>
+</resources>
