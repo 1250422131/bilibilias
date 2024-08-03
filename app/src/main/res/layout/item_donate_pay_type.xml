@@ -91,7 +91,7 @@
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:padding="10dp"
-                            android:src="@drawable/ic_item_donate_alipay"
+                            android:src="@drawable/ic_item_donate_pay_alipay"
                             app:tint="@color/white" />
 
                         <TextView

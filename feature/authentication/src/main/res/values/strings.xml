@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dialog_login_qr_bottomsheet_title">扫码登录</string>
+    <string name="app_dialog_login_qr_bottomsheet_finish">完成登录</string>
+    <string name="app_dialog_login_qr_bottomsheet_download">下载二维码</string>
+    <string name="app_dialog_login_qr_bottomsheet_go">跳转扫码</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">下载完成，跳转扫码</string>
+    <string name="app_LoginQRModel_goToQR">呜哇，您好像没有安装Bilibili</string>
+    <string name="app_dialog_login_bottomsheet_title">选择登录方式</string>
+    <string name="app_dialog_login_bottomsheet_option_1">Bilibili扫码</string>
+    <string name="app_dialog_login_bottomsheet_option_2">BILIBILIAS云端</string>
+    <string name="app_dialog_login_bottomsheet_text">登录后，你可以：</string>
+    <string name="app_dialog_login_bottomsheet_list_text_1">· 为了良好体验，此版本必须完成登录</string>
+    <string name="app_dialog_login_bottomsheet_list_text_2">· 云端账号加密保存，切换设备无需重复登录。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_3">· 下载更加高清，更高码率的视频</string>
+    <string name="app_dialog_login_bottomsheet_list_text_4">· 享受大会员权限视频和画质（如果你有）</string>
+    <string name="app_dialog_login_bottomsheet_list_text_5">· 缓存番剧，并且将番剧导入Bilibili，实现携带弹幕的离线播放。</string>
+    <string name="app_dialog_login_bottomsheet_text2">使用则代表你同意</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_1">· 哔哩哔哩账户和社区相关协议</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_2">·《BILIBILIAS用户协议》和《BILIBILIAS隐私协议》</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_3">· 此APP没有得到Bilibili许可，Bilibili对此概不负责。</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_4">· APP功能仅供学习使用参考</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_5">· 使用造成的任何后果BILIBILIAS概不负责</string>
+    <string name="app_LoginQRModel_downloadLoginQR_fileName" translatable="false">BILIBILIAS-QR-Code.jpg</string>
+</resources>

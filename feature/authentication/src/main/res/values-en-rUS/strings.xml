@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dialog_login_bottomsheet_title">Select login method</string>
+    <string name="app_dialog_login_bottomsheet_option_1">Bilibili code scanning</string>
+    <string name="app_dialog_login_bottomsheet_option_2">BILIBILIAS Cloud</string>
+    <string name="app_dialog_login_bottomsheet_text">After logging in, you can:</string>
+    <string name="app_dialog_login_bottomsheet_list_text_1">· For a good experience, this version must complete the login</string>
+    <string name="app_dialog_login_bottomsheet_list_text_2">· The cloud account is encrypted \nand saved, and switching devices \ndoes not require repeated login.</string>
+    <string name="app_dialog_login_bottomsheet_list_text_3">· Download videos with higher definition and higher bit rate</string>
+    <string name="app_dialog_login_bottomsheet_list_text_4">· Enjoy the video and picture quality of large member rights (if you have one)</string>
+    <string name="app_dialog_login_bottomsheet_list_text_5">· Download the opera and import it into Bilibili \nto realize offline playback with bullet screen.</string>
+    <string name="app_dialog_login_bottomsheet_text2">"Use means you agree: "</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_1">· Bilibili account and community related agreements</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_2">· 𝘉𝘐𝘓𝘐𝘉𝘐𝘓𝘐𝘈𝘚 𝘜𝘴𝘦𝘳 𝘈𝘨𝘳𝘦𝘦𝘮𝘦𝘯𝘵 and 𝘉𝘐𝘓𝘐𝘉𝘐𝘓𝘐𝘈𝘚 𝘗𝘳𝘪𝘷𝘢𝘤𝘺 𝘈𝘨𝘳𝘦𝘦𝘮𝘦𝘯𝘵</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_3">· This app is not licensed by Bilibili, and Bilibili is not responsible for it.</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_4">·  APP function is only for learning and reference</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_5">· BILIBILIAS is not responsible for any consequences caused by use</string>
+    <string name="app_dialog_login_qr_bottomsheet_title">Scan QR code login</string>
+    <string name="app_dialog_login_qr_bottomsheet_finish">Completed login</string>
+    <string name="app_dialog_login_qr_bottomsheet_download">Download QR code</string>
+    <string name="app_dialog_login_qr_bottomsheet_go">Go to QR code</string>
+</resources>

@@ -1,0 +1,710 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "items_lists": {
+      "page": {
+        "page_num": 1,
+        "page_size": 20,
+        "total": 7
+      },
+      "seasons_list": [
+        {
+          "archives": [
+            {
+              "aid": 902346336,
+              "bvid": "BV1MP4y127P3",
+              "ctime": 1667662767,
+              "duration": 277,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/7bb0d77a88666e1472069af59c2bfc4a7aacaf69.jpg",
+              "pubdate": 1667808000,
+              "stat": {
+                "view": 165920
+              },
+              "state": 0,
+              "title": "大家好，我是屎学家！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 432994141,
+              "bvid": "BV1S3411f7rh",
+              "ctime": 1669185163,
+              "duration": 264,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/0bc06bea36f57fba9cbf8aa9040b16969cb0008c.jpg",
+              "pubdate": 1669276800,
+              "stat": {
+                "view": 182634
+              },
+              "state": 0,
+              "title": "柳下惠也顶不住毕业的诱惑",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 648067518,
+              "bvid": "BV1Je4y1g7jx",
+              "ctime": 1669600359,
+              "duration": 203,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/dcab0e04db4dd909fe6d3555d4c81f702ffedab7.jpg",
+              "pubdate": 1669622400,
+              "stat": {
+                "view": 500584
+              },
+              "state": 0,
+              "title": "99%的研究生都经历过的“三年巨变”",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 263253225,
+              "bvid": "BV1Ke411N7bC",
+              "ctime": 1669965078,
+              "duration": 293,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/80c5bfa9d38a6efecbf99979b8c883da9dd08f17.jpg",
+              "pubdate": 1669973400,
+              "stat": {
+                "view": 203694
+              },
+              "state": 0,
+              "title": "东北冷是因为人长得高？拼命考上研究生就为了这个？",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 904120218,
+              "bvid": "BV1dP4y1B7ti",
+              "ctime": 1671589213,
+              "duration": 217,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/21081fa82b5828056607d6ee4674212c80755199.jpg",
+              "pubdate": 1671609600,
+              "stat": {
+                "view": 360312
+              },
+              "state": 0,
+              "title": "别人阳了发烧，我阳了发现商机！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 476585238,
+              "bvid": "BV1zK411q7ky",
+              "ctime": 1671770456,
+              "duration": 277,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/d9a7e3301c0bea02abbfb57fbd1e01b9078b84b6.jpg",
+              "pubdate": 1671782400,
+              "stat": {
+                "view": 995579
+              },
+              "state": 0,
+              "title": "丢人！中国学者造假被全球网友群嘲。",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/5a66236d397a0ded9ee97b0a69778af806486af4.jpg",
+            "description": "",
+            "mid": 1732848825,
+            "name": "合集·在人间~我的大学",
+            "ptime": 1690190844,
+            "season_id": 833691,
+            "total": 14
+          },
+          "recent_aids": [
+            902346336,
+            432994141,
+            648067518,
+            263253225,
+            904120218,
+            476585238
+          ]
+        },
+        {
+          "archives": [
+            {
+              "aid": 988486918,
+              "bvid": "BV1f44y1S7bc",
+              "ctime": 1670315724,
+              "duration": 252,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/fbd9e4c180bb764ccd39cf05e3749bf689dd3a2c.jpg",
+              "pubdate": 1670317200,
+              "stat": {
+                "view": 117165
+              },
+              "state": 0,
+              "title": "举报益生菌第三集",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 648179333,
+              "bvid": "BV1Ce4y1g7gQ",
+              "ctime": 1669802341,
+              "duration": 249,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/05ce5c19e0a233256e52425323c818960ac13eb8.jpg",
+              "pubdate": 1669802341,
+              "stat": {
+                "view": 237743
+              },
+              "state": 0,
+              "title": "跟 益生菌 继续刚",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 860633137,
+              "bvid": "BV1YG4y197FC",
+              "ctime": 1669718863,
+              "duration": 262,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/2cf7b7c404608e7aea76477251c818d542ea0a68.jpg",
+              "pubdate": 1669726800,
+              "stat": {
+                "view": 172956
+              },
+              "state": 0,
+              "title": "跟益生菌刚正面",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 560065044,
+              "bvid": "BV1Ae4y1Y7iN",
+              "ctime": 1661889025,
+              "duration": 327,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/00bb6521143f62def921f05f12b9b906ccfb7dc4.jpg",
+              "pubdate": 1661932800,
+              "stat": {
+                "view": 136710
+              },
+              "state": 0,
+              "title": "澳大利亚第一益生菌？软柿子而已！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 306468011,
+              "bvid": "BV1kA411Q7Tp",
+              "ctime": 1671509221,
+              "duration": 184,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/19e3df2f2c092b546119196aa4bffab9658650f0.jpg",
+              "pubdate": 1671509221,
+              "stat": {
+                "view": 102423
+              },
+              "state": 0,
+              "title": "举报华大益生菌，后续处理我不服！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 565166863,
+              "bvid": "BV1uv4y1i78K",
+              "ctime": 1673443547,
+              "duration": 138,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/2760a3d43c0afe7db74db2bdb08236bdd0ec85c8.jpg",
+              "pubdate": 1673443547,
+              "stat": {
+                "view": 79015
+              },
+              "state": 0,
+              "title": "在B站举报B站的益生菌广告！",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/fbd9e4c180bb764ccd39cf05e3749bf689dd3a2c.jpg",
+            "description": "",
+            "mid": 1732848825,
+            "name": "合集·打假益生菌",
+            "ptime": 1689619915,
+            "season_id": 913107,
+            "total": 13
+          },
+          "recent_aids": [
+            988486918,
+            648179333,
+            860633137,
+            560065044,
+            306468011,
+            565166863
+          ]
+        },
+        {
+          "archives": [
+            {
+              "aid": 228361312,
+              "bvid": "BV19h411V7Be",
+              "ctime": 1683252375,
+              "duration": 401,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/a59d773c5f3ab5c3fa1dbec443eb752aa0f23b41.jpg",
+              "pubdate": 1683277200,
+              "stat": {
+                "view": 202251
+              },
+              "state": 0,
+              "title": "我想写本书，科研说明书！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 991275949,
+              "bvid": "BV1bx4y1j7Sd",
+              "ctime": 1675575538,
+              "duration": 287,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/29724edecd2cc94aae3ad54a6e28b45df9057220.jpg",
+              "pubdate": 1675584000,
+              "stat": {
+                "view": 2080251
+              },
+              "state": 0,
+              "title": "看完视频，零基础也能发一篇二区SCI",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 352592711,
+              "bvid": "BV1WX4y1Q7iE",
+              "ctime": 1677406375,
+              "duration": 400,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/313002ca4e3f2969a01d3494c0b59b98c59e9391.jpg",
+              "pubdate": 1677406375,
+              "stat": {
+                "view": 392550
+              },
+              "state": 0,
+              "title": "给师弟师妹们讲透：啥是科研创新？",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 952707885,
+              "bvid": "BV1Ts4y1A7wm",
+              "ctime": 1681969500,
+              "duration": 241,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/f4d28847af6d4b84424945d57b1695e30be8e02b.jpg",
+              "pubdate": 1681977600,
+              "stat": {
+                "view": 294519
+              },
+              "state": 0,
+              "title": "赵高与秦桧对当代学术圈的影响",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 266730582,
+              "bvid": "BV15Y411i71B",
+              "ctime": 1676190382,
+              "duration": 385,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/ffcdf1927645880975d2945661dbbd105a7ffd95.jpg",
+              "pubdate": 1676190382,
+              "stat": {
+                "view": 469368
+              },
+              "state": 0,
+              "title": "试论学术造假的可行性",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 739237138,
+              "bvid": "BV1Dk4y147SN",
+              "ctime": 1679802825,
+              "duration": 375,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/bec884154d6c188c532dac979daeab571be6ebb0.jpg",
+              "pubdate": 1679817600,
+              "stat": {
+                "view": 467066
+              },
+              "state": 0,
+              "title": "三招，助你实验永不失败！",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/a59d773c5f3ab5c3fa1dbec443eb752aa0f23b41.jpg",
+            "description": "",
+            "mid": 1732848825,
+            "name": "合集·科研说明书",
+            "ptime": 1689332438,
+            "season_id": 1344927,
+            "total": 11
+          },
+          "recent_aids": [
+            228361312,
+            991275949,
+            352592711,
+            952707885,
+            266730582,
+            739237138
+          ]
+        },
+        {
+          "archives": [
+            {
+              "aid": 469225787,
+              "bvid": "BV1s5411R7qS",
+              "ctime": 1652709697,
+              "duration": 416,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/b2680a6d181d803866b4938ee48c9073ae991c44.jpg",
+              "pubdate": 1652709697,
+              "stat": {
+                "view": 250641
+              },
+              "state": 0,
+              "title": "科研劝退——抱歉，你可能不适合科研",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 383861150,
+              "bvid": "BV1zZ4y1h72y",
+              "ctime": 1651761320,
+              "duration": 248,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/4b9c24128b478e537babb10a467cac45eb02b247.jpg",
+              "pubdate": 1651761320,
+              "stat": {
+                "view": 179718
+              },
+              "state": 0,
+              "title": "在科研圈，屠龙少年 终成恶龙。",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 981993692,
+              "bvid": "BV1Gt4y1p7Ga",
+              "ctime": 1653451240,
+              "duration": 315,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/a3bcec67596ed53821a34177c922788d7856d8c1.jpg",
+              "pubdate": 1653451240,
+              "stat": {
+                "view": 567817
+              },
+              "state": 0,
+              "title": "关于天大学生举报导师，说说我对科研的绝望。",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 429374369,
+              "bvid": "BV1UG41187TF",
+              "ctime": 1660204809,
+              "duration": 393,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/7d59c9e90302df0ea88e85450f1ad0939e541f36.jpg",
+              "pubdate": 1660204800,
+              "stat": {
+                "view": 955503
+              },
+              "state": 0,
+              "title": "如果吃屎能让我毕业，我情愿吃屎。",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 387079254,
+              "bvid": "BV1Bd4y1o7hR",
+              "ctime": 1660809607,
+              "duration": 501,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/9cfaff2f42424ecac37c1ff3bef6ba6336e5ef29.jpg",
+              "pubdate": 1660809600,
+              "stat": {
+                "view": 395502
+              },
+              "state": 0,
+              "title": "文章如酒，但是假酒。为何迷醉？科研的朦胧美！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 217169004,
+              "bvid": "BV1Pa41157FT",
+              "ctime": 1661076862,
+              "duration": 334,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/c51e4897cec27347066d96c8ff6cb802900c99e0.jpg",
+              "pubdate": 1661155200,
+              "stat": {
+                "view": 268649
+              },
+              "state": 0,
+              "title": "我设计了敲除博尔特一条腿的实验",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/5206295575782c45623de0f7d649f5bd079d110a.jpg",
+            "description": "讲述科研圈真相",
+            "mid": 1732848825,
+            "name": "合集·科研劝退",
+            "ptime": 1689150931,
+            "season_id": 426388,
+            "total": 23
+          },
+          "recent_aids": [
+            469225787,
+            383861150,
+            981993692,
+            429374369,
+            387079254,
+            217169004
+          ]
+        },
+        {
+          "archives": [
+            {
+              "aid": 943625997,
+              "bvid": "BV1pW4y1e7XZ",
+              "ctime": 1664653226,
+              "duration": 203,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/08b5be74465f68c0cd203bd446eda2c9445255ce.jpg",
+              "pubdate": 1664784000,
+              "stat": {
+                "view": 358711
+              },
+              "state": 0,
+              "title": "我是科研吹，立志美化科研！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 901309935,
+              "bvid": "BV1MN4y1A7fw",
+              "ctime": 1665046147,
+              "duration": 188,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/28d7b100673981b3f3e5f6ecda2c3d1cd6c540ea.jpg",
+              "pubdate": 1665129600,
+              "stat": {
+                "view": 1349023
+              },
+              "state": 0,
+              "title": "进不了政府，还进不了地府吗？",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 688934173,
+              "bvid": "BV1cm4y1A7y1",
+              "ctime": 1665428926,
+              "duration": 255,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/e540da930c5b67447b22558385c106e134d6e01c.jpg",
+              "pubdate": 1665475200,
+              "stat": {
+                "view": 1176165
+              },
+              "state": 0,
+              "title": "今年诺奖没有中国人，阎王很没面子。",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 731511213,
+              "bvid": "BV1XD4y1k7LG",
+              "ctime": 1665627895,
+              "duration": 256,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/32c4c89ea07abdabc768e6a5e8074091e11eed13.jpg",
+              "pubdate": 1665734400,
+              "stat": {
+                "view": 273987
+              },
+              "state": 0,
+              "title": "美国队长，求见阎王",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 944181886,
+              "bvid": "BV1TW4y1n7vN",
+              "ctime": 1665944435,
+              "duration": 230,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/54a2e82c9a5a36ea3e50bed7aa650a96be3742e3.jpg",
+              "pubdate": 1665993600,
+              "stat": {
+                "view": 349181
+              },
+              "state": 0,
+              "title": "吐槽阴间的研究生导师",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 859544082,
+              "bvid": "BV1MV4y1V7dR",
+              "ctime": 1666942020,
+              "duration": 211,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/4ba720e7ff905476040d3f7e0cbcb4fbeb56f400.jpg",
+              "pubdate": 1666949400,
+              "stat": {
+                "view": 742924
+              },
+              "state": 0,
+              "title": "我在地府，为您科研劝退",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/dc0b2ae0882e03ee0afc94d76af94f549ba3896d.jpg",
+            "description": "",
+            "mid": 1732848825,
+            "name": "合集·地府工作日记",
+            "ptime": 1688547600,
+            "season_id": 767434,
+            "total": 13
+          },
+          "recent_aids": [
+            943625997,
+            901309935,
+            688934173,
+            731511213,
+            944181886,
+            859544082
+          ]
+        },
+        {
+          "archives": [
+            {
+              "aid": 313459968,
+              "bvid": "BV1SP41117hU",
+              "ctime": 1683651643,
+              "duration": 564,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/23632dd1867baa9cc5b9e08aa5577fb6d67d9630.jpg",
+              "pubdate": 1683651642,
+              "stat": {
+                "view": 506000
+              },
+              "state": 0,
+              "title": "日行一善，随机摧毁一个小学弟的科研幻想！（对事不对人）",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 953512328,
+              "bvid": "BV12s4y1u7xV",
+              "ctime": 1683996565,
+              "duration": 465,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/f05f7fe496b8ca1bf2b757c0f598777a8c81a7e5.jpg",
+              "pubdate": 1683996565,
+              "stat": {
+                "view": 215287
+              },
+              "state": 0,
+              "title": "日行一善未遂，摧毁小学弟科研幻想，被反杀！",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 613743681,
+              "bvid": "BV1wh4y1t76P",
+              "ctime": 1684072478,
+              "duration": 421,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/cc8508d621cffcd5575aee31b86d65e47b309509.jpg",
+              "pubdate": 1684072478,
+              "stat": {
+                "view": 282373
+              },
+              "state": 0,
+              "title": "当一个师弟发现师兄学术造假。。。",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 656187471,
+              "bvid": "BV1xa4y1u7ch",
+              "ctime": 1684143921,
+              "duration": 1240,
+              "interactive_video": false,
+              "pic": "http://i2.hdslb.com/bfs/archive/aaf4fde575f1354bdcd0f65df50ef5c35e1e112e.jpg",
+              "pubdate": 1684143920,
+              "stat": {
+                "view": 132076
+              },
+              "state": 0,
+              "title": "有意思且有意义的直播片段",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 401842894,
+              "bvid": "BV1co4y1u7jx",
+              "ctime": 1685528527,
+              "duration": 963,
+              "interactive_video": false,
+              "pic": "http://i1.hdslb.com/bfs/archive/a48b6125ccc393c665de9ee476041378b0446cf8.jpg",
+              "pubdate": 1685528526,
+              "stat": {
+                "view": 197329
+              },
+              "state": 0,
+              "title": "90%的研究生可有可无？深夜与小姐姐激情闲聊（观点可能有错，请大家理性看待）",
+              "ugc_pay": 0
+            },
+            {
+              "aid": 869387625,
+              "bvid": "BV17V4y1U7vE",
+              "ctime": 1685793060,
+              "duration": 743,
+              "interactive_video": false,
+              "pic": "http://i0.hdslb.com/bfs/archive/495112c69cc183b60f8a1250b53efc1c27fcab8b.jpg",
+              "pubdate": 1685793060,
+              "stat": {
+                "view": 262662
+              },
+              "state": 0,
+              "title": "屠龙少年，终成恶龙，恶龙眼中，少年是个啥？",
+              "ugc_pay": 0
+            }
+          ],
+          "meta": {
+            "category": 0,
+            "cover": "https://archive.biliimg.com/bfs/archive/f05f7fe496b8ca1bf2b757c0f598777a8c81a7e5.jpg",
+            "description": "",
+            "mid": 1732848825,
+            "name": "合集·直播切片",
+            "ptime": 1685793060,
+            "season_id": 1367931,
+            "total": 6
+          },
+          "recent_aids": [
+            313459968,
+            953512328,
+            613743681,
+            656187471,
+            401842894,
+            869387625
+          ]
+        }
+      ],
+      "series_list": [
+        {
+          "meta": {
+            "category": 2,
+            "creator": "auto",
+            "ctime": 1685222454,
+            "description": "直播回放",
+            "keywords": [
+              ""
+            ],
+            "last_update_ts": 1685256536,
+            "mid": 1732848825,
+            "mtime": 1685256536,
+            "name": "直播回放",
+            "raw_keywords": "",
+            "series_id": 3324112,
+            "state": 2,
+            "total": 0
+          },
+          "recent_aids": null
+        }
+      ]
+    }
+  }
+}
