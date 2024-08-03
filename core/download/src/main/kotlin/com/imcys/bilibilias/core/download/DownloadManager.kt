@@ -60,6 +60,10 @@ class DownloadManager @Inject constructor(
         }
     }
 
+    fun download(ids: List<Bvid>) {
+        Napier.d { ids.joinToString() }
+    }
+
     // todo 也许要重构
     fun download(request: DownloadRequest) {
         Napier.d { "下载任务详情: $request" }
@@ -164,7 +168,8 @@ class DownloadManager @Inject constructor(
         quality: Int,
         codecid: Int,
     ): AsDownloadTask? {
-        val videos = sources.groupBy { it.id }[quality] ?: error("没有所选清晰度")
+        val map = sources.groupBy { it.id }
+        val videos = map[quality] ?: map.maxBy { it.key }.value
         val v = videos.singleOrNull { it.codecid == codecid }
             ?: videos.maxBy { it.codecid }
         val info = ViewInfo(detail.aid, detail.bvid, detail.cid, detail.title)
