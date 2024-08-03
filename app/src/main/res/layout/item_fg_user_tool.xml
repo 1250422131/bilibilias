@@ -36,14 +36,12 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_item_user_collection"
                         app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/app_item_fg_user_tool_favorites" />
+                        android:layout_marginTop="5dp" />
 
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -61,14 +59,12 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_item_user_play_history"
                         app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/app_item_fg_user_tool_play_history" />
+                        android:layout_marginTop="5dp" />
 
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -85,14 +81,12 @@
                     <ImageView
 
                         android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/ic_item_bangumi_followr" />
+                        android:layout_height="32dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/app_item_fg_user_tool_follow_series" />
+                        android:layout_marginTop="5dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -108,14 +102,12 @@
                     <ImageView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@drawable/ic_as_video_throw"
                         app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/app_item_fg_user_tool_coin_history" />
+                        android:layout_marginTop="5dp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
 
