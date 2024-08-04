@@ -23,6 +23,3 @@ registries:
     type: "maven-repository"
     url: "https://maven.google.com"
     replaces-base: true
-  gralde-plugin:
-    type: maven-repository
-    url: "https://plugins.gradle.org/m2/"
