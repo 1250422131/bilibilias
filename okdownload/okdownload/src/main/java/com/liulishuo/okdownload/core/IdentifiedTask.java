@@ -48,6 +48,6 @@ public abstract class IdentifiedTask {
         // cover the case of filename is provided by response.
         final String filename = getFilename();
         final String anotherFilename = another.getFilename();
-        return anotherFilename != null && filename != null && anotherFilename.equals(filename);
+        return anotherFilename != null && anotherFilename.equals(filename);
     }
 }

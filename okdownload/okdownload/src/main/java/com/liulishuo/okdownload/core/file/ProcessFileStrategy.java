@@ -59,7 +59,6 @@ public class ProcessFileStrategy {
         boolean supportSeek = OkDownload.with().outputStreamFactory().supportSeek();
         if (!supportSeek) return false;
 
-        if (task.getSetPreAllocateLength() != null) return task.getSetPreAllocateLength();
-        return true;
+        return task.getIsPreAllocateLength();
     }
 }

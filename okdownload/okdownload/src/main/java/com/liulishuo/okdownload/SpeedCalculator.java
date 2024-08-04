@@ -130,7 +130,7 @@ public class SpeedCalculator {
 
 
     /**
-     * With wikipedia: https://en.wikipedia.org/wiki/Kibibyte
+     * <a href="https://en.wikipedia.org/wiki/Kibibyte">With wikipedia</a>
      * <p>
      * 1KiB = 2^10B = 1024B
      * 1MiB = 2^10KB = 1024KB
@@ -140,7 +140,7 @@ public class SpeedCalculator {
     }
 
     /**
-     * With wikipedia: https://en.wikipedia.org/wiki/Kilobyte
+     * <a href="https://en.wikipedia.org/wiki/Kilobyte">With wikipedia</a>
      * <p>
      * 1KB = 1000B
      * 1MB = 1000KB

@@ -33,6 +33,12 @@ import com.liulishuo.okdownload.core.file.DownloadOutputStream;
 import com.liulishuo.okdownload.core.file.DownloadUriOutputStream;
 import com.liulishuo.okdownload.core.file.ProcessFileStrategy;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 @SuppressWarnings("PMD.AvoidFieldNameMatchingMethodName")
 public class OkDownload {
 
@@ -46,7 +52,7 @@ public class OkDownload {
     private final DownloadOutputStream.Factory outputStreamFactory;
     private final ProcessFileStrategy processFileStrategy;
     private final DownloadStrategy downloadStrategy;
-
+    public final ExecutorService executorService;
     private final Context context;
 
     @Nullable
@@ -60,7 +66,8 @@ public class OkDownload {
             DownloadConnection.Factory connectionFactory,
             DownloadOutputStream.Factory outputStreamFactory,
             ProcessFileStrategy processFileStrategy,
-            DownloadStrategy downloadStrategy
+            DownloadStrategy downloadStrategy,
+            ExecutorService executorService
     ) {
         this.context = context;
         this.downloadDispatcher = downloadDispatcher;
@@ -70,7 +77,7 @@ public class OkDownload {
         this.outputStreamFactory = outputStreamFactory;
         this.processFileStrategy = processFileStrategy;
         this.downloadStrategy = downloadStrategy;
-
+        this.executorService = executorService;
         this.downloadDispatcher.setDownloadStore(Util.createRemitDatabase(store));
     }
 
@@ -122,7 +129,6 @@ public class OkDownload {
         return singleton;
     }
 
-    @NonNull
     public static void setSingletonInstance(@NonNull OkDownload okDownload) {
         if (singleton != null) {
             throw new IllegalArgumentException("OkDownload must be null.");
@@ -137,89 +143,75 @@ public class OkDownload {
     }
 
     public static class Builder {
-        private DownloadDispatcher downloadDispatcher;
-        private CallbackDispatcher callbackDispatcher;
-        private DownloadStore downloadStore;
-        private DownloadConnection.Factory connectionFactory;
-        private ProcessFileStrategy processFileStrategy;
-        private DownloadStrategy downloadStrategy;
-        private DownloadOutputStream.Factory outputStreamFactory;
-        private DownloadMonitor monitor;
         private final Context context;
+        private DownloadDispatcher downloadDispatcher = new DownloadDispatcher();
+        private CallbackDispatcher callbackDispatcher = new CallbackDispatcher();
+        private DownloadConnection.Factory connectionFactory = Util.createDefaultConnectionFactory();
+        private ProcessFileStrategy processFileStrategy = new ProcessFileStrategy();
+        private DownloadStrategy downloadStrategy = new DownloadStrategy();
+        private DownloadOutputStream.Factory outputStreamFactory = new DownloadUriOutputStream.Factory();
+        private ExecutorService executorService = new ThreadPoolExecutor(0,
+                Integer.MAX_VALUE,
+                60,
+                TimeUnit.SECONDS,
+                new SynchronousQueue<>(),
+                Util.threadFactory("OkDownload", false)
+        );
+
+        private DownloadStore downloadStore;
+        private DownloadMonitor monitor;
 
         public Builder(@NonNull Context context) {
             this.context = context.getApplicationContext();
+            downloadStore = Util.createDefaultDatabase(context);
         }
 
-        public Builder downloadDispatcher(DownloadDispatcher downloadDispatcher) {
+        public Builder downloadDispatcher(@NonNull DownloadDispatcher downloadDispatcher) {
             this.downloadDispatcher = downloadDispatcher;
             return this;
         }
 
-        public Builder callbackDispatcher(CallbackDispatcher callbackDispatcher) {
+        public Builder callbackDispatcher(@NonNull CallbackDispatcher callbackDispatcher) {
             this.callbackDispatcher = callbackDispatcher;
             return this;
         }
 
-        public Builder downloadStore(DownloadStore downloadStore) {
+        public Builder downloadStore(@NonNull DownloadStore downloadStore) {
             this.downloadStore = downloadStore;
             return this;
         }
 
-        public Builder connectionFactory(DownloadConnection.Factory connectionFactory) {
+        public Builder connectionFactory(@NonNull DownloadConnection.Factory connectionFactory) {
             this.connectionFactory = connectionFactory;
             return this;
         }
 
-        public Builder outputStreamFactory(DownloadOutputStream.Factory outputStreamFactory) {
+        public Builder outputStreamFactory(@NonNull DownloadOutputStream.Factory outputStreamFactory) {
             this.outputStreamFactory = outputStreamFactory;
             return this;
         }
 
-        public Builder processFileStrategy(ProcessFileStrategy processFileStrategy) {
+        public Builder processFileStrategy(@NonNull ProcessFileStrategy processFileStrategy) {
             this.processFileStrategy = processFileStrategy;
             return this;
         }
 
-        public Builder downloadStrategy(DownloadStrategy downloadStrategy) {
+        public Builder downloadStrategy(@NonNull DownloadStrategy downloadStrategy) {
             this.downloadStrategy = downloadStrategy;
             return this;
         }
 
-        public Builder monitor(DownloadMonitor monitor) {
+        public Builder monitor(@NonNull DownloadMonitor monitor) {
             this.monitor = monitor;
             return this;
         }
 
+        public Builder executor(@NonNull ExecutorService executorService) {
+            this.executorService = executorService;
+            return this;
+        }
+
         public OkDownload build() {
-            if (downloadDispatcher == null) {
-                downloadDispatcher = new DownloadDispatcher();
-            }
-
-            if (callbackDispatcher == null) {
-                callbackDispatcher = new CallbackDispatcher();
-            }
-
-            if (downloadStore == null) {
-                downloadStore = Util.createDefaultDatabase(context);
-            }
-
-            if (connectionFactory == null) {
-                connectionFactory = Util.createDefaultConnectionFactory();
-            }
-
-            if (outputStreamFactory == null) {
-                outputStreamFactory = new DownloadUriOutputStream.Factory();
-            }
-
-            if (processFileStrategy == null) {
-                processFileStrategy = new ProcessFileStrategy();
-            }
-
-            if (downloadStrategy == null) {
-                downloadStrategy = new DownloadStrategy();
-            }
-
             OkDownload okDownload = new OkDownload(
                     context,
                     downloadDispatcher,
@@ -228,7 +220,8 @@ public class OkDownload {
                     connectionFactory,
                     outputStreamFactory,
                     processFileStrategy,
-                    downloadStrategy
+                    downloadStrategy,
+                    executorService
             );
 
             okDownload.setMonitor(monitor);

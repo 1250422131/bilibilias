@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.net.ProtocolException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -51,7 +52,7 @@ public class DownloadOkHttpConnection implements DownloadConnection, DownloadCon
     }
 
     @Override
-    public void addHeader(String name, String value) {
+    public void addHeader(@NonNull String name, @NonNull String value) {
         this.requestBuilder.addHeader(name, value);
     }
 
@@ -71,20 +72,12 @@ public class DownloadOkHttpConnection implements DownloadConnection, DownloadCon
 
     @Override
     public Map<String, List<String>> getRequestProperties() {
-        if (request != null) {
-            return request.headers().toMultimap();
-        } else {
-            return requestBuilder.build().headers().toMultimap();
-        }
+        return Objects.requireNonNullElseGet(request, requestBuilder::build).headers().toMultimap();
     }
 
     @Override
-    public String getRequestProperty(String key) {
-        if (request != null) {
-            return request.header(key);
-        } else {
-            return requestBuilder.build().header(key);
-        }
+    public String getRequestProperty(@NonNull String key) {
+        return Objects.requireNonNullElseGet(request, requestBuilder::build).header(key);
     }
 
     @Override
@@ -140,7 +133,7 @@ public class DownloadOkHttpConnection implements DownloadConnection, DownloadCon
         }
 
         @Override
-        public DownloadConnection create(String url) throws IOException {
+        public DownloadConnection create(@NonNull String url) throws IOException {
             if (client == null) {
                 synchronized (Factory.class) {
                     if (client == null) {

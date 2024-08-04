@@ -39,33 +39,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 public class DownloadCall extends NamedRunnable implements Comparable<DownloadCall> {
-    private static final ExecutorService EXECUTOR = Util.createThreadPool();
 
     private static final String TAG = "DownloadCall";
 
     static final int MAX_COUNT_RETRY_FOR_PRECONDITION_FAILED = 1;
     public final DownloadTask task;
     public final boolean asyncExecuted;
-    @NonNull final ArrayList<DownloadChain> blockChainList;
+    @NonNull
+    final ArrayList<DownloadChain> blockChainList;
 
-    @Nullable volatile DownloadCache cache;
+    @Nullable
+    volatile DownloadCache cache;
     volatile boolean canceled;
     volatile boolean finishing;
 
     volatile Thread currentThread;
-    @NonNull private final DownloadStore store;
+    @NonNull
+    private final DownloadStore store;
 
-    private DownloadCall(DownloadTask task, boolean asyncExecuted, @NonNull DownloadStore store) {
-        this(task, asyncExecuted, new ArrayList<DownloadChain>(), store);
+    private DownloadCall(
+            @NonNull DownloadTask task,
+            boolean asyncExecuted,
+            @NonNull DownloadStore store
+    ) {
+        this(task, asyncExecuted, new ArrayList<>(), store);
     }
 
-    DownloadCall(DownloadTask task, boolean asyncExecuted,
-                 @NonNull ArrayList<DownloadChain> runningBlockList,
-                 @NonNull DownloadStore store) {
+    DownloadCall(
+            @NonNull DownloadTask task,
+            boolean asyncExecuted,
+            @NonNull ArrayList<DownloadChain> runningBlockList,
+            @NonNull DownloadStore store
+    ) {
         super("download call: " + task.getId());
         this.task = task;
         this.asyncExecuted = asyncExecuted;
@@ -99,7 +107,7 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
         // https://repl.it/talk/share/ConcurrentModificationException/18566.
         // So don't use clone anymore.
         final Object[] chains = blockChainList.toArray();
-        if (chains == null || chains.length == 0) {
+        if (chains.length == 0) {
             if (currentThread != null) {
                 Util.d(TAG,
                         "interrupt thread with cancel operation because of chains are not running "
@@ -121,9 +129,13 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
         return true;
     }
 
-    public boolean isCanceled() { return canceled; }
+    public boolean isCanceled() {
+        return canceled;
+    }
 
-    public boolean isFinishing() { return finishing; }
+    public boolean isFinishing() {
+        return finishing;
+    }
 
     @Override
     public void execute() throws InterruptedException {
@@ -298,9 +310,6 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
 
     /**
      * 开始添加 分块
-     * @param cache
-     * @param info
-     * @throws InterruptedException
      */
     private void start(final DownloadCache cache, BreakpointInfo info) throws InterruptedException {
         final int blockCount = info.getBlockCount();
@@ -338,11 +347,9 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
 
     /**
      * 开始分块下载 每块 由不同线程 去下载
-     * @param tasks
-     * @throws InterruptedException
      */
     private void startBlocks(List<DownloadChain> tasks) throws InterruptedException {
-        ArrayList<Future> futures = new ArrayList<>(tasks.size());
+        ArrayList<Future<?>> futures = new ArrayList<>(tasks.size());
         try {
             for (DownloadChain chain : tasks) {
 
@@ -353,15 +360,16 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
 
             blockChainList.addAll(tasks);
 
-            for (Future future : futures) {
+            for (Future<?> future : futures) {
                 if (!future.isDone()) {
                     try {
                         future.get();
-                    } catch (CancellationException | ExecutionException ignore) { }
+                    } catch (CancellationException | ExecutionException ignore) {
+                    }
                 }
             }
         } catch (Throwable t) {
-            for (Future future : futures) {
+            for (Future<?> future : futures) {
                 future.cancel(true);
             }
             throw t;
@@ -371,13 +379,15 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
     }
 
     // convenient for unit-test
-    @NonNull BreakpointLocalCheck createLocalCheck(@NonNull BreakpointInfo info,
-                                                   long responseInstanceLength) {
+    @NonNull
+    BreakpointLocalCheck createLocalCheck(@NonNull BreakpointInfo info,
+                                          long responseInstanceLength) {
         return new BreakpointLocalCheck(task, info, responseInstanceLength);
     }
 
     // convenient for unit-test
-    @NonNull BreakpointRemoteCheck createRemoteCheck(@NonNull BreakpointInfo info) {
+    @NonNull
+    BreakpointRemoteCheck createRemoteCheck(@NonNull BreakpointInfo info) {
         return new BreakpointRemoteCheck(task, info);
     }
 
@@ -388,13 +398,12 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
 
     /**
      * 开始检查 下载文件块
-     * @param info
-     * @param remoteCheck
-     * @param failedCause
      */
-    void assembleBlockAndCallbackFromBeginning(@NonNull BreakpointInfo info,
-                                               @NonNull BreakpointRemoteCheck remoteCheck,
-                                               @NonNull ResumeFailedCause failedCause) {
+    void assembleBlockAndCallbackFromBeginning(
+            @NonNull BreakpointInfo info,
+            @NonNull BreakpointRemoteCheck remoteCheck,
+            @NonNull ResumeFailedCause failedCause
+    ) {
         Util.assembleBlock(task, info, remoteCheck.getInstanceLength(),
                 remoteCheck.isAcceptRange());
         OkDownload.with().callbackDispatcher().dispatch()
@@ -402,18 +411,18 @@ public class DownloadCall extends NamedRunnable implements Comparable<DownloadCa
     }
 
     Future<?> submitChain(DownloadChain chain) {
-        return EXECUTOR.submit(chain);
+        return OkDownload.with().executorService.submit(chain);
     }
 
     public boolean equalsTask(@NonNull DownloadTask task) {
         return this.task.equals(task);
     }
 
-    @Nullable public File getFile() {
+    @Nullable
+    public File getFile() {
         return this.task.getFile();
     }
 
-//    @SuppressFBWarnings(value = "Eq", justification = "This special case is just for task priority")
     @Override
     public int compareTo(@NonNull DownloadCall o) {
         return o.getPriority() - getPriority();

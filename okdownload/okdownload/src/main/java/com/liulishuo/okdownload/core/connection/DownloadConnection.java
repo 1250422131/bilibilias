@@ -30,7 +30,7 @@ public interface DownloadConnection {
 
     int NO_RESPONSE_CODE = 0;
 
-    void addHeader(String name, String value);
+    void addHeader(@NonNull String name, @NonNull String value);
 
     /**
      * Set the method for the request, one of:
@@ -65,7 +65,7 @@ public interface DownloadConnection {
 
     Map<String, List<String>> getRequestProperties();
 
-    String getRequestProperty(String key);
+    String getRequestProperty(@NonNull String key);
 
     interface Connected {
         int getResponseCode() throws IOException;
@@ -81,7 +81,8 @@ public interface DownloadConnection {
          *
          * @return a Map of header fields
          */
-        @Nullable Map<String, List<String>> getResponseHeaderFields();
+        @Nullable
+        Map<String, List<String>> getResponseHeaderFields();
 
         /**
          * Returns the value of the named header field, which would be the response-header field.
@@ -93,17 +94,20 @@ public interface DownloadConnection {
          * @return the value of the named header field, or <code>null</code>
          * if there is no such field in the header.
          */
-        @Nullable String getResponseHeaderField(String name);
+        @Nullable
+        String getResponseHeaderField(String name);
 
         /**
          * Returns redirect location so that the upper layer to download target file directly and
          * there is no need to handle redirect again
+         *
          * @return redirect location
          */
+        @Nullable
         String getRedirectLocation();
     }
 
     interface Factory {
-        DownloadConnection create(String url) throws IOException;
+        DownloadConnection create(@NonNull String url) throws IOException;
     }
 }

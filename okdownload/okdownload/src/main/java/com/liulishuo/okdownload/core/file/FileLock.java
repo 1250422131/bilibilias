@@ -45,7 +45,7 @@ public class FileLock {
     }
 
     FileLock() {
-        this(new HashMap<String, AtomicInteger>(), new HashMap<String, Thread>());
+        this(new HashMap<>(), new HashMap<>());
     }
 
     public void increaseLock(@NonNull String path) {

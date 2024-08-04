@@ -114,9 +114,7 @@ public class BreakpointLocalCheck {
         if (supportSeek) return true;
 
         if (info.getBlockCount() != 1) return false;
-        if (OkDownload.with().processFileStrategy().isPreAllocateLength(task)) return false;
-
-        return true;
+        return !OkDownload.with().processFileStrategy().isPreAllocateLength(task);
     }
 
     public boolean isFileExistToResume() {
@@ -136,6 +134,7 @@ public class BreakpointLocalCheck {
         dirty = !infoRight || !fileExist || !outputStreamSupport;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "fileExist[" + fileExist + "] "
