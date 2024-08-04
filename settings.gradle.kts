@@ -9,11 +9,10 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version ("0.8.0")
 }
+
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
-        maven("https://mirrors.tencent.com/nexus/repository/gradle-plugins/")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public/")
         google()
         mavenCentral()
         maven("https://jitpack.io")
