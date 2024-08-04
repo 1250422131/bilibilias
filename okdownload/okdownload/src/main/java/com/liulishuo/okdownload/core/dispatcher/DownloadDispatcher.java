@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadDispatcher {
@@ -60,28 +59,17 @@ public class DownloadDispatcher {
 
     // for the case of tasks has been cancelled but didn't remove from runningAsyncCalls list yet.
     private final AtomicInteger flyingCanceledAsyncCallCount = new AtomicInteger();
-    @NonNull private final ExecutorService executorService;
 
     // for avoiding processCalls when doing enqueue/cancel operation
     private final AtomicInteger skipProceedCallCount = new AtomicInteger();
 
-    //    @SuppressFBWarnings(value = "IS", justification = "Not so urgency")
     private DownloadStore store;
 
     public DownloadDispatcher() {
-        this(Util.createThreadPool());
-    }
-
-    public DownloadDispatcher(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public void setDownloadStore(@NonNull DownloadStore store) {
         this.store = store;
-    }
-
-    synchronized ExecutorService getExecutorService() {
-        return executorService;
     }
 
     public void enqueue(DownloadTask[] tasks) {
@@ -143,7 +131,7 @@ public class DownloadDispatcher {
         final DownloadCall call = DownloadCall.create(task, true, store);
         if (runningAsyncSize() < maxParallelRunningCount) {
             runningAsyncCalls.add(call);
-            getExecutorService().execute(call);
+            OkDownload.with().executorService.execute(call);
         } else {
             // priority
             readyAsyncCalls.add(call);
@@ -498,7 +486,7 @@ public class DownloadDispatcher {
             }
 
             runningAsyncCalls.add(call);
-            getExecutorService().execute(call);
+            OkDownload.with().executorService.execute(call);
 
             if (runningAsyncSize() >= maxParallelRunningCount) return;
         }

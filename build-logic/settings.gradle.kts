@@ -2,7 +2,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven(" https://mirrors.tencent.com/nexus/repository/maven-public/")
     }
     versionCatalogs {
         create("libs") {

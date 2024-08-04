@@ -13,7 +13,7 @@ class OkDownloadInitializer : Initializer<OkDownload> {
             .connectionFactory(
                 DownloadOkHttpConnection.Factory().setClient(resolve.injectOkhttp())
             )
-            .downloadDispatcher(DownloadDispatcher(resolve.injectExecutorService()))
+            .executor(resolve.injectExecutorService())
             .build()
             .also(OkDownload::setSingletonInstance)
     }

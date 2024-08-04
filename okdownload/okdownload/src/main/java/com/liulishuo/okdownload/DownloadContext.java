@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -34,36 +35,34 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadContext {
 
     private static final String TAG = "DownloadContext";
-    private static final Executor SERIAL_EXECUTOR = new ThreadPoolExecutor(0,
-            Integer.MAX_VALUE, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
-            Util.threadFactory("OkDownload Serial", false));
 
     private final DownloadTask[] tasks;
     volatile boolean started = false;
-    @Nullable final DownloadContextListener contextListener;
+    @Nullable
+    final DownloadContextListener contextListener;
     private final QueueSet set;
     private Handler uiHandler;
 
-    DownloadContext(@NonNull DownloadTask[] tasks,
-                    @Nullable DownloadContextListener contextListener,
-                    @NonNull QueueSet set,
-                    @NonNull Handler uiHandler) {
+    DownloadContext(
+            @NonNull DownloadTask[] tasks,
+            @Nullable DownloadContextListener contextListener,
+            @NonNull QueueSet set,
+            @NonNull Handler uiHandler
+    ) {
         this(tasks, contextListener, set);
         this.uiHandler = uiHandler;
     }
 
-    DownloadContext(@NonNull DownloadTask[] tasks,
-                    @Nullable DownloadContextListener contextListener,
-                    @NonNull QueueSet set) {
+    DownloadContext(
+            @NonNull DownloadTask[] tasks,
+            @Nullable DownloadContextListener contextListener,
+            @NonNull QueueSet set
+    ) {
         this.tasks = tasks;
         this.contextListener = contextListener;
         this.set = set;
@@ -73,8 +72,6 @@ public class DownloadContext {
         return started;
     }
 
-//    @SuppressFBWarnings(value = "EI",
-//            justification = "user must know change this array will effect internal job")
     public DownloadTask[] getTasks() {
         return tasks;
     }
@@ -112,15 +109,13 @@ public class DownloadContext {
             final List<DownloadTask> scheduleTaskList = new ArrayList<>();
             Collections.addAll(scheduleTaskList, tasks);
             Collections.sort(scheduleTaskList);
-            executeOnSerialExecutor(new Runnable() {
-                @Override public void run() {
-                    for (DownloadTask task : scheduleTaskList) {
-                        if (!isStarted()) {
-                            callbackQueueEndOnSerialLoop(task.isAutoCallbackToUIThread());
-                            break;
-                        }
-                        task.execute(targetListener);
+            executeOnSerialExecutor(() -> {
+                for (DownloadTask task : scheduleTaskList) {
+                    if (!isStarted()) {
+                        callbackQueueEndOnSerialLoop(task.isAutoCallbackToUIThread());
+                        break;
                     }
+                    task.execute(targetListener);
                 }
             });
         } else {
@@ -145,7 +140,8 @@ public class DownloadContext {
         if (isAutoCallbackToUIThread) {
             if (uiHandler == null) uiHandler = new Handler(Looper.getMainLooper());
             uiHandler.post(new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     contextListener.queueEnd(DownloadContext.this);
                 }
             });
@@ -155,7 +151,7 @@ public class DownloadContext {
     }
 
     void executeOnSerialExecutor(Runnable runnable) {
-        SERIAL_EXECUTOR.execute(runnable);
+        OkDownload.with().executorService.execute(runnable);
     }
 
     public Builder toBuilder() {
@@ -400,8 +396,10 @@ public class DownloadContext {
 
     static class QueueAttachListener extends DownloadListener2 {
         private final AtomicInteger remainCount;
-        @NonNull private final DownloadContextListener contextListener;
-        @NonNull private final DownloadContext hostContext;
+        @NonNull
+        private final DownloadContextListener contextListener;
+        @NonNull
+        private final DownloadContext hostContext;
 
         QueueAttachListener(@NonNull DownloadContext context,
                             @NonNull DownloadContextListener contextListener, int taskCount) {
@@ -410,7 +408,8 @@ public class DownloadContext {
             this.hostContext = context;
         }
 
-        @Override public void taskStart(@NonNull DownloadTask task) {
+        @Override
+        public void taskStart(@NonNull DownloadTask task) {
         }
 
         @Override

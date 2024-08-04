@@ -177,9 +177,6 @@ public class ConnectTrial {
 
     /**
      * 判断服务器是否 允许分段 请求
-     * @param connected
-     * @return
-     * @throws IOException
      */
     private static boolean isAcceptRange(@NonNull DownloadConnection.Connected connected)
             throws IOException {
@@ -204,7 +201,7 @@ public class ConnectTrial {
      * The same to com.android.providers.downloads.Helpers#parseContentDisposition.
      * </p>
      * Parse the Content-Disposition HTTP Header. The format of the header
-     * is defined here: http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html
+     * is defined here: <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html"></a>
      * This header provides a filename for content that is going to be
      * downloaded to the file system. We only support the attachment type.
      */
@@ -268,7 +265,7 @@ public class ConnectTrial {
         }
 
         final String contentRange = connected.getResponseHeaderField(CONTENT_RANGE);
-        if (contentRange != null && contentRange.length() > 0) {
+        if (contentRange != null && !contentRange.isEmpty()) {
             // because of the Content-Range can certain the result is right, so pass.
             return false;
         }
@@ -281,17 +278,14 @@ public class ConnectTrial {
         }
 
         final String contentLengthField = connected.getResponseHeaderField(CONTENT_LENGTH);
-        if (contentLengthField == null || contentLengthField.length() <= 0) {
-            // because of the response header isn't contain the Content-Length so the HEAD method
-            // request is useless, because we plan to get the right instance-length on the
-            // Content-Length field through the response header of non 0-0 Range HEAD method request
-            return false;
-        }
+        // because of the response header isn't contain the Content-Length so the HEAD method
+        // request is useless, because we plan to get the right instance-length on the
+        // Content-Length field through the response header of non 0-0 Range HEAD method request
+        return contentLengthField != null && !contentLengthField.isEmpty();
 
         // because of the response header contain Content-Length, but because of we using Range: 0-0
         // so we the Content-Length is always 1 now, we can't use it, so we try to use HEAD method
         // request just for get the certain instance-length.
-        return true;
     }
 
     // if instance length is can't certain through transfer-encoding and content-range but the

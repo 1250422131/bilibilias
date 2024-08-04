@@ -27,11 +27,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.StatFs;
 import android.provider.OpenableColumns;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import android.util.Log;
 
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
@@ -41,8 +40,8 @@ import com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnCache;
 import com.liulishuo.okdownload.core.breakpoint.DownloadStore;
 import com.liulishuo.okdownload.core.connection.DownloadConnection;
 import com.liulishuo.okdownload.core.connection.DownloadOkHttpConnection;
-
-import org.jetbrains.annotations.Contract;
+import com.liulishuo.okdownload.core.logger.EmptyLogger;
+import com.liulishuo.okdownload.core.logger.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,11 +54,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
+import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,34 +83,6 @@ public class Util {
 
     // response special code.
     public static final int RANGE_NOT_SATISFIABLE = 416;
-
-    public interface Logger {
-        void e(String tag, String msg, Exception e);
-
-        void w(String tag, String msg);
-
-        void d(String tag, String msg);
-
-        void i(String tag, String msg);
-    }
-
-    public static class EmptyLogger implements Logger {
-        @Override
-        public void e(String tag, String msg, Exception e) {
-        }
-
-        @Override
-        public void w(String tag, String msg) {
-        }
-
-        @Override
-        public void d(String tag, String msg) {
-        }
-
-        @Override
-        public void i(String tag, String msg) {
-        }
-    }
 
     @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
     private static Logger logger = new EmptyLogger();
@@ -182,13 +150,10 @@ public class Util {
     }
 
     public static ThreadFactory threadFactory(final String name, final boolean daemon) {
-        return new ThreadFactory() {
-            @Override
-            public Thread newThread(@NonNull Runnable runnable) {
-                final Thread result = new Thread(runnable, name);
-                result.setDaemon(daemon);
-                return result;
-            }
+        return runnable -> {
+            final Thread result = new Thread(runnable, name);
+            result.setDaemon(daemon);
+            return result;
         };
     }
 
@@ -261,14 +226,11 @@ public class Util {
                 = "com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite";
 
         try {
-            final Constructor constructor = Class.forName(storeOnSqliteClassName)
+            final Constructor<?> constructor = Class.forName(storeOnSqliteClassName)
                     .getDeclaredConstructor(Context.class);
             return (DownloadStore) constructor.newInstance(context);
-        } catch (ClassNotFoundException ignored) {
-        } catch (InstantiationException ignored) {
-        } catch (IllegalAccessException ignored) {
-        } catch (NoSuchMethodException ignored) {
-        } catch (InvocationTargetException ignored) {
+        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException | InstantiationException ignored) {
         }
 
         return new BreakpointStoreOnCache();
@@ -280,9 +242,8 @@ public class Util {
             final Method createRemitSelf = originStore.getClass()
                     .getMethod("createRemitSelf");
             finalStore = (DownloadStore) createRemitSelf.invoke(originStore);
-        } catch (IllegalAccessException ignored) {
-        } catch (NoSuchMethodException ignored) {
-        } catch (InvocationTargetException ignored) {
+        } catch (IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException ignored) {
         }
 
         Util.d("Util", "Get final download store is " + finalStore);
@@ -293,14 +254,11 @@ public class Util {
         final String okhttpConnectionClassName
                 = "com.liulishuo.okdownload.core.connection.DownloadOkHttp3Connection$Factory";
         try {
-            final Constructor constructor = Class.forName(okhttpConnectionClassName)
+            final Constructor<?> constructor = Class.forName(okhttpConnectionClassName)
                     .getDeclaredConstructor();
             return (DownloadConnection.Factory) constructor.newInstance();
-        } catch (ClassNotFoundException ignored) {
-        } catch (InstantiationException ignored) {
-        } catch (IllegalAccessException ignored) {
-        } catch (NoSuchMethodException ignored) {
-        } catch (InvocationTargetException ignored) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException | InvocationTargetException ignored) {
         }
 
         return new DownloadOkHttpConnection.Factory();
@@ -309,15 +267,13 @@ public class Util {
 
     /**
      * 检查 下载文件块
-     *
-     * @param task
-     * @param info
-     * @param instanceLength
-     * @param isAcceptRange
      */
-    public static void assembleBlock(@NonNull DownloadTask task, @NonNull BreakpointInfo info,
-                                     long instanceLength,
-                                     boolean isAcceptRange) {
+    public static void assembleBlock(
+            @NonNull DownloadTask task,
+            @NonNull BreakpointInfo info,
+            long instanceLength,
+            boolean isAcceptRange
+    ) {
         final int blockCount;
 
         Util.d("OkdownloadUtil", "检查块 instanceLength: " + instanceLength + " ,isAcceptRange: " + isAcceptRange);
@@ -379,7 +335,7 @@ public class Util {
     }
 
     public static long parseContentLengthFromContentRange(@Nullable String contentRange) {
-        if (contentRange == null || contentRange.length() == 0) return CHUNKED_CONTENT_LENGTH;
+        if (contentRange == null || contentRange.isEmpty()) return CHUNKED_CONTENT_LENGTH;
         final String pattern = "bytes (\\d+)-(\\d+)/\\d+";
         try {
             final Pattern r = Pattern.compile(pattern);
@@ -396,11 +352,11 @@ public class Util {
     }
 
     public static boolean isUriContentScheme(@NonNull Uri uri) {
-        return uri.getScheme().equals(ContentResolver.SCHEME_CONTENT);
+        return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT);
     }
 
     public static boolean isUriFileScheme(@NonNull Uri uri) {
-        return uri.getScheme().equals(ContentResolver.SCHEME_FILE);
+        return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE);
     }
 
     @Nullable
@@ -448,12 +404,7 @@ public class Util {
         return 0;
     }
 
-    public static boolean isNetworkAvailable(ConnectivityManager manager) {
-        if (manager == null) {
-            Util.w("Util", "failed to get connectivity manager!");
-            return true;
-        }
-
+    public static boolean isNetworkAvailable(@NonNull ConnectivityManager manager) {
         //noinspection MissingPermission, because we check permission accessable when invoked
         @SuppressLint("MissingPermission") final NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.isConnected();
@@ -466,16 +417,18 @@ public class Util {
         }
     }
 
-    public static void addUserRequestHeaderField(@NonNull Map<String, List<String>> userHeaderField,
-                                                 @NonNull DownloadConnection connection)
-            throws IOException {
+    public static void addUserRequestHeaderField(
+            @NonNull Map<String, List<String>> userHeaderField,
+            @NonNull DownloadConnection connection
+    ) throws IOException {
         inspectUserHeader(userHeaderField);
         addRequestHeaderFields(userHeaderField, connection);
     }
 
     public static void addRequestHeaderFields(
             @NonNull Map<String, List<String>> headerFields,
-            @NonNull DownloadConnection connection) {
+            @NonNull DownloadConnection connection
+    ) {
         for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
             String key = entry.getKey();
             List<String> values = entry.getValue();
@@ -488,14 +441,5 @@ public class Util {
     public static void addDefaultUserAgent(@NonNull final DownloadConnection connection) {
         final String userAgent = "OkDownload/" + "2323";
         connection.addHeader(USER_AGENT, userAgent);
-    }
-    private static final ExecutorService DEFAULT_EXECUTOR_SERVICE = new ThreadPoolExecutor(0,
-            Integer.MAX_VALUE,
-            60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
-            Util.threadFactory("okdownload", false));
-    @NonNull
-    @Contract(" -> new")
-    public static ExecutorService createThreadPool() {
-        return DEFAULT_EXECUTOR_SERVICE;
     }
 }

@@ -39,9 +39,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -49,7 +49,6 @@ import java.util.concurrent.locks.LockSupport;
 
 public class MultiPointOutputStream {
     private static final String TAG = "MultiPointOutputStream";
-    private static final ExecutorService FILE_IO_EXECUTOR = Util.createThreadPool();
 
     final SparseArrayCompat<DownloadOutputStream> outputStreamMap = new SparseArrayCompat<>();
 
@@ -67,7 +66,7 @@ public class MultiPointOutputStream {
     private final boolean supportSeek;
     private final boolean isPreAllocateLength;
 
-    volatile Future syncFuture;
+    volatile Future<?> syncFuture;
     volatile Thread runSyncThread;
     final SparseArrayCompat<Thread> parkedRunBlockThreadMap = new SparseArrayCompat<>();
 
@@ -98,16 +97,7 @@ public class MultiPointOutputStream {
                 .isPreAllocateLength(task);
         this.noMoreStreamList = new ArrayList<>();
 
-        if (syncRunnable == null) {
-            this.syncRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    runSyncDelayException();
-                }
-            };
-        } else {
-            this.syncRunnable = syncRunnable;
-        }
+        this.syncRunnable = Objects.requireNonNullElseGet(syncRunnable, () -> this::runSyncDelayException);
 
         final File file = task.getFile();
         if (file != null) this.path = file.getAbsolutePath();
@@ -136,12 +126,7 @@ public class MultiPointOutputStream {
     }
 
     public void cancelAsync() {
-        FILE_IO_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                cancel();
-            }
-        });
+        OkDownload.with().executorService.execute(this::cancel);
     }
 
     public synchronized void cancel() {
@@ -304,8 +289,8 @@ public class MultiPointOutputStream {
     }
 
     // convenient for test
-    Future executeSyncRunnableAsync() {
-        return FILE_IO_EXECUTOR.submit(syncRunnable);
+    Future<?> executeSyncRunnableAsync() {
+        return OkDownload.with().executorService.submit(syncRunnable);
     }
 
     void inspectStreamState(StreamsState state) {
@@ -357,7 +342,7 @@ public class MultiPointOutputStream {
         List<Integer> newNoMoreStreamBlockList = new ArrayList<>();
 
         boolean isStreamsEndOrChanged() {
-            return isNoMoreStream || newNoMoreStreamBlockList.size() > 0;
+            return isNoMoreStream || !newNoMoreStreamBlockList.isEmpty();
         }
     }
 

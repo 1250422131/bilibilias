@@ -42,16 +42,17 @@ public class BreakpointStoreOnCache implements DownloadStore {
     private final List<Integer> fileDirtyList;
 
     public BreakpointStoreOnCache() {
-        this(new SparseArrayCompat<BreakpointInfo>(), new ArrayList<Integer>(),
-                new HashMap<String, String>());
+        this(new SparseArrayCompat<>(), new ArrayList<>(), new HashMap<>());
     }
 
-    BreakpointStoreOnCache(SparseArrayCompat<BreakpointInfo> storedInfos,
-                           List<Integer> fileDirtyList,
-                           HashMap<String, String> responseFilenameMap,
-                           SparseArrayCompat<IdentifiedTask> unStoredTasks,
-                           List<Integer> sortedOccupiedIds,
-                           KeyToIdMap keyToIdMap) {
+    BreakpointStoreOnCache(
+            SparseArrayCompat<BreakpointInfo> storedInfos,
+            List<Integer> fileDirtyList,
+            HashMap<String, String> responseFilenameMap,
+            SparseArrayCompat<IdentifiedTask> unStoredTasks,
+            List<Integer> sortedOccupiedIds,
+            @NonNull KeyToIdMap keyToIdMap
+    ) {
         this.unStoredTasks = unStoredTasks;
         this.fileDirtyList = fileDirtyList;
         this.storedInfos = storedInfos;

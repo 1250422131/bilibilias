@@ -38,12 +38,9 @@ import com.liulishuo.okdownload.core.interceptor.connect.HeaderInterceptor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DownloadChain implements Runnable {
-
-    private static final ExecutorService EXECUTOR = Util.createThreadPool();
 
     private static final String TAG = "DownloadChain";
 
@@ -175,8 +172,6 @@ public class DownloadChain implements Runnable {
 
     /**
      * 单块 开始真正下载
-     *
-     * @throws IOException
      */
     private void start() throws IOException {
         final CallbackDispatcher dispatcher = OkDownload.with().callbackDispatcher();
@@ -224,9 +219,6 @@ public class DownloadChain implements Runnable {
 
     /**
      * 调用 网络链接
-     *
-     * @return
-     * @throws IOException
      */
     public DownloadConnection.Connected processConnect() throws IOException {
         if (cache.isInterrupt()) throw InterruptException.SIGNAL;
@@ -240,9 +232,6 @@ public class DownloadChain implements Runnable {
 
     /**
      * 循环 处理 分块数据
-     *
-     * @return
-     * @throws IOException
      */
     public long loopFetch() throws IOException {
         if (fetchIndex == fetchInterceptorList.size()) {
@@ -281,13 +270,8 @@ public class DownloadChain implements Runnable {
     }
 
     void releaseConnectionAsync() {
-        EXECUTOR.execute(releaseConnectionRunnable);
+        OkDownload.with().executorService.execute(releaseConnectionRunnable);
     }
 
-    private final Runnable releaseConnectionRunnable = new Runnable() {
-        @Override
-        public void run() {
-            releaseConnection();
-        }
-    };
+    private final Runnable releaseConnectionRunnable = this::releaseConnection;
 }

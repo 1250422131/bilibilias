@@ -70,9 +70,6 @@ public class DownloadStrategy {
 
     /**
      * 计算 分几块下载
-     * @param task
-     * @param totalLength
-     * @return
      */
     public int determineBlockCount(@NonNull DownloadTask task, long totalLength) {
         if (task.getSetConnectionCount() != null) return task.getSetConnectionCount();
@@ -98,7 +95,6 @@ public class DownloadStrategy {
         }
 
         return 5;
-//        return 1;
     }
 
     public long reuseIdledSameInfoThresholdBytes() {
@@ -285,8 +281,8 @@ public class DownloadStrategy {
 
     public static class ResumeAvailableResponseCheck {
         @NonNull private DownloadConnection.Connected connected;
-        @NonNull private BreakpointInfo info;
-        private int blockIndex;
+        @NonNull private final BreakpointInfo info;
+        private final int blockIndex;
 
         protected ResumeAvailableResponseCheck(@NonNull DownloadConnection.Connected connected,
                                                int blockIndex, @NonNull BreakpointInfo info) {
@@ -356,11 +352,7 @@ public class DownloadStrategy {
             return true;
         }
 
-        if (responseCode == HttpURLConnection.HTTP_OK && isAlreadyProceed) {
-            return true;
-        }
-
-        return false;
+        return responseCode == HttpURLConnection.HTTP_OK && isAlreadyProceed;
     }
 
     Boolean isHasAccessNetworkStatePermission = null;

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -71,8 +72,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
 
     @Nullable
     private final Integer connectionCount;
-    @Nullable
-    private final Boolean isPreAllocateLength;
+    private final boolean isPreAllocateLength;
 
     /**
      * if this task has already completed with
@@ -103,13 +103,24 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
     @Nullable
     private String redirectLocation;
 
-    public DownloadTask(String url, Uri uri, int priority, int readBufferSize, int flushBufferSize,
-                        int syncBufferSize, int syncBufferIntervalMills,
-                        boolean autoCallbackToUIThread, int minIntervalMillisCallbackProcess,
-                        Map<String, List<String>> headerMapFields, @Nullable String filename,
-                        boolean passIfAlreadyCompleted, boolean wifiRequired,
-                        Boolean filenameFromResponse, @Nullable Integer connectionCount,
-                        @Nullable Boolean isPreAllocateLength) {
+    public DownloadTask(
+            @NonNull String url,
+            Uri uri,
+            int priority,
+            int readBufferSize,
+            int flushBufferSize,
+            int syncBufferSize,
+            int syncBufferIntervalMills,
+            boolean autoCallbackToUIThread,
+            int minIntervalMillisCallbackProcess,
+            Map<String, List<String>> headerMapFields,
+            @Nullable String filename,
+            boolean passIfAlreadyCompleted,
+            boolean wifiRequired,
+            Boolean filenameFromResponse,
+            @NonNull Integer connectionCount,
+            @NonNull Boolean isPreAllocateLength
+    ) {
         this.url = url;
         this.uri = uri;
         this.priority = priority;
@@ -406,8 +417,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
      *
      * @return whether need to pre-allocate length you set.
      */
-    @Nullable
-    public Boolean getSetPreAllocateLength() {
+    public boolean getIsPreAllocateLength() {
         return isPreAllocateLength;
     }
 
@@ -524,7 +534,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
      *                 thread-pool.
      * @param listener the listener is used for listen each {@code tasks} lifecycle.
      */
-    public static void enqueue(DownloadTask[] tasks, DownloadListener listener) {
+    public static void enqueue(DownloadTask[] tasks, @NonNull DownloadListener listener) {
         for (DownloadTask task : tasks) {
             task.listener = listener;
         }
@@ -541,7 +551,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
      *
      * @param listener the listener is used for listen the whole lifecycle of the task.
      */
-    public void enqueue(DownloadListener listener) {
+    public void enqueue(@NonNull DownloadListener listener) {
         this.listener = listener;
         OkDownload.with().downloadDispatcher().enqueue(this);
     }
@@ -551,7 +561,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
      *
      * @param listener the listener is used for listen the whole lifecycle of the task.
      */
-    public void execute(DownloadListener listener) {
+    public void execute(@NonNull DownloadListener listener) {
         this.listener = listener;
         OkDownload.with().downloadDispatcher().execute(this);
     }
@@ -650,7 +660,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
         final String url;
         @NonNull
         final Uri uri;
-        private volatile Map<String, List<String>> headerMapFields;
+        private volatile Map<String, List<String>> headerMapFields = new TreeMap<>();
 
         /**
          * Create the task builder through {@code url} and the file's parent path and the filename.
@@ -731,7 +741,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
 
         private Boolean isFilenameFromResponse;
         private Integer connectionCount;
-        private Boolean isPreAllocateLength;
+        private boolean isPreAllocateLength = true;
 
         /**
          * Set whether need to pre allocate length for the file after get the resource-length from
@@ -816,15 +826,9 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
          *
          * @param key   the key of the field.
          * @param value the value of the field.
-         * @return
          */
         public synchronized Builder addHeader(String key, String value) {
-            if (headerMapFields == null) headerMapFields = new HashMap<>();
-            List<String> valueList = headerMapFields.get(key);
-            if (valueList == null) {
-                valueList = new ArrayList<>();
-                headerMapFields.put(key, valueList);
-            }
+            List<String> valueList = headerMapFields.computeIfAbsent(key, k -> new ArrayList<>());
             valueList.add(value);
             return this;
         }
@@ -940,11 +944,24 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
          * @return a new task is built from this builder.
          */
         public DownloadTask build() {
-            return new DownloadTask(url, uri, priority, readBufferSize, flushBufferSize,
-                    syncBufferSize, syncBufferIntervalMillis,
-                    autoCallbackToUIThread, minIntervalMillisCallbackProcess,
-                    headerMapFields, filename, passIfAlreadyCompleted, isWifiRequired,
-                    isFilenameFromResponse, connectionCount, isPreAllocateLength);
+            return new DownloadTask(
+                    url,
+                    uri,
+                    priority,
+                    readBufferSize,
+                    flushBufferSize,
+                    syncBufferSize,
+                    syncBufferIntervalMillis,
+                    autoCallbackToUIThread,
+                    minIntervalMillisCallbackProcess,
+                    headerMapFields,
+                    filename,
+                    passIfAlreadyCompleted,
+                    isWifiRequired,
+                    isFilenameFromResponse,
+                    connectionCount,
+                    isPreAllocateLength
+            );
         }
     }
 
@@ -952,8 +969,7 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
     public boolean equals(Object obj) {
         if (super.equals(obj)) return true;
 
-        if (obj instanceof DownloadTask) {
-            final DownloadTask another = (DownloadTask) obj;
+        if (obj instanceof DownloadTask another) {
             if (another.id == this.id) return true;
             return compareIgnoreId(another);
         }
@@ -963,9 +979,10 @@ public class DownloadTask extends IdentifiedTask implements Comparable<DownloadT
 
     @Override
     public int hashCode() {
-        return (url + providedPathFile.toString() + filenameHolder.get()).hashCode();
+        return (url + providedPathFile + filenameHolder.get()).hashCode();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return super.toString() + "@" + id + "@" + url + "@" + directoryFile.toString()
