@@ -3,6 +3,7 @@ buildscript {
         classpath(libs.wire.gradlePlugin)
     }
     repositories {
+        google()
         mavenCentral()
     }
 }
