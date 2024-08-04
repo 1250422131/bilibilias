@@ -27,8 +27,3 @@ plugins {
     alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.compose.compiler.report.generator) apply false
 }
-allprojects {
-    repositories {
-        google()
-    }
-}
