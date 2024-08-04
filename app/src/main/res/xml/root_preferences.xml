@@ -30,7 +30,6 @@
             app:title="@string/user_dl_finish_automatic_merge_switch_title"></SwitchPreferenceCompat>
 
         <SwitchPreferenceCompat
-            android:icon="@drawable/ic_setting_bilibili"
             app:key="user_dl_finish_automatic_import_switch"
             app:summaryOff="@string/user_dl_finish_automatic_import_switch_off"
             app:summaryOn="@string/user_dl_finish_automatic_import_switch_on"
@@ -78,13 +77,11 @@
     <PreferenceCategory app:title="@string/app_root_preferences_title_privacy_policy">
 
         <SwitchPreferenceCompat
-            android:icon="@drawable/ic_setting_vscodeignore"
             app:defaultValue="false"
             app:key="microsoft_app_center_type"
             app:summary="@string/microsoft_app_center_type_summary"
             app:title="@string/microsoft_app_center_type_title"></SwitchPreferenceCompat>
         <SwitchPreferenceCompat
-            android:icon="@drawable/baidu_logo"
             app:defaultValue="false"
             app:key="baidu_statistics_type"
             app:summary="@string/baidu_statistics_type_summary"

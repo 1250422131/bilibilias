@@ -22,9 +22,4 @@ class UsersDataSource @Inject constructor(
         }
     }
 
-    suspend fun setMixKey(key: String) {
-        dataStore.updateData {
-            it.copy(mixKey = key)
-        }
-    }
 }

@@ -11,7 +11,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class AnalyticsModule {
     @Binds
-    internal abstract fun bindsSyncStatusMonitor(
-        analytics: StubAnalyticsHelper,
-    ): AnalyticsHelper
+    internal abstract fun bindsSyncStatusMonitor(analytics: StubAnalyticsHelper): AnalyticsHelper
 }
