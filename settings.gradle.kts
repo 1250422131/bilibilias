@@ -13,9 +13,9 @@ plugins {
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
-        maven("https://jitpack.io")
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
