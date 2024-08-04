@@ -70,7 +70,6 @@ striktCore = "0.35.1"
 toaster = "12.6"
 turbine = "1.1.0"
 truth = "1.4.4"
-tencentBugly = "4.1.9.3"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 akdanmaku = { group = "com.kuaishou", name = "akdanmaku", version.ref = "akdanmaku" }
@@ -216,7 +215,6 @@ sqllin-processor = { group = "com.ctrip.kotlin", name = "sqllin-processor", vers
 
 strikt-core = { group = "io.strikt", name = "strikt-core", version.ref = "striktCore" }
 
-tencent-bugly = { group = "com.tencent.bugly", name = "crashreport", version.ref = "tencentBugly" }
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
@@ -261,7 +259,6 @@ bilibilias-android-application = { id = "bilibilias.android.application", versio
 bilibilias-android-compose = { id = "bilibilias.android.compose", version = "unspecified" }
 bilibilias-android-jacoco = { id = "bilibilias.android.jacoco", version = "unspecified" }
 bilibilias-android-application-flavors = { id = "bilibilias.android.application.flavors", version = "unspecified" }
-bilibilias-android-application-bugly = { id = "bilibilias.android.application.bugly", version = "unspecified" }
 bilibilias-android-feature = { id = "bilibilias.android.feature", version = "unspecified" }
 bilibilias-android-library = { id = "bilibilias.android.library", version = "unspecified" }
 bilibilias-android-lint = { id = "bilibilias.android.lint", version = "unspecified" }
