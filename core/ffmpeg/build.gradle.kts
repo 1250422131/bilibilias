@@ -9,12 +9,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
-    packaging {
-        resources {
-//            excludes += "/**/*.kotlin_builtins" // (example)
-        }
-    }
 }
 
 dependencies {
