@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.logcat
 
+import org.hamcrest.MatcherAssert.assertThat
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -90,12 +91,10 @@ class LogcatTest {
         val exception = RuntimeException("damn")
 
         logcat { exception.asLog() }
-
         assertContains(
             logger.latestLog!!.message,
             """
-      |java.lang.RuntimeException: damn
-    	|	at logcat.LogcatTest.Throwable asLogMessage() has stacktrace logged(LogcatTest.kt:
+at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stacktrace logged(LogcatTest.kt:
       """.trimMargin(),
         )
     }
