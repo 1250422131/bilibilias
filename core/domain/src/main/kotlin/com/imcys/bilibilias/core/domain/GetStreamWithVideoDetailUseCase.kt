@@ -17,7 +17,7 @@ class GetStreamWithVideoDetailUseCase @Inject constructor(
         val detailFlow = flow { emit(videoRepository.获取视频详细信息(bvid)) }
         val collectionStreamUrl = detailFlow.map { detail ->
             detail.pages.map {
-                val streamUrl = videoRepository.videoStreamingURL(detail.aid, detail.bvid, it.cid)
+                val streamUrl = videoRepository.playerPlayUrl(detail.aid, detail.bvid, it.cid)
                 CollectionDetailWithStream(it.part, it.cid, streamUrl)
             }
         }

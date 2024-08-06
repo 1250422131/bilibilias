@@ -1,7 +1,6 @@
 ﻿package com.imcys.bilibilias.core.model.bangumi
 
 import com.imcys.bilibilias.core.model.video.Audio
-import com.imcys.bilibilias.core.model.video.Dash
 import com.imcys.bilibilias.core.model.video.SupportFormat
 import com.imcys.bilibilias.core.model.video.Video
 import kotlinx.serialization.SerialName

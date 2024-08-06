@@ -1,24 +1,15 @@
 package com.imcys.bilibilias.core.download.task
 
 import android.net.Uri
-import com.imcys.bilibilias.core.common.utils.DataSize.Companion.mb
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.liulishuo.okdownload.DownloadTask
-import java.io.File
 
 class AsDownloadTask {
     internal val viewInfo: ViewInfo
     internal val subTitle: String
     internal val okTask: DownloadTask
     internal val fileType: FileType
-
-    constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, file: File) {
-        this.viewInfo = viewInfo
-        this.subTitle = subTitle
-        this.fileType = fileType
-        this.okTask = createTask(fileType, DownloadTask.Builder(url, file))
-    }
 
     constructor(viewInfo: ViewInfo, subTitle: String, fileType: FileType, url: String, uri: Uri) {
         this.viewInfo = viewInfo
