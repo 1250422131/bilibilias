@@ -6,10 +6,13 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
+import com.imcys.bilibilias.core.common.network.AsDispatchers
+import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.common.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
+import com.imcys.bilibilias.core.domain.GetViewWithPlayerPlayUrlUseCase
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.model.download.FileType
@@ -18,9 +21,11 @@ import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Audio
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
+import com.imcys.bilibilias.core.model.video.Sources
 import com.imcys.bilibilias.core.model.video.Video
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
+import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.VideoRepository
 import com.lazygeniouz.dfc.file.DocumentFileCompat
@@ -30,6 +35,7 @@ import dev.DevUtils
 import dev.utils.app.ContentResolverUtils
 import dev.utils.app.UriUtils
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -49,10 +55,12 @@ private const val TAG = "DownloadManager"
 class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     @ApplicationContext private val context: Context,
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val videoRepository: VideoRepository,
     private val downloadTaskDao: DownloadTaskDao,
     private val listener: AsDownloadListener,
     private val asPreferencesDataSource: AsPreferencesDataSource,
+    private val getViewWithPlayerPlayUrlUseCase: GetViewWithPlayerPlayUrlUseCase,
 ) {
     init {
         if (BuildConfig.DEBUG) {
@@ -62,6 +70,29 @@ class DownloadManager @Inject constructor(
 
     fun download(ids: List<Bvid>) {
         Napier.d { ids.joinToString() }
+        scope.launch {
+            for (id in ids) {
+                downloadedTest(
+                    taskType = TaskType.ALL,
+                    viewWithPlayerPlayUrl = { getViewWithPlayerPlayUrlUseCase(id).first() },
+                    vUrl = {
+                        ""
+                    },
+                    aUrl = {
+                        ""
+                    },
+                    sectionsTitle = {
+                        ""
+                    },
+                    vTask = { url: String, ids: ViewIds, subTitle: String, type: FileType ->
+
+                    },
+                    aTask = { url: String, ids: ViewIds, subTitle: String, type: FileType ->
+
+                    },
+                )
+            }
+        }
     }
 
     // todo 也许要重构
@@ -70,12 +101,12 @@ class DownloadManager @Inject constructor(
         scope.launch {
             try {
                 val result = download(
-                    taksType = request.format.taskType,
+                    taskType = request.format.taskType,
                     getDetail = { bvid: Bvid ->
                         videoRepository.获取视频详细信息(bvid)
                     },
                     getDownloadUrl = { aid, bvid, cid ->
-                        videoRepository.videoStreamingURL(aid, bvid, cid)
+                        videoRepository.playerPlayUrl(aid, bvid, cid)
                     },
                     videoStrategy = { sources, detail, page ->
                         val format = request.format
@@ -92,7 +123,7 @@ class DownloadManager @Inject constructor(
     }
 
     suspend fun download(
-        taksType: TaskType,
+        taskType: TaskType,
         getDetail: suspend (bvid: Bvid) -> ViewDetail,
         getDownloadUrl: suspend (aid: Aid, bvid: Bvid, cid: Cid) -> VideoStreamUrl,
         videoStrategy: suspend (sources: List<Video>, detail: ViewDetail, page: ViewDetail.Pages) -> AsDownloadTask?,
@@ -104,7 +135,7 @@ class DownloadManager @Inject constructor(
             val downloadUrl = getDownloadUrl(it.aid, it.bvid, it.cid)
             val page = detail.pages.single { it.cid == it.cid }
             Napier.d { "选中的子集 $page" }
-            val newTaskType = when (taksType) {
+            val newTaskType = when (taskType) {
                 TaskType.ALL -> arrayOf(TaskType.VIDEO, TaskType.AUDIO)
                 TaskType.VIDEO -> arrayOf(TaskType.VIDEO)
                 TaskType.AUDIO -> arrayOf(TaskType.AUDIO)
@@ -112,30 +143,56 @@ class DownloadManager @Inject constructor(
             newTaskType.forEach {
                 when (it) {
                     TaskType.VIDEO -> {
-                        val task = videoStrategy(downloadUrl.dash.video, detail, page)
-                        Napier.d { "视频任务 $task" }
-                        if (task != null) {
-                            task.also(listener::add)
-                        } else {
-                            result = TaskResult.Failure
-                        }
+//                        val task = videoStrategy(downloadUrl.dash.video, detail, page)
+//                        Napier.d { "视频任务 $task" }
+//                        if (task != null) {
+//                            task.also(listener::add)
+//                        } else {
+//                            result = TaskResult.Failure
+//                        }
                     }
 
                     TaskType.AUDIO -> {
-                        val task = audioStrategy(downloadUrl.dash.audio, detail, page)
-                        Napier.d { "音频任务 $task" }
-                        if (task != null) {
-                            task.also(listener::add)
-                        } else {
-                            result = TaskResult.Failure
-                        }
+//                        val task = audioStrategy(downloadUrl.dash.audio, detail, page)
+//                        Napier.d { "音频任务 $task" }
+//                        if (task != null) {
+//                            task.also(listener::add)
+//                        } else {
+//                            result = TaskResult.Failure
+//                        }
                     }
 
                     TaskType.ALL -> throw UnsupportedOperationException()
                 }
             }
-            Napier.d { "任务是否成功: $result, 任务类型: $taksType" }
+            Napier.d { "任务是否成功: $result, 任务类型: $taskType" }
             result
+        }
+    }
+
+    suspend fun downloadedTest(
+        taskType: TaskType,
+        viewWithPlayerPlayUrl: suspend () -> Pair<ViewDetail, VideoStreamUrl>,
+        vUrl: (List<Sources>) -> String,
+        aUrl: (List<Sources>) -> String,
+        sectionsTitle: (List<ViewDetail.Pages>) -> String,
+        vTask: (url: String, ids: ViewIds, subTitle: String, type: FileType) -> Unit,
+        aTask: (url: String, ids: ViewIds, subTitle: String, type: FileType) -> Unit,
+    ) {
+        val (detail, url) = viewWithPlayerPlayUrl()
+        val dash = url.dash
+        val downloadVideoUrl = vUrl(dash.video)
+        val downloadAudioUrl = aUrl(dash.audio)
+        val viewIds = ViewIds(detail.aid, detail.bvid, detail.cid)
+        val subTitle = sectionsTitle(detail.pages)
+        when (taskType) {
+            TaskType.ALL -> {
+                vTask(downloadVideoUrl, viewIds, subTitle, FileType.VIDEO)
+                aTask(downloadAudioUrl, viewIds, subTitle, FileType.AUDIO)
+            }
+
+            TaskType.VIDEO -> vTask(downloadVideoUrl, viewIds, subTitle, FileType.VIDEO)
+            TaskType.AUDIO -> aTask(downloadAudioUrl, viewIds, subTitle, FileType.AUDIO)
         }
     }
 

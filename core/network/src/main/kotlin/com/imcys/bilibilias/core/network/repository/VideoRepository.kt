@@ -30,7 +30,8 @@ class VideoRepository @Inject constructor(
             .url
             .toString()
     }
-    suspend fun videoStreamingURL(aid: Long, bvid: String, cid: Long): VideoStreamUrl {
+
+    suspend fun playerPlayUrl(aid: Long, bvid: String, cid: Long): VideoStreamUrl {
         return client.get("x/player/wbi/playurl") {
             attributes.put(requireWbi, true)
             parameterAVid(aid)

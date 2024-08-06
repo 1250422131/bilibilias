@@ -15,6 +15,7 @@ dependencies {
     api(projects.core.common)
     implementation(projects.core.ffmpeg)
     implementation(projects.core.data)
+    implementation(projects.core.domain)
 
     implementation(libs.kotlinx.datetime)
 
