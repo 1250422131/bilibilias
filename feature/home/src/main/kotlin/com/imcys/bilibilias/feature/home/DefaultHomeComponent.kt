@@ -24,7 +24,8 @@ class DefaultHomeComponent @AssistedInject constructor(
     private val asRepository: BiliBiliAsRepository,
     private val loginRepository: LoginRepository,
     private val usersDataSource: UsersDataSource,
-) : HomeComponent, BaseViewModel<HomeEvent, HomeComponent.Model>(componentContext) {
+) : BaseViewModel<HomeEvent, HomeComponent.Model>(componentContext),
+    HomeComponent {
 
     @Composable
     override fun models(events: Flow<HomeEvent>): HomeComponent.Model {

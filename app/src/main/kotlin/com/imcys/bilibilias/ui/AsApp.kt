@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
@@ -43,8 +41,6 @@ import com.dokar.sonner.Toaster
 import com.dokar.sonner.ToasterState
 import com.dokar.sonner.rememberToasterState
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceContent
-import com.imcys.bilibilias.core.data.util.ErrorMessage
-import com.imcys.bilibilias.core.data.util.MessageDuration
 import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.designsystem.component.AsBackground
 import com.imcys.bilibilias.core.designsystem.component.AsGradientBackground

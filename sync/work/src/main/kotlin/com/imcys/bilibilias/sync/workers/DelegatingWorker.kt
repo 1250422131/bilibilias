@@ -53,7 +53,7 @@ class DelegatingWorker(
         EntryPointAccessors.fromApplication<HiltWorkerFactoryEntryPoint>(appContext)
             .hiltWorkerFactory()
             .createWorker(appContext, workerClassName, workerParams)
-                as? CoroutineWorker
+            as? CoroutineWorker
             ?: throw IllegalArgumentException("Unable to find appropriate worker")
 
     override suspend fun getForegroundInfo(): ForegroundInfo =

@@ -1,10 +1,6 @@
 package com.imcys.bilibilias.home
 
 import androidx.benchmark.macro.MacrobenchmarkScope
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
-import androidx.test.uiautomator.untilHasChildren
-import com.imcys.bilibilias.waitAndFindObject
 
 fun MacrobenchmarkScope.forYouWaitForContent() {
     // Wait until content is loaded by checking if topics are loaded

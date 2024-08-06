@@ -13,7 +13,6 @@ import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.data.Synchronizer
 import com.imcys.bilibilias.core.data.repository.WebInterfaceRepository
-import com.imcys.bilibilias.core.network.repository.LoginRepository
 import com.imcys.bilibilias.sync.initializers.SyncConstraints
 import com.imcys.bilibilias.sync.initializers.syncForegroundInfo
 import com.imcys.bilibilias.sync.status.SyncSubscriber
@@ -36,7 +35,8 @@ internal class SyncWorker @AssistedInject constructor(
     private val analyticsHelper: AnalyticsHelper,
     private val syncSubscriber: SyncSubscriber,
     private val wbiInterfaceRepository: WebInterfaceRepository,
-) : CoroutineWorker(appContext, workerParams), Synchronizer {
+) : CoroutineWorker(appContext, workerParams),
+    Synchronizer {
 
     override suspend fun getForegroundInfo(): ForegroundInfo =
         appContext.syncForegroundInfo()

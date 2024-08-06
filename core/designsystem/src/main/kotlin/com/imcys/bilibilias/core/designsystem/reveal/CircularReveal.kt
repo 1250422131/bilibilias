@@ -43,29 +43,27 @@ fun Modifier.circularReveal(
     durationMillis: Int = 250,
     easing: Easing = EaseInOutSine,
     positioned: (IntSize) -> Unit = {},
-    finishedListener: () -> Unit = {}
-): Modifier {
-    return composed(
-        inspectorInfo = debugInspectorInfo {
-            name = "circularReveal"
-            properties["visible"] = isVisible
-            properties["revealFrom"] = revealFrom
-            properties["durationMillis"] = durationMillis
-        }
-    ) {
-        val position = remember { mutableStateOf(IntSize(0, 0)) }
-        onGloballyPositioned {
-            position.value = it.size
-            positioned(it.size)
-        }
-        val animationProgress: State<Float> = animateFloatAsState(
-            targetValue = if (isVisible) 1f else 0f,
-            animationSpec = tween(durationMillis = durationMillis, easing = easing),
-            label = "circularReveal",
-            finishedListener = { finishedListener() }
-        )
-        circularReveal(animationProgress, revealFrom / position.value.toSize())
+    finishedListener: () -> Unit = {},
+): Modifier = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "circularReveal"
+        properties["visible"] = isVisible
+        properties["revealFrom"] = revealFrom
+        properties["durationMillis"] = durationMillis
+    },
+) {
+    val position = remember { mutableStateOf(IntSize(0, 0)) }
+    onGloballyPositioned {
+        position.value = it.size
+        positioned(it.size)
     }
+    val animationProgress: State<Float> = animateFloatAsState(
+        targetValue = if (isVisible) 1f else 0f,
+        animationSpec = tween(durationMillis = durationMillis, easing = easing),
+        label = "circularReveal",
+        finishedListener = { finishedListener() },
+    )
+    circularReveal(animationProgress, revealFrom / position.value.toSize())
 }
 
 /**
@@ -77,7 +75,7 @@ fun Modifier.circularReveal(
  */
 private fun Modifier.circularReveal(
     transitionProgress: State<Float>,
-    revealFrom: Offset = Offset(0.5f, 0.5f)
+    revealFrom: Offset = Offset(0.5f, 0.5f),
 ): Modifier = drawWithCache {
     val path = Path()
 

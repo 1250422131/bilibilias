@@ -10,7 +10,7 @@ interface HomeComponent {
     fun take(event: HomeEvent)
     data class Model(
         val updateNotice: UpdateNotice,
-        val homeBanner: HomeBanner
+        val homeBanner: HomeBanner,
     )
 
     interface Factory {

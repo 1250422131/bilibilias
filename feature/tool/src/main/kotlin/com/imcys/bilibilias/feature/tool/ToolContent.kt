@@ -32,7 +32,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -70,7 +69,7 @@ fun ToolContent(
         searchResultUiState = searchResultUiState,
         onDownload = component::download,
         onSetting = navigationToSettings,
-        navigationToAuthorSpace = navigationToAuthorSpace
+        navigationToAuthorSpace = navigationToAuthorSpace,
     )
 }
 
@@ -83,7 +82,7 @@ fun ToolContent(
     searchResultUiState: SearchResultUiState,
     onDownload: (DownloadRequest) -> Unit,
     onSetting: () -> Unit,
-    navigationToAuthorSpace: (Mid) -> Unit
+    navigationToAuthorSpace: (Mid) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -94,10 +93,10 @@ fun ToolContent(
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = "设置",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
-                }
+                },
             )
         },
     ) { paddingValues ->
@@ -112,11 +111,11 @@ fun ToolContent(
                         Icon(
                             Icons.Default.Clear,
                             contentDescription = "清空输入框",
-                            modifier = Modifier.clickable { onClearSearches() }
+                            modifier = Modifier.clickable { onClearSearches() },
                         )
                     }
                 },
-                label={ Text(text = "AV / BV / EP")},
+                label = { Text(text = "AV / BV / EP") },
                 singleLine = true,
             )
             when (searchResultUiState) {
@@ -128,7 +127,7 @@ fun ToolContent(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp)),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        contentPadding = PaddingValues(4.dp)
+                        contentPadding = PaddingValues(4.dp),
                     ) {
                         item {
                             AsyncImage(
@@ -137,7 +136,7 @@ fun ToolContent(
                                 modifier = Modifier
                                     .size(70.dp)
                                     .clip(CircleShape)
-                                    .clickable { navigationToAuthorSpace(searchResultUiState.mid) }
+                                    .clickable { navigationToAuthorSpace(searchResultUiState.mid) },
                             )
                         }
                         items(searchResultUiState.collection, key = { it.cid }) { item ->
@@ -151,7 +150,7 @@ fun ToolContent(
                                             item.title,
                                         ),
                                         it,
-                                    )
+                                    ),
                                 )
                             }
                         }
@@ -166,24 +165,24 @@ fun ToolContent(
 fun ViewItem(
     title: String,
     streamDesc: VideoStreamDesc,
-    onDownload: (Format) -> Unit
+    onDownload: (Format) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     Card(
         onClick = { expanded = !expanded },
         modifier = Modifier
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Row(
             modifier = Modifier
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = title, modifier = Modifier.basicMarquee())
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = null
+                contentDescription = null,
             )
         }
         AnimatedVisibility(visible = expanded) {
@@ -199,7 +198,7 @@ fun ViewItem(
                                 BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                             } else {
                                 null
-                            }
+                            },
                         ) {
                             Text(text = item.desc)
                         }
@@ -213,8 +212,8 @@ fun ViewItem(
                             Format(
                                 codecsState.current.codeid,
                                 typeState.current,
-                                currentQuality.quality
-                            )
+                                currentQuality.quality,
+                            ),
                         )
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally),

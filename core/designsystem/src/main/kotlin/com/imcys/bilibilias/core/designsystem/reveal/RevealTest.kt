@@ -20,7 +20,7 @@ import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 private fun RevealTest() {
     Box(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface),
     ) {
         val isVisible = remember { mutableStateOf(false) }
         val revealFrom = remember { mutableStateOf(Offset(0f, 0f)) }
@@ -29,25 +29,25 @@ private fun RevealTest() {
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.error)
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(150.dp),
         )
 
         Box(
             modifier = Modifier
                 .circularReveal(
                     isVisible = isVisible.value,
-                    revealFrom = revealFrom.value
+                    revealFrom = revealFrom.value,
                 )
                 .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(300.dp),
         )
 
         DraggableCircle(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.tertiary)
                 .size(50.dp)
-                .align(Alignment.CenterEnd)
+                .align(Alignment.CenterEnd),
         ) {
             revealFrom.value = it
             isVisible.value = !isVisible.value

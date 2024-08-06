@@ -64,7 +64,7 @@ data class Entry(
     @SerialName("type_tag")
     val typeTag: String = "",
     @SerialName("video_quality")
-    val videoQuality: Int = 0
+    val videoQuality: Int = 0,
 ) {
     @Serializable
     data class PageData(
@@ -95,6 +95,6 @@ data class Entry(
         @SerialName("vid")
         val vid: String = "",
         @SerialName("width")
-        val width: Int = 0
+        val width: Int = 0,
     )
 }

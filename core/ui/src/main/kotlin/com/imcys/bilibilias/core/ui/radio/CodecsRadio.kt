@@ -17,30 +17,28 @@ fun CodecsRadioGroup(codecsState: CodecsState) {
             selected = codecsState.current == Codecs.AV1,
             onClick = { codecsState.current = Codecs.AV1 },
             text = { Text(text = "AV1") },
-            enable = true
+            enable = true,
         )
         AsRadioButton(
             selected = codecsState.current == Codecs.H265,
             onClick = { codecsState.current = Codecs.H265 },
             text = { Text(text = "H265") },
-            enable = true
+            enable = true,
         )
         AsRadioButton(
             selected = codecsState.current == Codecs.H264,
             onClick = { codecsState.current = Codecs.H264 },
             text = { Text(text = "H264") },
-            enable = true
+            enable = true,
         )
     }
 }
 
 @Composable
-fun rememberCodecsState(): CodecsState {
-    return remember { CodecsState() }
-}
+fun rememberCodecsState(): CodecsState = remember { CodecsState() }
 
 @Stable
-class CodecsState() {
+class CodecsState {
     var current by mutableStateOf(Codecs.AV1)
         internal set
 }

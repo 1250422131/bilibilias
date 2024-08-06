@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 fun SplashContent(
     component: SplashComponent,
     navigationToLogin: () -> Unit,
-    navigationToTool: () -> Unit
+    navigationToTool: () -> Unit,
 ) {
     val isVisible = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -46,23 +46,23 @@ fun SplashContent(
                     } else {
                         navigationToLogin()
                     }
-                }
+                },
             ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painterResource(R.drawable.feature_splash_ic_launcher_foreground),
             contentDescription = null,
             modifier = Modifier
                 .width(120.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
         )
         Text(
             text = "BILIBILIAS",
             modifier = Modifier,
             fontSize = 56.sp,
             color = MaterialTheme.colorScheme.primary,
-            softWrap = false
+            softWrap = false,
         )
     }
 }

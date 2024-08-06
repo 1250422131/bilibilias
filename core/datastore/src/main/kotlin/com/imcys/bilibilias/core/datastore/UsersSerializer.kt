@@ -5,7 +5,6 @@ import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.datastore.model.Users
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
@@ -24,7 +23,6 @@ internal class UsersSerializer @Inject constructor(
 
     override suspend fun readFrom(input: InputStream): Users =
         protoBuf.decodeFromByteArray(input.readBytes())
-
 
     override suspend fun writeTo(t: Users, output: OutputStream) {
         withContext(ioDispatcher) {

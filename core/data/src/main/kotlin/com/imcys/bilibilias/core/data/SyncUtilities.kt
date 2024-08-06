@@ -42,4 +42,3 @@ internal suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> =
     )
     Result.failure(exception)
 }
-

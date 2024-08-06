@@ -5,7 +5,6 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.imcys.bilibilias.sync.workers.SyncWorker
 
-
 object Sync {
     // This method is initializes sync, the process that keeps the app's data current.
     // It is called from the app module's Application.onCreate() and should be only done once.

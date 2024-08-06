@@ -5,7 +5,6 @@ import androidx.core.net.toUri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.MapColumn
 import androidx.room.PrimaryKey
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
@@ -47,9 +46,7 @@ data class DownloadTaskEntity(
         else -> bytesSentTotal * 1.0f / contentLength
     }
 
-    override fun toString(): String {
-        return "DownloadTaskEntity(aid=$aid, bvid='$bvid', cid=$cid, fileType=$fileType, subTitle='$subTitle', state=$state, bytesSentTotal=$bytesSentTotal, contentLength=$contentLength, id=$id, created=$created)"
-    }
+    override fun toString(): String = "DownloadTaskEntity(aid=$aid, bvid='$bvid', cid=$cid, fileType=$fileType, subTitle='$subTitle', state=$state, bytesSentTotal=$bytesSentTotal, contentLength=$contentLength, id=$id, created=$created)"
 
     companion object {
         const val UNKNOWN_TOTAL_OFFSET = -1L

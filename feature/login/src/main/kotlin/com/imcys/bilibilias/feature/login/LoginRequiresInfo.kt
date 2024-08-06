@@ -7,11 +7,9 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
-import com.hjq.toast.Toaster
 
 object LoginRequiresInfo {
     fun toBiliAgreement(view: View) {
-        Toaster.show("无论如何，你都在间接使用B站")
         privacyAgreementWebView(
             view.context,
             "https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html",

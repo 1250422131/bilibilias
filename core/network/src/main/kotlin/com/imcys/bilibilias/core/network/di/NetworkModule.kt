@@ -9,9 +9,6 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import coil.decode.VideoFrameDecoder
 import coil.util.DebugLogger
-import com.imcys.bilibilias.core.common.utils.ofMap
-import com.imcys.bilibilias.core.common.utils.print
-import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
 import com.imcys.bilibilias.core.datastore.UsersDataSource
 import com.imcys.bilibilias.core.model.Box
 import com.imcys.bilibilias.core.model.Response
@@ -49,6 +46,7 @@ import io.ktor.util.AttributeKey
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.jvm.javaio.toInputStream
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
@@ -139,7 +137,6 @@ class NetworkModule {
         json: Json,
         transform: ClientPlugin<Unit>,
         asCookiesStorage: AsCookiesStorage,
-        usersDataSource: UsersDataSource,
         okHttpClient: OkHttpClient,
     ): HttpClient {
         val client = HttpClient(
@@ -184,7 +181,6 @@ class NetworkModule {
     @Singleton
     fun provideTransformData(
         json: Json,
-        asCookieStoreDataSource: AsCookieStoreDataSource,
         usersDataSource: UsersDataSource,
     ): ClientPlugin<Unit> = createClientPlugin("TransformData") {
         transformResponseBody { request, content, requestedType ->
@@ -208,7 +204,7 @@ class NetworkModule {
                     box.message +
                         "网络接口: ${request.request.url.encodedPath} 发生解析错误 " +
                         "\n链接: ${request.request.url}",
-                    box.data?.ofMap()?.print(),
+                    json.encodeToString(box),
                 )
             }
             box.data

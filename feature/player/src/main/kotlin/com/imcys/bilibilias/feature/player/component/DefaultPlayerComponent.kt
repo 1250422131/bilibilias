@@ -24,7 +24,8 @@ class DefaultPlayerComponent @AssistedInject constructor(
     @Assisted private val fileType: FileType,
     private val downloadTaskDao: DownloadTaskDao,
     private val danmakuRepository: DanmakuRepository,
-) : PlayerComponent, BaseViewModel<Unit, PlayerComponent.Model>(componentContext) {
+) : BaseViewModel<Unit, PlayerComponent.Model>(componentContext),
+    PlayerComponent {
 
     @Composable
     override fun models(events: Flow<Unit>): PlayerComponent.Model {

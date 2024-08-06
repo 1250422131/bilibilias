@@ -17,18 +17,18 @@ fun AsRadioButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     text: @Composable () -> Unit,
-    enable: Boolean = true
+    enable: Boolean = true,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
             selected = selected,
             onClick = onClick,
             enabled = enable,
             colors = RadioButtonDefaults.colors(
-                selectedColor = MaterialTheme.colorScheme.primary
+                selectedColor = MaterialTheme.colorScheme.primary,
             ),
         )
         text()

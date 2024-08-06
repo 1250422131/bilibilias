@@ -11,9 +11,7 @@ class UserPreferencesSerializer @Inject constructor() : Serializer<UserPreferenc
         shouldAppcenter = true,
     )
 
-    override suspend fun readFrom(input: InputStream): UserPreferences {
-        return UserPreferences.ADAPTER.decode(input)
-    }
+    override suspend fun readFrom(input: InputStream): UserPreferences = UserPreferences.ADAPTER.decode(input)
 
     override suspend fun writeTo(t: UserPreferences, output: OutputStream) {
         t.encode(output)

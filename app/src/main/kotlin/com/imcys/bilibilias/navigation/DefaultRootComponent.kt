@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.navigation
 
-import androidx.activity.compose.BackHandler
 import androidx.tracing.trace
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
@@ -11,10 +10,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.backhandler.BackCallback
-import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
-import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
@@ -28,8 +24,6 @@ import com.imcys.bilibilias.feature.tool.ToolComponent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.DevUtils
-import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 
 @Suppress("LongParameterList")
@@ -42,8 +36,9 @@ class DefaultRootComponent @AssistedInject constructor(
     private val splashComponentFactory: SplashComponent.Factory,
     private val loginComponentFactory: LoginComponent.Factory,
     private val settingsComponentFactory: SettingsComponent.Factory,
-    private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory
-) : RootComponent, ComponentContext by componentContext {
+    private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory,
+) : RootComponent,
+    ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
@@ -51,7 +46,8 @@ class DefaultRootComponent @AssistedInject constructor(
         get() = when (currentDestination) {
             is RootComponent.Child.HomeChild,
             is RootComponent.Child.ToolChild,
-            is RootComponent.Child.DownloadChild -> true
+            is RootComponent.Child.DownloadChild,
+            -> true
 
             else -> false
         }
@@ -118,39 +114,39 @@ class DefaultRootComponent @AssistedInject constructor(
             when (config) {
                 is Config.User -> error("未实现用户页面")
                 is Config.Home -> RootComponent.Child.HomeChild(
-                    homeComponentFactory(componentContext)
+                    homeComponentFactory(componentContext),
                 )
 
                 is Config.Tool -> RootComponent.Child.ToolChild(
-                    toolComponentFactory(componentContext)
+                    toolComponentFactory(componentContext),
                 )
 
                 is Config.Download -> RootComponent.Child.DownloadChild(
-                    downloadComponentFactory(componentContext)
+                    downloadComponentFactory(componentContext),
                 )
 
                 is Config.Player -> RootComponent.Child.PlayerChild(
                     playerComponentFactory(
                         componentContext,
                         config.info,
-                        FileType.VIDEO
-                    )
+                        FileType.VIDEO,
+                    ),
                 )
 
                 Config.Login -> RootComponent.Child.LoginChild(
-                    loginComponentFactory(componentContext)
+                    loginComponentFactory(componentContext),
                 )
 
                 Config.Splash -> RootComponent.Child.SplashChild(
-                    splashComponentFactory(componentContext)
+                    splashComponentFactory(componentContext),
                 )
 
                 Config.Settings -> RootComponent.Child.SettingsChild(
-                    settingsComponentFactory(componentContext)
+                    settingsComponentFactory(componentContext),
                 )
 
                 is Config.AuthorSpace -> RootComponent.Child.AuthorSpaceChild(
-                    authorSpaceComponentFactory(componentContext, config.mid)
+                    authorSpaceComponentFactory(componentContext, config.mid),
                 )
             }
         }

@@ -1,4 +1,4 @@
-﻿package com.imcys.bilibilias.core.model.user;
+﻿package com.imcys.bilibilias.core.model.user
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,11 +30,11 @@ data class Vip(
     @SerialName("type")
     val type: Int = 0,
     @SerialName("vip_pay_type")
-    val vipPayType: Int = 0
+    val vipPayType: Int = 0,
 ) {
     @Serializable
     data class AvatarIcon(
         @SerialName("icon_type")
-        val iconType: Int = 0
+        val iconType: Int = 0,
     )
 }

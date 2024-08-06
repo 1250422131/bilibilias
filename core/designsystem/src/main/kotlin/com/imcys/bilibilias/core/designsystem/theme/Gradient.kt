@@ -1,7 +1,6 @@
 ﻿package com.imcys.bilibilias.core.designsystem.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 

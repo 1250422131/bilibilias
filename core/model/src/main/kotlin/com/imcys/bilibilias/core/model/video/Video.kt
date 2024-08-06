@@ -30,5 +30,5 @@ data class Video(
     @SerialName("start_with_sap")
     val startWithSap: Int = 0,
     @SerialName("width")
-    val width: Int = 0
+    val width: Int = 0,
 )

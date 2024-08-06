@@ -38,5 +38,5 @@ data class Rights(
     @SerialName("ugc_pay")
     val ugcPay: Int = 0,
     @SerialName("ugc_pay_preview")
-    val ugcPayPreview: Int = 0
+    val ugcPayPreview: Int = 0,
 )

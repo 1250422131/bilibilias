@@ -8,5 +8,5 @@ data class SegmentBase(
     @SerialName("index_range")
     val indexRange: String = "",
     @SerialName("initialization")
-    val initialization: String = ""
+    val initialization: String = "",
 )

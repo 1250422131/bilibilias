@@ -1,26 +1,26 @@
 package com.imcys.bilibilias.core.notifications
 
-//import android.Manifest
-//import android.Manifest.permission
-//import android.app.Notification
-//import android.app.NotificationChannel
-//import android.app.NotificationManager
-//import android.app.PendingIntent
-//import android.content.ComponentName
-//import android.content.Context
-//import android.content.Intent
-//import android.content.pm.PackageManager.PERMISSION_GRANTED
-//import android.os.Build
-//import android.os.Build.VERSION
-//import android.os.Build.VERSION_CODES
-//import androidx.core.app.ActivityCompat.checkSelfPermission
-//import androidx.core.app.NotificationCompat
-//import androidx.core.app.NotificationCompat.InboxStyle
-//import androidx.core.app.NotificationManagerCompat
-//import androidx.core.net.toUri
-//import dagger.hilt.android.qualifiers.ApplicationContext
-//import javax.inject.Inject
-//import javax.inject.Singleton
+// import android.Manifest
+// import android.Manifest.permission
+// import android.app.Notification
+// import android.app.NotificationChannel
+// import android.app.NotificationManager
+// import android.app.PendingIntent
+// import android.content.ComponentName
+// import android.content.Context
+// import android.content.Intent
+// import android.content.pm.PackageManager.PERMISSION_GRANTED
+// import android.os.Build
+// import android.os.Build.VERSION
+// import android.os.Build.VERSION_CODES
+// import androidx.core.app.ActivityCompat.checkSelfPermission
+// import androidx.core.app.NotificationCompat
+// import androidx.core.app.NotificationCompat.InboxStyle
+// import androidx.core.app.NotificationManagerCompat
+// import androidx.core.net.toUri
+// import dagger.hilt.android.qualifiers.ApplicationContext
+// import javax.inject.Inject
+// import javax.inject.Singleton
 
 private const val MAX_NUM_NOTIFICATIONS = 5
 private const val TARGET_ACTIVITY_NAME = "com.imcys.bilibilias.MainActivity"
@@ -33,10 +33,10 @@ private const val FOR_YOU_PATH = "foryou"
 /**
  * Implementation of [Notifier] that displays notifications in the system tray.
  */
-//@Singleton
-//internal class SystemTrayNotifier @Inject constructor(
+// @Singleton
+// internal class SystemTrayNotifier @Inject constructor(
 //    @ApplicationContext private val context: Context,
-//) : Notifier {
+// ) : Notifier {
 //
 //    override fun postNewsNotifications(
 //        newsResources: List<NewsResource>,
@@ -94,14 +94,14 @@ private const val FOR_YOU_PATH = "foryou"
 //        .fold(Notification.InboxStyle()) { inboxStyle, newsResource -> inboxStyle.addLine(newsResource.title) }
 //        .setBigContentTitle(title)
 //        .setSummaryText(title)
-//}
+// }
 
 /**
  * Creates a notification for configured for news updates
  */
-//private fun Context.createNewsNotification(
+// private fun Context.createNewsNotification(
 //    block: NotificationCompat.Builder.() -> Unit,
-//): Notification {
+// ): Notification {
 //    ensureNotificationChannelExists()
 //    return NotificationCompat.Builder(
 //        this,
@@ -110,12 +110,12 @@ private const val FOR_YOU_PATH = "foryou"
 //        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //        .apply(block)
 //        .build()
-//}
+// }
 
-///**
+// /**
 // * Ensures that a notification channel is present if applicable
 // */
-//private fun Context.ensureNotificationChannelExists() {
+// private fun Context.ensureNotificationChannelExists() {
 //    if (VERSION.SDK_INT < VERSION_CODES.O) return
 //
 //    val channel = NotificationChannel(
@@ -127,11 +127,11 @@ private const val FOR_YOU_PATH = "foryou"
 //    }
 //    // Register the channel with the system
 //    NotificationManagerCompat.from(this).createNotificationChannel(channel)
-//}
+// }
 //
-//private fun Context.newsPendingIntent(
+// private fun Context.newsPendingIntent(
 //    newsResource: NewsResource,
-//): PendingIntent? = PendingIntent.getActivity(
+// ): PendingIntent? = PendingIntent.getActivity(
 //    this,
 //    NEWS_NOTIFICATION_REQUEST_CODE,
 //    Intent().apply {
@@ -143,6 +143,6 @@ private const val FOR_YOU_PATH = "foryou"
 //        )
 //    },
 //    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-//)
+// )
 //
-//private fun NewsResource.newsDeepLinkUri() = "$DEEP_LINK_SCHEME_AND_HOST/$FOR_YOU_PATH/$id".toUri()
+// private fun NewsResource.newsDeepLinkUri() = "$DEEP_LINK_SCHEME_AND_HOST/$FOR_YOU_PATH/$id".toUri()

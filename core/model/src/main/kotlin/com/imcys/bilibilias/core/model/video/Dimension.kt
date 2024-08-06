@@ -8,5 +8,5 @@ data class Dimension(
     @SerialName("rotate")
     val rotate: Int = 0,
     @SerialName("width")
-    val width: Int = 0
+    val width: Int = 0,
 )

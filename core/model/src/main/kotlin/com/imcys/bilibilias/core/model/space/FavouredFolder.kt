@@ -25,6 +25,6 @@ data class FavouredFolder(
         @SerialName("mid")
         val mid: Long = 0,
         @SerialName("title")
-        val title: String = ""
+        val title: String = "",
     )
 }

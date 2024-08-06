@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetStreamWithBangumiDetailUseCase @Inject constructor(
-    private val bangumiRepository: BangumiRepository
+    private val bangumiRepository: BangumiRepository,
 ) {
     operator fun invoke(epid: Long): Flow<Pair<BangumiDetail, List<BangumiWithStream>>> {
         val detailFlow = flow { emit(bangumiRepository.获取剧集详情(epid)) }
@@ -34,5 +34,5 @@ data class BangumiWithStream(
     val bvid: String,
     val cid: Long,
     val epid: Long,
-    val streamUrl: BangumiStreamUrl
+    val streamUrl: BangumiStreamUrl,
 )

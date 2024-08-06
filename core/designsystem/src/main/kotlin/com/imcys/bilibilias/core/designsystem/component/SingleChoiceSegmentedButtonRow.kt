@@ -19,7 +19,7 @@ fun AsSingleChoiceSegmentedButtonRow(
     options: List<SegmentedButtonOption>,
     modifier: Modifier = Modifier,
     defaultSelectedItemIndex: Int = 0,
-    onItemSelection: (selectedItemIndex: Int) -> Unit
+    onItemSelection: (selectedItemIndex: Int) -> Unit,
 ) {
     val selectedIndex = remember { mutableIntStateOf(defaultSelectedItemIndex) }
     SingleChoiceSegmentedButtonRow(modifier = modifier) {
@@ -27,10 +27,11 @@ fun AsSingleChoiceSegmentedButtonRow(
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
-                    selectedIndex.intValue = index; onItemSelection(selectedIndex.intValue)
+                    selectedIndex.intValue = index
+                    onItemSelection(selectedIndex.intValue)
                 },
                 selected = selectedIndex.intValue == index,
-                enabled = option.enabled
+                enabled = option.enabled,
             ) {
                 Text(option.label)
             }
@@ -48,9 +49,7 @@ fun rememberAsSingleChoiceSegmentedState() {
     }
 }
 
-class AsSingleChoiceSegmentedState {
-
-}
+class AsSingleChoiceSegmentedState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ThemePreviews

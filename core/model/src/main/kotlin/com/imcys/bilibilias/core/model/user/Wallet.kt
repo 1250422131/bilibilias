@@ -12,5 +12,5 @@ data class Wallet(
     @SerialName("coupon_due_time")
     val couponDueTime: Int = 0,
     @SerialName("mid")
-    val mid: Long = 0
+    val mid: Long = 0,
 )

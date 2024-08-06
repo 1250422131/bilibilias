@@ -10,11 +10,10 @@ android {
 
 dependencies {
     api(libs.kotlinx.collections.immutable)
+    api(libs.androidx.collection)
     api(libs.okio)
     api(libs.napier)
     api(libs.devappx)
-    api(libs.toaster)
-    implementation(libs.kotlin.reflect)
 
     testImplementation(kotlin("test"))
     implementation(libs.kotlinx.coroutines.core)

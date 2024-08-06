@@ -69,5 +69,5 @@ data class Episode(
     @SerialName("title")
     val title: String = "",
     @SerialName("vid")
-    val vid: String = ""
+    val vid: String = "",
 )

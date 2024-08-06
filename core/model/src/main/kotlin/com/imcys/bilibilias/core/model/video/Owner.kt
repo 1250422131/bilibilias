@@ -8,5 +8,5 @@ data class Owner(
     @SerialName("mid")
     val mid: Long = 0,
     @SerialName("name")
-    val name: String = ""
+    val name: String = "",
 )

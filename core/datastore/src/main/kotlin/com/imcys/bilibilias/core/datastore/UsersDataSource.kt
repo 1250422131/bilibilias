@@ -21,5 +21,4 @@ class UsersDataSource @Inject constructor(
             it.copy(isLogined = state)
         }
     }
-
 }

@@ -5,7 +5,6 @@ import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.datastore.model.AsCookieStore
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
@@ -24,7 +23,6 @@ internal class AsCookieStoreSerializer @Inject constructor(
 
     override suspend fun readFrom(input: InputStream): AsCookieStore =
         protoBuf.decodeFromByteArray(input.readBytes())
-
 
     override suspend fun writeTo(t: AsCookieStore, output: OutputStream) {
         withContext(ioDispatcher) {

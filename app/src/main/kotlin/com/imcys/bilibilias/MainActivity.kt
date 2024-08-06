@@ -11,7 +11,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
-import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
@@ -27,8 +26,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
 
-     @Inject
-     lateinit var analyticsHelper: AnalyticsHelper
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
 
     @Inject
     lateinit var errorMonitor: ErrorMonitor
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             val componentContext = defaultComponentContext()
             AsTheme {
                 CompositionLocalProvider(
-                     LocalAnalyticsHelper provides analyticsHelper,
+                    LocalAnalyticsHelper provides analyticsHelper,
                 ) {
                     val appState = rememberAsAppState(errorMonitor = errorMonitor)
                     AsApp(appState, rootComponentFactory(componentContext))
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (System.currentTimeMillis() - exitTime > 2000) {
-                        Toaster.show(R.string.app_HomeActivity_exit)
+//                        Toaster.show(R.string.app_HomeActivity_exit)
                         exitTime = System.currentTimeMillis()
                     } else {
                         finish()

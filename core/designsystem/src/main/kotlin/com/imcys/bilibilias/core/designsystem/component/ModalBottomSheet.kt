@@ -26,12 +26,12 @@ fun AsModalBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        modifier = Modifier
+        modifier = Modifier,
     ) {
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
             content()
@@ -40,7 +40,7 @@ fun AsModalBottomSheet(
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .height(60.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 Text(text = "确定", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
@@ -50,7 +50,7 @@ fun AsModalBottomSheet(
                     .padding(vertical = 20.dp)
                     .height(60.dp)
                     .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors().copy(containerColor = Color(255, 210, 224))
+                colors = ButtonDefaults.buttonColors().copy(containerColor = Color(255, 210, 224)),
             ) {
                 Text(text = "取消", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }

@@ -90,7 +90,7 @@ data class ViewDetail(
     @SerialName("vt_display")
     val vtDisplay: String = "",
     @SerialName("redirect_url")
-    val redirectUrl: String? = null
+    val redirectUrl: String? = null,
 ) {
     @Serializable
     data class ArgueInfo(
@@ -99,7 +99,7 @@ data class ViewDetail(
         @SerialName("argue_msg")
         val argueMsg: String = "",
         @SerialName("argue_type")
-        val argueType: Int = 0
+        val argueType: Int = 0,
     )
 
     @Serializable
@@ -109,7 +109,7 @@ data class ViewDetail(
         @SerialName("raw_text")
         val rawText: String = "",
         @SerialName("type")
-        val type: Int = 0
+        val type: Int = 0,
     )
 
     @Serializable
@@ -129,7 +129,7 @@ data class ViewDetail(
         @SerialName("vid")
         val vid: String = "",
         @SerialName("weblink")
-        val weblink: String = ""
+        val weblink: String = "",
     )
 
     @Serializable
@@ -149,12 +149,12 @@ data class ViewDetail(
         @SerialName("title")
         val title: String = "",
         @SerialName("vip")
-        val vip: Vip = Vip()
+        val vip: Vip = Vip(),
     )
 
     @Serializable
     data class UserGarb(
         @SerialName("url_image_ani_cut")
-        val urlImageAniCut: String = ""
+        val urlImageAniCut: String = "",
     )
 }

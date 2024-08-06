@@ -26,5 +26,5 @@ data class Danmaku(
     @SerialName("textSize")
     val textSize: Int = 0,
     @SerialName("userId")
-    val userId: Long = 0
+    val userId: Long = 0,
 )

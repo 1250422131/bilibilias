@@ -24,5 +24,5 @@ data class HomeBanner(
     @SerialName("token")
     val token: List<String> = listOf(),
     @SerialName("typeList")
-    val typeList: List<String> = listOf()
+    val typeList: List<String> = listOf(),
 )

@@ -34,10 +34,8 @@ fun FileTypeRadioGroup(typeState: FileTypeState) {
 
 @Composable
 fun rememberFileTypeState(
-    initialState: TaskType = TaskType.ALL
-): FileTypeState {
-    return remember { FileTypeState(initialState) }
-}
+    initialState: TaskType = TaskType.ALL,
+): FileTypeState = remember { FileTypeState(initialState) }
 
 @Stable
 class FileTypeState(initialState: TaskType) {

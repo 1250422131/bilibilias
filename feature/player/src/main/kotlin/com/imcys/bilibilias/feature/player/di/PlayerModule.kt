@@ -26,4 +26,3 @@ class PlayerModule {
         .setUserAgent(BROWSER_USER_AGENT)
         .setCacheControl(CacheControl.FORCE_CACHE)
 }
-

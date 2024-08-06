@@ -7,5 +7,5 @@ data class CacheFile(
     val viewInfo: ViewInfo,
     val vFile: File?,
     val aFile: File?,
-    val dFile: File?
+    val dFile: File?,
 )

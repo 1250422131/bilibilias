@@ -24,5 +24,5 @@ data class SupportFormat(
     @SerialName("sub_description")
     val subDescription: String = "",
     @SerialName("superscript")
-    val superscript: String = ""
+    val superscript: String = "",
 )

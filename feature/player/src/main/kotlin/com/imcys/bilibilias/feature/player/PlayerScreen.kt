@@ -30,7 +30,7 @@ private fun PlayerScreen(model: PlayerComponent.Model, modifier: Modifier = Modi
             DanmakuVideoPlayer(it)
         },
         onReset = {},
-        onRelease = {}
+        onRelease = {},
     ) {
         it.setMediaSource(model.uris)
     }

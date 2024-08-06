@@ -1,5 +1,3 @@
 ﻿package com.imcys.bilibilias.core.database
 
-internal object DatabaseMigrations {
-
-}
+internal object DatabaseMigrations

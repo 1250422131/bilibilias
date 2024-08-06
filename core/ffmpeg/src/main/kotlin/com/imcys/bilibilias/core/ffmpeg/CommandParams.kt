@@ -1,8 +1,6 @@
 ﻿package com.imcys.bilibilias.core.ffmpeg
 
-fun buildCommandParams(builderAction: CommandParams.() -> Unit): Array<String> {
-    return CommandParams().apply(builderAction).get()
-}
+fun buildCommandParams(builderAction: CommandParams.() -> Unit): Array<String> = CommandParams().apply(builderAction).get()
 
 class CommandParams {
     private val data = mutableListOf<String>()
@@ -27,11 +25,7 @@ class CommandParams {
         data.clear()
     }
 
-    fun get(): Array<String> {
-        return data.toTypedArray()
-    }
+    fun get(): Array<String> = data.toTypedArray()
 
-    override fun toString(): String {
-        return data.joinToString(" ")
-    }
+    override fun toString(): String = data.joinToString(" ")
 }

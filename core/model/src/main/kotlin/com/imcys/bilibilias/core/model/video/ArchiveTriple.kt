@@ -9,7 +9,7 @@ typealias ArchiveLike = Response
 @Serializable
 data class ArchiveCoins(
     @SerialName("multiply")
-    val multiply: Int = 0
+    val multiply: Int = 0,
 ) {
     val hasCoins = multiply != 0
 }
@@ -17,7 +17,7 @@ data class ArchiveCoins(
 @Serializable
 data class ArchiveFavoured(
     @SerialName("favoured")
-    val favoured: Boolean = false
+    val favoured: Boolean = false,
 )
 
 data class ViewTriple(val hasLike: Boolean, val hasCoins: Boolean, val hasFavoured: Boolean)

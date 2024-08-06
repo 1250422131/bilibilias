@@ -4,7 +4,7 @@ interface IFFmpegWork {
     fun execute(
         command: Array<String>,
         onSuccess: () -> Unit,
-        onFailure: () -> Unit
+        onFailure: () -> Unit,
     )
 
     fun execute(
@@ -12,6 +12,6 @@ interface IFFmpegWork {
         inputAudio: String,
         output: String,
         onSuccess: () -> Unit,
-        onFailure: () -> Unit
+        onFailure: () -> Unit,
     )
 }

@@ -69,14 +69,14 @@ data class NavigationBar(
     @SerialName("wallet")
     val wallet: Wallet = Wallet(),
     @SerialName("wbi_img")
-    val wbiImg: WbiImg = WbiImg()
+    val wbiImg: WbiImg = WbiImg(),
 ) {
     @Serializable
     data class WbiImg(
         @SerialName("img_url")
         val imgUrl: String = "",
         @SerialName("sub_url")
-        val subUrl: String = ""
+        val subUrl: String = "",
     )
 
     val imgKey = wbiImg.imgUrl.replace(".png", "").split('/').last()

@@ -9,5 +9,4 @@ import org.junit.rules.TestRule
 /**
  * [TestRule] granting [POST_NOTIFICATIONS] permission if running on [SDK_INT] greater than [TIRAMISU].
  */
-class GrantPostNotificationsPermissionRule :
-    TestRule by if (SDK_INT >= TIRAMISU) grant(POST_NOTIFICATIONS) else grant()
+class GrantPostNotificationsPermissionRule : TestRule by if (SDK_INT >= TIRAMISU) grant(POST_NOTIFICATIONS) else grant()

@@ -12,5 +12,5 @@ data class Page(
     @JsonNames("pn")
     val pn: Int = 0,
     @JsonNames("ps")
-    val ps: Int = 0
+    val ps: Int = 0,
 )

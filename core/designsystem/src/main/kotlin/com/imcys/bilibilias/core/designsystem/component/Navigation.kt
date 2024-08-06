@@ -143,9 +143,12 @@ fun AsNavigationSuiteScaffold(
     shouldShowBottomBar: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val layoutType = if (shouldShowBottomBar) NavigationSuiteScaffoldDefaults
-        .calculateFromAdaptiveInfo(windowAdaptiveInfo)
-    else NavigationSuiteType.None
+    val layoutType = if (shouldShowBottomBar) {
+        NavigationSuiteScaffoldDefaults
+            .calculateFromAdaptiveInfo(windowAdaptiveInfo)
+    } else {
+        NavigationSuiteType.None
+    }
     val navigationSuiteItemColors = NavigationSuiteItemColors(
         navigationBarItemColors = NavigationBarItemDefaults.colors(
             selectedIconColor = AsNavigationDefaults.navigationSelectedItemColor(),

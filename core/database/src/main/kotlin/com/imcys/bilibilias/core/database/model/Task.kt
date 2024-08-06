@@ -3,15 +3,12 @@ package com.imcys.bilibilias.core.database.model
 import android.net.Uri
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity.Companion.UNKNOWN_PROGRESS
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity.Companion.UNKNOWN_TOTAL_OFFSET
-import com.imcys.bilibilias.core.database.util.TypeConverters
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 data class Task(
     val uri: Uri,
@@ -34,5 +31,3 @@ data class Task(
 
     val isCompelete = state == State.COMPLETED
 }
-
-

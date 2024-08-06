@@ -9,6 +9,7 @@ import org.junit.Test
 class HomeBaselineProfile {
     @get:Rule
     val baselineProfileRule = BaselineProfileRule()
+
     @Test
     fun generate() =
         baselineProfileRule.collect(PACKAGE_NAME) {

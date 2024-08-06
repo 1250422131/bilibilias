@@ -31,5 +31,5 @@ enum class TopLevelDestination(
         unselectedIconId = R.drawable.ic_home_people,
         iconTextId = R.string.app_home_menu_button_navigation_user,
         titleTextId = R.string.app_home_menu_button_navigation_user,
-    )
+    ),
 }

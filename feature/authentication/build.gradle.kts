@@ -1,11 +1,12 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.bilibiliAs.android.feature)
-    alias(libs.plugins.bilibiliAs.android.library.compose)
+    alias(libs.plugins.bilibilias.android.feature)
+    alias(libs.plugins.bilibilias.android.compose)
+    alias(libs.plugins.bilibilias.android.jacoco)
+    alias(libs.plugins.bilibilias.decompose)
 }
 
 android {
-    namespace = "com.imcys.authentication"
+    namespace = "com.imcys.bilibilias.feature.authentication"
 }
 
 dependencies {

@@ -38,7 +38,7 @@ data class VideoStreamUrl(
     @SerialName("video_codecid")
     val videoCodecid: Int = 0,
     @SerialName("volume")
-    val volume: Volume = Volume()
+    val volume: Volume = Volume(),
 ) {
     @Serializable
     data class Volume(
@@ -55,6 +55,6 @@ data class VideoStreamUrl(
         @SerialName("target_offset")
         val targetOffset: Double = 0.0,
         @SerialName("target_tp")
-        val targetTp: Int = 0
+        val targetTp: Int = 0,
     )
 }
