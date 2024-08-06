@@ -1,10 +1,10 @@
 buildscript {
-    dependencies {
-        classpath(libs.wire.gradlePlugin)
-    }
     repositories {
         google()
         mavenCentral()
+    }
+    dependencies {
+        classpath(libs.wire.gradlePlugin)
     }
 }
 
