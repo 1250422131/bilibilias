@@ -32,6 +32,5 @@ class SettingsComponentTest {
 
     @Test
     fun test() = runTest {
-
     }
 }

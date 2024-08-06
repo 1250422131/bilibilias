@@ -17,13 +17,13 @@ import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
-import com.imcys.bilibilias.core.utils.addOrRemove
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.utils.addOrRemove
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import com.imcys.bilibilias.feature.download.sheet.DialogComponent
 import dagger.assisted.Assisted
@@ -41,7 +41,8 @@ class DefaultDownloadComponent @AssistedInject constructor(
     private val dialogComponentFactory: DialogComponent.Factory,
     private val taskDao: DownloadTaskDao,
     private val downloadManager: DownloadManager,
-) : DownloadComponent, BaseViewModel<Event, Model>(componentContext) {
+) : BaseViewModel<Event, Model>(componentContext),
+    DownloadComponent {
     override val recompositionMode = RecompositionMode.Immediate
 
     override val selectedDeletes = mutableStateListOf<Int>()
@@ -63,12 +64,10 @@ class DefaultDownloadComponent @AssistedInject constructor(
         }
 
     @Composable
-    override fun models(events: Flow<Event>): Model {
-        return PresentationLogic(
-            events,
-            taskDao.findAllTaskByGroupCid(),
-        )
-    }
+    override fun models(events: Flow<Event>): Model = PresentationLogic(
+        events,
+        taskDao.findAllTaskByGroupCid(),
+    )
 
     @Composable
     private fun PresentationLogic(

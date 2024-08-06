@@ -8,7 +8,6 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,7 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginContent(
     component: LoginComponent,
-    navigationToTool: () -> Unit
+    navigationToTool: () -> Unit,
 ) {
     val model by component.models.collectAsStateWithLifecycle()
     LoginContent(model = model, navigationToTool = navigationToTool, onEvent = component::take)
@@ -59,7 +58,7 @@ fun LoginContent(
 private fun LoginContent(
     model: LoginModel,
     onEvent: (LoginEvent) -> Unit,
-    navigationToTool: () -> Unit
+    navigationToTool: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -67,13 +66,13 @@ private fun LoginContent(
                 title = {
                     Text(
                         text = "Bilibili\n" + "扫码登录",
-                        fontSize = 30.sp
+                        fontSize = 30.sp,
                     )
                 },
-                modifier = Modifier
+                modifier = Modifier,
             )
         },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -81,7 +80,7 @@ private fun LoginContent(
                 .padding(innerPadding)
                 .scrollable(rememberScrollState(), Orientation.Vertical),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SideEffect {
                 if (model.isSuccess) {
@@ -94,7 +93,7 @@ private fun LoginContent(
                 val bitmap = painter.toImageBitmap(2000, 2000)
                     .asAndroidBitmap()
                     .addWhiteBorder(200)
-                QRUtil.saveQRCode(bitmap, context,)
+                QRUtil.saveQRCode(bitmap, context)
             }
             AsCard(
                 modifier = Modifier
@@ -102,8 +101,8 @@ private fun LoginContent(
                     .border(
                         width = 4.dp,
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(16.dp)
-                    )
+                        shape = RoundedCornerShape(16.dp),
+                    ),
             ) {
                 Image(
                     painter = painter,
@@ -118,7 +117,7 @@ private fun LoginContent(
                 text = model.message,
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(16.dp),
             )
 
             Row {
@@ -133,7 +132,7 @@ private fun LoginContent(
                     },
                     modifier = Modifier
                         .padding(16.dp)
-                        .weight(1f)
+                        .weight(1f),
                 ) {
                     Text(text = "登录详情")
                 }
@@ -146,7 +145,7 @@ private fun LoginContent(
                     },
                     modifier = Modifier
                         .padding(16.dp)
-                        .weight(1f)
+                        .weight(1f),
                 ) {
                     Text(text = "用户协议")
                 }
@@ -157,7 +156,7 @@ private fun LoginContent(
                 modifier = Modifier
                     .padding(16.dp)
                     .height(48.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 Text(text = "跳转扫码")
             }
@@ -177,12 +176,12 @@ internal fun LoginDetail(state: BottomSheetState) {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     ) {
                         Text(
                             text = "登录后，你可以：",
                             modifier = Modifier.align(Alignment.CenterHorizontally),
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(text = "· 为了良好体验，此版本必须完成登录")
                         Text(text = "· 云端账号加密保存，切换设备无需重复登录")
@@ -208,11 +207,11 @@ internal fun ProtocolBottomSheet(state: BottomSheetState) {
                     Column(
                         modifier = Modifier
                             .padding(16.dp)
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
                     ) {
                         Text(
                             text = "使用则代表你同意",
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
                         )
                         val color = MaterialTheme.colorScheme.primary
                         val view = LocalView.current
@@ -220,31 +219,31 @@ internal fun ProtocolBottomSheet(state: BottomSheetState) {
                             text = "· 哔哩哔哩账户和社区相关协议",
                             modifier = Modifier.clickable {
                                 LoginRequiresInfo.toBiliAgreement(
-                                    view
+                                    view,
                                 )
                             },
-                            color = color
+                            color = color,
                         )
                         Text(
                             text = "·《BILIBILIAS用户协议》和《BILIBILIAS隐私协议》",
                             modifier = Modifier.clickable {
                                 LoginRequiresInfo.toBilibiliAsAgreement(
-                                    view
+                                    view,
                                 )
                             },
-                            color = color
+                            color = color,
                         )
                         Text(
                             text = "· 此APP没有得到Bilibili许可，Bilibili对此概不负责",
-                            color = color
+                            color = color,
                         )
                         Text(
                             text = "· APP功能仅供学习使用参考",
-                            color = color
+                            color = color,
                         )
                         Text(
                             text = "· 使用造成的任何后果BILIBILIAS概不负责",
-                            color = color
+                            color = color,
                         )
                     }
                 }

@@ -33,7 +33,8 @@ class DefaultSettingsComponent @AssistedInject constructor(
     private val asPreferencesDataSource: AsPreferencesDataSource,
     private val asCookieStoreDataSource: AsCookieStoreDataSource,
     private val usersDataSource: UsersDataSource,
-) : SettingsComponent, BaseViewModel<UserEditEvent, UserEditableSettings>(componentContext) {
+) : BaseViewModel<UserEditEvent, UserEditableSettings>(componentContext),
+    SettingsComponent {
 
     @Composable
     override fun models(events: Flow<UserEditEvent>): UserEditableSettings {
@@ -44,32 +45,32 @@ class DefaultSettingsComponent @AssistedInject constructor(
                 autoMerge = true,
                 autoImport = false,
                 shouldAppcenter = true,
-                command = DEFAULT_COMMAND
+                command = DEFAULT_COMMAND,
             ),
-            context = viewModelScope.coroutineContext
+            context = viewModelScope.coroutineContext,
         )
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
-                    is UserEditEvent.onChangeAutoImport ->
+                    is UserEditEvent.ChangeAutoImport ->
                         asPreferencesDataSource.setAutoImportToBilibili(event.state)
 
-                    is UserEditEvent.onChangeAutoMerge ->
+                    is UserEditEvent.ChangeAutoMerge ->
                         asPreferencesDataSource.setAutoMerge(event.state)
 
-                    is UserEditEvent.onEditCommand ->
+                    is UserEditEvent.EditCommand ->
                         asPreferencesDataSource.setCommand(event.text)
 
-                    is UserEditEvent.onEditNamingRule ->
+                    is UserEditEvent.EditNamingRule ->
                         asPreferencesDataSource.setFileNameRule(event.rule)
 
-                    is UserEditEvent.onSelectedStoragePath ->
+                    is UserEditEvent.SelectedStoragePath ->
                         asPreferencesDataSource.setFileStoragePath(event.path)
 
-                    is UserEditEvent.onChangeWill ->
+                    is UserEditEvent.ChangeWill ->
                         asPreferencesDataSource.setShouldAppcenter(event.state)
 
-                    UserEditEvent.onLogout -> usersDataSource.setLoginState(false)
+                    UserEditEvent.Logout -> usersDataSource.setLoginState(false)
 
                     UserEditEvent.ShareLog.NewLog -> {
                         val logFile = File(DevUtils.getContext().externalCacheDir, "log.txt")
@@ -89,7 +90,7 @@ class DefaultSettingsComponent @AssistedInject constructor(
             autoMerge = true,
             autoImport = false,
             command = userData.command ?: DEFAULT_COMMAND,
-            shouldAppcenter = true
+            shouldAppcenter = true,
         )
     }
 
@@ -107,7 +108,7 @@ private fun shareLog(logFile: File) {
         val uri = FileProvider.getUriForFile(
             context,
             "${AppUtils.getPackageName()}.fileProvider",
-            logFile
+            logFile,
         )
         val title = "bilibilias"
         val shareIntent = ShareCompat.IntentBuilder(context)

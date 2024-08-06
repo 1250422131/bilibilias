@@ -2,7 +2,6 @@ package com.imbys.bilibilias.feature.authorspace
 
 import androidx.paging.PagingData
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.ui.UnitedDetails
 import kotlinx.coroutines.flow.Flow

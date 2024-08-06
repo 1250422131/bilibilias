@@ -10,7 +10,6 @@ import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 
 class DefaultDialogComponent @AssistedInject constructor(
@@ -18,8 +17,9 @@ class DefaultDialogComponent @AssistedInject constructor(
     @Assisted private val viewInfo: ViewInfo,
     @Assisted private val fileType: FileType,
     @Assisted("dismissed") private val onDismissed: () -> Unit,
-    private val downloadManager: DownloadManager
-) : DialogComponent, BaseViewModel<DialogComponent.Event, Unit>(componentContext) {
+    private val downloadManager: DownloadManager,
+) : BaseViewModel<DialogComponent.Event, Unit>(componentContext),
+    DialogComponent {
     @Composable
     override fun models(events: Flow<DialogComponent.Event>) {
         LaunchedEffect(Unit) {

@@ -21,17 +21,15 @@ data class DownloadTask(
     val state: String,
 )
 
-internal fun DownloadTaskEntity.mapToTask(): DownloadTask {
-    return DownloadTask(
-        id,
-        ViewInfo(aid, bvid, cid, title),
-        subTitle,
-        fileType,
-        uri,
-        progress,
-        state.cn
-    )
-}
+internal fun DownloadTaskEntity.mapToTask(): DownloadTask = DownloadTask(
+    id,
+    ViewInfo(aid, bvid, cid, title),
+    subTitle,
+    fileType,
+    uri,
+    progress,
+    state.cn,
+)
 
 sealed interface Event {
     data class UserSelecte(val id: Int) : Event

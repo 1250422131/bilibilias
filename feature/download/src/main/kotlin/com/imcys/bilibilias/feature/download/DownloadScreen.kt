@@ -28,8 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.imcys.bilibilias.core.utils.selected
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.database.model.Task
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
@@ -46,6 +43,7 @@ import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.utils.selected
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.component.Event
 import com.imcys.bilibilias.feature.download.component.Model
@@ -55,7 +53,7 @@ import kotlin.reflect.KFunction1
 @Composable
 fun DownloadContent(
     component: DownloadComponent,
-    navigationToPlayer: (viewInfo: ViewInfo) -> Unit
+    navigationToPlayer: (viewInfo: ViewInfo) -> Unit,
 ) {
     DownloadScreen(component = component, navigationToPlayer = navigationToPlayer)
 }
@@ -63,7 +61,7 @@ fun DownloadContent(
 @Composable
 internal fun DownloadScreen(
     component: DownloadComponent,
-    navigationToPlayer: (viewInfo: ViewInfo) -> Unit
+    navigationToPlayer: (viewInfo: ViewInfo) -> Unit,
 ) {
     val model by component.models.collectAsStateWithLifecycle()
 
@@ -71,7 +69,7 @@ internal fun DownloadScreen(
         model = model,
         onEvent = component::take,
         onSettingsClicked = { info, type -> },
-        component.selectedDeletes
+        component.selectedDeletes,
     )
 }
 
@@ -96,15 +94,15 @@ internal fun DownloadScreen(
                     EditButton(
                         model.canDelete,
                         editable = { onEvent(Event.OpenDeleteOption) },
-                        cancleSelection = { onEvent(Event.CloseDeleteOption) }
+                        cancleSelection = { onEvent(Event.CloseDeleteOption) },
                     )
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier.padding(paddingValues),
-            contentPadding = PaddingValues(4.dp)
+            contentPadding = PaddingValues(4.dp),
         ) {
             model.entities.forEach {
                 items(it, key = { it.id }) { item ->
@@ -113,7 +111,7 @@ internal fun DownloadScreen(
                         onSettingsClicked = onSettingsClicked,
                         isOpenSelecte = model.canDelete,
                         onSelecte = { onEvent(Event.UserSelecte(it)) },
-                        isSelected = selectedDeletes.selected(item.id)
+                        isSelected = selectedDeletes.selected(item.id),
                     )
                 }
                 item {
@@ -138,19 +136,19 @@ fun DownloadTaskItem(
             modifier = Modifier.clickable {
                 onSettingsClicked(
                     ViewInfo(task.aid, task.bvid, task.cid, task.title),
-                    task.fileType
+                    task.fileType,
                 )
             },
             leadingContent = {
                 Card(
                     modifier = Modifier.size(80.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(251, 114, 153)
-                    )
+                        containerColor = Color(251, 114, 153),
+                    ),
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = task.fileType.toString(),
@@ -200,12 +198,12 @@ fun DownloadTaskItem(
             Card(
                 modifier = Modifier.size(80.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(251, 114, 153)
-                )
+                    containerColor = Color(251, 114, 153),
+                ),
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = task.fileType.toString(),
@@ -237,7 +235,7 @@ fun DownloadTaskItem(
 fun EditButton(
     isEdit: Boolean,
     editable: () -> Unit,
-    cancleSelection: () -> Unit
+    cancleSelection: () -> Unit,
 ) {
     if (!isEdit) {
         IconButton(onClick = editable) {

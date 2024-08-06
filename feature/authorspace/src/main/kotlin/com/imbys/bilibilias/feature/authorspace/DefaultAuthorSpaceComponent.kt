@@ -3,7 +3,6 @@ package com.imbys.bilibilias.feature.authorspace
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -12,13 +11,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.utils.addOrRemove
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.network.pagingsource.SpaceArcSearchPagingSource
-import com.imcys.bilibilias.core.network.repository.UserSpaceRepository
 import com.imcys.bilibilias.core.ui.UnitedDetails
+import com.imcys.bilibilias.core.utils.addOrRemove
 import com.imcys.bilibilias.feature.common.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -31,8 +29,8 @@ class DefaultAuthorSpaceComponent @AssistedInject constructor(
     @Assisted private val mid: Mid,
     private val spaceArcSearchPagingSourceFactory: SpaceArcSearchPagingSource.Factory,
     private val downloadManager: DownloadManager,
-) : AuthorSpaceComponent,
-    BaseViewModel<AuthorSpaceEvent, AuthorSpaceComponent.Model>(componentContext) {
+) : BaseViewModel<AuthorSpaceEvent, AuthorSpaceComponent.Model>(componentContext),
+    AuthorSpaceComponent {
     override val flow = Pager(
         PagingConfig(
             pageSize = 30,

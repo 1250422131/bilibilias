@@ -48,27 +48,27 @@ fun SettingContent(model: UserEditableSettings, onEvent: (UserEditEvent) -> Unit
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .scrollable(rememberScrollState(), Orientation.Vertical)
+                .scrollable(rememberScrollState(), Orientation.Vertical),
         ) {
             val context = LocalContext.current
             SettingsGroup(
-                title = { Text(text = "通用") }
+                title = { Text(text = "通用") },
             ) {
                 FileStorageMenuLink(model.storagePath, onEvent)
 
                 NamingRuleMenuLink(model.namingRule, onEvent)
 
                 SettingsMenuLink(title = { Text(text = "还原文件存储路径") }) {
-                    onEvent(UserEditEvent.onSelectedStoragePath(null))
+                    onEvent(UserEditEvent.SelectedStoragePath(null))
                 }
                 SettingsMenuLink(title = { Text(text = "还原文件命名规则") }) {
-                    onEvent(UserEditEvent.onEditNamingRule(null))
+                    onEvent(UserEditEvent.EditNamingRule(null))
                 }
 
                 FFmpegCommandMenuLink(model.command, onEvent)
 
                 SettingsMenuLink(title = { Text(text = "退出登录") }) {
-                    onEvent(UserEditEvent.onLogout)
+                    onEvent(UserEditEvent.Logout)
                     context.getActivity().finish()
                 }
                 ShareLogMenuLink(onEvent)
@@ -101,26 +101,26 @@ fun ShareLogMenuLink(onEvent: (UserEditEvent) -> Unit) {
     if (open) {
         Dialog(
             onDismissRequest = { open = false },
-            properties = DialogProperties()
+            properties = DialogProperties(),
         ) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
                 ) {
                     Text(
                         text = "log.txt",
                         modifier = Modifier
                             .padding(8.dp)
-                            .clickable { onEvent(UserEditEvent.ShareLog.NewLog) }
+                            .clickable { onEvent(UserEditEvent.ShareLog.NewLog) },
                     )
                     Text(
                         text = "old_log.txt（崩溃相关发这个）",
                         modifier = Modifier
                             .padding(8.dp)
-                            .clickable { onEvent(UserEditEvent.ShareLog.OldLog) }
+                            .clickable { onEvent(UserEditEvent.ShareLog.OldLog) },
                     )
                 }
             }
@@ -137,15 +137,15 @@ fun FileStorageMenuLink(path: String, onEvent: (UserEditEvent) -> Unit) {
             if (it != null) {
                 context.contentResolver.takePersistableUriPermission(
                     it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
                 )
             }
 
-            onEvent(UserEditEvent.onSelectedStoragePath(it?.toString()))
+            onEvent(UserEditEvent.SelectedStoragePath(it?.toString()))
         }
     SettingsMenuLink(
         title = { Text(text = "文件储存路径") },
-        subtitle = { Text(text = path) }
+        subtitle = { Text(text = path) },
     ) {
         activityResultLauncher.launch(null)
     }
@@ -157,22 +157,22 @@ private fun NamingRuleMenuLink(rule: String, onEvent: (UserEditEvent) -> Unit) {
     var newRule by remember { mutableStateOf<String?>(null) }
     SettingsMenuLink(
         title = { Text(text = "文件命名规则") },
-        subtitle = { Text(text = rule) }
+        subtitle = { Text(text = rule) },
     ) {
         showEditRuleDialog = true
     }
     SimpleDialog(
         show = showEditRuleDialog,
         helpText = "AV号: {AV}\n" +
-                "BV号: {BV}\n" +
-                "CID号: {CID}\n" +
-                "视频标题: {TITLE}\n" +
-                "分P标题: {P_TITLE}\n",
+            "BV号: {BV}\n" +
+            "CID号: {CID}\n" +
+            "视频标题: {TITLE}\n" +
+            "分P标题: {P_TITLE}\n",
         inputText = rule,
         onDismiss = {
             showEditRuleDialog = false
-            newRule?.let { onEvent(UserEditEvent.onEditNamingRule(it)) }
-        }
+            newRule?.let { onEvent(UserEditEvent.EditNamingRule(it)) }
+        },
     ) {
         newRule = it
     }
@@ -184,22 +184,22 @@ private fun FFmpegCommandMenuLink(command: String, onEvent: (UserEditEvent) -> U
     var showEditCommandDialog by remember { mutableStateOf(false) }
     SettingsMenuLink(
         title = { Text(text = "FFmpeg命令") },
-        subtitle = { Text(text = command) }
+        subtitle = { Text(text = command) },
     ) {
         showEditCommandDialog = true
     }
     SimpleDialog(
         show = showEditCommandDialog,
         helpText = "如果你不清楚FFmpeg命令，请不要修改\n" +
-                "BILIBILIAS为大家提供了简单的命令参数\n" +
-                "{VIDEO_PATH} 视频下载路径\n" +
-                "{AUDIO_PATH} 音频储存路径\n" +
-                "{VIDEO_MERGE_PATH} 合并后储存路径",
+            "BILIBILIAS为大家提供了简单的命令参数\n" +
+            "{VIDEO_PATH} 视频下载路径\n" +
+            "{AUDIO_PATH} 音频储存路径\n" +
+            "{VIDEO_MERGE_PATH} 合并后储存路径",
         inputText = newCommand ?: command,
         onDismiss = {
             showEditCommandDialog = false
-            newCommand?.let { onEvent(UserEditEvent.onEditCommand(it)) }
-        }
+            newCommand?.let { onEvent(UserEditEvent.EditCommand(it)) }
+        },
     ) {
         newCommand = it
     }
@@ -213,19 +213,19 @@ fun SimpleDialog(
     inputText: String,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    onEdit: (String) -> Unit
+    onEdit: (String) -> Unit,
 ) {
     if (show) {
         BasicAlertDialog(
             modifier = modifier,
-            onDismissRequest = onDismiss
+            onDismissRequest = onDismiss,
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Card {
                     Text(
@@ -235,7 +235,7 @@ fun SimpleDialog(
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = onEdit,
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(8.dp),
                     )
                 }
             }
