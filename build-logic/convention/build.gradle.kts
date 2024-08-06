@@ -17,12 +17,12 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.detekt.gradlePlugin)
     compileOnly(libs.kotlin.power.assert.gradlePlugin)
-    compileOnly(libs.compose.compiler.report.gradlePlugin) {
-        repositories {
-            mavenCentral()
-            gradlePluginPortal()
-        }
-    }
+//    compileOnly(libs.compose.compiler.report.gradlePlugin) {
+//        repositories {
+////            mavenCentral()
+//            gradlePluginPortal()
+//        }
+//    }
 }
 
 tasks {
