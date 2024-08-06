@@ -20,7 +20,7 @@ import com.imcys.bilibilias.core.model.video.ViewInfo
 @Composable
 internal fun BottomSheetContent(
     component: DialogComponent,
-    navigationToPlayer: (viewInfo: ViewInfo) -> Unit
+    navigationToPlayer: (viewInfo: ViewInfo) -> Unit,
 ) {
     val model by component.models.collectAsStateWithLifecycle()
     val state = rememberBottomSheetState(
@@ -35,7 +35,7 @@ internal fun BottomSheetContent(
     BottomSheet(state = state) {
         Column(
             modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AsButton(
                 onClick = {
@@ -44,7 +44,7 @@ internal fun BottomSheetContent(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(60.dp),
             ) {
                 Text(text = "删除")
             }
@@ -53,7 +53,7 @@ internal fun BottomSheetContent(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(60.dp),
             ) {
                 Text(text = "播放")
             }

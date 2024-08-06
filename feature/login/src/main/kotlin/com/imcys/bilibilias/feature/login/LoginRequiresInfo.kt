@@ -14,7 +14,7 @@ object LoginRequiresInfo {
             view.context,
             "https://www.bilibili.com/blackboard/topic/activity-cn8bxPLzz.html",
             "B站账户需要遵守的协议列表",
-            "使用则代表同意"
+            "使用则代表同意",
         )
     }
 
@@ -23,7 +23,7 @@ object LoginRequiresInfo {
             view.context,
             "https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865",
             "BILIBILIAS隐私政策",
-            "使用则代表同意"
+            "使用则代表同意",
         )
     }
 

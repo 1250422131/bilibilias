@@ -65,9 +65,11 @@ internal object QRUtil {
 
     private fun getExistingImageUriOrNull(): Uri? {
         ContentResolverUtils.query(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            },
             arrayOf(MediaStore.Images.Media._ID),
             "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
             arrayOf("BILIBILIAS-QR-Code"),

@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -66,13 +65,13 @@ fun ImageWithText(
     @DrawableRes resId: Int,
     label: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier.clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
-            onClick = onClick
+            onClick = onClick,
         ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +79,7 @@ fun ImageWithText(
         Image(
             painter = painterResource(id = resId),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
         )
         Text(text = label)
     }

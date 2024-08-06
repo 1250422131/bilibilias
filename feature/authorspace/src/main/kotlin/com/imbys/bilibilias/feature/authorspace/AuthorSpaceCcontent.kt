@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +25,7 @@ import com.imcys.bilibilias.core.ui.UnitedDetails
 fun AuthorSpaceContent(component: AuthorSpaceComponent) {
     val lazyPagingItems = component.flow.collectAsLazyPagingItems()
     val model by component.models.collectAsStateWithLifecycle()
-    AuthorSpaceScreen(lazyPagingItems,onEvent = component::take)
+    AuthorSpaceScreen(lazyPagingItems, onEvent = component::take)
 }
 
 @Composable
@@ -55,7 +54,7 @@ private fun AuthorSpaceScreen(
             items(count = lazyPagingItems.itemCount) { index ->
                 val item = lazyPagingItems[index]
                 if (item != null) {
-                    UnitedDetails(item){
+                    UnitedDetails(item) {
                         onEvent(AuthorSpaceEvent.ChangeSelection(it))
                     }
                 }
@@ -73,5 +72,3 @@ private fun AuthorSpaceScreen(
         }
     }
 }
-
-

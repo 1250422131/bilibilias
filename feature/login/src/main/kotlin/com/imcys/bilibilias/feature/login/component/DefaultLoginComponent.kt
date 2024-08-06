@@ -26,12 +26,11 @@ class DefaultLoginComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val loginRepository: LoginRepository,
     private val asCookieStoreDataSource: AsCookieStoreDataSource,
-) : LoginComponent, BaseViewModel<LoginEvent, LoginModel>(componentContext) {
+) : BaseViewModel<LoginEvent, LoginModel>(componentContext),
+    LoginComponent {
 
     @Composable
-    override fun models(events: Flow<LoginEvent>): LoginModel {
-        return LoginPresenter(events, loginRepository, asCookieStoreDataSource)
-    }
+    override fun models(events: Flow<LoginEvent>): LoginModel = LoginPresenter(events, loginRepository, asCookieStoreDataSource)
 
     @AssistedFactory
     interface Factory : LoginComponent.Factory {
@@ -45,7 +44,7 @@ class DefaultLoginComponent @AssistedInject constructor(
 private fun LoginPresenter(
     events: Flow<LoginEvent>,
     loginRepository: LoginRepository,
-    asCookieStoreDataSource: AsCookieStoreDataSource
+    asCookieStoreDataSource: AsCookieStoreDataSource,
 ): LoginModel {
     var qrUrl by remember { mutableStateOf("") }
     var key by remember { mutableStateOf("") }
