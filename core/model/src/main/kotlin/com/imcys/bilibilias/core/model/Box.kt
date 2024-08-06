@@ -10,5 +10,5 @@ data class Box<T>(
     val code: Int,
     val message: String,
     @JsonNames("data", "result")
-    val data: T? = null
+    val data: T? = null,
 )

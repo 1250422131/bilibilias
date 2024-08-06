@@ -10,10 +10,8 @@ import javax.inject.Inject
 class WebInterfaceRepository @Inject constructor(
     private val loginRepository: LoginRepository,
 ) : Syncable {
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
-        return suspendRunCatching {
-            val nav = loginRepository.nav()
-            TokenUtil.setCacheToken(TokenUtil.getMixinKey(nav.imgKey, nav.subKey))
-        }.isSuccess
-    }
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean = suspendRunCatching {
+        val nav = loginRepository.nav()
+        TokenUtil.setCacheToken(TokenUtil.getMixinKey(nav.imgKey, nav.subKey))
+    }.isSuccess
 }

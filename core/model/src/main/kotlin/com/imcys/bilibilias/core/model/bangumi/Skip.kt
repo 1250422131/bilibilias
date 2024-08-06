@@ -8,14 +8,14 @@ data class Skip(
     @SerialName("ed")
     val ed: Ed = Ed(),
     @SerialName("op")
-    val op: Op = Op()
+    val op: Op = Op(),
 ) {
     @Serializable
     data class Ed(
         @SerialName("end")
         val end: Int = 0,
         @SerialName("start")
-        val start: Int = 0
+        val start: Int = 0,
     )
 
     @Serializable
@@ -23,6 +23,6 @@ data class Skip(
         @SerialName("end")
         val end: Int = 0,
         @SerialName("start")
-        val start: Int = 0
+        val start: Int = 0,
     )
 }

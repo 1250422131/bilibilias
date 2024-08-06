@@ -6,5 +6,5 @@ data class IconFont(
     @SerialName("name")
     val name: String = "",
     @SerialName("text")
-    val text: String = ""
+    val text: String = "",
 )

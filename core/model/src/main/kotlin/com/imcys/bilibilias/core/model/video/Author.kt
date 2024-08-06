@@ -24,5 +24,5 @@ data class Author(
     @SerialName("sex")
     val sex: String = "",
     @SerialName("sign")
-    val sign: String = ""
+    val sign: String = "",
 )

@@ -20,7 +20,7 @@ class FFmpegKitImpl @Inject constructor(
         inputAudio: String,
         output: String,
         onSuccess: () -> Unit,
-        onFailure: () -> Unit
+        onFailure: () -> Unit,
     ) {
         val readVideo = FFmpegKitConfig.getSafParameterForRead(context, inputVideo.toUri())
         val readAudio = FFmpegKitConfig.getSafParameterForRead(context, inputAudio.toUri())

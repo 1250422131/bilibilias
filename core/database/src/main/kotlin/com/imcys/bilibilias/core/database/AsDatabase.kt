@@ -13,12 +13,12 @@ import com.imcys.bilibilias.core.database.util.UriConverters
     entities = [DownloadTaskEntity::class],
     version = 2,
     autoMigrations = [],
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(
     InstantConverter::class,
     UriConverters::class,
-    builtInTypeConverters = BuiltInTypeConverters()
+    builtInTypeConverters = BuiltInTypeConverters(),
 )
 internal abstract class AsDatabase : RoomDatabase() {
     abstract fun downloadTaskDao(): DownloadTaskDao

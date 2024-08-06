@@ -14,28 +14,22 @@ class TestErrorMonitor(networkMonitor: TestNetworkMonitor) : ErrorMonitor {
         error: String,
         type: MessageType,
         label: String?,
-        action: (() -> Unit)?
-    ): String? {
-        return "1"
-    }
+        action: (() -> Unit)?,
+    ): String? = "1"
 
     override fun addLongErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
-        action: (() -> Unit)?
-    ): String? {
-        return "2"
-    }
+        action: (() -> Unit)?,
+    ): String? = "2"
 
     override fun addIndefiniteErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
-        action: (() -> Unit)?
-    ): String? {
-        return "3"
-    }
+        action: (() -> Unit)?,
+    ): String? = "3"
 
     override fun clearErrorMessage(id: String) {
         // Do nothing

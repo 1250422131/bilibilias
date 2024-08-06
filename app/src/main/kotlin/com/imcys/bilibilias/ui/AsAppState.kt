@@ -13,12 +13,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.essenty.backhandler.BackHandler
-import com.hjq.toast.Toaster
-import com.imcys.bilibilias.R
-import com.imcys.bilibilias.core.common.utils.getActivity
 import com.imcys.bilibilias.core.data.util.ErrorMessage
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.ui.TrackDisposableJank
+import com.imcys.bilibilias.core.utils.getActivity
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
@@ -30,16 +28,14 @@ import kotlinx.coroutines.flow.stateIn
 fun rememberAsAppState(
     errorMonitor: ErrorMonitor,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-): AsAppState {
-    return remember(
-        errorMonitor,
-        coroutineScope,
-    ) {
-        AsAppState(
-            errorMonitor = errorMonitor,
-            coroutineScope = coroutineScope,
-        )
-    }
+): AsAppState = remember(
+    errorMonitor,
+    coroutineScope,
+) {
+    AsAppState(
+        errorMonitor = errorMonitor,
+        coroutineScope = coroutineScope,
+    )
 }
 
 @Stable
@@ -84,12 +80,14 @@ internal fun AsBackHandler(
         if (currentTopLevelDestination != null || currentDestination is RootComponent.Child.LoginChild) {
             val currentTimeMillis = System.currentTimeMillis()
             if (currentTimeMillis - exitTime > 2000) {
-                Toaster.show(R.string.app_HomeActivity_exit)
+//                Toaster.show(R.string.app_HomeActivity_exit)
                 exitTime = currentTimeMillis
             } else {
                 context.getActivity().finish()
             }
-        } else onBack()
+        } else {
+            onBack()
+        }
     }
 }
 

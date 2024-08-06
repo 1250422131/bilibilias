@@ -18,5 +18,5 @@ data class Pendant(
     @SerialName("name")
     val name: String = "",
     @SerialName("pid")
-    val pid: Int = 0
+    val pid: Int = 0,
 )

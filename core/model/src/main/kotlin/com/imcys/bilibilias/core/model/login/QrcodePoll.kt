@@ -14,7 +14,7 @@ data class QrcodePoll(
     @SerialName("timestamp")
     val timestamp: Long = 0,
     @SerialName("url")
-    val url: String = ""
+    val url: String = "",
 ) {
     val success get() = code == 0
 }

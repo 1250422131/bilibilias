@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
@@ -328,15 +327,15 @@ class DownloadManager @Inject constructor(
         val uri = taskEntity.uri
         if (UriUtils.isFileScheme(uri)) {
             if (uri.toFile().delete()) {
-                Toaster.show("删除成功")
+//                Toaster.show("删除成功")
             } else {
-                Toaster.show("删除失败")
+//                Toaster.show("删除失败")
             }
         } else if (UriUtils.isContentScheme(uri)) {
             if (ContentResolverUtils.deleteDocument(uri)) {
-                Toaster.show("删除成功")
+//                Toaster.show("删除成功")
             } else {
-                Toaster.show("删除失败")
+//                Toaster.show("删除失败")
             }
         } else {
             Napier.d { taskEntity.toString() }

@@ -59,7 +59,7 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
                     state = t.state,
                     bytesSentTotal = t.bytesSentTotal,
                     contentLength = t.contentLength,
-                )
+                ),
             )
         }
     }
@@ -76,11 +76,11 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
                     bytesSentTotal = t.bytesSentTotal
                     contentLength = t.contentLength
                 } WHERE (
-                        (aid EQ t.aid) AND
-                                (bvid EQ t.bvid) AND
-                                (cid EQ t.cid) AND
-                                (fileType EQ TypeConverters.fileTypeToString(t.fileType))
-                        )
+                    (aid EQ t.aid) AND
+                        (bvid EQ t.bvid) AND
+                        (cid EQ t.cid) AND
+                        (fileType EQ TypeConverters.fileTypeToString(t.fileType))
+                    )
             }
         }
         channel.trySend(Unit)
@@ -101,17 +101,16 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
             TaskEntityTable { table ->
                 selectStatement =
                     table SELECT
-                            WHERE(
-                                (aid EQ t.aid) AND
-                                        (bvid EQ t.bvid) AND
-                                        (cid EQ t.cid) AND
-                                        (fileType EQ TypeConverters.fileTypeToString(t.fileType))
-                            )
+                    WHERE(
+                        (aid EQ t.aid) AND
+                            (bvid EQ t.bvid) AND
+                            (cid EQ t.cid) AND
+                            (fileType EQ TypeConverters.fileTypeToString(t.fileType)),
+                    )
             }
         }
         return selectStatement.getResults().map(TaskEntity::mapToTask)
     }
-
 
     suspend fun insertTask(t: Task) {
         database suspendedScope {
@@ -138,16 +137,18 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         a: Aid,
         b: Bvid,
         c: Cid,
-        type: FileType
+        type: FileType,
     ) {
         database suspendedScope {
             TaskEntityTable { table ->
                 table UPDATE SET {
                     state = TypeConverters.stateToString(newState)
-                } WHERE ((aid EQ a) AND
+                } WHERE (
+                    (aid EQ a) AND
                         (bvid EQ b) AND
                         (cid EQ c) AND
-                        (fileType EQ TypeConverters.fileTypeToString(type)))
+                        (fileType EQ TypeConverters.fileTypeToString(type))
+                    )
             }
         }
         channel.trySend(Unit)
@@ -178,7 +179,7 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
         a: Aid,
         b: Bvid,
         c: Cid,
-        type: FileType
+        type: FileType,
     ) {
         database suspendedScope {
             TaskEntityTable { table ->
@@ -186,10 +187,12 @@ class DownloadTaskDao2 @Inject constructor(private val database: Database) {
                     state = TypeConverters.stateToString(newState)
                     bytesSentTotal = currentOffset
                     contentLength = totalLength
-                } WHERE ((aid EQ a) AND
+                } WHERE (
+                    (aid EQ a) AND
                         (bvid EQ b) AND
                         (cid EQ c) AND
-                        (fileType EQ TypeConverters.fileTypeToString(type)))
+                        (fileType EQ TypeConverters.fileTypeToString(type))
+                    )
             }
         }
         channel.trySend(Unit)

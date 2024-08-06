@@ -28,5 +28,5 @@ data class Stat(
     @SerialName("view")
     val view: Int = 0,
     @SerialName("vt")
-    val vt: Int = 0
+    val vt: Int = 0,
 )

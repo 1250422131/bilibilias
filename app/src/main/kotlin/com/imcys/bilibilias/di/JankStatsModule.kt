@@ -18,7 +18,7 @@ class JankStatsModule {
         // Make sure to only log janky frames.
         if (frameData.isJank) {
             // We're currently logging this but would better report it to a backend.
-            Napier.v(frameData.toString(), tag = "As Jank",)
+            Napier.v(frameData.toString(), tag = "As Jank")
         }
     }
 

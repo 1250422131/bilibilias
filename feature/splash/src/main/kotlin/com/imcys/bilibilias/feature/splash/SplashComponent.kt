@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.feature.splash
 
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
 import com.imcys.bilibilias.core.datastore.UsersDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

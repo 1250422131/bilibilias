@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.arkivanov.decompose.ComponentContext
-import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_COMMAND
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_STORE_PATH
@@ -125,7 +124,6 @@ private fun shareLog(logFile: File) {
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         AppUtils.startActivity(chooserIntent)
     } else {
-        Toaster.show("日志文件不存在")
         Napier.d { "日志文件不存在" }
     }
 }

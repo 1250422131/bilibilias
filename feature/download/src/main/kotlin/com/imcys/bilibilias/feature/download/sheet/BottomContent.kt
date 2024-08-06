@@ -14,7 +14,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dokar.sheets.BottomSheetValue
 import com.dokar.sheets.m3.BottomSheet
 import com.dokar.sheets.rememberBottomSheetState
-import com.hjq.toast.Toaster
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.model.video.ViewInfo
 
@@ -50,7 +49,7 @@ internal fun BottomSheetContent(
                 Text(text = "删除")
             }
             AsButton(
-                onClick = { Toaster.show("该功能未实现") },
+                onClick = { },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()

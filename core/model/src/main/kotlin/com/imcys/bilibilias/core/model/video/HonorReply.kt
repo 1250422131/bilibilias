@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HonorReply(
     @SerialName("honor")
-    val honor: List<Honor> = listOf()
+    val honor: List<Honor> = listOf(),
 ) {
     @Serializable
     data class Honor(
@@ -15,6 +15,6 @@ data class HonorReply(
         @SerialName("type")
         val type: Int = 0,
         @SerialName("weekly_recommend_num")
-        val weeklyRecommendNum: Int = 0
+        val weeklyRecommendNum: Int = 0,
     )
 }

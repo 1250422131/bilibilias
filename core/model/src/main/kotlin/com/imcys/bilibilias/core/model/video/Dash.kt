@@ -12,5 +12,5 @@ data class Dash(
     @SerialName("min_buffer_time")
     val minBufferTime: Double = 0.0,
     @SerialName("video")
-    val video: List<Sources> = listOf()
+    val video: List<Sources> = listOf(),
 )

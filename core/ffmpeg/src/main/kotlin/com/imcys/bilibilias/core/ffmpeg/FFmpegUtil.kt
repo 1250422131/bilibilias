@@ -11,44 +11,40 @@ object FFmpegUtil {
      * @return 合成后的文件
      * ffmpeg -y -i video.mp4 -i audio.m4a -c:v copy -c:a copy output.mp4
      */
-    fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String> {
-        return buildCommandParams {
-            append("ffmpeg")
-            append("-y")
+    fun mixAudioVideo(videoFile: String, audioFile: String, muxFile: String): Array<String> = buildCommandParams {
+        append("ffmpeg")
+        append("-y")
 
-            append("-i")
-            append("\"$videoFile\"")
+        append("-i")
+        append("\"$videoFile\"")
 
-            append("-i")
-            append("\"$audioFile\"")
+        append("-i")
+        append("\"$audioFile\"")
 
-            append("-c:v")
-            append("copy")
-            append("-c:a")
-            append("copy")
-            append("\"$muxFile\"")
-        }
+        append("-c:v")
+        append("copy")
+        append("-c:a")
+        append("copy")
+        append("\"$muxFile\"")
     }
 
     /**
      * ffmpeg -y -i video.mp4 -i audio.m4a -vcodec copy -acodec copy output.mp4
      */
-    fun mixAudioVideo2(videoFile: String, audioFile: String, muxFile: String): Array<String> {
-        return buildCommandParams {
-            append("-y")
+    fun mixAudioVideo2(videoFile: String, audioFile: String, muxFile: String): Array<String> = buildCommandParams {
+        append("-y")
 
-            append("-i")
-            append("$videoFile")
+        append("-i")
+        append("$videoFile")
 
-            append("-i")
-            append("$audioFile")
+        append("-i")
+        append("$audioFile")
 
-            append("-vcodec")
-            append("copy")
-            append("-acodec")
-            append("copy")
+        append("-vcodec")
+        append("copy")
+        append("-acodec")
+        append("copy")
 
-            append("$muxFile")
-        }
+        append("$muxFile")
     }
 }

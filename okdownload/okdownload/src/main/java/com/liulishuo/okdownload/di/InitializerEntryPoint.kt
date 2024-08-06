@@ -15,8 +15,6 @@ interface InitializerEntryPoint {
     fun injectExecutorService(): ExecutorService
 
     companion object {
-        fun resolve(context: Context): InitializerEntryPoint {
-            return EarlyEntryPoints.get(context, InitializerEntryPoint::class.java)
-        }
+        fun resolve(context: Context): InitializerEntryPoint = EarlyEntryPoints.get(context, InitializerEntryPoint::class.java)
     }
 }

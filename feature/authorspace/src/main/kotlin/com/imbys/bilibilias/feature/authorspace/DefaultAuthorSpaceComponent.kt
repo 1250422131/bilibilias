@@ -12,7 +12,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.common.utils.addOrRemove
+import com.imcys.bilibilias.core.utils.addOrRemove
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Mid

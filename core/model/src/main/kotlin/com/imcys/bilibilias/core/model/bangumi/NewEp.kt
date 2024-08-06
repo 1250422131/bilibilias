@@ -10,5 +10,5 @@ data class NewEp(
     @SerialName("is_new")
     val isNew: Int = 0,
     @SerialName("title")
-    val title: String = ""
+    val title: String = "",
 )

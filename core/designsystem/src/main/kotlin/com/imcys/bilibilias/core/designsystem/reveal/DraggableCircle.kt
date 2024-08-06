@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
 @Composable
 fun DraggableCircle(
     modifier: Modifier = Modifier,
-    onTap: (Offset) -> Unit
+    onTap: (Offset) -> Unit,
 ) {
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
@@ -48,6 +48,6 @@ fun DraggableCircle(
                 }
             }
             .clip(RoundedCornerShape(25.dp))
-            .then(modifier)
+            .then(modifier),
     )
 }

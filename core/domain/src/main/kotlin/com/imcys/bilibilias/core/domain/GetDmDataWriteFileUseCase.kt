@@ -12,7 +12,7 @@ import javax.inject.Inject
 class GetDmDataWriteFileUseCase @Inject constructor(
     private val danmakuRepository: DanmakuRepository,
     @ApplicationContext private val context: Context,
-    @ApplicationScope private val scope: CoroutineScope
+    @ApplicationScope private val scope: CoroutineScope,
 ) {
     operator fun invoke(cid: Long) {
         scope.launch {
@@ -21,4 +21,3 @@ class GetDmDataWriteFileUseCase @Inject constructor(
         }
     }
 }
-

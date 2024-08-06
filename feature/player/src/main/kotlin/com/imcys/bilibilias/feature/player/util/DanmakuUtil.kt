@@ -11,7 +11,5 @@ internal object DanmakuUtil {
     }
 
     fun parseFile() {
-
     }
 }
-

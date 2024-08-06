@@ -16,7 +16,7 @@ data class Card(
     @SerialName("following")
     val following: Boolean = false,
     @SerialName("like_num")
-    val likeNum: Int = 0
+    val likeNum: Int = 0,
 ) {
     @Serializable
     data class Card(
@@ -71,7 +71,7 @@ data class Card(
         @SerialName("spacesta")
         val spacesta: Int = 0,
         @SerialName("vip")
-        val vip: Vip = Vip()
+        val vip: Vip = Vip(),
     ) {
         @Serializable
         data class Nameplate(
@@ -86,7 +86,7 @@ data class Card(
             @SerialName("name")
             val name: String = "",
             @SerialName("nid")
-            val nid: Int = 0
+            val nid: Int = 0,
         )
 
         @Serializable
@@ -94,7 +94,7 @@ data class Card(
             @SerialName("desc")
             val desc: String = "",
             @SerialName("type")
-            val type: Int = 0
+            val type: Int = 0,
         )
     }
 }

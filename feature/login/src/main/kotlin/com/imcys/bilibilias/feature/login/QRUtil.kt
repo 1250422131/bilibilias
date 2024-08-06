@@ -11,13 +11,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.core.content.contentValuesOf
-import com.hjq.toast.Toaster
-import dev.DevUtils
 import dev.utils.app.AppUtils
 import dev.utils.app.ContentResolverUtils
 import dev.utils.app.MediaStoreUtils
-import dev.utils.app.image.ImageUtils
 import io.github.aakira.napier.Napier
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -44,7 +40,7 @@ internal object QRUtil {
         if (componentName != null) {
             AppUtils.startActivity(intent)
         } else {
-            Toaster.show("呜哇，您好像没有安装Bilibili")
+            // Toaster.show("呜哇，您好像没有安装Bilibili")
         }
     }
 

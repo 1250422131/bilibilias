@@ -8,5 +8,5 @@ data class QrcodeGenerate(
     @SerialName("qrcode_key")
     val qrcodeKey: String = "",
     @SerialName("url")
-    val url: String = ""
+    val url: String = "",
 )

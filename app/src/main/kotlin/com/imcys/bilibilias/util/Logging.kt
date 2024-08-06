@@ -4,7 +4,6 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import java.io.File
-import java.lang.Thread.UncaughtExceptionHandler
 import javax.inject.Inject
 
 class Logging @Inject constructor(@ApplicationContext private val context: Context) {
@@ -26,8 +25,8 @@ class Logging @Inject constructor(@ApplicationContext private val context: Conte
                     "-T",
                     "100",
                     "-f",
-                    logFile.absolutePath
-                )
+                    logFile.absolutePath,
+                ),
             )
         } catch (e: Exception) {
             Napier.d(e) { "初始化日志" }

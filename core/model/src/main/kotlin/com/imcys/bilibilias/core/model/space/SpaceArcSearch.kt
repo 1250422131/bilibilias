@@ -11,13 +11,13 @@ data class SpaceArcSearch(
     @SerialName("list")
     val list: VList = VList(),
     @SerialName("page")
-    val page: Page = Page()
+    val page: Page = Page(),
 ) {
 
     @Serializable
     data class VList(
         @SerialName("vlist")
-        val vlist: List<Vlist> = listOf()
+        val vlist: List<Vlist> = listOf(),
     ) {
         @Serializable
         data class Vlist(
@@ -86,7 +86,7 @@ data class SpaceArcSearch(
             @SerialName("vt")
             val vt: Int = 0,
             @SerialName("vt_display")
-            val vtDisplay: String = ""
+            val vtDisplay: String = "",
         )
     }
 }

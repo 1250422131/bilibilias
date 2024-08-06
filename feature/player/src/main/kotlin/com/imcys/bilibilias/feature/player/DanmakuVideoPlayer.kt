@@ -16,7 +16,7 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.extractor.DefaultExtractorsFactory
-import com.imcys.bilibilias.core.common.utils.getActivity
+import com.imcys.bilibilias.core.utils.getActivity
 import com.kuaishou.akdanmaku.DanmakuConfig
 import com.kuaishou.akdanmaku.render.SimpleRenderer
 import com.kuaishou.akdanmaku.render.TypedDanmakuRenderer
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DanmakuVideoPlayer :
     StandardGSYVideoPlayer,
-    ExoMediaSourceInterceptListener{
+    ExoMediaSourceInterceptListener {
     constructor(context: Context) : super(context)
     constructor(context: Context, fullFlag: Boolean) : super(context, fullFlag)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -135,7 +135,7 @@ class DanmakuVideoPlayer :
     override fun startWindowFullscreen(
         context: Context?,
         actionBar: Boolean,
-        statusBar: Boolean
+        statusBar: Boolean,
     ): GSYBaseVideoPlayer? {
         val gsyBaseVideoPlayer = super.startWindowFullscreen(context, actionBar, statusBar)
         if (gsyBaseVideoPlayer != null) {
@@ -155,7 +155,7 @@ class DanmakuVideoPlayer :
     override fun resolveNormalVideoShow(
         oldF: View?,
         vp: ViewGroup?,
-        gsyVideoPlayer: GSYVideoPlayer?
+        gsyVideoPlayer: GSYVideoPlayer?,
     ) {
         super.resolveNormalVideoShow(oldF, vp, gsyVideoPlayer)
         if (gsyVideoPlayer != null) {
@@ -263,13 +263,13 @@ class DanmakuVideoPlayer :
     private fun createMediaSource(uri: Uri) = progressiveSource.createMediaSource(
         MediaItem.Builder()
             .setUri(uri)
-            .build()
+            .build(),
     )
 
     private fun createMediaSource(url: String) = progressiveSource.createMediaSource(
         MediaItem.Builder()
             .setUri(url)
-            .build()
+            .build(),
     )
 
     @OptIn(UnstableApi::class)
@@ -278,7 +278,7 @@ class DanmakuVideoPlayer :
         preview: Boolean,
         cacheEnable: Boolean,
         isLooping: Boolean,
-        cacheDir: File?
+        cacheDir: File?,
     ): MediaSource? = mergingMediaSource
 
     @OptIn(UnstableApi::class)
@@ -288,7 +288,7 @@ class DanmakuVideoPlayer :
         connectTimeoutMillis: Int,
         readTimeoutMillis: Int,
         mapHeadData: MutableMap<String, String>?,
-        allowCrossProtocolRedirects: Boolean
+        allowCrossProtocolRedirects: Boolean,
     ): DataSource.Factory? = defaultDataSource
 
     @OptIn(UnstableApi::class)

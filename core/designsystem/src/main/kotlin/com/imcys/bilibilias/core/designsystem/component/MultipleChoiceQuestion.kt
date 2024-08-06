@@ -31,7 +31,7 @@ fun MultipleChoiceQuestion(
             modifier = Modifier.padding(vertical = 8.dp),
             text = it,
             selected = selected,
-            onOptionSelected = { onOptionSelected(!selected, it) }
+            onOptionSelected = { onOptionSelected(!selected, it) },
         )
     }
 }
@@ -56,17 +56,17 @@ fun CheckboxRow(
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.outline
-            }
+            },
         ),
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
-            .clickable(onClick = onOptionSelected)
+            .clickable(onClick = onOptionSelected),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
             Box(Modifier.padding(8.dp)) {
@@ -84,6 +84,6 @@ fun MultipleChoiceQuestionPreview() {
     MultipleChoiceQuestion(
         possibleAnswers = possibleAnswers,
         selectedAnswers = selectedAnswers,
-        onOptionSelected = { _, _ -> }
+        onOptionSelected = { _, _ -> },
     )
 }

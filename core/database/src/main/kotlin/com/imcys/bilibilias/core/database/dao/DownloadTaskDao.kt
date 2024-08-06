@@ -2,7 +2,6 @@ package com.imcys.bilibilias.core.database.dao
 
 import android.net.Uri
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
@@ -67,22 +66,22 @@ interface DownloadTaskDao {
 
     @Query(
         "UPDATE download_task_list " +
-                "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-                "WHERE uri = :uri",
+            "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
+            "WHERE uri = :uri",
     )
     suspend fun updateProgressByUri(bytesSentTotal: Long, contentLength: Long, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
-                "SET state = :state " +
-                "WHERE uri = :uri",
+            "SET state = :state " +
+            "WHERE uri = :uri",
     )
     suspend fun updateStateByUri(state: State, uri: Uri)
 
     @Query(
         "UPDATE download_task_list " +
-                "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-                "WHERE uri = :uri",
+            "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
+            "WHERE uri = :uri",
     )
     suspend fun updateProgressWithStateByUri(
         state: State,
@@ -95,7 +94,13 @@ interface DownloadTaskDao {
     fun findAllTask(): Flow<List<DownloadTaskEntity>>
 
     @Query("SELECT * FROM download_task_list GROUP BY cid, id")
-    fun findAllTaskByGroupCid(): Flow<Map<@MapColumn("cid") Cid, List<DownloadTaskEntity>>>
+    fun findAllTaskByGroupCid(): Flow<
+        Map<
+            @MapColumn("cid")
+            Cid,
+            List<DownloadTaskEntity>,
+            >,
+        >
 
     @Query("SELECT * FROM download_task_list WHERE id IN (:ids)")
     suspend fun findByIds(ids: List<Int>): List<DownloadTaskEntity>

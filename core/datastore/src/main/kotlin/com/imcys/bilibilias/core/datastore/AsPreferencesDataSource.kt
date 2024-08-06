@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AsPreferencesDataSource @Inject constructor(
-    private val userPreferences: DataStore<UserPreferences>
+    private val userPreferences: DataStore<UserPreferences>,
 ) {
     val userData = userPreferences.data.map {
         UserData(
@@ -15,7 +15,7 @@ class AsPreferencesDataSource @Inject constructor(
             it.autoMerge,
             it.autoImportToBilibili,
             it.shouldAppcenter,
-            it.command
+            it.command,
         )
     }
 

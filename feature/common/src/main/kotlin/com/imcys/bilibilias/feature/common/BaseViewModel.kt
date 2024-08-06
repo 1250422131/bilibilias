@@ -10,8 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
-    ComponentContext by componentContext {
+abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) : ComponentContext by componentContext {
     val viewModelScope = CoroutineScope(AndroidUiDispatcher.Main)
 
     protected val moleculeScope = CoroutineScope(AndroidUiDispatcher.Main)

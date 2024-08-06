@@ -97,14 +97,14 @@ data class BangumiDetail(
     @SerialName("up_info")
     val upInfo: UpInfo = UpInfo(),
     @SerialName("user_status")
-    val userStatus: UserStatus = UserStatus()
+    val userStatus: UserStatus = UserStatus(),
 ) {
     @Serializable
     data class Area(
         @SerialName("id")
         val id: Int = 0,
         @SerialName("name")
-        val name: String = ""
+        val name: String = "",
     )
 
     @Serializable
@@ -114,7 +114,7 @@ data class BangumiDetail(
         @SerialName("bubble_show_cnt")
         val bubbleShowCnt: Int = 0,
         @SerialName("icon_show")
-        val iconShow: Int = 0
+        val iconShow: Int = 0,
     )
 
     @Serializable
@@ -138,7 +138,7 @@ data class BangumiDetail(
         @SerialName("vip_price")
         val vipPrice: String = "",
         @SerialName("vip_promotion")
-        val vipPromotion: String = ""
+        val vipPromotion: String = "",
     ) {
         @Serializable
         data class PayType(
@@ -153,14 +153,14 @@ data class BangumiDetail(
             @SerialName("allow_vip_discount")
             val allowVipDiscount: Int = 0,
             @SerialName("forbid_bb")
-            val forbidBb: Int = 0
+            val forbidBb: Int = 0,
         )
     }
 
     @Serializable
     data class PlayStrategy(
         @SerialName("strategies")
-        val strategies: List<String> = listOf()
+        val strategies: List<String> = listOf(),
     )
 
     @Serializable
@@ -168,7 +168,7 @@ data class BangumiDetail(
         @SerialName("id")
         val id: Int = 0,
         @SerialName("title")
-        val title: String = ""
+        val title: String = "",
     )
 
     @Serializable
@@ -184,7 +184,7 @@ data class BangumiDetail(
         @SerialName("unknow_pub_date")
         val unknowPubDate: Int = 0,
         @SerialName("weekday")
-        val weekday: Int = 0
+        val weekday: Int = 0,
     )
 
     @Serializable
@@ -192,7 +192,7 @@ data class BangumiDetail(
         @SerialName("count")
         val count: Int = 0,
         @SerialName("score")
-        val score: Double = 0.0
+        val score: Double = 0.0,
     )
 
     @Serializable
@@ -222,7 +222,7 @@ data class BangumiDetail(
         @SerialName("season_type")
         val seasonType: Int = 0,
         @SerialName("stat")
-        val stat: Stat = Stat()
+        val stat: Stat = Stat(),
     )
 
     @Serializable
@@ -242,7 +242,7 @@ data class BangumiDetail(
         @SerialName("type")
         val type: Int = 0,
         @SerialName("type2")
-        val type2: Int = 0
+        val type2: Int = 0,
     )
 
     @Serializable
@@ -252,13 +252,13 @@ data class BangumiDetail(
         @SerialName("series_id")
         val seriesId: Int = 0,
         @SerialName("series_title")
-        val seriesTitle: String = ""
+        val seriesTitle: String = "",
     )
 
     @Serializable
     data class Show(
         @SerialName("wide_screen")
-        val wideScreen: Int = 0
+        val wideScreen: Int = 0,
     )
 
     @Serializable
@@ -286,7 +286,7 @@ data class BangumiDetail(
         @SerialName("vip_status")
         val vipStatus: Int = 0,
         @SerialName("vip_type")
-        val vipType: Int = 0
+        val vipType: Int = 0,
     )
 
     @Serializable
@@ -308,7 +308,7 @@ data class BangumiDetail(
         @SerialName("sponsor")
         val sponsor: Int = 0,
         @SerialName("vip_info")
-        val vipInfo: VipInfo = VipInfo()
+        val vipInfo: VipInfo = VipInfo(),
     ) {
         @Serializable
         data class VipInfo(
@@ -317,7 +317,7 @@ data class BangumiDetail(
             @SerialName("status")
             val status: Int = 0,
             @SerialName("type")
-            val type: Int = 0
+            val type: Int = 0,
         )
     }
 }

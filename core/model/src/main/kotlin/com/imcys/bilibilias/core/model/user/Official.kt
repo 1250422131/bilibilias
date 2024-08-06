@@ -12,5 +12,5 @@ data class Official(
     @SerialName("title")
     val title: String = "",
     @SerialName("type")
-    val type: Int = 0
+    val type: Int = 0,
 )

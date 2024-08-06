@@ -12,5 +12,5 @@ data class Danmaku(
     @SerialName("text")
     val text: String = "",
     @SerialName("value")
-    val value: Int = 0
+    val value: Int = 0,
 )

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.datastore.preferences;
+package com.imcys.bilibilias.core.datastore.preferences
 
 import com.imcys.bilibilias.core.datastore.UserPreferences
 import com.imcys.bilibilias.core.datastore.UserPreferencesSerializer

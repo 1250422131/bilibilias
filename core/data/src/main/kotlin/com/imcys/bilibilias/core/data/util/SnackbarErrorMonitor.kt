@@ -70,27 +70,21 @@ class SnackbarErrorMonitor @Inject constructor(val networkMonitor: NetworkMonito
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String? {
-        return addErrorMessage(error, type, MessageDuration.Short, action)
-    }
+    ): String? = addErrorMessage(error, type, MessageDuration.Short, action)
 
     override fun addLongErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String? {
-        return addErrorMessage(error, type, MessageDuration.Long, action)
-    }
+    ): String? = addErrorMessage(error, type, MessageDuration.Long, action)
 
     override fun addIndefiniteErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String? {
-        return addErrorMessage(error, type, MessageDuration.Indefinite, action)
-    }
+    ): String? = addErrorMessage(error, type, MessageDuration.Indefinite, action)
 
     /**
      * Removes the [ErrorMessage] with the specified [id] from the list.
