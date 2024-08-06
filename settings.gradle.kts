@@ -44,7 +44,6 @@ include(":core:screenshot-testing")
 include(":core:testing")
 include(":core:ui")
 
-include(":feature:authentication")
 include(":feature:authorspace")
 include(":feature:common")
 include(":feature:download")
