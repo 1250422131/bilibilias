@@ -4,5 +4,5 @@ plugins {
 }
 
 android {
-    namespace = "com.imcys.bilibili.uitesthiltmanifest"
+    namespace = "com.imcys.bilibilias.uitesthiltmanifest"
 }

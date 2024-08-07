@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui
 
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.Posture
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.runtime.CompositionLocalProvider
@@ -79,7 +78,6 @@ class AsAppScreenSizesScreenshotTests {
         hiltRule.inject()
     }
 
-    @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     private fun testAsAppScreenshotWithSize(width: Dp, height: Dp, screenshotName: String) {
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -89,9 +87,7 @@ class AsAppScreenSizesScreenshotTests {
                     override = DeviceConfigurationOverride.ForcedSize(DpSize(width, height)),
                 ) {
                     AsTheme {
-                        val fakeAppState = rememberAsAppState(
-                            errorMonitor = errorMonitor,
-                        )
+                        val fakeAppState = rememberAsAppState(errorMonitor = errorMonitor)
                         AsApp(
                             fakeAppState,
                             rootComponentFactory(DefaultComponentContext(LifecycleRegistry())),
