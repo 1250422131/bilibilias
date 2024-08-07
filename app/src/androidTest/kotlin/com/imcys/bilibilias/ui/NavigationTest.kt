@@ -53,17 +53,12 @@ class NavigationTest {
         ReadOnlyProperty<Any, String> { _, _ -> activity.getString(resId) }
 
     // The strings used for matching in these tests
-    private val navigateUp = "navigateUp"
     private val home by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_home)
     private val tool by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_tool)
     private val download by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_download)
     private val user by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_user)
 
-    private val sampleTopic = "Headlines"
     private val appName by composeTestRule.stringResource(R.string.app_name)
-    private val settings = "settings"
-    private val brand = "brand"
-    private val ok = "OK"
 
     @BeforeTest
     fun setup() {
