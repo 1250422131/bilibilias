@@ -233,7 +233,6 @@ com.google.guava:guava:33.0.0-android
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
 com.kuaishou:akdanmaku:1.0.3
 com.lazygeniouz:dfc:1.0.8
-com.squareup.okhttp3:okhttp-brotli:4.12.0
 com.squareup.okhttp3:okhttp:4.12.0
 com.squareup.okio:okio-jvm:3.9.0
 com.squareup.okio:okio:3.9.0
@@ -294,7 +293,6 @@ io.ktor:ktor-websockets-jvm:2.3.12
 io.ktor:ktor-websockets:2.3.12
 jakarta.inject:jakarta.inject-api:2.0.1
 javax.inject:javax.inject:1
-org.brotli:dec:0.1.2
 org.jetbrains.compose.foundation:foundation:1.6.11
 org.jetbrains.compose.material3:material3:1.6.10
 org.jetbrains.compose.runtime:runtime:1.6.11
