@@ -5,7 +5,12 @@ import java.text.DecimalFormat
 import kotlin.math.roundToLong
 
 enum class DataUnit(val shortName: String) {
-    BYTES("B"), KILOBYTES("KB"), MEGABYTES("MB"), GIGABYTES("GB"), TERABYTES("TB"), PETABYTES("PB")
+    BYTES("B"),
+    KILOBYTES("KB"),
+    MEGABYTES("MB"),
+    GIGABYTES("GB"),
+    TERABYTES("TB"),
+    PETABYTES("PB"),
 }
 
 /** Bytes per Kilobyte.*/
@@ -82,37 +87,23 @@ value class DataSize internal constructor(private val rawBytes: Long) : Comparab
 
     fun toLong(unit: DataUnit): Long = convertDataUnit(rawBytes, DataUnit.BYTES, unit)
 
-    operator fun unaryMinus(): DataSize {
-        return DataSize(-this.rawBytes)
-    }
+    operator fun unaryMinus(): DataSize = DataSize(-this.rawBytes)
 
-    operator fun plus(other: DataSize): DataSize {
-        return DataSize(Math.addExact(this.rawBytes, other.rawBytes))
-    }
+    operator fun plus(other: DataSize): DataSize = DataSize(Math.addExact(this.rawBytes, other.rawBytes))
 
     operator fun minus(other: DataSize): DataSize {
         return this + (-other) // a - b = a + (-b)
     }
 
-    operator fun times(scale: Int): DataSize {
-        return DataSize(Math.multiplyExact(this.rawBytes, scale.toLong()))
-    }
+    operator fun times(scale: Int): DataSize = DataSize(Math.multiplyExact(this.rawBytes, scale.toLong()))
 
-    operator fun div(scale: Int): DataSize {
-        return DataSize(this.rawBytes / scale)
-    }
+    operator fun div(scale: Int): DataSize = DataSize(this.rawBytes / scale)
 
-    operator fun times(scale: Double): DataSize {
-        return DataSize((this.rawBytes * scale).roundToLong())
-    }
+    operator fun times(scale: Double): DataSize = DataSize((this.rawBytes * scale).roundToLong())
 
-    operator fun div(scale: Double): DataSize {
-        return DataSize((this.rawBytes / scale).roundToLong())
-    }
+    operator fun div(scale: Double): DataSize = DataSize((this.rawBytes / scale).roundToLong())
 
-    override fun compareTo(other: DataSize): Int {
-        return this.rawBytes.compareTo(other.rawBytes)
-    }
+    override fun compareTo(other: DataSize): Int = this.rawBytes.compareTo(other.rawBytes)
 
     override fun toString(): String = String.format("%dB", rawBytes)
 
@@ -129,13 +120,9 @@ value class DataSize internal constructor(private val rawBytes: Long) : Comparab
     }
 
     companion object {
-        fun Long.toDataSize(unit: DataUnit): DataSize {
-            return DataSize(convertDataUnit(this, unit, DataUnit.BYTES))
-        }
+        fun Long.toDataSize(unit: DataUnit): DataSize = DataSize(convertDataUnit(this, unit, DataUnit.BYTES))
 
-        fun Double.toDataSize(unit: DataUnit): DataSize {
-            return DataSize(convertDataUnit(this, unit, DataUnit.BYTES).roundToLong())
-        }
+        fun Double.toDataSize(unit: DataUnit): DataSize = DataSize(convertDataUnit(this, unit, DataUnit.BYTES).roundToLong())
 
         inline val Long.bytes get() = this.toDataSize(DataUnit.BYTES)
         inline val Long.kb get() = this.toDataSize(DataUnit.KILOBYTES)

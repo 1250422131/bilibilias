@@ -18,7 +18,6 @@ internal interface TestDataModule {
     @Binds
     fun bindsNetworkMonitor(networkMonitor: AlwaysOnlineNetworkMonitor): NetworkMonitor
 
-
     @Binds
     fun bindsErrorMonitor(errorMonitor: FakeErrorMonitor): ErrorMonitor
 }
