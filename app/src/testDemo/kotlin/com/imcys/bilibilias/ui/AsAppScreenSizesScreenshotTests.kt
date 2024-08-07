@@ -12,8 +12,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import com.arkivanov.decompose.DefaultComponentContext
-import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
@@ -71,7 +69,7 @@ class AsAppScreenSizesScreenshotTests {
     lateinit var errorMonitor: ErrorMonitor
 
     @Inject
-    lateinit var rootComponentFactory: RootComponent.Factory
+    lateinit var rootComponent: RootComponent
 
     @Before
     fun setup() {
@@ -90,7 +88,7 @@ class AsAppScreenSizesScreenshotTests {
                         val fakeAppState = rememberAsAppState(errorMonitor = errorMonitor)
                         AsApp(
                             fakeAppState,
-                            rootComponentFactory(DefaultComponentContext(LifecycleRegistry())),
+                            rootComponent,
                             windowAdaptiveInfo = WindowAdaptiveInfo(
                                 windowSizeClass = WindowSizeClass.compute(
                                     width.value,

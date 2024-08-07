@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DestinationModule {
+interface ComponentModule {
 
     @Binds
     fun componentRootFactory(impl: DefaultRootComponent.Factory): RootComponent.Factory
