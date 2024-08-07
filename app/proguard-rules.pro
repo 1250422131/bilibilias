@@ -63,4 +63,6 @@
 # 这个过滤器是谷歌推荐的算法，一般不做更改
 -optimizations !code/simplification/cast,!field/*,!class/merging/*
 
--keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+##---------------Begin: proguard configuration for Pusher Java Client  ----------
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+##---------------End: proguard configuration for Pusher Java Client  ----------
