@@ -102,5 +102,9 @@ gradlePlugin {
             id = "bilibilias.compose.compiler.report"
             implementationClass = "ComposeCompilerReportPlugin"
         }
+        register("androidOptionsUnitTests") {
+            id = "bilibilias.android.testoptions"
+            implementationClass = "AndroidTestOptionsUnitTestsConventionPlugin"
+        }
     }
 }
