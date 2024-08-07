@@ -18,7 +18,7 @@ class UsersDataSource @Inject constructor(
 
     suspend fun setLoginState(state: Boolean) {
         dataStore.updateData {
-            it.copy(isLogined = state)
+            it.copy(isLogin = state)
         }
     }
 }
