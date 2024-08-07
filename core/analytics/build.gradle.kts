@@ -11,8 +11,4 @@ android {
 
 dependencies {
     implementation(libs.androidx.compose.runtime)
-
-    implementation(libs.umeng.common)
-    implementation(libs.umeng.asms)
-    implementation(libs.umeng.abtest)
 }

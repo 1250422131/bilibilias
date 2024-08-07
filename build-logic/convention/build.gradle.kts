@@ -1,5 +1,5 @@
 plugins {
-     `kotlin-dsl`
+    alias(libs.plugins.kotlin.dsl)
 }
 
 group = "com.imcys.bilibilias.buildlogic"
@@ -17,12 +17,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.detekt.gradlePlugin)
     compileOnly(libs.kotlin.power.assert.gradlePlugin)
-//    compileOnly(libs.compose.compiler.report.gradlePlugin) {
-//        repositories {
-////            mavenCentral()
-//            gradlePluginPortal()
-//        }
-//    }
+    implementation(libs.truth)
 }
 
 tasks {

@@ -27,7 +27,7 @@ private const val TAG = "DownloadManager"
 class AsDownloadListener @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
-    private val toastMachine: ErrorMonitor,
+    private val errorMonitor: ErrorMonitor,
     private val taskDao: DownloadTaskDao,
 ) : DownloadListener1() {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
@@ -41,7 +41,7 @@ class AsDownloadListener @Inject constructor(
         scope.launch {
             Napier.d(tag = TAG) { "任务开始 ${task.filename}" }
             val asTask = taskQueue.first { it.okTask === task }
-            val info = asTask.viewInfo
+            val info = asTask.ids
             val taskEntity = DownloadTaskEntity(
                 uri = asTask.okTask.uri,
                 aid = info.aid,
@@ -49,11 +49,11 @@ class AsDownloadListener @Inject constructor(
                 cid = info.cid,
                 fileType = asTask.fileType,
                 subTitle = asTask.subTitle,
-                title = info.title,
+                title = asTask.title,
                 state = State.RUNNING,
             )
             taskDao.insertOrUpdate(taskEntity)
-            toastMachine.addShortErrorMessage("添加任务到下载队列")
+            errorMonitor.addShortErrorMessage("添加任务到下载队列")
         }
     }
 
@@ -66,7 +66,7 @@ class AsDownloadListener @Inject constructor(
         scope.launch {
             Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.filename}" }
             val asTask = taskQueue.first { it.okTask === task }
-            val info = asTask.viewInfo
+            val info = asTask.ids
             taskDao.updateStateByUri(
                 if (realCause == null) State.COMPLETED else State.ERROR,
                 task.uri,
@@ -80,7 +80,7 @@ class AsDownloadListener @Inject constructor(
                     defaultGroupTaskCall.execute(GroupTask(v, a))
                 }
             }
-            toastMachine.addShortErrorMessage("添加任务到下载队列")
+            errorMonitor.addShortErrorMessage("添加任务到下载队列")
         }
     }
 
@@ -94,7 +94,7 @@ class AsDownloadListener @Inject constructor(
         } else {
             "$filename·下载失败" to MessageType.Error
         }
-        toastMachine.addShortErrorMessage(messageWithType.first, messageWithType.second)
+        errorMonitor.addShortErrorMessage(messageWithType.first, messageWithType.second)
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
