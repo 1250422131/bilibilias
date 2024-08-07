@@ -60,7 +60,6 @@ napier = "2.7.1"
 okhttp = "4.12.0"
 okio = "3.9.0"
 qrose = "1.0.1"
-wire = "5.0.0"
 robolectric = "4.13"
 roborazzi = "1.26.0"
 sonner = "0.3.8"
@@ -215,9 +214,6 @@ strikt-core = { group = "io.strikt", name = "strikt-core", version.ref = "strikt
 
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-
-wire-gradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
-wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }

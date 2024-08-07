@@ -42,7 +42,7 @@ class MixingInterceptor @Inject constructor(
         if (!enable) return
         scope.launch {
             errorMonitor.addShortErrorMessage("开始合并视频: ${message.video.subTitle}")
-            val path = userPreferences.userData.first().storagePath
+            val path = userPreferences.userData.first().storageFolder
             Napier.d { "指定路径 $path" }
             if (path != null) {
                 指定写入路径(message, path)

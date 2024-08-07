@@ -12,7 +12,6 @@ android {
 
 dependencies {
     api(libs.androidx.dataStore)
-    api(projects.core.datastoreProto)
     api(projects.core.model)
 
     implementation(projects.core.common)

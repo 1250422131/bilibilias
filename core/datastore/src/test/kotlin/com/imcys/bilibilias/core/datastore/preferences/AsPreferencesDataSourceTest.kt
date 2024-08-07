@@ -30,7 +30,7 @@ class AsPreferencesDataSourceTest {
     @Test
     fun changeFileStoragePath_pathIsNotNull() = testScope.runTest {
         val testPath = "test"
-        subject.setFileStoragePath(testPath)
+        subject.setStorageFolder(testPath)
 
         assertEquals(testPath, subject.userData.first().storagePath)
     }
