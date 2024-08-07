@@ -40,35 +40,23 @@ class DefaultSettingsComponent @AssistedInject constructor(
     override fun models(events: Flow<UserEditEvent>): UserEditableSettings {
         val userData by asPreferencesDataSource.userData.collectAsState(
             initial = UserData(
-                storagePath = DEFAULT_STORE_PATH,
-                namingRule = DEFAULT_NAMING_RULE,
-                autoMerge = true,
-                autoImport = false,
-                shouldAppcenter = true,
-                command = DEFAULT_COMMAND,
+                storageFolder = DEFAULT_STORE_PATH,
+                fileNamesConvention = DEFAULT_NAMING_RULE,
+                ffmpegCommand = DEFAULT_COMMAND,
             ),
             context = viewModelScope.coroutineContext,
         )
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
-                    is UserEditEvent.ChangeAutoImport ->
-                        asPreferencesDataSource.setAutoImportToBilibili(event.state)
-
-                    is UserEditEvent.ChangeAutoMerge ->
-                        asPreferencesDataSource.setAutoMerge(event.state)
-
                     is UserEditEvent.EditCommand ->
-                        asPreferencesDataSource.setCommand(event.text)
+                        asPreferencesDataSource.setFfmpegCommand(event.text)
 
                     is UserEditEvent.EditNamingRule ->
-                        asPreferencesDataSource.setFileNameRule(event.rule)
+                        asPreferencesDataSource.setFileNamesConvention(event.rule)
 
                     is UserEditEvent.SelectedStoragePath ->
-                        asPreferencesDataSource.setFileStoragePath(event.path)
-
-                    is UserEditEvent.ChangeWill ->
-                        asPreferencesDataSource.setShouldAppcenter(event.state)
+                        asPreferencesDataSource.setStorageFolder(event.path)
 
                     UserEditEvent.Logout -> usersDataSource.setLoginState(false)
 
@@ -81,16 +69,15 @@ class DefaultSettingsComponent @AssistedInject constructor(
                         val oldLogFile = File(DevUtils.getContext().externalCacheDir, "old_log.txt")
                         shareLog(oldLogFile)
                     }
+
+                    else -> Unit
                 }
             }
         }
         return UserEditableSettings(
-            storagePath = userData.storagePath ?: DEFAULT_STORE_PATH,
-            namingRule = userData.namingRule ?: DEFAULT_NAMING_RULE,
-            autoMerge = true,
-            autoImport = false,
-            command = userData.command ?: DEFAULT_COMMAND,
-            shouldAppcenter = true,
+            storagePath = userData.storageFolder ?: DEFAULT_STORE_PATH,
+            namingRule = userData.fileNamesConvention ?: DEFAULT_NAMING_RULE,
+            command = userData.ffmpegCommand ?: DEFAULT_COMMAND,
         )
     }
 

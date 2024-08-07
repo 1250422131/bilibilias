@@ -3,9 +3,6 @@ buildscript {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath(libs.wire.gradlePlugin)
-    }
 }
 
 plugins {
