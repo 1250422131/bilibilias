@@ -12,7 +12,7 @@ class SplashComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val usersDataSource: UsersDataSource,
 ) : ComponentContext by componentContext {
-    val isLogin: Boolean = runBlocking { usersDataSource.users.first().isLogined }
+    val isLogin: Boolean = runBlocking { usersDataSource.users.first().isLogin }
 
     @AssistedFactory
     interface Factory {
