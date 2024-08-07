@@ -84,10 +84,8 @@ class DownloadManager @Inject constructor(
                         ""
                     },
                     vTask = { url: String, ids: ViewIds, subTitle: String, type: FileType ->
-
                     },
                     aTask = { url: String, ids: ViewIds, subTitle: String, type: FileType ->
-
                     },
                 )
             }
@@ -127,21 +125,20 @@ class DownloadManager @Inject constructor(
         getDownloadUrl: suspend (aid: Aid, bvid: Bvid, cid: Cid) -> VideoStreamUrl,
         videoStrategy: suspend (sources: List<Video>, detail: ViewDetail, page: ViewDetail.Pages) -> AsDownloadTask?,
         audioStrategy: suspend (sources: List<Audio>, detail: ViewDetail, page: ViewDetail.Pages) -> AsDownloadTask?,
-    ): suspend (info: ViewInfo) -> TaskResult {
-        return {
-            var result: TaskResult = TaskResult.Success
-            val detail = getDetail(it.bvid)
-            val downloadUrl = getDownloadUrl(it.aid, it.bvid, it.cid)
-            val page = detail.pages.single { it.cid == it.cid }
-            Napier.d { "选中的子集 $page" }
-            val newTaskType = when (taskType) {
-                TaskType.ALL -> arrayOf(TaskType.VIDEO, TaskType.AUDIO)
-                TaskType.VIDEO -> arrayOf(TaskType.VIDEO)
-                TaskType.AUDIO -> arrayOf(TaskType.AUDIO)
-            }
-            newTaskType.forEach {
-                when (it) {
-                    TaskType.VIDEO -> {
+    ): suspend (info: ViewInfo) -> TaskResult = {
+        var result: TaskResult = TaskResult.Success
+        val detail = getDetail(it.bvid)
+        val downloadUrl = getDownloadUrl(it.aid, it.bvid, it.cid)
+        val page = detail.pages.single { it.cid == it.cid }
+        Napier.d { "选中的子集 $page" }
+        val newTaskType = when (taskType) {
+            TaskType.ALL -> arrayOf(TaskType.VIDEO, TaskType.AUDIO)
+            TaskType.VIDEO -> arrayOf(TaskType.VIDEO)
+            TaskType.AUDIO -> arrayOf(TaskType.AUDIO)
+        }
+        newTaskType.forEach {
+            when (it) {
+                TaskType.VIDEO -> {
 //                        val task = videoStrategy(downloadUrl.dash.video, detail, page)
 //                        Napier.d { "视频任务 $task" }
 //                        if (task != null) {
@@ -149,9 +146,9 @@ class DownloadManager @Inject constructor(
 //                        } else {
 //                            result = TaskResult.Failure
 //                        }
-                    }
+                }
 
-                    TaskType.AUDIO -> {
+                TaskType.AUDIO -> {
 //                        val task = audioStrategy(downloadUrl.dash.audio, detail, page)
 //                        Napier.d { "音频任务 $task" }
 //                        if (task != null) {
@@ -159,14 +156,13 @@ class DownloadManager @Inject constructor(
 //                        } else {
 //                            result = TaskResult.Failure
 //                        }
-                    }
-
-                    TaskType.ALL -> throw UnsupportedOperationException()
                 }
+
+                TaskType.ALL -> throw UnsupportedOperationException()
             }
-            Napier.d { "任务是否成功: $result, 任务类型: $taskType" }
-            result
         }
+        Napier.d { "任务是否成功: $result, 任务类型: $taskType" }
+        result
     }
 
     suspend fun downloadedTest(

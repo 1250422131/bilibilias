@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.core.network.ktor.plugin.logging
 
 import io.ktor.client.HttpClient
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 /**

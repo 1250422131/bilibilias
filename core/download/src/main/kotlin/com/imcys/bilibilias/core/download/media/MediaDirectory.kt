@@ -5,7 +5,7 @@ import java.io.File
 
 enum class ImageMediaDirectory(val folderName: String) {
     PICTURES(Environment.DIRECTORY_PICTURES),
-    DCIM(Environment.DIRECTORY_DCIM)
+    DCIM(Environment.DIRECTORY_DCIM),
 }
 
 enum class AudioMediaDirectory(val folderName: String) {
@@ -13,12 +13,12 @@ enum class AudioMediaDirectory(val folderName: String) {
     PODCASTS(Environment.DIRECTORY_PODCASTS),
     RINGTONES(Environment.DIRECTORY_RINGTONES),
     ALARMS(Environment.DIRECTORY_ALARMS),
-    NOTIFICATIONS(Environment.DIRECTORY_NOTIFICATIONS)
+    NOTIFICATIONS(Environment.DIRECTORY_NOTIFICATIONS),
 }
 
 enum class VideoMediaDirectory(val folderName: String) {
     MOVIES(Environment.DIRECTORY_MOVIES),
-    DCIM(Environment.DIRECTORY_DCIM)
+    DCIM(Environment.DIRECTORY_DCIM),
 }
 
 enum class PublicDirectory(val folderName: String) {
@@ -69,7 +69,8 @@ enum class PublicDirectory(val folderName: String) {
      * Returns `null` if you have no URI permissions for read and write in Android 10.
      * @see DocumentFileCompat.fromPublicFolder
      */
-    DOCUMENTS(Environment.DIRECTORY_DOCUMENTS);
+    DOCUMENTS(Environment.DIRECTORY_DOCUMENTS),
+    ;
 
     @Suppress("DEPRECATION")
     val file: File

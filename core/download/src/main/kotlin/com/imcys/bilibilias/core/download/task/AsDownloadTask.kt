@@ -20,23 +20,19 @@ class AsDownloadTask {
 
     private fun createTask(
         fileType: FileType,
-        builder: DownloadTask.Builder
-    ): DownloadTask {
-        return builder
-            .setPassIfAlreadyCompleted(false)
-            .setAutoCallbackToUIThread(true)
-            .setMinIntervalMillisCallbackProcess(50)
-            .addHeader(
-                "User-Agent",
-                "Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36",
-            )
-            .addHeader("Referer", "https://www.bilibili.com/")
-            .setConnectionCount(1)
-            .setPriority(fileType.priority)
-            .build()
-    }
+        builder: DownloadTask.Builder,
+    ): DownloadTask = builder
+        .setPassIfAlreadyCompleted(false)
+        .setAutoCallbackToUIThread(true)
+        .setMinIntervalMillisCallbackProcess(50)
+        .addHeader(
+            "User-Agent",
+            "Mozilla/4.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/70.0.3538.77 Chrome/70.0.3538.77 Safari/537.36",
+        )
+        .addHeader("Referer", "https://www.bilibili.com/")
+        .setConnectionCount(1)
+        .setPriority(fileType.priority)
+        .build()
 
-    override fun toString(): String {
-        return "AsDownloadTask(subTitle='$subTitle', viewInfo=$viewInfo)"
-    }
+    override fun toString(): String = "AsDownloadTask(subTitle='$subTitle', viewInfo=$viewInfo)"
 }

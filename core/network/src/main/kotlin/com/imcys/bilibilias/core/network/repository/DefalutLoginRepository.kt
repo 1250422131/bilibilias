@@ -32,9 +32,7 @@ class DefalutLoginRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val json: Json,
 ) : LoginRepository {
-    override suspend fun 获取二维码(): QrcodeGenerate {
-        return client.get(BilibiliApi.WEB_QRCODE_GENERATE).body<QrcodeGenerate>()
-    }
+    override suspend fun 获取二维码(): QrcodeGenerate = client.get(BilibiliApi.WEB_QRCODE_GENERATE).body<QrcodeGenerate>()
 
     override suspend fun 轮询登录(key: String): QrcodePoll {
         val response = client.get(BilibiliApi.WEB_QRCODE_POLL) {
@@ -47,9 +45,7 @@ class DefalutLoginRepository @Inject constructor(
         return response
     }
 
-    override suspend fun nav(): NavigationBar {
-        return client.get(BilibiliApi.NAV_BAR).body()
-    }
+    override suspend fun nav(): NavigationBar = client.get(BilibiliApi.NAV_BAR).body()
 
     override suspend fun exitLogin() {
         // val cookie = asCookieStoreDataSource.cookieStore.first()["bili_jct"]
