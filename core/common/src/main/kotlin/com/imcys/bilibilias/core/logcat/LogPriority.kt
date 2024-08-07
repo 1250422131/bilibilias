@@ -5,12 +5,12 @@ package com.imcys.bilibilias.core.logcat
  * without a direct import.
  */
 enum class LogPriority(
-  val priorityInt: Int
+    val priorityInt: Int,
 ) {
-  VERBOSE(2),
-  DEBUG(3),
-  INFO(4),
-  WARN(5),
-  ERROR(6),
-  ASSERT(7);
+    VERBOSE(2),
+    DEBUG(3),
+    INFO(4),
+    WARN(5),
+    ERROR(6),
+    ASSERT(7),
 }

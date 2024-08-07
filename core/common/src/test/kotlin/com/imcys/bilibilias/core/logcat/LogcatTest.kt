@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.core.logcat
 
-import org.hamcrest.MatcherAssert.assertThat
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -29,7 +28,10 @@ class LogcatTest {
 
     @Test
     fun `logcat() logs message from lambda`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         logcat { "Hi" }
         assertEquals("Hi", logger.latestLog!!.message)
@@ -37,7 +39,10 @@ class LogcatTest {
 
     @Test
     fun `logcat() captures tag from outer context class name`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         logcat { "Hi" }
 
@@ -46,7 +51,10 @@ class LogcatTest {
 
     @Test
     fun `logcat() tag overriding passes tag to logger`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         logcat(tag = "Bonjour") { "Hi" }
 
@@ -55,7 +63,10 @@ class LogcatTest {
 
     @Test
     fun `logcat() passes priority to logger`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         logcat(LogPriority.INFO) { "Hi" }
 
@@ -65,8 +76,14 @@ class LogcatTest {
     @Test
     fun `logcat() passes priority to isLoggable check`() {
         var receivedPriority: LogPriority? = null
-        TestLogcatLogger(isLoggable = { receivedPriority = it; true })
-            .apply { LogcatLogger.install(this); latestLog = null }
+        TestLogcatLogger(isLoggable = {
+            receivedPriority = it
+            true
+        })
+            .apply {
+                LogcatLogger.install(this)
+                latestLog = null
+            }
 
         logcat(LogPriority.INFO) { "Hi" }
 
@@ -76,7 +93,8 @@ class LogcatTest {
     @Test
     fun `when not loggable, the message lambda isn't invoked`() {
         TestLogcatLogger(isLoggable = { false }).apply {
-            LogcatLogger.install(this); latestLog = null
+            LogcatLogger.install(this)
+            latestLog = null
         }
         var count = 0
 
@@ -87,7 +105,10 @@ class LogcatTest {
 
     @Test
     fun `Throwable asLogMessage() has stacktrace logged`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
         val exception = RuntimeException("damn")
 
         logcat { exception.asLog() }
@@ -95,13 +116,16 @@ class LogcatTest {
             logger.latestLog!!.message,
             """
 at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stacktrace logged(LogcatTest.kt:
-      """.trimMargin(),
+            """.trimMargin(),
         )
     }
 
     @Test
     fun `standalone function can log with tag`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         standaloneFunctionLog(tag = "Bonjour", message = { "Hi" })
 
@@ -113,7 +137,10 @@ at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stac
 
     @Test
     fun `logcat() captures outer this tag from lambda`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         val lambda = {
             logcat { "Hi" }
@@ -125,7 +152,10 @@ at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stac
 
     @Test
     fun `logcat() captures outer this tag from nested lambda`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         val lambda = {
             val lambda = {
@@ -140,7 +170,10 @@ at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stac
 
     @Test
     fun `logcat() captures outer this tag from anonymous object`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         val anonymousRunnable = object : Runnable {
             override fun run() {
@@ -154,7 +187,10 @@ at com.imcys.bilibilias.core.logcat.LogcatTest.Throwable asLogMessage() has stac
 
     @Test
     fun `logcat() captures tag from companion function`() {
-        val logger = TestLogcatLogger().apply { LogcatLogger.install(this); latestLog = null }
+        val logger = TestLogcatLogger().apply {
+            LogcatLogger.install(this)
+            latestLog = null
+        }
 
         companionFunctionLog { "Hi" }
 

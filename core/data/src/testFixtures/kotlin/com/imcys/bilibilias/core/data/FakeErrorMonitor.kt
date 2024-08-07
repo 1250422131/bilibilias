@@ -18,27 +18,21 @@ class FakeErrorMonitor @Inject constructor() : ErrorMonitor {
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String {
-        return "1"
-    }
+    ): String = "1"
 
     override fun addLongErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String {
-        return "2"
-    }
+    ): String = "2"
 
     override fun addIndefiniteErrorMessage(
         error: String,
         type: MessageType,
         label: String?,
         action: (() -> Unit)?,
-    ): String {
-        return "3"
-    }
+    ): String = "3"
 
     override fun clearErrorMessage(id: String) {
         // Do nothing

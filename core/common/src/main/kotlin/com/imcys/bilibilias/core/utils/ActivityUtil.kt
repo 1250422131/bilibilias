@@ -19,18 +19,16 @@ tailrec fun Context.getActivity(): Activity = when (this) {
     else -> error("Permissions should be called in the context of an Activity")
 }
 
-suspend fun scanFile(file: File, mimeType: String): Uri? {
-    return suspendCancellableCoroutine { continuation ->
-        MediaScannerConnection.scanFile(
-            DevUtils.getContext(),
-            arrayOf(file.toString()),
-            arrayOf(mimeType)
-        ) { _, scannedUri ->
-            if (scannedUri == null) {
-                continuation.cancel(Exception("File $file could not be scanned"))
-            } else {
-                continuation.resume(scannedUri)
-            }
+suspend fun scanFile(file: File, mimeType: String): Uri? = suspendCancellableCoroutine { continuation ->
+    MediaScannerConnection.scanFile(
+        DevUtils.getContext(),
+        arrayOf(file.toString()),
+        arrayOf(mimeType),
+    ) { _, scannedUri ->
+        if (scannedUri == null) {
+            continuation.cancel(Exception("File $file could not be scanned"))
+        } else {
+            continuation.resume(scannedUri)
         }
     }
 }
@@ -42,7 +40,7 @@ suspend fun scanUri(uri: Uri, mimeType: String): Uri? {
         arrayOf(MediaStore.Files.FileColumns.DATA),
         null,
         null,
-        null
+        null,
     ) ?: throw Exception("Uri $uri could not be found")
 
     val path = cursor.use {
@@ -57,7 +55,7 @@ suspend fun scanUri(uri: Uri, mimeType: String): Uri? {
         MediaScannerConnection.scanFile(
             context,
             arrayOf(path),
-            arrayOf(mimeType)
+            arrayOf(mimeType),
         ) { _, scannedUri ->
             if (scannedUri == null) {
                 continuation.cancel(Exception("File $path could not be scanned"))
@@ -67,4 +65,3 @@ suspend fun scanUri(uri: Uri, mimeType: String): Uri? {
         }
     }
 }
-

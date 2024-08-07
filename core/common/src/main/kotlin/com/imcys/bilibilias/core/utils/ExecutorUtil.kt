@@ -13,13 +13,9 @@ object ExecutorUtil {
 
 fun Executor.asNonTerminatingExecutorService(): ExecutorService =
     object : Executor by this, AbstractExecutorService() {
-        override fun shutdown() {
-            throw UnsupportedOperationException("shutdown is not implemented")
-        }
+        override fun shutdown(): Unit = throw UnsupportedOperationException("shutdown is not implemented")
 
-        override fun shutdownNow(): MutableList<Runnable> {
-            throw UnsupportedOperationException("shutdownNow is not implemented")
-        }
+        override fun shutdownNow(): MutableList<Runnable> = throw UnsupportedOperationException("shutdownNow is not implemented")
 
         override fun isShutdown(): Boolean = false
 
