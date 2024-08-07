@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * Interface implementation for handling general errors.
  */
 
-class SnackbarErrorMonitor @Inject constructor(val networkMonitor: NetworkMonitor) : ErrorMonitor {
+class SnackbarErrorMonitor @Inject constructor(networkMonitor: NetworkMonitor) : ErrorMonitor {
     /**
      * List of [ErrorMessage] to be shown to the user, via Snackbar.
      */
