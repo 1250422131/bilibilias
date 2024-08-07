@@ -34,8 +34,6 @@ dependencies {
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
 
-    implementation(libs.okhttp.brotli)
-
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     testImplementation(libs.androidx.paging.common)
