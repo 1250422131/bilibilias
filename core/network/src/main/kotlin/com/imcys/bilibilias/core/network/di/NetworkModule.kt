@@ -53,7 +53,6 @@ import kotlinx.serialization.serializer
 import okhttp3.Cache
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import okhttp3.brotli.BrotliInterceptor
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -120,7 +119,6 @@ class NetworkModule {
                     .build()
                 chain.proceed(requestWithUserAgent)
             }
-            .addInterceptor(BrotliInterceptor)
             .pingInterval(1, TimeUnit.SECONDS)
             .dispatcher(Dispatcher(executorService))
             .cache(Cache(File(context.cacheDir.path, "okhttp_cache"), 1024 * 1024 * 50))
