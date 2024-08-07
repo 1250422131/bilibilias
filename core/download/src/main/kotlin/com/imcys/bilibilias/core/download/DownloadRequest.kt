@@ -2,8 +2,6 @@ package com.imcys.bilibilias.core.download
 
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.ViewInfo
-import dev.DevUtils
-import java.io.File
 
 data class DownloadRequest(
     val viewInfo: ViewInfo,

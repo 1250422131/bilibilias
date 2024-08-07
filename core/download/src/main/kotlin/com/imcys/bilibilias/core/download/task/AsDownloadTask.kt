@@ -8,7 +8,7 @@ import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
 import com.liulishuo.okdownload.DownloadTask
 
 class AsDownloadTask(
-    internal val viewInfo: ViewIds,
+    internal val ids: ViewIds,
     internal val title: String,
     internal val subTitle: String,
     internal val fileType: FileType,
