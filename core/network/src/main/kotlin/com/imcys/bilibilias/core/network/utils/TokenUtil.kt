@@ -26,9 +26,7 @@ object TokenUtil {
     fun encWbi(
         params: Map<String, Any>,
         timestamp: Long = System.currentTimeMillis(),
-    ): List<Parameter> {
-        return encWbi(params, token!!, timestamp)
-    }
+    ): List<Parameter> = encWbi(params, token!!, timestamp)
 
     fun encWbi(params: Map<String, Any>, mixinKey: String, timestamp: Long): List<Parameter> {
         val sortedMap = params.toSortedMap()

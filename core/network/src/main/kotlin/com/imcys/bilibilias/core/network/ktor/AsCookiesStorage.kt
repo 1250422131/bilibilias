@@ -22,9 +22,7 @@ class AsCookiesStorage @Inject constructor(
         if (cookie.name == "SESSDATA") usersDataSource.setLoginState(true)
     }
 
-    override suspend fun get(requestUrl: Url): List<KtorCookie> {
-        return asCookieStoreDataSource.cookies.first().values.map(AsCookie::mapToKtorCookie)
-    }
+    override suspend fun get(requestUrl: Url): List<KtorCookie> = asCookieStoreDataSource.cookies.first().values.map(AsCookie::mapToKtorCookie)
 
     override fun close() = Unit
 }

@@ -12,9 +12,7 @@ import javax.inject.Inject
 
 class AsLoggerImpl @Inject constructor(private val json: Json) : JsonAwareLogger {
 
-    override fun prettifyJson(message: String): String {
-        return json.encodeToString(json.parseToJsonElement(message))
-    }
+    override fun prettifyJson(message: String): String = json.encodeToString(json.parseToJsonElement(message))
 
     override fun log(message: String) {
         Napier.i(tag = "Ktor Client") { message }

@@ -4,7 +4,6 @@ import com.imcys.bilibilias.core.model.bilibilias.HomeBanner
 import com.imcys.bilibilias.core.model.bilibilias.UpdateNotice
 import com.imcys.bilibilias.core.network.api.BiliBiliAsApi
 import io.ktor.client.HttpClient
-
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
@@ -14,12 +13,10 @@ import javax.inject.Inject
 class BiliBiliAsRepository @Inject constructor(
     private val client: HttpClient,
 ) {
-    suspend fun getUpdateNotice(): UpdateNotice {
-        return client.get(BiliBiliAsApi.UPDATE_DATA) {
-            parameter("type", "json")
-            parameter("version", BiliBiliAsApi.VERSION)
-        }.body()
-    }
+    suspend fun getUpdateNotice(): UpdateNotice = client.get(BiliBiliAsApi.UPDATE_DATA) {
+        parameter("type", "json")
+        parameter("version", BiliBiliAsApi.VERSION)
+    }.body()
 
     suspend fun postSignatureMessage(sha: String, md5: Pair<String, Long>, crc: String) {
         client.get(BiliBiliAsApi.UPDATE_DATA) {

@@ -13,23 +13,19 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
 import javax.inject.Inject
-
+@Suppress("ktlint:standard:function-naming")
 class UserSpaceRepository @Inject constructor(
     private val client: HttpClient,
 ) {
-    suspend fun 查询用户创建的视频收藏夹(mid: Long): FavouredFolder {
-        return client.get(BilibiliApi.FAVOURED_FOLDER_ALL) {
-            parameterUpMid(mid)
-        }.body()
-    }
+    suspend fun 查询用户创建的视频收藏夹(mid: Long): FavouredFolder = client.get(BilibiliApi.FAVOURED_FOLDER_ALL) {
+        parameterUpMid(mid)
+    }.body()
 
-    suspend fun 查询用户投稿视频(mid: Long, next: Int, size: Int): SpaceArcSearch {
-        return client.get(BilibiliApi.SPACE_ARC_SEARCH) {
-            attributes.put(requireWbi, true)
-            header(HttpHeaders.Referrer, "https://www.bilibili.com")
-            parameterMid(mid)
-            parameter("pn", next)
-            parameter("ps", size.coerceAtMost(30))
-        }.body()
-    }
+    suspend fun 查询用户投稿视频(mid: Long, next: Int, size: Int): SpaceArcSearch = client.get(BilibiliApi.SPACE_ARC_SEARCH) {
+        attributes.put(requireWbi, true)
+        header(HttpHeaders.Referrer, "https://www.bilibili.com")
+        parameterMid(mid)
+        parameter("pn", next)
+        parameter("ps", size.coerceAtMost(30))
+    }.body()
 }

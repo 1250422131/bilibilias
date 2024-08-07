@@ -38,7 +38,7 @@ object WBIUtils {
 
     fun encWbi2(params: List<Parameter>, mixinKey: String): List<Parameter> {
         val map = sortedMapOf<String, String>(
-            "wts" to (System.currentTimeMillis() / 1000).toString()
+            "wts" to (System.currentTimeMillis() / 1000).toString(),
         ).apply {
             params.forEach { put(it.name, it.value) }
         }
@@ -46,12 +46,13 @@ object WBIUtils {
         val param = StringJoiner("&")
         map.forEach { entry ->
             param.add(
-                entry.key + "=" + entry.value.encodeURLParameter()
+                entry.key + "=" + entry.value.encodeURLParameter(),
             )
         }
         return map.map { Parameter(it.key, it.value) } +
             Parameter(
-                "w_rid", DigestUtils.md5Hex(param.toString() + mixinKey)
+                "w_rid",
+                DigestUtils.md5Hex(param.toString() + mixinKey),
             )
     }
 }

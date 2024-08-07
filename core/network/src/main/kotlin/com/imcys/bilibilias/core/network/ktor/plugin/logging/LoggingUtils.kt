@@ -77,5 +77,8 @@ private val JsonUtf8 =
     ContentType("application", "json", parameters = listOf(HeaderValueParam("charset", "utf-8")))
 
 internal fun String.prettifyJsonIfNeeded(contentType: ContentType?, logger: JsonAwareLogger) =
-    if (contentType == JsonUtf8 || contentType == Json || contentType == HalJson)
-        logger.prettifyJson(this) else this
+    if (contentType == JsonUtf8 || contentType == Json || contentType == HalJson) {
+        logger.prettifyJson(this)
+    } else {
+        this
+    }

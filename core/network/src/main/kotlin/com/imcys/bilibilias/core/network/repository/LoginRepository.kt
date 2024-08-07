@@ -4,6 +4,7 @@ import com.imcys.bilibilias.core.model.login.NavigationBar
 import com.imcys.bilibilias.core.model.login.QrcodeGenerate
 import com.imcys.bilibilias.core.model.login.QrcodePoll
 
+@Suppress("ktlint:standard:function-naming")
 interface LoginRepository {
     suspend fun 获取二维码(): QrcodeGenerate
 

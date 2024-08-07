@@ -8,13 +8,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import javax.inject.Inject
-
+@Suppress("ktlint:standard:function-naming")
 class UserRepository @Inject constructor(
     private val client: HttpClient,
-) { suspend fun 用户名片信息(mid: Long): Card {
-    Napier.d { mid.toString() }
-    return client.get(BilibiliApi.CARD) {
-        parameterMid(mid)
-    }.body()
-}
+) {
+    suspend fun 用户名片信息(mid: Long): Card {
+        Napier.d { mid.toString() }
+        return client.get(BilibiliApi.CARD) {
+            parameterMid(mid)
+        }.body()
+    }
 }

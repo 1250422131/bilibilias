@@ -20,36 +20,30 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.request
 import javax.inject.Inject
-
+@Suppress("ktlint:standard:function-naming")
 class VideoRepository @Inject constructor(
     private val client: HttpClient,
 ) {
-    suspend fun shortLink(url: String): String {
-        return client.get(url)
-            .request
-            .url
-            .toString()
-    }
+    suspend fun shortLink(url: String): String = client.get(url)
+        .request
+        .url
+        .toString()
 
-    suspend fun playerPlayUrl(aid: Long, bvid: String, cid: Long): VideoStreamUrl {
-        return client.get("x/player/wbi/playurl") {
-            attributes.put(requireWbi, true)
-            parameterAVid(aid)
-            parameterBVid(bvid)
-            parameterCid(cid)
-            parameter("qn", 127)
-            parameter("fnver", 0)
-            parameter("fnval", 4048)
-            parameter("fourk", 1)
-            parameter("from_client", "BROWSER")
-        }.body()
-    }
+    suspend fun playerPlayUrl(aid: Long, bvid: String, cid: Long): VideoStreamUrl = client.get("x/player/wbi/playurl") {
+        attributes.put(requireWbi, true)
+        parameterAVid(aid)
+        parameterBVid(bvid)
+        parameterCid(cid)
+        parameter("qn", 127)
+        parameter("fnver", 0)
+        parameter("fnval", 4048)
+        parameter("fourk", 1)
+        parameter("from_client", "BROWSER")
+    }.body()
 
-    suspend fun 获取视频详细信息(bvid: String): ViewDetail {
-        return client.get(BilibiliApi.VIEW) {
-            parameterBVid(bvid)
-        }.body()
-    }
+    suspend fun 获取视频详细信息(bvid: String): ViewDetail = client.get(BilibiliApi.VIEW) {
+        parameterBVid(bvid)
+    }.body()
 
     /**
      * 检验是否点赞
@@ -80,29 +74,23 @@ class VideoRepository @Inject constructor(
         return response.favoured
     }
 
-    suspend fun 点赞视频(hasLike: Boolean, bvid: String): Response {
-        return client.post(BilibiliApi.ARCHIVE_LIKE) {
-            attributes.put(requireCSRF, true)
-            parameterBVid(bvid)
-            parameter("like", if (hasLike) 2 else 1)
-        }.body<Response>()
-    }
+    suspend fun 点赞视频(hasLike: Boolean, bvid: String): Response = client.post(BilibiliApi.ARCHIVE_LIKE) {
+        attributes.put(requireCSRF, true)
+        parameterBVid(bvid)
+        parameter("like", if (hasLike) 2 else 1)
+    }.body<Response>()
 
-    suspend fun 投币视频(bvid: String): Response {
-        return client.post(BilibiliApi.COIN_ADD) {
-            attributes.put(requireCSRF, true)
-            parameterBVid(bvid)
-            parameter("select_like", 1)
-            parameter("multiply", 2)
-        }.body<Response>()
-    }
+    suspend fun 投币视频(bvid: String): Response = client.post(BilibiliApi.COIN_ADD) {
+        attributes.put(requireCSRF, true)
+        parameterBVid(bvid)
+        parameter("select_like", 1)
+        parameter("multiply", 2)
+    }.body<Response>()
 
-    suspend fun 收藏视频(aid: Long, addIds: String, delIds: String = ""): Response {
-        return client.get(BilibiliApi.ARCHIVE_RESOURCE_FAVOURED) {
-            attributes.put(requireCSRF, true)
-            parameter("rid", aid)
-            parameter("add_media_ids", addIds)
-            parameter("type", "2")
-        }.body()
-    }
+    suspend fun 收藏视频(aid: Long, addIds: String, delIds: String = ""): Response = client.get(BilibiliApi.ARCHIVE_RESOURCE_FAVOURED) {
+        attributes.put(requireCSRF, true)
+        parameter("rid", aid)
+        parameter("add_media_ids", addIds)
+        parameter("type", "2")
+    }.body()
 }

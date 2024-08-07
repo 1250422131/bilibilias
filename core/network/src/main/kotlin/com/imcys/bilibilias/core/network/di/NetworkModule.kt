@@ -215,5 +215,4 @@ class NetworkModule {
     }
 }
 
-class ApiIOException(code: Int, errorMessage: String?, content: String?) :
-    Exception(errorMessage)
+class ApiIOException(code: Int, errorMessage: String?, content: String?) : Exception(errorMessage)

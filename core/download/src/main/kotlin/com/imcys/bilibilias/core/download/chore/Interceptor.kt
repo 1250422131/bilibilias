@@ -9,7 +9,7 @@ interface Interceptor<T> {
     fun intercept(message: T, chain: Chain)
     class Chain(
         private val interceptors: List<Interceptor<*>>,
-        private val index: Int = 0
+        private val index: Int = 0,
     ) {
         @Suppress("UNCHECKED_CAST")
         fun proceed(message: Any) {
