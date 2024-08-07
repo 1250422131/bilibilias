@@ -67,7 +67,6 @@ sonner = "0.3.8"
 sqllin = "1.3.2"
 startupRuntime = "1.1.1"
 striktCore = "0.35.1"
-toaster = "12.6"
 turbine = "1.1.0"
 truth = "1.4.4"
 [libraries]
@@ -214,13 +213,8 @@ sqllin-processor = { group = "com.ctrip.kotlin", name = "sqllin-processor", vers
 
 strikt-core = { group = "io.strikt", name = "strikt-core", version.ref = "striktCore" }
 
-toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-
-umeng-common = { group = "com.umeng.umsdk", name = "common", version = "9.7.3" }
-umeng-asms = { group = "com.umeng.umsdk", name = "asms", version = "1.8.3" }
-umeng-abtest = { group = "com.umeng.umsdk", name = "abtest", version = "1.0.1" }
 
 wire-gradlePlugin = { group = "com.squareup.wire", name = "wire-gradle-plugin", version.ref = "wire" }
 wire-runtime = { group = "com.squareup.wire", name = "wire-runtime", version.ref = "wire" }
