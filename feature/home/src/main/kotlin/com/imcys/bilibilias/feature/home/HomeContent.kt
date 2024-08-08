@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,9 +26,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,22 +95,9 @@ internal fun HomeContent(
                         )
                     }
                 }
-//                item {
-//                    HomeCard(
-//                        R.drawable.feature_home_ic_home_trophy,
-//                        onClick = {
-//                            startActivityForUri(
-//                                context,
-//                                "https://support.qq.com/products/337496/change-log"
-//                            )
-//                        },
-//                        title = "更新内容",
-//                        desc = "2.0.4-玉衡-Beta发布"
-//                    )
-//                }
                 item {
                     HomeCard(
-                        R.drawable.feature_home_ic_home_trophy,
+                        R.drawable.feature_home_ic_trophy,
                         onClick = onSalute,
                         title = "致敬",
                         desc = "爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户",
@@ -120,7 +106,7 @@ internal fun HomeContent(
                 item {
                     var show by remember { mutableStateOf(false) }
                     HomeCard(
-                        R.drawable.feature_home_ic_home_red_envelopes,
+                        R.drawable.feature_home_ic_savings,
                         onClick = { show = true },
                         title = "捐款",
                         desc = "BILIBILIAS的服务器会消耗费用，请我们一杯奶茶吧。",
@@ -146,7 +132,7 @@ internal fun HomeContent(
                 }
                 item {
                     HomeCard(
-                        R.drawable.feature_home_ic_home_rabbit,
+                        R.drawable.feature_home_ic_cruelty_free,
                         onClick = {
                             startActivityForUri(
                                 context,
@@ -179,13 +165,13 @@ private fun HomeCard(resId: Int, title: String, desc: String, onClick: () -> Uni
             modifier = Modifier
                 .padding(20.dp),
         ) {
-            Icon(
-                painterResource(id = resId),
+            AsyncImage(
+                resId,
                 contentDescription = null,
                 modifier = Modifier
                     .size(50.dp)
                     .padding(10.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             )
             Column(modifier = Modifier.padding(start = 20.dp)) {
                 Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
