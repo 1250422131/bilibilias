@@ -2,7 +2,7 @@ package com.imcys.bilibilias.core.datastore.preferences
 
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.InMemoryDataStore
-import com.imcys.bilibilias.core.datastore.UserPreferences
+import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -23,20 +23,20 @@ class AsPreferencesDataSourceTest {
     }
 
     @Test
-    fun fileStorangePathIsNullByDefault() = testScope.runTest {
-        assertNull(subject.userData.first().storagePath)
+    fun storageFolderPathIsNullByDefault() = testScope.runTest {
+        assertNull(subject.userData.first().storageFolder)
     }
 
     @Test
-    fun changeFileStoragePath_pathIsNotNull() = testScope.runTest {
+    fun changeStorageFolder_IsNotNull() = testScope.runTest {
         val testPath = "test"
         subject.setStorageFolder(testPath)
 
-        assertEquals(testPath, subject.userData.first().storagePath)
+        assertEquals(testPath, subject.userData.first().storageFolder)
     }
 
     @Test
-    fun commandIsNullByDefault() = testScope.runTest {
-        assertNull(subject.userData.first().command)
+    fun ffmpegCommandIsNullByDefault() = testScope.runTest {
+        assertNull(subject.userData.first().ffmpegCommand)
     }
 }
