@@ -6,10 +6,8 @@ import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

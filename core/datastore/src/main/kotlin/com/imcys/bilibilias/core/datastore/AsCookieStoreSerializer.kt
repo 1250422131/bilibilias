@@ -12,7 +12,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
