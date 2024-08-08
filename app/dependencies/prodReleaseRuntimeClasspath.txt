@@ -236,8 +236,6 @@ com.lazygeniouz:dfc:1.0.8
 com.squareup.okhttp3:okhttp:4.12.0
 com.squareup.okio:okio-jvm:3.9.0
 com.squareup.okio:okio:3.9.0
-com.squareup.wire:wire-runtime-jvm:5.0.0
-com.squareup.wire:wire-runtime:5.0.0
 commons-codec:commons-codec:1.17.1
 io.antmedia:rtmp-client:3.2.0
 io.coil-kt:coil-base:2.7.0
