@@ -202,7 +202,7 @@ class NetworkModule {
                     box.message +
                         "网络接口: ${request.request.url.encodedPath} 发生解析错误 " +
                         "\n链接: ${request.request.url}",
-                    json.encodeToString(box),
+                    json.encodeToString(json.parseToJsonElement(box.data.toString())),
                 )
             }
             box.data

@@ -179,7 +179,7 @@ class DownloadManager @Inject constructor(
         extension: String,
     ): Uri? {
         val userData = asPreferencesDataSource.userData.first()
-        val path = userData.storagePath
+        val path = userData.storageFolder
         Napier.d { "存储路径: $path" }
         return if (path == null) {
             File(context.downloadDir, defaultFilename).toUri()
@@ -220,7 +220,7 @@ class DownloadManager @Inject constructor(
         subTitle: String,
     ): Pair<String, String> {
         val userData = asPreferencesDataSource.userData.first()
-        var template = userData.namingRule ?: DEFAULT_NAMING_RULE
+        var template = userData.fileNamesConvention ?: DEFAULT_NAMING_RULE
         Napier.d { "命名规则: $template" }
         // 如果文件名的尾部是 / 则去掉
         if (template.endsWith("/")) {

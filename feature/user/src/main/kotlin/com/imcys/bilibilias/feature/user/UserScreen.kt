@@ -52,9 +52,9 @@ internal fun UserScreen(model: Model, onEvent: (Event) -> Unit) {
             )
             Row(modifier = Modifier.padding(8.dp)) {
                 val modifier = Modifier.weight(1f)
-                ImageWithText(R.drawable.feature_user_ic_item_user_collection, "收藏", modifier = modifier) {}
-                ImageWithText(R.drawable.feature_user_ic_item_user_play_history, "历史", modifier = modifier) {}
-                ImageWithText(R.drawable.feature_user_ic_item_bangumi_followr, "追番", modifier = modifier) {}
+                // ImageWithText(R.drawable.feature_user_ic_item_user_collection, "收藏", modifier = modifier) {}
+                // ImageWithText(R.drawable.feature_user_ic_item_user_play_history, "历史", modifier = modifier) {}
+                // ImageWithText(R.drawable.feature_user_ic_item_bangumi_followr, "追番", modifier = modifier) {}
             }
         }
     }

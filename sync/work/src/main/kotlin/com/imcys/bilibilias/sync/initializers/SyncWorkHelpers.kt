@@ -54,7 +54,7 @@ private fun Context.syncWorkNotification(): Notification {
         this,
         SYNC_NOTIFICATION_CHANNEL_ID,
     )
-        .setSmallIcon(R.drawable.img)
+        .setSmallIcon(R.drawable.sync_work_ic)
         .setContentTitle(getString(R.string.sync_work_notification_title))
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()

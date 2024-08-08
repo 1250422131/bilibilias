@@ -31,6 +31,8 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = AsBuildType.DEBUG.applicationIdSuffix
+            resValue("string", "app_name", "BILIBILIAS_DEBUG")
+            resValue("string", "app_channel", "Official Channel Debug")
         }
         release {
             isMinifyEnabled = true
@@ -41,6 +43,8 @@ android {
             )
             applicationIdSuffix = AsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
+            resValue("string", "app_name", "BILIBILIAS")
+            resValue("string", "app_channel", "Official Channel")
         }
     }
 
