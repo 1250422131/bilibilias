@@ -17,7 +17,7 @@ import com.imcys.bilibilias.feature.tool.ToolComponent
 interface RootComponent : ComponentContext {
 
     val stack: Value<ChildStack<*, Child>>
-    val currentDestination: RootComponent.Child
+    val currentDestination: Child
     val currentTopLevelDestination: TopLevelDestination?
 
     val shouldShowBottomBar: Boolean
