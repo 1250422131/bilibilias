@@ -89,7 +89,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.windowSizeClass)
     implementation(libs.androidx.compose.runtime.tracing)
     implementation(libs.androidx.core.ktx)
-
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing.ktx)
@@ -98,7 +98,7 @@ dependencies {
     implementation(libs.coil.kt)
     implementation(libs.coil.compose)
 
-    implementation(libs.androidx.work.ktx)
+    implementation(libs.androidx.work.runtime)
 
     implementation(libs.androidx.activity.ktx)
 
