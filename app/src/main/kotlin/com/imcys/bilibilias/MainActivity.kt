@@ -1,16 +1,25 @@
 package com.imcys.bilibilias
 
-import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.metrics.performance.JankStats
 import com.arkivanov.decompose.defaultComponentContext
+import com.imcys.bilibilias.MainActivityUiState.Loading
+import com.imcys.bilibilias.MainActivityUiState.Success
 import com.imcys.bilibilias.core.analytics.AnalyticsHelper
 import com.imcys.bilibilias.core.analytics.LocalAnalyticsHelper
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
@@ -19,10 +28,13 @@ import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.ui.AsApp
 import com.imcys.bilibilias.ui.rememberAsAppState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     @Inject
     lateinit var lazyStats: dagger.Lazy<JankStats>
 
@@ -35,8 +47,32 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var rootComponentFactory: RootComponent.Factory
 
+    val viewModel: MainActivityViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        var uiState: MainActivityUiState by mutableStateOf(Loading)
+
+        // Update the uiState
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState
+                    .onEach { uiState = it }
+                    .collect()
+            }
+        }
+
+        // Keep the splash screen on-screen until the UI state is loaded. This condition is
+        // evaluated each time the app needs to be redrawn so it should be fast to avoid blocking
+        // the UI.
+        splashScreen.setKeepOnScreenCondition {
+            when (uiState) {
+                Loading -> true
+                is Success -> false
+            }
+        }
         enableEdgeToEdge()
         backHandle()
         setContent {
