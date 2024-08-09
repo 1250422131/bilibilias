@@ -27,42 +27,9 @@ fun SplashContent(
     navigationToLogin: () -> Unit,
     navigationToTool: () -> Unit,
 ) {
-    val isVisible = remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        isVisible.value = !isVisible.value
-        delay(300)
-    }
-    val configuration = LocalConfiguration.current
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = (configuration.screenHeightDp * .3).dp)
-            .circularReveal(
-                isVisible.value,
-                durationMillis = 1000,
-                finishedListener = {
-                    if (component.isLogin) {
-                        navigationToTool()
-                    } else {
-                        navigationToLogin()
-                    }
-                },
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Image(
-            painterResource(R.drawable.feature_splash_ic_launcher_foreground),
-            contentDescription = null,
-            modifier = Modifier
-                .width(120.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-        )
-        Text(
-            text = "BILIBILIAS",
-            modifier = Modifier,
-            fontSize = 56.sp,
-            color = MaterialTheme.colorScheme.primary,
-            softWrap = false,
-        )
+    if (component.isLogin) {
+        navigationToTool()
+    } else {
+        navigationToLogin()
     }
 }
