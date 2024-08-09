@@ -37,8 +37,7 @@ class DefaultRootComponent @AssistedInject constructor(
     private val loginComponentFactory: LoginComponent.Factory,
     private val settingsComponentFactory: SettingsComponent.Factory,
     private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory,
-) : RootComponent,
-    ComponentContext by componentContext {
+) : RootComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Config>()
 
