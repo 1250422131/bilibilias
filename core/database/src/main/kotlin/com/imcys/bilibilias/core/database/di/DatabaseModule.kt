@@ -6,7 +6,6 @@ import com.ctrip.sqllin.driver.DatabaseConfiguration
 import com.ctrip.sqllin.driver.toDatabasePath
 import com.ctrip.sqllin.dsl.Database
 import com.imcys.bilibilias.core.database.AsDatabase
-import com.imcys.bilibilias.core.database.instantiateImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,10 +22,9 @@ internal class DatabaseModule {
         @ApplicationContext context: Context,
     ): AsDatabase = Room.databaseBuilder<AsDatabase>(
         context,
+        AsDatabase::class.java,
         "as-database",
-        { AsDatabase::class.instantiateImpl() },
     )
-        .fallbackToDestructiveMigration(true)
         .build()
 
     @Provides
