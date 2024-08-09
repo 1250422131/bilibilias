@@ -153,9 +153,7 @@
     <string name="app_ToolFragment_asVideoId">没有输入任何内容哦</string>
     <string name="app_ToolFragment_asVideoId2">输入的内容不正确</string>
     <string name="app_ToolFragment_loadShareData">检查是否为错误地址</string>
-    <string name="app_ToolFragment_onDestroy" translatable="false">ToolFragment</string>
     <string name="app_LoginQRModel_goToQR">呜哇，您好像没有安装Bilibili</string>
-    <string name="app_LoginQRModel_downloadLoginQR_fileName" translatable="false">BILIBILIAS-QR-Code.jpg</string>
     <string name="app_LoginQRModel_downloadLoginQR_asToast">下载完成，跳转扫码</string>
     <string name="app_HomeFragment_loadVersionData_title">有新版本了</string>
     <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
