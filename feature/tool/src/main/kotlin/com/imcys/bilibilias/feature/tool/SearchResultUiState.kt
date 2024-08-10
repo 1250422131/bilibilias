@@ -10,14 +10,16 @@ sealed interface SearchResultUiState {
 
     data object LoadFailed : SearchResultUiState
     data class Success(
-        val aid: Long,
-        val bvid: String,
-        val cid: Long,
-        val mid: Mid,
-        val collection: List<View>,
-        val face: String,
-        val ownerId: Long,
-    ) : SearchResultUiState
+        val aid: Long = 0,
+        val bvid: String = "",
+        val cid: Long = 0,
+        val mid: Mid = 0,
+        val collection: List<View> = emptyList(),
+        val ownerFace: String = "",
+        val ownerId: Long = 0,
+    ) : SearchResultUiState {
+        val isEmpty = aid == 0L && bvid.isEmpty()
+    }
 }
 
 data class View(val cid: Long, val title: String, val videoStreamDesc: VideoStreamDesc)

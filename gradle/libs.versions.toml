@@ -267,4 +267,4 @@ bilibilias-detekt = { id = "bilibilias.detekt", version = "unspecified" }
 bilibilias-compose-compiler-report = { id = "bilibilias.compose.compiler.report", version = "unspecified" }
 
 [bundles]
-androidx-compose-ui-test = ["androidx-compose-ui-test", "androidx-compose-ui-testManifest"]
+androidx-compose-ui-test = ["androidx-compose-ui-test", "androidx-compose-ui-testManifest", "androidx-test-espresso-core"]
