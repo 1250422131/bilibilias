@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -28,12 +30,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +45,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -53,6 +67,7 @@ import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
+import com.imcys.bilibilias.feature.tool.R as searchR
 
 @Composable
 fun ToolContent(
@@ -65,23 +80,21 @@ fun ToolContent(
     ToolContent(
         searchQuery = searchQuery,
         onSearchQueryChanged = component::onSearchQueryChanged,
-        onClearSearches = component::clearSearches,
         searchResultUiState = searchResultUiState,
         onDownload = component::download,
-        onSetting = navigationToSettings,
+        navigationToSettings = navigationToSettings,
         navigationToAuthorSpace = navigationToAuthorSpace,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolContent(
+internal fun ToolContent(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
-    onClearSearches: () -> Unit,
     searchResultUiState: SearchResultUiState,
     onDownload: (DownloadRequest) -> Unit,
-    onSetting: () -> Unit,
+    navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
 ) {
     Scaffold(
@@ -89,7 +102,7 @@ fun ToolContent(
             TopAppBar(
                 title = {},
                 actions = {
-                    IconButton(onClick = onSetting) {
+                    IconButton(onClick = navigationToSettings) {
                         Icon(
                             Icons.Default.Settings,
                             contentDescription = "设置",
@@ -101,23 +114,11 @@ fun ToolContent(
         },
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = onSearchQueryChanged,
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "搜索") },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        Icon(
-                            Icons.Default.Clear,
-                            contentDescription = "清空输入框",
-                            modifier = Modifier.clickable { onClearSearches() },
-                        )
-                    }
-                },
-                label = { Text(text = "AV / BV / EP") },
-                singleLine = true,
+            SearchTextField(
+                searchQuery = searchQuery,
+                onSearchQueryChanged = onSearchQueryChanged,
             )
+
             when (searchResultUiState) {
                 SearchResultUiState.EmptyQuery -> Unit
                 SearchResultUiState.LoadFailed -> Unit
@@ -222,5 +223,80 @@ fun ViewItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SearchTextField(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val onSearchExplicitlyTriggered = {
+        keyboardController?.hide()
+    }
+
+    TextField(
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = stringResource(
+                    id = searchR.string.feature_tool_title,
+                ),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        onSearchQueryChanged("")
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = stringResource(
+                            id = searchR.string.feature_tool_clear_search_text_content_desc,
+                        ),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+        },
+        onValueChange = onSearchQueryChanged,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .focusRequester(focusRequester)
+            .onKeyEvent {
+                if (it.key == Key.Enter) {
+                    onSearchExplicitlyTriggered()
+                    true
+                } else {
+                    false
+                }
+            }
+            .testTag("searchTextField"),
+        shape = RoundedCornerShape(32.dp),
+        value = searchQuery,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSearchExplicitlyTriggered()
+            },
+        ),
+        label = { Text(stringResource(searchR.string.feature_tool_label)) },
+    )
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }

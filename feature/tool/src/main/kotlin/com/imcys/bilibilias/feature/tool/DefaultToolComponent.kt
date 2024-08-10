@@ -66,10 +66,6 @@ class DefaultToolComponent @AssistedInject constructor(
         savedState.set(query)
     }
 
-    override fun clearSearches() {
-        savedState.set("")
-    }
-
     private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> = flowOf(videoRepository.shortLink(url)).map {
         InputParseUtil.searchType(it)
     }.flatMapLatest { type ->
