@@ -49,18 +49,18 @@ jobs:
 
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
-          -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
-          -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
-          -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
-          -Pandroid.experimental.androidTest.numManagedDeviceShards=1
-          -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
+#          -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+#          -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+#          -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
+#          -Pandroid.experimental.androidTest.numManagedDeviceShards=1
+#          -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
 
       # 签名apk
       - uses: noriban/sign-android-release@v5.1
         name: Sign app APK
         id: sign_app
         with:
-          releaseDirectory: 'app/build/outputs/apk/**/release'
+          releaseDirectory: 'app/build/outputs/apk/*/release'
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
