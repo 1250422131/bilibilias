@@ -14,10 +14,5 @@ class HomeBaselineProfile {
     fun generate() =
         baselineProfileRule.collect(PACKAGE_NAME) {
             startActivityAndAllowNotifications()
-
-            // Scroll the feed critical user journey
-//            forYouWaitForContent()
-//            forYouSelectTopics(true)
-//            forYouScrollFeedDownUp()
         }
 }

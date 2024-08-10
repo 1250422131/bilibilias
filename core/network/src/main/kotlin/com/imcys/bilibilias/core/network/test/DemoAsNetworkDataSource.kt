@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class DemoNiaNetworkDataSource @Inject constructor(
+class DemoAsNetworkDataSource @Inject constructor(
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val networkJson: Json,
     private val assets: TestAssetManager = JvmUnitTestDemoAssetManager,
