@@ -60,13 +60,27 @@ jobs:
         name: Sign app APK
         id: sign_app
         with:
-          releaseDirectory: '**/build/outputs/apk/**/*.apk'
+          releaseDirectory: '**/build/outputs/apk/**/'
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
+
+      - name: Example Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Release X"
+          files: |
+            ${{ steps.sign_app.outputs.signedReleaseFile0 }}
+            ${{ steps.sign_app.outputs.signedReleaseFile1 }}
+            ${{ steps.sign_app.outputs.signedReleaseFile2 }}
+            ${{ steps.sign_app.outputs.signedReleaseFile3 }}
+            ${{ steps.sign_app.outputs.signedReleaseFile4 }}
 
       - name: rename apk
         run: |
