@@ -25,7 +25,7 @@ android {
         buildConfigField(
             "String",
             "APP_FLAVOR_SUFFIX",
-            "\"${flavor.applicationIdSuffix ?: ""}\""
+            "\"${flavor.applicationIdSuffix ?: ""}\"",
         )
     }
     testOptions.managedDevices.devices {
