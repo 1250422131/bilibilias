@@ -1,4 +1,6 @@
-﻿plugins {
+import org.gradle.kotlin.dsl.test
+
+plugins {
     alias(libs.plugins.bilibilias.android.feature)
     alias(libs.plugins.bilibilias.android.compose)
     alias(libs.plugins.bilibilias.android.jacoco)

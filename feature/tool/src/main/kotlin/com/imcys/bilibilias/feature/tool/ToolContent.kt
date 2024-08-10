@@ -5,10 +5,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -54,13 +57,25 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
+import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
+import com.imcys.bilibilias.core.model.video.Aid
+import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
@@ -121,41 +136,67 @@ internal fun ToolContent(
 
             when (searchResultUiState) {
                 SearchResultUiState.EmptyQuery -> Unit
-                SearchResultUiState.LoadFailed -> Unit
+                SearchResultUiState.LoadFailed -> EmptySearchResultBody(searchQuery) {}
                 SearchResultUiState.Loading -> Unit
                 is SearchResultUiState.Success ->
-                    LazyColumn(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp)),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        contentPadding = PaddingValues(4.dp),
-                    ) {
-                        item {
-                            AsyncImage(
-                                model = searchResultUiState.face,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .clip(CircleShape)
-                                    .clickable { navigationToAuthorSpace(searchResultUiState.mid) },
-                            )
-                        }
-                        items(searchResultUiState.collection, key = { it.cid }) { item ->
-                            ViewItem(item.title, item.videoStreamDesc) {
-                                onDownload(
-                                    DownloadRequest(
-                                        ViewInfo(
-                                            searchResultUiState.aid,
-                                            searchResultUiState.bvid,
-                                            item.cid,
-                                            item.title,
-                                        ),
-                                        it,
-                                    ),
-                                )
-                            }
-                        }
-                    }
+                    SearchResultBody(
+                        aid = searchResultUiState.aid,
+                        bvid = searchResultUiState.bvid,
+                        mid = searchResultUiState.mid,
+                        collection = searchResultUiState.collection,
+                        ownerFace = searchResultUiState.ownerFace,
+                        onDownload = onDownload,
+                        navigationToAuthorSpace = navigationToAuthorSpace,
+                    )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResultBody(
+    aid: Aid,
+    bvid: Bvid,
+    mid: Mid,
+    collection: List<View>,
+    ownerFace: String,
+    onDownload: (DownloadRequest) -> Unit,
+    navigationToAuthorSpace: (Mid) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp)),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(4.dp),
+        ) {
+            item {
+                AsyncImage(
+                    model = ownerFace,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(CircleShape)
+                        .clickable { navigationToAuthorSpace(mid) },
+                )
+            }
+            items(collection, key = { it.cid }) { item ->
+                ViewItem(item.title, item.videoStreamDesc) {
+                    onDownload(
+                        DownloadRequest(
+                            ViewInfo(
+                                aid,
+                                bvid,
+                                item.cid,
+                                item.title,
+                            ),
+                            it,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -298,5 +339,95 @@ private fun SearchTextField(
     )
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+}
+
+@Composable
+private fun SearchNotReadyBody() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 48.dp),
+    ) {
+        Text(
+            text = stringResource(id = searchR.string.feature_tool_not_ready),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 24.dp),
+        )
+    }
+}
+
+@Composable
+fun EmptySearchResultBody(
+    searchQuery: String,
+    onInterestsClick: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 48.dp),
+    ) {
+        val message = stringResource(id = searchR.string.feature_tool_result_not_found, searchQuery)
+        val start = message.indexOf(searchQuery)
+        Text(
+            text = AnnotatedString(
+                text = message,
+                spanStyles = listOf(
+                    AnnotatedString.Range(
+                        SpanStyle(fontWeight = FontWeight.Bold),
+                        start = start,
+                        end = start + searchQuery.length,
+                    ),
+                ),
+            ),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 24.dp),
+        )
+        val tryAnotherSearchString = buildAnnotatedString {
+            append(stringResource(id = searchR.string.feature_tool_try_another_search))
+            append(" ")
+            withStyle(
+                style = SpanStyle(
+                    textDecoration = TextDecoration.Underline,
+                    fontWeight = FontWeight.Bold,
+                ),
+            ) {}
+            append(" ")
+        }
+        ClickableText(
+            text = tryAnotherSearchString,
+            style = MaterialTheme.typography.bodyLarge.merge(
+                TextStyle(
+                    color = MaterialTheme.colorScheme.secondary,
+                    textAlign = TextAlign.Center,
+                ),
+            ),
+            modifier = Modifier
+                .padding(start = 36.dp, end = 36.dp, bottom = 24.dp)
+                .clickable {},
+        ) { offset ->
+            tryAnotherSearchString.getStringAnnotations(start = offset, end = offset)
+                .firstOrNull()
+                ?.let { onInterestsClick() }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchNotReadyBodyPreview() {
+    AsTheme {
+        SearchNotReadyBody()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EmptySearchResultColumnPreview() {
+    AsTheme {
+        EmptySearchResultBody(
+            onInterestsClick = {},
+            searchQuery = "C++",
+        )
     }
 }
