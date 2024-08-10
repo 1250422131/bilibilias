@@ -49,11 +49,11 @@ jobs:
 
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
-#          -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
-#          -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
-#          -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
-#          -Pandroid.experimental.androidTest.numManagedDeviceShards=1
-#          -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
+          -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
+          -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
+          -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
+          -Pandroid.experimental.androidTest.numManagedDeviceShards=1
+          -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
 
       # 签名apk
       - uses: noriban/sign-android-release@v5.1
@@ -68,24 +68,11 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
-      - name: Example Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: false
-          title: "Release X"
-          files: |
-            ${{ steps.sign_app.outputs.signedReleaseFile0 }}
-            ${{ steps.sign_app.outputs.signedReleaseFile1 }}
-            ${{ steps.sign_app.outputs.signedReleaseFile2 }}
-            ${{ steps.sign_app.outputs.signedReleaseFile3 }}
-            ${{ steps.sign_app.outputs.signedReleaseFile4 }}
-
       - name: rename apk
         run: |
+          ll app/build/outputs/apk/demo/release
           cd app/build/outputs/apk/demo/release
-          mv app-demo-release-unsigned-signed.apk Bilibili-As-Lite-${{ github.ref_name }}.apk
+          mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk
           ls
 
       - name: Create Release and Upload Release Asset
