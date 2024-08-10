@@ -193,7 +193,7 @@ jobs:
         id: cache-jemalloc
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build projects and run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2

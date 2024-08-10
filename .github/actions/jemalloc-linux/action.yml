@@ -7,7 +7,7 @@ runs:
   steps:
     - name: "Restore jemalloc"
       id: cache-jemalloc
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       with:
         path: /tmp/libjemalloc.so.2
         key: v2-${{ runner.os }}-jemalloc-5.3.0
@@ -41,7 +41,7 @@ runs:
         echo 'export LD_PRELOAD=/usr/local/lib/libjemalloc.so.2 app' >> $GITHUB_ENV
         cp /usr/local/lib/libjemalloc.so.2 /tmp/
     - name: "Save jemalloc"
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       if: steps.cache-jemalloc.outputs.cache-hit != 'true'
       with:
         path: /tmp/libjemalloc.so.2
