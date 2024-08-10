@@ -48,6 +48,8 @@ import com.github.takahirom.roborazzi.captureRoboImage
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.core.testing.util.DefaultRoborazziOptions
+import com.imcys.bilibilias.core.testing.util.TestErrorMonitor
+import com.imcys.bilibilias.core.testing.util.TestNetworkMonitor
 import com.imcys.bilibilias.navigation.RootComponent
 import com.imcys.bilibilias.uitesthiltmanifest.HiltComponentActivity
 import dagger.hilt.android.testing.BindValue
@@ -99,8 +101,7 @@ class SnackbarInsetsScreenshotTests {
     @get:Rule(order = 2)
     val composeTestRule = createAndroidComposeRule<HiltComponentActivity>()
 
-    @Inject
-    lateinit var errorMonitor: ErrorMonitor
+    private val errorMonitor: ErrorMonitor = TestErrorMonitor(TestNetworkMonitor())
 
     @Inject
     lateinit var rootComponent: RootComponent
@@ -112,9 +113,7 @@ class SnackbarInsetsScreenshotTests {
 
     @Test
     fun phone_noSnackbar() {
-        val snackbarHostState = SnackbarHostState()
         testSnackbarScreenshotWithSize(
-            snackbarHostState,
             400.dp,
             500.dp,
             "insets_snackbar_compact_medium_noSnackbar",
@@ -126,7 +125,6 @@ class SnackbarInsetsScreenshotTests {
     fun snackbarShown_phone() {
         val snackbarHostState = SnackbarHostState()
         testSnackbarScreenshotWithSize(
-            snackbarHostState,
             400.dp,
             500.dp,
             "insets_snackbar_compact_medium",
@@ -143,7 +141,6 @@ class SnackbarInsetsScreenshotTests {
     fun snackbarShown_foldable() {
         val snackbarHostState = SnackbarHostState()
         testSnackbarScreenshotWithSize(
-            snackbarHostState,
             600.dp,
             600.dp,
             "insets_snackbar_medium_medium",
@@ -160,7 +157,6 @@ class SnackbarInsetsScreenshotTests {
     fun snackbarShown_tablet() {
         val snackbarHostState = SnackbarHostState()
         testSnackbarScreenshotWithSize(
-            snackbarHostState,
             900.dp,
             900.dp,
             "insets_snackbar_expanded_expanded",
@@ -175,7 +171,6 @@ class SnackbarInsetsScreenshotTests {
 
     @OptIn(ExperimentalMaterial3AdaptiveApi::class)
     private fun testSnackbarScreenshotWithSize(
-        snackbarHostState: SnackbarHostState,
         width: Dp,
         height: Dp,
         screenshotName: String,
