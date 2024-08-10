@@ -39,7 +39,7 @@ jobs:
           java-version: 21
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
           gradle-home-cache-cleanup: true
@@ -60,7 +60,7 @@ jobs:
         name: Sign app APK
         id: sign_app
         with:
-          releaseDirectory: '**/build/outputs/apk/**/'
+          releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
