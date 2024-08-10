@@ -71,6 +71,7 @@ jobs:
       - name: rename apk
         run: |
           ll app/build/outputs/apk/demo/release
+          ll app/build/outputs/apk/demo/release/baselineProfiles
           cd app/build/outputs/apk/demo/release
           mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk
           ls
