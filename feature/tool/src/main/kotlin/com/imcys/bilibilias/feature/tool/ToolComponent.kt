@@ -9,7 +9,6 @@ interface ToolComponent {
     val searchResultUiState: StateFlow<SearchResultUiState>
     fun download(request: DownloadRequest)
     fun onSearchQueryChanged(query: String)
-    fun clearSearches()
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,

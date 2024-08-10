@@ -79,6 +79,7 @@ dependencies {
     implementation(projects.core.data)
 
     implementation(projects.sync.work)
+    implementation(projects.okdownload.okdownload)
 
     implementation(libs.androidx.activity.compose) {
         exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
