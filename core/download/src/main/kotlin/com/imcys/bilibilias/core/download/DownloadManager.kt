@@ -19,7 +19,6 @@ import com.imcys.bilibilias.core.model.video.Sources
 import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewIds
-import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import com.liulishuo.okdownload.core.Util
@@ -178,7 +177,7 @@ class DownloadManager @Inject constructor(
 
     private suspend fun createFile(
         defaultFilename: String,
-        viewInfo: ViewIds,
+        ids: ViewIds,
         title: String,
         subTitle: String,
         mimeType: String,
@@ -190,7 +189,7 @@ class DownloadManager @Inject constructor(
         return if (path == null) {
             File(context.downloadDir, defaultFilename).toUri()
         } else {
-            createFoldersAndFiles(viewInfo, title, subTitle, mimeType, extension, path)
+            createFoldersAndFiles(ids, title, subTitle, mimeType, extension, path)
         }
     }
 
@@ -201,26 +200,18 @@ class DownloadManager @Inject constructor(
         mimeType: String,
         extension: String,
         path: String,
-    ): Uri? {
-        val (folder, filename) = generateFileNameByNamingRule(viewInfo, title, subTitle)
-        val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
-        val folderFile = tree.findFile(folder)
+    ): Uri {
+        val (folderName, filename) = generateFileNameByNamingConventions(viewInfo, title, subTitle)
         val filenameWithExtension = filename + extension
-        Napier.d { "文件夹 $folder" }
-        return if (folderFile == null) {
-            val folder = tree.createDirectory(folder)
-            folder?.findFile(filenameWithExtension)
-        } else {
-            val findFile = folderFile.findFile(filenameWithExtension)
-            if (findFile == null) {
-                folderFile.createFile(mimeType, filenameWithExtension)
-            } else {
-                findFile
-            }
-        }?.uri
+        val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
+        val folder = tree.createDirectory(folderName) ?: throw CreateFileFailedException("创建文件夹失败")
+        val file = folder.createFile(mimeType, filenameWithExtension) ?: throw CreateFileFailedException("创建文件失败")
+
+        Napier.d { "file: $folder/$file" }
+        return file.uri
     }
 
-    private suspend fun generateFileNameByNamingRule(
+    private suspend fun generateFileNameByNamingConventions(
         ids: ViewIds,
         title: String,
         subTitle: String,
@@ -250,18 +241,6 @@ class DownloadManager @Inject constructor(
             downloadTaskDao.findByIds(ids).forEach {
                 delete(it)
             }
-        }
-    }
-
-    fun delete(
-        info: ViewInfo,
-        fileType: FileType,
-    ) {
-        scope.launch {
-            val task =
-                downloadTaskDao.findByIdWithFileType(info.aid, info.bvid, info.cid, fileType)
-                    ?: return@launch
-            delete(task)
         }
     }
 

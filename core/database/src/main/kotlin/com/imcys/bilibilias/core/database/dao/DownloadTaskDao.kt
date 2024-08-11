@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.MapColumn
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.model.download.FileType
@@ -18,25 +17,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DownloadTaskDao {
-    @Transaction
-    suspend fun insertOrUpdate(t: DownloadTaskEntity) {
-        val task = findByIdWithFileType(t.aid, t.bvid, t.cid, t.fileType)
-        if (task == null) {
-            insertTask(t)
-        } else {
-            updateTask(
-                task.copy(
-                    uri = t.uri,
-                    created = t.created,
-                    subTitle = t.subTitle,
-                    title = t.title,
-                    state = t.state,
-                    bytesSentTotal = t.bytesSentTotal,
-                    contentLength = t.contentLength,
-                ),
-            )
-        }
-    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(downloadTaskEntity: DownloadTaskEntity)
@@ -45,7 +25,10 @@ interface DownloadTaskDao {
     suspend fun updateTask(downloadTaskEntity: DownloadTaskEntity)
 
     @Query(
-        "SELECT * FROM download_task_list WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type = :fileType",
+        """
+            SELECT * FROM download_task_list 
+            WHERE aid = :aid AND bvid = :bvid AND cid = :cid AND file_type = :fileType
+            """,
     )
     suspend fun findByIdWithFileType(
         aid: Aid,
@@ -65,23 +48,25 @@ interface DownloadTaskDao {
     suspend fun findByUri(uri: Uri): DownloadTaskEntity
 
     @Query(
-        "UPDATE download_task_list " +
-            "SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-            "WHERE uri = :uri",
+        """
+            UPDATE download_task_list 
+            SET bytesSentTotal = :bytesSentTotal, contentLength = :contentLength 
+            WHERE uri = :uri
+            """,
     )
     suspend fun updateProgressByUri(bytesSentTotal: Long, contentLength: Long, uri: Uri)
 
     @Query(
-        "UPDATE download_task_list " +
-            "SET state = :state " +
-            "WHERE uri = :uri",
+        """UPDATE download_task_list SET state = :state WHERE uri = :uri""",
     )
     suspend fun updateStateByUri(state: State, uri: Uri)
 
     @Query(
-        "UPDATE download_task_list " +
-            "SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength " +
-            "WHERE uri = :uri",
+        """
+            UPDATE download_task_list 
+            SET state = :state, bytesSentTotal = :bytesSentTotal, contentLength = :contentLength 
+            WHERE uri = :uri
+            """,
     )
     suspend fun updateProgressWithStateByUri(
         state: State,

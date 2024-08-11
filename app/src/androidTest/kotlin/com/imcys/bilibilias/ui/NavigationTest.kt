@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.NoActivityResumedException
@@ -14,7 +12,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import kotlin.properties.ReadOnlyProperty
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -62,7 +59,7 @@ class NavigationTest {
     }
 
     @Test
-    fun firstScreen_isHome () {
+    fun firstScreen_isHome() {
         composeTestRule.apply {
             onNodeWithText(home).assertIsSelected()
         }
