@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
+import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
@@ -52,13 +53,12 @@ class DownloadManager @Inject constructor(
     private val listener: AsDownloadListener,
     private val asPreferencesDataSource: AsPreferencesDataSource,
     private val getViewWithPlayerPlayUrlUseCase: GetViewWithPlayerPlayUrlUseCase,
+    private val errorMonitor: ErrorMonitor,
 ) {
     init {
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
-        // val client = OkHttpClient.Builder().build()
-        // client.newCall().enqueue()
     }
 
     fun download(ids: List<Bvid>) {
@@ -166,7 +166,11 @@ class DownloadManager @Inject constructor(
                 subTitle,
                 mimeType,
                 extension,
-            ) ?: throw CreateFileFailedException("创建文件失败")
+            )
+            if (uri == null) {
+                errorMonitor.addShortErrorMessage("创建文件失败")
+                throw CreateFileFailedException("创建文件失败")
+            }
             val task = AsDownloadTask(ids, title, subTitle, type, url, uri)
             listener.add(task)
         }
