@@ -9,9 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_COMMAND
-import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
-import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_STORE_PATH
+import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_COMMAND
+import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_NAMING_RULE
+import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_STORE_PATH
 import com.imcys.bilibilias.core.datastore.AsCookieStoreDataSource
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.UsersDataSource

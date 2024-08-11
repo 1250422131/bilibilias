@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.common.download
+package com.imcys.bilibilias.core.download
 
 object DefaultConfig {
     /**
