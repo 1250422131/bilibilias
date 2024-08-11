@@ -1,7 +1,6 @@
 package com.imcys.bilibilias.core.download
 
 import androidx.collection.mutableObjectListOf
-import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
@@ -11,6 +10,7 @@ import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause

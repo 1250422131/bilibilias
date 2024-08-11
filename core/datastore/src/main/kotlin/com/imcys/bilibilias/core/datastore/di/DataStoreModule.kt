@@ -6,13 +6,13 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
-import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.datastore.AsCookieStoreSerializer
 import com.imcys.bilibilias.core.datastore.UserPreferencesSerializer
 import com.imcys.bilibilias.core.datastore.UsersSerializer
 import com.imcys.bilibilias.core.datastore.model.AsCookieStore
 import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.core.datastore.model.Users
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
