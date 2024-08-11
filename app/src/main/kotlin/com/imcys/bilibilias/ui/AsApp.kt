@@ -199,7 +199,6 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
             is RootComponent.Child.DownloadChild ->
                 DownloadContent(
                     component = child.component,
-                    navigationToPlayer = component::onPlayedTabClicked,
                 )
 
             RootComponent.Child.UserChild -> Unit
