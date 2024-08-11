@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.core.download
 
 import androidx.collection.mutableObjectListOf
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
