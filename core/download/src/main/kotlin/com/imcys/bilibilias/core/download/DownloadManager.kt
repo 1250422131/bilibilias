@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
-import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
@@ -20,6 +19,7 @@ import com.imcys.bilibilias.core.model.video.VideoStreamUrl
 import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import com.liulishuo.okdownload.core.Util
 import dagger.hilt.android.qualifiers.ApplicationContext
