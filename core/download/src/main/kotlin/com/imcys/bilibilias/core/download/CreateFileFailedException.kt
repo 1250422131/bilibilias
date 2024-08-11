@@ -1,3 +1,5 @@
 package com.imcys.bilibilias.core.download
 
-class CreateFileFailedException(message: String? = null) : Exception(message)
+import java.io.IOException
+
+class CreateFileFailedException(message: String? = null) : IOException(message)
