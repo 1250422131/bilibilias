@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.common.download.DefaultConfig.DEFAULT_NAMING_RULE
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource

@@ -7,7 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource

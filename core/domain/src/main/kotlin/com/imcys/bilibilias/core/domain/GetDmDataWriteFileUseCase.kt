@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.core.domain
 
 import android.content.Context
-import com.imcys.bilibilias.core.common.network.di.ApplicationScope
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope

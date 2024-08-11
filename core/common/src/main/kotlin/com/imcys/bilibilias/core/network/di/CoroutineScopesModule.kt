@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.common.network.di
+package com.imcys.bilibilias.core.network.di
 
 import com.imcys.bilibilias.core.common.network.AsDispatchers
 import com.imcys.bilibilias.core.common.network.Dispatcher
