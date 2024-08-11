@@ -57,6 +57,8 @@ class DownloadManager @Inject constructor(
         if (BuildConfig.DEBUG) {
             Util.enableConsoleLog()
         }
+        // val client = OkHttpClient.Builder().build()
+        // client.newCall().enqueue()
     }
 
     fun download(ids: List<Bvid>) {
@@ -158,7 +160,7 @@ class DownloadManager @Inject constructor(
                 FileType.AUDIO -> MimeType.AUDIO to ".acc"
             }
             val uri = createFile(
-                System.currentTimeMillis().toString(),
+                System.currentTimeMillis().toString() + extension,
                 ids,
                 title,
                 subTitle,

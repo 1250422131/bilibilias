@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface OkDownloadModule {
+class OkDownloadModule {
 
     @Provides
     @Singleton
