@@ -43,18 +43,18 @@ class AsDownloadListener @Inject constructor(
         scope.launch {
             Napier.d(tag = TAG) { "任务开始 ${task.filename}" }
             val asTask = taskQueue.first { it.okTask === task }
-            val info = asTask.ids
+            val ids = asTask.ids
             val taskEntity = DownloadTaskEntity(
                 uri = asTask.okTask.uri,
-                aid = info.aid,
-                bvid = info.bvid,
-                cid = info.cid,
+                aid = ids.aid,
+                bvid = ids.bvid,
+                cid = ids.cid,
                 fileType = asTask.fileType,
                 subTitle = asTask.subTitle,
                 title = asTask.title,
                 state = State.RUNNING,
             )
-            taskDao.insertOrUpdate(taskEntity)
+            taskDao.insertTask(taskEntity)
             errorMonitor.addShortErrorMessage("添加任务到下载队列")
         }
     }
