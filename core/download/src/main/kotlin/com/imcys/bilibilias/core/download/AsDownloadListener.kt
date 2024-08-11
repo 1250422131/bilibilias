@@ -30,7 +30,7 @@ class AsDownloadListener @Inject constructor(
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
     private val errorMonitor: ErrorMonitor,
     private val taskDao: DownloadTaskDao,
-    @Suppress("unused") private val okDownload: OkDownload
+    @Suppress("unused") private val okDownload: OkDownload,
 ) : DownloadListener1() {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 

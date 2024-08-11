@@ -2,8 +2,6 @@ package com.imcys.bilibilias.feature.download.di
 
 import com.imcys.bilibilias.feature.download.component.DefaultDownloadComponent
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
-import com.imcys.bilibilias.feature.download.sheet.DefaultDialogComponent
-import com.imcys.bilibilias.feature.download.sheet.DialogComponent
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,7 +13,4 @@ interface DownloadModule {
 
     @Binds
     fun downloadComponentFactory(impl: DefaultDownloadComponent.Factory): DownloadComponent.Factory
-
-    @Binds
-    fun dialogComponentFactory(impl: DefaultDialogComponent.Factory): DialogComponent.Factory
 }
