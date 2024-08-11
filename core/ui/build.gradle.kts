@@ -15,6 +15,9 @@ dependencies {
     api(projects.core.model)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
+    implementation(libs.coil.video)
+    implementation(libs.coil.svg)
 
     androidTestImplementation(projects.core.testing)
     androidTestImplementation(testFixtures(projects.core.model))

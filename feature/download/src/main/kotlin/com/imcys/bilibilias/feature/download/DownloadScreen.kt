@@ -40,6 +40,7 @@ import com.imcys.bilibilias.core.designsystem.icon.AsIcons
 import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.ui.thumbnail.Thumbnail
 import com.imcys.bilibilias.core.utils.selected
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
 import com.imcys.bilibilias.feature.download.component.Event
@@ -132,20 +133,24 @@ fun DownloadTaskPanel(
                 )
             },
             leadingContent = {
-                Card(
-                    modifier = Modifier.size(80.dp),
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary),
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
+                if (task.fileType == FileType.VIDEO) {
+                    Thumbnail(task.uri, 1000)
+                } else {
+                    Card(
+                        modifier = Modifier.size(80.dp),
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary),
                     ) {
-                        Text(
-                            text = task.fileType.toString(),
-                            modifier = Modifier,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = task.fileType.toString(),
+                                modifier = Modifier,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                            )
+                        }
                     }
                 }
             },

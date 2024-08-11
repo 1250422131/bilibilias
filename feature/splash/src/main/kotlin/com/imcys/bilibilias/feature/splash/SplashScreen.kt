@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 fun SplashContent(
     component: SplashComponent,
     navigationToLogin: () -> Unit,
-    navigationToTool: () -> Unit,
+    navigationToHome: () -> Unit,
 ) {
     if (component.isLogin) {
-        navigationToTool()
+        navigationToHome()
     } else {
         navigationToLogin()
     }
