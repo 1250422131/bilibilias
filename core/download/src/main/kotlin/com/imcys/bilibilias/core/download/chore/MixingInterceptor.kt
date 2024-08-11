@@ -7,7 +7,6 @@ import android.os.Build
 import android.provider.MediaStore
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
@@ -15,6 +14,7 @@ import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.GroupTask
 import com.imcys.bilibilias.core.ffmpeg.FFmpegUtil
 import com.imcys.bilibilias.core.ffmpeg.IFFmpegWork
+import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.lazygeniouz.dfc.file.DocumentFileCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.utils.app.ContentResolverUtils
