@@ -48,9 +48,7 @@ import com.imcys.bilibilias.feature.download.component.Model
 import com.imcys.bilibilias.feature.download.component.PreviewDownloadComponent
 
 @Composable
-fun DownloadContent(
-    component: DownloadComponent,
-) {
+fun DownloadContent(component: DownloadComponent) {
     DownloadScreen(component = component)
 }
 
@@ -101,7 +99,7 @@ internal fun DownloadScreen(
         ) {
             model.entities.forEach {
                 items(it, key = { it.id }) { item ->
-                    DownloadTaskItem(
+                    DownloadTaskPanel(
                         task = item,
                         onSettingsClicked = onSettingsClicked,
                         isOpenSelect = model.canDelete,
@@ -119,7 +117,7 @@ internal fun DownloadScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DownloadTaskItem(
+fun DownloadTaskPanel(
     task: DownloadTaskEntity,
     onSettingsClicked: (ViewInfo, FileType) -> Unit,
     isOpenSelect: Boolean,
