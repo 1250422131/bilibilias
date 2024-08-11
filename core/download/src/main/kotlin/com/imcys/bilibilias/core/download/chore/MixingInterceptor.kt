@@ -82,7 +82,7 @@ class MixingInterceptor @Inject constructor(
         val uri = getExistingVideoUriOrNull(message)
         val contentUri = if (uri == null) {
             MediaStoreUtils.createVideoUri(
-                "${message.video.subTitle}.mp4",
+                message.video.subTitle,
                 MimeType.VIDEO,
                 RELATIVE_PATH,
             ) ?: throw Exception("创建文件失败")

@@ -15,12 +15,10 @@ class AsAppStateTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    // Create the test dependencies.
     private val networkMonitor = TestNetworkMonitor()
 
     private val errorMonitor = TestErrorMonitor(networkMonitor)
 
-    // Subject under test.
     private lateinit var state: AsAppState
 
     @Test

@@ -49,14 +49,10 @@ class NavigationTest {
     @get:Rule(order = 3)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private fun AndroidComposeTestRule<*, *>.stringResource(@StringRes resId: Int) =
-        ReadOnlyProperty<Any, String> { _, _ -> activity.getString(resId) }
-
     // The strings used for matching in these tests
     private val home by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_home)
     private val tool by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_tool)
     private val download by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_download)
-    private val user by composeTestRule.stringResource(R.string.app_home_menu_button_navigation_user)
 
     private val appName by composeTestRule.stringResource(R.string.app_name)
 
@@ -66,7 +62,7 @@ class NavigationTest {
     }
 
     @Test
-    fun firstScreen_isForYou() {
+    fun firstScreen_isHome () {
         composeTestRule.apply {
             onNodeWithText(home).assertIsSelected()
         }
