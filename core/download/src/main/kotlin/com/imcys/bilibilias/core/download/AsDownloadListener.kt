@@ -12,6 +12,7 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.liulishuo.okdownload.core.listener.DownloadListener1
@@ -29,6 +30,7 @@ class AsDownloadListener @Inject constructor(
     private val defaultGroupTaskCall: DefaultGroupTaskCall,
     private val errorMonitor: ErrorMonitor,
     private val taskDao: DownloadTaskDao,
+    @Suppress("unused") private val okDownload: OkDownload
 ) : DownloadListener1() {
     private val taskQueue = mutableObjectListOf<AsDownloadTask>()
 

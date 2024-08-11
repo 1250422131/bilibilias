@@ -222,7 +222,7 @@ public class DownloadDispatcher {
             handleCanceledCalls(needCallbackCalls, needCancelCalls);
         }
 
-        return needCallbackCalls.size() > 0 || needCancelCalls.size() > 0;
+        return !needCallbackCalls.isEmpty() || !needCancelCalls.isEmpty();
     }
 
     private synchronized void filterCanceledCalls(@NonNull IdentifiedTask task,
@@ -369,7 +369,7 @@ public class DownloadDispatcher {
             if (syncCall.isCanceled() || syncCall.task == task) continue;
 
             final File otherFile = syncCall.task.getFile();
-            if (otherFile != null && file.equals(otherFile)) {
+            if (file.equals(otherFile)) {
                 return true;
             }
         }
@@ -378,7 +378,7 @@ public class DownloadDispatcher {
             if (asyncCall.isCanceled() || asyncCall.task == task) continue;
 
             final File otherFile = asyncCall.task.getFile();
-            if (otherFile != null && file.equals(otherFile)) {
+            if (file.equals(otherFile)) {
                 return true;
             }
         }
@@ -455,7 +455,7 @@ public class DownloadDispatcher {
 
             final File file = call.getFile();
             final File taskFile = task.getFile();
-            if (file != null && taskFile != null && file.equals(taskFile)) {
+            if (file != null && file.equals(taskFile)) {
                 if (fileBusyList != null) {
                     fileBusyList.add(task);
                 } else {
