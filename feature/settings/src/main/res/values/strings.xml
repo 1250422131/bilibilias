@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_settings_set_download_destination_path">设置下载目标路径</string>
+    <string name="feature_settings_internal_storage">设备/内部存储</string>
+    <string name="feature_settings_custom_storage">自定义路径</string>
+    <string name="feature_settings_download_location">下载位置</string>
+    <string name="feature_settings_select_download_storage_location">选择下载存储位置</string>
+    <string name="feature_settings_dialog_confirm_button_text">确定</string>
+    <string name="feature_settings_dialog_dismiss_button_text">取消</string>
+</resources>
