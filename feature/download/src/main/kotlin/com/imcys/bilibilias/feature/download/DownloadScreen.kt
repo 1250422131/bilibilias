@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -158,13 +157,11 @@ fun DownloadTaskPanel(
                 )
             },
             supportingContent = {
-                Text(text = "${task.state.cn}·")
+                Text(text = task.state.cn)
             },
             trailingContent = {
                 if (isOpenSelect) {
                     Checkbox(checked = isSelected, onCheckedChange = { onSelect(task.id) })
-                } else {
-                    Icon(Icons.AutoMirrored.Filled.ArrowRight, contentDescription = null)
                 }
             },
         )
