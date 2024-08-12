@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CallToAction
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -89,6 +90,7 @@ fun ToolContent(
     component: ToolComponent,
     navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
+    navigationToFfmpegAction: () -> Unit,
 ) {
     val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
     val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
@@ -99,6 +101,7 @@ fun ToolContent(
         onDownload = component::download,
         navigationToSettings = navigationToSettings,
         navigationToAuthorSpace = navigationToAuthorSpace,
+        navigationToFfmpegAction = navigationToFfmpegAction,
     )
 }
 
@@ -111,12 +114,20 @@ internal fun ToolContent(
     onDownload: (DownloadRequest) -> Unit,
     navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
+    navigationToFfmpegAction: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 actions = {
+                    IconButton(onClick = navigationToFfmpegAction) {
+                        Icon(
+                            Icons.Default.CallToAction,
+                            contentDescription = "action",
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                     IconButton(onClick = navigationToSettings) {
                         Icon(
                             Icons.Default.Settings,

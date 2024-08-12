@@ -49,6 +49,7 @@ import com.imcys.bilibilias.core.designsystem.component.AsNavigationSuiteScope
 import com.imcys.bilibilias.core.designsystem.theme.GradientColors
 import com.imcys.bilibilias.core.designsystem.theme.LocalGradientColors
 import com.imcys.bilibilias.feature.download.DownloadContent
+import com.imcys.bilibilias.feature.ffmpegaction.FfmpegActionScreen
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.login.LoginContent
 import com.imcys.bilibilias.feature.player.PlayerContent
@@ -194,6 +195,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                     component = child.component,
                     navigationToSettings = component::onSettingsTabClicked,
                     navigationToAuthorSpace = component::onAuthorSpaceTabClicked,
+                    navigationToFfmpegAction = component::onFfmpegActionTabClicked
                 )
 
             is RootComponent.Child.DownloadChild ->
@@ -216,6 +218,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
 
             is RootComponent.Child.SettingsChild -> SettingContent(component = child.component)
             is RootComponent.Child.AuthorSpaceChild -> AuthorSpaceContent(component = child.component)
+            is RootComponent.Child.FfmpegActionChild -> FfmpegActionScreen(component = child.component)
         }
     }
 }
