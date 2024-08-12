@@ -151,7 +151,7 @@ dokar-sonner = { group = "io.github.dokar3", name = "sonner", version.ref = "son
 devappx = { group = "io.github.afkt", name = "DevAppX", version.ref = "devappx" }
 
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
-detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version = "0.4.5" }
+detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", version = "0.4.10" }
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
