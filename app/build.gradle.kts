@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.feature.settings)
     implementation(projects.feature.player)
     implementation(projects.feature.authorspace)
+    implementation(projects.feature.ffmpegAction)
 
     implementation(projects.core.analytics)
     implementation(projects.core.common)

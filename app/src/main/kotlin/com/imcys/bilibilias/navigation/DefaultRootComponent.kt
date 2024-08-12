@@ -15,6 +15,7 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
+import com.imcys.bilibilias.feature.ffmpegaction.FfmpegActionComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.login.component.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
@@ -37,6 +38,7 @@ class DefaultRootComponent @AssistedInject constructor(
     private val loginComponentFactory: LoginComponent.Factory,
     private val settingsComponentFactory: SettingsComponent.Factory,
     private val authorSpaceComponentFactory: AuthorSpaceComponent.Factory,
+    private val ffmpegActionComponentFactory: FfmpegActionComponent.Factory,
 ) : RootComponent,
     ComponentContext by componentContext {
 
@@ -106,6 +108,10 @@ class DefaultRootComponent @AssistedInject constructor(
         navigation.push(Config.AuthorSpace(mid))
     }
 
+    override fun onFfmpegActionTabClicked() {
+        navigation.push(Config.FfmpegAction)
+    }
+
     override fun onBack() {
         navigation.pop()
     }
@@ -149,6 +155,10 @@ class DefaultRootComponent @AssistedInject constructor(
                 is Config.AuthorSpace -> RootComponent.Child.AuthorSpaceChild(
                     authorSpaceComponentFactory(componentContext, config.mid),
                 )
+
+                Config.FfmpegAction -> RootComponent.Child.FfmpegActionChild(
+                    ffmpegActionComponentFactory(componentContext),
+                )
             }
         }
 
@@ -177,6 +187,9 @@ class DefaultRootComponent @AssistedInject constructor(
 
         @Serializable
         data object Settings : Config
+
+        @Serializable
+        data object FfmpegAction : Config
 
         @Serializable
         data class AuthorSpace(val mid: Mid) : Config

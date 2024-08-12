@@ -7,6 +7,7 @@ import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
 import com.imcys.bilibilias.core.model.video.Mid
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.feature.download.component.DownloadComponent
+import com.imcys.bilibilias.feature.ffmpegaction.FfmpegActionComponent
 import com.imcys.bilibilias.feature.home.HomeComponent
 import com.imcys.bilibilias.feature.login.component.LoginComponent
 import com.imcys.bilibilias.feature.player.component.PlayerComponent
@@ -29,6 +30,7 @@ interface RootComponent : ComponentContext {
     fun onLoginTabClicked()
     fun onSettingsTabClicked()
     fun onAuthorSpaceTabClicked(mid: Mid)
+    fun onFfmpegActionTabClicked()
     fun onBack()
     sealed class Child {
         data class HomeChild(val component: HomeComponent) : Child()
@@ -44,6 +46,7 @@ interface RootComponent : ComponentContext {
         data class LoginChild(val component: LoginComponent) : Child()
         data class SettingsChild(val component: SettingsComponent) : Child()
         data class AuthorSpaceChild(val component: AuthorSpaceComponent) : Child()
+        data class FfmpegActionChild(val component: FfmpegActionComponent) : Child()
     }
 
     interface Factory {
