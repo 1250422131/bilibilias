@@ -24,7 +24,7 @@ class AsApplication :
     override fun onCreate() {
         super.onCreate()
         Napier.base(DebugAntilog())
-        logging()
+        logging(this)
         Sync.initialize(context = this)
     }
 
