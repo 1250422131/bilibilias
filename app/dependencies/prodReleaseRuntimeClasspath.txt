@@ -259,6 +259,10 @@ io.github.dokar3:sheets-m3:0.6.0-alpha03
 io.github.dokar3:sonner-android:0.3.8
 io.github.dokar3:sonner:0.3.8
 io.github.leavesczy:monitor-no-op:1.8.1
+io.github.vinceglb:filekit-compose-android:0.7.0
+io.github.vinceglb:filekit-compose:0.7.0
+io.github.vinceglb:filekit-core-android:0.7.0
+io.github.vinceglb:filekit-core:0.7.0
 io.github.youth5201314:banner:2.2.3
 io.ktor:ktor-client-content-negotiation-jvm:2.3.12
 io.ktor:ktor-client-content-negotiation:2.3.12

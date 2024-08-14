@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.ffmpeg)
 
     implementation(libs.androidx.activity.compose)
     implementation("io.github.vinceglb:filekit-compose:0.7.0")
