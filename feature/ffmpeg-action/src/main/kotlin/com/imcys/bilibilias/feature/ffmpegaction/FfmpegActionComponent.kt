@@ -4,8 +4,9 @@ import com.arkivanov.decompose.ComponentContext
 import kotlinx.coroutines.flow.StateFlow
 
 interface FfmpegActionComponent {
-    val models: StateFlow<Unit>
+    val models: StateFlow<State>
     fun take(event: Unit)
+
     interface Factory {
         operator fun invoke(
             componentContext: ComponentContext,

@@ -4,12 +4,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.domain.GetViewWithPlayerPlayUrlUseCase
+import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
 import com.imcys.bilibilias.core.model.download.FileType

@@ -195,7 +195,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                     component = child.component,
                     navigationToSettings = component::onSettingsTabClicked,
                     navigationToAuthorSpace = component::onAuthorSpaceTabClicked,
-                    navigationToFfmpegAction = component::onFfmpegActionTabClicked
+                    navigationToFfmpegAction = component::onFfmpegActionTabClicked,
                 )
 
             is RootComponent.Child.DownloadChild ->
