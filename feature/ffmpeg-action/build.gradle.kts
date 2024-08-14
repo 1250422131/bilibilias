@@ -12,7 +12,7 @@ android {
 dependencies {
     implementation(projects.core.common)
 
-    implementation("io.github.vinceglb:filekit-core:0.7.0")
+    implementation(libs.androidx.activity.compose)
     implementation("io.github.vinceglb:filekit-compose:0.7.0")
 
     testImplementation(projects.core.testing)

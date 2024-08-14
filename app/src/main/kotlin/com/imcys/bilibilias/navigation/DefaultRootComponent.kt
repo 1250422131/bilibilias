@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.imbys.bilibilias.feature.authorspace.AuthorSpaceComponent
 import com.imcys.bilibilias.core.model.download.FileType
@@ -109,7 +110,7 @@ class DefaultRootComponent @AssistedInject constructor(
     }
 
     override fun onFfmpegActionTabClicked() {
-        navigation.push(Config.FfmpegAction)
+        navigation.pushNew(Config.FfmpegAction)
     }
 
     override fun onBack() {

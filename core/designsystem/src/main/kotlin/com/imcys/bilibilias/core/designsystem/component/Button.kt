@@ -13,7 +13,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
@@ -38,7 +37,7 @@ fun AsButton(
         modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(251, 114, 153),
+            containerColor = MaterialTheme.colorScheme.primary,
         ),
         contentPadding = contentPadding,
         content = content,

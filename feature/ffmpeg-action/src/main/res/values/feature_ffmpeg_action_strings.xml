@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_ffmpeg_action_video_resources">视频资源</string>
+    <string name="feature_ffmpeg_action_audio_resources">音频资源</string>
+</resources>

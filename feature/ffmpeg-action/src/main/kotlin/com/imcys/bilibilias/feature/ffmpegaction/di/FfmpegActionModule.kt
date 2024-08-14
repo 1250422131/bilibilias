@@ -9,8 +9,8 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface FfmpegActionModule {
+internal abstract class FfmpegActionModule {
 
     @Binds
-    fun componentFactory(impl: DefaultFfmpegActionComponent.Factory): FfmpegActionComponent.Factory
+    internal abstract fun componentFactory(impl: DefaultFfmpegActionComponent.Factory): FfmpegActionComponent.Factory
 }
