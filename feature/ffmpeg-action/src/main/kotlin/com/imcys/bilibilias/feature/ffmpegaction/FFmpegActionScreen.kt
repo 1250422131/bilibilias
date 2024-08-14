@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.component.AsButton
-import com.imcys.bilibilias.core.download.DefaultConfig
 import com.imcys.bilibilias.core.logcat.logcat
 import com.imcys.bilibilias.feature.ffmpegaction.Action.CreateNewFile
 import com.imcys.bilibilias.feature.ffmpegaction.Action.ExecuteCommand
