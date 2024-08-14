@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
+import com.imcys.bilibilias.core.ffmpeg.FfmpegKit2
 import com.imcys.bilibilias.feature.common.BaseViewModel2
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -15,36 +16,54 @@ import kotlinx.coroutines.flow.Flow
 
 internal class DefaultFfmpegActionComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
+    private val kit: FfmpegKit2,
 ) : BaseViewModel2<State, Unit>(),
     FfmpegActionComponent,
     ComponentContext by componentContext {
 
     @Composable
     override fun models(events: Flow<Unit>): State {
-        var videoName by remember { mutableStateOf("") }
-        var audioName by remember { mutableStateOf("") }
+        var videoName by remember { mutableStateOf("videoName") }
+        var audioName by remember { mutableStateOf("audioName") }
 
         var videoUri by remember { mutableStateOf<Uri?>(null) }
         var audioUri by remember { mutableStateOf<Uri?>(null) }
 
         var newFile by remember { mutableStateOf<String?>(null) }
+
+        var command by remember { mutableStateOf("-y -i {VIDEO_PATH} -i {AUDIO_PATH} -vcodec copy -acodec copy {VIDEO_MERGE_PATH}") }
         return State(
+            command = command,
             videoName = videoName,
             audioName = audioName,
         ) {
             when (it) {
                 is Action.UpdateAudioResource -> {
-                    videoName = it.res.name
-                    videoUri = it.res.uri
-                }
-
-                is Action.UpdateVideoResource -> {
                     audioName = it.res.name
                     audioUri = it.res.uri
                 }
 
-                Action.ExecuteCommand -> {
+                is Action.UpdateVideoResource -> {
+                    videoName = it.res.name
+                    videoUri = it.res.uri
                 }
+
+                Action.ExecuteCommand -> {
+                    val realCommand = command
+                        .replace("{VIDEO_PATH}", videoUri.toString())
+                        .replace("{AUDIO_PATH}", audioUri.toString())
+                        .replace("{VIDEO_MERGE_PATH}", newFile.toString())
+                        .split(" ")
+                        .toTypedArray()
+                    kit.execute(
+                        realCommand,
+                        videoUri.toString(),
+                        audioUri.toString(),
+                        newFile.toString(),
+                    )
+                }
+
+                is Action.UpdateCommand -> command = it.command
                 is Action.CreateNewFile -> newFile = it.uri
             }
         }
