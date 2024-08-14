@@ -59,8 +59,8 @@ internal fun FfmpegActionContent(
                 color = MaterialTheme.colorScheme.error,
             )
             TextField(
-                value = DefaultConfig.DEFAULT_COMMAND,
-                onValueChange = {},
+                value = model.command,
+                onValueChange = { model.action(Action.UpdateCommand(it)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),

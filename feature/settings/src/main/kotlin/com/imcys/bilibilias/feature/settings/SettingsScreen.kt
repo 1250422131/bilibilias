@@ -192,7 +192,7 @@ private fun FFmpegCommandMenuLink(command: String, onEvent: (UserEditEvent) -> U
         show = showEditCommandDialog,
         helpText = "如果你不清楚FFmpeg命令，请不要修改\n" +
             "BILIBILIAS为大家提供了简单的命令参数\n" +
-            "{VIDEO_PATH} 视频下载路径\n" +
+            "{VIDEO_PATH} 视频储存路径\n" +
             "{AUDIO_PATH} 音频储存路径\n" +
             "{VIDEO_MERGE_PATH} 合并后储存路径",
         inputText = newCommand ?: command,
