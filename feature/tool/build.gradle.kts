@@ -23,6 +23,8 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.download)
 
+    implementation(libs.flexible.bottomsheet.material3)
+
     testImplementation(projects.core.testing)
     androidTestImplementation(libs.bundles.androidx.compose.ui.test)
     androidTestImplementation(projects.core.testing)
