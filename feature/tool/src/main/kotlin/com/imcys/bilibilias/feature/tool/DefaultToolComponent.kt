@@ -3,6 +3,10 @@ package com.imcys.bilibilias.feature.tool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.imcys.bilibilias.core.common.result.Result
@@ -12,6 +16,8 @@ import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.network.repository.VideoRepository
+import com.imcys.bilibilias.feature.tool.download.DefaultDownloadBottomSheetComponent
+import com.imcys.bilibilias.feature.tool.download.DownloadBottomSheetComponent
 import com.imcys.bilibilias.feature.tool.util.ConversionUtil
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
 import com.imcys.bilibilias.feature.tool.util.SearchType
@@ -26,6 +32,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.serialization.Serializable
 
 class DefaultToolComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -36,6 +43,17 @@ class DefaultToolComponent @AssistedInject constructor(
 ) : ViewModel(),
     ToolComponent,
     ComponentContext by componentContext {
+
+    private val navigation = SlotNavigation<Config>()
+
+    private val _dialogSlot =
+        childSlot(
+            source = navigation,
+            serializer = Config.serializer(),
+            handleBackButton = true,
+            childFactory = ::child
+        )
+    override val dialogSlot: Value<ChildSlot<*, DownloadBottomSheetComponent>> = _dialogSlot
 
     private val savedState = instanceKeeper.getOrCreate(::SavedState)
     private val _searchQuery = savedState.getStateFlow()
@@ -66,7 +84,9 @@ class DefaultToolComponent @AssistedInject constructor(
         savedState.set(query)
     }
 
-    private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> = flowOf(videoRepository.shortLink(url)).map {
+    private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> = flowOf(
+        videoRepository.shortLink(url)
+    ).map {
         InputParseUtil.searchType(it)
     }.flatMapLatest { type ->
         when (type) {
@@ -83,7 +103,9 @@ class DefaultToolComponent @AssistedInject constructor(
         return handleBV(bvid)
     }
 
-    private fun handleBV(id: String): Flow<SearchResultUiState> = getStreamWithVideoDetailUseCase(id).asResult().map { result ->
+    private fun handleBV(id: String): Flow<SearchResultUiState> = getStreamWithVideoDetailUseCase(
+        id
+    ).asResult().map { result ->
         when (result) {
             is Result.Error -> SearchResultUiState.LoadFailed
             Result.Loading -> SearchResultUiState.Loading
@@ -108,7 +130,9 @@ class DefaultToolComponent @AssistedInject constructor(
         }
     }
 
-    private fun handleEP(id: String): Flow<SearchResultUiState> = getStreamWithBangumiDetailUseCase(id.toLong()).asResult().map { result ->
+    private fun handleEP(id: String): Flow<SearchResultUiState> = getStreamWithBangumiDetailUseCase(
+        id.toLong()
+    ).asResult().map { result ->
         when (result) {
             is Result.Error -> SearchResultUiState.LoadFailed
             Result.Loading -> SearchResultUiState.Loading
@@ -133,6 +157,19 @@ class DefaultToolComponent @AssistedInject constructor(
             }
         }
     }
+    private fun child(
+        config: Config,
+        componentContext: ComponentContext,
+    ): DownloadBottomSheetComponent =
+        DefaultDownloadBottomSheetComponent(
+            componentContext = componentContext,
+        )
+
+    @Serializable
+    private data class Config(
+        val index: Int,
+        val isBackEnabled: Boolean,
+    )
 
     @AssistedFactory
     interface Factory : ToolComponent.Factory {
