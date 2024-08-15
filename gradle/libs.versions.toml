@@ -41,6 +41,7 @@ detekt = "1.23.6"
 devappx = "2.4.6"
 dependencyGuard = "0.5.0"
 ffmpegKitFull = "6.0-2"
+flexibleBottomsheetMaterial3 = "0.1.4"
 gsyvideoplayer = "v8.6.0-release-jitpack"
 hilt = "2.52"
 hiltExt = "1.2.0"
@@ -155,6 +156,7 @@ detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", ver
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 
+flexible-bottomsheet-material3 = { module = "com.github.skydoves:flexible-bottomsheet-material3", version.ref = "flexibleBottomsheetMaterial3" }
 gsyvideoplayer-exo2 = { group = "com.github.CarGuo.GSYVideoPlayer", name = "GSYVideoPlayer-exo2", version.ref = "gsyvideoplayer" }
 gsyvideoplayer-java = { group = "com.github.CarGuo.GSYVideoPlayer", name = "gsyVideoPlayer-java", version.ref = "gsyvideoplayer" }
 
