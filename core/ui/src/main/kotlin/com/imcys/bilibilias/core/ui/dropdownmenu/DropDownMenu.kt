@@ -20,12 +20,13 @@ import kotlin.collections.forEach
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ExposedDropdownMenuSample() {
+fun ExposedDropdownMenuSample(modifier: Modifier = Modifier) {
     val options = listOf("Cupcake", "Donut", "Eclair", "Froyo", "Gingerbread")
     var expanded by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(options[0]) }
 
     ExposedDropdownMenuBox(
+        modifier = modifier,
         expanded = expanded,
         onExpandedChange = { expanded = it },
     ) {
