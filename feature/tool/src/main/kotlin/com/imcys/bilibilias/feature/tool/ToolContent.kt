@@ -170,8 +170,10 @@ internal fun ToolContent(
                         navigationToAuthorSpace = navigationToAuthorSpace,
                     )
             }
-            AsButton(onClick = navigationTioDownloadTypeBottomSheet) {
-                Text("Test Sheet")
+            if (false){
+                AsButton(onClick = navigationTioDownloadTypeBottomSheet) {
+                    Text("Test Sheet")
+                }
             }
         }
     }
