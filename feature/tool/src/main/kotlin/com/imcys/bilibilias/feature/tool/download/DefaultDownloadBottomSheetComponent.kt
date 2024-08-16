@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class DefaultDownloadBottomSheetComponent(componentContext: ComponentContext) :
-    DownloadBottomSheetComponent, ComponentContext by componentContext {
+    DownloadBottomSheetComponent,
+    ComponentContext by componentContext {
     override val model: StateFlow<Model> = MutableStateFlow(Model)
 }

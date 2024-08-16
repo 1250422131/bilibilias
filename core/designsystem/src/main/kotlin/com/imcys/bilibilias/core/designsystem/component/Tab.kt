@@ -102,10 +102,12 @@ fun TabIndicatorScope.FancyAnimatedIndicatorWithModifier(index: Int) {
                     coroutineScope.launch {
                         startAnim.animateTo(
                             newStart,
+                            /*
+                             Handle directionality here, if we are moving to the right, we
+                             want the right side of the indicator to move faster, if we are
+                             moving to the left, we want the left side to move faster.
+                             */
                             animationSpec =
-                            // Handle directionality here, if we are moving to the right, we
-                            // want the right side of the indicator to move faster, if we are
-                            // moving to the left, we want the left side to move faster.
                             if (startAnim.targetValue < newStart) {
                                 spring(dampingRatio = 1f, stiffness = 50f)
                             } else {
