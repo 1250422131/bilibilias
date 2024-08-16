@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.dismiss
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.instancekeeper.getOrCreate
@@ -51,7 +53,7 @@ class DefaultToolComponent @AssistedInject constructor(
             source = navigation,
             serializer = Config.serializer(),
             handleBackButton = true,
-            childFactory = ::child
+            childFactory = ::child,
         )
     override val dialogSlot: Value<ChildSlot<*, DownloadBottomSheetComponent>> = _dialogSlot
 
@@ -85,7 +87,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }
 
     private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> = flowOf(
-        videoRepository.shortLink(url)
+        videoRepository.shortLink(url),
     ).map {
         InputParseUtil.searchType(it)
     }.flatMapLatest { type ->
@@ -104,7 +106,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }
 
     private fun handleBV(id: String): Flow<SearchResultUiState> = getStreamWithVideoDetailUseCase(
-        id
+        id,
     ).asResult().map { result ->
         when (result) {
             is Result.Error -> SearchResultUiState.LoadFailed
@@ -131,7 +133,7 @@ class DefaultToolComponent @AssistedInject constructor(
     }
 
     private fun handleEP(id: String): Flow<SearchResultUiState> = getStreamWithBangumiDetailUseCase(
-        id.toLong()
+        id.toLong(),
     ).asResult().map { result ->
         when (result) {
             is Result.Error -> SearchResultUiState.LoadFailed
@@ -157,13 +159,20 @@ class DefaultToolComponent @AssistedInject constructor(
             }
         }
     }
+
+    override fun navigationTioDownloadTypeBottomSheet() {
+        navigation.activate(Config(0, false))
+    }
+
+    override fun onDismissClicked() {
+        navigation.dismiss()
+    }
+
     private fun child(
         config: Config,
         componentContext: ComponentContext,
     ): DownloadBottomSheetComponent =
-        DefaultDownloadBottomSheetComponent(
-            componentContext = componentContext,
-        )
+        DefaultDownloadBottomSheetComponent(componentContext = componentContext)
 
     @Serializable
     private data class Config(

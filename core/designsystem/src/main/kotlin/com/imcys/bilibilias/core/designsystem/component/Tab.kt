@@ -37,9 +37,10 @@ import kotlinx.coroutines.launch
 fun FancyIndicatorContainerTabs(
     selectedTabIndex: Int,
     tabs: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column {
+    Column(modifier = modifier) {
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             indicator = { FancyAnimatedIndicatorWithModifier(selectedTabIndex) },

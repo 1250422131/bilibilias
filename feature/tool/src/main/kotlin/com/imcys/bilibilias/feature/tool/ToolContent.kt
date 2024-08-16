@@ -71,6 +71,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.router.slot.child
+import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.core.download.DownloadRequest
@@ -83,6 +86,7 @@ import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
+import com.imcys.bilibilias.feature.tool.download.DownloadBottomSheetScreen
 import com.imcys.bilibilias.feature.tool.R as searchR
 
 @Composable
@@ -102,7 +106,12 @@ fun ToolContent(
         navigationToSettings = navigationToSettings,
         navigationToAuthorSpace = navigationToAuthorSpace,
         navigationToFfmpegAction = navigationToFfmpegAction,
+        navigationTioDownloadTypeBottomSheet = component::navigationTioDownloadTypeBottomSheet,
     )
+    val dialogSlot by component.dialogSlot.subscribeAsState()
+    dialogSlot.child?.instance?.also {
+        DownloadBottomSheetScreen(component = it, onDismiss = component::onDismissClicked)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +124,7 @@ internal fun ToolContent(
     navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
     navigationToFfmpegAction: () -> Unit,
+    navigationTioDownloadTypeBottomSheet: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -159,6 +169,9 @@ internal fun ToolContent(
                         onDownload = onDownload,
                         navigationToAuthorSpace = navigationToAuthorSpace,
                     )
+            }
+            AsButton(onClick = navigationTioDownloadTypeBottomSheet) {
+                Text("Test Sheet")
             }
         }
     }
