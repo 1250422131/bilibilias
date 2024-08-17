@@ -59,7 +59,7 @@ monitor = "1.8.1"
 mockk = "1.13.12"
 moduleGraph = "2.6.0"
 napier = "2.7.1"
-nextlib = "0.12.0"
+nextlib = "0.8.2"
 okhttp = "4.12.0"
 okio = "3.9.0"
 qrose = "1.0.1"
@@ -110,6 +110,8 @@ androidx-lifecycle-runtimeTesting = { group = "androidx.lifecycle", name = "life
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidxMedia3" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidxMedia3" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidxMedia3" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidxMedia3" }
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidxMedia3" }
 androidx-metrics = { group = "androidx.metrics", name = "metrics-performance", version.ref = "androidXMetrics" }

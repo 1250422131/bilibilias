@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.feature.player.util
 
 import android.content.res.Resources
+import android.util.TypedValue
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -11,11 +12,11 @@ object Utils {
      * Converts px to dp.
      */
     fun pxToDp(px: Float): Float {
-        return px / Resources.getSystem().displayMetrics.density
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, px, Resources.getSystem().displayMetrics)
     }
 
     fun dpToPx(dp: Float): Float {
-        return dp / Resources.getSystem().displayMetrics.density
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().displayMetrics)
     }
 
     /**
