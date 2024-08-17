@@ -95,11 +95,9 @@ val Player.audioSessionId: Int
         else -> C.AUDIO_SESSION_ID_UNSET
     }
 
-fun Player.getCurrentTrackIndex(type: @C.TrackType Int): Int {
-    return currentTracks.groups
-        .filter { it.type == type && it.isSupported }
-        .indexOfFirst { it.isSelected }
-}
+fun Player.getCurrentTrackIndex(type: @C.TrackType Int): Int = currentTracks.groups
+    .filter { it.type == type && it.isSupported }
+    .indexOfFirst { it.isSelected }
 
 @get:UnstableApi
 @set:UnstableApi

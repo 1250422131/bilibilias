@@ -11,8 +11,6 @@ import com.imcys.bilibilias.feature.player.PlayerActivity
 import com.imcys.bilibilias.feature.player.R
 import com.imcys.bilibilias.feature.player.extensions.seekBack
 import com.imcys.bilibilias.feature.player.extensions.seekForward
-import com.imcys.bilibilias.feature.player.extensions.togglePlayPause
-import com.imcys.bilibilias.feature.player.model.DoubleTapGesture
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -59,7 +57,7 @@ class PlayerGestureHelper(
                 if (pointerCount >= 3) return
 
                 playerView.hideController()
-                activity.showTopInfo(activity.getString(R.string.fast_playback_speed, ))
+                activity.showTopInfo(activity.getString(R.string.fast_playback_speed))
                 playerView.player?.setPlaybackSpeed(2.0f)
             }
 
@@ -248,8 +246,7 @@ class PlayerGestureHelper(
      * Check if [firstEvent] is in the gesture exclusion area
      */
     private fun inExclusionArea(firstEvent: MotionEvent): Boolean {
-
-        val gestureExclusionBorder =Utils.dpToPx(GESTURE_EXCLUSION_AREA)
+        val gestureExclusionBorder = Utils.dpToPx(GESTURE_EXCLUSION_AREA)
 
         return firstEvent.y < gestureExclusionBorder || firstEvent.y > playerView.height - gestureExclusionBorder ||
             firstEvent.x < gestureExclusionBorder || firstEvent.x > playerView.width - gestureExclusionBorder

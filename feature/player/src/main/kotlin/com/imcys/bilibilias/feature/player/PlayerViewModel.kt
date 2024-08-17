@@ -2,25 +2,15 @@ package com.imcys.bilibilias.feature.player
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
 import com.imcys.bilibilias.feature.player.extensions.isSchemaContent
 import com.imcys.bilibilias.feature.player.model.VideoState
 import com.imcys.bilibilias.feature.player.model.VideoZoom
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.anilbeesetti.nextplayer.core.data.models.VideoState
-import dev.anilbeesetti.nextplayer.core.data.repository.MediaRepository
-import dev.anilbeesetti.nextplayer.core.data.repository.PreferencesRepository
-import dev.anilbeesetti.nextplayer.core.domain.GetSortedPlaylistUseCase
-import dev.anilbeesetti.nextplayer.core.model.Resume
 import dev.anilbeesetti.nextplayer.core.model.VideoZoom
 import dev.anilbeesetti.nextplayer.feature.player.extensions.isSchemaContent
 import javax.inject.Inject
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 private const val END_POSITION_OFFSET = 5L
 
@@ -51,9 +41,7 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
         externalSubtitles += currentVideoState?.externalSubs ?: emptyList()
     }
 
-    suspend fun getPlaylistFromUri(uri: Uri): List<Uri> {
-        return getSortedPlaylistUseCase.invoke(uri)
-    }
+    suspend fun getPlaylistFromUri(uri: Uri): List<Uri> = getSortedPlaylistUseCase.invoke(uri)
 
     fun saveState(
         uri: Uri,
@@ -77,11 +65,9 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
         val newPosition = position.takeIf {
             position < duration - END_POSITION_OFFSET
         } ?: C.TIME_UNSET
-
     }
 
     fun setPlayerBrightness(value: Float) {
-
     }
 
     fun setVideoZoom(videoZoom: VideoZoom) {

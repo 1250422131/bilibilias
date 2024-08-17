@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.feature.player.model;
+package com.imcys.bilibilias.feature.player.model
 
 enum class DoubleTapGesture {
     PLAY_PAUSE,
