@@ -190,9 +190,10 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var brightnessIcon: ImageView
 
     private val isPipSupported: Boolean by lazy {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && packageManager.hasSystemFeature(
-            PackageManager.FEATURE_PICTURE_IN_PICTURE,
-        )
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            packageManager.hasSystemFeature(
+                PackageManager.FEATURE_PICTURE_IN_PICTURE,
+            )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -728,7 +729,7 @@ class PlayerActivity : AppCompatActivity() {
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP,
             KeyEvent.KEYCODE_DPAD_UP,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                     volumeManager.increaseVolume(true)
                     showVolumeGestureLayout()
@@ -738,7 +739,7 @@ class PlayerActivity : AppCompatActivity() {
 
             KeyEvent.KEYCODE_VOLUME_DOWN,
             KeyEvent.KEYCODE_DPAD_DOWN,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     volumeManager.decreaseVolume(true)
                     showVolumeGestureLayout()
@@ -750,7 +751,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_MEDIA_PAUSE,
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
             KeyEvent.KEYCODE_BUTTON_SELECT,
-                -> {
+            -> {
                 when {
                     keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE -> player.pause()
                     keyCode == KeyEvent.KEYCODE_MEDIA_PLAY -> player.play()
@@ -763,7 +764,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_BUTTON_START,
             KeyEvent.KEYCODE_BUTTON_A,
             KeyEvent.KEYCODE_SPACE,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible) {
                     playerView.togglePlayPause()
                     return true
@@ -773,7 +774,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_DPAD_LEFT,
             KeyEvent.KEYCODE_BUTTON_L2,
             KeyEvent.KEYCODE_MEDIA_REWIND,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible || keyCode == KeyEvent.KEYCODE_MEDIA_REWIND) {
                     val pos = player.currentPosition
                     if (scrubStartPosition == -1L) {
@@ -792,7 +793,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_DPAD_RIGHT,
             KeyEvent.KEYCODE_BUTTON_R2,
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible || keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
                     val pos = player.currentPosition
                     if (scrubStartPosition == -1L) {
@@ -812,7 +813,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_ENTER,
             KeyEvent.KEYCODE_DPAD_CENTER,
             KeyEvent.KEYCODE_NUMPAD_ENTER,
-                -> {
+            -> {
                 if (!playerView.isControllerFullyVisible) {
                     playerView.showController()
                     return true
@@ -835,7 +836,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_VOLUME_DOWN,
             KeyEvent.KEYCODE_DPAD_UP,
             KeyEvent.KEYCODE_DPAD_DOWN,
-                -> {
+            -> {
                 hideVolumeGestureLayout()
                 return true
             }
@@ -846,7 +847,7 @@ class PlayerActivity : AppCompatActivity() {
             KeyEvent.KEYCODE_DPAD_RIGHT,
             KeyEvent.KEYCODE_BUTTON_R2,
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD,
-                -> {
+            -> {
                 hidePlayerInfo()
                 return true
             }
@@ -854,12 +855,10 @@ class PlayerActivity : AppCompatActivity() {
         return super.onKeyUp(keyCode, event)
     }
 
-    private fun getAudioAttributes(): AudioAttributes {
-        return AudioAttributes.Builder()
-            .setUsage(C.USAGE_MEDIA)
-            .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
-            .build()
-    }
+    private fun getAudioAttributes(): AudioAttributes = AudioAttributes.Builder()
+        .setUsage(C.USAGE_MEDIA)
+        .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+        .build()
 
     private fun scrub(position: Long) {
         if (isFrameRendered) {
@@ -942,20 +941,18 @@ class PlayerActivity : AppCompatActivity() {
         .setUri(uri)
         .build()
 
-    private suspend fun createExternalSubtitleStreams(subtitles: List<Subtitle>): List<MediaItem.SubtitleConfiguration> {
-        return subtitles.map {
-            MediaItem.SubtitleConfiguration.Builder(
-                convertToUTF8(
-                    uri = it.uri,
-                    charset = null,
-                ),
-            ).apply {
-                setId(it.uri.toString())
-                setMimeType(it.uri.getSubtitleMime())
-                setLabel(it.name)
-                if (it.isSelected) setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-            }.build()
-        }
+    private suspend fun createExternalSubtitleStreams(subtitles: List<Subtitle>): List<MediaItem.SubtitleConfiguration> = subtitles.map {
+        MediaItem.SubtitleConfiguration.Builder(
+            convertToUTF8(
+                uri = it.uri,
+                charset = null,
+            ),
+        ).apply {
+            setId(it.uri.toString())
+            setMimeType(it.uri.getSubtitleMime())
+            setLabel(it.name)
+            if (it.isSelected) setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
+        }.build()
     }
 
     private fun resetExoContentFrameWidthAndHeight() {

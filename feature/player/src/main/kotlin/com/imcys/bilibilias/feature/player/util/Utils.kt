@@ -11,13 +11,9 @@ object Utils {
     /**
      * Converts px to dp.
      */
-    fun pxToDp(px: Float): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, px, Resources.getSystem().displayMetrics)
-    }
+    fun pxToDp(px: Float): Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, px, Resources.getSystem().displayMetrics)
 
-    fun dpToPx(dp: Float): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().displayMetrics)
-    }
+    fun dpToPx(dp: Float): Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, Resources.getSystem().displayMetrics)
 
     /**
      * Formats the given duration in milliseconds to a string in the format of `mm:ss` or `hh:mm:ss`.
@@ -26,8 +22,8 @@ object Utils {
         val hours = TimeUnit.MILLISECONDS.toHours(millis)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(hours)
         val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) -
-                TimeUnit.MINUTES.toSeconds(minutes) -
-                TimeUnit.HOURS.toSeconds(hours)
+            TimeUnit.MINUTES.toSeconds(minutes) -
+            TimeUnit.HOURS.toSeconds(hours)
         return if (hours > 0) {
             String.format("%02d:%02d:%02d", hours, minutes, seconds)
         } else {
@@ -39,12 +35,10 @@ object Utils {
      * Formats the given duration in milliseconds to a string in the format of
      * `+mm:ss` or `+hh:mm:ss` or `-mm:ss` or `-hh:mm:ss`.
      */
-    fun formatDurationMillisSign(millis: Long): String {
-        return if (millis >= 0) {
-            "+${formatDurationMillis(millis)}"
-        } else {
-            "-${formatDurationMillis(abs(millis))}"
-        }
+    fun formatDurationMillisSign(millis: Long): String = if (millis >= 0) {
+        "+${formatDurationMillis(millis)}"
+    } else {
+        "-${formatDurationMillis(abs(millis))}"
     }
 
     fun formatFileSize(size: Long): String {
@@ -77,7 +71,5 @@ object Utils {
         }
     }
 
-    fun formatLanguage(language: String?): String? {
-        return language?.let { lang -> Locale.forLanguageTag(lang).displayLanguage.takeIf { it.isNotEmpty() } }
-    }
+    fun formatLanguage(language: String?): String? = language?.let { lang -> Locale.forLanguageTag(lang).displayLanguage.takeIf { it.isNotEmpty() } }
 }

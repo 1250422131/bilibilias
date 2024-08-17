@@ -9,13 +9,9 @@ class PlaylistManager {
 
     fun clear() = queue.clear()
 
-    fun hasNext(): Boolean {
-        return currentIndex() + 1 < size()
-    }
+    fun hasNext(): Boolean = currentIndex() + 1 < size()
 
-    fun hasPrev(): Boolean {
-        return currentIndex() > 0
-    }
+    fun hasPrev(): Boolean = currentIndex() > 0
 
     fun getNext(): Uri? = queue.getOrNull(currentIndex() + 1)
 
