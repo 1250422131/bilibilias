@@ -17,22 +17,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.imcys.bilibilias.core.designsystem.component.AsOutlinedButton
 import com.imcys.bilibilias.core.designsystem.component.FancyIndicatorContainerTabs
 import com.imcys.bilibilias.core.ui.dropdownmenu.ExposedDropdownMenuSample
+import com.imcys.bilibilias.feature.tool.download.DownloadBottomSheetComponent.Model
+import com.imcys.bilibilias.feature.tool.download.DownloadTypeBottomSheetEvent.ChangesAuthor
+import com.imcys.bilibilias.feature.tool.download.DownloadTypeBottomSheetEvent.ChangesTitle
 import com.skydoves.flexible.bottomsheet.material3.FlexibleBottomSheet
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadBottomSheetScreen(component: DownloadBottomSheetComponent, onDismiss: () -> Unit) {
-    val scope = rememberCoroutineScope()
+    val model by component.models.collectAsStateWithLifecycle()
+    DownloadBottomSheetContent(
+        model = model,
+        onDismiss = onDismiss,
+        onEvent = component::take,
+        modifier = Modifier,
+    )
+}
+
+@Composable
+internal fun DownloadBottomSheetContent(
+    model: Model,
+    onDismiss: () -> Unit,
+    onEvent: (DownloadTypeBottomSheetEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val sheetState = rememberFlexibleBottomSheetState(
         containSystemBars = true,
         isModal = true,
@@ -54,17 +72,17 @@ fun DownloadBottomSheetScreen(component: DownloadBottomSheetComponent, onDismiss
         DownloadTypeTabs(
             titles = listOf("音频", "视频"),
             selectedTabIndex = {},
-            title = "TODO()",
-            onChangeTitle = {},
-            author = "TODO()",
-            onChangeAuthor = { },
+            title = model.title,
+            onChangeTitle = { onEvent(ChangesTitle(it)) },
+            author = model.author,
+            onChangeAuthor = { onEvent(ChangesAuthor(it)) },
         ) {
         }
     }
 }
 
 @Composable
-fun DownloadTypeTabs(
+internal fun DownloadTypeTabs(
     titles: List<String>,
     selectedTabIndex: (Int) -> Unit,
     title: String,

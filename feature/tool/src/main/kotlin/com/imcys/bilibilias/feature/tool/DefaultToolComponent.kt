@@ -17,8 +17,8 @@ import com.imcys.bilibilias.core.domain.GetStreamWithBangumiDetailUseCase
 import com.imcys.bilibilias.core.domain.GetStreamWithVideoDetailUseCase
 import com.imcys.bilibilias.core.download.DownloadManager
 import com.imcys.bilibilias.core.download.DownloadRequest
+import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.network.repository.VideoRepository
-import com.imcys.bilibilias.feature.tool.download.DefaultDownloadBottomSheetComponent
 import com.imcys.bilibilias.feature.tool.download.DownloadBottomSheetComponent
 import com.imcys.bilibilias.feature.tool.util.ConversionUtil
 import com.imcys.bilibilias.feature.tool.util.InputParseUtil
@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -42,6 +43,7 @@ class DefaultToolComponent @AssistedInject constructor(
     private val getStreamWithBangumiDetailUseCase: GetStreamWithBangumiDetailUseCase,
     private val downloadManager: DownloadManager,
     private val videoRepository: VideoRepository,
+    private val downloadBottomSheetComponentFactory: DownloadBottomSheetComponent.Factory,
 ) : ViewModel(),
     ToolComponent,
     ComponentContext by componentContext {
@@ -86,9 +88,9 @@ class DefaultToolComponent @AssistedInject constructor(
         savedState.set(query)
     }
 
-    private suspend fun handleShortLink(url: String): Flow<SearchResultUiState> = flowOf(
-        videoRepository.shortLink(url),
-    ).map {
+    private fun handleShortLink(url: String): Flow<SearchResultUiState> = flow {
+        emit(videoRepository.shortLink(url))
+    }.map {
         InputParseUtil.searchType(it)
     }.flatMapLatest { type ->
         when (type) {
@@ -160,25 +162,24 @@ class DefaultToolComponent @AssistedInject constructor(
         }
     }
 
-    override fun navigationTioDownloadTypeBottomSheet() {
-        navigation.activate(Config(0, false))
-    }
+    override fun onDismissClicked(): Unit = navigation.dismiss()
 
-    override fun onDismissClicked() {
-        navigation.dismiss()
+    override fun navigationToDownloadTypeBottomSheet(title: String, author: String, id: ViewIds) {
+        navigation.activate(Config(title, author, id))
     }
 
     private fun child(
         config: Config,
         componentContext: ComponentContext,
-    ): DownloadBottomSheetComponent =
-        DefaultDownloadBottomSheetComponent(componentContext = componentContext)
+    ): DownloadBottomSheetComponent = downloadBottomSheetComponentFactory(
+        componentContext,
+        config.title,
+        config.author,
+        config.id,
+    )
 
     @Serializable
-    private data class Config(
-        val index: Int,
-        val isBackEnabled: Boolean,
-    )
+    private data class Config(val title: String, val author: String, val id: ViewIds)
 
     @AssistedFactory
     interface Factory : ToolComponent.Factory {
