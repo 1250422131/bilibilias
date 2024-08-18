@@ -7,9 +7,6 @@ import com.imcys.bilibilias.feature.player.extensions.isSchemaContent
 import com.imcys.bilibilias.feature.player.model.VideoState
 import com.imcys.bilibilias.feature.player.model.VideoZoom
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.anilbeesetti.nextplayer.core.data.models.VideoState
-import dev.anilbeesetti.nextplayer.core.model.VideoZoom
-import dev.anilbeesetti.nextplayer.feature.player.extensions.isSchemaContent
 import javax.inject.Inject
 
 private const val END_POSITION_OFFSET = 5L
@@ -30,18 +27,18 @@ class PlayerViewModel @Inject constructor() : ViewModel() {
 
     suspend fun initMediaState(uri: String?) {
         if (currentPlaybackPosition != null) return
-        currentVideoState = uri?.let { mediaRepository.getVideoState(it) }
-        val prefs = playerPrefs.value
-
-        currentPlaybackPosition = currentVideoState?.position.takeIf { true } ?: currentPlaybackPosition
-        currentAudioTrackIndex = currentVideoState?.audioTrackIndex.takeIf { prefs.rememberSelections } ?: currentAudioTrackIndex
-        currentSubtitleTrackIndex = currentVideoState?.subtitleTrackIndex.takeIf { prefs.rememberSelections } ?: currentSubtitleTrackIndex
-        currentPlaybackSpeed = currentVideoState?.playbackSpeed.takeIf { prefs.rememberSelections } ?: prefs.defaultPlaybackSpeed
-        currentVideoScale = currentVideoState?.videoScale.takeIf { prefs.rememberSelections } ?: 1f
-        externalSubtitles += currentVideoState?.externalSubs ?: emptyList()
+        // currentVideoState = uri?.let { mediaRepository.getVideoState(it) }
+        // val prefs = playerPrefs.value
+        //
+        // currentPlaybackPosition = currentVideoState?.position.takeIf { true } ?: currentPlaybackPosition
+        // currentAudioTrackIndex = currentVideoState?.audioTrackIndex.takeIf { prefs.rememberSelections } ?: currentAudioTrackIndex
+        // currentSubtitleTrackIndex = currentVideoState?.subtitleTrackIndex.takeIf { prefs.rememberSelections } ?: currentSubtitleTrackIndex
+        // currentPlaybackSpeed = currentVideoState?.playbackSpeed.takeIf { prefs.rememberSelections } ?: prefs.defaultPlaybackSpeed
+        // currentVideoScale = currentVideoState?.videoScale.takeIf { prefs.rememberSelections } ?: 1f
+        // externalSubtitles += currentVideoState?.externalSubs ?: emptyList()
     }
 
-    suspend fun getPlaylistFromUri(uri: Uri): List<Uri> = getSortedPlaylistUseCase.invoke(uri)
+    suspend fun getPlaylistFromUri(uri: Uri): List<Uri> = emptyList() // getSortedPlaylistUseCase.invoke(uri)
 
     fun saveState(
         uri: Uri,

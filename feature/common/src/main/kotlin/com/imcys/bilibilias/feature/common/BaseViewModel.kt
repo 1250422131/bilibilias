@@ -16,10 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 // rename to Presenter
 abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) : ComponentContext by componentContext {
-    @Deprecated("")
     val viewModelScope = CoroutineScope(Dispatchers.Main + AndroidUiDispatcher.Main)
-
-    val moleculeScope = CoroutineScope(Dispatchers.Main + AndroidUiDispatcher.Main)
 
     protected open val recompositionMode = ContextClock
 
@@ -28,7 +25,32 @@ abstract class BaseViewModel<Event, Model>(componentContext: ComponentContext) :
     private val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
 
     val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
-        moleculeScope.launchMolecule(mode = recompositionMode) {
+        viewModelScope.launchMolecule(mode = recompositionMode) {
+            models(events)
+        }
+    }
+
+    fun take(event: Event) {
+        if (!events.tryEmit(event)) {
+            error("Event buffer overflow.")
+        }
+    }
+
+    @Composable
+    protected abstract fun models(events: Flow<Event>): Model
+}
+
+abstract class PresenterModel<Model, Event> {
+    val viewModelScope = CoroutineScope(Dispatchers.Main + AndroidUiDispatcher.Main)
+
+    protected open val recompositionMode = ContextClock
+
+    // Events have a capacity large enough to handle simultaneous UI events, but
+    // small enough to surface issues if they get backed up for some reason.
+    private val events = MutableSharedFlow<Event>(extraBufferCapacity = 20)
+
+    val models: StateFlow<Model> by lazy(LazyThreadSafetyMode.NONE) {
+        viewModelScope.launchMolecule(mode = recompositionMode) {
             models(events)
         }
     }

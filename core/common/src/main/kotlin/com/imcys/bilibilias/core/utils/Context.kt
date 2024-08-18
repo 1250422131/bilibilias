@@ -1,11 +1,13 @@
 package com.imcys.bilibilias.core.utils
 
+import android.app.UiModeManager
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -18,6 +20,7 @@ import android.util.Log
 import androidx.core.text.isDigitsOnly
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.InputStream

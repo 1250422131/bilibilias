@@ -8,7 +8,7 @@
     </item>
     <item>
         <shape>
-            <solid android:color="@color/player_background" />
+            <solid android:color="#4D000000" />
             <corners android:radius="10000dp" />
         </shape>
     </item>

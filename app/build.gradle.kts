@@ -54,6 +54,13 @@ android {
             merges += "META-INF/LICENSE.md"
             merges += "META-INF/LICENSE-notice.md"
         }
+        jniLibs {
+            pickFirsts += "**/libavcodec.so"
+            pickFirsts += "**/libavutil.so"
+            pickFirsts += "**/libswresample.so"
+            pickFirsts += "**/libswscale.so"
+            pickFirsts += "**/libavformat.so"
+        }
     }
 }
 

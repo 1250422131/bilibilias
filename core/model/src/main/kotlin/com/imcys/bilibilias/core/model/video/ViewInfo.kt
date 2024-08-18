@@ -11,5 +11,6 @@ typealias Mid = Long
 @Serializable
 data class ViewInfo(val aid: Aid, val bvid: Bvid, val cid: Cid, val title: String)
 
+// todo rename viewid
 @Serializable
 data class ViewIds(val aid: Aid, val bvid: Bvid, val cid: Cid)

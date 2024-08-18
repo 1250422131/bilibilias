@@ -72,7 +72,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.arkivanov.decompose.router.slot.child
 import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
@@ -80,7 +79,9 @@ import com.imcys.bilibilias.core.download.DownloadRequest
 import com.imcys.bilibilias.core.download.Format
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
+import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.Mid
+import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
@@ -106,7 +107,7 @@ fun ToolContent(
         navigationToSettings = navigationToSettings,
         navigationToAuthorSpace = navigationToAuthorSpace,
         navigationToFfmpegAction = navigationToFfmpegAction,
-        navigationTioDownloadTypeBottomSheet = component::navigationTioDownloadTypeBottomSheet,
+        navigationToDownloadTypeBottomSheet = component::navigationToDownloadTypeBottomSheet,
     )
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.also {
@@ -124,7 +125,7 @@ internal fun ToolContent(
     navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
     navigationToFfmpegAction: () -> Unit,
-    navigationTioDownloadTypeBottomSheet: () -> Unit,
+    navigationToDownloadTypeBottomSheet: (String, String, ViewIds) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -159,20 +160,18 @@ internal fun ToolContent(
                 SearchResultUiState.EmptyQuery -> Unit
                 SearchResultUiState.LoadFailed -> EmptySearchResultBody(searchQuery) {}
                 SearchResultUiState.Loading -> Unit
-                is SearchResultUiState.Success ->
+                is SearchResultUiState.Success -> {
                     SearchResultBody(
                         aid = searchResultUiState.aid,
                         bvid = searchResultUiState.bvid,
+                        cid = searchResultUiState.cid,
                         mid = searchResultUiState.mid,
                         collection = searchResultUiState.collection,
                         ownerFace = searchResultUiState.ownerFace,
                         onDownload = onDownload,
                         navigationToAuthorSpace = navigationToAuthorSpace,
+                        navigationToDownloadTypeBottomSheet = navigationToDownloadTypeBottomSheet,
                     )
-            }
-            if (false) {
-                AsButton(onClick = navigationTioDownloadTypeBottomSheet) {
-                    Text("Test Sheet")
                 }
             }
         }
@@ -183,11 +182,13 @@ internal fun ToolContent(
 fun SearchResultBody(
     aid: Aid,
     bvid: Bvid,
+    cid: Cid,
     mid: Mid,
     collection: List<View>,
     ownerFace: String,
     onDownload: (DownloadRequest) -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
+    navigationToDownloadTypeBottomSheet: (String, String, ViewIds) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -222,6 +223,19 @@ fun SearchResultBody(
                             it,
                         ),
                     )
+                }
+            }
+            item {
+                AsButton(
+                    onClick = {
+                        navigationToDownloadTypeBottomSheet(
+                            "title",
+                            "author",
+                            ViewIds(aid, bvid, cid),
+                        )
+                    },
+                ) {
+                    Text("Test Sheet")
                 }
             }
         }
