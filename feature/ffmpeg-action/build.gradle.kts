@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.core.ffmpeg)
 
     implementation(libs.androidx.activity.compose)
-    implementation("io.github.vinceglb:filekit-compose:0.7.0")
+    implementation(libs.filekit.compose)
 
     testImplementation(projects.core.testing)
     androidTestImplementation(libs.bundles.androidx.compose.ui.test)

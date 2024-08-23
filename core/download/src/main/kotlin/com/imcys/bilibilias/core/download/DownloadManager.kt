@@ -67,7 +67,7 @@ class DownloadManager @Inject constructor(
                 // todo 处理 pages
                 downloadedTest(
                     taskType = TaskType.ALL,
-                    viewWithPlayerPlayUrl = { getViewWithPlayerPlayUrlUseCase(id).first() },
+                    viewWithPlayerVideoStreamUrl = { getViewWithPlayerPlayUrlUseCase(id).first() },
                     vUrl = {
                         it.groupBy { it.id }
                             .maxBy { it.key }
@@ -97,7 +97,7 @@ class DownloadManager @Inject constructor(
         scope.launch {
             downloadedTest(
                 taskType = request.format.taskType,
-                viewWithPlayerPlayUrl = { getViewWithPlayerPlayUrlUseCase(request.viewInfo.bvid).first() },
+                viewWithPlayerVideoStreamUrl = { getViewWithPlayerPlayUrlUseCase(request.viewInfo.bvid).first() },
                 vUrl = { sources ->
                     val map = sources.groupBy { it.id }
                     val videos = map[request.format.quality] ?: map.maxBy { it.key }.value
@@ -120,14 +120,14 @@ class DownloadManager @Inject constructor(
 
     suspend fun downloadedTest(
         taskType: TaskType,
-        viewWithPlayerPlayUrl: suspend () -> Pair<ViewDetail, VideoStreamUrl>,
+        viewWithPlayerVideoStreamUrl: suspend () -> Pair<ViewDetail, VideoStreamUrl>,
         vUrl: (List<Sources>) -> String,
         aUrl: (List<Sources>) -> String,
         pages: (List<ViewDetail.Pages>) -> String,
         vTask: (url: String, ids: ViewIds, title: String, subTitle: String) -> Unit,
         aTask: (url: String, ids: ViewIds, title: String, subTitle: String) -> Unit,
     ) {
-        val (detail, url) = viewWithPlayerPlayUrl()
+        val (detail, url) = viewWithPlayerVideoStreamUrl()
         val dash = url.dash
         val downloadVideoUrl = vUrl(dash.video)
         val downloadAudioUrl = aUrl(dash.audio)

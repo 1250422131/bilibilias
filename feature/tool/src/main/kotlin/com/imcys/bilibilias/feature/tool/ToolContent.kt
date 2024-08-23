@@ -5,18 +5,32 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -30,10 +44,12 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,6 +71,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -72,7 +89,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.imcys.bilibilias.core.designsystem.component.AsButton
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.core.download.DownloadRequest
@@ -88,6 +104,7 @@ import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
 import com.imcys.bilibilias.core.ui.radio.rememberFileTypeState
 import com.imcys.bilibilias.feature.tool.download.DownloadBottomSheetScreen
+import com.imcys.bilibilias.feature.tool.util.videoClarityConversion
 import com.imcys.bilibilias.feature.tool.R as searchR
 
 @Composable
@@ -211,7 +228,7 @@ fun SearchResultBody(
                 )
             }
             items(collection, key = { it.cid }) { item ->
-                ViewItem(item.title, item.videoStreamDesc) {
+                FormatItem(item.title, item.videoStreamDesc) {
                     onDownload(
                         DownloadRequest(
                             ViewInfo(
@@ -225,26 +242,13 @@ fun SearchResultBody(
                     )
                 }
             }
-            item {
-                AsButton(
-                    onClick = {
-                        navigationToDownloadTypeBottomSheet(
-                            "title",
-                            "author",
-                            ViewIds(aid, bvid, cid),
-                        )
-                    },
-                ) {
-                    Text("Test Sheet")
-                }
-            }
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewItem(
+fun FormatItem(
     title: String,
     streamDesc: VideoStreamDesc,
     onDownload: (Format) -> Unit,
@@ -302,6 +306,72 @@ fun ViewItem(
                 ) {
                     Text(text = "下载")
                 }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Privee() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(300.dp),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            // verticalItemSpacing = 24.dp,
+            modifier = Modifier
+                .testTag("forYou:feed"),
+        ) {
+            onboarding(
+                onboardingUiState = SearchResultUiState.Success(),
+                // Custom LayoutModifier to remove the enforced parent 16.dp contentPadding
+                // from the LazyVerticalGrid and enable edge-to-edge scrolling for this section
+                interestsItemModifier = Modifier.layout { measurable, constraints ->
+                    val placeable = measurable.measure(
+                        constraints.copy(
+                            maxWidth = constraints.maxWidth + 32.dp.roundToPx(),
+                        ),
+                    )
+                    layout(placeable.width, placeable.height) {
+                        placeable.place(0, 0)
+                    }
+                },
+            )
+
+            item(contentType = "bottomSpacing") {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    // Add space for the content to clear the "offline" snackbar.
+                    // TODO: Check that the Scaffold handles this correctly in NiaApp
+                    // if (isOffline) Spacer(modifier = Modifier.height(48.dp))
+                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.safeDrawing))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * An extension on [LazyListScope] defining the onboarding portion of the for you screen.
+ * Depending on the [onboardingUiState], this might emit no items.
+ *
+ */
+private fun LazyGridScope.onboarding(
+    onboardingUiState: SearchResultUiState,
+    interestsItemModifier: Modifier = Modifier,
+) {
+    when (onboardingUiState) {
+        SearchResultUiState.Loading,
+        SearchResultUiState.LoadFailed,
+        SearchResultUiState.EmptyQuery,
+            -> Unit
+
+        is SearchResultUiState.Success -> {
+            items(12) {
             }
         }
     }
@@ -469,5 +539,125 @@ private fun EmptySearchResultColumnPreview() {
             onInterestsClick = {},
             searchQuery = "C++",
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSupportFormats() {
+    val view = List(10) {
+        View(
+            it.toLong(),
+            "title $it",
+            VideoStreamDesc(
+                emptyList(),
+                videos = List(10) {
+                    Format(
+                        112,
+                        "",
+                        codecId = 12,
+                        codecs = "hev1.1.6.L150.90",
+                        mimeType = "video/mp4",
+                        bandwidth = 2303770,
+                        width = 1920,
+                        height = 1080,
+                        sar = "1:1",
+                        fps = "30.000",
+                    )
+                },
+                audios = List(10) {
+                    Format(
+                        30280,
+                        "",
+                        codecId = 0,
+                        codecs = "mp4a.40.2",
+                        mimeType = "audio/mp4",
+                        bandwidth = 169515,
+                        width = 0,
+                        height = 0,
+                        sar = "",
+                        fps = "",
+                    )
+                },
+            ),
+        )
+    }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(3),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp,
+    ) {
+        supportFormats(view)
+    }
+}
+
+private fun LazyStaggeredGridScope.supportFormats(
+    view: List<View>,
+) {
+    view.forEachIndexed { index, items ->
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Text("video-only")
+        }
+        items(
+            items.videoStreamDesc.videos,
+            span = { StaggeredGridItemSpan.SingleLane },
+        ) {
+            MediaSourcesCard(it, false) {}
+        }
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Text("audio-only")
+        }
+        items(
+            items.videoStreamDesc.audios,
+            span = { StaggeredGridItemSpan.SingleLane },
+        ) {
+            MediaSourcesCard(it, true) {
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewMediaSourcesCard() {
+    val format = Format(
+        112,
+        "",
+        codecId = 12,
+        codecs = "hev1.1.6.L150.90",
+        mimeType = "video/mp4",
+        bandwidth = 2303770,
+        width = 1920,
+        height = 1080,
+        sar = "1:1",
+        fps = "30.000",
+    )
+    AsTheme {
+        Column {
+            MediaSourcesCard(format, true) {}
+            MediaSourcesCard(format, false) {}
+        }
+    }
+}
+
+@Composable
+internal fun MediaSourcesCard(
+    format: com.imcys.bilibilias.feature.tool.Format,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onMediaSourceChanged: () -> Unit,
+) {
+    OutlinedCard(
+        onClick = onMediaSourceChanged,
+        modifier = modifier,
+        colors = CardDefaults.outlinedCardColors(
+            if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+        ),
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(format.formatId.videoClarityConversion())
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(format.codecs, maxLines = 1)
+        }
     }
 }
