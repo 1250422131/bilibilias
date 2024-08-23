@@ -1,8 +1,7 @@
 ﻿package com.imcys.bilibilias.core.model.bangumi
 
-import com.imcys.bilibilias.core.model.video.Audio
+import com.imcys.bilibilias.core.model.video.Sources
 import com.imcys.bilibilias.core.model.video.SupportFormat
-import com.imcys.bilibilias.core.model.video.Video
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -85,13 +84,13 @@ data class BangumiStreamUrl(
         @Serializable
         data class Dash(
             @SerialName("audio")
-            val audio: List<Audio> = listOf(),
+            val audio: List<Sources> = listOf(),
             @SerialName("duration")
             val duration: Int = 0,
             @SerialName("min_buffer_time")
             val minBufferTime: Double = 0.0,
             @SerialName("video")
-            val video: List<Video> = listOf(),
+            val video: List<Sources> = listOf(),
         ) {
             @Serializable
             data class RecordInfo(
