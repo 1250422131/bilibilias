@@ -34,6 +34,7 @@ coil = "2.7.0"
 coreKtx = "1.13.1"
 composeSettings = "2.4.0"
 composeCompilerReport = "1.4.0"
+dfc = "1.0.8"
 dokarSheets = "0.6.0-alpha05"
 decompose = "3.1.0"
 detekt = "1.23.6"
@@ -69,6 +70,7 @@ startupRuntime = "1.1.1"
 striktCore = "0.35.1"
 turbine = "1.1.0"
 truth = "1.4.4"
+urlencoderLib = "1.5.0"
 [libraries]
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
@@ -147,6 +149,7 @@ coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
 decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-compose", version.ref = "decompose" }
 
+dfc = { module = "com.lazygeniouz:dfc", version.ref = "dfc" }
 dokar-sheets = { group = "io.github.dokar3", name = "sheets-m3", version.ref = "dokarSheets" }
 dokar-sonner = { group = "io.github.dokar3", name = "sonner", version.ref = "sonner" }
 devappx = { group = "io.github.afkt", name = "DevAppX", version.ref = "devappx" }
@@ -221,6 +224,8 @@ strikt-core = { group = "io.strikt", name = "strikt-core", version.ref = "strikt
 
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+
+urlencoder-lib = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version.ref = "urlencoderLib" }
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
