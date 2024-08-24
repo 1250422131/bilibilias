@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
@@ -196,13 +197,12 @@ public class Util {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static long getFreeSpaceBytes(@NonNull StatFs statFs) {
-        // NEED CHECK PERMISSION?
         long freeSpaceBytes;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             freeSpaceBytes = statFs.getAvailableBytes();
         } else {
-            //noinspection deprecation
             freeSpaceBytes = statFs.getAvailableBlocks() * (long) statFs.getBlockSize();
         }
 
@@ -323,9 +323,7 @@ public class Util {
             return true;
         }
 
-        //noinspection MissingPermission, because we check permission accessable when invoked
-        @SuppressLint("MissingPermission") final NetworkInfo info = manager.getActiveNetworkInfo();
-
+        final NetworkInfo info = manager.getActiveNetworkInfo();
         return info == null || info.getType() != ConnectivityManager.TYPE_WIFI;
     }
 
@@ -379,7 +377,6 @@ public class Util {
         return null;
     }
 
-    //    @SuppressFBWarnings(value = "DMI")
     @NonNull
     public static File getParentFile(final File file) {
         final File candidate = file.getParentFile();
@@ -404,10 +401,23 @@ public class Util {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean isNetworkAvailable(@NonNull ConnectivityManager manager) {
-        //noinspection MissingPermission, because we check permission accessable when invoked
-        @SuppressLint("MissingPermission") final NetworkInfo info = manager.getActiveNetworkInfo();
-        return info != null && info.isConnected();
+        var activeNetwork = manager.getActiveNetwork();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (activeNetwork != null) {
+                var networkCapabilities = manager.getNetworkCapabilities(activeNetwork);
+                if (networkCapabilities != null) {
+                    return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+                }
+            }
+        } else {
+            var networkInfo = manager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                return networkInfo.isConnected();
+            }
+        }
+        return false;
     }
 
     public static void inspectUserHeader(@NonNull Map<String, List<String>> headerField)

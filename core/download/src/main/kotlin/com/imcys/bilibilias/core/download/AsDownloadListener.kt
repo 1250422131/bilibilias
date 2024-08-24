@@ -2,13 +2,10 @@ package com.imcys.bilibilias.core.download
 
 import androidx.collection.mutableObjectListOf
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
-import com.imcys.bilibilias.core.data.util.MessageType
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.download.chore.DefaultGroupTaskCall
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
-import com.imcys.bilibilias.core.download.task.GroupTask
-import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.liulishuo.okdownload.DownloadTask
@@ -75,33 +72,15 @@ class AsDownloadListener @Inject constructor(
             )
 
             val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
-            val v = tasks.find { it.fileType == FileType.VIDEO }
-            val a = tasks.find { it.fileType == FileType.AUDIO }
-            if (v != null && v.state == State.COMPLETED) {
-                if (a != null && a.state == State.COMPLETED) {
-                    defaultGroupTaskCall.execute(GroupTask(v, a))
-                }
+            if (tasks.size == 2 && tasks.any { it.state == State.COMPLETED }) {
+                // defaultGroupTaskCall.execute(GroupTask(v, a))
             }
-            errorMonitor.addShortErrorMessage("添加任务到下载队列")
         }
-    }
-
-    private fun toast(
-        realCause: Exception?,
-        task: AsDownloadTask,
-    ) {
-        val filename = task.okTask.filename
-        val messageWithType = if (realCause == null) {
-            "$filename·下载成功" to MessageType.Normal
-        } else {
-            "$filename·下载失败" to MessageType.Error
-        }
-        errorMonitor.addShortErrorMessage(messageWithType.first, messageWithType.second)
     }
 
     override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
         scope.launch {
-            Napier.d(tag = TAG) { "下载中: ${task.filename} $currentOffset-$totalLength" }
+            Napier.d(tag = TAG) { "下载进度:$currentOffset--$totalLength ${task.filename} " }
             taskDao.updateProgressByUri(
                 currentOffset,
                 totalLength,

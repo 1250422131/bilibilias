@@ -31,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.thauvin.erik.urlencoder.UrlEncoderUtil
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -163,7 +164,7 @@ class DownloadManager @Inject constructor(
     ): Uri {
         val userData = asPreferencesDataSource.userData.first()
         val path = userData.storageFolder
-        Napier.d { "存储路径: $path" }
+        Napier.d { "存储路径: ${path?.let { UrlEncoderUtil.decode(it) }}" }
         return if (path == null) {
             File(context.downloadDir, defaultFilename).toUri()
         } else {
@@ -212,7 +213,7 @@ class DownloadManager @Inject constructor(
         val index = path.indexOfLast { it == '/' }
         val folder = path.substring(0, index)
         val filename = path.substring(index + 1, path.length)
-        Napier.d { "文件夹: $folder, 文件: $filename, 路径: $path" }
+        Napier.d { "$folder/$filename" }
         return folder to filename
     }
 

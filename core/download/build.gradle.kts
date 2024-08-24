@@ -21,7 +21,7 @@ dependencies {
 
     implementation(projects.okdownload.okdownload)
 
-    implementation("com.lazygeniouz:dfc:1.0.8")
+    implementation(libs.dfc)
 
-    implementation(libs.okhttp)
+    implementation(libs.urlencoder.lib)
 }

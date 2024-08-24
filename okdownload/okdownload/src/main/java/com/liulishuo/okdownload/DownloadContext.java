@@ -139,12 +139,7 @@ public class DownloadContext {
 
         if (isAutoCallbackToUIThread) {
             if (uiHandler == null) uiHandler = new Handler(Looper.getMainLooper());
-            uiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    contextListener.queueEnd(DownloadContext.this);
-                }
-            });
+            uiHandler.post(() -> contextListener.queueEnd(DownloadContext.this));
         } else {
             contextListener.queueEnd(this);
         }

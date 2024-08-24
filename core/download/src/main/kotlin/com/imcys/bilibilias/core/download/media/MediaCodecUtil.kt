@@ -9,7 +9,8 @@ object MediaCodecUtil {
         val codecInfos = codecList.codecInfos
         for (i in codecInfos.indices) {
             val codecInfo = codecInfos[i]
-            if (!codecInfo.isEncoder && (
+            if (!codecInfo.isEncoder &&
+                (
                     codecInfo.name.contains("hevc") &&
                         !isSoftwareCodec(codecInfo.name)
                     )
