@@ -52,7 +52,6 @@ import com.imcys.bilibilias.feature.download.DownloadContent
 import com.imcys.bilibilias.feature.ffmpegaction.FfmpegActionScreen
 import com.imcys.bilibilias.feature.home.HomeContent
 import com.imcys.bilibilias.feature.login.LoginContent
-import com.imcys.bilibilias.feature.player.PlayerContent
 import com.imcys.bilibilias.feature.settings.SettingContent
 import com.imcys.bilibilias.feature.splash.SplashContent
 import com.imcys.bilibilias.feature.tool.ToolContent
@@ -204,7 +203,7 @@ private fun RootContent(component: RootComponent, modifier: Modifier = Modifier)
                 )
 
             RootComponent.Child.UserChild -> Unit
-            is RootComponent.Child.PlayerChild -> PlayerContent(component = child.component)
+            is RootComponent.Child.PlayerChild -> Unit
             is RootComponent.Child.LoginChild -> LoginContent(
                 component = child.component,
                 navigationToTool = component::onToolTabClicked,
