@@ -12,7 +12,6 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.network.repository.DanmakuRepository
 import com.imcys.bilibilias.feature.common.BaseViewModel
-import com.imcys.bilibilias.feature.player.util.DanmakuUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -33,7 +32,6 @@ class DefaultPlayerComponent @AssistedInject constructor(
         var title = remember { mutableStateOf<String?>(null) }
         LaunchedEffect(Unit) {
             val bytes = danmakuRepository.getRealTimeDanmaku(viewInfo.cid)
-            DanmakuUtil.writer(bytes)
         }
         LaunchedEffect(Unit) {
 //            downloadTaskDao.findByUri(viewInfo.aid, viewInfo.bvid, viewInfo.cid).map {

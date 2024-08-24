@@ -1,10 +1,13 @@
 package com.imcys.bilibilias.feature.player.util
 
 import android.view.WindowManager
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import com.imcys.bilibilias.feature.player.PlayerActivity
 import com.imcys.bilibilias.feature.player.extensions.currentBrightness
 import com.imcys.bilibilias.feature.player.extensions.swipeToShowStatusBars
 
+@OptIn(UnstableApi::class)
 class BrightnessManager(private val activity: PlayerActivity) {
 
     var currentBrightness = activity.currentBrightness
