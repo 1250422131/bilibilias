@@ -1,11 +1,15 @@
 package com.imcys.bilibilias.core.download
 
 import com.imcys.bilibilias.core.model.download.TaskType
-import com.imcys.bilibilias.core.model.video.ViewInfo
+import com.imcys.bilibilias.core.model.video.Aid
+import com.imcys.bilibilias.core.model.video.Bvid
+import com.imcys.bilibilias.core.model.video.Cid
 
 data class DownloadRequest(
-    val viewInfo: ViewInfo,
-    val format: Format,
+    val aid: Aid,
+    val bvid: Bvid,
+    val cid: Cid,
+    val codecid: Int,
+    val taskType: TaskType,
+    val quality: Int,
 )
-
-data class Format(val codecid: Int, val taskType: TaskType, val quality: Int)
