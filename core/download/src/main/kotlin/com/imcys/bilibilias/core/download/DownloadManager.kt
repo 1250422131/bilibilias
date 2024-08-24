@@ -4,11 +4,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.imcys.bilibilias.core.data.util.ErrorMonitor
+import com.imcys.bilibilias.core.common.network.AsDispatchers
+import com.imcys.bilibilias.core.common.network.Dispatcher
 import com.imcys.bilibilias.core.database.dao.DownloadTaskDao
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
-import com.imcys.bilibilias.core.domain.GetViewWithPlayerPlayUrlUseCase
+import com.imcys.bilibilias.core.domain.GetVideoInfoMetaWithPlayUrlUseCase
 import com.imcys.bilibilias.core.download.DefaultConfig.DEFAULT_NAMING_RULE
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.AsDownloadTask
@@ -16,8 +17,6 @@ import com.imcys.bilibilias.core.model.download.FileType
 import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Sources
-import com.imcys.bilibilias.core.model.video.VideoStreamUrl
-import com.imcys.bilibilias.core.model.video.ViewDetail
 import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.network.di.ApplicationScope
 import com.lazygeniouz.dfc.file.DocumentFileCompat
@@ -27,14 +26,15 @@ import dev.DevUtils
 import dev.utils.app.ContentResolverUtils
 import dev.utils.app.UriUtils
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.maxBy
-import kotlin.collections.singleOrNull
 
 val Context.downloadDir
     get() =
@@ -48,11 +48,11 @@ private const val TAG = "DownloadManager"
 class DownloadManager @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope,
     @ApplicationContext private val context: Context,
+    @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val downloadTaskDao: DownloadTaskDao,
     private val listener: AsDownloadListener,
     private val asPreferencesDataSource: AsPreferencesDataSource,
-    private val getViewWithPlayerPlayUrlUseCase: GetViewWithPlayerPlayUrlUseCase,
-    private val errorMonitor: ErrorMonitor,
+    private val getVideoInfoMetaWithPlayUrlUseCase: GetVideoInfoMetaWithPlayUrlUseCase,
 ) {
     init {
         if (BuildConfig.DEBUG) {
@@ -60,91 +60,73 @@ class DownloadManager @Inject constructor(
         }
     }
 
-    fun download(ids: List<Bvid>) {
+    suspend fun download(ids: List<Bvid>): Unit = withContext(ioDispatcher) {
         Napier.d { ids.joinToString() }
-        scope.launch {
-            for (id in ids) {
-                // todo 处理 pages
-                downloadedTest(
-                    taskType = TaskType.ALL,
-                    viewWithPlayerVideoStreamUrl = { getViewWithPlayerPlayUrlUseCase(id).first() },
-                    vUrl = {
-                        it.groupBy { it.id }
-                            .maxBy { it.key }
-                            .value
-                            .maxBy { it.codecid }
-                            .baseUrl
-                    },
-                    aUrl = {
-                        it.maxBy { it.id }.baseUrl
-                    },
-                    pages = {
-                        it.first().part
-                    },
-                    vTask = { url, ids, title, subTitle ->
-                        createTask(url, ids, title, subTitle, FileType.VIDEO)
-                    },
-                    aTask = { url, ids, title, subTitle ->
-                        createTask(url, ids, title, subTitle, FileType.VIDEO)
-                    },
-                )
+        for (id in ids) {
+            getVideoInfoMetaWithPlayUrlUseCase(id).first().forEach {
+                val pageTitle = it.partTitle
+                val title = it.title
+                val downloadVideoUrl =
+                    getDownloadVideoUrlStrategy(it.video, null, null)
+                val downloadAudioUrl = getDownloadAudioUrlStrategy(it.audio)
+                val viewIds = ViewIds(it.aid, it.bvid, it.cid)
+
+                createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
+                createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
             }
         }
     }
 
-    fun download(request: DownloadRequest) {
+    suspend fun download(request: DownloadRequest) = withContext(ioDispatcher) {
         Napier.d { "下载任务详情: $request" }
-        scope.launch {
-            downloadedTest(
-                taskType = request.format.taskType,
-                viewWithPlayerVideoStreamUrl = { getViewWithPlayerPlayUrlUseCase(request.viewInfo.bvid).first() },
-                vUrl = { sources ->
-                    val map = sources.groupBy { it.id }
-                    val videos = map[request.format.quality] ?: map.maxBy { it.key }.value
-                    videos.singleOrNull { it.codecid == request.format.codecid }?.baseUrl
-                        ?: videos.maxBy { it.codecid }.baseUrl
-                },
-                aUrl = { it.maxBy { it.id }.baseUrl },
-                pages = { pages ->
-                    pages.single { it.cid == request.viewInfo.cid }.part
-                },
-                vTask = { url, ids, title, subTitle ->
-                    createTask(url, ids, title, subTitle, FileType.VIDEO)
-                },
-                aTask = { url, ids, title, subTitle ->
-                    createTask(url, ids, title, subTitle, FileType.AUDIO)
-                },
+        val videoInfo = getVideoInfoMetaWithPlayUrlUseCase(request.bvid).first()
+        val info = videoInfo.single { it.cid == request.cid }
+        val pageTitle = info.partTitle
+        val title = info.title
+        val downloadVideoUrl =
+            getDownloadVideoUrlStrategy(info.video, request.codecid, request.quality)
+        val downloadAudioUrl = getDownloadAudioUrlStrategy(info.audio)
+        val viewIds = ViewIds(info.aid, info.bvid, info.cid)
+        when (request.taskType) {
+            TaskType.ALL -> {
+                createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
+                createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
+            }
+
+            TaskType.VIDEO -> createTask(
+                downloadVideoUrl,
+                viewIds,
+                pageTitle,
+                title,
+                FileType.VIDEO,
+            )
+
+            TaskType.AUDIO -> createTask(
+                downloadAudioUrl,
+                viewIds,
+                pageTitle,
+                title,
+                FileType.AUDIO,
             )
         }
     }
 
-    suspend fun downloadedTest(
-        taskType: TaskType,
-        viewWithPlayerVideoStreamUrl: suspend () -> Pair<ViewDetail, VideoStreamUrl>,
-        vUrl: (List<Sources>) -> String,
-        aUrl: (List<Sources>) -> String,
-        pages: (List<ViewDetail.Pages>) -> String,
-        vTask: (url: String, ids: ViewIds, title: String, subTitle: String) -> Unit,
-        aTask: (url: String, ids: ViewIds, title: String, subTitle: String) -> Unit,
-    ) {
-        val (detail, url) = viewWithPlayerVideoStreamUrl()
-        val dash = url.dash
-        val downloadVideoUrl = vUrl(dash.video)
-        val downloadAudioUrl = aUrl(dash.audio)
-        val viewIds = ViewIds(detail.aid, detail.bvid, detail.cid)
-        val subTitle = pages(detail.pages)
-        val title = detail.title
-        when (taskType) {
-            TaskType.ALL -> {
-                val title = detail.title
-                vTask(downloadVideoUrl, viewIds, subTitle, title)
-                aTask(downloadAudioUrl, viewIds, subTitle, title)
-            }
-
-            TaskType.VIDEO -> vTask(downloadVideoUrl, viewIds, subTitle, title)
-            TaskType.AUDIO -> aTask(downloadAudioUrl, viewIds, subTitle, title)
+    private fun getDownloadVideoUrlStrategy(
+        sources: List<Sources>,
+        codecId: Int?,
+        quality: Int?,
+    ): String {
+        val map = sources.groupBy { it.id }
+        val default: () -> String = { map.maxBy { it.key }.value.maxBy { it.codecid }.baseUrl }
+        if (codecId == null && quality == null) {
+            return default()
         }
+        return map[quality]?.singleOrNull { it.codecid == codecId }?.baseUrl
+            ?: default()
     }
+
+    private fun getDownloadAudioUrlStrategy(sources: List<Sources>) =
+        sources.maxBy { it.id }.baseUrl
 
     private fun createTask(
         url: String,
@@ -166,10 +148,6 @@ class DownloadManager @Inject constructor(
                 mimeType,
                 extension,
             )
-            if (uri == null) {
-                errorMonitor.addShortErrorMessage("创建文件失败")
-                throw CreateFileFailedException("创建文件失败")
-            }
             val task = AsDownloadTask(ids, title, subTitle, type, url, uri)
             listener.add(task)
         }
@@ -182,7 +160,7 @@ class DownloadManager @Inject constructor(
         subTitle: String,
         mimeType: String,
         extension: String,
-    ): Uri? {
+    ): Uri {
         val userData = asPreferencesDataSource.userData.first()
         val path = userData.storageFolder
         Napier.d { "存储路径: $path" }
@@ -204,8 +182,10 @@ class DownloadManager @Inject constructor(
         val (folderName, filename) = generateFileNameByNamingConventions(viewInfo, title, subTitle)
         val filenameWithExtension = filename + extension
         val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
-        val folder = tree.createDirectory(folderName) ?: throw CreateFileFailedException("创建文件夹失败")
-        val file = folder.createFile(mimeType, filenameWithExtension) ?: throw CreateFileFailedException("创建文件失败")
+        val folder =
+            tree.createDirectory(folderName) ?: throw CreateFailedException("创建文件夹失败")
+        val file = folder.createFile(mimeType, filenameWithExtension)
+            ?: throw CreateFailedException("创建文件失败")
 
         Napier.d { "file: $folder/$file" }
         return file.uri
@@ -269,7 +249,7 @@ class DownloadManager @Inject constructor(
 
     private fun deleteEmptyDirectoriesOfFolder(folder: File) {
         val files = folder.listFiles() ?: return
-        if (files.size == 0) {
+        if (files.isEmpty()) {
             folder.delete()
         } else {
             for (fileEntry in files) {

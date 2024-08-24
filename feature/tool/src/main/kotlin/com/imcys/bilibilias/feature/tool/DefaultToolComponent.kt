@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 class DefaultToolComponent @AssistedInject constructor(
@@ -81,7 +82,9 @@ class DefaultToolComponent @AssistedInject constructor(
     )
 
     override fun download(request: DownloadRequest) {
-        downloadManager.download(request)
+        viewModelScope.launch {
+            downloadManager.download(request)
+        }
     }
 
     override fun onSearchQueryChanged(query: String) {

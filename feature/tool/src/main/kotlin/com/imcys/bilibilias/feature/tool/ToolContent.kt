@@ -1,8 +1,6 @@
 package com.imcys.bilibilias.feature.tool
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +28,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -39,8 +36,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CallToAction
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -92,13 +87,11 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.core.designsystem.component.AsTextButton
 import com.imcys.bilibilias.core.designsystem.theme.AsTheme
 import com.imcys.bilibilias.core.download.DownloadRequest
-import com.imcys.bilibilias.core.download.Format
+import com.imcys.bilibilias.core.model.download.TaskType
 import com.imcys.bilibilias.core.model.video.Aid
 import com.imcys.bilibilias.core.model.video.Bvid
 import com.imcys.bilibilias.core.model.video.Cid
 import com.imcys.bilibilias.core.model.video.Mid
-import com.imcys.bilibilias.core.model.video.ViewIds
-import com.imcys.bilibilias.core.model.video.ViewInfo
 import com.imcys.bilibilias.core.ui.radio.CodecsRadioGroup
 import com.imcys.bilibilias.core.ui.radio.FileTypeRadioGroup
 import com.imcys.bilibilias.core.ui.radio.rememberCodecsState
@@ -124,7 +117,6 @@ fun ToolContent(
         navigationToSettings = navigationToSettings,
         navigationToAuthorSpace = navigationToAuthorSpace,
         navigationToFfmpegAction = navigationToFfmpegAction,
-        navigationToDownloadTypeBottomSheet = component::navigationToDownloadTypeBottomSheet,
     )
     val dialogSlot by component.dialogSlot.subscribeAsState()
     dialogSlot.child?.instance?.also {
@@ -142,7 +134,6 @@ internal fun ToolContent(
     navigationToSettings: () -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
     navigationToFfmpegAction: () -> Unit,
-    navigationToDownloadTypeBottomSheet: (String, String, ViewIds) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -187,7 +178,6 @@ internal fun ToolContent(
                         ownerFace = searchResultUiState.ownerFace,
                         onDownload = onDownload,
                         navigationToAuthorSpace = navigationToAuthorSpace,
-                        navigationToDownloadTypeBottomSheet = navigationToDownloadTypeBottomSheet,
                     )
                 }
             }
@@ -205,7 +195,6 @@ fun SearchResultBody(
     ownerFace: String,
     onDownload: (DownloadRequest) -> Unit,
     navigationToAuthorSpace: (Mid) -> Unit,
-    navigationToDownloadTypeBottomSheet: (String, String, ViewIds) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -228,16 +217,15 @@ fun SearchResultBody(
                 )
             }
             items(collection, key = { it.cid }) { item ->
-                FormatItem(item.title, item.videoStreamDesc) {
+                FormatItem(item.title, item.videoStreamDesc, modifier = Modifier.animateItem()) { codecId, taskType, quality ->
                     onDownload(
                         DownloadRequest(
-                            ViewInfo(
-                                aid,
-                                bvid,
-                                item.cid,
-                                item.title,
-                            ),
-                            it,
+                            aid = aid,
+                            bvid = bvid,
+                            cid = cid,
+                            codecid = codecId,
+                            taskType = taskType,
+                            quality = quality,
                         ),
                     )
                 }
@@ -246,17 +234,15 @@ fun SearchResultBody(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FormatItem(
     title: String,
     streamDesc: VideoStreamDesc,
-    onDownload: (Format) -> Unit,
+    modifier: Modifier = Modifier,
+    onDownload: (Int, TaskType, Int) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     Card(
-        onClick = { expanded = !expanded },
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp),
     ) {
         Row(
@@ -265,47 +251,38 @@ fun FormatItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = title, modifier = Modifier.basicMarquee())
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-            )
         }
-        AnimatedVisibility(visible = expanded) {
-            val codecsState = rememberCodecsState()
-            val typeState = rememberFileTypeState()
-            var currentQuality by remember { mutableStateOf(streamDesc.descriptionQuality.first()) }
-            Column {
-                LazyRow {
-                    items(streamDesc.descriptionQuality) { item ->
-                        TextButton(
-                            onClick = { currentQuality = item },
-                            border = if (currentQuality == item) {
-                                BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                            } else {
-                                null
-                            },
-                        ) {
-                            Text(text = item.desc)
-                        }
+        val codecsState = rememberCodecsState()
+        val typeState = rememberFileTypeState()
+        var currentQuality by remember { mutableStateOf(streamDesc.descriptionQuality.first()) }
+        Column {
+            LazyRow {
+                items(streamDesc.descriptionQuality) { item ->
+                    TextButton(
+                        onClick = { currentQuality = item },
+                        border = if (currentQuality == item) {
+                            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                        } else {
+                            null
+                        },
+                    ) {
+                        Text(text = item.desc)
                     }
                 }
-                CodecsRadioGroup(codecsState)
-                FileTypeRadioGroup(typeState)
-                AsTextButton(
-                    onClick = {
-                        onDownload(
-                            Format(
-                                codecsState.current.codeid,
-                                typeState.current,
-                                currentQuality.quality,
-                            ),
-                        )
-                    },
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                ) {
-                    Text(text = "下载")
-                }
+            }
+            CodecsRadioGroup(codecsState)
+            FileTypeRadioGroup(typeState)
+            AsTextButton(
+                onClick = {
+                    onDownload(
+                        codecsState.current.codeid,
+                        typeState.current,
+                        currentQuality.quality,
+                    )
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            ) {
+                Text(text = "下载")
             }
         }
     }
@@ -368,7 +345,7 @@ private fun LazyGridScope.onboarding(
         SearchResultUiState.Loading,
         SearchResultUiState.LoadFailed,
         SearchResultUiState.EmptyQuery,
-            -> Unit
+        -> Unit
 
         is SearchResultUiState.Success -> {
             items(12) {
