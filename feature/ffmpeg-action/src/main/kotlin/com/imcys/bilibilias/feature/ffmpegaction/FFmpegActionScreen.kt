@@ -25,11 +25,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.designsystem.component.AsButton
-import com.imcys.bilibilias.core.logcat.logcat
 import com.imcys.bilibilias.feature.ffmpegaction.Action.CreateNewFile
 import com.imcys.bilibilias.feature.ffmpegaction.Action.ExecuteCommand
 import com.imcys.bilibilias.feature.ffmpegaction.Action.UpdateAudioResource
 import com.imcys.bilibilias.feature.ffmpegaction.Action.UpdateVideoResource
+import io.github.aakira.napier.Napier
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerType
 
@@ -89,7 +89,7 @@ internal fun FfmpegActionContent(
                     if (uri != null) {
                         val newFile = uri.toString()
                         model.action(CreateNewFile(newFile))
-                        logcat("createFile") { newFile.toString() }
+                        Napier.d(tag = "createFile") { newFile }
                     }
                 }
             AsButton(
@@ -118,7 +118,7 @@ internal fun SectionResourceCard(
     ) {
         if (it != null) {
             result(ResourceFile(it.name, it.uri))
-            logcat("filename") { it.name.toString() }
+            Napier.d(tag = "filename") { it.name }
         }
     }
 
