@@ -5,6 +5,7 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.imcys.bilibilias.core.data.util.ErrorMonitor
 import com.imcys.bilibilias.core.data.util.MessageType
+import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
 import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.download.media.MimeType
 import com.imcys.bilibilias.core.download.task.GroupTask
@@ -29,15 +30,16 @@ class MixingInterceptor @Inject constructor(
     private val userPreferences: AsPreferencesDataSource,
     private val ffmpegWork: IFFmpegWork,
     private val errorMonitor: ErrorMonitor,
-) : Interceptor<GroupTask> {
+) : Interceptor<List<DownloadTaskEntity>> {
     override val enable = true
 
-    override fun intercept(message: GroupTask, chain: Interceptor.Chain) {
+    override fun intercept(message:  List<DownloadTaskEntity>, chain: Interceptor.Chain) {
         Napier.d(tag = "Interceptor") { "合并视频 $enable, $message" }
         if (!enable) return
         scope.launch {
-            errorMonitor.addShortErrorMessage("开始合并视频: ${message.video.subTitle}")
             val path = userPreferences.userData.first().storageFolder
+
+
             Napier.d { "指定路径 $path" }
             if (path != null) {
                 指定写入路径(message, path)
@@ -48,7 +50,7 @@ class MixingInterceptor @Inject constructor(
     }
 
     @Suppress("standard:function-naming")
-    private suspend fun 指定写入路径(message: GroupTask, path: String) {
+    private fun 指定写入路径(message: GroupTask, path: String) {
         val savePath = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
         val outputFile = savePath.findFile("${message.video.subTitle}.mp4")
             ?: savePath.createFile(MimeType.VIDEO, "${message.video.subTitle}.mp4")

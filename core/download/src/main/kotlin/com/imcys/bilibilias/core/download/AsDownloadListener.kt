@@ -73,7 +73,7 @@ class AsDownloadListener @Inject constructor(
 
             val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
             if (tasks.size == 2 && tasks.any { it.state == State.COMPLETED }) {
-                // defaultGroupTaskCall.execute(GroupTask(v, a))
+                defaultGroupTaskCall.execute(tasks)
             }
         }
     }
