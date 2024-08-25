@@ -141,67 +141,53 @@ class DownloadManager @Inject constructor(
                 FileType.VIDEO -> MimeType.VIDEO to ".mp4"
                 FileType.AUDIO -> MimeType.AUDIO to ".acc"
             }
-            val uri = createFile(
-                System.currentTimeMillis().toString() + extension,
-                ids,
-                title,
-                subTitle,
-                mimeType,
-                extension,
-            )
-            val task = AsDownloadTask(ids, title, subTitle, type, url, uri)
-            listener.add(task)
+            val path = getUserDownloadFolderPath()
+            val uri = if (path == null) {
+                File(context.downloadDir, System.currentTimeMillis().toString() + extension).toUri()
+            } else {
+                val (dir, file) = fileNameTemplate(ids, title, subTitle)
+                val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
+                tree.createDirWithFile(mimeType, dir, file + extension)
+            }
+            AsDownloadTask(ids, title, subTitle, type, url, uri).also(listener::add)
         }
     }
 
-    private suspend fun createFile(
-        defaultFilename: String,
-        ids: ViewIds,
-        title: String,
-        subTitle: String,
-        mimeType: String,
-        extension: String,
-    ): Uri {
+    private suspend fun getUserDownloadFolderPath(): String? {
         val userData = asPreferencesDataSource.userData.first()
         val path = userData.storageFolder
         Napier.d { "存储路径: ${path?.let { UrlEncoderUtil.decode(it) }}" }
-        return if (path == null) {
-            File(context.downloadDir, defaultFilename).toUri()
-        } else {
-            createFoldersAndFiles(ids, title, subTitle, mimeType, extension, path)
-        }
+        return path
     }
 
-    private suspend fun createFoldersAndFiles(
-        viewInfo: ViewIds,
-        title: String,
-        subTitle: String,
+    private fun DocumentFileCompat.createDirWithFile(
         mimeType: String,
-        extension: String,
-        path: String,
+        dir: String,
+        filenameWithExtension: String,
     ): Uri {
-        val (folderName, filename) = generateFileNameByNamingConventions(viewInfo, title, subTitle)
-        val filenameWithExtension = filename + extension
-        val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
-        val folder =
-            tree.createDirectory(folderName) ?: throw CreateFailedException("创建文件夹失败")
-        val file = folder.createFile(mimeType, filenameWithExtension)
+        val file = createDirIfNotExits(dir).createFile(mimeType, filenameWithExtension)
             ?: throw CreateFailedException("创建文件失败")
 
-        Napier.d { "file: $folder/$file" }
+        Napier.d { "$dir/$filenameWithExtension" }
         return file.uri
     }
 
-    private suspend fun generateFileNameByNamingConventions(
+    private fun DocumentFileCompat.createDirIfNotExits(name: String): DocumentFileCompat {
+        val dir = findFile(name)
+        dir?.let { return it }
+        return createDirectory(name) ?: throw CreateFailedException("创建文件夹失败")
+    }
+
+    private suspend fun fileNameTemplate(
         ids: ViewIds,
         title: String,
         subTitle: String,
     ): Pair<String, String> {
         val userData = asPreferencesDataSource.userData.first()
         var template = userData.fileNamesConvention ?: DEFAULT_NAMING_RULE
-        Napier.d { "命名规则: $template" }
+        Napier.d { "命名模板: $template" }
         // 如果文件名的尾部是 / 则去掉
-        if (template.endsWith("/")) {
+        while (template.endsWith("/")) {
             template = template.dropLast(1)
         }
         val path = template
@@ -211,10 +197,10 @@ class DownloadManager @Inject constructor(
             .replace("{TITLE}", title)
             .replace("{P_TITLE}", subTitle)
         val index = path.indexOfLast { it == '/' }
-        val folder = path.substring(0, index)
+        val dir = path.substring(0, index)
         val filename = path.substring(index + 1, path.length)
-        Napier.d { "$folder/$filename" }
-        return folder to filename
+        Napier.d { "$dir/$filename" }
+        return dir to filename
     }
 
     fun delete(ids: List<Int>) {
