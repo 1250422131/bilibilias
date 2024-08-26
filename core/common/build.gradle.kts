@@ -20,5 +20,5 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
 
-    implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+    implementation("com.github.albfernandez:juniversalchardet:2.5.0")
 }
