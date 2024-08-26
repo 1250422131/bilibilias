@@ -4,6 +4,7 @@ import com.imcys.bilibilias.configureFlavors
 import com.imcys.bilibilias.configureGradleManagedDevices
 import com.imcys.bilibilias.configureKotlinAndroid
 import com.imcys.bilibilias.configurePrintApksTask
+import com.imcys.bilibilias.configureResourcesPackaging
 import com.imcys.bilibilias.disableUnnecessaryAndroidTests
 import com.imcys.bilibilias.libs
 import org.gradle.api.Plugin
@@ -29,6 +30,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 testOptions.animationsDisabled = true
                 configureFlavors(this)
                 configureGradleManagedDevices(this)
+                configureResourcesPackaging(this)
                 // The resource prefix is derived from the module name,
                 // so resources inside ":core:module1" must be prefixed with "core_module1_"
                 resourcePrefix =
