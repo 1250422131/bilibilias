@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.download.chore
 
 import com.imcys.bilibilias.core.database.model.DownloadTaskEntity
+import io.github.aakira.napier.Napier
 import javax.inject.Inject
 
 class DefaultGroupTaskCall @Inject constructor(
@@ -16,6 +17,7 @@ class DefaultGroupTaskCall @Inject constructor(
 
     fun execute(tasks: List<DownloadTaskEntity>) {
         try {
+            Napier.d { tasks.joinToString("\n") }
             getResponseWithInterceptorChain(tasks)
         } finally {
         }

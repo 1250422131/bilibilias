@@ -65,14 +65,20 @@ class AsDownloadListener @Inject constructor(
         scope.launch {
             Napier.d(tag = TAG, throwable = realCause) { "任务结束 $cause-${task.filename}" }
             val asTask = taskQueue.first { it.okTask === task }
+            val state = if (realCause == null) State.COMPLETED else State.ERROR
+            asTask.state = state
             val info = asTask.ids
-            taskDao.updateStateByUri(
-                if (realCause == null) State.COMPLETED else State.ERROR,
-                task.uri,
-            )
+            taskDao.updateStateByUri(state, task.uri,)
 
             val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
-            if (tasks.size == 2 && tasks.any { it.state == State.COMPLETED }) {
+            val list = mutableListOf<AsDownloadTask>()
+            taskQueue.fold(list) { acc, element ->
+                if (element.ids.cid == info.cid && element.ids.bvid == info.bvid && element.ids.aid == info.aid) {
+                    acc.add(element)
+                }
+                list
+            }
+            if (list.size == 2 && list.all { it.state == State.COMPLETED }) {
                 defaultGroupTaskCall.execute(tasks)
             }
         }
