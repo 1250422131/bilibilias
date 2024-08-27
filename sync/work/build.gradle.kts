@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.imcys.bilibilias.sync"
     defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.imcys.bilibilias.core.testing.AsTestRunner"
     }
 }
 
