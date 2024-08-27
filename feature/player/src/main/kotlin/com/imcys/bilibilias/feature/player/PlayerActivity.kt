@@ -89,7 +89,6 @@ import com.imcys.bilibilias.feature.player.util.VolumeManager
 import com.imcys.bilibilias.feature.player.util.toMillis
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.aakira.napier.Napier
-import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -366,10 +365,6 @@ class PlayerActivity : AppCompatActivity() {
     private fun createPlayer() {
         Napier.d("Creating player")
 
-        val renderersFactory = NextRenderersFactory(applicationContext)
-            .setEnableDecoderFallback(true)
-            .setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER)
-
         trackSelector = DefaultTrackSelector(applicationContext).apply {
             this.setParameters(
                 this.buildUponParameters()
@@ -379,7 +374,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         player = ExoPlayer.Builder(applicationContext)
-            .setRenderersFactory(renderersFactory)
             .setTrackSelector(trackSelector)
             .setAudioAttributes(getAudioAttributes(), true)
             .setHandleAudioBecomingNoisy(true)
