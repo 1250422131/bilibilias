@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.core.ffmpeg.FfmpegKit2
+import com.imcys.bilibilias.core.ffmpeg.IFFmpegWork
 import com.imcys.bilibilias.feature.common.BaseViewModel2
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 internal class DefaultFfmpegActionComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val kit: FfmpegKit2,
+    private val work: IFFmpegWork,
 ) : BaseViewModel2<State, Unit>(),
     FfmpegActionComponent,
     ComponentContext by componentContext {
@@ -31,7 +31,7 @@ internal class DefaultFfmpegActionComponent @AssistedInject constructor(
 
         var newFile by remember { mutableStateOf<String?>(null) }
 
-        var command by remember { mutableStateOf("-y -i {VIDEO_PATH} -i {AUDIO_PATH} -vcodec copy -acodec copy {VIDEO_MERGE_PATH}") }
+        var command by remember { mutableStateOf("-y -i {input} -i {input} -vcodec copy -acodec copy {output}") }
         return State(
             command = command,
             videoName = videoName,
@@ -49,17 +49,13 @@ internal class DefaultFfmpegActionComponent @AssistedInject constructor(
                 }
 
                 Action.ExecuteCommand -> {
-                    val realCommand = command
-                        .replace("{VIDEO_PATH}", videoUri.toString())
-                        .replace("{AUDIO_PATH}", audioUri.toString())
-                        .replace("{VIDEO_MERGE_PATH}", newFile.toString())
-                        .split(" ")
-                        .toTypedArray()
-                    kit.execute(
-                        realCommand,
+                    work.execute(
+                        command,
+                        newFile.toString(),
                         videoUri.toString(),
                         audioUri.toString(),
-                        newFile.toString(),
+                        onSuccess = {},
+                        onFailure = {},
                     )
                 }
 
