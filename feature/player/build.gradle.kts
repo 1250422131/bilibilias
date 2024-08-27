@@ -17,12 +17,10 @@ dependencies {
     implementation(libs.androidx.media3.datasource.okhttp)
 
     implementation(libs.androidx.media3.common)
+    // implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.session)
-
-    implementation(libs.nextlib.media3ext)
-    implementation(libs.nextlib.mediainfo)
 
     testImplementation(projects.core.testing)
     androidTestImplementation(libs.bundles.androidx.compose.ui.test)
