@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.download.task
 
 import android.net.Uri
 import com.imcys.bilibilias.core.model.download.FileType
+import com.imcys.bilibilias.core.model.download.State
 import com.imcys.bilibilias.core.model.video.ViewIds
 import com.imcys.bilibilias.core.network.api.BILIBILI_URL
 import com.imcys.bilibilias.core.network.api.BROWSER_USER_AGENT
@@ -16,7 +17,7 @@ class AsDownloadTask(
     uri: Uri,
 ) {
     internal val okTask: DownloadTask = createTask(fileType, DownloadTask.Builder(url, uri))
-
+    internal var state: State? = null
     private fun createTask(
         fileType: FileType,
         builder: DownloadTask.Builder,

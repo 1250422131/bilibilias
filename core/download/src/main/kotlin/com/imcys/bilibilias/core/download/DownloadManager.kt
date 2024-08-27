@@ -47,7 +47,7 @@ private const val TAG = "DownloadManager"
 @Suppress("LongParameterList")
 @Singleton
 class DownloadManager @Inject constructor(
-    @ApplicationScope private val scope: CoroutineScope,
+    @ApplicationScope private val applicationScope: CoroutineScope,
     @ApplicationContext private val context: Context,
     @Dispatcher(AsDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val downloadTaskDao: DownloadTaskDao,
@@ -61,54 +61,58 @@ class DownloadManager @Inject constructor(
         }
     }
 
-    suspend fun download(ids: List<Bvid>): Unit = withContext(ioDispatcher) {
-        Napier.d { ids.joinToString() }
-        for (id in ids) {
-            getVideoInfoMetaWithPlayUrlUseCase(id).first().forEach {
-                val pageTitle = it.partTitle
-                val title = it.title
-                val downloadVideoUrl =
-                    getDownloadVideoUrlStrategy(it.video, null, null)
-                val downloadAudioUrl = getDownloadAudioUrlStrategy(it.audio)
-                val viewIds = ViewIds(it.aid, it.bvid, it.cid)
+    fun download(ids: List<Bvid>) {
+        applicationScope.launch {
+            Napier.d { ids.joinToString() }
+            for (id in ids) {
+                getVideoInfoMetaWithPlayUrlUseCase(id).first().forEach {
+                    val pageTitle = it.partTitle
+                    val title = it.title
+                    val downloadVideoUrl =
+                        getDownloadVideoUrlStrategy(it.video, null, null)
+                    val downloadAudioUrl = getDownloadAudioUrlStrategy(it.audio)
+                    val viewIds = ViewIds(it.aid, it.bvid, it.cid)
 
-                createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
-                createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
+                    createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
+                    createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
+                }
             }
         }
     }
 
-    suspend fun download(request: DownloadRequest) = withContext(ioDispatcher) {
-        Napier.d { "下载任务详情: $request" }
-        val videoInfo = getVideoInfoMetaWithPlayUrlUseCase(request.bvid).first()
-        val info = videoInfo.single { it.cid == request.cid }
-        val pageTitle = info.partTitle
-        val title = info.title
-        val downloadVideoUrl =
-            getDownloadVideoUrlStrategy(info.video, request.codecid, request.quality)
-        val downloadAudioUrl = getDownloadAudioUrlStrategy(info.audio)
-        val viewIds = ViewIds(info.aid, info.bvid, info.cid)
-        when (request.taskType) {
-            TaskType.ALL -> {
-                createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
-                createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
+    fun download(request: DownloadRequest) {
+        applicationScope.launch {
+            Napier.d { "下载任务详情: $request" }
+            val videoInfo = getVideoInfoMetaWithPlayUrlUseCase(request.bvid).first()
+            val info = videoInfo.single { it.cid == request.cid }
+            val pageTitle = info.partTitle
+            val title = info.title
+            val downloadVideoUrl =
+                getDownloadVideoUrlStrategy(info.video, request.codecid, request.quality)
+            val downloadAudioUrl = getDownloadAudioUrlStrategy(info.audio)
+            val viewIds = ViewIds(info.aid, info.bvid, info.cid)
+            when (request.taskType) {
+                TaskType.ALL -> {
+                    createTask(downloadVideoUrl, viewIds, pageTitle, title, FileType.VIDEO)
+                    createTask(downloadAudioUrl, viewIds, pageTitle, title, FileType.AUDIO)
+                }
+
+                TaskType.VIDEO -> createTask(
+                    downloadVideoUrl,
+                    viewIds,
+                    pageTitle,
+                    title,
+                    FileType.VIDEO,
+                )
+
+                TaskType.AUDIO -> createTask(
+                    downloadAudioUrl,
+                    viewIds,
+                    pageTitle,
+                    title,
+                    FileType.AUDIO,
+                )
             }
-
-            TaskType.VIDEO -> createTask(
-                downloadVideoUrl,
-                viewIds,
-                pageTitle,
-                title,
-                FileType.VIDEO,
-            )
-
-            TaskType.AUDIO -> createTask(
-                downloadAudioUrl,
-                viewIds,
-                pageTitle,
-                title,
-                FileType.AUDIO,
-            )
         }
     }
 
@@ -129,28 +133,27 @@ class DownloadManager @Inject constructor(
     private fun getDownloadAudioUrlStrategy(sources: List<Sources>) =
         sources.maxBy { it.id }.baseUrl
 
-    private fun createTask(
+    private suspend fun createTask(
         url: String,
         ids: ViewIds,
         title: String,
         subTitle: String,
         type: FileType,
-    ) {
-        scope.launch {
-            val (mimeType, extension) = when (type) {
-                FileType.VIDEO -> MimeType.VIDEO to ".mp4"
-                FileType.AUDIO -> MimeType.AUDIO to ".acc"
-            }
-            val path = getUserDownloadFolderPath()
-            val uri = if (path == null) {
-                File(context.downloadDir, System.currentTimeMillis().toString() + extension).toUri()
-            } else {
-                val (dir, file) = fileNameTemplate(ids, title, subTitle)
-                val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
-                tree.createDirWithFile(mimeType, dir, file + extension)
-            }
-            AsDownloadTask(ids, title, subTitle, type, url, uri).also(listener::add)
+    ): Unit = withContext(ioDispatcher) {
+        val mimeType = when (type) {
+            FileType.VIDEO -> MimeType.VIDEO
+            FileType.AUDIO -> MimeType.AUDIO
         }
+        val path = getUserDownloadFolderPath()
+        val uri = if (path == null) {
+            File("").nameWithoutExtension
+            File(context.downloadDir, System.currentTimeMillis().toString() + type.extension).toUri()
+        } else {
+            val (dir, file) = fileNameTemplate(ids, title, subTitle)
+            val tree = DocumentFileCompat.fromTreeUri(context, path.toUri())!!
+            tree.createDirWithFile(mimeType, dir, file)
+        }
+        AsDownloadTask(ids, title, subTitle, type, url, uri).also(listener::add)
     }
 
     private suspend fun getUserDownloadFolderPath(): String? {
@@ -163,19 +166,20 @@ class DownloadManager @Inject constructor(
     private fun DocumentFileCompat.createDirWithFile(
         mimeType: String,
         dir: String,
-        filenameWithExtension: String,
+        filename: String,
     ): Uri {
-        val file = createDirIfNotExits(dir).createFile(mimeType, filenameWithExtension)
+        val dirs = createDirIfNotExits(dir)
+        val file = dirs.findFile(filename)
+        val f = file ?: dirs.createFile(mimeType, filename)
             ?: throw CreateFailedException("创建文件失败")
 
-        Napier.d { "$dir/$filenameWithExtension" }
-        return file.uri
+        Napier.d { "$dirs/$filename" }
+        return f.uri
     }
 
     private fun DocumentFileCompat.createDirIfNotExits(name: String): DocumentFileCompat {
-        val dir = findFile(name)
-        dir?.let { return it }
-        return createDirectory(name) ?: throw CreateFailedException("创建文件夹失败")
+        return findFile(name) ?: createDirectory(name)
+            ?: throw CreateFailedException("创建文件夹失败")
     }
 
     private suspend fun fileNameTemplate(
@@ -204,7 +208,7 @@ class DownloadManager @Inject constructor(
     }
 
     fun delete(ids: List<Int>) {
-        scope.launch {
+        applicationScope.launch {
             downloadTaskDao.findByIds(ids).forEach {
                 delete(it)
             }

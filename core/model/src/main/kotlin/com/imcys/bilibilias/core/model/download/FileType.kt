@@ -1,6 +1,6 @@
 package com.imcys.bilibilias.core.model.download
 
-enum class FileType(val priority: Int, val filename: String) {
-    VIDEO(99, "video.mp4"),
-    AUDIO(100, "audio.aac"),
+enum class FileType(val priority: Int, val extension: String) {
+    VIDEO(99, ".mp4"),
+    AUDIO(100, ".aac"),
 }
