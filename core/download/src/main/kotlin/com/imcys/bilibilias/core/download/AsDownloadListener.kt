@@ -68,7 +68,7 @@ class AsDownloadListener @Inject constructor(
             val state = if (realCause == null) State.COMPLETED else State.ERROR
             asTask.state = state
             val info = asTask.ids
-            taskDao.updateStateByUri(state, task.uri,)
+            taskDao.updateStateByUri(state, task.uri)
 
             val tasks = taskDao.findById(info.aid, info.bvid, info.cid)
             val list = mutableListOf<AsDownloadTask>()

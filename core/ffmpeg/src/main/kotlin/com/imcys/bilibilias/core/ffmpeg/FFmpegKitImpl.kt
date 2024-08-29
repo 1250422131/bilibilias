@@ -2,7 +2,6 @@ package com.imcys.bilibilias.core.ffmpeg
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import androidx.core.net.toUri
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.Level
@@ -12,7 +11,6 @@ import com.imcys.bilibilias.core.ffmpeg.util.convertSAFProtocol
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
-import java.net.URLDecoder
 import javax.inject.Inject
 
 private const val TAG = "FFmpegKitImpl"
@@ -57,9 +55,7 @@ class FFmpegKitImpl @Inject constructor(
         Napier.i(tag = TAG) { session.toString() }
     }
 
-    private fun String.countSubstrings(): Int {
-        return """{input}""".toRegex().findAll(this).count()
-    }
+    private fun String.countSubstrings(): Int = """{input}""".toRegex().findAll(this).count()
 
     @VisibleForTesting
     internal fun generateCommand(

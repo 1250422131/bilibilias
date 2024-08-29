@@ -177,10 +177,8 @@ class DownloadManager @Inject constructor(
         return f.uri
     }
 
-    private fun DocumentFileCompat.createDirIfNotExits(name: String): DocumentFileCompat {
-        return findFile(name) ?: createDirectory(name)
-            ?: throw CreateFailedException("创建文件夹失败")
-    }
+    private fun DocumentFileCompat.createDirIfNotExits(name: String): DocumentFileCompat = findFile(name) ?: createDirectory(name)
+        ?: throw CreateFailedException("创建文件夹失败")
 
     private suspend fun fileNameTemplate(
         ids: ViewIds,
