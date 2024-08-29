@@ -31,7 +31,7 @@ internal class DefaultFfmpegActionComponent @AssistedInject constructor(
 
         var newFile by remember { mutableStateOf<String?>(null) }
 
-        var command by remember { mutableStateOf("-y -i {input} -i {input} -vcodec copy -acodec copy {output}") }
+        var command by remember { mutableStateOf("-y -i {input} -i {input} -c copy {output}") }
         return State(
             command = command,
             videoName = videoName,

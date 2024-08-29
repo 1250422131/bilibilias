@@ -23,5 +23,5 @@ dependencies {
 
     implementation(libs.dfc)
 
-    implementation(libs.urlencoder.lib)
+    implementation(libs.urlencoder)
 }

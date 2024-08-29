@@ -5,11 +5,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegKitConfig
+import com.arthenica.ffmpegkit.Level
 import com.arthenica.ffmpegkit.ReturnCode
 import com.arthenica.ffmpegkit.Session
 import com.imcys.bilibilias.core.ffmpeg.util.convertSAFProtocol
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
+import java.net.URLDecoder
 import javax.inject.Inject
 
 private const val TAG = "FFmpegKitImpl"
@@ -17,6 +19,10 @@ private const val TAG = "FFmpegKitImpl"
 class FFmpegKitImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : IFFmpegWork {
+    init {
+        FFmpegKitConfig.setLogLevel(Level.AV_LOG_DEBUG)
+    }
+
     override fun execute(
         template: String,
         outputUri: String,
@@ -24,17 +30,16 @@ class FFmpegKitImpl @Inject constructor(
         onSuccess: () -> Unit,
         onFailure: () -> Unit,
     ) {
+        Napier.d {
+            "命令模板 $template, out:${URLDecoder.decode(outputUri)}, input:${
+                contentSourcesUri.joinToString { URLDecoder.decode(it) }
+            }"
+        }
         val realCommand = generateCommand(template, outputUri, arrayOf(*contentSourcesUri))
         FFmpegKit.executeWithArgumentsAsync(
             realCommand,
             {
                 completeCallback(it, onSuccess, onFailure)
-            },
-            {
-                Napier.d(tag = TAG) { it.toString() }
-            },
-            {
-                Napier.d(tag = TAG) { it.toString() }
             },
         )
     }
@@ -65,7 +70,7 @@ class FFmpegKitImpl @Inject constructor(
         // val size = contentSourcesUri.size
         // check(countSubstrings == size) { "占位符与输入源数量不同, template is $countSubstrings, sources is $size" }
         val strings = contentSourcesUri.map { context.convertSAFProtocol(it, true) }
-        val outUri = context.convertSAFProtocol(outputUri, true)
+        val outUri = context.convertSAFProtocol(outputUri, false)
         var index = 0
         return template.split(" ")
             .map {
