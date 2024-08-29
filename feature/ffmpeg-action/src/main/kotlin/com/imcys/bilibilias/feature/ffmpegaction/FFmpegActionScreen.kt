@@ -85,7 +85,7 @@ internal fun FfmpegActionContent(
                 model.action(UpdateAudioResource(it))
             }
             val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("*/*")) { uri ->
+                rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("video/mp4")) { uri ->
                     if (uri != null) {
                         val newFile = uri.toString()
                         model.action(CreateNewFile(newFile))

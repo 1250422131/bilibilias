@@ -54,7 +54,9 @@ class MixingInterceptor @Inject constructor(
             ffmpegWork.execute(
                 template = COMMAND,
                 out.toString(),
-                contentSourcesUri = message.map { it.uri.toString() }.toTypedArray(), {}, {},
+                contentSourcesUri = message.map {
+                    it.uri.toString()
+                }.toTypedArray(), {}, {},
             )
         }
     }
