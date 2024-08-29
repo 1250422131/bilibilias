@@ -56,7 +56,9 @@ class MixingInterceptor @Inject constructor(
                 out.toString(),
                 contentSourcesUri = message.map {
                     it.uri.toString()
-                }.toTypedArray(), {}, {},
+                }.toTypedArray(),
+                {},
+                {},
             )
         }
     }

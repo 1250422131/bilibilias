@@ -53,5 +53,6 @@ annotation class SurfaceType
 
 /** Surface type equivalent to [SurfaceView] . */
 const val SURFACE_TYPE_SURFACE_VIEW = 1
+
 /** Surface type equivalent to [TextureView]. */
 const val SURFACE_TYPE_TEXTURE_VIEW = 2
