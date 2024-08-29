@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.core.common)
 
     implementation(libs.ffmpeg.kit.full)
+    implementation(libs.urlencoder)
 
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(projects.core.testing)

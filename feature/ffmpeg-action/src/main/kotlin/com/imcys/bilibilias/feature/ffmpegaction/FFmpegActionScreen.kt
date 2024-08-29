@@ -32,6 +32,7 @@ import com.imcys.bilibilias.feature.ffmpegaction.Action.UpdateVideoResource
 import io.github.aakira.napier.Napier
 import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.core.PickerType
+import net.thauvin.erik.urlencoder.UrlEncoderUtil
 
 @Composable
 fun FfmpegActionScreen(component: FfmpegActionComponent) {
@@ -89,7 +90,7 @@ internal fun FfmpegActionContent(
                     if (uri != null) {
                         val newFile = uri.toString()
                         model.action(CreateNewFile(newFile))
-                        Napier.d(tag = "createFile") { newFile }
+                        Napier.d(tag = "createFile") { UrlEncoderUtil.decode(newFile) }
                     }
                 }
             AsButton(

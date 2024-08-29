@@ -11,6 +11,7 @@ import com.arthenica.ffmpegkit.Session
 import com.imcys.bilibilias.core.ffmpeg.util.convertSAFProtocol
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
+import net.thauvin.erik.urlencoder.UrlEncoderUtil
 import java.net.URLDecoder
 import javax.inject.Inject
 
@@ -31,8 +32,8 @@ class FFmpegKitImpl @Inject constructor(
         onFailure: () -> Unit,
     ) {
         Napier.d {
-            "命令模板 $template, out:${URLDecoder.decode(outputUri)}, input:${
-                contentSourcesUri.joinToString { URLDecoder.decode(it) }
+            "命令模板 $template, out:${UrlEncoderUtil.decode(outputUri)}, input:${
+                contentSourcesUri.joinToString { UrlEncoderUtil.decode(it) }
             }"
         }
         val realCommand = generateCommand(template, outputUri, arrayOf(*contentSourcesUri))
