@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.filekit.compose)
 
+    implementation(libs.urlencoder)
+
     testImplementation(projects.core.testing)
     androidTestImplementation(libs.bundles.androidx.compose.ui.test)
     androidTestImplementation(projects.core.testing)
