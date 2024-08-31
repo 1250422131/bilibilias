@@ -40,8 +40,6 @@ internal fun Project.configureAndroidCompose(
         includeSourceInformation = true
         includeTraceMarkers = true
         featureFlags = setOf(
-            ComposeFeatureFlag.StrongSkipping,
-            ComposeFeatureFlag.IntrinsicRemember,
             ComposeFeatureFlag.OptimizeNonSkippingGroups,
         )
     }
