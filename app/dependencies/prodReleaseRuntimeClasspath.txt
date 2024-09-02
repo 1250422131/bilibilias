@@ -191,10 +191,12 @@ com.github.alorma.compose-settings:ui-base-android:2.4.0
 com.github.alorma.compose-settings:ui-base:2.4.0
 com.github.alorma.compose-settings:ui-tiles-android:2.4.0
 com.github.alorma.compose-settings:ui-tiles:2.4.0
-com.github.skydoves:flexible-bottomsheet-material3-android:0.1.4
-com.github.skydoves:flexible-bottomsheet-material3:0.1.4
-com.github.skydoves:flexible-core-android:0.1.4
-com.github.skydoves:flexible-core:0.1.4
+com.github.anilbeesetti.nextlib:nextlib-media3ext:0.8.2
+com.github.anilbeesetti.nextlib:nextlib-mediainfo:0.8.2
+com.github.skydoves:flexible-bottomsheet-material3-android:0.1.5
+com.github.skydoves:flexible-bottomsheet-material3:0.1.5
+com.github.skydoves:flexible-core-android:0.1.5
+com.github.skydoves:flexible-core:0.1.5
 com.goncalossilva:murmurhash-jvm:0.4.0
 com.goncalossilva:murmurhash:0.4.0
 com.google.accompanist:accompanist-drawablepainter:0.32.0
@@ -204,7 +206,7 @@ com.google.dagger:dagger-lint-aar:2.52
 com.google.dagger:dagger:2.52
 com.google.dagger:hilt-android:2.52
 com.google.dagger:hilt-core:2.52
-com.google.errorprone:error_prone_annotations:2.15.0
+com.google.errorprone:error_prone_annotations:2.29.2
 com.google.guava:failureaccess:1.0.2
 com.google.guava:guava:33.0.0-android
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava
