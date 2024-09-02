@@ -193,10 +193,10 @@ com.github.alorma.compose-settings:ui-tiles-android:2.4.0
 com.github.alorma.compose-settings:ui-tiles:2.4.0
 com.github.anilbeesetti.nextlib:nextlib-media3ext:0.8.2
 com.github.anilbeesetti.nextlib:nextlib-mediainfo:0.8.2
-com.github.skydoves:flexible-bottomsheet-material3-android:0.1.4
-com.github.skydoves:flexible-bottomsheet-material3:0.1.4
-com.github.skydoves:flexible-core-android:0.1.4
-com.github.skydoves:flexible-core:0.1.4
+com.github.skydoves:flexible-bottomsheet-material3-android:0.1.5
+com.github.skydoves:flexible-bottomsheet-material3:0.1.5
+com.github.skydoves:flexible-core-android:0.1.5
+com.github.skydoves:flexible-core:0.1.5
 com.goncalossilva:murmurhash-jvm:0.4.0
 com.goncalossilva:murmurhash:0.4.0
 com.google.accompanist:accompanist-drawablepainter:0.32.0
