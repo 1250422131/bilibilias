@@ -159,7 +159,7 @@ detekt-compose-rules = { group = "io.nlopez.compose.rules", name = "detekt", ver
 
 ffmpeg-kit-full = { group = "com.arthenica", name = "ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
 filekit-compose = { module = "io.github.vinceglb:filekit-compose", version.ref = "filekitCompose" }
-flexible-bottomsheet-material3 = { group = "com.github.skydoves", name = "flexible-bottomsheet-material3", version = "0.1.4" }
+flexible-bottomsheet-material3 = { group = "com.github.skydoves", name = "flexible-bottomsheet-material3", version = "0.1.5" }
 
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
