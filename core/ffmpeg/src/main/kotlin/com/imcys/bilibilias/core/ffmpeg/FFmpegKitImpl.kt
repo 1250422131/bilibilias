@@ -25,14 +25,16 @@ class FFmpegKitImpl @Inject constructor(
     override fun execute(
         template: String,
         outputUri: String,
-        vararg contentSourcesUri: String,
+        contentSourcesUri: Array<String>,
         onSuccess: () -> Unit,
         onFailure: () -> Unit,
     ) {
         Napier.d {
-            "命令模板 $template, out:${UrlEncoderUtil.decode(outputUri)}, input:${
-                contentSourcesUri.joinToString { UrlEncoderUtil.decode(it) }
-            }"
+            """
+                命令模板 $template
+                输出资源: ${UrlEncoderUtil.decode(outputUri)}
+                输入资源: ${contentSourcesUri.joinToString("\n") { UrlEncoderUtil.decode(it) }}
+            """.trimIndent()
         }
         val realCommand = generateCommand(template, outputUri, arrayOf(*contentSourcesUri))
         FFmpegKit.executeWithArgumentsAsync(

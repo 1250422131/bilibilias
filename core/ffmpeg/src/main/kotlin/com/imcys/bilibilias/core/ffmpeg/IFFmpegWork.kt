@@ -4,7 +4,7 @@ interface IFFmpegWork {
     fun execute(
         template: String,
         outputUri: String,
-        vararg contentSourcesUri: String,
+        contentSourcesUri: Array<String>,
         onSuccess: () -> Unit,
         onFailure: () -> Unit,
     )
