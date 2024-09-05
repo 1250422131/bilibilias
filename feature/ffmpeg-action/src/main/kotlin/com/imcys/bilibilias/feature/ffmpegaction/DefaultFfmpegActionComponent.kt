@@ -3,6 +3,8 @@ package com.imcys.bilibilias.feature.ffmpegaction
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -13,6 +15,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
+import kotlin.math.max
 
 internal class DefaultFfmpegActionComponent @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -32,28 +35,22 @@ internal class DefaultFfmpegActionComponent @AssistedInject constructor(
         var newFile by remember { mutableStateOf<String?>(null) }
 
         var command by remember { mutableStateOf("-y -i {input} -i {input} -c copy {output}") }
+
+        var count by remember { mutableIntStateOf(0) }
+        val resources = remember { mutableStateListOf<ResourceFile>() }
         return State(
             command = command,
             videoName = videoName,
             audioName = audioName,
+            count = count,
+            resources = resources,
         ) {
             when (it) {
-                is Action.UpdateAudioResource -> {
-                    audioName = it.res.name
-                    audioUri = it.res.uri
-                }
-
-                is Action.UpdateVideoResource -> {
-                    videoName = it.res.name
-                    videoUri = it.res.uri
-                }
-
                 Action.ExecuteCommand -> {
                     work.execute(
-                        command,
-                        newFile.toString(),
-                        videoUri.toString(),
-                        audioUri.toString(),
+                        template = command,
+                        outputUri = newFile.toString(),
+                        contentSourcesUri = resources.map { r -> r.uri.toString() }.toTypedArray(),
                         onSuccess = {},
                         onFailure = {},
                     )
@@ -61,6 +58,12 @@ internal class DefaultFfmpegActionComponent @AssistedInject constructor(
 
                 is Action.UpdateCommand -> command = it.command
                 is Action.CreateNewFile -> newFile = it.uri
+                is Action.AddResource -> resources.add(it.res)
+                is Action.Increase -> count++
+                is Action.Decrease -> {
+                    count = max(--count, 0)
+                    resources.removeLastOrNull()
+                }
             }
         }
     }
