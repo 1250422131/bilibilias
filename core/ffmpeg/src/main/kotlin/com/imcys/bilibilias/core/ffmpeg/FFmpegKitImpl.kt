@@ -31,12 +31,12 @@ class FFmpegKitImpl @Inject constructor(
     ) {
         Napier.d {
             """
-                命令模板 $template
+                命令模板: $template
                 输出资源: ${UrlEncoderUtil.decode(outputUri)}
-                输入资源: ${contentSourcesUri.joinToString("\n") { UrlEncoderUtil.decode(it) }}
+                输入资源: ${contentSourcesUri.joinToString("\t") { UrlEncoderUtil.decode(it) }}
             """.trimIndent()
         }
-        val realCommand = generateCommand(template, outputUri, arrayOf(*contentSourcesUri))
+        val realCommand = generateCommand(template, outputUri, contentSourcesUri)
         FFmpegKit.executeWithArgumentsAsync(
             realCommand,
             {

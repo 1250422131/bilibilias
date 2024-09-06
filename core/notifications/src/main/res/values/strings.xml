@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_notifications_download_notification_channel_name">Downloading…</string>
+    <string name="core_notifications_download_notification_channel_description">Used to notify download task status</string>
+    <string name="core_notifications_download_notification_group_summary">>%1$d task downloading</string>
+</resources>

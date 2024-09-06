@@ -5,6 +5,7 @@
 
 android {
     namespace = "com.imcys.bilibilias.core.notifications"
+    testFixtures.enable = true
 }
 
 dependencies {
