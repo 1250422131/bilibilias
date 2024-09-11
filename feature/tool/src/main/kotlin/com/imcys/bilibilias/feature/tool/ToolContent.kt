@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -78,6 +79,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -217,7 +219,11 @@ fun SearchResultBody(
                 )
             }
             items(collection, key = { it.cid }) { item ->
-                FormatItem(item.title, item.videoStreamDesc, modifier = Modifier.animateItem()) { codecId, taskType, quality ->
+                FormatItem(
+                    item.title,
+                    item.videoStreamDesc,
+                    modifier = Modifier.animateItem(),
+                ) { codecId, taskType, quality ->
                     onDownload(
                         DownloadRequest(
                             aid = aid,
@@ -345,7 +351,7 @@ private fun LazyGridScope.onboarding(
         SearchResultUiState.Loading,
         SearchResultUiState.LoadFailed,
         SearchResultUiState.EmptyQuery,
-        -> Unit
+            -> Unit
 
         is SearchResultUiState.Success -> {
             items(12) {
@@ -480,8 +486,23 @@ fun EmptySearchResultBody(
                 ),
             ) {}
             append(" ")
+            withLink(
+                LinkAnnotation.Clickable(
+                    tag = "",
+                    linkInteractionListener = {
+                        onInterestsClick()
+                    },
+                ),
+            ) {
+                withStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                ) {}
+            }
         }
-        ClickableText(
+        Text(
             text = tryAnotherSearchString,
             style = MaterialTheme.typography.bodyLarge.merge(
                 TextStyle(
@@ -490,13 +511,8 @@ fun EmptySearchResultBody(
                 ),
             ),
             modifier = Modifier
-                .padding(start = 36.dp, end = 36.dp, bottom = 24.dp)
-                .clickable {},
-        ) { offset ->
-            tryAnotherSearchString.getStringAnnotations(start = offset, end = offset)
-                .firstOrNull()
-                ?.let { onInterestsClick() }
-        }
+                .padding(start = 36.dp, end = 36.dp, bottom = 24.dp),
+        )
     }
 }
 
