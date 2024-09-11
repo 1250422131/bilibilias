@@ -69,14 +69,6 @@ gradlePlugin {
             id = "bilibilias.android.application.flavors"
             implementationClass = "AndroidApplicationFlavorsConventionPlugin"
         }
-        register("androidBugly") {
-            id = "bilibilias.android.application.bugly"
-            implementationClass = "AndroidApplicationBuglyConventionPlugin"
-        }
-        register("androidApplicationTestOptionsUnitTests") {
-            id = "bilibilias.android.testoptions"
-            implementationClass = "AndroidTestOptionsUnitTestsConventionPlugin"
-        }
         register("hilt") {
             id = "bilibilias.hilt"
             implementationClass = "HiltConventionPlugin"

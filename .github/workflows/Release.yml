@@ -72,7 +72,6 @@ jobs:
         run: |
           cd app/build/outputs/apk/demo/release
           mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk
-          ls
 
       - name: Create Release and Upload Release Asset
         id: create_release
