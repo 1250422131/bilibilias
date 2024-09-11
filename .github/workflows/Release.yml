@@ -47,6 +47,18 @@ jobs:
       - name: Install GMD image for baseline profile generation
         run: yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager "system-images;android-33;aosp_atd;x86_64"
 
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
+          signing.keyPassword:${{ secrets.KEY_PASSWORD }}
+          signing.keyAlias:${{ secrets.ALIAS }}
+          signing.storeFile:keystore.jks
+          EOF
+
+      - name: Decode keystore and create jks
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
+
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
@@ -56,21 +68,24 @@ jobs:
           -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
 
       # 签名apk
-      - uses: noriban/sign-android-release@v5.1
-        name: Sign app APK
-        id: sign_app
-        with:
-          releaseDirectory: 'app/build/outputs/apk/demo/release'
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "34.0.0"
+#      - uses: noriban/sign-android-release@v5.1
+#        name: Sign app APK
+#        id: sign_app
+#        with:
+#          releaseDirectory: 'app/build/outputs/apk/demo/release'
+#          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+#          alias: ${{ secrets.ALIAS }}
+#          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+#          keyPassword: ${{ secrets.KEY_PASSWORD }}
+#        env:
+#          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: rename apk
         run: |
+          cat keystore.properties
+          ls
           cd app/build/outputs/apk/demo/release
+          ls
           mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk
 
       - name: Create Release and Upload Release Asset
