@@ -47,17 +47,17 @@ jobs:
       - name: Install GMD image for baseline profile generation
         run: yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager "system-images;android-33;aosp_atd;x86_64"
 
+      - name: Decode keystore and create jks
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
+
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
           signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
           signing.keyPassword:${{ secrets.KEY_PASSWORD }}
           signing.keyAlias:${{ secrets.ALIAS }}
-          signing.storeFile:../keystore.jks
+          signing.storeFile:keystore.jks
           EOF
-
-      - name: Decode keystore and create jks
-        run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
       - name: run command
         run: |
           cat keystore.properties
@@ -86,8 +86,6 @@ jobs:
 
       - name: rename apk
         run: |
-          cat keystore.properties
-          ls
           cd app/build/outputs/apk/demo/release
           ls
           mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk

@@ -25,14 +25,14 @@ internal fun Project.configureSigning(
         create("BilibiliAsSigningConfig") {
             keyAlias = getLocalProperty("signing.keyAlias") ?: environment["ALIAS"]
             storeFile =
-                (getLocalProperty("signing.storeFile")
-                    ?: environment["SIGNING_STORE_FILE"])?.toFile()
+                (
+                    getLocalProperty("signing.storeFile")
+                        ?: environment["SIGNING_STORE_FILE"]
+                    )?.toFile()
             keyPassword =
                 getLocalProperty("signing.keyPassword") ?: environment["KEY_PASSWORD"]
             storePassword =
                 getLocalProperty("signing.storePassword") ?: environment["KEY_STORE_PASSWORD"]
-            enableV1Signing = true
-            enableV2Signing = true
             enableV3Signing = true
             enableV4Signing = true
         }
