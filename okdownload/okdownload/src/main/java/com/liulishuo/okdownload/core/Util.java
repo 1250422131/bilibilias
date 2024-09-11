@@ -16,7 +16,6 @@
 
 package com.liulishuo.okdownload.core;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -365,10 +364,7 @@ public class Util {
             try {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                if (columnIndex >= 0) {
-                    return cursor.getString(columnIndex);
-                }
-                return "";
+                return cursor.getString(columnIndex);
             } finally {
                 cursor.close();
             }
