@@ -43,11 +43,11 @@ android {
             )
             applicationIdSuffix = AsBuildType.RELEASE.applicationIdSuffix
             baselineProfile.automaticGenerationDuringBuild = true
+            signingConfig = signingConfigs["BilibiliAsSigningConfig"]
             resValue("string", "app_name", "BILIBILIAS")
             resValue("string", "app_channel", "Official Channel")
         }
     }
-
     packaging {
         jniLibs {
             pickFirsts += "**/libavcodec.so"
