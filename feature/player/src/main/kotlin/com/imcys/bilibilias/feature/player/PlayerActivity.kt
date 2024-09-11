@@ -208,7 +208,7 @@ class PlayerActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        setContentView(R.layout.activity_player)
+        setContentView(R.layout.feature_player_activity_player)
 
         // Initializing views
         audioTrackButton = findViewById(R.id.btn_audio_track)
@@ -626,13 +626,13 @@ class PlayerActivity : AppCompatActivity() {
         override fun onPlayerError(error: PlaybackException) {
             Napier.e(error) { "onPlayerError" }
             val alertDialog = MaterialAlertDialogBuilder(this@PlayerActivity).apply {
-                setTitle(getString(R.string.error_playing_video))
-                setMessage(error.message ?: getString(R.string.unknown_error))
-                setNegativeButton(getString(R.string.exit)) { _, _ ->
+                setTitle(getString(R.string.feature_player_error_playing_video))
+                setMessage(error.message ?: getString(R.string.feature_player_unknown_error))
+                setNegativeButton(getString(R.string.feature_player_exit)) { _, _ ->
                     finish()
                 }
                 if (playlistManager.hasNext()) {
-                    setPositiveButton(getString(R.string.play_next_video)) { dialog, _ ->
+                    setPositiveButton(getString(R.string.feature_player_play_next_video)) { dialog, _ ->
                         dialog.dismiss()
                         playVideo(playlistManager.getNext()!!)
                     }
@@ -964,17 +964,17 @@ class PlayerActivity : AppCompatActivity() {
         when (videoZoom) {
             VideoZoom.BEST_FIT -> {
                 playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                videoZoomButton.setImageDrawable(this, R.drawable.ic_fit_screen)
+                videoZoomButton.setImageDrawable(this, R.drawable.feature_player_ic_fit_screen)
             }
 
             VideoZoom.STRETCH -> {
                 playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-                videoZoomButton.setImageDrawable(this, R.drawable.ic_aspect_ratio)
+                videoZoomButton.setImageDrawable(this, R.drawable.feature_player_ic_aspect_ratio)
             }
 
             VideoZoom.CROP -> {
                 playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                videoZoomButton.setImageDrawable(this, R.drawable.ic_crop_landscape)
+                videoZoomButton.setImageDrawable(this, R.drawable.feature_player_ic_crop_landscape)
             }
 
             VideoZoom.HUNDRED_PERCENT -> {
@@ -984,7 +984,7 @@ class PlayerActivity : AppCompatActivity() {
                     exoContentFrameLayout.requestLayout()
                 }
                 playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                videoZoomButton.setImageDrawable(this, R.drawable.ic_width_wide)
+                videoZoomButton.setImageDrawable(this, R.drawable.feature_player_ic_width_wide)
             }
         }
         if (showInfo) {

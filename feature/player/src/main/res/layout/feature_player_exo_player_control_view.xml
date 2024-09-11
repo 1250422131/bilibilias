@@ -32,10 +32,10 @@
                     android:id="@+id/back_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/transparent_circle_background"
-                    android:contentDescription="@string/player_controls_exit"
+                    android:background="@drawable/feature_player_transparent_circle_background"
+                    android:contentDescription="@string/feature_player_player_controls_exit"
                     android:padding="12dp"
-                    android:src="@drawable/ic_arrow_left"
+                    android:src="@drawable/feature_player_ic_arrow_left"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -60,10 +60,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
-                    android:background="@drawable/transparent_circle_background"
-                    android:contentDescription="@string/select_playback_speed"
+                    android:background="@drawable/feature_player_transparent_circle_background"
+                    android:contentDescription="@string/feature_player_select_playback_speed"
                     android:padding="12dp"
-                    android:src="@drawable/ic_speed"
+                    android:src="@drawable/feature_player_ic_speed"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_audio_track"
                     app:layout_constraintTop_toTopOf="parent"
@@ -74,10 +74,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
-                    android:background="@drawable/transparent_circle_background"
-                    android:contentDescription="@string/select_audio_track"
+                    android:background="@drawable/feature_player_transparent_circle_background"
+                    android:contentDescription="@string/feature_player_select_audio_track"
                     android:padding="12dp"
-                    android:src="@drawable/ic_audio_track"
+                    android:src="@drawable/feature_player_ic_audio_track"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/btn_subtitle_track"
                     app:layout_constraintTop_toTopOf="parent"
@@ -87,10 +87,10 @@
                     android:id="@+id/btn_subtitle_track"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/transparent_circle_background"
-                    android:contentDescription="@string/select_subtitle_track"
+                    android:background="@drawable/feature_player_transparent_circle_background"
+                    android:contentDescription="@string/feature_player_select_subtitle_track"
                     android:padding="12dp"
-                    android:src="@drawable/ic_subtitle_track"
+                    android:src="@drawable/feature_player_ic_subtitle_track"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -147,10 +147,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:background="@drawable/transparent_circle_background"
-                    android:contentDescription="@string/controls_lock"
+                    android:background="@drawable/feature_player_transparent_circle_background"
+                    android:contentDescription="@string/feature_player_controls_lock"
                     android:padding="12dp"
-                    android:src="@drawable/ic_screen_rotation"
+                    android:src="@drawable/feature_player_ic_screen_rotation"
                     app:layout_constraintBottom_toTopOf="@id/exo_progress"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -160,7 +160,7 @@
                     android:id="@+id/exo_progress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/player_controls_progress"
+                    android:contentDescription="@string/feature_player_player_controls_progress"
                     app:layout_constraintBottom_toTopOf="@id/extra_controls"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,10 +178,10 @@
                         android:id="@+id/btn_lock_controls"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/transparent_circle_background"
-                        android:contentDescription="@string/controls_lock"
+                        android:background="@drawable/feature_player_transparent_circle_background"
+                        android:contentDescription="@string/feature_player_controls_lock"
                         android:padding="12dp"
-                        android:src="@drawable/ic_lock_open"
+                        android:src="@drawable/feature_player_ic_lock_open"
                         app:tint="@android:color/white" />
 
                     <ImageButton
@@ -189,10 +189,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/transparent_circle_background"
-                        android:contentDescription="@string/video_zoom"
+                        android:background="@drawable/feature_player_transparent_circle_background"
+                        android:contentDescription="@string/feature_player_video_zoom"
                         android:padding="12dp"
-                        android:src="@drawable/ic_fit_screen"
+                        android:src="@drawable/feature_player_ic_fit_screen"
                         app:tint="@android:color/white" />
 
                     <ImageButton
@@ -200,10 +200,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/transparent_circle_background"
-                        android:contentDescription="@string/screen_rotation"
+                        android:background="@drawable/feature_player_transparent_circle_background"
+                        android:contentDescription="@string/feature_player_screen_rotation"
                         android:padding="12dp"
-                        android:src="@drawable/ic_pip"
+                        android:src="@drawable/feature_player_ic_pip"
                         app:tint="@android:color/white" />
 
                 </LinearLayout>
@@ -223,36 +223,36 @@
                 android:id="@+id/btn_play_prev"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:background="@drawable/transparent_circle_background"
+                android:background="@drawable/feature_player_transparent_circle_background"
                 android:backgroundTint="@android:color/white"
-                android:contentDescription="@string/player_controls_previous"
+                android:contentDescription="@string/feature_player_player_controls_previous"
                 android:padding="16dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_skip_prev" />
+                android:src="@drawable/feature_player_ic_skip_prev" />
 
             <ImageButton
                 android:id="@+id/exo_play_pause"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginHorizontal="32dp"
-                android:background="@drawable/transparent_circle_background"
+                android:background="@drawable/feature_player_transparent_circle_background"
                 android:backgroundTint="@android:color/white"
-                android:contentDescription="@string/player_controls_play_pause"
+                android:contentDescription="@string/feature_player_player_controls_play_pause"
                 android:padding="20dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_play" />
+                android:src="@drawable/feature_player_ic_play" />
 
 
             <ImageButton
                 android:id="@+id/btn_play_next"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:background="@drawable/transparent_circle_background"
+                android:background="@drawable/feature_player_transparent_circle_background"
                 android:backgroundTint="@android:color/white"
-                android:contentDescription="@string/player_controls_next"
+                android:contentDescription="@string/feature_player_player_controls_next"
                 android:padding="16dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_skip_next" />
+                android:src="@drawable/feature_player_ic_skip_next" />
         </LinearLayout>
 
     </FrameLayout>
@@ -270,10 +270,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/rounded_corner"
-            android:contentDescription="@string/controls_unlock"
+            android:background="@drawable/feature_player_rounded_corner"
+            android:contentDescription="@string/feature_player_controls_unlock"
             android:padding="12dp"
-            android:src="@drawable/ic_lock"
+            android:src="@drawable/feature_player_ic_lock"
             app:tint="@android:color/white" />
 
     </FrameLayout>

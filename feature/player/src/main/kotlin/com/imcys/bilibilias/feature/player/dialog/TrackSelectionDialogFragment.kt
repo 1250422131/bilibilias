@@ -30,17 +30,17 @@ class TrackSelectionDialogFragment(
                 .indexOfFirst { it.isSelected }.takeIf { it != -1 } ?: audioTracks.size
 
             val builder = MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.select_audio_track))
+                .setTitle(getString(R.string.feature_player_select_audio_track))
             if (trackNames.isNotEmpty()) {
                 builder.setSingleChoiceItems(
-                    arrayOf(*trackNames, getString(R.string.disable)),
+                    arrayOf(*trackNames, getString(R.string.feature_player_disable)),
                     selectedTrackIndex,
                 ) { dialog, trackIndex ->
                     onTrackSelected(trackIndex.takeIf { it < trackNames.size } ?: -1)
                     dialog.dismiss()
                 }
             } else {
-                builder.setMessage(getString(R.string.no_audio_tracks_found))
+                builder.setMessage(getString(R.string.feature_player_no_audio_tracks_found))
             }
             builder.create()
         }
@@ -57,21 +57,21 @@ class TrackSelectionDialogFragment(
                 .indexOfFirst { it.isSelected }.takeIf { it != -1 } ?: textTracks.size
 
             val builder = MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.select_subtitle_track))
-                .setPositiveButton(getString(R.string.open_subtitle)) { dialog, _ ->
+                .setTitle(getString(R.string.feature_player_select_subtitle_track))
+                .setPositiveButton(getString(R.string.feature_player_open_subtitle)) { dialog, _ ->
                     dialog.dismiss()
                     onOpenLocalTrackClicked()
                 }
             if (trackNames.isNotEmpty()) {
                 builder.setSingleChoiceItems(
-                    arrayOf(*trackNames, getString(R.string.disable)),
+                    arrayOf(*trackNames, getString(R.string.feature_player_disable)),
                     selectedTrackIndex,
                 ) { dialog, trackIndex ->
                     onTrackSelected(trackIndex.takeIf { it < trackNames.size } ?: -1)
                     dialog.dismiss()
                 }
             } else {
-                builder.setMessage(getString(R.string.no_subtitle_tracks_found))
+                builder.setMessage(getString(R.string.feature_player_no_subtitle_tracks_found))
             }
             builder.create()
         }

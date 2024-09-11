@@ -74,7 +74,7 @@ class PlaybackSpeedControlsDialogFragment(
         }
 
         val builder = MaterialAlertDialogBuilder(activity)
-        return builder.setTitle(getString(R.string.select_playback_speed))
+        return builder.setTitle(getString(R.string.feature_player_select_playback_speed))
             .setView(view)
             .create()
     }
