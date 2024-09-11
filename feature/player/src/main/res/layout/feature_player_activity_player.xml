@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:background="@drawable/overlay_background"
+        android:background="@drawable/feature_player_overlay_background"
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -24,13 +24,13 @@
             android:id="@+id/fast_speed_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_fast" />
+            android:src="@drawable/feature_player_ic_fast" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/top_info_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fast_playback_speed"
+            android:text="@string/feature_player_fast_playback_speed"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
             android:textColor="@android:color/white"
             tools:text="hello" />
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
         android:layout_margin="16dp"
-        android:background="@drawable/overlay_background"
+        android:background="@drawable/feature_player_overlay_background"
         android:clickable="false"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -110,7 +110,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="6dp"
             android:layout_height="125dp"
-            android:progressDrawable="@drawable/progress_scale_drawable"
+            android:progressDrawable="@drawable/feature_player_progress_scale_drawable"
             tools:progress="58" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -118,7 +118,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginVertical="16dp"
-            android:src="@drawable/ic_volume"
+            android:src="@drawable/feature_player_ic_volume"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
@@ -128,7 +128,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
         android:layout_margin="16dp"
-        android:background="@drawable/overlay_background"
+        android:background="@drawable/feature_player_overlay_background"
         android:clickable="false"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -149,7 +149,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="6dp"
             android:layout_height="125dp"
-            android:progressDrawable="@drawable/progress_scale_drawable"
+            android:progressDrawable="@drawable/feature_player_progress_scale_drawable"
             tools:progress="58" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -157,7 +157,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginVertical="16dp"
-            android:src="@drawable/ic_brightness"
+            android:src="@drawable/feature_player_ic_brightness"
             tools:ignore="ContentDescription" />
     </LinearLayout>
 </FrameLayout>

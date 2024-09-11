@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <drawable name="exo_styled_controls_play" >@drawable/ic_play</drawable>
-    <drawable name="exo_styled_controls_pause">@drawable/ic_pause</drawable>
+    <drawable name="feature_player_exo_styled_controls_play" >@drawable/feature_player_ic_play</drawable>
+    <drawable name="feature_player_exo_styled_controls_pause">@drawable/feature_player_ic_pause</drawable>
 </resources>

@@ -17,7 +17,7 @@ class VideoZoomOptionsDialogFragment(
         val videoZoomValues = VideoZoom.entries.toTypedArray()
 
         return MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.video_zoom))
+            .setTitle(getString(R.string.feature_player_video_zoom))
             .setSingleChoiceItems(
                 videoZoomValues.map { getString(it.nameRes()) }.toTypedArray(),
                 videoZoomValues.indexOfFirst { it == currentVideoZoom },
@@ -30,10 +30,10 @@ class VideoZoomOptionsDialogFragment(
 
 fun VideoZoom.nameRes(): Int {
     val stringRes = when (this) {
-        VideoZoom.BEST_FIT -> R.string.best_fit
-        VideoZoom.STRETCH -> R.string.stretch
-        VideoZoom.CROP -> R.string.crop
-        VideoZoom.HUNDRED_PERCENT -> R.string.hundred_percent
+        VideoZoom.BEST_FIT -> R.string.feature_player_best_fit
+        VideoZoom.STRETCH -> R.string.feature_player_stretch
+        VideoZoom.CROP -> R.string.feature_player_crop
+        VideoZoom.HUNDRED_PERCENT -> R.string.feature_player_hundred_percent
     }
 
     return stringRes

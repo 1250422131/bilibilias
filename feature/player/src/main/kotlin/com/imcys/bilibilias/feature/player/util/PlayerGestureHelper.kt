@@ -57,7 +57,7 @@ class PlayerGestureHelper(
                 if (pointerCount >= 3) return
 
                 playerView.hideController()
-                activity.showTopInfo(activity.getString(R.string.fast_playback_speed))
+                activity.showTopInfo(activity.getString(R.string.feature_player_fast_playback_speed))
                 playerView.player?.setPlaybackSpeed(2.0f)
             }
 
