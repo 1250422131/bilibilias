@@ -53,7 +53,7 @@ jobs:
           signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
           signing.keyPassword:${{ secrets.KEY_PASSWORD }}
           signing.keyAlias:${{ secrets.ALIAS }}
-          signing.storeFile:keystore.jks
+          signing.storeFile:../keystore.jks
           EOF
 
       - name: Decode keystore and create jks

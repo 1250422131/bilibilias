@@ -12,6 +12,9 @@ internal fun Project.configureSigning(
     val environment = System.getenv()
     fun getLocalProperty(key: String): String? {
         val keystorePropertiesFile = rootProject.file("keystore.properties")
+        if (keystorePropertiesFile.exists().not()) {
+            return null
+        }
         val keystoreProperties = Properties()
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
         return keystoreProperties[key] as String?
