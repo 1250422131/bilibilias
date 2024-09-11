@@ -20,22 +20,14 @@ internal fun Project.configureSigning(
     fun String.toFile() = File(this)
     commonExtension.signingConfigs {
         create("BilibiliAsSigningConfig") {
-            keyAlias = getLocalProperty("signing.keyAlias")
-                ?: environment["ALIAS"]
-                ?: error("Error keyAlias!")
-            storeFile = (
-                getLocalProperty("signing.storeFile")
-                    ?: environment["SIGNING_STORE_FILE"]
-                    ?: error("Error storeFile!")
-                ).toFile()
+            keyAlias = getLocalProperty("signing.keyAlias") ?: environment["ALIAS"]
+            storeFile =
+                (getLocalProperty("signing.storeFile")
+                    ?: environment["SIGNING_STORE_FILE"])?.toFile()
             keyPassword =
-                getLocalProperty("signing.keyPassword")
-                    ?: environment["KEY_PASSWORD"]
-                    ?: error("Error keyPassword!")
+                getLocalProperty("signing.keyPassword") ?: environment["KEY_PASSWORD"]
             storePassword =
-                getLocalProperty("signing.storePassword")
-                    ?: environment["KEY_STORE_PASSWORD"]
-                    ?: error("Error storePassword!")
+                getLocalProperty("signing.storePassword") ?: environment["KEY_STORE_PASSWORD"]
             enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true

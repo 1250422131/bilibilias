@@ -58,6 +58,10 @@ jobs:
 
       - name: Decode keystore and create jks
         run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
+      - name: run command
+        run: |
+          cat keystore.properties
+          ls
 
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
