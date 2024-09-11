@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="730pt" height="188pt" viewBox="0 0 729.63 188">
+    <g class="graph">
+        <path fill="#fff" stroke="transparent" d="M0 188V0h729.63v188z"/>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="438.74" cy="-162" fill="none" stroke="#000" rx="113.98" ry="18"/>
+            <text x="438.74" y="-158.3" font-family="Times,serif" font-size="14" text-anchor="middle">:feature:ffmpeg-action</text>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="285.74" cy="-90" fill="none" stroke="#000" rx="45.49" ry="18"/>
+            <text x="285.74" y="-86.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:ui</text>
+        </g>
+        <g stroke="red" stroke-width="2" class="edge">
+            <path fill="none" d="M407.26 39.24c-23.85 10.91-55.25 25.27-79.59 36.41"/>
+            <path fill="red" d="m328.93 78.92-10.55.98 7.64-7.35z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="100.74" cy="-18" fill="none" stroke="#000" rx="100.98" ry="18"/>
+            <text x="100.74" y="-14.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:designsystem</text>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M367.84 35.66c-40.29 8.4-90.17 21.43-132.1 40.34-38.28 17.27-77.51 45.61-102.94 65.67"/>
+            <path d="m134.73 144.61-10 3.51 5.63-8.98z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="438.74" cy="-90" fill="none" stroke="#000" rx="89.08" ry="18"/>
+            <text x="438.74" y="-86.3" font-family="Times,serif" font-size="14" text-anchor="middle">:feature:common</text>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M442.74 40.3v25.59"/>
+            <path d="m446.24 65.9-3.5 10-3.5-10z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="640.74" cy="-18" fill="none" stroke="#000" rx="75.29" ry="18"/>
+            <text x="640.74" y="-14.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:common</text>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M478.08 39.29c19.26 9.55 43.08 22.52 62.66 36.71 18.84 13.65 20.47 20.7 38 36 11.76 10.26 25.13 21.13 36.74 30.34"/>
+            <path d="m617.88 139.78 5.69 8.94-10.02-3.44z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="652.74" cy="-90" fill="none" stroke="#000" rx="68.79" ry="18"/>
+            <text x="652.74" y="-86.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:ffmpeg</text>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M489.97 38.45c34.31 11.22 80.71 26.4 115.85 37.89"/>
+            <path d="m607 73.05 8.41 6.43-10.59.22z"/>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M257.94 107.03c-28.21 10.68-69.9 26.45-102.67 38.85"/>
+            <path d="m156.44 149.18-10.59.27 8.11-6.82z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="297.74" cy="-18" fill="none" stroke="#000" rx="77.99" ry="18"/>
+            <text x="297.74" y="-14.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:analytics</text>
+        </g>
+        <g stroke="red" stroke-width="2" class="edge">
+            <path fill="none" d="M292.71 112.3c1.32 7.72 2.91 16.99 4.38 25.59"/>
+            <path fill="red" d="m300.57 137.45-1.76 10.45-5.14-9.27z"/>
+        </g>
+        <g class="node" transform="translate(4 184)">
+            <ellipse cx="458.74" cy="-18" fill="none" stroke="#000" rx="64.99" ry="18"/>
+            <text x="458.74" y="-14.3" font-family="Times,serif" font-size="14" text-anchor="middle">:core:model</text>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M320.27 107.35c27.05 10.95 66.89 27.07 97.57 39.48"/>
+            <path d="m419.49 143.72 7.96 7-10.59-.51z"/>
+        </g>
+        <g stroke="#000" class="edge">
+            <path fill="none" d="M653.77 112.3c-1.32 7.72-2.91 16.99-4.38 25.59"/>
+            <path d="m652.81 138.63-5.14 9.27-1.76-10.45z"/>
+        </g>
+    </g>
+</svg>
