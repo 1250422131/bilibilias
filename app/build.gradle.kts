@@ -16,8 +16,8 @@ android {
     namespace = "com.imcys.bilibilias"
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
-        versionCode = 19
-        versionName = "0.1.9"
+        versionCode = 20
+        versionName = "0.1.20"
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
