@@ -70,8 +70,6 @@ jobs:
 
       - name: rename apk
         run: |
-          ls app/build/outputs/apk/demo/release
-          ls app/build/outputs/apk/demo/release/baselineProfiles
           cd app/build/outputs/apk/demo/release
           mv app-demo-release-unsigned-signed.apk Bilibili-As-${{ github.ref_name }}.apk
           ls
@@ -89,10 +87,6 @@ jobs:
           generate_release_notes: true
           files: |
             app/build/outputs/apk/demo/release/Bilibili-As-Lite-${{ github.ref_name }}.apk
-
-      - name: test command
-        run: |
-          echo "${{ fromJSON(steps.create_release.outputs.assets)[0].browser_download_url }}"
 
 
   generateModuleGraphs:
