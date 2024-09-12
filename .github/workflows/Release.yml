@@ -82,7 +82,7 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            app/build/outputs/
+            app/build/outputs/*.apk
 
   generateModuleGraphs:
     name: 'generate module graphs'
