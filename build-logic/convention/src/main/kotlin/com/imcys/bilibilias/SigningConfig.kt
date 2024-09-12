@@ -9,6 +9,13 @@ import java.util.Properties
 internal fun Project.configureSigning(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
+    val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+    val allFilesFromDir = file(tmpFilePath).listFiles()
+
+    if (allFilesFromDir != null) {
+        val keystoreFile = allFilesFromDir.first()
+        keystoreFile.renameTo(file("app/keystore.jks"))
+    }
     fun getLocalProperty(key: String): String? {
         val keystorePropertiesFile = rootProject.file("keystore.properties")
         if (!keystorePropertiesFile.exists()) {
