@@ -14,7 +14,7 @@ internal fun Project.configureSigning(
 
     if (allFilesFromDir != null) {
         val keystoreFile = allFilesFromDir.first()
-        keystoreFile.renameTo(file("app/keystore.jks"))
+        keystoreFile.renameTo(file("keystore/keystore.jks"))
     }
     fun getLocalProperty(key: String): String? {
         val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -32,7 +32,7 @@ internal fun Project.configureSigning(
             val environment = System.getenv()
             keyAlias = getLocalProperty("signing.keyAlias") ?: environment["SIGNING_KEY_ALIAS"]
             storeFile =
-                getLocalProperty("signing.storeFile")?.toFile() ?: file("app/keystore.jks")
+                getLocalProperty("signing.storeFile")?.toFile() ?: file("keystore/keystore.jks")
             keyPassword =
                 getLocalProperty("signing.keyPassword") ?: environment["SIGNING_KEY_PASSWORD"]
             storePassword =
