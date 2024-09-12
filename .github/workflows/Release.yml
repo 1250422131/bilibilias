@@ -51,7 +51,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: 'app/keystore.jks'
+          fileName: 'keystore/keystore.jks'
           encodedString: ${{ secrets.SIGNING_KEY }}
         env:
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
