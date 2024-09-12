@@ -14,13 +14,6 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: Decode Keystore and create jks
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/keystore.jks'
-          encodedString: ${{ secrets.SIGNING_KEY }}
-
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -45,6 +38,20 @@ jobs:
         with:
           validate-wrappers: true
           gradle-home-cache-cleanup: true
+      - name: Find files matching "*.rs" or "*.md"
+        uses: jeertmans/filesfinder@latest
+        id: ff # Any id, to be used later to reference to files output
+        with:
+          args: "*.jks"
+      - name: Print files
+        run: echo "${{ steps.ff.outputs.files }}"
+
+      - name: Decode Keystore and create jks
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
       - name: run
         run: |
           ls
