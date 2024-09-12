@@ -14,10 +14,12 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: GitHub Tag Name example
-        run: |
-          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
-          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+      - name: Decode Keystore and create jks
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/keystore.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
 
       - name: Enable KVM group perms
         run: |
@@ -46,13 +48,6 @@ jobs:
 
       - name: Install GMD image for baseline profile generation
         run: yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager "system-images;android-33;aosp_atd;x86_64"
-
-      - name: Decode Keystore and create jks
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/keystore.jks'
-          encodedString: ${{ secrets.SIGNING_KEY }}
 
       - name: Build release variant including baseline profile generation
         env:
