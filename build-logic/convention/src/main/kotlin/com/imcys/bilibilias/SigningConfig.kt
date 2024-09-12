@@ -9,10 +9,9 @@ import java.util.Properties
 internal fun Project.configureSigning(
     commonExtension: CommonExtension<*, *, *, *, *, *>,
 ) {
-    val environment = System.getenv()
     fun getLocalProperty(key: String): String? {
         val keystorePropertiesFile = rootProject.file("keystore.properties")
-        if (keystorePropertiesFile.exists().not()) {
+        if (!keystorePropertiesFile.exists()) {
             return null
         }
         val keystoreProperties = Properties()
@@ -23,16 +22,14 @@ internal fun Project.configureSigning(
     fun String.toFile() = File(this)
     commonExtension.signingConfigs {
         create("BilibiliAsSigningConfig") {
-            keyAlias = getLocalProperty("signing.keyAlias") ?: environment["ALIAS"]
+            val environment = System.getenv()
+            keyAlias = getLocalProperty("signing.keyAlias") ?: environment["SIGNING_KEY_ALIAS"]
             storeFile =
-                (
-                    getLocalProperty("signing.storeFile")
-                        ?: environment["SIGNING_STORE_FILE"]
-                    )?.toFile()
+                getLocalProperty("signing.storeFile")?.toFile() ?: file("app/keystore.jks")
             keyPassword =
-                getLocalProperty("signing.keyPassword") ?: environment["KEY_PASSWORD"]
+                getLocalProperty("signing.keyPassword") ?: environment["SIGNING_KEY_PASSWORD"]
             storePassword =
-                getLocalProperty("signing.storePassword") ?: environment["KEY_STORE_PASSWORD"]
+                getLocalProperty("signing.storePassword") ?: environment["SIGNING_STORE_PASSWORD"]
             enableV3Signing = true
             enableV4Signing = true
         }
