@@ -32,7 +32,7 @@ internal fun Project.configureSigning(
             val environment = System.getenv()
             keyAlias = getLocalProperty("signing.keyAlias") ?: environment["SIGNING_KEY_ALIAS"]
             storeFile =
-                getLocalProperty("signing.storeFile")?.toFile() ?: file("keystore/keystore.jks")
+                getLocalProperty("signing.storeFile")?.toFile() ?: file("home/runner/work/_temp/keystore.jks")
             keyPassword =
                 getLocalProperty("signing.keyPassword") ?: environment["SIGNING_KEY_PASSWORD"]
             storePassword =

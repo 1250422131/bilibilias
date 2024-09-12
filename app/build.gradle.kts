@@ -26,8 +26,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        applicationVariants.all {
+            outputs.forEach { output ->
+                if (output is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {
+                    output.outputFileName =
+                        "bilibilias-v$versionName-$name.${output.outputFile.extension}"
+                }
+            }
+        }
     }
-
     buildTypes {
         debug {
             applicationIdSuffix = AsBuildType.DEBUG.applicationIdSuffix
