@@ -38,6 +38,23 @@ jobs:
         with:
           validate-wrappers: true
           gradle-home-cache-cleanup: true
+
+      - name: Decode Keystore and create jks
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
+          signing.keyPassword:${{ secrets.KEY_PASSWORD }}
+          signing.keyAlias:${{ secrets.ALIAS }}
+          signing.storeFile: ${{ steps.decode_keystore.outputs.filePath }}
+          EOF
+          ls
+
       - name: Find files matching "*.rs" or "*.md"
         uses: jeertmans/filesfinder@latest
         id: ff # Any id, to be used later to reference to files output
@@ -46,15 +63,6 @@ jobs:
       - name: Print files
         run: echo "${{ steps.ff.outputs.files }}"
 
-      - name: Decode Keystore and create jks
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore.jks'
-          encodedString: ${{ secrets.SIGNING_KEY }}
-      - name: run
-        run: |
-          ls
       - name: Install GMD image for baseline profile generation
         run: yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager "system-images;android-33;aosp_atd;x86_64"
 
