@@ -52,8 +52,7 @@ jobs:
             KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
             ALIAS: ${{ secrets.ALIAS }}
             KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-            SIGNING_STORE_FILE: "../keystore.jks"
-        run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
+        run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > app/keystore.jks
 
       - name: Generate keystore.properties
         run: |
