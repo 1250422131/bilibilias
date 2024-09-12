@@ -53,31 +53,18 @@ jobs:
         with:
           fileName: 'keystore/keystore.jks'
           encodedString: ${{ secrets.SIGNING_KEY }}
+
+      - name: Build release variant including baseline profile generation
         env:
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
           -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=BaselineProfile
           -Pandroid.testoptions.manageddevices.emulator.gpu="swiftshader_indirect"
           -Pandroid.experimental.testOptions.managedDevices.emulator.showKernelLogging=true
           -Pandroid.experimental.androidTest.numManagedDeviceShards=1
           -Pandroid.experimental.testOptions.managedDevices.maxConcurrentDevices=1
-
-      # 签名apk
-#      - uses: noriban/sign-android-release@v5.1
-#        name: Sign app APK
-#        id: sign_app
-#        with:
-#          releaseDirectory: 'app/build/outputs/apk/demo/release'
-#          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-#          alias: ${{ secrets.ALIAS }}
-#          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-#          keyPassword: ${{ secrets.KEY_PASSWORD }}
-#        env:
-#          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: rename apk
         run: |
