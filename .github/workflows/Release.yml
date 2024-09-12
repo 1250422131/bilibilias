@@ -48,20 +48,21 @@ jobs:
         run: yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager "system-images;android-33;aosp_atd;x86_64"
 
       - name: Decode keystore and create jks
+        env:
+            KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+            ALIAS: ${{ secrets.ALIAS }}
+            KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+            SIGNING_STORE_FILE: "../keystore.jks"
         run: echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > keystore.jks
 
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
-          signing.keyPassword:${{ secrets.KEY_PASSWORD }}
-          signing.keyAlias:${{ secrets.ALIAS }}
-          signing.storeFile:../../keystore.jks
+          signing.storePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          signing.keyPassword: ${{ secrets.KEY_PASSWORD }}
+          signing.keyAlias: ${{ secrets.ALIAS }}
+          signing.storeFile: keystore.jks
           EOF
-      - name: run command
-        run: |
-          cat keystore.properties
-          ls
 
       - name: Build release variant including baseline profile generation
         run: ./gradlew :app:assembleDemoRelease
