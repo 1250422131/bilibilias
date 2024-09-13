@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-    implementation("ch.acra:acra-core:5.11.3")
+    implementation("ch.acra:acra-core:5.11.4")
     implementation("ch.acra:acra-dialog:5.11.3")
 
     testImplementation(libs.junit)
