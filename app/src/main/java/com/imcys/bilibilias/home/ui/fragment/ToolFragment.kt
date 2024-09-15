@@ -205,10 +205,10 @@ class ToolFragment : BaseFragment() {
         }
 
         // ep过滤
-        val epRegex = Regex("""^(?<=ep)([0-9]+)""")
+        val epRegex = Regex("""(?:^|/)ep([0-9]+)""")
         // 判断是否有搜到
         if (epRegex.containsMatchIn(inputString)) {
-            loadEpVideoCard(epRegex.find(inputString)?.value!!.toLong())
+            loadEpVideoCard(epRegex.find(inputString)?.groups?.get(1)?.value!!.toLong())
             return
         } else if ("""https://b23.tv/([A-z]|\d)*""".toRegex().containsMatchIn(inputString)) {
             loadShareData(
