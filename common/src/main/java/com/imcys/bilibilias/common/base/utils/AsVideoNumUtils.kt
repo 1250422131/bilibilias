@@ -7,7 +7,7 @@ object AsVideoNumUtils {
 
         //bv过滤
         var epRegex =
-            Regex("""(BV|bv|Bv|bV)1([A-z]|[0-9]){2}4([A-z]|[0-9])1([A-z]|[0-9])7([A-z]|[0-9]){2}""")
+            Regex("""(BV|bv|Bv|bV)1([A-z]|[0-9]){9}""")
         if (epRegex.containsMatchIn(string)) {
             return epRegex.find(string)?.value.toString()
         }
@@ -17,7 +17,7 @@ object AsVideoNumUtils {
         if (epRegex.containsMatchIn(string)) return NewVideoNumConversionUtils.av2bv(
             epRegex.find(
                 string
-            )?.value!!.toInt().toLong()
+            )?.value!!.toLong()
         )
 
 
