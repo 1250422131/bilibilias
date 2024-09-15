@@ -2,6 +2,7 @@ package com.imcys.bilibilias.splash.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,6 +32,13 @@ import com.tencent.mmkv.MMKV
 class SplashActivity : BaseActivity() {
     private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
     private val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 1
+
+    private val allFilesAccessLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        toHome()
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.R)
     private val MANAGE_EXTERNAL_STORAGES = arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
@@ -55,9 +64,8 @@ class SplashActivity : BaseActivity() {
                         val intent = Intent(
                             Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
                         )
-                        intent.setData(Uri.parse("package:$packageName"))
-                        startActivity(intent)
-                        toHome()
+                        intent.data = Uri.parse("package:$packageName")
+                        allFilesAccessLauncher.launch(intent)
                     },
                     negativeButtonClickListener = {
                     },
