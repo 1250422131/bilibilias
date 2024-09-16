@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
     <string name="action_settings">設定</string>
     <string name="title_activity_user">用戶活動</string>
     <string name="dl_file_rename_rules">路徑開頭/默認給出，無需添加。\n命名規則：即代表下載檔案儲存的子目錄或者檔案的命名方案，我們為你準備了一些變數，幫助你進行重命名。\n下麵我簡單介紹一些命名變數：\nAV號：{AV}\nBV號：{BV}\nCID編號：{CID}\n影片名稱：{TITLE}\n分P名稱：{P_TITLE}\n檔案類型：{FILE_TYPE}\n如果影片是av10086，自定義命名規則如下\n{BV}/{TITLE}. {FILE_TYPE}\n則下載的路徑和檔名稱為\n下載路徑/BV1bx411c7u3/搞笑漫畫日和之貼紙.mp4\n【注意】：如果修改後發現檔案下載失敗了，就嘗試直接用CID等作為名稱，也可能是系統對這類檔案名稱有劫持。\n盡可能保證音訊和影片不在一個資料夾裏，經過測試，這樣有可能誘發一個檔案下載失敗。</string>
     <string name="user_download_save_path_title">快取檔案儲存路徑</string>
     <string name="user_download_file_name">快取檔案命名規則</string>
-
     <string name="BangumiEntry">
         {
           \"media_type\": 2,
@@ -54,7 +51,6 @@
         }
 
     </string>
-
     <string name="VideoIndex">
         {
             \"video\": [{
@@ -87,7 +83,6 @@
             }]
         }
 	</string>
-
     <string name="VideoEntry">
         {
             \"media_type\": 2,
@@ -136,7 +131,6 @@
             }
         }
     </string>
-
     <string name="new_version_doc">2.0.43修改了存儲權限，需要重新在設定授權自定義存儲位置。</string>
     <string name="app_donate_doc">BILIBILIAS自運營之初，就有後端支持，我們現時採用的是學生伺服器，但即使如此，每月也會產生費用。\n囙此，希望BILIBILIAS的用戶們可以支援一些費用，一次早餐費，一次奶茶費，一次午飯費就可以滿足BILIBILIAS絕大部分的費用。\n最後，感謝所有為BILIBILIAS捐款和支持AS的用戶。\n你可以不匿名和匿名捐款，推薦不匿名捐款。\n帶上AS和QQ號等聯繫方式</string>
     <string name="user_dl_merge_cmd">
@@ -285,7 +279,6 @@
     <string name="app_donate_tip_title">为其他参与者贊助</string>
     <string name="app_donate_tip_long_title">现在你有更多选择</string>
     <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
-    <string name="app_donate_tip_link" />
     <string name="app_login_view_biliagreement_context">无论如何，你都在间接使用B站</string>
     <string name="app_login_view_biliagreement_alert_title">B站账户需要遵守的协议列表</string>
     <string name="app_login_view_biliagreement_alert_button_text">使用则代表同意</string>
@@ -312,5 +305,4 @@
     <string name="Copied">拷貝成功</string>
     <string name="app_root_preferences_long_title_language">設定軟體顯示的語言</string>
     <string name="app_root_preferences_long_title_language_tip">設定軟體顯示的語言</string>
-
 </resources>
