@@ -1,7 +1,7 @@
 [versions]
 android = "8.6.1"
 androidFilePicker = "1.0.1"
-androidx-junit = "1.1.5"
+androidx-junit = "1.2.1"
 appcenter = "5.0.4"
 appcompat = "1.7.0"
 asBottomDialog = "0.0.1beta10"
