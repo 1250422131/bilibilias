@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quick_download"
+        android:enabled="true"
+        android:icon="@drawable/ic_as_shortcut_download"
+        android:shortcutShortLabel="@string/app_download_shortcut_label"
+        android:shortcutLongLabel="@string/app_download_shortcut_label">
+        <intent
+            android:action="android.intent.action.CREATE_SHORTCUT"
+            android:targetPackage="com.imcys.bilibilias"
+            android:targetClass="com.imcys.bilibilias.home.ui.activity.HomeActivity">
+        </intent>
+    </shortcut>
+</shortcuts>
