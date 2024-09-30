@@ -97,6 +97,13 @@ class HomeActivity : BaseActivity() {
                 }
             }
         }
+        if (Intent.ACTION_CREATE_SHORTCUT == intent?.action) {
+            activityHomeBinding.apply {
+                homeViewPage.currentItem = 1
+                homeBottomNavigationView.menu.getItem(1).isChecked = true
+                toolFragment.parseShare(intent)
+            }
+        }
     }
 
     //复用/创建时检测

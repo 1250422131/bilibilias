@@ -300,4 +300,5 @@
     <string name="app_download_queue_cachesuccessful">缓存成功</string>
     <string name="app_download_queue_merge_error">合并错误</string>
     <string name="app_download_queue_merge_finish">合并完成</string>
+    <string name="app_download_shortcut_label">Quick download</string>
 </resources>
