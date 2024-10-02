@@ -305,4 +305,5 @@
     <string name="Copied">拷貝成功</string>
     <string name="app_root_preferences_long_title_language">設定軟體顯示的語言</string>
     <string name="app_root_preferences_long_title_language_tip">設定軟體顯示的語言</string>
+    <string name="app_download_shortcut_label">快速下載</string>
 </resources>
