@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="action_settings">Settings</string>
     <string name="title_activity_user">UserActivity</string>
     <string name="dl_file_rename_rules">Let me briefly introduce some named variables: \nAV Num: {AV}\nBV Num.: {BV}\nCID Nnum.: {CID}\nVideo Name: {TITLE}\nSub-P Name: {P_TITLE}\nFile Type: {FILE_TYPE}\nIf the video is av10086, the custom naming rules are as follows. \n{BV}/{TITLE}. {FILE_TYPE}\nThen the download path and file name are:\n\"Download Path/BV1bx411c7u3/Funny Comics Day Hezhi Sticker.mp4\". \n[Note]: If the file download fails after modification, try to directly use CID as the name, or the system may hijack the file name.\nTry to ensure that the audio and video are not in the same folder. After testing, this may cause a file download failure.</string>
     <string name="user_download_save_path_title">Storage Path</string>
     <string name="user_download_file_name">Name Rules</string>
-
     <string name="BangumiEntry">
         {
           \"media_type\": 2,
@@ -55,8 +52,6 @@
         }
 
     </string>
-
-
     <string name="VideoIndex">
         {
             \"video\": [{
@@ -89,7 +84,6 @@
             }]
         }
 	</string>
-
     <string name="VideoEntry">
         {
             \"media_type\": 2,
@@ -140,7 +134,6 @@
     </string>
     <string name="new_version_doc">2.0.43 has modified the storage permissions, and you need to re-authorize the custom storage location.</string>
     <string name="user_dl_merge_cmd">"If you do not know the FFmpeg command, please do not modify it. \nBILIBILIAS provides you with simple command parameters. \n{VIDEO_PATH} video download path. \n{AUDIO_PATH} audio storage path. \n{VIDEO_MERGE_PATH} Storage path after merging. "</string>
-
     <string name="app_activity_bangumi_follow_title">Follow Series</string>
     <string name="app_activity_collection_title">Stars</string>
     <string name="app_activity_dedicate_title">Salutes</string>
@@ -284,7 +277,6 @@
     <string name="app_donate_tip_title">为其他参与者捐款</string>
     <string name="app_donate_tip_long_title">现在你有更多选择</string>
     <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
-    <string name="app_donate_tip_link" />
     <string name="app_login_view_biliagreement_context">无论如何，你都在间接使用B站</string>
     <string name="app_login_view_biliagreement_alert_title">B站账户需要遵守的协议列表</string>
     <string name="app_login_view_biliagreement_alert_button_text">使用则代表同意</string>
@@ -308,4 +300,5 @@
     <string name="app_download_queue_cachesuccessful">缓存成功</string>
     <string name="app_download_queue_merge_error">合并错误</string>
     <string name="app_download_queue_merge_finish">合并完成</string>
+    <string name="app_download_shortcut_label">Quick download</string>
 </resources>
