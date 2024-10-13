@@ -81,6 +81,10 @@ UP主可以下載一些剪輯素材，來製作影片。
 |:-------:|:------------------------------------------------------------:|:------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官網](https://api.misakamoe.com/app/) |
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hant.png"
+    alt="取得於 F-Droid 立即下載"
+    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+
 ## 🔭最近關注
 
 這裡展示的是最近Star了 **BILIBILIAS** 專案的使用者

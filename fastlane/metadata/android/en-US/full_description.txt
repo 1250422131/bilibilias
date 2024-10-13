@@ -1,0 +1,14 @@
+<b>BILIBILIAS</b> is an auxiliary tool for Bilibili video caching, providing one-click caching.
+Use it to help you cache videos. Currently, we support a considerable number of features to assist you in completing your work.
+UP creators can download some clips as material for video editing.
+Please note that the project's maintenance may be stopped at any time.
+<h3>Supported Features</h3>
+<ul>
+<li>Scan code login</li>
+<li>Cache videos/Bilibili exclusive anime that can be played in Mainland China</li>
+<li>Personal Center -&gt; Help cache your own videos</li>
+<li>Batch download</li>
+<li>Background download</li>
+<li>Support ffmpeg</li>
+<li>Support download list operations</li>
+</ul>

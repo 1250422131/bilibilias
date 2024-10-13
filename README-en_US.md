@@ -82,6 +82,10 @@ Please note that the project's maintenance may be stopped at any time.
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [Official Website](https://api.misakamoe.com/app/) |
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+
 ## 🔭Recent Stars
 
 Here are the users who recently starred the **BILIBILIAS** project.

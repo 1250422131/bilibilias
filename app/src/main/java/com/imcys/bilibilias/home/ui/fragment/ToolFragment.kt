@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.home.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -172,6 +174,17 @@ class ToolFragment : BaseFragment() {
                 if ("text/plain" == type) {
                     asVideoId(intent.getStringExtra(Intent.EXTRA_TEXT).toString())
                 }
+            }
+            if (Intent.ACTION_CREATE_SHORTCUT == intent?.action) {
+                getUrlFromClipboard(context, object : OnClipDataListener {
+                    override fun onClipData(clipText: String?) {
+                        if (clipText != null) {
+                            fragmentToolBinding.fragmentToolEditText.setText(clipText)
+                            asVideoId(clipText)
+                        }
+                    }
+
+                })
             }
         } else {
             sharedIntent = intent
@@ -450,6 +463,20 @@ class ToolFragment : BaseFragment() {
         }
     }
 
+    private fun getUrlFromClipboard(context: Context?, listener: OnClipDataListener) {
+        val clipboard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = clipboard.primaryClip
+        if (clipData == null || clipData.itemCount == 0) {
+            return
+        }
+        val item = clipData.getItemAt(0)
+        val clipText = item.text?.toString()
+        listener.onClipData(clipText)
+    }
+
+    interface OnClipDataListener {
+        fun onClipData(clipText: String?)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
