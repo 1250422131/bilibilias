@@ -74,7 +74,9 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
         viewModelScope.launchUI {
-            if ((context as AsVideoActivity).userBaseBean.data.level >= 2) {
+            (context as AsVideoActivity)
+//                userBaseBean.data.level >= 2  暂时关闭等级检测
+            if (true) {
                 //并发
                 val dashVideoPlayDeferred =
                     async { networkService.viewDash(context.bvid, context.cid, 64) }
@@ -528,6 +530,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         return true
     }
+
     /**
      * 复制内容
      * @param inputStr String
