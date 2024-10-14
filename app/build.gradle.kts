@@ -37,6 +37,7 @@ android {
             )
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
+            signingConfig = signingConfigs["BilibiliAsSigningConfig"]
         }
     }
     buildFeatures {
