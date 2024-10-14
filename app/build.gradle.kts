@@ -31,8 +31,6 @@ android {
 
     buildTypes {
         debug {
-            // 混淆
-            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -53,12 +51,6 @@ android {
             resValue("string", "app_name", "@string/app_name_release")
             resValue("string", "app_channel", "@string/app_channel_release")
         }
-    }
-
-    lint {
-        baseline = file("lint-baseline.xml")
-        abortOnError = false
-        checkReleaseBuilds = false
     }
 
     compileOptions {
@@ -98,7 +90,6 @@ kapt {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":model_ffmpeg"))
     implementation(project(":tool_log_export"))
     implementation(libs.androidx.activity)
 
