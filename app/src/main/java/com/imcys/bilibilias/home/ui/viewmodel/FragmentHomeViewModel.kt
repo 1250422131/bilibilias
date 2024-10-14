@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
 import com.xiaojinzi.component.impl.Router

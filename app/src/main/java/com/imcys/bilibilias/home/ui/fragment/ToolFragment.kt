@@ -30,7 +30,6 @@ import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
@@ -46,7 +45,7 @@ import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
-import com.xiaojinzi.component.anno.RouterAnno
+
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
