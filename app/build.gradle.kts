@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
@@ -12,20 +11,16 @@ plugins {
 ksp {
     arg("ModuleName", project.name)
 }
+
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         minSdk = 21
-        // noinspecton ExpiredTargetSdkVersion
         targetSdk = 34
         versionCode = 206
         versionName = "2.0.45"
-        // multiDexEnabled true
-//        def appCenterSecret = getRootProject().getProperties().get("APP_CENTER_SECRET")
-//        buildConfigField("String", "APP_CENTER_SECRET", """ + appCenterSecret + """)
-
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
@@ -77,14 +72,8 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    dataBinding {
-        enable = true
-    }
-
-    viewBinding {
-        enable = true
+        dataBinding = true
+        viewBinding = true
     }
 
     composeCompiler {
@@ -102,16 +91,9 @@ android {
         includeInBundle = true
     }
 }
+
 kapt {
     correctErrorTypes = true
-}
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
-    }
 }
 
 dependencies {

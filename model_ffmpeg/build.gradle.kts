@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
@@ -35,15 +34,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-}
-
-kotlin {
-    jvmToolchain(17)
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "2.0"
-        }
     }
 }
 
