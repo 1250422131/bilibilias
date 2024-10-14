@@ -36,6 +36,22 @@ jobs:
       - name: Accept licenses
         run: yes | sdkmanager --licenses || true
 
+      - name: Decode Keystore and create jks
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
+
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
+          signing.keyPassword:${{ secrets.KEY_PASSWORD }}
+          signing.keyAlias:${{ secrets.ALIAS }}
+          signing.storeFile: ${{ steps.decode_keystore.outputs.filePath }}
+          EOF
+
       - name: Build release variant
         run: ./gradlew :app:assembleRelease
 
