@@ -6,14 +6,13 @@ import androidx.databinding.DataBindingUtil
 import com.drake.brv.annotaion.AnimationType
 import com.drake.brv.utils.linear
 import com.drake.brv.utils.setup
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.tool_log_export.R
 import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
 import com.imcys.bilibilias.tool_log_export.data.mEnum.ExportItemEnum
 import com.imcys.bilibilias.tool_log_export.data.model.ExportItemBean
 import com.imcys.bilibilias.tool_log_export.databinding.ActivityLogExportBinding
 import com.xiaojinzi.component.Component
-import com.xiaojinzi.component.anno.RouterAnno
+
 import com.xiaojinzi.component.impl.Router
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 

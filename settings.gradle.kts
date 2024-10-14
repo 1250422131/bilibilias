@@ -18,5 +18,4 @@ rootProject.name = "bilibilias"
 
 include(":app")
 include(":common")
-include(":model_ffmpeg")
 include(":tool_log_export")
