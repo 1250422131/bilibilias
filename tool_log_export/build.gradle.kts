@@ -6,10 +6,6 @@ plugins {
     kotlin("kapt")
 }
 
-ksp {
-    arg("ModuleName", project.name)
-}
-
 android {
     namespace = "com.imcys.bilibilias.tool_log_export"
     compileSdk = 34
@@ -44,7 +40,6 @@ android {
 dependencies {
     implementation(project(":common"))
     implementation(libs.constraintlayout)
-    ksp(libs.kcomponent.compiler)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

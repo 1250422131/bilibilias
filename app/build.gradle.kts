@@ -8,10 +8,6 @@ plugins {
     kotlin("kapt")
 }
 
-ksp {
-    arg("ModuleName", project.name)
-}
-
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = 34
@@ -102,7 +98,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     ksp(libs.hilt.compiler)
 
-    ksp(libs.kcomponent.compiler)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

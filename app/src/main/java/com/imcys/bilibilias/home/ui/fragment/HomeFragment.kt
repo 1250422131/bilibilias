@@ -68,9 +68,6 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.system.exitProcess
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
-)
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
 

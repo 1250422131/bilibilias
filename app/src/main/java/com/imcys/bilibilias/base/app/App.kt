@@ -5,7 +5,6 @@ import android.content.Context
 import com.drake.brv.utils.BRV
 import com.drake.statelayout.StateConfig
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.tool_log_export.BR
 import dagger.hilt.android.HiltAndroidApp
@@ -38,15 +37,10 @@ class App : BaseApplication() {
 
     companion object {
 
-        const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
         const val AppGuideVersion = "1.0"
 
         // —————————————————————————————————————————————————
 
-        // ——————————————————B站视频模板——————————————————
-        val videoEntry: String by lazy {
-            context.getString(R.string.VideoEntry)
-        }
         val videoIndex: String by lazy {
             context.getString(R.string.VideoIndex)
         }

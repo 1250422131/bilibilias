@@ -6,13 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
-apply {
-    from("../config.gradle")
-}
-
-ksp {
-    arg("ModuleName", project.name)
-}
 
 android {
     namespace = "com.imcys.bilibilias.common"
@@ -20,7 +13,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -110,12 +102,6 @@ dependencies {
      * 支持视频合并等操作
      */
     api(libs.rxFFmpeg)
-
-    /**
-     * 组件化路由库
-     */
-    api(libs.kcomponent.rx)
-    ksp(libs.kcomponent.compiler)
 
     // 百度统计
     api(libs.mtj.sdk)
