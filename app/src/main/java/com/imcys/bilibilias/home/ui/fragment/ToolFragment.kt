@@ -57,9 +57,6 @@ import okhttp3.Response
 import java.io.IOException
 import javax.inject.Inject
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.ToolFragment,
-)
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
 
