@@ -45,7 +45,6 @@ import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
 import com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder
 import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
-
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
