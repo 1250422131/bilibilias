@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl`
@@ -56,7 +55,7 @@ gradlePlugin {
         }
         register("hilt") {
             id = "bilibilias.hilt"
-            implementationClass = "HiltConventionConventionPlugin"
+            implementationClass = "HiltConventionPlugin"
         }
         register("androidRoom") {
             id = "bilibilias.android.room"

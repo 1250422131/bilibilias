@@ -1,42 +1,14 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.bilibilias.android.library)
+    alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
     kotlin("kapt")
 }
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 21
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
-
-    dataBinding {
-        enable = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
+    buildFeatures{
+        dataBinding = true
     }
 }
 
@@ -44,10 +16,6 @@ dependencies {
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
-
-    // hilt库，实现控制反转
-    api(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     // 文件下载
     api(libs.okdownload)
@@ -163,12 +131,12 @@ dependencies {
     api(libs.androidx.preference.ktx)
 
     api(libs.activity.compose)
-    api(platform(libs.compose.bom))
-    api(libs.ui)
-    api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
-    api(libs.material3)
-    androidTestImplementation(platform(libs.compose.bom))
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.graphics)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.material3)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)

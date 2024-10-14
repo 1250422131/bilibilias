@@ -1,20 +1,15 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.bilibilias.android.application)
+    alias(libs.plugins.bilibilias.compose)
+    alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.compose.compiler)
     kotlin("kapt")
 }
 
 android {
     namespace = "com.imcys.bilibilias"
-    compileSdk = 34
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
-        minSdk = 21
-        targetSdk = 34
         versionCode = 206
         versionName = "2.0.45"
         ndk {
@@ -27,10 +22,6 @@ android {
 
     buildTypes {
         debug {
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
             resValue("string", "app_name", "@string/app_name_debug")
             resValue("string", "app_channel", "@string/app_channel_debug")
         }
@@ -48,40 +39,20 @@ android {
             resValue("string", "app_channel", "@string/app_channel_release")
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
         compose = true
         dataBinding = true
         viewBinding = true
     }
-
-    composeCompiler {
-        enableStrongSkippingMode = true
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-
     dependenciesInfo {
         includeInApk = true
         includeInBundle = true
     }
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
@@ -94,7 +65,6 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
 
-    implementation(libs.hilt.android)
     implementation(libs.work.runtime.ktx)
     ksp(libs.hilt.compiler)
 
