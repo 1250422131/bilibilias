@@ -1,10 +1,8 @@
 package com.imcys.bilibilias.common.base.utils.http
 
-import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.model.common.IPostBody
-import com.imcys.bilibilias.common.base.utils.file.SystemUtil
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -33,7 +31,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         url: String,
         builder: HttpMessageBuilder.() -> Unit = {}
     ): T {
-        checkUrl(url)
+        checkUrl()
         val mBean: T = httpClient.get(url) {
             builder()
             this@KtHttpUtils.headers.forEach {
@@ -55,7 +53,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
     }
 
     suspend inline fun <reified T> asyncPost(url: String): T {
-        checkUrl(url)
+        checkUrl()
 
         val response = httpClient.submitForm(
             url = url,
@@ -79,7 +77,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         url: String,
         bodyObject: IPostBody,
     ): T {
-        checkUrl(url)
+        checkUrl()
         val response = httpClient.post(url) {
             contentType(ContentType.Application.Json)
 
@@ -104,7 +102,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         url: String,
         bodyObject: IPostBody,
     ): T {
-        checkUrl(url)
+        checkUrl()
         val response = httpClient.delete(url) {
             contentType(ContentType.Application.Json)
 
@@ -143,11 +141,7 @@ class KtHttpUtils @Inject constructor(val httpClient: HttpClient) {
         return this
     }
 
-    fun checkUrl(url: String) {
-        headers[USER_AGENT] = if (url in "misakamoe") {
-            SystemUtil.getUserAgent() + " BILIBILIAS/${BiliBiliAsApi.version}"
-        } else {
-            BROWSER_USER_AGENT
-        }
+    fun checkUrl() {
+        headers[USER_AGENT] = BROWSER_USER_AGENT
     }
 }

@@ -450,8 +450,6 @@ class DownloadQueue @Inject constructor() {
             val baiduStatisticsType =
                 sharedPreferences.getBoolean("baidu_statistics_type", true)
 
-            val cookie = BaseApplication.dataKv.decodeString(COOKIES, "")
-
             val myUserData = networkService.getMyUserData()
 
             val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
