@@ -1,0 +1,67 @@
+name: GitHub Release with APKs
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls /dev/kvm
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Decode Keystore and create jks
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          encodedString: ${{ secrets.SIGNING_KEY }}
+
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          signing.storePassword:${{ secrets.KEY_STORE_PASSWORD }}
+          signing.keyPassword:${{ secrets.KEY_PASSWORD }}
+          signing.keyAlias:${{ secrets.ALIAS }}
+          signing.storeFile: ${{ steps.decode_keystore.outputs.filePath }}
+          EOF
+
+      - name: Build release variant
+        run: ./gradlew :app:assembleRelease
+
+      - name: Create Release and Upload Release Asset
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
+          files: |
+            app/build/outputs/**/*.apk
