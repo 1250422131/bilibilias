@@ -43,11 +43,13 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -248,12 +250,12 @@ class HomeFragment : BaseFragment() {
             val request = Request.Builder()
                 .url(
                     (
-                        "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" +
-                            "&SHA=" + sha +
-                            "&MD5=" + md5 +
-                            "&CRC=" + crc +
-                            "lj=" + LJ
-                        )
+                            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" +
+                                    "&SHA=" + sha +
+                                    "&MD5=" + md5 +
+                                    "&CRC=" + crc +
+                                    "lj=" + LJ
+                            )
                 )
                 .build()
             newCall(request).enqueue(object : Callback {
@@ -427,6 +429,22 @@ class HomeFragment : BaseFragment() {
         launchUI {
             val params = mutableMapOf<String, String>()
             params["mid"] = myUserData.data.mid.toString()
+            // 截取新的webId
+            val spaceStr = networkService.getSpaceStr( myUserData.data.mid.toString())
+            val renderDataRegex =
+                "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
+            val matchResult = renderDataRegex.find(spaceStr)?.groupValues?.get(1) ?: ""
+
+            if (matchResult.isNotBlank()) {
+                val accessIdJsonStr =
+                    withContext(Dispatchers.IO) {
+                        URLDecoder.decode(matchResult, "UTF-8")
+                    }
+                val jsonObject = JSONObject(accessIdJsonStr)
+                val webId = jsonObject.optString("access_id")
+                params["w_webid"] = webId ?: ""
+            }
+
             val paramsStr = tokenUtils.getParamStr(params)
 
             val userInfoBean = networkService.getUserInfoData(paramsStr)

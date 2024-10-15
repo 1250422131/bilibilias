@@ -8,6 +8,9 @@ object BilibiliApi {
      */
     const val loginApi = "https://passport.bilibili.com/"
 
+    const val spacePath = "https://space.bilibili.com/"
+
+
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
 
     // 需要登陆密钥

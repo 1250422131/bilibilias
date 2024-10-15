@@ -370,6 +370,10 @@ class NetworkService @Inject constructor(
         httpClient.get("${BilibiliApi.getUserInfoPath}?$paramsStr").body()
     }
 
+    suspend fun getSpaceStr(mid: String): String = runCatchingOnWithContextIo {
+        httpClient.get("${BilibiliApi.spacePath}$mid").body()
+    }
+
     // ---------------------------------------------------------------------------------------------
     suspend fun videoLike(bvid: String): LikeVideoBean = runCatchingOnWithContextIo {
         httpClient.submitForm(
