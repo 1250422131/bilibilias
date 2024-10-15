@@ -13,7 +13,7 @@ android {
         versionCode = 206
         versionName = "2.0.45"
         ndk {
-            abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            abiFilters += listOf("arm64-v8a", "x86_64")
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -27,9 +27,7 @@ android {
         }
 
         release {
-            // 混淆
             isMinifyEnabled = true
-            // 移除无用的resource文件
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -50,9 +48,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    dependenciesInfo {
-        includeInApk = true
-        includeInBundle = true
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            isUniversalApk = false
+        }
     }
 }
 
@@ -73,4 +74,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(libs.ffmpeg.kit.full)
 }
