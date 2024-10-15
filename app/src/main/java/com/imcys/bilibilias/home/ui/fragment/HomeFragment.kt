@@ -13,14 +13,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -29,12 +22,10 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
@@ -110,41 +101,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        // 判断用户是否没有被引导
-        val guideVersion =
-            (requireActivity() as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            loadHomeGuide()
-        }
         StatService.onPageStart(requireActivity(), "HomeFragment")
-    }
-
-    /**
-     * 加载引导
-     */
-    private fun loadHomeGuide() {
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(requireActivity()))
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_home)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentHomeBinding.fragmentHomeNewVersionLy.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.TopToBottomOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .setOnDismissCallback {
-                // 让ViewPage来切换页面
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1,
-                ).isCheckable = true
-            }
-            .show()
     }
 
     /**
