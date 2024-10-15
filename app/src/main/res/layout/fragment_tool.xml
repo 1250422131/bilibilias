@@ -3,15 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="ToolViewHolder"
-            type="com.imcys.bilibilias.home.ui.viewmodel.ToolViewHolder" />
-
-
-    </data>
-
+    <data></data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -24,7 +16,6 @@
             android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/fragment_tool_top_linearLayout"
                 android:layout_width="match_parent"
@@ -32,72 +23,37 @@
                 android:background="@drawable/tool_top_bg"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:orientation="horizontal">
+                    android:text="@string/app_fragment_tool_title"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:id="@+id/fragment_tool_top_ly"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="5">
-
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/app_fragment_tool_title"
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="5" />
-                </LinearLayout>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/fragment_tool_search"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fragment_tool_editText"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="0dp">
+                    android:hint="@string/app_fragment_tool_input_tip"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="256"
+                    app:endIconContentDescription="cl"
+                    app:endIconDrawable="@drawable/ic_clear_24"
+                    app:endIconMode="clear_text"
+                    app:startIconContentDescription="search"
+                    app:startIconDrawable="@drawable/ic_search_24">
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
+                    <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#EDEFF2"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="10dp">
+                        android:singleLine="true" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_tool_search" />
-
-                        <EditText
-                            android:id="@+id/fragment_tool_editText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="8dp"
-                            android:background="@android:color/transparent"
-                            android:hint="@string/app_fragment_tool_input_tip"
-                            android:imeOptions="actionSearch"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textColor="#000000" />
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
-                </androidx.cardview.widget.CardView>
-
-
+                </com.google.android.material.textfield.TextInputLayout>
             </androidx.appcompat.widget.LinearLayoutCompat>
-
 
             <me.dkzwm.widget.srl.SmoothRefreshLayout
                 android:id="@+id/fragment_tool_sr"

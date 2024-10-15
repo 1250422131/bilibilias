@@ -51,6 +51,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.readBytes
+import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parameters
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +66,7 @@ class NetworkService @Inject constructor(
     private val httpClient: HttpClient,
     private val asCookiesStorage: AsCookiesStorage
 ) {
-
+    @Deprecated("不需要")
     private val ioDispatcher = Dispatchers.IO
     suspend fun getDashBangumiPlayInfo(cid: Long, qn: Int): DashBangumiPlayBean =
         runCatchingOnWithContextIo {
@@ -94,7 +95,6 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-
     // ---------------------------------------------------------------------------------------------
     suspend fun flvPgcPlayUrl(cId: Long, qn: Int): BangumiPlayBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.bangumiPlayPath) {
@@ -118,7 +118,6 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             viewPlayUrl(bvid, cid.toString(), qn)
         }
-
 
     // ---------------------------------------------------------------------------------------------
     suspend fun getDashVideoPlayInfo(bvid: String, cid: Long, qn: Int): DashVideoPlayBean =
@@ -150,7 +149,6 @@ class NetworkService @Inject constructor(
             httpClient.get("${BilibiliApi.userPlayHistoryPath}?max=$max&view_at=$viewAt&type=archive")
                 .body()
         }
-
 
     private suspend inline fun <reified T> videoPlayPath(
         bvid: String,
@@ -259,7 +257,7 @@ class NetworkService @Inject constructor(
 
     suspend fun getUserCollection(id: Long, pn: Int): CollectionDataBean =
         runCatchingOnWithContextIo {
-            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=${id}&pn=${pn}&ps=20")
+            httpClient.get("${BilibiliApi.userCollectionDataPath}?media_id=$id&pn=$pn&ps=20")
                 .body()
         }
 
@@ -275,7 +273,6 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             httpClient.get("${BilibiliApi.bangumiFollowPath}?vmid=$vmid&type=$type&pn=$pn&ps=$ps")
                 .body()
-
         }
 
     suspend fun getUpdateData(): OldUpdateDataBean = runCatchingOnWithContextIo {
@@ -283,18 +280,17 @@ class NetworkService @Inject constructor(
             .body()
     }
 
-
     suspend fun getOldHomeAd(): OldHomeAdBean = runCatchingOnWithContextIo {
         httpClient.get("${BiliBiliAsApi.appFunction}?type=oldHomeAd").body()
     }
 
-
     // ---------------------------------------------------------------------------------------------
-    suspend fun getBangumiSeasonBeanByEpid(epid: Long): BangumiSeasonBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.bangumiVideoDataPath) {
-            parameterEpID(epid.toString())
-        }.body()
-    }
+    suspend fun getBangumiSeasonBeanByEpid(epid: Long): BangumiSeasonBean =
+        runCatchingOnWithContextIo {
+            httpClient.get(BilibiliApi.bangumiVideoDataPath) {
+                parameterEpID(epid.toString())
+            }.body()
+        }
 
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserNavInfo(): UserNavDataModel = runCatchingOnWithContextIo {
@@ -345,6 +341,7 @@ class NetworkService @Inject constructor(
             parameterBVID(bvid)
         }.body()
     }
+
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr") {
@@ -415,7 +412,6 @@ class NetworkService @Inject constructor(
             }.body()
         }
 
-
     suspend fun n36(
         asCookie: String?,
         asLoginInfo: AsLoginBsViewModel.AsLoginInfo
@@ -445,7 +441,6 @@ class NetworkService @Inject constructor(
 
     suspend fun n43(biliBiliCookieInfo: AsLoginBsViewModel.BiliBiliCookieInfo): BiLiCookieResponseModel =
         runCatchingOnWithContextIo {
-
             ktHttpUtils.addHeader(COOKIE, BaseApplication.asUser.asCookie)
                 .asyncPostJson(
                     "${BiliBiliAsApi.serviceTestApi}BiliBiliCookie",
@@ -459,4 +454,8 @@ class NetworkService @Inject constructor(
         return withContext(ioDispatcher, block)
     }
 
+    suspend fun shortLink(url: String): String = httpClient.get(url)
+        .request
+        .url
+        .toString()
 }
