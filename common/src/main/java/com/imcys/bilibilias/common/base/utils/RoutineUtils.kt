@@ -4,8 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 
-
-//顶层方法
+// 顶层方法
 fun asLogI(tag: String, content: String) = Log.i(tag, content)
 
 fun asLogD(tag: String, content: String) = Log.d(tag, content)
@@ -26,5 +25,5 @@ fun asLogV(context: Context, content: String) = Log.v(context::class.java.simple
 
 fun asLoW(context: Context, content: String) = Log.w(context::class.java.simpleName, content)
 
- fun asToast(context: Context, content: String) =
+fun asToast(context: Context, content: String) =
     Toast.makeText(context, content, Toast.LENGTH_SHORT).show()
