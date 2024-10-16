@@ -452,13 +452,13 @@ class DownloadQueue @Inject constructor() {
 
             val myUserData = networkService.getMyUserData()
 
-            val url = if (!microsoftAppCenterType && !baiduStatisticsType) {
+            // 提交数据
+            if (!microsoftAppCenterType && !baiduStatisticsType) {
+                networkService.postAsData(aid, bvid, mid, name, tName, copyright)
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
             } else {
-                "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright&UserName=${myUserData.data.uname}&UserUID=${myUserData.data.mid}"
+                networkService.postAsData(aid, bvid, mid, name, tName, copyright,myUserData.data.uname,myUserData.data.mid)
             }
-            // 提交数据
-            HttpUtils.asyncGet(url).await()
         }
     }
 

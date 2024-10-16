@@ -12,10 +12,8 @@ import kotlinx.coroutines.launch
 open class BaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initData()
     }
 
-    open fun initData() {}
     fun launchIO(
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit,
