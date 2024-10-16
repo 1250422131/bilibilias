@@ -43,11 +43,13 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -418,12 +420,34 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    @Inject
+    lateinit var tokenUtils: TokenUtils
+
     // 加载用户数据
+    @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchUI {
-            val userInfoBean = networkService.getUserInfoData(
-                TokenUtils.encWbi(mapOf("mid" to myUserData.data.mid.toString()))
-            )
+            val params = mutableMapOf<String, String>()
+            params["mid"] = myUserData.data.mid.toString()
+            // 截取新的webId
+            val spaceStr = networkService.getSpaceStr( myUserData.data.mid.toString())
+            val renderDataRegex =
+                "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
+            val matchResult = renderDataRegex.find(spaceStr)?.groupValues?.get(1) ?: ""
+
+            if (matchResult.isNotBlank()) {
+                val accessIdJsonStr =
+                    withContext(Dispatchers.IO) {
+                        URLDecoder.decode(matchResult, "UTF-8")
+                    }
+                val jsonObject = JSONObject(accessIdJsonStr)
+                val webId = jsonObject.optString("access_id")
+                params["w_webid"] = webId ?: ""
+            }
+
+            val paramsStr = tokenUtils.getParamStr(params)
+
+            val userInfoBean = networkService.getUserInfoData(paramsStr)
 
             // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)
