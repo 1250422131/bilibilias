@@ -52,7 +52,7 @@ srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.1"
 work-runtime-ktx = "2.9.0"
 xutils = "3.9.0"
-activity-compose = "1.8.2"
+activity-compose = "1.9.3"
 compose-bom = "2024.09.03"
 activity = "1.9.2"
 [libraries]
