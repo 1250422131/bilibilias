@@ -232,6 +232,28 @@ class NetworkService @Inject constructor(
         httpClient.get(BilibiliApi.getMyUserData).body()
     }
 
+    suspend fun postAsData(
+        aid: Long,
+        bvid: String?,
+        mid: Long,
+        name: String?,
+        tName: String?,
+        copyright: Int,
+        UserName: String? = null,
+        UserUID: Long? = null,
+    ): String = runCatchingOnWithContextIo {
+        httpClient.get(BiliBiliAsApi.appAddAsVideoData) {
+            parameter("Aid", aid)
+            parameter("Bvid", bvid)
+            parameter("Mid", mid)
+            parameter("Upname", name)
+            parameter("Tname", tName)
+            parameter("Copyright", copyright)
+            parameter("UserName", UserName)
+            parameter("UserUID", UserUID)
+        }.body()
+    }
+
     suspend fun getDanmuBytes(cid: Long) = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.videoDanMuPath) {
             refererBILIHarder()

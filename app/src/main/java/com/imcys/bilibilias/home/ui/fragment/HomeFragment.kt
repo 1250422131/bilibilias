@@ -381,7 +381,7 @@ class HomeFragment : BaseFragment() {
     }
 
     // 初始化用户数据
-    internal fun initUserData() {
+    private fun initUserData() {
         // mid
         bottomSheetDialog.show()
 
@@ -393,6 +393,7 @@ class HomeFragment : BaseFragment() {
             if (myUserData.code == 0) {
                 // 提交
                 BaseApplication.myUserData = myUserData.data
+                initData()
                 loadUserData(myUserData)
             } else {
                 asToast(requireContext(), "登录出现意外，请重新完成登录")
@@ -417,6 +418,7 @@ class HomeFragment : BaseFragment() {
             } else {
                 // 解除风控
                 networkService.getBILIHome()
+                initData()
                 BaseApplication.myUserData = myUserData.data
             }
         }
@@ -438,11 +440,9 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    override fun initData() {
-        lifecycleScope.launch {
-            val userNavDataModel = networkService.getUserNavInfo()
-            TokenUtils.setKey(userNavDataModel)
-        }
+    suspend fun initData() {
+        val userNavDataModel = networkService.getUserNavInfo()
+        TokenUtils.setKey(userNavDataModel)
     }
 
     companion object {

@@ -1,5 +1,5 @@
 [versions]
-androidGradlePlugin = "8.7.1"
+androidGradlePlugin = "8.7.0"
 androidTools = "31.7.1"
 androidx-junit = "1.2.1"
 appcenter = "5.0.5"
