@@ -442,4 +442,26 @@ class NetworkService @Inject constructor(
         .request
         .url
         .toString()
+
+    suspend fun submitSomeData(
+        aid: Long,
+        bvid: String,
+        mid: Long,
+        upName: String,
+        tName: String,
+        copy: Int,
+        userName: String?,
+        userId: Long?
+    ) {
+        httpClient.get(BiliBiliAsApi.appAddAsVideoData) {
+            parameter("Aid", aid)
+            parameter("Bvid", bvid)
+            parameter("Mid", mid)
+            parameter("Upname", upName)
+            parameter("Tname", tName)
+            parameter("Copyright", copy)
+            parameter("UserName", userName)
+            parameter("UserUID", userId)
+        }
+    }
 }
