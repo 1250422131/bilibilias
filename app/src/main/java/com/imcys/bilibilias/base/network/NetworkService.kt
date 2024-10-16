@@ -4,6 +4,7 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -300,12 +301,12 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n11(paramsStr: String): UserBaseBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userBaseDataPath}?$paramsStr").body()
-    }
-
-    suspend fun n24(paramsStr: String): UserBaseBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userBaseDataPath}?$paramsStr").body()
+    suspend fun n11(map: Map<String, String>): UserBaseBean = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.userBaseDataPath) {
+            map.forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }.body()
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -315,8 +316,16 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun n22(paramsStr: String): UserCardBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.getUserCardPath}?$paramsStr").body()
+    suspend fun n22(mid: Long): UserCardBean = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.getUserCardPath){
+            TokenUtils.encWbi(
+                mapOf(
+                    "mid" to mid.toString(),
+                )
+            ).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }.body()
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -340,21 +349,36 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    // ---------------------------------------------------------------------------------------------
-    suspend fun getUserWorkData(paramsStr: String): UserWorksBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userWorksPath}?$paramsStr") {
+    suspend fun getUserWorkData(mid: Long, page: Int): UserWorksBean = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.userWorksPath) {
             refererBILIHarder()
+            TokenUtils.encWbi(
+                mapOf(
+                    "mid" to mid.toString(),
+                    "pn" to page.toString(),
+                    "ps" to "30"
+                )
+            ).forEach { (k, v) ->
+                parameter(k, v)
+            }
         }.body()
     }
 
     // ----------------------------------------------------------------------------------------------
     suspend fun getUpStateInfo(): UpStatBeam = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.userUpStat}?mid=${BaseApplication.asUser.mid}").body()
+        httpClient.get(BilibiliApi.userUpStat) {
+            parameter("mid", BaseApplication.asUser.mid)
+        }.body()
     }
 
-    suspend fun getUserInfoData(paramsStr: String): UserInfoBean = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.getUserInfoPath}?$paramsStr").body()
-    }
+    suspend fun getUserInfoData(map: Map<String, String>): UserInfoBean =
+        runCatchingOnWithContextIo {
+            httpClient.get(BilibiliApi.getUserInfoPath) {
+                map.forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }.body()
+        }
 
     // ---------------------------------------------------------------------------------------------
     suspend fun videoLike(bvid: String): LikeVideoBean = runCatchingOnWithContextIo {

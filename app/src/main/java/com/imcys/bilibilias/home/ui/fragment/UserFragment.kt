@@ -13,6 +13,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.TokenUtils.encWbi
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -50,8 +51,6 @@ class UserFragment : BaseFragment() {
     @Inject
     lateinit var networkService: NetworkService
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(context, "UserFragment")
@@ -106,14 +105,7 @@ class UserFragment : BaseFragment() {
                 override fun onLoadingMore() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
                         launchIO {
-                            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-                            val params = mutableMapOf<String, String>()
-                            params["mid"] = mid.toString()
-                            params["pn"] = (userWorksBean.data.page.pn + 1).toString()
-                            params["ps"] = "20"
-                            val paramsStr = tokenUtils.getParamStr(params)
-
-                            val userWorksBean = networkService.getUserWorkData(paramsStr)
+                            val userWorksBean = networkService.getUserWorkData(mid, userWorksBean.data.page.pn + 1)
 
                             this@UserFragment.userWorksBean = userWorksBean
 
@@ -141,14 +133,7 @@ class UserFragment : BaseFragment() {
 
     private fun initUserWorks() {
         launchIO {
-            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-            val params = mutableMapOf<String, String>()
-            params["mid"] = mid.toString()
-            params["qn"] = "1"
-            params["ps"] = "20"
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userWorksBean = networkService.getUserWorkData(paramsStr)
+            val userWorksBean = networkService.getUserWorkData(mid,1)
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
@@ -229,11 +214,7 @@ class UserFragment : BaseFragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n22(paramsStr)
+        return networkService.n22(mid)
     }
 
     /**
@@ -241,25 +222,14 @@ class UserFragment : BaseFragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
-
         return networkService.getUpStateInfo()
     }
 
     /**
      * 获取用户基础信息
-     * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n24(paramsStr)
-    }
-
-    private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
-        if (recyclerView == null) return false
-        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
+        return networkService.n11(encWbi(mapOf("mid" to asUser.mid.toString())))
     }
 
     override fun onDestroy() {

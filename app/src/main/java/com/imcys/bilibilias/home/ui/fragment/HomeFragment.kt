@@ -418,18 +418,12 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     // 加载用户数据
-    @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchUI {
-            val params = mutableMapOf<String, String>()
-            params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userInfoBean = networkService.getUserInfoData(paramsStr)
+            val userInfoBean = networkService.getUserInfoData(
+                TokenUtils.encWbi(mapOf("mid" to myUserData.data.mid.toString()))
+            )
 
             // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)

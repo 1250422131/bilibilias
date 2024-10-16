@@ -24,6 +24,7 @@ import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.TokenUtils.encWbi
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -434,19 +435,12 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     /**
      * 获取用户基础信息
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n11(paramsStr)
+        return networkService.n11(encWbi(mapOf("mid" to asUser.mid.toString())))
     }
 
     /**
