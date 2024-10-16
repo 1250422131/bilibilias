@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.activity.user.UserVideoDownloadActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
@@ -28,19 +27,13 @@ import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
-import org.json.JSONObject
-import java.net.URLDecoder
 import javax.inject.Inject
 import kotlin.math.ceil
 
-
 @AndroidEntryPoint
-class
-UserFragment : BaseFragment() {
+class UserFragment : BaseFragment() {
 
     private lateinit var userWorksAd: UserWorksAdapter
     private lateinit var userDataRvAd: UserDataAdapter
@@ -56,8 +49,6 @@ UserFragment : BaseFragment() {
     @Inject
     lateinit var networkService: NetworkService
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(context, "UserFragment")
@@ -112,14 +103,7 @@ UserFragment : BaseFragment() {
                 override fun onLoadingMore() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
                         launchIO {
-                            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-                            val params = mutableMapOf<String, String>()
-                            params["mid"] = mid.toString()
-                            params["pn"] = (userWorksBean.data.page.pn + 1).toString()
-                            params["ps"] = "20"
-                            val paramsStr = tokenUtils.getParamStr(params)
-
-                            val userWorksBean = networkService.getUserWorkData(paramsStr)
+                            val userWorksBean = networkService.getUserWorkData(mid, userWorksBean.data.page.pn + 1)
 
                             this@UserFragment.userWorksBean = userWorksBean
 
@@ -147,14 +131,7 @@ UserFragment : BaseFragment() {
 
     private fun initUserWorks() {
         launchIO {
-            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-            val params = mutableMapOf<String, String>()
-            params["mid"] = mid.toString()
-            params["qn"] = "1"
-            params["ps"] = "20"
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userWorksBean = networkService.getUserWorkData(paramsStr)
+            val userWorksBean = networkService.getUserWorkData(mid,1)
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
@@ -235,11 +212,7 @@ UserFragment : BaseFragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n22(paramsStr)
+        return networkService.getUserCardData(mid)
     }
 
     /**
@@ -256,30 +229,7 @@ UserFragment : BaseFragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = mid.toString()
-        // 截取新的webId
-        val spaceStr = networkService.getSpaceStr(mid.toString())
-        val renderDataRegex =
-            "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
-        val matchResult = renderDataRegex.find(spaceStr)?.groupValues?.get(1) ?: ""
-
-        if (matchResult.isNotBlank()) {
-            val accessIdJsonStr =
-                withContext(Dispatchers.IO) {
-                    URLDecoder.decode(matchResult, "UTF-8")
-                }
-            val jsonObject = JSONObject(accessIdJsonStr)
-            val webId = jsonObject.optString("access_id")
-            params["w_webid"] = webId ?: ""
-        }
-        val paramsStr = tokenUtils.getParamStr(params)
-        return networkService.n24(paramsStr)
-    }
-
-    private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
-        if (recyclerView == null) return false
-        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
+        return networkService.n11(mid)
     }
 
     override fun onDestroy() {

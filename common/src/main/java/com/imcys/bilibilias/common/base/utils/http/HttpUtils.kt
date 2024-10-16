@@ -5,9 +5,6 @@ import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
-import com.imcys.bilibilias.common.base.extend.awaitResponse
-import kotlinx.coroutines.*
-import okhttp3.*
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -19,77 +16,6 @@ import java.net.URL
  */
 @Deprecated("ktor")
 object HttpUtils {
-
-    private val okHttpClient = OkHttpClient()
-
-    private val headers = mutableMapOf<String, String>()
-
-    /**
-     * 使用 OkHttp 库发送 GET 请求的方法
-     *
-     * @param url String 请求地址
-     * @param callBack Callback 请求完成后的回调函数
-     */
-    @JvmStatic
-    @Deprecated("ktor")
-    fun get(url: String, callBack: Callback) {
-        // 检验url，添加对应的ua
-        checkUrl()
-        // 创建请求对象
-        val request: Request = Request.Builder().apply {
-            // 将已设置的头信息添加到请求中
-            headers.forEach {
-                addHeader(it.key, it.value)
-            }
-            // 设置请求地址
-            url(url)
-            // 设置为 GET 请求
-            get()
-        }.build()
-        // 使用 OkHttp 的 enqueue 方法异步发送请求
-        okHttpClient.newCall(request).enqueue(callBack)
-    }
-
-    /**
-     * 使用 OkHttp 库发送 GET 请求的方法
-     *
-     * @param url String 请求地址
-     * @param callBack Callback 请求完成后的回调函数
-     */
-    @JvmStatic
-    @Deprecated("ktor")
-    fun asyncGet(url: String): Deferred<Response> {
-        // 检验url，添加对应的ua
-        checkUrl()
-        // 创建请求对象
-        val request: Request = Request.Builder().apply {
-            // 将已设置的头信息添加到请求中
-            headers.forEach {
-                addHeader(it.key, it.value)
-            }
-            // 设置请求地址
-            url(url)
-            // 设置为 GET 请求
-            get()
-        }.build()
-        // 使用 OkHttp 的 enqueue 方法异步发送请求
-        return CoroutineScope(Dispatchers.Default).async {
-            okHttpClient.newCall(request).awaitResponse()
-        }
-    }
-
-    /**
-     * 添加请求头
-     *
-     * @param key String
-     * @param value String
-     * @return HttpUtils
-     */
-    @JvmStatic
-    fun addHeader(key: String, value: String): HttpUtils {
-        headers[key] = value
-        return this
-    }
 
     /**
      * 向指定 URL 发送POST方法的请求
@@ -154,9 +80,5 @@ object HttpUtils {
             }
         }
         return result
-    }
-
-    private fun checkUrl() {
-        headers[USER_AGENT] = BROWSER_USER_AGENT
     }
 }

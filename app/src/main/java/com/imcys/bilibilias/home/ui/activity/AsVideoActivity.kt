@@ -23,7 +23,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -68,7 +67,6 @@ import java.io.InputStream
 import java.util.zip.Inflater
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
 
@@ -91,7 +89,7 @@ class AsVideoActivity : BaseActivity() {
 
     lateinit var userBaseBean: UserBaseBean
 
-    private val asVideoViewModel    : AsVideoViewModel by viewModels()
+    private val asVideoViewModel: AsVideoViewModel by viewModels()
 
     @Inject
     lateinit var networkService: NetworkService
@@ -192,7 +190,7 @@ class AsVideoActivity : BaseActivity() {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
 
-                        if (dashVideoPlayBean.data.dash.video.isNotEmpty()){
+                        if (dashVideoPlayBean.data.dash.video.isNotEmpty()) {
                             // 得有video才行
                             dashVideoPlayBean.data.dash.video[0].also {
                                 if (it.width < it.height) {
@@ -215,7 +213,6 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-
                     val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
@@ -245,10 +242,9 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                        NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
+                    NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
-
 
             // 设置数据
             videoDataBean = videoBaseBean
@@ -328,7 +324,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadBangumiVideoList() {
         launchIO {
-
             val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
@@ -434,19 +429,12 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     /**
      * 获取用户基础信息
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n11(paramsStr)
+        return networkService.n11(asUser.mid)
     }
 
     /**
@@ -455,7 +443,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         launchIO {
-
             val videoPlayListData = networkService.getVideoPageListData(bvid)
 
             launchUI {
@@ -464,7 +451,7 @@ class AsVideoActivity : BaseActivity() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                            // 将子集切换后的逻辑交给activity完成
+                        // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
@@ -504,12 +491,11 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-
         launchUI {
-           runCatching {
-               // 储存弹幕
-               saveDanmaku(networkService.getDanmuBytes(cid))
-           }
+            runCatching {
+                // 储存弹幕
+                saveDanmaku(networkService.getDanmuBytes(cid))
+            }
             // 初始化弹幕配置
             initDanmaku()
         }
@@ -715,7 +701,6 @@ class AsVideoActivity : BaseActivity() {
      */
 
     private fun setDanmakuContextCongif() {
-
         // 设置弹幕的最大显示行数
         val maxLinesPair = HashMap<Int, Int>()
         // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
@@ -723,7 +708,6 @@ class AsVideoActivity : BaseActivity() {
         val overlappingEnablePair = HashMap<Int, Boolean>()
         overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
         overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
-
 
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
             .setDuplicateMergingEnabled(false)
@@ -749,7 +733,6 @@ class AsVideoActivity : BaseActivity() {
 
             override fun danmakuShown(danmaku: BaseDanmaku?) {
                 // 弹幕展示的时候回调
-
             }
 
             override fun drawingFinished() {
