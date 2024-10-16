@@ -6,25 +6,15 @@ package com.imcys.bilibilias.common.base.utils.file;
  * @Description:
  */
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.FileUtils;
-import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.system.Os;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,11 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 
 public class AppFilePathUtils {
 
@@ -53,41 +38,6 @@ public class AppFilePathUtils {
     public AppFilePathUtils(Context context, String packageName) {
         mContext = context;
         mPackageName = packageName;
-    }
-
-    // 递归方式 计算文件的大小
-    public static long getTotalSizeOfFilesInDir(final File file) {
-        if (file.isFile())
-            return file.length();
-        final File[] children = file.listFiles();
-        long total = 0;
-        if (children != null)
-            for (final File child : children)
-                total += getTotalSizeOfFilesInDir(child);
-        return total;
-    }
-
-    /**
-     * 递归删除目录下的所有文件及子目录下所有文件
-     *
-     * @param dir 将要删除的文件目录
-     * @return boolean Returns "true" if all deletions were successful.
-     * If a deletion fails, the method stops attempting to
-     * delete and returns "false".
-     */
-    public static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            //递归删除目录中的子目录下
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // 目录此时为空，可以删除
-        return dir.delete();
     }
 
     /**
@@ -215,145 +165,6 @@ public class AppFilePathUtils {
     }
 
 
-    public static String getFilePathByUri(Context context, Uri uri) {
-        String path = null;
-        // 4.4及之后的 是以 content:// 开头的，比如 content://com.android.providers.media.documents/document/image%3A235700
-        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (DocumentsContract.isDocumentUri(context, uri)) {
-                if (isExternalStorageDocument(uri)) {
-                    // ExternalStorageProvider
-                    final String docId = DocumentsContract.getDocumentId(uri);
-                    final String[] split = docId.split(":");
-                    final String type = split[0];
-                    if ("primary".equalsIgnoreCase(type)) {
-                        path = Environment.getExternalStorageDirectory() + "/" + split[1];
-                        return path;
-                    }
-                } else if (isDownloadsDocument(uri)) {
-                    // DownloadsProvider
-                    final String id = DocumentsContract.getDocumentId(uri);
-                    final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
-                            Long.valueOf(id));
-                    path = getDataColumn(context, contentUri, null, null);
-                    return path;
-                } else if (isMediaDocument(uri)) {
-                    // MediaProvider
-                    final String docId = DocumentsContract.getDocumentId(uri);
-                    final String[] split = docId.split(":");
-                    final String type = split[0];
-                    Uri contentUri = null;
-                    if ("image".equals(type)) {
-                        contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                    } else if ("video".equals(type)) {
-                        contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                    } else if ("audio".equals(type)) {
-                        contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                    }
-                    final String selection = "_id=?";
-                    final String[] selectionArgs = new String[]{split[1]};
-                    path = getDataColumn(context, contentUri, selection, selectionArgs);
-                    return path;
-                }
-            }
-        } else {
-            // 以 file:// 开头的
-            if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-                path = uri.getPath();
-                return path;
-            }
-            // 以 content:// 开头的，比如 content://media/extenral/images/media/17766
-            if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()) && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
-                if (cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                        if (columnIndex > -1) {
-                            path = cursor.getString(columnIndex);
-                        }
-                    }
-                    cursor.close();
-                }
-                return path;
-            }
-        }
-        return null;
-    }
-
-    private static boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
-
-    private static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    private static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {column};
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(column_index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
-
-    public String uriToPath(Uri fileUri) {
-        try {
-            ContentResolver contentResolver = mContext.getContentResolver();
-            ParcelFileDescriptor fileDescriptor = contentResolver.openFileDescriptor(fileUri, "r");
-            int detachFd = fileDescriptor.detachFd();
-            String fdPath = "/proc/self/fd/" + detachFd;
-            fileDescriptor.close();
-            String filePath = Os.readlink(fdPath);
-            if (filePath != null && !filePath.isEmpty()) {
-                return filePath;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public File getCache() {
-        File file;
-        try {
-            file = new File(mContext.getCacheDir().getPath().replace(mContext.getPackageName(), mPackageName));
-        } catch (Exception e) {
-            file = new File(dataFile, "/data/" + mPackageName + "/cache");
-        }
-        //获取内部缓存路径
-        return file;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public File getCodeCache() {
-        File file;
-        try {
-            file = new File(mContext.getCodeCacheDir().getPath().replace(mContext.getPackageName(), mPackageName));
-            return file;
-
-        } catch (Exception e) {
-            file = new File(dataFile, "/data/" + mPackageName + "/code_cache");
-
-
-        }
-
-//获取内部Code缓存路径
-        return file;
-    }
-
     public File getData() {
         File file;
         try {
@@ -376,109 +187,6 @@ public class AppFilePathUtils {
         return file;
     }
 
-    public File getAppPackagSource() {
-        File file;
-        try {
-            file = new File(getPackagSourceDir(mPackageName)).getParentFile();
-            return file;
-
-        } catch (Exception e) {
-            file = new File(dataFile, "/data/app/" + mPackageName + "-1");
-
-
-        }
-
-//获取应用数据路径路径//最好返回空判断
-        return file;
-    }
-
-    public File getAppPackagArm() {
-        File file;
-        try {
-
-            PackageInfo packInfo = mContext.getPackageManager().getPackageInfo(mPackageName, PackageManager.GET_UNINSTALLED_PACKAGES);
-            ApplicationInfo applicationInfo = packInfo.applicationInfo;
-            file = new File(applicationInfo.nativeLibraryDir);
-            return file;
-
-        } catch (Exception e) {
-            file = new File(dataFile, "app/" + mPackageName + "-1/lib");
-        }
-        //获取Arm文件路径//最好返回空判断
-
-        return file;
-    }
-
-    public File getExternalCache() {
-        File file;
-        try {
-            file = new File(mContext.getExternalCacheDir().getPath().replace(mContext.getPackageName(), mPackageName));
-            return file;
-
-        } catch (Exception e) {
-            file = new File(sdcardFile, "Android/data/" + mPackageName + "/cache");
-
-
-        }
-
-//获取外部缓存路径
-
-        return file;
-    }
-
-    public File getExternal() {
-        File file;
-        try {
-            file = new File(mContext.getExternalFilesDir(null).getParent().replace(mContext.getPackageName(), mPackageName));
-
-            return file;
-
-        } catch (Exception e) {
-            file = new File(sdcardFile, "Android/data/" + mPackageName);
-
-
-        }
-
-//获取外部缓存路径
-
-        return file;
-    }
-
-    public File getExternalFiles() {
-        File file;
-        try {
-            file = new File(mContext.getExternalFilesDir(null).getPath().replace(mContext.getPackageName(), mPackageName));
-
-
-            return file;
-
-        } catch (Exception e) {
-            file = new File(sdcardFile, "Android/data/" + mPackageName + "files");
-
-
-        }
-
-//获取外部文件路径
-
-        return file;
-    }
-
-    public File getObb() {
-        File file;
-        try {
-            file = new File(mContext.getObbDir().getPath().replace(mContext.getPackageName(), mPackageName));
-            return file;
-
-        } catch (Exception e) {
-            file = new File(sdcardFile, "Android/obb/" + mPackageName);
-
-
-        }
-
-//获取OBB路径
-
-        return file;
-    }
 
     public File getFiles() {
         File file;
@@ -513,49 +221,6 @@ public class AppFilePathUtils {
 
 
         return file;
-    }
-
-    public File getDataBases() {
-        File file;
-        try {
-            String SharedPreferencePath = new File(mContext.getFilesDir().getParentFile(), "databases").getPath().replace(mContext.getPackageName(), mPackageName);
-            file = new File(SharedPreferencePath);
-            return file;
-
-        } catch (Exception e) {
-            file = new File(dataFile, "data/" + mPackageName + "databases");
-
-
-        }
-
-        //获取DATABASES文件路径
-
-        return file;
-    }
-
-    public File getDataDirectory() {
-
-        return Environment.getDataDirectory();
-
-        //获取DATA根路径
-
-
-    }
-
-    public File getRootDirectory() {
-
-        return Environment.getRootDirectory();
-
-        //获取系统根路径
-
-    }
-
-    public File getExternalDirectory() {
-
-        return Environment.getExternalStorageDirectory();
-
-        //获取内部存储根路径
-
     }
 
     public String getSdCardDirectory() {
@@ -595,139 +260,4 @@ public class AppFilePathUtils {
             return SDError;
         }
     }
-
-    public String getUsbDirectory() {
-        StorageManager mStorageManager = (StorageManager) mContext.getSystemService(Context.STORAGE_SERVICE);//storage
-        try {
-            Method mMethodGetPaths = mStorageManager.getClass().getMethod("getVolumePaths");
-            String[] paths = (String[]) mMethodGetPaths.invoke(mStorageManager);
-            List<String> resultList = new ArrayList<>(paths.length);
-
-            resultList.addAll(Arrays.asList(paths));
-
-            for (int i = 0; i < resultList.size(); i++) {
-                if (resultList.get(i).contains("emulated")) {
-                    resultList.remove(i);
-
-                }
-
-                if (resultList.get(i).contains("internal")) {
-                    resultList.remove(i);
-
-                }
-                if (resultList.get(i).contains(getSdCardDirectory())) {
-                    resultList.remove(i);
-
-                }
-            }
-
-            if (!resultList.isEmpty()) {
-                return resultList.get(0);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return UsbError;
-    }
-
-    public File getDCIMDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-
-        //获取公共相册根路径
-
-    }
-
-    public File getPicturesDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-        //获取公共图片根路径
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public File getDocumentsDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-
-        //获取公共文档根路径
-
-    }
-
-    public File getDownloadDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-        //获取公共下载根路径
-
-    }
-
-    public File getMoviesDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-
-        //获取公共电影根路径
-
-    }
-
-    public File getMusicDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-
-        //获取公共音乐根路径
-
-    }
-
-    public File getPodcastsDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
-
-        //获取公共系统广播根路径
-
-    }
-
-    public File getRingtonesDirectory() {
-
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES);
-
-        //获取公共系统铃声根路径
-
-    }
-
-    public File getAlarmsDirectory() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_ALARMS);
-
-
-        //获取公共系统提醒铃声根路径
-
-    }
-
-    public File getNotificationsDirectory() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_NOTIFICATIONS);
-
-
-        //获取公共系统通知铃声根路径
-
-    }
-
-    private String getPackagSourceDir(String PackageName) {
-
-        ApplicationInfo localPackageInfo = getApplicationInfo(PackageName);
-        return localPackageInfo == null ? null : localPackageInfo.sourceDir;
-
-
-    }
-
-    private ApplicationInfo getApplicationInfo(String PackageName) {
-        try {
-            return mContext.getPackageManager().getApplicationInfo(PackageName, PackageManager.GET_META_DATA);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 }

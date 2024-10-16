@@ -1,6 +1,6 @@
 [versions]
-androidGradlePlugin = "8.7.0"
-androidTools = "31.7.0"
+androidGradlePlugin = "8.7.1"
+androidTools = "31.7.1"
 androidx-junit = "1.2.1"
 appcenter = "5.0.5"
 appcompat = "1.7.0"
@@ -150,7 +150,7 @@ room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", vers
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
