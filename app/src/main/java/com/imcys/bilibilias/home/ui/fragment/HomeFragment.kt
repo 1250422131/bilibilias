@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -37,6 +38,7 @@ import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
@@ -250,12 +252,12 @@ class HomeFragment : BaseFragment() {
             val request = Request.Builder()
                 .url(
                     (
-                        "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" +
-                            "&SHA=" + sha +
-                            "&MD5=" + md5 +
-                            "&CRC=" + crc +
-                            "lj=" + LJ
-                        )
+                            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" +
+                                    "&SHA=" + sha +
+                                    "&MD5=" + md5 +
+                                    "&CRC=" + crc +
+                                    "lj=" + LJ
+                            )
                 )
                 .build()
             newCall(request).enqueue(object : Callback {
@@ -420,34 +422,11 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     // 加载用户数据
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchUI {
-            val params = mutableMapOf<String, String>()
-            params["mid"] = myUserData.data.mid.toString()
-            // 截取新的webId
-            val spaceStr = networkService.getSpaceStr( myUserData.data.mid.toString())
-            val renderDataRegex =
-                "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
-            val matchResult = renderDataRegex.find(spaceStr)?.groupValues?.get(1) ?: ""
-
-            if (matchResult.isNotBlank()) {
-                val accessIdJsonStr =
-                    withContext(Dispatchers.IO) {
-                        URLDecoder.decode(matchResult, "UTF-8")
-                    }
-                val jsonObject = JSONObject(accessIdJsonStr)
-                val webId = jsonObject.optString("access_id")
-                params["w_webid"] = webId ?: ""
-            }
-
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userInfoBean = networkService.getUserInfoData(paramsStr)
+            val userInfoBean = networkService.getUserInfoData(myUserData.data.mid)
 
             // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)
@@ -456,6 +435,13 @@ class HomeFragment : BaseFragment() {
             loginQRDialog.cancel()
             // 加载用户弹窗
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
+        }
+    }
+
+    override fun initData() {
+        lifecycleScope.launch {
+            val userNavDataModel = networkService.getUserNavInfo()
+            TokenUtils.setKey(userNavDataModel)
         }
     }
 
