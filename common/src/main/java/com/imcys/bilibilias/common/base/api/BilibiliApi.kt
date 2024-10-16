@@ -56,7 +56,7 @@ object BilibiliApi {
     const val bangumiVideoDataPath = "pgc/view/web/season"
 
     // 获取用户基本信息
-    const val userBaseDataPath = "x/space/wbi/acc/info"
+    const val userBaseDataPath = getUserInfoPath
 
     // 用户导航栏信息
     const val userNavDataPath = "x/web-interface/nav"
