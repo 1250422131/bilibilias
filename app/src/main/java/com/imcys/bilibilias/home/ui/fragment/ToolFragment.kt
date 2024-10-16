@@ -27,6 +27,7 @@ import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.utils.AsRegexUtil
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.TextType
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.databinding.FragmentToolBinding
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
@@ -204,6 +205,7 @@ class ToolFragment : BaseFragment() {
      * 加载APP端分享视频
      */
     private fun loadShareData(url: String) {
+        asLogD("调试",url)
         lifecycleScope.launch {
             runCatching { networkService.shortLink(url) }
                 .onSuccess { asVideoId(it) }
