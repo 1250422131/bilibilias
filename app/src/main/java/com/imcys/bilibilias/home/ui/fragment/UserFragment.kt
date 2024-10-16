@@ -18,6 +18,7 @@ import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.databinding.FragmentUserBinding
 import com.imcys.bilibilias.home.ui.activity.user.UserVideoDownloadActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
@@ -29,8 +30,12 @@ import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import org.json.JSONObject
+import java.net.URLDecoder
 import javax.inject.Inject
 import kotlin.math.ceil
 
@@ -222,14 +227,39 @@ class UserFragment : BaseFragment() {
      * @return UpStatBeam
      */
     private suspend fun getUpStat(): UpStatBeam {
+
         return networkService.getUpStateInfo()
     }
 
     /**
      * 获取用户基础信息
+     * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        return networkService.n11(encWbi(mapOf("mid" to asUser.mid.toString())))
+        val params = mutableMapOf<String, String>()
+        params["mid"] = mid.toString()
+        // 截取新的webId
+        val spaceStr = networkService.getSpaceStr(mid.toString())
+        val renderDataRegex =
+            "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
+        val matchResult = renderDataRegex.find(spaceStr)?.groupValues?.get(1) ?: ""
+
+        if (matchResult.isNotBlank()) {
+            val accessIdJsonStr =
+                withContext(Dispatchers.IO) {
+                    URLDecoder.decode(matchResult, "UTF-8")
+                }
+            val jsonObject = JSONObject(accessIdJsonStr)
+            val webId = jsonObject.optString("access_id")
+            params["w_webid"] = webId ?: ""
+        }
+        val paramsStr = tokenUtils.getParamStr(params)
+        return networkService.n24(paramsStr)
+    }
+
+    private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
+        if (recyclerView == null) return false
+        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
     }
 
     override fun onDestroy() {
