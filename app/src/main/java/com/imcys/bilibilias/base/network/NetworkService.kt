@@ -42,13 +42,18 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readRawBytes
 import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
+import io.ktor.http.decodeURLPart
 import io.ktor.http.parameters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -301,23 +306,19 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n11(map: Map<String, String>): UserBaseBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.userBaseDataPath) {
-            map.forEach { (k, v) ->
-                parameter(k, v)
-            }
-        }.body()
-    }
+    suspend fun n11(mid: Long): UserBaseBean =
+        runCatchingOnWithContextIo {
+            val newMap = mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
+            httpClient.get(BilibiliApi.userBaseDataPath) {
+                TokenUtils.encWbi(newMap).forEach { (k, v) ->
+                    parameter(k, v)
+                }
+            }.body()
+        }
 
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserCardData(mid: Long): UserCardBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getUserCardPath) {
-            parameterMID(mid.toString())
-        }.body()
-    }
-
-    suspend fun n22(mid: Long): UserCardBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getUserCardPath){
             TokenUtils.encWbi(
                 mapOf(
                     "mid" to mid.toString(),
@@ -329,13 +330,6 @@ class NetworkService @Inject constructor(
     }
 
     // ---------------------------------------------------------------------------------------------
-
-    suspend fun n17(): UserCreateCollectionBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.userCreatedScFolderPath) {
-            parameterUpMID(BaseApplication.asUser.mid.toString())
-        }.body()
-    }
-
     suspend fun n34(): UserCreateCollectionBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.userCreatedScFolderPath) {
             parameterUpMID(BaseApplication.asUser.mid.toString())
@@ -371,17 +365,27 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun getUserInfoData(map: Map<String, String>): UserInfoBean =
+    suspend fun getUserInfoData(mid: Long): UserInfoBean =
         runCatchingOnWithContextIo {
             httpClient.get(BilibiliApi.getUserInfoPath) {
-                map.forEach { (k, v) ->
-                    parameter(k, v)
-                }
+                TokenUtils.encWbi(
+                    mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
+                )
+                    .forEach { (k, v) ->
+                        parameter(k, v)
+                    }
             }.body()
         }
 
-    suspend fun getSpaceStr(mid: String): String = runCatchingOnWithContextIo {
-        httpClient.get("${BilibiliApi.spacePath}$mid").body()
+    suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> {
+        val response = httpClient.get(BilibiliApi.spacePath + mid).bodyAsText()
+        val regex = "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
+        val result = regex.find(response)?.groupValues?.get(1)?.ifEmpty { return emptyMap() }
+            ?: return emptyMap()
+        val accessId =
+            Json.parseToJsonElement(result.decodeURLPart()).jsonObject["access_id"]?.jsonPrimitive?.content
+                ?: ""
+        return mapOf("w_webid" to accessId)
     }
 
     // ---------------------------------------------------------------------------------------------

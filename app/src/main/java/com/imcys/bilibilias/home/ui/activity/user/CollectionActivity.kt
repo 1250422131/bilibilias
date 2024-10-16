@@ -81,7 +81,7 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         launchUI {
-            val userCreateCollectionBean = networkService.n17()
+            val userCreateCollectionBean = networkService.n34()
 
             userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {

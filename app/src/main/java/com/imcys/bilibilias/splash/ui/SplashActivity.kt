@@ -78,13 +78,6 @@ class SplashActivity : BaseActivity() {
         }
     }
 
-    override fun initData() {
-        lifecycleScope.launch {
-            val userNavDataModel = networkService.getUserNavInfo()
-            TokenUtils.setKey(userNavDataModel)
-        }
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
