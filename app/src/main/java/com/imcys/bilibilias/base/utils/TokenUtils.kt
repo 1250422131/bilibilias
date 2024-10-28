@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.base.utils
 
 import androidx.collection.mutableScatterMapOf
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.home.ui.model.UserNavDataModel
 import io.ktor.http.encodeURLParameter
 import java.net.URLEncoder
@@ -8,7 +9,8 @@ import java.security.MessageDigest
 import java.util.TreeMap
 
 object TokenUtils {
-    private var key: String? = null
+    var key: String? = null
+        private set
 
     // 生成key的方法
     fun setKey(userNavDataModel: UserNavDataModel) {
@@ -51,7 +53,8 @@ object TokenUtils {
     }
 
     // 生成加密后的参数
-    fun encWbi(params: Map<String, String>): Map<String, String> {
+    suspend fun NetworkService.encWbi(params: Map<String, String>): Map<String, String> {
+        checkToken()
         // 初始化参数并加入时间戳
         val parameters = mutableMapOf<String, String>().apply {
             put("wts", (System.currentTimeMillis() / 1000).toString())
