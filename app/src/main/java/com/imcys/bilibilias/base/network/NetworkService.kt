@@ -4,7 +4,9 @@ import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
-import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.TokenUtils.encWbi
+import com.imcys.bilibilias.base.utils.TokenUtils.key
+import com.imcys.bilibilias.base.utils.TokenUtils.setKey
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -332,7 +334,7 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             val newMap = mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
             httpClient.get(BilibiliApi.userBaseDataPath) {
-                TokenUtils.encWbi(newMap).forEach { (k, v) ->
+                encWbi(newMap).forEach { (k, v) ->
                     parameter(k, v)
                 }
             }.body()
@@ -341,7 +343,7 @@ class NetworkService @Inject constructor(
     // ---------------------------------------------------------------------------------------------
     suspend fun getUserCardData(mid: Long): UserCardBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getUserCardPath) {
-            TokenUtils.encWbi(
+            encWbi(
                 mapOf(
                     "mid" to mid.toString(),
                 )
@@ -368,7 +370,7 @@ class NetworkService @Inject constructor(
     suspend fun getUserWorkData(mid: Long, page: Int): UserWorksBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.userWorksPath) {
             refererBILIHarder()
-            TokenUtils.encWbi(
+            encWbi(
                 mapOf(
                     "mid" to mid.toString(),
                     "pn" to page.toString(),
@@ -390,7 +392,7 @@ class NetworkService @Inject constructor(
     suspend fun getUserInfoData(mid: Long): UserInfoBean =
         runCatchingOnWithContextIo {
             httpClient.get(BilibiliApi.getUserInfoPath) {
-                TokenUtils.encWbi(
+                encWbi(
                     mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
                 )
                     .forEach { (k, v) ->
@@ -399,7 +401,7 @@ class NetworkService @Inject constructor(
             }.body()
         }
 
-    suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> {
+    private suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> {
         val response = httpClient.get(BilibiliApi.spacePath + mid).bodyAsText()
         val regex = "\"__RENDER_DATA__\" type=\"application/json\">(.*)</script>".toRegex()
         val result = regex.find(response)?.groupValues?.get(1)?.ifEmpty { return emptyMap() }
@@ -484,6 +486,14 @@ class NetworkService @Inject constructor(
             parameter("Copyright", copy)
             parameter("UserName", userName)
             parameter("UserUID", userId)
+        }
+    }
+
+    // 检验token
+    suspend fun checkToken() = also {
+        if (key == null) {
+            val userNavDataModel = getUserNavInfo()
+            setKey(userNavDataModel)
         }
     }
 }
