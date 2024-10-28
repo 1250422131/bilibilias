@@ -81,7 +81,7 @@ class DedicateActivity : BaseActivity() {
                                 Icon(Icons.Default.ArrowBack, contentDescription = "返回")
                             }
                         },
-                        modifier = Modifier.height(height),
+//                        modifier = Modifier.height(height),
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                     )
