@@ -4,10 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.home.ui.activity.DedicateActivity
 import com.imcys.bilibilias.home.ui.activity.DonateActivity
-import com.xiaojinzi.component.impl.Router
 
 class FragmentHomeViewModel : ViewModel() {
 
@@ -16,13 +14,6 @@ class FragmentHomeViewModel : ViewModel() {
             Uri.parse("https://docs.qq.com/doc/p/080e6bdd303d1b274e7802246de47bd7cc28eeb7?dver=2.1.27292865")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
-    }
-
-    fun goToRoam(view: View) {
-        // 跳转
-        Router
-            .with(view.context)
-            .hostAndPath(hostAndPath = ARouterAddress.LiveStreamActivity).forward()
     }
 
     fun goToNewVersionDoc(view: View) {
