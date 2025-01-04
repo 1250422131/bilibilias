@@ -9,7 +9,7 @@ data class AsCookie(
     val name: String,
     val value: String,
     val encoding: CookieEncoding = CookieEncoding.URI_ENCODING,
-    val maxAge: Int = 0,
+    val maxAge: Int? = null,
     val timestamp: Long? = 0,
     val domain: String? = null,
     val path: String? = null,
@@ -17,7 +17,7 @@ data class AsCookie(
     val httpOnly: Boolean = false,
 )
 
- fun Cookie.toAsCookie(): AsCookie =
+fun Cookie.toAsCookie(): AsCookie =
     AsCookie(
         name = name,
         value = value,
@@ -41,4 +41,3 @@ fun AsCookie.toCookie(): Cookie =
         secure = secure,
         httpOnly = httpOnly
     )
-

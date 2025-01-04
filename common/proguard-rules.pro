@@ -36,8 +36,6 @@
     java.lang.Object readResolve();
 }
 
-
-
 -keep public class com.alibaba.android.arouter.routes.**{*;}
 -keep public class com.alibaba.android.arouter.facade.**{*;}
 
