@@ -44,7 +44,7 @@ uiTimateBarX = "0.8.1"
 xutils = "3.9.0"
 activity = "1.9.3"
 work-runtime-ktx = "2.10.0"
-activity-compose = "1.9.2"
+activity-compose = "1.9.3"
 androidxComposeBom = "2024.12.01"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
