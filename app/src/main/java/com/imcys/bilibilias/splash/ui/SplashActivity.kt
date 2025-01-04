@@ -2,7 +2,6 @@ package com.imcys.bilibilias.splash.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -13,40 +12,41 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.os.HandlerCompat
+import androidx.lifecycle.lifecycleScope
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
-import com.liulishuo.okdownload.OkDownloadProvider.context
 import com.tencent.mmkv.MMKV
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
+private const val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 1
 
+@AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
-    private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
-    private val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 1
 
+    @Inject
+    lateinit var networkService: NetworkService
     private val allFilesAccessLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    ) { _ ->
         toHome()
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private val MANAGE_EXTERNAL_STORAGES = arrayOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
-
     private var isFirstLoaded = false
-    private var delayedHandler: Handler? = null
+    private val delayedHandler: Handler = Handler(Looper.getMainLooper())
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -70,16 +70,12 @@ class SplashActivity : BaseActivity() {
                     negativeButtonClickListener = {
                     },
                 ).show()
-
             } else {
                 toHome()
             }
         } else {
             getSavePermissions()
         }
-
-//        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
-//        constraintLayout.addStatusBarTopPadding()
     }
 
     @Deprecated("Deprecated in Java")
@@ -87,12 +83,6 @@ class SplashActivity : BaseActivity() {
         super.onBackPressed()
         moveTaskToBack(true)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        delayedHandler?.removeCallbacksAndMessages(null)
-    }
-
 
     private fun getSavePermissions() {
         if (ContextCompat.checkSelfPermission(
@@ -161,25 +151,21 @@ class SplashActivity : BaseActivity() {
         // 如果已经授予了储存权限，则可以进行相应的操作
         if (!isFirstLoaded) {
             isFirstLoaded = true
-            delayedHandler = Handler(Looper.getMainLooper())
-            delayedHandler?.let {
+            delayedHandler.postDelayed({
                 // 迁移旧的数据
                 initMMVKData()
-
-                HandlerCompat.postDelayed(it, {
-                    // 创建一个意图，说明我要跳转到那个活动界面。
-                    val intent = Intent(this, HomeActivity::class.java)
-                    // 跳转到主要活动。
-                    startActivity(intent)
-                    // 再来个跳转过度动画。
-                    overridePendingTransition(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out,
-                    )
-                    // 销毁当前活动。
-                    finish()
-                }, null, 1000)
-            }
+                // 创建一个意图，说明我要跳转到那个活动界面。
+                val intent = Intent(this, HomeActivity::class.java)
+                // 跳转到主要活动。
+                startActivity(intent)
+                // 再来个跳转过度动画。
+                overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                )
+                // 销毁当前活动。
+                finish()
+            }, 1000)
         }
     }
 
@@ -189,7 +175,7 @@ class SplashActivity : BaseActivity() {
     private fun initMMVKData() {
         getSharedPreferences("data", MODE_PRIVATE).apply {
             if (!getString(COOKIES, "").equals("")) {
-                MMKV.mmkvWithID("data")!!.importFromSharedPreferences(this)
+                MMKV.mmkvWithID("data").importFromSharedPreferences(this)
                 this.edit { clear() }
             }
         }

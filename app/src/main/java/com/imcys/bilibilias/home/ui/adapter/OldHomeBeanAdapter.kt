@@ -20,6 +20,10 @@ import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
 import com.youth.banner.adapter.BannerAdapter
 import okhttp3.Call
 import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
@@ -57,7 +61,7 @@ class OldHomeBeanAdapter(
         var intent = Intent()
         when (s) {
             "goBilibili" -> {
-                intent.setDataAndType(Uri.parse(sumData.dataList[position]),"text/plain")
+                intent.setDataAndType(Uri.parse(sumData.dataList[position]), "text/plain")
                 intent.action = "android.intent.action.VIEW"
                 context.startActivity(intent)
             }
@@ -139,27 +143,28 @@ class OldHomeBeanAdapter(
         context: Context,
     ) {
         val cookie = BaseApplication.dataKv.decodeString(COOKIES, "").toString()
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .addHeader(COOKIE, cookie)
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
+            }
 
-        HttpUtils.addHeader(COOKIE, cookie).get(
-            url,
-            object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    Toast.makeText(context, failToast, Toast.LENGTH_SHORT).show()
-                }
+            override fun onResponse(call: Call, response: Response) {
+                val requestStr = response.body!!.string()
+                val requestJson = JSONObject(requestStr)
+                val code = requestJson.optInt("code")
+                val message = requestJson.optString("message")
 
-                override fun onResponse(call: Call, response: Response) {
-                    val requestStr = response.body!!.string()
-                    val requestJson = JSONObject(requestStr)
-                    val code = requestJson.optInt("code")
-                    val message = requestJson.optString("message")
-
-                    if (code == 0) {
-                        Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
-                    }
+                if (code == 0) {
+                    Toast.makeText(context, successToast + message, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, failToast + message, Toast.LENGTH_SHORT).show()
                 }
             }
-        )
+        })
     }
 }
