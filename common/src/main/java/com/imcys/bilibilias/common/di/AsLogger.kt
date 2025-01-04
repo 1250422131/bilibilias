@@ -6,8 +6,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AsLogger@Inject constructor() : Logger {
+class AsLogger @Inject constructor() : Logger {
     override fun log(message: String) {
-        Napier.d(message, tag = this::class.simpleName.toString())
+        Napier.d(message, tag = "AsLogger")
     }
 }

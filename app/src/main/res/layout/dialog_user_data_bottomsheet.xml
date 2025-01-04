@@ -91,16 +91,6 @@
                 android:text="@{`Level`+DataBean.data.level}"
                 android:textStyle="bold" />
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="13dp"
-                android:text="@{DataBean.data.level &lt; 2 ? `暂时不支持未转正用户`:``}"
-                android:textStyle="bold"
-                android:visibility="@{DataBean.data.level &lt; 2 ? View.VISIBLE :View.GONE}" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

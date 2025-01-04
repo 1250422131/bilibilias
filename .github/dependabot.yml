@@ -8,21 +8,9 @@ updates:
     open-pull-requests-limit: 10
     target-branch: develop
     registries:
-      - maven-central
-      - jitpack
       - maven-google
-      - gradle-plugin
 
 registries:
-  jitpack:
-    type: maven-repository
-    url: "https://jitpack.io"
-  maven-central:
-    type: maven-repository
-    url: "https://repo.maven.apache.org/maven2/"
   maven-google:
     type: maven-repository
     url: "https://dl.google.com/dl/android/maven2/"
-  gradle-plugin:
-    type: maven-repository
-    url: "https://plugins.gradle.org/m2/"
