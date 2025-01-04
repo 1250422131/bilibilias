@@ -1,120 +1,24 @@
-//import com.google.protobuf.gradle.id
-
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.bilibilias.android.library)
+    alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
-//    alias(libs.plugins.protobuf)
     kotlin("kapt")
-}
-apply {
-    from("../config.gradle")
-}
-
-ksp {
-    arg("ModuleName", project.name)
 }
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 21
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
-
-    dataBinding {
-        enable = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
+    buildFeatures{
+        dataBinding = true
     }
 }
-kotlin {
-    jvmToolchain(17)
-}
 
-// https://github.com/wilsoncastiblanco/notes-grpc/blob/master/app/build.gradle.kts
-// https://stackoverflow.com/questions/75384020/setting-up-protobuf-kotlin-in-android-studio-2023
-
-//protobuf {
-//    protoc {
-//        artifact = "com.google.protobuf:protoc:3.25.2"
-//    }
-//    plugins {
-//        id("java") {
-//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
-//        }
-//        id("grpc") {
-//            artifact = "io.grpc:protoc-gen-grpc-java:1.61.0"
-//        }
-//        id("grpckt") {
-//            artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
-//        }
-//    }
-//    generateProtoTasks {
-//        all().forEach {
-//            it.plugins {
-//                id("java") {
-//                    option("lite")
-//                }
-//                id("grpc") {
-//                    option("lite")
-//                }
-//                id("grpckt") {
-//                    option("lite")
-//                }
-//            }
-//            it.builtins {
-//                id("kotlin") {
-//                    option("lite")
-//                }
-//            }
-//        }
-//    }
-//}
 dependencies {
-
-    api(libs.grpc.kotlin.stub)
-    api(libs.grpc.protobuf)
-
-    api(libs.protobuf.kotlin)
-    api(libs.protobuf.java.util)
-
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)
 
-    // hilt库，实现控制反转
-    api(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-
     // 文件下载
     api(libs.okdownload)
-
-    // 提供kotlin extension，可以不引入
-    api(libs.ktx)
 
     /**
      * SmoothRefreshLayout支持
@@ -167,12 +71,6 @@ dependencies {
      */
     api(libs.rxFFmpeg)
 
-    /**
-     * 组件化路由库
-     */
-    api(libs.kcomponent.rx)
-    ksp(libs.kcomponent.compiler)
-
     // 百度统计
     api(libs.mtj.sdk)
 
@@ -217,12 +115,10 @@ dependencies {
     debugImplementation(libs.monitor)
     releaseImplementation(libs.monitor.no.op)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.brotli)
 
     /**
      * ktor全局支持
      */
-    api(libs.ktor.client.android)
     api(libs.ktor.client.okhttp)
     api(libs.napier)
     api(libs.ktor.client.logging)
@@ -235,12 +131,12 @@ dependencies {
     api(libs.androidx.preference.ktx)
 
     api(libs.activity.compose)
-    api(platform(libs.compose.bom))
-    api(libs.ui)
-    api(libs.ui.graphics)
-    api(libs.ui.tooling.preview)
-    api(libs.material3)
-    androidTestImplementation(platform(libs.compose.bom))
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.graphics)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.material3)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
     api(libs.androidx.core.ktx)
     implementation(libs.appcompat)
