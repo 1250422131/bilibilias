@@ -8,6 +8,8 @@ object BilibiliApi {
      */
     const val loginApi = "https://passport.bilibili.com/"
 
+    const val spacePath = "https://space.bilibili.com/"
+
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
 
     // 需要登陆密钥
@@ -28,7 +30,7 @@ object BilibiliApi {
     // 对视频进行点赞
     const val videLikePath = "x/web-interface/archive/like"
 
-    //视频V2接口信息->名称暂定 要求AID CID同时存在
+    // 视频V2接口信息->名称暂定 要求AID CID同时存在
     const val videoInfoV2 = "x/player/wbi/v2"
 
     // 获取收藏列表
@@ -56,7 +58,7 @@ object BilibiliApi {
     const val bangumiVideoDataPath = "pgc/view/web/season"
 
     // 获取用户基本信息
-    const val userBaseDataPath = "x/space/wbi/acc/info"
+    const val userBaseDataPath = getUserInfoPath
 
     // 用户导航栏信息
     const val userNavDataPath = "x/web-interface/nav"
