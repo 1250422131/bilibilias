@@ -173,19 +173,35 @@ class DownloadQueue @Inject constructor() {
     fun cancelTask(task: DownloadTaskInfo) {
         cancelFlags[getTaskKey(task)] = true
 
-        if (task.isGroupTask) {
-            val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
-            groupTasks?.forEach {
-                cancelFlags[getTaskKey(it)] = true
-                currentTasks.remove(it)
-                it.state = STATE_DOWNLOAD_ERROR
-                it.progress = 0.0
+
+        if (currentTasks.find { it.savePath == task.savePath } != null) {
+            if (task.isGroupTask) {
+                val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                groupTasks?.forEach {
+                    cancelFlags[getTaskKey(it)] = true
+                    currentTasks.remove(it)
+                    it.state = STATE_DOWNLOAD_ERROR
+                    it.progress = 0.0
+                }
+                groupTasksMap.remove(task.downloadTaskDataBean.cid)
+            } else {
+                currentTasks.remove(task)
+                task.state = STATE_DOWNLOAD_ERROR
+                task.progress = 0.0
             }
-            groupTasksMap.remove(task.downloadTaskDataBean.cid)
         } else {
-            currentTasks.remove(task)
-            task.state = STATE_DOWNLOAD_ERROR
-            task.progress = 0.0
+            if (task.isGroupTask) {
+                val groupTasks = groupTasksMap[task.downloadTaskDataBean.cid]
+                groupTasks?.forEach {
+                    cancelFlags[getTaskKey(it)] = true
+                    queue.remove(it)
+                    it.state = STATE_DOWNLOAD_ERROR
+                    it.progress = 0.0
+                }
+                groupTasksMap.remove(task.downloadTaskDataBean.cid)
+            }else{
+                queue.remove(task)
+            }
         }
 
         updateTasks()
@@ -209,16 +225,16 @@ class DownloadQueue @Inject constructor() {
         }.execute { response ->
             val channel = response.bodyAsChannel()
             val totalBytes = response.contentLength() ?: 0L
-            
+
             file.parentFile?.mkdirs()
-            
+
             val bufferSize = 8192 // 8KB buffer
             var lastEmitTime = 0L
-            
+
             file.outputStream().buffered(bufferSize).use { output ->
                 var downloadedBytes = 0L
                 val buffer = ByteArray(bufferSize)
-                
+
                 while (!channel.isClosedForRead) {
                     if (cancelFlags[taskKey] == true) {
                         throw CancellationException("Download cancelled")
@@ -226,12 +242,12 @@ class DownloadQueue @Inject constructor() {
 
                     val bytes = channel.readAvailable(buffer, 0, bufferSize)
                     if (bytes < 0) break
-                    
+
                     output.write(buffer, 0, bytes)
                     output.flush()
-                    
+
                     downloadedBytes += bytes
-                    
+
                     // 每100ms更新一次进度
                     val currentTime = System.currentTimeMillis()
                     if (currentTime - lastEmitTime >= 100) {
@@ -239,10 +255,10 @@ class DownloadQueue @Inject constructor() {
                         emit(Progress(downloadedBytes, totalBytes, progress))
                         lastEmitTime = currentTime
                     }
-                    
+
                     kotlinx.coroutines.delay(1)
                 }
-                
+
                 // 确保发送最终进度
                 emit(Progress(downloadedBytes, totalBytes, 100.0))
             }
@@ -303,14 +319,14 @@ class DownloadQueue @Inject constructor() {
         // 检查当前下载中的任务
         val inCurrentTasks = currentTasks.any { task ->
             task.url == url ||
-            task.savePath == savePath
+                    task.savePath == savePath
         }
         if (inCurrentTasks) return true
 
         // 检查队列中的任务
         val inQueue = queue.any { task ->
             task.url == url ||
-            task.savePath == savePath
+                    task.savePath == savePath
         }
         if (inQueue) return true
 
@@ -330,10 +346,10 @@ class DownloadQueue @Inject constructor() {
     private fun executeTask() {
         // 如果当前任务已满或队列为空，直接返回
         if (currentTasks.size >= 2 || queue.isEmpty()) return
-        
+
         // 获取但不立即移除任务
         val mTask = queue.first()
-        
+
         if (mTask.isGroupTask) {
             // 如果是组任务，检查是否有配对的任务
             val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
@@ -399,15 +415,15 @@ class DownloadQueue @Inject constructor() {
 
                     if (mTask.isGroupTask) {
                         val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
-                        val isGroupTasksCompleted = groupTasks?.all { 
-                            it.state == STATE_DOWNLOAD_END 
+                        val isGroupTasksCompleted = groupTasks?.all {
+                            it.state == STATE_DOWNLOAD_END
                         } ?: false
-                        
+
                         if (isGroupTasksCompleted) {
                             launchIO {
                                 videoDataSubmit(mTask)
                                 videoMerge(mTask)
-                                
+
                                 withContext(Dispatchers.Main) {
                                     groupTasks?.forEach { task ->
                                         currentTasks.remove(task)
@@ -422,7 +438,7 @@ class DownloadQueue @Inject constructor() {
                         moveFileToDlUriPath(mTask.savePath)
                         currentTasks.remove(mTask)
                         mTask.onComplete(true)
-                        
+
                         launchIO {
                             saveFinishTask(mTask)
                             videoDataSubmit(mTask)
@@ -438,6 +454,7 @@ class DownloadQueue @Inject constructor() {
                         is CancellationException -> {
                             currentTasks.remove(mTask)
                         }
+
                         else -> {
                             if (mTask.isGroupTask) {
                                 val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
@@ -501,10 +518,12 @@ class DownloadQueue @Inject constructor() {
             } else {
                 val documentFile =
                     DocumentFile.fromSingleUri(OkDownloadProvider.context, Uri.parse(value))!!
-                safPath = (documentFile.uri.toString() + Uri.encode(task.savePath.replace(
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
-                    ""
-                )))
+                safPath = (documentFile.uri.toString() + Uri.encode(
+                    task.savePath.replace(
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                        ""
+                    )
+                ))
 
                 "/storage/emulated/0/" + documentFile.uri.path?.replace(
                     Regex("/tree/.*:"),
@@ -619,7 +638,16 @@ class DownloadQueue @Inject constructor() {
                 networkService.postAsData(aid, bvid, mid, name, tName, copyright)
                 "${BiliBiliAsApi.appAddAsVideoData}?Aid=$aid&Bvid=$bvid&Mid=$mid&Upname=$name&Tname=$tName&Copyright=$copyright"
             } else {
-                networkService.postAsData(aid, bvid, mid, name, tName, copyright,myUserData.data.uname,myUserData.data.mid)
+                networkService.postAsData(
+                    aid,
+                    bvid,
+                    mid,
+                    name,
+                    tName,
+                    copyright,
+                    myUserData.data.uname,
+                    myUserData.data.mid
+                )
             }
         }
     }
@@ -1250,8 +1278,6 @@ class DownloadQueue @Inject constructor() {
             context.sendBroadcast(intent)
         }
     }
-
-
 
 
     private fun moveFileToDlUriPath(oldPath: String) {

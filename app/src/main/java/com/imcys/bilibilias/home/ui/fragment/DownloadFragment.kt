@@ -280,6 +280,9 @@ class DownloadFragment : BaseFragment() {
     private fun loadDownloadTask() {
         fragmentDownloadBinding.apply {
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
+            launchUI {
+                downloadFinishTaskAd.submitList(downloadFinishTaskRepository.allDownloadFinishTask())
+            }
         }
     }
 
@@ -304,7 +307,7 @@ class DownloadFragment : BaseFragment() {
     @OptIn(FlowPreview::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         viewLifecycleOwner.lifecycleScope.launch {
             downloadQueue.downloadTasks
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
@@ -321,7 +324,7 @@ class DownloadFragment : BaseFragment() {
                     }
                 }
         }
-        
+
         // 已完成任务列表不需要频繁更新
         viewLifecycleOwner.lifecycleScope.launch {
             downloadQueue.finishedTasks
