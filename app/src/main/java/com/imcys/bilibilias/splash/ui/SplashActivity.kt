@@ -4,56 +4,84 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.os.HandlerCompat
+import androidx.lifecycle.lifecycleScope
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.tencent.mmkv.MMKV
-import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
+private const val MANAGE_EXTERNAL_STORAGE_REQUEST_CODE = 1
+
+@AndroidEntryPoint
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity() {
-    private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 0
-    private val REQUEST_CODE_POST_NOTIFICATIONS = 1
+
+    @Inject
+    lateinit var networkService: NetworkService
+    private val allFilesAccessLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+        toHome()
+    }
 
     private var isFirstLoaded = false
-    private var delayedHandler: Handler? = null
+    private val delayedHandler: Handler = Handler(Looper.getMainLooper())
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         // 首先检查是否已经授予了储存权限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // 安卓13废弃对写入权限检测
-            // TODO 将准备改为SAF，届时不在对软件检查储存权限
-            toHome()
+            if (!Environment.isExternalStorageManager()) {
+                DialogUtils.dialog(
+                    this,
+                    getString(R.string.app_permission_application_title),
+                    "下面将授权所有文件访问权限，你可以不这么做，但是如果你自定义了下载存储路径，那么是无法在APP内唤起系统播放下载的视频的。",
+                    getString(R.string.app_permission_application_confirm),
+                    getString(R.string.app_permission_application_cancel),
+                    false,
+                    positiveButtonClickListener = {
+                        val intent = Intent(
+                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                        )
+                        intent.data = Uri.parse("package:$packageName")
+                        allFilesAccessLauncher.launch(intent)
+                    },
+                    negativeButtonClickListener = {
+                    },
+                ).show()
+            } else {
+                toHome()
+            }
         } else {
             getSavePermissions()
         }
-
-//        val constraintLayout = findViewById<ConstraintLayout>(R.id.splash_top)
-//        constraintLayout.addStatusBarTopPadding()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         moveTaskToBack(true)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        delayedHandler?.removeCallbacksAndMessages(null)
     }
 
     private fun getSavePermissions() {
@@ -123,25 +151,21 @@ class SplashActivity : BaseActivity() {
         // 如果已经授予了储存权限，则可以进行相应的操作
         if (!isFirstLoaded) {
             isFirstLoaded = true
-            delayedHandler = Handler(Looper.getMainLooper())
-            delayedHandler?.let {
+            delayedHandler.postDelayed({
                 // 迁移旧的数据
                 initMMVKData()
-
-                HandlerCompat.postDelayed(it, {
-                    // 创建一个意图，说明我要跳转到那个活动界面。
-                    val intent = Intent(this, HomeActivity::class.java)
-                    // 跳转到主要活动。
-                    startActivity(intent)
-                    // 再来个跳转过度动画。
-                    overridePendingTransition(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out,
-                    )
-                    // 销毁当前活动。
-                    finish()
-                }, null, 1000)
-            }
+                // 创建一个意图，说明我要跳转到那个活动界面。
+                val intent = Intent(this, HomeActivity::class.java)
+                // 跳转到主要活动。
+                startActivity(intent)
+                // 再来个跳转过度动画。
+                overridePendingTransition(
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out,
+                )
+                // 销毁当前活动。
+                finish()
+            }, 1000)
         }
     }
 
@@ -151,7 +175,7 @@ class SplashActivity : BaseActivity() {
     private fun initMMVKData() {
         getSharedPreferences("data", MODE_PRIVATE).apply {
             if (!getString(COOKIES, "").equals("")) {
-                MMKV.mmkvWithID("data")!!.importFromSharedPreferences(this)
+                MMKV.mmkvWithID("data").importFromSharedPreferences(this)
                 this.edit { clear() }
             }
         }
@@ -167,6 +191,14 @@ class SplashActivity : BaseActivity() {
             REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> {
                 // 如果权限被授予，则可以进行相应的操作
                 toHome()
+            }
+
+            MANAGE_EXTERNAL_STORAGE_REQUEST_CODE -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    toHome()
+                } else {
+                    asToast(this, "自定义路径后你将无法直接跳转播放视频！")
+                }
             }
         }
     }

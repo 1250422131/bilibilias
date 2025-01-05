@@ -81,7 +81,7 @@ class CollectionActivity : BaseActivity() {
 
     private fun loadCollectionList() {
         launchUI {
-            val userCreateCollectionBean = networkService.n17()
+            val userCreateCollectionBean = networkService.n34()
 
             userCreateCollectionBean.data.list.forEach { it1 ->
                 binding.apply {
@@ -109,6 +109,8 @@ class CollectionActivity : BaseActivity() {
                                     collectionDataMutableList.clear()
                                     createCollectionList = it1
                                     loadCollectionData(it1)
+                                    binding.collectionRecyclerView.scrollToPosition(1)
+
                                 }
                             }
                         }
@@ -133,8 +135,6 @@ class CollectionActivity : BaseActivity() {
             val userCollection = networkService.getUserCollection(listBean.id, ++pn)
             userCollection.data.medias?.also { collectionDataMutableList.addAll(it) }
             collectionDataAd.submitList(collectionDataMutableList + mutableListOf())
-
-            binding.collectionRecyclerView.scrollToPosition(1)
         }
     }
 

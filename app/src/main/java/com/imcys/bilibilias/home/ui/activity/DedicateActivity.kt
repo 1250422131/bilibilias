@@ -81,7 +81,7 @@ class DedicateActivity : BaseActivity() {
                                 Icon(Icons.Default.ArrowBack, contentDescription = "返回")
                             }
                         },
-                        modifier = Modifier.height(height),
+//                        modifier = Modifier.height(height),
                         scrollBehavior = scrollBehavior,
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                     )
@@ -155,6 +155,7 @@ class DedicateActivity : BaseActivity() {
     }
 
     private fun loadDedicate(): List<DedicateBean> {
+        // TODO: i18n Need to translate the content
         return listOf(
             DedicateBean(
                 "BILIBILIAS捐款名单",

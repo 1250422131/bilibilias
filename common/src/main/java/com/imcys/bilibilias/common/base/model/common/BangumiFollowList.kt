@@ -30,7 +30,7 @@ data class BangumiFollowList(
             val season_title: String = "",
             val evaluate: String = "",
             val subtitle: String = "",
-            val first_ep: Int = 0,
+            val first_ep: Long = 0,
             val mode: Int = 0,
             val url: String = "",
             val badge_info: BadgeInfoBean = BadgeInfoBean(),

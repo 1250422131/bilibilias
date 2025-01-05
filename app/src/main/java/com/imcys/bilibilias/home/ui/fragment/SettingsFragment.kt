@@ -19,7 +19,7 @@ import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
@@ -192,12 +192,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     "拒绝授权",
                     true,
                     positiveButtonClickListener = {
-                        // saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
+//                         saveImport.launch(Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata"))
                         fileUriUtils.startFor(
                             "/storage/emulated/0/Android/data/tv.danmaku.bili",
                             context as Activity,
                             IMPORT_FILE_PATH_CODE,
                         )
+
+
+
                     },
                     negativeButtonClickListener = {
                     },
@@ -211,10 +214,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun bindingGetSavePathEvent() {
         userDownloadSavePathEditText.setOnPreferenceClickListener {
-            fileUriUtils.startForRoot(
-                context as Activity,
-                SAVE_FILE_PATH_CODE,
-            )
+//            fileUriUtils.startForRoot(
+//                context as Activity,
+//                SAVE_FILE_PATH_CODE,
+//            )
+            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
+                requireActivity().startActivityForResult(it,SAVE_FILE_PATH_CODE)
+            }
             true
         }
     }

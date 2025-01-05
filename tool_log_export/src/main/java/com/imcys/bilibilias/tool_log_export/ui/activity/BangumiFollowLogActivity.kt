@@ -11,15 +11,10 @@ import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
-import com.imcys.bilibilias.base.utils.asToast
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.extend.launchIO
-import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
-import com.imcys.bilibilias.common.base.utils.http.KtHttpUtils
 import com.imcys.bilibilias.tool_log_export.R
 import com.imcys.bilibilias.tool_log_export.base.activity.LogExportBaseActivity
 import com.imcys.bilibilias.tool_log_export.base.network.NetworkService
@@ -41,7 +36,6 @@ import com.imcys.bilibilias.tool_log_export.utils.ExcelUtils.addCell
 import com.imcys.bilibilias.tool_log_export.utils.ExportDialogUtils
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
-import io.ktor.util.network.NetworkAddress
 import jxl.format.Alignment
 import jxl.format.Border
 import jxl.format.BorderLineStyle
@@ -52,6 +46,7 @@ import jxl.write.WritableFont
 import jxl.write.WritableSheet
 import javax.inject.Inject
 import kotlin.math.ceil
+
 @AndroidEntryPoint
 class BangumiFollowLogActivity : LogExportBaseActivity() {
 
@@ -112,7 +107,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
                 SeasonTypeName,
             ),
 
-        )
+            )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,7 +203,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
             asToast(
                 this@BangumiFollowLogActivity,
                 "获取成功\n储存位置" +
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
+                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/追番.xls",
             )
         }
     }
@@ -321,7 +316,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
     }
 
     private suspend fun getBangumiFollowList(pn: Int): BangumiFollowList {
-        return networkService.getBangumiFollow(BaseApplication.myUserData.mid,1,pn,30)
+        return networkService.getBangumiFollow(asUser.mid, 1, pn, 30)
     }
 
     /**
@@ -381,7 +376,7 @@ class BangumiFollowLogActivity : LogExportBaseActivity() {
      */
     private fun loadBanguiFollowData() {
         launchUI {
-            bangumiFollowList = networkService.getBangumiFollow(BaseApplication.myUserData.mid,1,1,15)
+            bangumiFollowList = networkService.getBangumiFollow(asUser.mid, 1, 1, 15)
             if (bangumiFollowList.code == 0) {
                 binding.bangumiFollowList = bangumiFollowList
             }

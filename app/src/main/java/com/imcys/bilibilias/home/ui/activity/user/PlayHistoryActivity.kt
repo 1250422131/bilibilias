@@ -10,11 +10,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.common.base.api.BilibiliApi
-import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
-import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
@@ -61,7 +57,7 @@ class PlayHistoryActivity : BaseActivity() {
                 StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
             launchUI {
-                networkService.getPlayHistory(0, 0, "archive").let {
+                networkService.getPlayHistory(0, 0).let {
                     max = it.data.cursor.max
                     viewAt = it.data.cursor.view_at
                     playHistoryDataMutableList.addAll(it.data.list)
@@ -81,7 +77,7 @@ class PlayHistoryActivity : BaseActivity() {
 
     private fun loadPlayHistory() {
         launchUI {
-            networkService.getPlayHistory(max, viewAt, "archive").let {
+            networkService.getPlayHistory(max, viewAt).let {
                 max = it.data.cursor.max
                 viewAt = it.data.cursor.view_at
                 playHistoryDataMutableList.addAll(it.data.list)
