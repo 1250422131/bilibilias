@@ -19,7 +19,7 @@ object AsRegexUtil {
             isAV(text) -> regex5.find(text)?.groupValues?.get(2)?.let { TextType.AV(it.toLong()) }
             isEP(text) -> regex1.find(text)?.groupValues?.get(1)?.let { TextType.EP(it.toLong()) }
             isShortLink(text) -> regex2.find(text)?.groupValues?.get(1)?.let { TextType.ShortLink("https://b23.tv/$it") }
-            is2233ShortLink(text) -> regex6.find(text)?.groupValues?.get(1)?.let { TextType.ShortLink("https://space.bilibili.com/$it") }
+            is2233ShortLink(text) -> regex6.find(text)?.groupValues?.get(1)?.let { TextType.ShortLink("https://bili2233.cn/$it") }
             isUserSpace(text) -> regex3.find(text)?.groupValues?.get(1)?.let { TextType.UserSpace(it) }
             else -> null
         }

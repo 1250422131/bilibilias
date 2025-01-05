@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         versionCode = 207
-        versionName = "2.0.46"
+        versionName = "2.0.47-天枢-Beta"
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
         }
@@ -22,8 +22,8 @@ android {
 
     buildTypes {
         debug {
-            resValue("string", "app_name", "@string/app_name_debug")
-            resValue("string", "app_channel", "@string/app_channel_debug")
+            resValue("string", "app_name", "BILIBILIAS_DEBUG")
+            resValue("string", "app_channel", "Official Channel Debug")
         }
 
         release {
@@ -33,8 +33,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            resValue("string", "app_name", "@string/app_name_release")
-            resValue("string", "app_channel", "@string/app_channel_release")
+            resValue("string", "app_name", "BILIBILIAS")
+            resValue("string", "app_channel", "Official Channel")
             signingConfig = signingConfigs["BilibiliAsSigningConfig"]
         }
     }
