@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         versionCode = 207
-        versionName = "2.0.46"
+        versionName = "2.0.47-Beta-天枢"
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
         }

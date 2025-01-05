@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
@@ -28,6 +28,10 @@ import com.imcys.bilibilias.home.ui.adapter.DownloadTaskAdapter
 import com.liulishuo.okdownload.OkDownloadProvider
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -157,8 +161,7 @@ class DownloadFragment : BaseFragment() {
                     override fun onTabSelected(tab: TabLayout.Tab) {
                         when (tab.position) {
                             0 -> {
-                                fragmentDownloadRecyclerView.adapter =
-                                    downloadQueue.downloadTaskAdapter
+                                fragmentDownloadRecyclerView.adapter = downloadTaskAdapter
                             }
 
                             1 -> {
@@ -276,20 +279,7 @@ class DownloadFragment : BaseFragment() {
      */
     private fun loadDownloadTask() {
         fragmentDownloadBinding.apply {
-            downloadQueue.downloadFinishTaskAd = downloadFinishTaskAd
             fragmentDownloadRecyclerView.adapter = downloadFinishTaskAd
-
-            launchIO {
-                // 协程提交
-                downloadFinishTaskRepository.apply {
-                    downloadQueue.downloadFinishTaskAd?.apply {
-                        val finishTasks = allDownloadFinishTask()
-                        lifecycleScope.launchUI {
-                            submitList(finishTasks)
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -298,12 +288,48 @@ class DownloadFragment : BaseFragment() {
      */
     private fun initDownloadList() {
         fragmentDownloadBinding.apply {
-            downloadQueue.downloadTaskAdapter = downloadTaskAdapter
+            fragmentDownloadRecyclerView.apply {
+                adapter = downloadTaskAdapter
+                layoutManager = LinearLayoutManager(context)
+                // 启用视图缓存
+                setItemViewCacheSize(20)
+                // 禁用动画以提高性能
+                itemAnimator = null
+                // 固定大小优化
+                setHasFixedSize(true)
+            }
+        }
+    }
 
-            fragmentDownloadRecyclerView.adapter = downloadQueue.downloadTaskAdapter
-//            fragmentDownloadRecyclerView.itemAnimator = null
-            fragmentDownloadRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    @OptIn(FlowPreview::class)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            downloadQueue.downloadTasks
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .sample(200) // 增加采样间隔到200ms
+                .distinctUntilChanged()
+                .collect { tasks ->
+                    // 使用 DiffUtil 进行增量更新
+                    downloadTaskAdapter.submitList(tasks) {
+                        // 更新完成后滚动到当前位置
+//                        fragmentDownloadBinding.fragmentDownloadRecyclerView.scrollToPosition(
+//                            (fragmentDownloadBinding.fragmentDownloadRecyclerView.layoutManager as LinearLayoutManager)
+//                                .findFirstVisibleItemPosition()
+//                        )
+                    }
+                }
+        }
+        
+        // 已完成任务列表不需要频繁更新
+        viewLifecycleOwner.lifecycleScope.launch {
+            downloadQueue.finishedTasks
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .distinctUntilChanged()
+                .collect { tasks ->
+                    downloadFinishTaskAd.submitList(tasks)
+                }
         }
     }
 

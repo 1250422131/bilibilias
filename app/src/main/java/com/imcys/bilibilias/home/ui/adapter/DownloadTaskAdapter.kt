@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOADING
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_END
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_ERROR
@@ -18,7 +19,9 @@ import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_WAIT
 import com.imcys.bilibilias.base.utils.STATE_MERGE
 import com.imcys.bilibilias.databinding.ItemDownloadTaskBinding
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DownloadTaskAdapter @Inject constructor() :
     ListAdapter<DownloadTaskInfo, DownloadTaskAdapter.ViewHolder>(
         object : DiffUtil.ItemCallback<DownloadTaskInfo>() {
@@ -41,7 +44,11 @@ class DownloadTaskAdapter @Inject constructor() :
         },
     ) {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    @Inject
+    lateinit var downloadQueue: DownloadQueue
+
+    inner class ViewHolder(val binding: ItemDownloadTaskBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = DataBindingUtil.inflate<ItemDownloadTaskBinding>(
@@ -51,7 +58,7 @@ class DownloadTaskAdapter @Inject constructor() :
             false,
         )
 
-        return ViewHolder(binding.root)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -80,7 +87,8 @@ class DownloadTaskAdapter @Inject constructor() :
                             "注意B站视频下载链接有效时长为1小时左右，这里就只提供取消这个任务的功能了。"
                         positiveButtonText = "删除任务"
                         positiveButton = {
-                            dataBean.call?.cancel()
+                            downloadQueue.cancelTask(dataBean)
+
                             it.cancel()
                         }
                         negativeButtonText = "手滑了"
