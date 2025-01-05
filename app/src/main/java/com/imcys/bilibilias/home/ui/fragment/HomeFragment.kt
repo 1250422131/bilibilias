@@ -9,55 +9,49 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.hyy.highlightpro.HighlightPro
-import com.hyy.highlightpro.parameter.Constraints
-import com.hyy.highlightpro.parameter.HighlightParameter
-import com.hyy.highlightpro.parameter.MarginOffset
-import com.hyy.highlightpro.shape.RectShape
-import com.hyy.highlightpro.util.dp
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
-import com.imcys.bilibilias.common.base.arouter.ARouterAddress
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.extend.toColorInt
 import com.imcys.bilibilias.common.base.model.user.MyUserData
-import com.imcys.bilibilias.common.base.utils.http.HttpUtils
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.FragmentHomeBinding
-import com.imcys.bilibilias.databinding.TipAppBinding
 import com.imcys.bilibilias.home.ui.activity.HomeActivity
 import com.imcys.bilibilias.home.ui.adapter.OldHomeAdAdapter
 import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.distribute.Distribute
-import com.xiaojinzi.component.anno.RouterAnno
+
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -69,19 +63,17 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.system.exitProcess
 
-@RouterAnno(
-    hostAndPath = ARouterAddress.AppHomeFragment,
-)
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
 
     private lateinit var fragmentHomeBinding: FragmentHomeBinding
     internal lateinit var loginQRDialog: BottomSheetDialog
 
-     val fragmentHomeViewModel by viewModels<FragmentHomeViewModel>()
-
     @Inject
     lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var asCookiesStorage: AsCookiesStorage
 
     // 懒加载
     private val bottomSheetDialog by lazy {
@@ -93,7 +85,6 @@ class HomeFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-
         fragmentHomeBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_home,
@@ -104,7 +95,7 @@ class HomeFragment : BaseFragment() {
         // 添加边距
         fragmentHomeBinding.apply {
             fragmentHomeTopLinearLayout.addStatusBarTopPadding()
-            fragmentHomeViewModel = this@HomeFragment.fragmentHomeViewModel
+            fragmentHomeViewModel = FragmentHomeViewModel()
         }
 
         initView()
@@ -114,41 +105,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        // 判断用户是否没有被引导
-        val guideVersion =
-            (requireActivity() as HomeActivity).asSharedPreferences.getString("AppGuideVersion", "")
-        if (guideVersion != App.AppGuideVersion) {
-            loadHomeGuide()
-        }
         StatService.onPageStart(requireActivity(), "HomeFragment")
-    }
-
-    /**
-     * 加载引导
-     */
-    private fun loadHomeGuide() {
-        HighlightPro.with(this)
-            .setHighlightParameter {
-                val tipAppBinding = TipAppBinding.inflate(LayoutInflater.from(requireActivity()))
-                tipAppBinding.tipAppTitle.text = getString(R.string.app_guide_home)
-                HighlightParameter.Builder()
-                    .setTipsView(tipAppBinding.root)
-                    .setHighlightViewId(fragmentHomeBinding.fragmentHomeNewVersionLy.id)
-                    .setHighlightShape(RectShape(4f.dp, 4f.dp, 6f))
-                    .setHighlightHorizontalPadding(8f.dp)
-                    .setConstraints(Constraints.TopToBottomOfHighlight + Constraints.EndToEndOfHighlight)
-                    .setMarginOffset(MarginOffset(start = 8.dp))
-                    .build()
-            }
-            .setBackgroundColor("#80000000".toColorInt())
-            .setOnDismissCallback {
-                // 让ViewPage来切换页面
-                (activity as HomeActivity).activityHomeBinding.homeViewPage.currentItem = 1
-                (activity as HomeActivity).activityHomeBinding.homeBottomNavigationView.menu.getItem(
-                    1,
-                ).isCheckable = true
-            }
-            .show()
     }
 
     /**
@@ -163,7 +120,7 @@ class HomeFragment : BaseFragment() {
      * 加载首页广告
      */
     @Detainted
-     fun initHomeAd() {
+    fun initHomeAd() {
         val userGoogleADSwitch =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("user_google_ad_switch", true)
@@ -197,8 +154,7 @@ class HomeFragment : BaseFragment() {
      */
     private fun loadBannerData() {
         launchUI {
-
-            val oldHomeBannerDataBean = withContext(Dispatchers.IO){
+            val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
                 networkService.getOldHomeBannerData()
             }
 
@@ -216,12 +172,17 @@ class HomeFragment : BaseFragment() {
      * 加载APP数据
      */
     private fun loadAppData() {
-        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
+//        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
         launchUI {
-
-            val oldUpdateDataBean = withContext(Dispatchers.IO){
+            val oldUpdateDataBean = withContext(Dispatchers.IO) {
                 networkService.getUpdateData()
+            }
+
+            // 确定是否灰度
+            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+                isGrayType = oldUpdateDataBean.gray
+                invalidate() // 通知 View 重新绘制，以显示灰度效果
             }
 
             if (oldUpdateDataBean.notice != "") {
@@ -239,7 +200,6 @@ class HomeFragment : BaseFragment() {
 
             // 检测更新
             loadVersionData(oldUpdateDataBean)
-
         }
     }
 
@@ -253,6 +213,7 @@ class HomeFragment : BaseFragment() {
                 getString(R.string.app_HomeFragment_loadVersionData_title),
                 oldUpdateDataBean.gxnotice,
                 getString(R.string.app_HomeFragment_loadVersionData_positiveButtonText),
+
                 getString(R.string.app_HomeFragment_loadVersionData_negativeButtonText),
                 oldUpdateDataBean.id != "3",
                 positiveButtonClickListener = {
@@ -261,9 +222,6 @@ class HomeFragment : BaseFragment() {
                     requireContext().startActivity(intent)
                 },
                 negativeButtonClickListener = {
-//                    val uri = Uri.parse(oldUpdateDataBean.url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri)
-//                    requireContext().startActivity(intent)
                 },
             ).show()
         }
@@ -290,10 +248,25 @@ class HomeFragment : BaseFragment() {
      * 送出此版本的数据信息
      */
     private fun postAppData(sha: String, md5: String, crc: String) {
-        HttpUtils.get(
-            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" + "&SHA=" + sha + "&MD5=" + md5 + "&CRC=" + crc + "lj=" + LJ,
-            OldUpdateDataBean::class.java,
-        ) {
+        OkHttpClient().apply {
+            val request = Request.Builder()
+                .url(
+                    (
+                            "${BiliBiliAsApi.updateDataPath}?type=json&version=${BiliBiliAsApi.version}" +
+                                    "&SHA=" + sha +
+                                    "&MD5=" + md5 +
+                                    "&CRC=" + crc +
+                                    "lj=" + LJ
+                            )
+                )
+                .build()
+            newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                }
+            })
         }
     }
 
@@ -333,6 +306,37 @@ class HomeFragment : BaseFragment() {
         // loadRoamData()
 
         initSmoothRefreshLayout()
+        initLogoutLoginButton()
+    }
+
+    private fun initLogoutLoginButton() {
+        fragmentHomeBinding.fragmentHomeLoginout.setOnClickListener {
+            DialogUtils.dialog(
+                requireContext(),
+                "退出登录",
+                "确定要退出登录了吗？",
+                "是的",
+                "点错了",
+                true,
+                positiveButtonClickListener =
+                {
+                    val csrf = asCookiesStorage.getCookieValue("bili_jct")
+
+                    launchUI {
+                        networkService.exitUserLogin(csrf ?: "")
+
+                        asCookiesStorage.deleteAllCookie()
+                        BaseApplication.dataKv.apply {
+                            encode("mid", 0)
+                        }
+
+                        asToast(requireContext(), "清除完成，请关闭后台重新进入")
+                        (requireActivity() as HomeActivity).finishAll()
+                    }
+                },
+                negativeButtonClickListener = {},
+            ).show()
+        }
     }
 
     private fun initSmoothRefreshLayout() {
@@ -343,11 +347,7 @@ class HomeFragment : BaseFragment() {
      */
     internal fun loadLogin() {
         launchUI {
-
-            //解除风控
-            networkService.getBILIHome()
-
-            //自己会切换IO
+            // 自己会切换IO
             val loginQRData = networkService.getLoginQRData()
                 .apply { data.url = URLEncoder.encode(data.url, "UTF-8") }
 
@@ -363,7 +363,6 @@ class HomeFragment : BaseFragment() {
             }.apply {
                 show()
             }
-
         }
     }
 
@@ -376,17 +375,19 @@ class HomeFragment : BaseFragment() {
             .putBoolean("microsoft_app_center_type", true)
             .putBoolean("baidu_statistics_type", true)
             .apply()
+
+        // 重新执行百度统计
+        (activity as HomeActivity).startBaiDuService()
     }
 
     // 初始化用户数据
-    internal fun initUserData() {
+    private fun initUserData() {
         // mid
         bottomSheetDialog.show()
 
         launchUI {
-
-            val myUserData = withContext(Dispatchers.IO){
-                networkService.n27()
+            val myUserData = withContext(Dispatchers.IO) {
+                networkService.getMyUserData()
             }
 
             if (myUserData.code == 0) {
@@ -399,7 +400,6 @@ class HomeFragment : BaseFragment() {
             }
 
             bottomSheetDialog.cancel()
-
         }
     }
 
@@ -408,30 +408,25 @@ class HomeFragment : BaseFragment() {
      */
     private fun detectUserLogin() {
         launchUI {
-
+            // 无论如何优先获取必要Token
             val myUserData = networkService.getMyUserData()
 
             if (myUserData.code != 0) {
                 DialogUtils.loginDialog(requireActivity())
                     .show()
             } else {
+                // 解除风控
+                networkService.getBILIHome()
                 BaseApplication.myUserData = myUserData.data
             }
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     // 加载用户数据
     @SuppressLint("CommitPrefEdits")
     private fun loadUserData(myUserData: MyUserData) {
         launchUI {
-            val params = mutableMapOf<String, String>()
-            params["mid"] = myUserData.data.mid.toString()
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userInfoBean = networkService.n28(paramsStr)
+            val userInfoBean = networkService.getUserInfoData(myUserData.data.mid)
 
             // 这里需要储存下数据
             BaseApplication.dataKv.encode("mid", myUserData.data.mid)
@@ -442,6 +437,7 @@ class HomeFragment : BaseFragment() {
             DialogUtils.userDataDialog(requireActivity(), userInfoBean).show()
         }
     }
+
 
     companion object {
 

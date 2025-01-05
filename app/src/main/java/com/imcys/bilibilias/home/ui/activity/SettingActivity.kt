@@ -3,9 +3,7 @@ package com.imcys.bilibilias.home.ui.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
 import androidx.documentfile.provider.DocumentFile
@@ -13,7 +11,6 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
-import com.imcys.bilibilias.common.base.utils.file.toFilePath
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
@@ -79,6 +76,7 @@ class SettingActivity : BaseActivity() {
                     }
                     val documentFile = DocumentFile.fromSingleUri(this, resultData.data!!)
 
+                    // Not need to translate to file path
                     var filePath = documentFile!!.uri.path?.replace("/tree/primary:", "手机根目录:")
                     filePath = filePath?.replace(Regex("/tree/.*:"), "储存卡:")
                     settingsFragment.userDownloadSavePathEditText.summary = filePath

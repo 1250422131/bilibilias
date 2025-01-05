@@ -23,7 +23,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -33,7 +32,7 @@ import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
-import com.imcys.bilibilias.common.base.utils.VideoNumConversion
+import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -67,7 +66,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.zip.Inflater
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class AsVideoActivity : BaseActivity() {
@@ -167,17 +165,20 @@ class AsVideoActivity : BaseActivity() {
             "video" -> {
                 launchUI {
                     // 获取播放信息
-                    val videoPlayBean = networkService.n9(bvid, cid)
+                    val videoPlayBean = networkService.getVideoPlayInfo(bvid, cid)
                     // 设置布局视频播放数据
                     binding.videoPlayBean = videoPlayBean
                     // 有部分视频不存在flv接口下的mp4，无法提供播放服务，需要及时通知。
                     if (videoPlayBean.code != 0) {
                         // 弹出通知弹窗
                         AsDialog.init(this@AsVideoActivity).build {
-                            title = "视频文件特殊"
+                            title =
+                                getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_title)
                             config = {
-                                content = "该视频无FLV格式，故无法播放，请选择Dash模式缓存。"
-                                positiveButtonText = "知道啦"
+                                content =
+                                    getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_content)
+                                positiveButtonText =
+                                    getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_button_text)
                                 positiveButton = {
                                     it.cancel()
                                 }
@@ -189,27 +190,18 @@ class AsVideoActivity : BaseActivity() {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
 
-                        dashVideoPlayBean.data.dash.video[0].also {
-                            if (it.width < it.height) {
-                                // 竖屏
-                                binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
-                                    height = windowManager.defaultDisplay.height / 4 * 3
+                        if (dashVideoPlayBean.data.dash.video.isNotEmpty()) {
+                            // 得有video才行
+                            dashVideoPlayBean.data.dash.video[0].also {
+                                if (it.width < it.height) {
+                                    // 竖屏
+                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                        height = windowManager.defaultDisplay.height / 4 * 3
+                                    }
                                 }
                             }
-
-//                            binding.asVideoAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-//                                // 计算折叠程度（0为完全展开，1为完全折叠）
-//
-//                                if (asJzvdStd.state != Jzvd.STATE_NORMAL && asJzvdStd.state != Jzvd.STATE_AUTO_COMPLETE) {
-//                                    // 根据当前滚动百分比计算内边距
-//                                    val totalScrollRange = appBarLayout.totalScrollRange
-//                                    val currentScrollPercentage = abs(verticalOffset) / totalScrollRange.toFloat()
-//                                    val padding = (currentScrollPercentage * 100).toInt()
-//                                    binding.asVideoAsJzvdStd.asJzvdstdVideo.setPadding(padding, 0, padding, padding)
-//                                }
-//
-//                            }
                         }
+
                         // 真正调用饺子播放器设置视频数据
                         setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                     }
@@ -221,7 +213,6 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-
                     val bangumiPlayBean = networkService.n16(epid)
 
                     launchUI {
@@ -251,10 +242,9 @@ class AsVideoActivity : BaseActivity() {
 
             if (videoBaseBean.code != 0) {
                 videoBaseBean = networkService.getVideoBaseInfoByAid(
-                    VideoNumConversion.toAvidOffline(bvId).toString()
+                    NewVideoNumConversionUtils.bv2av(bvId ?: "").toString()
                 )
             }
-
 
             // 设置数据
             videoDataBean = videoBaseBean
@@ -334,8 +324,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadBangumiVideoList() {
         launchIO {
-
-            val bangumiSeasonBean = networkService.n13(epid)
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epid)
             launchUI { isMember(bangumiSeasonBean) }
 
             // 获取真实的cid
@@ -387,12 +376,12 @@ class AsVideoActivity : BaseActivity() {
         data: BangumiSeasonBean.ResultBean.EpisodesBean,
     ) {
         val userVipState = userBaseBean.data.vip.status
-        if (data.badge == "会员" && userVipState != 1) {
+        if (data.badge == getString(R.string.app_asvideoactivity_updatebangumiinformation_badge) && userVipState != 1) {
             DialogUtils.dialog(
                 this,
-                "越界啦",
-                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
-                "我知道啦",
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_title),
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_message),
+                getString(R.string.app_asvideoactivity_updatebangumiinformation_dialog_button_text),
                 positiveButtonClickListener = {
                 },
             ).show()
@@ -424,14 +413,14 @@ class AsVideoActivity : BaseActivity() {
 
         val userVipState = userBaseBean.data.vip.status
         bangumiSeasonBean.result.episodes.forEach {
-            if (it.cid == cid && it.badge == "会员" && userVipState != 1) memberType = true
+            if (it.cid == cid && it.badge == getString(R.string.app_asvideoactivity_ismember_badge) && userVipState != 1) memberType = true
         }
         if (memberType) {
             DialogUtils.dialog(
                 this,
-                "越界啦",
-                "没大会员就要止步于此了哦，切换到不需要大会员的子集或者视频吧。",
-                "我知道啦",
+                getString(R.string.app_asvideoactivity_ismember_dialog_title),
+                getString(R.string.app_asvideoactivity_ismember_dialog_message),
+                getString(R.string.app_asvideoactivity_ismember_dialog_button_text),
                 positiveButtonClickListener = {
                 },
             ).show()
@@ -440,19 +429,12 @@ class AsVideoActivity : BaseActivity() {
         }
     }
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
-
     /**
      * 获取用户基础信息
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n11(paramsStr)
+        return networkService.n11(asUser.mid)
     }
 
     /**
@@ -461,8 +443,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoList() {
         launchIO {
-
-            val videoPlayListData = networkService.n15(bvid)
+            val videoPlayListData = networkService.getVideoPageListData(bvid)
 
             launchUI {
                 binding.apply {
@@ -470,7 +451,7 @@ class AsVideoActivity : BaseActivity() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                            // 将子集切换后的逻辑交给activity完成
+                        // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
@@ -510,10 +491,11 @@ class AsVideoActivity : BaseActivity() {
      * 加载弹幕信息(目前只能这样写)
      */
     private fun loadDanmakuFlameMaster() {
-
         launchUI {
-            // 储存弹幕
-            saveDanmaku(networkService.getDanmuBytes(cid))
+            runCatching {
+                // 储存弹幕
+                saveDanmaku(networkService.getDanmuBytes(cid))
+            }
             // 初始化弹幕配置
             initDanmaku()
         }
@@ -543,7 +525,7 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadUserCardData(mid: Long) {
         launchUI {
-            val userCardBean = networkService.n14(mid)
+            val userCardBean = networkService.getUserCardData(mid)
             // 显示用户卡片
             showUserCard()
             // 将数据交给viewModel
@@ -618,7 +600,7 @@ class AsVideoActivity : BaseActivity() {
         @Deprecated("B站已经在弱化aid的使用，我们不确定这是否会被弃用，因此这个方法将无法确定时效性")
         fun actionStart(context: Context, aid: Long) {
             val intent = Intent(context, AsVideoActivity::class.java)
-            intent.putExtra("bvId", VideoNumConversion.toBvidOffline(aid))
+            intent.putExtra("bvId", NewVideoNumConversionUtils.av2bv(aid))
             context.startActivity(intent)
         }
     }
@@ -719,7 +701,6 @@ class AsVideoActivity : BaseActivity() {
      */
 
     private fun setDanmakuContextCongif() {
-
         // 设置弹幕的最大显示行数
         val maxLinesPair = HashMap<Int, Int>()
         // maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 3); // 滚动弹幕最大显示3行
@@ -727,7 +708,6 @@ class AsVideoActivity : BaseActivity() {
         val overlappingEnablePair = HashMap<Int, Boolean>()
         overlappingEnablePair[BaseDanmaku.TYPE_SCROLL_LR] = true
         overlappingEnablePair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
-
 
         danmakuContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3F) // 设置描边样式
             .setDuplicateMergingEnabled(false)
@@ -753,7 +733,6 @@ class AsVideoActivity : BaseActivity() {
 
             override fun danmakuShown(danmaku: BaseDanmaku?) {
                 // 弹幕展示的时候回调
-
             }
 
             override fun drawingFinished() {

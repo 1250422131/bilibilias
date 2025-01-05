@@ -13,11 +13,12 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.home.ui.activity.user.UserVideoDownloadActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
 import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
@@ -40,14 +41,15 @@ class UserFragment : BaseFragment() {
     private lateinit var userDataRv: RecyclerView
     private var userDataMutableList = mutableListOf<UserViewItemBean>()
     private lateinit var userWorksBean: UserWorksBean
+    private val userWorkList = mutableListOf<UserWorksBean.DataBean.ListBean.VlistBean>()
+    private var mid: Long = asUser.mid
+
 
     lateinit var fragmentUserBinding: FragmentUserBinding
 
     @Inject
     lateinit var networkService: NetworkService
 
-    @Inject
-    lateinit var tokenUtils: TokenUtils
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(context, "UserFragment")
@@ -63,7 +65,14 @@ class UserFragment : BaseFragment() {
 
         fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
+        // 刷新登录数据
+        mid = asUser.mid
+        this.arguments?.apply {
+            mid = getLong("mid")
+        }
+
         initView()
+
 
         return fragmentUserBinding.root
     }
@@ -75,6 +84,18 @@ class UserFragment : BaseFragment() {
         initUserWorks()
 
         initSmoothRefreshLayout()
+
+        initUserVideoDownloadButton()
+
+
+    }
+
+    private fun initUserVideoDownloadButton() {
+        // 批量视频下载按钮
+        fragmentUserBinding.uvDownloadImage.setOnClickListener {
+            UserVideoDownloadActivity.actionStart(requireContext(), mid)
+        }
+
     }
 
     private fun initSmoothRefreshLayout() {
@@ -82,22 +103,14 @@ class UserFragment : BaseFragment() {
             setOnRefreshListener(object : RefreshingListenerAdapter() {
                 override fun onLoadingMore() {
                     if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
-                        val oldMutableList = userWorksBean.data.list.vlist
                         launchIO {
-                            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-                            val params = mutableMapOf<String, String>()
-                            params["mid"] = asUser.mid.toString()
-                            params["pn"] = (userWorksBean.data.page.pn + 1).toString()
-                            params["ps"] = "20"
-                            val paramsStr = tokenUtils.getParamStr(params)
-
-                            val userWorksBean = networkService.n19(paramsStr)
+                            val userWorksBean = networkService.getUserWorkData(mid, userWorksBean.data.page.pn + 1)
 
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launchUI {
-                                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
-
+                                userWorkList.addAll(userWorksBean.data.list.vlist)
+                                userWorksAd.submitList(userWorkList + mutableListOf())
                                 // 更新数据 -> fragmentUserWorksCsr 支持
                                 refreshComplete()
                             }
@@ -117,30 +130,9 @@ class UserFragment : BaseFragment() {
         userDataRvAd.submitList(userDataMutableList + mutableListOf())
     }
 
-    private fun loadUserWorks() {
-        val oldMutableList = userWorksBean.data.list.vlist
-        launchIO {
-
-            val userWorksBean = networkService.n20(userWorksBean.data.page.pn + 1)
-
-            this@UserFragment.userWorksBean = userWorksBean
-
-            launchUI {
-                userWorksAd.submitList(oldMutableList + userWorksBean.data.list.vlist)
-            }
-        }
-    }
-
     private fun initUserWorks() {
         launchIO {
-            // 添加加密鉴权参数【此类方法将在下个版本被替换，因为我们需要让写法尽可能简单简短】
-            val params = mutableMapOf<String, String>()
-            params["mid"] = asUser.mid.toString()
-            params["qn"] = "1"
-            params["ps"] = "20"
-            val paramsStr = tokenUtils.getParamStr(params)
-
-            val userWorksBean = networkService.n21(paramsStr)
+            val userWorksBean = networkService.getUserWorkData(mid,1)
 
             userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
@@ -153,7 +145,8 @@ class UserFragment : BaseFragment() {
                     fragmentUserBinding.fragmentUserWorksRv.layoutManager =
                         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     // 刷新刚刚请求的代码
-                    userWorksAd.submitList(userWorksBean.data.list.vlist)
+                    userWorkList.addAll(userWorksBean.data.list.vlist)
+                    userWorksAd.submitList(userWorkList + mutableListOf())
                 }
             } else {
                 launchUI {
@@ -207,7 +200,10 @@ class UserFragment : BaseFragment() {
             }
 
             userDataRvAd.submitList(userDataMutableList + mutableListOf())
-            initUserTool()
+
+            if (userBaseBean.await().data.mid == asUser.mid) {
+                initUserTool()
+            }
 
         }
     }
@@ -217,11 +213,7 @@ class UserFragment : BaseFragment() {
      * @return UserCardBean
      */
     private suspend fun getUserCardBean(): UserCardBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n22(paramsStr)
+        return networkService.getUserCardData(mid)
     }
 
     /**
@@ -238,16 +230,7 @@ class UserFragment : BaseFragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
-        val params = mutableMapOf<String, String>()
-        params["mid"] = asUser.mid.toString()
-        val paramsStr = tokenUtils.getParamStr(params)
-
-        return networkService.n24(paramsStr)
-    }
-
-    private fun isSlideToBottom(recyclerView: RecyclerView?): Boolean {
-        if (recyclerView == null) return false
-        return recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset() >= recyclerView.computeVerticalScrollRange()
+        return networkService.n11(mid)
     }
 
     override fun onDestroy() {
@@ -259,7 +242,7 @@ class UserFragment : BaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // 保留当前页面的用户信息
-        outState.putLong("mid", asUser.mid)
+        outState.putLong("mid", mid)
     }
 
     companion object {

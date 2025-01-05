@@ -75,11 +75,11 @@ class DonateActivity : BaseActivity() {
                 DonateViewBean(
                     PAY_TIP,
                     tipBean = TipBean(
-                        "为其他参与者捐款",
-                        "现在你有更多选择",
-                        "你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。",
+                        getString(R.string.app_donate_tip_title),
+                        getString(R.string.app_donate_tip_long_title),
+                        getString(R.string.app_donate_tip_doc),
                         getDrawable(R.drawable.ic_home_red_envelopes)!!,
-                        "",
+                        getString(R.string.app_donate_tip_link),
                         DedicateActivity::class.java
                     )
                 )

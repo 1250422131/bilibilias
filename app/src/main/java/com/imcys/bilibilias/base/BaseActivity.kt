@@ -2,9 +2,9 @@ package com.imcys.bilibilias.base
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.common.base.AbsActivity
-import dagger.hilt.android.AndroidEntryPoint
 
 open class BaseActivity : AbsActivity() {
 
@@ -16,5 +16,13 @@ open class BaseActivity : AbsActivity() {
         super.onCreate(savedInstanceState)
         // 沉浸式状态栏
         statusBarOnly(this)
+        initData()
     }
+
+    open fun initData() {}
+    fun toast(text: String, duration: Int = Toast.LENGTH_SHORT) =
+        Toast.makeText(this, text, duration).show()
+
+    fun toast(resId: Int, duration: Int = Toast.LENGTH_SHORT) =
+        Toast.makeText(this, resId, duration).show()
 }

@@ -48,18 +48,16 @@
 
     <string-array name="app_language">
         <item>System</item>
-        <item>Default</item>
-        <item>Chinese(Simplified)</item>
-        <item>Chinese(Traditional)</item>
         <item>English</item>
+        <item>Chinese(Simplified)</item>
+        <item>Chinese-Taiwan(Traditional)</item>
     </string-array>
 
     <string-array name="app_language_value">
         <item>System</item>
-        <item>Default</item>
-        <item>Default</item>
+        <item>en-US</item>
+        <item>zh-CN</item>
         <item>zh-TW</item>
-        <item>en-rUS</item>
     </string-array>
 
 </resources>

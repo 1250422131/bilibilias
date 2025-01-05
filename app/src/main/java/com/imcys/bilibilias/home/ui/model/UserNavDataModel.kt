@@ -16,8 +16,8 @@ data class UserNavDataModel(
 ) {
     @Serializable
     data class Data(
-        @SerialName("allowance_count")
-        val allowanceCount: Int, // 0
+//        @SerialName("allowance_count")
+//        val allowanceCount: Int, // 0
         @SerialName("answer_status")
         val answerStatus: Int, // 0
         @SerialName("email_verified")

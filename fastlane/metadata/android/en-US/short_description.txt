@@ -1,0 +1,1 @@
+An auxiliary tool for Bilibili video caching, providing one-click caching

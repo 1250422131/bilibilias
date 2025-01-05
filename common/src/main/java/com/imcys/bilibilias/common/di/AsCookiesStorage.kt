@@ -27,7 +27,11 @@ class AsCookiesStorage @Inject constructor(
         if (UserInfoRepository.asCookies.isNotEmpty()) {
             cbor.decodeFromByteArray<List<AsCookie>>(UserInfoRepository.asCookies)
                     .map { it.toCookie() }
-                    .forEach { cookies.add(it) }
+                    .forEach {
+                        cookies.add(it)
+                    }
+
+
         }
     }
 
@@ -54,6 +58,10 @@ class AsCookiesStorage @Inject constructor(
         return cookies.joinToString(";") {
             "${it.name}=${it.value}"
         }
+    }
+
+    fun deleteAllCookie(){
+        UserInfoRepository.clearAllKV()
     }
 
     override fun close() {

@@ -55,11 +55,11 @@ class BangumiFollowAdapter @Inject constructor() :
 
                 launchIO {
 
-                    val bangumiSeasonBean = networkService.n18(getItem(position).first_ep)
+                    val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(getItem(position).first_ep)
 
                     launchUI {
                         if (bangumiSeasonBean.code == 0) {
-                            if (bangumiSeasonBean.result.episodes.size > 0) {
+                            if (bangumiSeasonBean.result.episodes.isNotEmpty()) {
                                 AsVideoActivity.actionStart(
                                     holder.itemView.context,
                                     bangumiSeasonBean.result.episodes[0].bvid,

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".home.ui.activity.user.UserVideoDownloadActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <com.imcys.bilibilias.common.base.view.AsTopNavigationLayout
+                android:id="@+id/uv_download_top_ly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="批量下载"
+                tools:ignore="MissingConstraints">
+
+            </com.imcys.bilibilias.common.base.view.AsTopNavigationLayout>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/uv_download_top_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/uv_download_edit_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="取消"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/uv_download_edit_select_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="全选"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/uv_download_edit_invert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="反选"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="16sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <me.dkzwm.widget.srl.SmoothRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/user_video_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp" />
+
+            </me.dkzwm.widget.srl.SmoothRefreshLayout>
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/uv_download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_margin="20dp"
+        android:src="@drawable/uv_download_four"
+        android:tint="?attr/colorPrimary"
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        tools:ignore="ContentDescription,RtlHardcoded" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -29,6 +29,4 @@ data class DownloadTaskInfo(
     var fileSize: Double = 0.0,
     // 定义当前已经下载的大小
     var fileDlSize: Double = 0.0,
-    // 定义当前任务的下载请求
-    var call: DownloadTask? = null,
 )

@@ -1,19 +1,20 @@
 <div align="center">
 
-![](https://github.com/1250422131/bilibilias/blob/develop/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
 # BILIBILIAS
+
+![bilibilias](https://socialify.git.ci/1250422131/bilibilias/image?description=1&descriptionEditable=%E4%BE%BF%E6%8D%B7%E7%9A%84%E7%BC%93%E5%AD%98B%E7%AB%99%E8%A7%86%E9%A2%91%E5%92%8C%E7%95%AA%E5%89%A7&font=Inter&forks=1&language=1&logo=https%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fim_new%2F18b70b81972a79923f179106c406910a351201307.png&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto)
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 </div>
 
 ---
 
-**Language:**
+**Languages:**
 - English (United States)
 - [简体中文](./README.md)
 - [繁体中文(台湾)](./README-zh_TW.md)
@@ -81,6 +82,10 @@ Please note that the project's maintenance may be stopped at any time.
 |:-------:|:------------------------------------------------------------:|:-------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [Official Website](https://api.misakamoe.com/app/) |
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+
 ## 🔭Recent Stars
 
 Here are the users who recently starred the **BILIBILIAS** project.
@@ -93,10 +98,8 @@ Here are the users who recently starred the **BILIBILIAS** project.
 
 ## Feedback
 
-QQ Group: 812128563
-
+QQ Group: 703180724
 Bilibili: [萌新杰少](https://space.bilibili.com/351201307)
-
 Feedback Community: [兔小巢](https://support.qq.com/product/337496)
 
 ## Special Thanks

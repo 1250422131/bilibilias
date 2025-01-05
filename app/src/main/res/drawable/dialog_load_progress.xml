@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--进度条背景-->
+    <item>
+        <shape>
+            <corners android:radius="10dp" />
+            <solid android:color="?attr/colorPrimaryVariant" />
+        </shape>
+    </item>
+
+    <!--第二进度条，要显示第二进度条必须加上ID-->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <corners android:radius="10dp" />
+                <solid android:color="?attr/colorPrimary" />
+            </shape>
+        </clip>
+    </item>
+
+    <!--进度条样式-->
+    <item>
+        <clip>
+            <shape>
+                <corners android:radius="10dp" />
+                <solid android:color="?attr/colorPrimary" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

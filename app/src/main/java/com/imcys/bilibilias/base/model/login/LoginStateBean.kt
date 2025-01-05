@@ -15,7 +15,7 @@ data class LoginStateBean(
     @Serializable
     data class DataBean(
         val url: String = "",
-        val refresh_token: String = "",
+        val refreshToken: String = "",
         val code: Int = 0,
         val message: String = "",
     )

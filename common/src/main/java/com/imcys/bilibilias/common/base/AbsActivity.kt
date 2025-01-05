@@ -7,12 +7,12 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+    import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
-import com.imcys.bilibilias.base.utils.asLogD
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.R
 import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.broadcast.ThemeChangedBroadcast
@@ -77,10 +77,6 @@ open class AbsActivity : AppCompatActivity() {
         ) {
             "System" -> {
                 Locale.getDefault()
-            }
-
-            "Default" -> {
-                Locale("zh")
             }
 
             else -> Locale(language.split("-")[0], language.split("-")[1])

@@ -1,19 +1,19 @@
 <div align="center">
 
-![](https://github.com/1250422131/bilibilias/blob/develop/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
 
 # BILIBILIAS
+
+![bilibilias](https://socialify.git.ci/1250422131/bilibilias/image?description=1&descriptionEditable=%E4%BE%BF%E6%8D%B7%E7%9A%84%E7%BC%93%E5%AD%98B%E7%AB%99%E8%A7%86%E9%A2%91%E5%92%8C%E7%95%AA%E5%89%A7&font=Inter&forks=1&language=1&logo=https%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fim_new%2F18b70b81972a79923f179106c406910a351201307.png&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto)
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
 ![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
 ![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
-
+[![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 </div>
 
 ---
 
-**Language:**
+**Languages:**
 
 - [English (United States)](./README-en_US.md)
 - 简体中文
@@ -82,6 +82,10 @@ UP主可以下载一些剪辑素材，来做视频
 |:-------:|:------------------------------------------------------------:|:------------------------------------:|
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png"
+    alt="下载应用，请到 F-Droid"
+    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+
 ## 🔭最近关注
 
 这里展示的是最近Star了**BILIBILIAS**项目的用户
@@ -101,4 +105,12 @@ UP主可以下载一些剪辑素材，来做视频
 反馈社区：[兔小巢](https://support.qq.com/product/337496)
 
 ## 特别感谢
+
+感谢 **[JetBrains](https://www.jetbrains.com/)** 对本项目的支持，此项目在 **[OSS许可证](https://sales.jetbrains.com/hc/zh-cn/articles/360016581839-%E4%BB%80%E4%B9%88%E6%98%AF-OSS-%E5%BC%80%E5%8F%91%E8%AE%B8%E5%8F%AF%E8%AF%81-%E8%B0%81%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%BE%97)** 下开发，并且遵守相关政策。
+
+
+此项目的Kotlin技术采用IDEA开发和学习，再次感谢Jetbrains带来无与伦比的开发体验。
+
+![Toolbox App logo](https://resources.jetbrains.com/storage/products/company/brand/logos/Toolbox.svg)
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 

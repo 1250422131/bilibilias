@@ -15,7 +15,7 @@ import com.imcys.bilibilias.common.data.entity.RoamInfo
     entities = [
         DownloadFinishTaskInfo::class, RoamInfo::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -64,6 +64,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE as_download_finish_task ADD COLUMN saf_path TEXT")
+            }
+        }
+
         // 获取实例
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -78,6 +84,7 @@ abstract class AppDatabase : RoomDatabase() {
                     // 数据库升级异常之后的回滚
                     .fallbackToDestructiveMigration()
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
 
