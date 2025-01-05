@@ -51,3 +51,5 @@ google-services.json
 # Android Profiling
 *.hprof
 .kotlin
+/app/release/
+/app/community/
