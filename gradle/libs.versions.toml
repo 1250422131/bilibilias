@@ -42,7 +42,7 @@ ffmpegKit = "6.0-2"
 srl-core = "1.7.2.4"
 uiTimateBarX = "0.8.1"
 work-runtime-ktx = "2.10.0"
-activity-compose = "1.9.3"
+activity-compose = "1.10.0"
 androidxComposeBom = "2024.12.01"
 activity = "1.10.0"
 [libraries]
