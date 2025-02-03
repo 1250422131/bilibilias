@@ -59,7 +59,6 @@ android {
 
 dependencies {
     implementation(project(":common"))
-    implementation(project(":tool_log_export"))
     implementation(libs.androidx.activity)
 
     ksp(libs.deeprecopy.compiler)
