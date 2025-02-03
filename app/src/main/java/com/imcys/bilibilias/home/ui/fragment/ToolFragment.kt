@@ -35,7 +35,6 @@ import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -309,18 +308,6 @@ class ToolFragment : BaseFragment() {
                             ) {
                                 val intent = Intent(context, WebAsActivity::class.java)
                                 requireActivity().startActivity(intent)
-                            },
-                        )
-                    }
-                    // 导出日志
-                    4 -> {
-                        toolItemMutableList.add(
-                            ToolItemBean(
-                                it.title,
-                                it.img_url,
-                                it.color,
-                            ) {
-                                LogExportActivity.actionStart(requireContext())
                             },
                         )
                     }
