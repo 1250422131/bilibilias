@@ -48,11 +48,11 @@ activity = "1.10.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
+androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-
 kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinxSerialization" }
 monitor = { module = "io.github.leavesczy:monitor", version.ref = "monitor" }
 monitor-no-op = { module = "io.github.leavesczy:monitor-no-op", version.ref = "monitor" }
