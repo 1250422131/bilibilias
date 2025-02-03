@@ -75,5 +75,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-//    implementation(libs.ffmpeg.kit.full)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 }
