@@ -67,16 +67,6 @@ class ToolFragment : BaseFragment() {
     @Inject
     lateinit var downloadQueue: DownloadQueue
 
-    private val regex1 = Regex("""(?:^|/)ep([0-9]+)""")
-    private val regex2 = Regex("""https://b23.tv/([A-z]|\d)*""")
-    private val regex3 = Regex("""[space.bilibili.com/]?(\d+).*""")
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
-        StatService.onPageStart(context, "ToolFragment")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -373,6 +363,10 @@ class ToolFragment : BaseFragment() {
         StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
+    override fun onResume() {
+        super.onResume()
+        StatService.onPageStart(context, getString(R.string.app_ToolFragment_onDestroy))
+    }
     // 构建输入框文字变化流
     private fun TextInputLayout.textChangeFlow(): Flow<String> = callbackFlow {
         val textWatcher = TextInputLayout.OnEditTextAttachedListener {
