@@ -537,7 +537,7 @@ object DialogUtils {
         properties["downloadTool"] = mDownloadTool
         properties["downloadType"] = mDownloadType
         StatService.onEvent(
-            App.context,
+            downloadQueue.context,
             "AnalysisVideo",
             // No need to translate
             "解析视频",
