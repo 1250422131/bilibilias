@@ -70,15 +70,13 @@ open class AbsActivity : AppCompatActivity() {
     private fun setLanguage() {
         val configuration = Configuration()
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-        val locale = when (
-            val language =
-                sharedPreferences.getString("app_language", "System") ?: "System"
-        ) {
-            "System" -> {
+        val language =
+            sharedPreferences.getString("app_language", "System") ?: "System"
+        val locale = when  {
+            language == "System" -> {
                 Locale.getDefault()
             }
-
+            !language.contains("-") ->Locale(language)
             else -> Locale(language.split("-")[0], language.split("-")[1])
         }
         configuration.setLocale(locale)

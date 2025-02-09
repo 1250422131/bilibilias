@@ -23,7 +23,7 @@
     <string name="user_download_save_path_title">缓存文件储存路径</string>
     <string name="user_download_file_name">缓存文件命名规则</string>
 
-    <string name="BangumiEntry">
+    <string name="BangumiEntry" translatable="false">
         {
           \"media_type\": 2,
           \"has_dash_audio\": true,
@@ -71,7 +71,7 @@
     </string>
 
 
-    <string name="VideoIndex">
+    <string name="VideoIndex" translatable="false">
         {
             \"video\": [{
                 \"id\": QN编码,
@@ -104,7 +104,7 @@
         }
 	</string>
 
-    <string name="VideoEntry">
+    <string name="VideoEntry" translatable="false">
         {
             \"media_type\": 2,
             \"has_dash_audio\": true,
@@ -308,7 +308,7 @@
     <string name="app_donate_tip_title">为其他参与者赞助</string>
     <string name="app_donate_tip_long_title">现在你有更多选择</string>
     <string name="app_donate_tip_doc">你不仅仅可以给服务器捐款，你还可以去看看参与贡献的人员，你对哪方面感到有价值，那么你就可以选择为其应援。</string>
-    <string name="app_donate_tip_link" />
+    <string name="app_donate_tip_link" translatable="false" />
     <string name="app_login_view_biliagreement_context">无论如何，你都在间接使用B站</string>
     <string name="app_login_view_biliagreement_alert_title">B站账户需要遵守的协议列表</string>
     <string name="app_login_view_biliagreement_alert_button_text">使用则代表同意</string>
