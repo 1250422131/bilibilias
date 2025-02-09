@@ -212,6 +212,7 @@ class DownloadFragment : BaseFragment() {
     private fun deleteSelectTaskAndFile() {
         downloadFinishTaskAd.currentList.filter { it.selectState }
             .forEach {
+                it.fileType
                 val sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
                 val saveUriPath = sharedPreferences.getString(
