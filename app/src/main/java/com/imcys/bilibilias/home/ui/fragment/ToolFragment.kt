@@ -35,7 +35,6 @@ import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.tool_log_export.ui.activity.LogExportActivity
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -67,16 +66,6 @@ class ToolFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadQueue: DownloadQueue
-
-    private val regex1 = Regex("""(?:^|/)ep([0-9]+)""")
-    private val regex2 = Regex("""https://b23.tv/([A-z]|\d)*""")
-    private val regex3 = Regex("""[space.bilibili.com/]?(\d+).*""")
-
-    @SuppressLint("CommitPrefEdits")
-    override fun onResume() {
-        super.onResume()
-        StatService.onPageStart(context, "ToolFragment")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -312,18 +301,6 @@ class ToolFragment : BaseFragment() {
                             },
                         )
                     }
-                    // 导出日志
-                    4 -> {
-                        toolItemMutableList.add(
-                            ToolItemBean(
-                                it.title,
-                                it.img_url,
-                                it.color,
-                            ) {
-                                LogExportActivity.actionStart(requireContext())
-                            },
-                        )
-                    }
                     // 独立合并
                     5 -> {
                         toolItemMutableList.add(
@@ -386,6 +363,10 @@ class ToolFragment : BaseFragment() {
         StatService.onPageEnd(context, getString(R.string.app_ToolFragment_onDestroy))
     }
 
+    override fun onResume() {
+        super.onResume()
+        StatService.onPageStart(context, getString(R.string.app_ToolFragment_onDestroy))
+    }
     // 构建输入框文字变化流
     private fun TextInputLayout.textChangeFlow(): Flow<String> = callbackFlow {
         val textWatcher = TextInputLayout.OnEditTextAttachedListener {

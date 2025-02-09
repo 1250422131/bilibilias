@@ -2,12 +2,11 @@ plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
 }
 
 android {
     namespace = "com.imcys.bilibilias.common"
-    buildFeatures{
+    buildFeatures {
         dataBinding = true
     }
 }
@@ -136,6 +135,7 @@ dependencies {
     api(libs.androidx.compose.ui.graphics)
     api(libs.androidx.compose.ui.tooling.preview)
     api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.material.iconsExtended)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     api(libs.androidx.core.ktx)

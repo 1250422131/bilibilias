@@ -23,4 +23,3 @@ rootProject.name = "bilibilias"
 
 include(":app")
 include(":common")
-include(":tool_log_export")

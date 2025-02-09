@@ -31,6 +31,7 @@ data class PlayHistoryBean(
             val uri: String = "",
             val history: HistoryBean = HistoryBean(),
             val author_mid: Long = 0,
+            val author_name: String = "",
             val progress: Int = 0,
             val duration: Int = 0,
             val total: Int = 0,
