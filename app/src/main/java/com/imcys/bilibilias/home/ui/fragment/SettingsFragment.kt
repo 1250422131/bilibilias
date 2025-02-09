@@ -166,7 +166,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             val tip = "这里的路径无法修改，储存位置为:\n${
                 AppFilePathUtils(
-                    App.context,
+                    requireContext(),
                     "com.imcys.bilibilias",
                 ).sdCardDirectory
             }/Android/data/com.imcys.bilibilias/files/download"
