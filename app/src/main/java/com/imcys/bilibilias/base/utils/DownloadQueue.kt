@@ -24,6 +24,7 @@ import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.extend.toAsFFmpeg
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
@@ -53,7 +54,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import okhttp3.Dispatcher
 import okhttp3.Protocol
 import okio.BufferedSink
@@ -62,11 +65,13 @@ import okio.sink
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.io.RandomAccessFile
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resumeWithException
 
 const val FLV_FILE = 1
 const val DASH_FILE = 0
@@ -101,9 +106,10 @@ class DownloadQueue @Inject constructor(
     private val client = HttpClient(OkHttp) {
         engine {
             config {
-                connectTimeout(60, TimeUnit.SECONDS)
-                readTimeout(60, TimeUnit.SECONDS)
-                writeTimeout(60, TimeUnit.SECONDS)
+                // 增加超时时间到5分钟
+                connectTimeout(300, TimeUnit.SECONDS)
+                readTimeout(300, TimeUnit.SECONDS)
+                writeTimeout(300, TimeUnit.SECONDS)
                 retryOnConnectionFailure(true)
                 protocols(listOf(Protocol.HTTP_1_1))
 
@@ -116,9 +122,10 @@ class DownloadQueue @Inject constructor(
         }
 
         install(HttpTimeout) {
-            requestTimeoutMillis = 60_000
-            connectTimeoutMillis = 60_000
-            socketTimeoutMillis = 60_000
+            // 增加超时时间到5分钟
+            requestTimeoutMillis = 300_000
+            connectTimeoutMillis = 300_000
+            socketTimeoutMillis = 300_000
         }
 
         // 配置客户端内存使用
@@ -212,52 +219,105 @@ class DownloadQueue @Inject constructor(
     ): Flow<Progress> = flow {
         val taskKey = getTaskKey(task)
         cancelFlags[taskKey] = false
-
-        client.prepareGet(url) {
-            headers.forEach { (key, value) ->
-                header(key, value)
-            }
-        }.execute { response ->
-            val channel = response.bodyAsChannel()
-            val totalBytes = response.contentLength() ?: 0L
-
-            file.parentFile?.mkdirs()
-
-            val bufferSize = 8192 // 8KB buffer
-            var lastEmitTime = 0L
-
-            file.outputStream().buffered(bufferSize).use { output ->
-                var downloadedBytes = 0L
-                val buffer = ByteArray(bufferSize)
-
-                while (!channel.isClosedForRead) {
-                    if (cancelFlags[taskKey] == true) {
-                        throw CancellationException("Download cancelled")
+        
+        var retryCount = 0
+        val maxRetries = 3
+        var lastDownloadedBytes = file.length()
+        var isDownloadComplete = false
+        
+        while (retryCount < maxRetries && !isDownloadComplete) {
+            try {
+                client.prepareGet(url) {
+                    headers.forEach { (key, value) ->
+                        header(key, value)
                     }
-
-                    val bytes = channel.readAvailable(buffer, 0, bufferSize)
-                    if (bytes < 0) break
-
-                    output.write(buffer, 0, bytes)
-                    output.flush()
-
-                    downloadedBytes += bytes
-
-                    // 每100ms更新一次进度
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastEmitTime >= 100) {
-                        val progress = (downloadedBytes.toDouble() / totalBytes) * 100
-                        emit(Progress(downloadedBytes, totalBytes, progress))
-                        lastEmitTime = currentTime
+                    // 添加断点续传的 Range 头
+                    if (lastDownloadedBytes > 0) {
+                        header("Range", "bytes=$lastDownloadedBytes-")
                     }
+                }.execute { response ->
+                    val channel = response.bodyAsChannel()
+                    val totalBytes = response.contentLength()?.plus(lastDownloadedBytes) ?: 0L
 
-                    kotlinx.coroutines.delay(1)
+                    file.parentFile?.mkdirs()
+                    
+                    val randomAccessFile = RandomAccessFile(file, "rw")
+                    if (lastDownloadedBytes > 0) {
+                        randomAccessFile.seek(lastDownloadedBytes)
+                    }
+                    
+                    var downloadedBytes = lastDownloadedBytes
+                    var lastEmitTime = 0L
+                    
+                    try {
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        
+                        while (!channel.isClosedForRead) {
+                            if (cancelFlags[taskKey] == true) {
+                                throw CancellationException("Download cancelled")
+                            }
+
+                            val bytes = channel.readAvailable(buffer, 0, DEFAULT_BUFFER_SIZE)
+                            if (bytes <= 0) {
+                                isDownloadComplete = true
+                                break
+                            }
+
+                            randomAccessFile.write(buffer, 0, bytes)
+                            downloadedBytes += bytes
+                            
+                            val currentTime = System.currentTimeMillis()
+                            if (currentTime - lastEmitTime >= 100) {
+                                val progress = if (totalBytes > 0) {
+                                    (downloadedBytes.toDouble() / totalBytes) * 100
+                                } else {
+                                    0.0
+                                }
+                                emit(Progress(downloadedBytes, totalBytes, progress))
+                                lastEmitTime = currentTime
+                            }
+                            
+                            yield()
+                        }
+                        
+                        if (!isDownloadComplete) {
+                            isDownloadComplete = true
+                        }
+                        
+                    } finally {
+                        withContext(Dispatchers.IO) {
+                            try {
+                                randomAccessFile.close()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
                 }
-
-                // 确保发送最终进度
-                emit(Progress(downloadedBytes, totalBytes, 100.0))
+                
+                if (isDownloadComplete) {
+                    // 下载完成，跳出循环
+                    break
+                }
+                
+            } catch (e: Exception) {
+                lastDownloadedBytes = file.length() // 保存已下载的大小
+                retryCount++
+                
+                if (retryCount >= maxRetries) {
+                    throw e
+                }
+                
+                // 重试前等待一段时间
+                delay(2000L * retryCount)
+                
+                asLogD(context, "下载出错，正在进行第${retryCount}次重试: ${e.message}")
             }
         }
+        
+        // 确保发送最终进度
+        val finalBytes = file.length()
+        emit(Progress(finalBytes, finalBytes, 100.0))
     }.flowOn(Dispatchers.IO)
 
     // 添加下载任务到队列中
@@ -410,8 +470,11 @@ class DownloadQueue @Inject constructor(
 
                     if (mTask.isGroupTask) {
                         val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
-                        val isGroupTasksCompleted = groupTasks?.all {
-                            it.state == STATE_DOWNLOAD_END
+                        // 修改：检查组内所有任务是否都已下载完成,并且确保有音频和视频文件
+                        val isGroupTasksCompleted = groupTasks?.let { tasks ->
+                            val hasVideo = tasks.any { it.fileType == 0 && it.state == STATE_DOWNLOAD_END }
+                            val hasAudio = tasks.any { it.fileType == 1 && it.state == STATE_DOWNLOAD_END }
+                            hasVideo && hasAudio
                         } ?: false
 
                         if (isGroupTasksCompleted) {
@@ -444,6 +507,7 @@ class DownloadQueue @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                asLogD(context,"下载异常："+e.message)
                 withContext(Dispatchers.Main) {
                     when (e) {
                         is CancellationException -> {
@@ -651,7 +715,7 @@ class DownloadQueue @Inject constructor(
      * 参数合并
      * @param cid Int
      */
-    private fun videoMerge(mTask: DownloadTaskInfo) {
+    private suspend fun videoMerge(mTask: DownloadTaskInfo) {
 
         val cid = mTask.downloadTaskDataBean.cid
 
@@ -723,99 +787,100 @@ class DownloadQueue @Inject constructor(
         updateTasks()
     }
 
-    private fun runFFmpegRxJavaVideoMerge(
+    private suspend fun runFFmpegRxJavaVideoMerge(
         task: DownloadTaskInfo,
         videoPath: String,
-        audioPath: String,
-
-        ) {
+        audioPath: String
+    ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(context).getString(
                 "user_dl_merge_cmd_editText",
                 "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}",
             )
 
-        File(videoPath + "_merge.mp4")
+        val mergeFilePath = videoPath + "_merge.mp4"
+        File(mergeFilePath)
 
         val commands = userDLMergeCmd?.toAsFFmpeg(
             videoPath,
             audioPath,
-            videoPath + "_merge.mp4",
+            mergeFilePath
         )
-        // context.getFileDir().getPath()
-        RxFFmpegInvoke.getInstance()
-            .runCommandRxJava(commands)
-            .subscribe(object : RxFFmpegSubscriber() {
-                override fun onError(message: String?) {
-                    updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
-                    asToast(
-                        context,
-                        context.getString(R.string.app_download_queue_merge_error)
-                    )
-                    FileUtils.deleteFile(videoPath)
-                    FileUtils.deleteFile(audioPath)
-                    FileUtils.deleteFile(videoPath + "_merge.mp4")
 
-                    runOnUiThread {
-                        asToast(context, "合并错误,请重新下载，已经删除下载文件。")
-                    }
-                    executeTask()
-                }
-
-                override fun onFinish() {
-                    asToast(
-                        context,
-                        context.getString(R.string.app_download_queue_merge_finish)
-                    )
-                    runOnUiThread {
-                        asToast(context, "合并完成")
-                    }
-                    // 删除合并文件
-                    val deleteMergeSatae =
-                        PreferenceManager.getDefaultSharedPreferences(context)
-                            .getBoolean(
-                                "user_dl_finish_delete_merge_switch",
-                                true,
-                            )
-                    if (deleteMergeSatae) {
+        return suspendCancellableCoroutine { continuation ->
+            RxFFmpegInvoke.getInstance()
+                .runCommandRxJava(commands)
+                .subscribe(object : RxFFmpegSubscriber() {
+                    override fun onError(message: String?) {
+                        updateVideoMergeOrImportTask(task, STATE_MERGE_ERROR, false)
+                        asToast(
+                            context,
+                            context.getString(R.string.app_download_queue_merge_error)
+                        )
                         FileUtils.deleteFile(videoPath)
                         FileUtils.deleteFile(audioPath)
-                        // 仅仅储存视频地址
-                        task.savePath = videoPath + "_merge.mp4"
-                        task.fileType = 0
-                        moveFileToDlUriPath(task.savePath)
-                        saveFinishTask(task)
-                    } else {
-                        // 分别储存两次下载结果
-                        val videoTask = task
-                        val audioTask = task
-                        videoTask.fileType = 0
-                        audioTask.savePath = audioPath
-                        audioTask.fileType = 1
-                        // 分别移动视频和音频
-                        moveFileToDlUriPath(videoPath)
-                        moveFileToDlUriPath(audioPath)
-                        moveFileToDlUriPath(videoPath + "_merge.mp4")
+                        FileUtils.deleteFile(mergeFilePath)
 
-                        saveFinishTask(videoTask, audioTask)
-
+                        runOnUiThread {
+                            asToast(context, "合并错误,请重新下载，已经删除下载文件。")
+                        }
+                        continuation.resumeWithException(RuntimeException("合并失败: $message"))
                     }
-                    updateVideoMergeOrImportTask(task, STATE_DOWNLOAD_END, true)
 
-                    // 继续下一个
-                    executeTask()
-                }
+                    override fun onFinish() {
+                        asToast(
+                            context,
+                            context.getString(R.string.app_download_queue_merge_finish)
+                        )
+                        runOnUiThread {
+                            asToast(context, "合并完成")
+                        }
+                        // 删除合并文件
+                        val deleteMergeState =
+                            PreferenceManager.getDefaultSharedPreferences(context)
+                                .getBoolean(
+                                    "user_dl_finish_delete_merge_switch",
+                                    true,
+                                )
+                        if (deleteMergeState) {
+                            FileUtils.deleteFile(videoPath)
+                            FileUtils.deleteFile(audioPath)
+                            // 仅仅储存视频地址
+                            task.savePath = mergeFilePath
+                            task.fileType = 0
+                            moveFileToDlUriPath(task.savePath)
+                            saveFinishTask(task)
+                        } else {
+                            // 分别储存两次下载结果
+                            val videoTask = task.copy()
+                            val audioTask = task.copy()
+                            videoTask.fileType = 0
+                            audioTask.savePath = audioPath
+                            audioTask.fileType = 1
+                            // 分别移动视频和音频
+                            moveFileToDlUriPath(videoPath)
+                            moveFileToDlUriPath(audioPath)
+                            moveFileToDlUriPath(mergeFilePath)
 
-                override fun onProgress(progress: Int, progressTime: Long) {
-                    // 更新任务状态
-                    task.state = STATE_MERGE
-                    updateProgress(task, progress.toDouble())
+                            saveFinishTask(videoTask, audioTask)
+                        }
+                        updateVideoMergeOrImportTask(task, STATE_DOWNLOAD_END, true)
+                        continuation.resume(
+                            Unit
+                        ) { _, _, _ -> }
+                    }
 
-                }
+                    override fun onProgress(progress: Int, progressTime: Long) {
+                        // 更新任务状态
+                        task.state = STATE_MERGE
+                        updateProgress(task, progress.toDouble())
+                    }
 
-                override fun onCancel() {
-                }
-            })
+                    override fun onCancel() {
+                        continuation.cancel()
+                    }
+                })
+        }
     }
 
     /**

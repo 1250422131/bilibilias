@@ -12,52 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.compose.AsyncImage
 import com.baidu.mobstat.StatService
 import com.google.android.material.textfield.TextInputLayout
 import com.imcys.bilibilias.R
@@ -70,15 +29,13 @@ import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.TextType
 import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.databinding.FragmentToolBinding
-import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
 import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
 import com.imcys.bilibilias.home.ui.model.*
-import com.imcys.bilibilias.home.ui.viewmodel.SearchResultUiState
-import com.imcys.bilibilias.home.ui.viewmodel.SearchViewModel
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -93,7 +50,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class ToolFragment : BaseFragment() {
@@ -116,135 +72,28 @@ class ToolFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        fragmentToolBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_tool, container, false)
+
         initView()
-        return ComposeView(requireContext()).apply {
-            // Dispose of the Composition when the view's LifecycleOwner
-            // is destroyed
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MaterialTheme {
-                    ToolScreen()
-                }
-            }
-        }
-    }
 
-    @Composable
-    fun ToolScreen(viewmodel: SearchViewModel = hiltViewModel()) {
-        val searchQuery by viewmodel.searchQuery.collectAsStateWithLifecycle()
-        val searchResultUiState by viewmodel.searchResultUiState.collectAsStateWithLifecycle()
-        ToolContent(
-            searchQuery = searchQuery,
-            searchResultUiState = searchResultUiState,
-            onSearchQueryChanged = viewmodel::onSearchQueryChanged,
-        )
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun ToolContent(
-        searchQuery: String,
-        searchResultUiState: SearchResultUiState,
-        onSearchQueryChanged: (String) -> Unit
-    ) {
-        val context = LocalContext.current
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            stringResource(R.string.app_fragment_tool_title),
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    },
-                    actions = {
-                        IconButton(
-                            {
-                                val intent = Intent(context, SettingActivity::class.java)
-                                context.startActivity(intent)
-                            }
-                        ) {
-                            Icon(
-                                Icons.Rounded.Settings,
-                                "Settings",
-                                tint = colorResource(R.color.color_primary)
-                            )
-                        }
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = onSearchQueryChanged,
-                    label = { Text(stringResource(R.string.app_fragment_tool_input_tip)) },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = {
-                                    onSearchQueryChanged("")
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Close,
-                                    contentDescription = null,
-                                    tint = colorResource(R.color.color_primary),
-                                )
-                            }
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    singleLine = true,
-                )
-                when (searchResultUiState) {
-                    is SearchResultUiState.LoadFailed -> {}
-                    SearchResultUiState.Loading -> {}
-                    SearchResultUiState.SearchNotReady -> {}
-                    is SearchResultUiState.Success -> {
-                        ListItem(
-                            leadingContent = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(128.dp, 72.dp)
-                                ) {
-                                    AsyncImage(
-                                        searchResultUiState.cover,
-                                        "cover",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                    )
-                                }
-                            },
-                            headlineContent = {
-                                Text(searchResultUiState.title, maxLines = 2)
-                            },
-                            supportingContent = {
-                                searchResultUiState.ownerName?.let { Text(it) }
-                            },
-                            modifier = Modifier
-                                .padding(vertical = 16.dp)
-                                .clickable {
-                                    AsVideoActivity.actionStart(context, searchResultUiState.bvid)
-                                }
-                        )
-                    }
-                }
-            }
-        }
+        return fragmentToolBinding.root
     }
 
     private fun initView() {
         DialogUtils.downloadQueue = downloadQueue
+
+        // 设置布局不浸入
+        fragmentToolBinding.fragmentToolTopLinearLayout.addStatusBarTopPadding()
+
+        // 加载工具item
+        loadToolItem()
+
+        // 绑定列表
+        mRecyclerView = fragmentToolBinding.fragmentToolRecyclerView
+
+        // 设置监听
+        setEditListener()
     }
 
     /**
@@ -345,7 +194,7 @@ class ToolFragment : BaseFragment() {
      * 加载APP端分享视频
      */
     private fun loadShareData(url: String) {
-        asLogD("调试", url)
+        asLogD("调试",url)
         lifecycleScope.launch {
             runCatching { networkService.shortLink(url) }
                 .onSuccess { asVideoId(it) }
@@ -518,7 +367,6 @@ class ToolFragment : BaseFragment() {
         super.onResume()
         StatService.onPageStart(context, getString(R.string.app_ToolFragment_onDestroy))
     }
-
     // 构建输入框文字变化流
     private fun TextInputLayout.textChangeFlow(): Flow<String> = callbackFlow {
         val textWatcher = TextInputLayout.OnEditTextAttachedListener {

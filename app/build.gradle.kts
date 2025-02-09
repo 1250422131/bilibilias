@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.bilibilias.compose)
     alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
 }
 
 android {
@@ -11,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.imcys.bilibilias"
         versionCode = 207
-        versionName = "2.0.47-天枢-Beta"
+        versionName = "2.0.47-天璇-Beta"
         ndk {
             abiFilters += listOf("arm64-v8a","armeabi-v7a", "x86_64")
         }
