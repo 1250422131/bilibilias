@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.bilibilias.android.library)
     alias(libs.plugins.bilibilias.hilt)
     alias(libs.plugins.kotlin.serialization)
-    kotlin("kapt")
 }
 
 android {
