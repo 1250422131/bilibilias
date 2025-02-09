@@ -71,7 +71,7 @@ dependencies {
     api(libs.rxFFmpeg)
 
     // 百度统计
-    api(libs.mtj.sdk)
+    api(files("libs/Baidu_Mtj_android_4.0.10.9.jar"))
 
     // 开屏引导
     api(libs.hyy920109.guidePro)

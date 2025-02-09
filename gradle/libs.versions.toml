@@ -112,8 +112,6 @@ lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"
 
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 
-mtj-sdk = { group = "com.baidu.mobstat", name = "mtj-sdk", version.ref = "mtjSdkCircle" }
-
 okdownload = { group = "com.liulishuo.okdownload", name = "okdownload", version.ref = "okdownload" }
 
 rxFFmpeg = { group = "com.github.microshow", name = "RxFFmpeg", version.ref = "rxFFmpeg" }
