@@ -14,18 +14,19 @@
 
     <string-array name="user_language">
         <item>Auto</item>
-        <item>English (US)</item>
         <item>简体中文 (中国)</item>
+        <item>English (US)</item>
         <item>繁體中文 (中國台灣)</item>
         <item>Japanese</item>
     </string-array>
 
     <string-array name="app_theme">
-        <item>跟隨系統</item>
-        <item>花嫁白（亮色）</item>
-        <item>暗夜黑（暗色）</item>
-        <item>嗶哩粉</item>
-        <item>胖次藍</item>
+        <item>システムに従う</item>
+        <item>花嫁白（明るい色）</item>
+        <item>暗夜黑（ダークモード）</item>
+        <item>ピリピンク</item>
+        <item>パンティブルー</item>
     </string-array>
+
 
 </resources>

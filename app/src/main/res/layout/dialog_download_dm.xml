@@ -89,6 +89,68 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <RelativeLayout
+                    android:id="@+id/dialog_dl_video_diversity_ly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp">
+
+
+                    <ImageView
+
+                        android:id="@+id/as_video_diversity_ic"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_as_video_diversity"
+                        app:tint="?attr/colorPrimary" />
+
+
+                    <TextView
+                        android:id="@+id/textView2"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@id/as_video_diversity_ic"
+                        android:text="@string/app_dialog_dl_video_episode"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:gravity="end"
+                        android:layout_marginStart="10dp"
+                        android:id="@+id/dialog_dl_video_diversity_tx"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="right"
+                        android:layout_toStartOf="@id/as_video_diversity_right"
+                        android:layout_toEndOf="@+id/textView2"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="P1"
+                        android:textColor="@color/color_text_hint"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+
+                    <ImageView
+                        android:id="@+id/as_video_diversity_right"
+                        android:layout_width="20sp"
+                        android:layout_height="20sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_right"
+                        app:tint="@color/color_text_hint" />
+
+                </RelativeLayout>
+
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"

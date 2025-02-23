@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">設定</string>
+    <string name="title_activity_user">ユーザー活動</string>
+    <string name="dl_file_rename_rules">
+    パスは先頭に / がデフォルトで付与されるため、手動で追加する必要はありません。\n命名ルール：ダウンロードされたファイルのサブディレクトリまたはファイルの命名スキームを表します。いくつかの変数を用意しましたので、名前を変更するのに役立つでしょう。\n以下にいくつかの変数を紹介します：\n
+    AV番号：{AV}\n
+    BV番号：{BV}\n
+    CID番号：{CID}\n
+    動画タイトル：{TITLE}\n
+    分Pタイトル：{P_TITLE}\n
+    ファイルタイプ：{FILE_TYPE}\n
+    動画のエピソード：{P}\n
+    例えば、動画がav10086の場合、カスタムの命名ルールは以下の通りです。\n{BV}/{P}_{TITLE}.{FILE_TYPE}\n
+    すると、ダウンロードのパスとファイル名は以下の通りになります。\nダウンロードパス/BV1bx411c7u3/1_おもしろ漫画ステッカー.mp4
+    \n\n【注意】：命名ルールを変更した後、ファイルのダウンロードに失敗した場合は、CIDを直接名前に使用してみてください。システムがこのようなファイル名を遮断する可能性があります。\n
+    また、テストの結果、音声ファイルと動画ファイルを同じフォルダに置くと、ファイルのダウンロードに失敗する可能性がありますので、できるだけ別々のフォルダに置いてください。
+    </string>
+
+    <string name="user_download_save_path_title">キャッシュファイルの保存パス</string>
+    <string name="user_download_file_name">キャッシュファイルの命名ルール</string>
+
+    <string name="new_version_doc">2.0.47では、ストレージパーミッションが変更され、設定でカスタムストレージ場所を再度承認する必要があります。</string>
+    <string name="user_dl_merge_cmd">
+    FFmpegコマンドが不明な場合は変更しないでください\n
+    BILIBILIASは簡単なコマンドパラメーターを提供しています\n
+    {VIDEO_PATH} 動画のダウンロードパス\n
+    {AUDIO_PATH} 音声の保存パス\n
+    {VIDEO_MERGE_PATH} 結合後の保存パス
+</string>
+
+    <string name="app_activity_bangumi_follow_title">追番</string>
+    <string name="app_activity_collection_title">コレクション</string>
+    <string name="app_activity_dedicate_title">献身</string>
+    <string name="app_activity_donate_title">寄付</string>
+    <string name="app_activity_play_history_title">再生履歴</string>
+    <string name="app_fragment_tool_input_tip">BV/AV/EP番号を入力</string>
+    <string name="app_fragment_download_task_tab_downloading_title">ダウンロード中</string>
+    <string name="app_fragment_download_task_tab_finish_title">ダウンロード完了</string>
+    <string name="app_item_fg_user_card_data_fans">ファン</string>
+    <string name="app_item_fg_user_card_data_friend">フォロー</string>
+    <string name="app_item_fg_user_card_data_liks">いいね</string>
+    <string name="app_item_fg_user_card_data_view">再生</string>
+    <string name="app_fragment_user_works_title">作品</string>
+    <string name="app_dialog_dl_video_bar_title">動画情報</string>
+    <string name="app_dialog_dl_video_tip">この動画は許可なく転載禁止です</string>
+    <string name="app_dialog_dl_video_definition">動画の品質</string>
+    <string name="app_dialog_dl_video_episode">キャッシュするエピソード</string>
+    <string name="app_dialog_dl_video_video_type">キャッシュするタイプ</string>
+    <string name="app_dialog_dl_video_audio_quality">キャッシュする音質</string>
+    <string name="app_dialog_dl_video_radio_built_download">ビルトインダウンロード</string>
+    <string name="app_dialog_dl_radio_video_and_audio">動画と音声</string>
+    <string name="app_dialog_dl_radio_only_audio">音声のみ</string>
+    <string name="app_dialog_dl_radio_only_video">動画のみ</string>
+    <string name="app_activity_as_video_dl_bt_text">動画をキャッシュする</string>
+    <string name="app_activity_as_bangumi_dl_bt_text">番組をキャッシュする</string>
+    <string name="app_donate_doc">"\n
+        BILIBILIASは運営当初からバックエンドのサポートがあり、現在は学生用のマシンを使用していますが、それでも毎月コストが発生します。\n
+        したがって、BILIBILIASのユーザーの皆さんに、費用を支援していただければと思います。朝食代、奶茶代、昼食代など一度の寄付で、BILIBILIASのほとんどの費用をまかなうことができます。\n
+        最後に、BILIBILIASに寄付し、ASを支持してくれたすべてのユーザーに感謝します。\n\n
+        匿名で寄付するか、非匿名で寄付するかを選べますが、非匿名での寄付をお勧めします。\n
+        ASとQQ番号などの連絡先を付けてください
+    "</string>
+    <string name="app_fragment_home_donate">寄付</string>
+    <string name="app_fragment_home_salute">敬意を表する</string>
+    <string name="app_fragment_home_update_content">更新内容</string>
+    <string name="app_fragment_home_version">V2.0.47-天玑-Beta</string>
+    <string name="app_fragment_home_salute_text">すべてのBILIBILIASユーザーに敬意を表する</string>
+    <string name="app_fragment_home_salute_doc">趣味と追求は年齢に関係なく、いつでも生活に情熱があれば、それが最も楽しいことで、人生をカラフルにできる！ —— BILIBILIASユーザー</string>
+    <string name="app_fragment_home_donate_text">BILIBILIASの開発を支援する</string>
+    <string name="app_fragment_home_donate_doc">BILIBILIASのサーバーはコストがかかりますので、私たちに一杯の奶茶を買ってください。</string>
+    <string name="app_fragment_home_donate_list">寄付者リスト</string>
+    <string name="app_fragment_home_feedback">フィードバック</string>
+    <string name="app_fragment_home_feedback_text">兎小巢でフィードバックする</string>
+    <string name="app_fragment_home_feedback_doc">問題が発生した場合や機能の追加が必要な場合は、コミュニティでフィードバックしてください。</string>
+    <string name="app_fragment_home_logout">ログアウト</string>
+    <string name="app_fragment_home_logout_text">このアカウントのログアウト</string>
+    <string name="app_fragment_tool_title">ツール</string>
+    <string name="app_fragment_user_title">ユーザー</string>
+    <string name="app_jz_layout_std_download_cover">カバーダウンロード</string>
+    <string name="app_home_menu_button_navigation_home">ホーム</string>
+    <string name="app_home_menu_button_navigation_tool">ツール</string>
+    <string name="app_home_menu_button_navigation_download">キャッシュ</string>
+    <string name="app_home_menu_button_navigation_user">マイ</string>
+    <string name="app_dialog_tone_quality_sound_quality_selection">音質の選択</string>
+    <string name="app_dialog_tone_quality_finish">確定</string>
+    <string name="app_dialog_user_data_bottomsheet_finish">確定</string>
+    <string name="app_dialog_user_data_bottomsheet_personal_information">個人情報</string>
+    <string name="app_activity_fav_list_title">お気に入りリスト</string>
+    <string name="app_activity_fav_list_create_tab">作成したリスト</string>
+    <string name="app_activity_fav_list_collection_tab">収集したリスト</string>
+    <string name="app_app_activity_main_text">こんにちは、世界！</string>
+    <string name="app_activity_stting_title">設定</string>
+    <string name="app_dialog_download_type_title">モードの選択</string>
+    <string name="app_dialog_dl_video_button">キャッシュに追加</string>
+    <string name="app_dialog_load_bottomsheet_loading">読み込み中</string>
+    <string name="app_dialog_dl_video_idm_dl">IDM</string>
+    <string name="app_dialog_dl_video_adm_dl">ADM</string>
+    <string name="app_dialog_login_bottomsheet_title">ログイン方法の選択</string>
+    <string name="app_dialog_login_bottomsheet_option_1">Bilibili QRコードスキャン</string>
+    <string name="app_dialog_login_bottomsheet_option_2">BILIBILIASクラウド</string>
+    <string name="app_dialog_login_bottomsheet_text">ログイン後、以下のことができます：</string>
+    <string name="app_dialog_login_bottomsheet_list_text_1">・このバージョンではログインが必須です。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_2">・クラウドアカウントは暗号化保存され、デバイスを切り替える際に再度ログインする必要がありません。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_3">・より高品質で高ビットレートの動画をダウンロードできます。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_4">・大会員権限の動画と品質を楽しむことができます（所有している場合）。</string>
+    <string name="app_dialog_login_bottomsheet_list_text_5">・番組をキャッシュし、Bilibiliに番組をインポートして、オフラインで弾幕付きで再生することができます。</string>
+    <string name="app_dialog_login_bottomsheet_text2">使用する場合は、以下に同意するものとします：</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_1">・Bilibiliアカウントとコミュニティ関連の規約</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_2">・《BILIBILIAS利用規約》と《BILIBILIASプライバシーポリシー》</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_3">・このアプリはBilibiliの許可を得ておらず、Bilibiliは一切の責任を負いません。</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_4">・アプリの機能は学習目的での使用を参考としてください。</string>
+    <string name="app_dialog_login_bottomsheet_list_text2_5">・使用によって発生するいかなる結果も、BILIBILIASは一切の責任を負いません。</string>
+    <string name="app_dialog_login_qr_bottomsheet_title">QRコードログイン</string>
+    <string name="app_dialog_login_qr_bottomsheet_finish">ログイン完了</string>
+    <string name="app_dialog_login_qr_bottomsheet_download">QRコードをダウンロード</string>
+    <string name="app_dialog_login_qr_bottomsheet_go">QRコードをスキャンする</string>
+    <string name="app_fragment_download_title">ダウンロード</string>
+    <string name="app_permission_application_text">BILIBILIASは、ダウンロードされたファイルとコンテンツを保存するために、ストレージパーミッションを申請する必要があります。安心して許可してください。あなたのデバイスがXiaomiの場合、表示される説明はアルバムなどの他のファイルへのアクセス権を取得する可能性がありますが、心配しないでください。このソフトウェアはオープンソースで公開されており、パーミッションはファイルを保存するためにのみ使用されます。ダウンロードパスをアルバムに変更していない限り、アルバムの内容を読み取ることはありません。</string>
+    <string name="app_permission_application_title">パーミッション申請</string>
+    <string name="app_permission_application_confirm">許可する</string>
+    <string name="app_permission_application_cancel">許可しない</string>
+    <string name="app_permission_application_msg">BILIBILIASを使用するには、このパーミッションに同意する必要があります。キャッシュ動画などは、システム内にストレージパーミッションを申請する必要があります。</string>
+    <string name="app_guide_home">新しいバージョンの内容はここをクリックして確認してください</string>
+    <string name="app_guide_tool">解析機能はここに移動しました</string>
+    <string name="app_root_preferences_title_download_conf">キャッシュ設定</string>
+    <string name="user_download_save_sd_path_switch_title">ストレージカードを使用してダウンロードパスとする</string>
+    <string name="user_download_save_sd_path_switch_off">ストレージカードを使用して保存する</string>
+    <string name="user_download_save_sd_path_switch_on">このパスは変更できません。保存場所は以下のとおりです：\nストレージカード/Android/data/com.imcys.bilibilias/files/download\n注意：このアプリをアンインストールすると、保存されたデータがすべて削除されます。</string>
+    <string name="rename_user_download_save_path_title">ダウンロードパスを元に戻す</string>
+    <string name="rename_user_download_file_name_editText_title">命名ルールを元に戻す</string>
+    <string name="app_root_preferences_title_behavior">キャッシュ完了後の動作</string>
+    <string name="user_dl_finish_automatic_merge_switch_off">デフォルトでは、ダウンロードは音声が分離されています。</string>
+    <string name="user_dl_finish_automatic_merge_switch_on">現在、音声の自動マージは非常に簡単な動作であるため、バグが発生する可能性があります。マージに問題が発生する可能性がありますので、ご了承ください。</string>
+    <string name="user_dl_finish_automatic_merge_switch_title">キャッシュ完了後に自動マージする</string>
+    <string name="user_dl_finish_automatic_import_switch_off">これは、個別にフォルダにパーミッションを付与する必要があります。注意：番組のDashダウンロードのみに有効です。</string>
+    <string name="user_dl_finish_automatic_import_switch_on">ダウンロードが完了すると、自動的にB站のキャッシュリストにインポートされます</string>
+    <string name="user_dl_finish_automatic_import_switch_title">キャッシュ完了後に自動的にB站にインポートする</string>
+    <string name="app_root_preferences_title_merge_conf">マージ設定</string>
+    <string name="user_dl_finish_delete_merge_switch_title">マージ後、元の音声と動画ファイルを削除する</string>
+    <string name="user_dl_merge_cmd_editText_title">マージ時のFFmpegコマンド</string>
+    <string name="app_root_preferences_title_import_conf">インポート設定</string>
+    <string name="app_root_preferences_title_language">言語(Language)</string>
+    <string name="user_language_title">BILIBILIASの表示言語を設定する</string>
+    <string name="app_root_preferences_title_privacy_policy">プライバシーポリシー</string>
+    <string name="microsoft_app_center_type_summary">このアプリの使用統計データ（FLVまたはDASHを使用するなど）を匿名で送信し、アプリを最適化するのに役立ちます。</string>
+    <string name="microsoft_app_center_type_title">Microsoft AppCenterの使用を許可する</string>
+    <string name="baidu_statistics_type_summary">匿名で使用時間、ページ滞在時間、地域情報をアップロードし、アプリを統計的に最適化するのに役立ちます。</string>
+    <string name="baidu_statistics_type_title">百度統計の使用を許可する</string>
+    <string name="app_item_fg_user_tool_favorites">お気に入り</string>
+    <string name="app_item_fg_user_tool_follow_series">追番</string>
+    <string name="app_item_fg_user_tool_play_history">視聴</string>
+    <string name="app_item_fg_user_tool_coin_history">コイン履歴</string>
+    <string name="user_dl_delete_import_file_switch_title">インポート後に元の音声と動画ファイルを削除する</string>
+    <string name="app_tool_toolbar_menu_title">完了</string>
+    <string name="app_tool_toolbar_menu_tooltipText">完了</string>
+    <string name="app_HomeActivity_exit">もう一度押すとプログラムを終了します</string>
+    <string name="app_activity_web_as_title">ウェブ解析</string>
+    <string name="app_ToolFragment_asVideoId">何も入力されていません</string>
+    <string name="app_ToolFragment_asVideoId2">入力内容が正しくありません</string>
+    <string name="app_ToolFragment_loadShareData">正しいアドレスかどうかを確認してください</string>
+    <string name="app_LoginQRModel_goToQR">うわあ、Bilibiliがインストールされていないようです</string>
+    <string name="app_LoginQRModel_downloadLoginQR_asToast">ダウンロードが完了しました。QRコードをスキャンしてください</string>
+    <string name="app_HomeFragment_loadVersionData_title">新しいバージョンがあります</string>
+    <string name="app_HomeFragment_loadVersionData_positiveButtonText">更新</string>
+    <string name="app_HomeFragment_loadVersionData_negativeButtonText">後で更新する</string>
+    <string name="app_HomeFragment_loadNotice_title">最新のお知らせ</string>
+    <string name="app_HomeFragment_loadNotice_negativeButtonText">このお知らせは不要です</string>
+    <string name="app_HomeFragment_loadNotice_positiveButtonText">わかりました</string>
+    <string name="app_root_preferences_title_theme">テーマ</string>
+    <string name="app_root_preferences_long_title_theme">ソフトウェアのテーマを設定する</string>
+    <string name="app_root_preferences_long_title_theme_tip">注意：これはテスト機能であり、継続的に調整されます。</string>
+    <string name="app_merge_video_top_ly_title">動画をマージする</string>
+    <string name="download_barrage">弾幕をダウンロードする</string>
+    <string name="Copied">コピーに成功しました</string>
+    <string name="app_root_preferences_long_title_language">ソフトウェアの表示言語を設定する</string>
+    <string name="app_root_preferences_long_title_language_tip">ソフトウェアの表示言語を設定する</string>
+    <string name="app_donate_tip_title">他の参加者に寄付する</string>
+    <string name="app_donate_tip_long_title">あなたにはより多くの選択肢があります</string>
+    <string name="app_donate_tip_doc">サーバーに寄付するだけでなく、貢献した人を見に行くこともできます。どの分野が価値があると感じるかによって、その分野を応援することができます。</string>
+    <string name="app_login_view_biliagreement_context">いずれにせよ、あなたは間接的にB站を使用しています</string>
+    <string name="app_login_view_biliagreement_alert_title">B站アカウントが遵守する必要がある規約リスト</string>
+    <string name="app_login_view_biliagreement_alert_button_text">使用する場合は同意する</string>
+    <string name="app_login_view_bilibiliasagreement_title">BILIBILIASプライバシーポリシー</string>
+    <string name="app_login_view_bilibiliasagreement_text">使用する場合は同意する</string>
+    <string name="app_user_download_save_path_error">ユーザーのダウンロードパスを取得できません</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_title">動画ファイルが特殊です</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_content">この動画にはFLV形式がなく、再生することができません。Dashモードでキャッシュしてください。</string>
+    <string name="app_asvideoactivity_loadvideoplay_asdialog_button_text">わかりました</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_title">越境しました</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_message">大会員でない場合は、ここでのみ停止する必要があります。大会員でない必要があるエピソードまたは動画に切り替えてください。</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_dialog_button_text">わかりました</string>
+    <string name="app_asvideoactivity_updatebangumiinformation_badge">VIP</string>
+    <string name="app_asvideoactivity_ismember_badge">VIP</string>
+    <string name="app_asvideoactivity_ismember_dialog_title">越境しました</string>
+    <string name="app_asvideoactivity_ismember_dialog_message">大会員でない場合は、ここでのみ停止する必要があります。大会員でない必要があるエピソードまたは動画に切り替えてください。</string>
+    <string name="app_asvideoactivity_ismember_dialog_button_text">わかりました</string>
+    <string name="app_dialog_dialog_astoast_content">クラウドアカウントがまもなく登場します</string>
+    <string name="app_dialog_addbangumidownloadtask_toast_text">ダウンロードキューに追加されました</string>
+    <string name="app_download_queue_error_text">ダウンロードエラー：</string>
+    <string name="app_download_queue_cachesuccessful">キャッシュが成功しました</string>
+    <string name="app_download_queue_merge_error">マージエラー</string>
+    <string name="app_download_queue_merge_finish">マージが完了しました</string>
+    <string name="app_download_shortcut_label">クイックダウンロード</string>
+</resources>

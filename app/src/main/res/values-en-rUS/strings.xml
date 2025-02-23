@@ -3,7 +3,20 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="action_settings">Settings</string>
     <string name="title_activity_user">UserActivity</string>
-    <string name="dl_file_rename_rules">Let me briefly introduce some named variables: \nAV Num: {AV}\nBV Num.: {BV}\nCID Nnum.: {CID}\nVideo Name: {TITLE}\nSub-P Name: {P_TITLE}\nFile Type: {FILE_TYPE}\nIf the video is av10086, the custom naming rules are as follows. \n{BV}/{TITLE}. {FILE_TYPE}\nThen the download path and file name are:\n\"Download Path/BV1bx411c7u3/Funny Comics Day Hezhi Sticker.mp4\". \n[Note]: If the file download fails after modification, try to directly use CID as the name, or the system may hijack the file name.\nTry to ensure that the audio and video are not in the same folder. After testing, this may cause a file download failure.</string>
+    <string name="dl_file_rename_rules">
+    The path starts with / by default, no need to add it manually.\nNaming rules: These represent the subdirectory or file naming scheme for downloaded files. We have prepared some variables to help you rename them.\nHere are some variables:\n
+    AV number: {AV}\n
+    BV number: {BV}\n
+    CID number: {CID}\n
+    Video title: {TITLE}\n
+    Part title: {P_TITLE}\n
+    File type: {FILE_TYPE}\n
+    Video episode: {P}\n
+    For example, if the video is av10086, the custom naming rule could be\n{BV}/{P}_{TITLE}.{FILE_TYPE}\n
+    Then the download path and file name would be\nDownload path/BV1bx411c7u3/1_Interesting Comic Stickers.mp4
+    \n\n【Note】: If you find that the file download fails after modifying the naming rule, try using CID directly as the name. It might be that the system intercepts such file names.\n
+    Also, try to keep audio and video files in separate folders. Tests have shown that mixing them might cause download failures.
+    </string>
     <string name="user_download_save_path_title">Storage Path</string>
     <string name="user_download_file_name">Name Rules</string>
     <string name="BangumiEntry">
@@ -163,7 +176,7 @@
     <string name="app_fragment_home_donate">Donate</string>
     <string name="app_fragment_home_salute">Salute List</string>
     <string name="app_fragment_home_update_content">Update_content</string>
-    <string name="app_fragment_home_version">V2.0.47</string>
+    <string name="app_fragment_home_version">V2.0.47-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
     <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
     <string name="app_fragment_home_donate_text">Support the development</string>

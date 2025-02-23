@@ -113,7 +113,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     getDefaultSharedPreferences(requireContext()).edit {
                         putString(
                             "user_download_file_name_editText",
-                            "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                            "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
                         )
                         apply()
                     }
