@@ -160,7 +160,6 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun loadVideoPlay(type: String) {
         // 这里默认用目前flv最高免费画质1080P，注意：flv已经被B站弃用，目前只能使用360P和1080P，后面得考虑想办法做音频分离。
-
         when (type) {
             "video" -> {
                 launchUI {

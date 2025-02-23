@@ -2,7 +2,20 @@
 <resources>
     <string name="action_settings">設定</string>
     <string name="title_activity_user">用戶活動</string>
-    <string name="dl_file_rename_rules">路徑開頭/默認給出，無需添加。\n命名規則：即代表下載檔案儲存的子目錄或者檔案的命名方案，我們為你準備了一些變數，幫助你進行重命名。\n下麵我簡單介紹一些命名變數：\nAV號：{AV}\nBV號：{BV}\nCID編號：{CID}\n影片名稱：{TITLE}\n分P名稱：{P_TITLE}\n檔案類型：{FILE_TYPE}\n如果影片是av10086，自定義命名規則如下\n{BV}/{TITLE}. {FILE_TYPE}\n則下載的路徑和檔名稱為\n下載路徑/BV1bx411c7u3/搞笑漫畫日和之貼紙.mp4\n【注意】：如果修改後發現檔案下載失敗了，就嘗試直接用CID等作為名稱，也可能是系統對這類檔案名稱有劫持。\n盡可能保證音訊和影片不在一個資料夾裏，經過測試，這樣有可能誘發一個檔案下載失敗。</string>
+    <string name="dl_file_rename_rules">
+        路徑開頭 / 預設會給出，無需額外添加。\n命名規則：即代表下載文件儲存的子目錄或者文件的命名方案，我們為你準備了一些變數，幫助你進行重新命名。\n以下我簡單介紹一些命名變數：\n
+        AV號：{AV}\n
+        BV號：{BV}\n
+        CID編號：{CID}\n
+        視頻名稱：{TITLE}\n
+        分P名稱：{P_TITLE}\n
+        文件類型：{FILE_TYPE}\n
+        視頻集數：{P}\n
+        如果視頻是av10086，自定義命名規則如下\n{BV}/{P}_{TITLE}.{FILE_TYPE}\n
+        則下載的路徑和文件名稱為\n下載路徑/BV1bx411c7u3/1_搞笑漫畫日和之貼紙.mp4
+        \n\n【注意】：如果修改後發現文件下載失敗了，就嘗試直接用CID等作為名稱，也可能是系統對這類文件名稱有攔截。\n
+        噫，盡量保證音頻和視頻不在同一個文件夾裡，經過測試，這樣有可能會導致一個文件下載失敗。
+    </string>
     <string name="user_download_save_path_title">快取檔案儲存路徑</string>
     <string name="user_download_file_name">快取檔案命名規則</string>
     <string name="BangumiEntry">
@@ -168,7 +181,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.47</string>
+    <string name="app_fragment_home_version">V2.0.47-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">向全體BILIBILIAS用戶致敬</string>
     <string name="app_fragment_home_salute_doc">愛好和追求不分年齡，無論何時，對生活有份熱愛，才是最快樂的事，生命才能多姿多彩！—— BILIBILIAS用戶</string>
     <string name="app_fragment_home_donate_text">為BILIBILIAS的開發提供支援</string>
