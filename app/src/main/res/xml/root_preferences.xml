@@ -27,6 +27,14 @@
             app:title="@string/user_download_file_name"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            app:key="user_dl_task_file_name_cover_switch"
+            app:summaryOff="@string/user_dl_task_file_name_cover_switch_off"
+            app:summaryOn="@string/user_dl_task_file_name_cover_switch_on"
+            app:title="@string/user_dl_task_file_name_cover_switch_title">
+        </SwitchPreferenceCompat>
+
 
         <Preference
             app:key="rename_user_download_save_path"

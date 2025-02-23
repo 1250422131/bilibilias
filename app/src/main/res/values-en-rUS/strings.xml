@@ -314,4 +314,7 @@
     <string name="app_download_queue_merge_error">合并错误</string>
     <string name="app_download_queue_merge_finish">合并完成</string>
     <string name="app_download_shortcut_label">Quick download</string>
+    <string name="user_dl_task_file_name_cover_switch_off">Use default video/series title</string>
+    <string name="user_dl_task_file_name_cover_switch_on">Use custom naming rule for file name</string>
+    <string name="user_dl_task_file_name_cover_switch_title">Download task title</string>
 </resources>
