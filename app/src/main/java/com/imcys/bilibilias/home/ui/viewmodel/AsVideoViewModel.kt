@@ -16,6 +16,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.extend.toAsDownloadSavePath
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -153,27 +154,155 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         }
     }
 
-    fun downloadDanMu(view: View, videoBaseBean: VideoBaseBean) {
-        val context = view.context
+    /**
+     * 下载视频弹幕对话框
+     */
+    fun downloadVideoDanMu(
+        view: View,
+        videoBaseBean: VideoBaseBean,
+        videoPageListData: VideoPageListData,
+    ) {
+        val context = view.context as AsVideoActivity
 
-        DialogUtils.downloadDMDialog(view.context, videoBaseBean) { binding ->
+        DialogUtils.downloadDMDialog(
+            view.context,
+            videoBaseBean,
+            videoPageListData
+        ) { binding, selectVideo ->
+
+            val loadDialog = DialogUtils.loadProgressDialog(context)
+            loadDialog.show()
+            val titleView = loadDialog.findViewById<TextView>(R.id.dialog_load_tip)
+            val progressBar = loadDialog.findViewById<ProgressBar>(R.id.dialog_load_progressBar)
+            titleView?.text = "正在加载"
+            progressBar?.max = selectVideo.size
+            progressBar?.progress = 1
             viewModelScope.launchIO {
-                val danmakuByte = networkService.getDanmuBytes((context as AsVideoActivity).cid)
+                selectVideo.forEachIndexed { index, dataBean ->
+                    launchUI {
+                        progressBar?.progress = index
+                    }
+                    val videoPageListData = dataBean
+                    val fileType = when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
+                        R.id.dialog_dl_dm_ass -> "ass"
 
-                when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
-                    R.id.dialog_dl_dm_ass -> {
-                        saveAssDanmaku(
-                            context,
-                            danmakuByte,
-                            videoBaseBean,
+                        R.id.dialog_dl_dm_xml -> "xml"
+
+                        else -> throw Exception("意外的选项")
+                    }
+                    val sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
                         )
+                            .toString()
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        videoPageListData.part,
+                        dataBean.cid.toString(),
+                        fileType,
+                        dataBean.page.toString(),
+                        videoBaseBean.data.title,
+                        fileType,
+                    )
+                    val danmakuByte = networkService.getDanmuBytes(dataBean.cid)
+
+                    when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
+                        R.id.dialog_dl_dm_ass -> {
+                            saveAssDanmaku(context, danmakuByte, videoBaseBean, savePath)
+                        }
+
+                        R.id.dialog_dl_dm_xml -> {
+                            saveDanmaku(context, danmakuByte, videoBaseBean, savePath)
+                        }
+                    }
+                }
+
+                //　关闭对话框
+                launchUI {
+                    loadDialog.cancel()
+                }
+            }
+        }.show()
+    }
+
+    /**
+     * 下载番剧弹幕对话框
+     */
+    fun downloadBangumiDanMu(
+        view: View,
+        videoBaseBean: VideoBaseBean,
+        videoPageListData: BangumiSeasonBean,
+    ) {
+        val context = view.context as AsVideoActivity
+        DialogUtils.downloadDMDialog(
+            view.context,
+            videoBaseBean,
+            videoPageListData
+        ) { binding, selectVideo ->
+            val loadDialog = DialogUtils.loadProgressDialog(context)
+            loadDialog.show()
+            val titleView = loadDialog.findViewById<TextView>(R.id.dialog_load_tip)
+            val progressBar = loadDialog.findViewById<ProgressBar>(R.id.dialog_load_progressBar)
+            titleView?.text = "正在加载"
+            progressBar?.max = selectVideo.size
+            progressBar?.progress = 1
+
+            viewModelScope.launchIO {
+
+                selectVideo.forEachIndexed { index, dataBean ->
+                    launchUI {
+                        progressBar?.progress = index
+                    }
+                    val fileType = when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
+                        R.id.dialog_dl_dm_ass -> "ass"
+
+                        R.id.dialog_dl_dm_xml -> "xml"
+
+                        else -> throw Exception("意外的选项")
+                    }
+                    // 读取命名规则
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
+                        )
+                            .toString()
+
+                    // 扩展函数 -> 把下载地址换出来
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        dataBean.long_title,
+                        dataBean.cid.toString(),
+                        fileType,
+                        dataBean.title,
+                        videoBaseBean.data.title,
+                        fileType,
+                    )
+
+                    val danmakuByte = networkService.getDanmuBytes(dataBean.cid)
+
+                    when (binding.dialogDlDmTypeRadioGroup.checkedRadioButtonId) {
+                        R.id.dialog_dl_dm_ass -> {
+                            saveAssDanmaku(context, danmakuByte, videoBaseBean, savePath)
+                        }
+
+                        R.id.dialog_dl_dm_xml -> {
+                            saveDanmaku(context, danmakuByte, videoBaseBean, savePath)
+                        }
                     }
 
-                    R.id.dialog_dl_dm_xml -> {
-                        saveDanmaku(context, danmakuByte, videoBaseBean)
-                    }
+                }
 
-                    else -> throw Exception("意外的选项")
+                launchUI {
+                    loadDialog.cancel()
                 }
             }
         }.show()
@@ -264,25 +393,25 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         }
     }
 
-    private fun saveAssDanmaku(
+    private suspend fun saveAssDanmaku(
         context: AsVideoActivity,
         bytes: ByteArray,
         videoBaseBean: VideoBaseBean,
-    ) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        savePath: String,
+    ) = withContext(Dispatchers.IO) {
+        val assFile = File(savePath)
 
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
-        val fileName = "$savePath/${(context.bvid)}/${context.cid}_danmu.ass"
-        val assFile = File(fileName)
+        // 确保父目录存在（递归创建所有必要的目录）
+        if (assFile.parentFile?.exists() != true) {
+            assFile.parentFile?.mkdirs() // 递归创建所有缺失的父目录
+        }
 
-        val folderFile = File("$savePath/${(context.bvid)}")
-        // 检查是否存在文件夹
-        if (!folderFile.exists()) folderFile.mkdirs()
-
-        if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
+        // 清空文件内容或创建文件
+        if (assFile.exists()) {
+            assFile.writeText("") // 清空文件内容
+        } else {
+            assFile.createNewFile() // 创建文件
+        }
 
         val decompressBytes =
             context.decompress(bytes) // 调用解压函数进行解压，返回包含解压后数据的byte数组
@@ -302,33 +431,35 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                 context,
             ),
         )
-        moveFileToDlUriPath("$savePath/${(context.bvid)}/${context.cid}_danmu.ass")
-        viewModelScope.launchUI {
-            asToast(
-                context,
-                "下载弹幕储存于\n存储目录/${(context.bvid)}/${context.cid}_danmu.ass",
-            )
+        moveFileToDlUriPath(savePath)
+        launchUI {
             // 通知下载成功
+            asToast(context, "下载完成")
             Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
     }
 
-    fun saveDanmaku(context: AsVideoActivity, bytes: ByteArray, videoBaseBean: VideoBaseBean) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
+    private suspend fun saveDanmaku(
+        context: AsVideoActivity,
+        bytes: ByteArray,
+        videoBaseBean: VideoBaseBean,
+        savePath: String,
+    ) = withContext(Dispatchers.IO) {
 
         val bufferedSink: BufferedSink?
+        val dest = File(savePath)
 
-        val dest = File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml")
-        // 检查是否存在文件夹
-        val parentDir = dest.parentFile
-        if (parentDir != null && !parentDir.exists()) parentDir.mkdirs()
-        if (!FileUtils.isFileExists(dest)) {
-            File("$savePath/${(context.bvid)}/${context.cid}_danmu.xml").createNewFile()
+
+        // 确保父目录存在（递归创建所有必要的目录）
+        if (dest.parentFile?.exists() != true) {
+            dest.parentFile?.mkdirs() // 递归创建所有缺失的父目录
+        }
+
+        // 清空文件内容或创建文件
+        if (dest.exists()) {
+            dest.writeText("") // 清空文件内容
+        } else {
+            dest.createNewFile() // 创建文件
         }
 
         val sink = dest.sink() // 打开目标文件路径的sink
@@ -338,13 +469,10 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         decompressBytes.let { bufferedSink.write(it) } // 将解压后数据写入文件（sink）中
         bufferedSink.close()
 
-        moveFileToDlUriPath("$savePath/${(context.bvid)}/${context.cid}_danmu.xml")
-        viewModelScope.launchUI {
-            asToast(
-                context,
-                "下载弹幕储存于\n存储路径/${(context.bvid)}/${context.cid}_danmu.xml",
-            )
+        moveFileToDlUriPath(savePath)
+        launchUI {
             // 通知下载成功
+            asToast(context, "下载完成")
             Analytics.trackEvent(context.getString(R.string.download_barrage))
         }
     }
@@ -468,7 +596,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
         // Only show a toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT)
+                .show()
         }
 
         return true
@@ -486,7 +615,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", inputStr))
         // Only show a toast for Android 12 and lower.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.Copied), Toast.LENGTH_SHORT)
+                .show()
         }
 
         return true
@@ -496,7 +626,11 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
      * 设置收藏夹的ID列表
      * @param selects MutableList<Long>
      */
-    private fun setCollection(context: AsVideoActivity, selects: MutableList<Long>, avid: Long) {
+    private fun setCollection(
+        context: AsVideoActivity,
+        selects: MutableList<Long>,
+        avid: Long,
+    ) {
         var addMediaIds = ""
         selects.forEachIndexed { index, l ->
             if (index == selects.size) {
