@@ -14,8 +14,9 @@
         视频名称：{TITLE}\n
         分P名称：{P_TITLE}\n
         文件类型：{FILE_TYPE}\n
-        如果视频是av10086，自定义命名规则如下\n{BV}/{TITLE}.{FILE_TYPE}\n
-        则下载的路径和文件名称为\n下载路径/BV1bx411c7u3/搞笑漫画日和之贴纸.mp4
+        视频集数：{P}\n
+        如果视频是av10086，自定义命名规则如下\n{BV}/{P}_{TITLE}.{FILE_TYPE}\n
+        则下载的路径和文件名称为\n下载路径/BV1bx411c7u3/1_搞笑漫画日和之贴纸.mp4
         \n\n【注意】：如果修改后发现文件下载失败了，就尝试直接用CID等作为名称，也可能是系统对这类文件名称有劫持。\n
         尽可能保证音频和视频不在一个文件夹里，经过测试，这样有可能诱发一个文件下载失败。
     </string>
@@ -190,7 +191,7 @@
     <string name="app_fragment_home_donate">捐款</string>
     <string name="app_fragment_home_salute">致敬</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.47</string>
+    <string name="app_fragment_home_version">V2.0.47-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">向全体BILIBILIAS用户致敬</string>
     <string name="app_fragment_home_salute_doc">爱好和追求不分年龄，无论何时，对生活有份热爱，才是最快乐的事，生命才能多姿多彩！—— BILIBILIAS用户</string>
     <string name="app_fragment_home_donate_text">为BILIBILIAS的开发提供支持</string>
@@ -253,7 +254,7 @@
     <string name="user_download_save_sd_path_switch_title">用存储卡作为下载路径</string>
     <string name="user_download_save_sd_path_switch_off">使用存储卡储存</string>
     <string name="user_download_save_sd_path_switch_on">这里的路径无法修改，储存位置为：\n存储卡/Android/data/com.imcys.bilibilias/files/download\n注意：卸载该应用，将会清空已存储的数据。</string>
-    <string name="user_download_file_name_default" translatable="false">{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}</string>
+    <string name="user_download_file_name_default" translatable="false">{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}</string>
     <string name="rename_user_download_save_path_title">还原下载路径</string>
     <string name="rename_user_download_file_name_editText_title">还原命名规则</string>
     <string name="app_root_preferences_title_behavior">缓存完成后的行为</string>

@@ -51,6 +51,7 @@ import com.imcys.bilibilias.home.ui.model.*
 import com.microsoft.appcenter.analytics.Analytics
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.io.File
 
 /**
  * 全局使用弹窗工具类
@@ -134,7 +135,7 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
         binding.dataBean = loginQrcodeBean.data
-        asLogE(context,"loginQRDialog: ${loginQrcodeBean.data.qrcode_key}")
+        asLogE(context, "loginQRDialog: ${loginQrcodeBean.data.qrcode_key}")
 
         binding.loginQRModel =
             ViewModelProvider(
@@ -566,7 +567,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -633,7 +634,7 @@ object DialogUtils {
         qn: Int,
         fnval: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         // 向第三方统计提交数据
         addThirdPartyData(
@@ -710,12 +711,58 @@ object DialogUtils {
     }
 
     /**
-     * 下载弹幕文件
+     * 下载视频弹幕文件
      */
     fun downloadDMDialog(
         context: Context,
         videoBaseBean: VideoBaseBean,
-        clickEvent: (binding: DialogDownloadDmBinding) -> Unit,
+        videoPageListData: VideoPageListData,
+        clickEvent: (binding: DialogDownloadDmBinding, videoPageMutableList: List<VideoPageListData.DataBean>) -> Unit,
+    ): BottomSheetDialog {
+        val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener {
+                setDynamicGaussianBlurEffect()
+            }
+        }
+        var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
+
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
+        binding.apply {
+            // 子集选择 默认选中1集
+            videoPageMutableList.add(videoPageListData.data[0])
+            videoPageListData.data[0].selected = 1
+            dialogDlVideoDiversityLy.setOnClickListener {
+                loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
+                    videoPageMutableList = it1
+                    var videoPageMsg = ""
+                    if (videoPageMutableList.size != 1) {
+                        videoPageMutableList.forEach {
+                            videoPageMsg = "${it.page}-$videoPageMsg${it.part} "
+                        }
+                        dialogDlVideoDiversityTx.text = videoPageMsg
+                    }
+                }.show()
+            }
+
+            dialogDlDmButton.setOnClickListener {
+                clickEvent(this, videoPageMutableList)
+            }
+        }
+        return bottomSheetDialog
+    }
+
+
+    /**
+     * 下载番剧弹幕文件
+     */
+    fun downloadDMDialog(
+        context: Context,
+        videoBaseBean: VideoBaseBean,
+        bangumiSeasonBean: BangumiSeasonBean,
+        clickEvent: (binding: DialogDownloadDmBinding,videoPageMutableList: List<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
@@ -727,11 +774,26 @@ object DialogUtils {
         bottomSheetDialog.setContentView(binding.root)
         initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
         binding.apply {
+            var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
+            videoPageMutableList.add(bangumiSeasonBean.result.episodes[0])
+            bangumiSeasonBean.result.episodes[0].selected = 1
+            dialogDlVideoDiversityLy.setOnClickListener {
+                loadVideoPageDialog(context, bangumiSeasonBean, videoPageMutableList) { it1 ->
+                    videoPageMutableList = it1
+                    var videoPageMsg = ""
+
+                    if (videoPageMutableList.size != 1) {
+                        videoPageMutableList.forEach {
+                            videoPageMsg = "${it.title}-$videoPageMsg${it.long_title} "
+                        }
+                        dialogDlVideoDiversityTx.text = videoPageMsg
+                    }
+                }.show()
+            }
             dialogDlDmButton.setOnClickListener {
-                clickEvent.invoke(this)
+                clickEvent.invoke(this,videoPageMutableList)
             }
         }
-
         return bottomSheetDialog
     }
 
@@ -798,7 +860,7 @@ object DialogUtils {
     fun batchDownloadVideoDialog(
         context: Context,
         works: List<UserWorksBean.DataBean.ListBean.VlistBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ): BottomSheetDialog {
 
         var selectDefinition = 80
@@ -825,7 +887,11 @@ object DialogUtils {
             launchUI {
                 val baseVideoBaseBean = networkService.getVideoBaseInfoByBvid(works[0].bvid)
 
-                val baseVideo = networkService.getDashVideoPlayInfo(works[0].bvid,baseVideoBaseBean.data.cid,80)
+                val baseVideo = networkService.getDashVideoPlayInfo(
+                    works[0].bvid,
+                    baseVideoBaseBean.data.cid,
+                    80
+                )
 
                 dialogDlVideoDefinitionLy.setOnClickListener {
                     loadVideoDefinition(context, baseVideo) {
@@ -981,6 +1047,7 @@ object DialogUtils {
 
 
     }
+
     /**
      * 缓存视频弹窗
      * @param context Context
@@ -996,7 +1063,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         videoPageListData: VideoPageListData,
         dashVideoPlayBean: DashVideoPlayBean,
-        networkService: NetworkService
+        networkService: NetworkService,
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
         var selectDefinition = 80
@@ -1030,7 +1097,7 @@ object DialogUtils {
                     var videoPageMsg = ""
                     if (videoPageMutableList.size != 1) {
                         videoPageMutableList.forEach {
-                            videoPageMsg = "$videoPageMsg${it.part} "
+                            videoPageMsg = "${it.page}-$videoPageMsg${it.part} "
                         }
                         dialogDlVideoDiversityTx.text = videoPageMsg
                     }
@@ -1195,7 +1262,7 @@ object DialogUtils {
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
         dashVideoPlayBean: DashVideoPlayBean,
-        networkService: NetworkService
+        networkService: NetworkService,
     ): BottomSheetDialog {
         var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         var selectDefinition = 80
@@ -1228,7 +1295,7 @@ object DialogUtils {
 
                     if (videoPageMutableList.size != 1) {
                         videoPageMutableList.forEach {
-                            videoPageMsg = "$videoPageMsg${it.long_title} "
+                            videoPageMsg = "${it.title}-$videoPageMsg${it.long_title} "
                         }
                         dialogDlVideoDiversityTx.text = videoPageMsg
                     }
@@ -1389,15 +1456,18 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashBangumiPlayBean,
             val dataBean: BangumiSeasonBean.ResultBean.EpisodesBean,
         )
 
-        Toast.makeText(context,
-            context.getString(R.string.app_dialog_addbangumidownloadtask_toast_text), Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            context.getString(R.string.app_dialog_addbangumidownloadtask_toast_text),
+            Toast.LENGTH_SHORT
+        ).show()
 
         launchUI {
             flow {
@@ -1475,7 +1545,7 @@ object DialogUtils {
         downloadCondition: Int,
         toneQuality: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         data class VideoData(
             val dashBangumiPlayBean: DashVideoPlayBean,
@@ -1487,7 +1557,8 @@ object DialogUtils {
         launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val dashVideoPlayBean = networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
+                    val dashVideoPlayBean =
+                        networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
 
                     emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
                 }
@@ -1567,7 +1638,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         videoPageMutableList: MutableList<VideoPageListData.DataBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         data class VideoData(
             val videoPlayBean: VideoPlayBean,
@@ -1614,7 +1685,7 @@ object DialogUtils {
         fnval: Int,
         downloadTool: Int,
         bangumiPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
-        networkService: NetworkService
+        networkService: NetworkService,
     ) {
         data class VideoData(
             val bangumiPlayBean: BangumiPlayBean,
@@ -1685,7 +1756,7 @@ object DialogUtils {
         val inputString =
             sharedPreferences.getString(
                 "user_download_file_name_editText",
-                "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
             )
                 .toString()
         val savePath = inputString.toAsDownloadSavePath(
@@ -1695,11 +1766,11 @@ object DialogUtils {
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
-            urlIndex.toString(),
+            dataBean.page.toString(),
             videoBaseBean.data.title,
             qn.toString(),
         )
-
+        val saveFileName = savePath.split("/").last()
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -1708,7 +1779,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        dataBean.part,
+                        saveFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         videoPlayBean = videoPlayBean,
@@ -1723,6 +1794,10 @@ object DialogUtils {
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
+                        val file = File(savePath)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                         Toast.makeText(
                             context,
                             "${videoBaseBean.data.bvid}下载失败",
@@ -1792,7 +1867,7 @@ object DialogUtils {
         val inputString =
             sharedPreferences.getString(
                 "user_download_file_name_editText",
-                "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
             )
                 .toString()
 
@@ -1803,11 +1878,11 @@ object DialogUtils {
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
-            urlIndex.toString(),
+            dataBean.title,
             videoBaseBean.data.title,
             qn.toString(),
         )
-
+        val saveFileName = savePath.split("/").last()
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -1816,7 +1891,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        dataBean.title,
+                        saveFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         bangumiPlayBean = bangumiPlayBean,
@@ -1831,6 +1906,10 @@ object DialogUtils {
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
+                        val file = File(savePath)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                         Toast.makeText(
                             context,
                             "${videoBaseBean.data.bvid}下载失败",
@@ -1914,7 +1993,7 @@ object DialogUtils {
         val inputString =
             sharedPreferences.getString(
                 "user_download_file_name_editText",
-                "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
             )
                 .toString()
 
@@ -1926,11 +2005,11 @@ object DialogUtils {
             dataBean.long_title,
             dataBean.cid.toString(),
             fileType,
-            urlIndex.toString(),
+            dataBean.title,
             videoBaseBean.data.title,
             qn.toString(),
         )
-
+        val saveFileName = savePath.split("/").last()
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -1939,7 +2018,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        dataBean.long_title,
+                        saveFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         dashBangumiPlayBean = dashBangumiPlayBean,
@@ -1954,6 +2033,10 @@ object DialogUtils {
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
+                        val file = File(savePath)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                         Toast.makeText(
                             context,
                             "${videoBaseBean.data.bvid}下载失败",
@@ -2036,7 +2119,7 @@ object DialogUtils {
         val inputString =
             sharedPreferences.getString(
                 "user_download_file_name_editText",
-                "{BV}/{FILE_TYPE}/{P_TITLE}_{CID}.{FILE_TYPE}",
+                "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
             )
                 .toString()
 
@@ -2048,11 +2131,11 @@ object DialogUtils {
             dataBean.part,
             dataBean.cid.toString(),
             fileType,
-            urlIndex.toString(),
+            dataBean.page.toString(),
             videoBaseBean.data.title,
             qn.toString(),
         )
-
+        val saveFileName = savePath.split("/").last()
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -2061,7 +2144,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        dataBean.part,
+                        saveFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         dashVideoPlayBean = dashVideoPlayBean,
@@ -2076,6 +2159,10 @@ object DialogUtils {
                             Toast.LENGTH_SHORT,
                         ).show()
                     } else {
+                        val file = File(savePath)
+                        if (file.exists()) {
+                            file.delete()
+                        }
                         Toast.makeText(
                             context,
                             "${videoBaseBean.data.bvid}下载失败",

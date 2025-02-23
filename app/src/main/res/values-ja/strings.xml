@@ -3,18 +3,19 @@
     <string name="action_settings">設定</string>
     <string name="title_activity_user">ユーザー活動</string>
     <string name="dl_file_rename_rules">
-    パスの先頭 / はデフォルトで提供され、追加する必要はありません。\n命名ルール：ダウンロードされたファイルの保存サブディレクトリまたはファイルの命名スキームを表し、いくつかの変数を用意してリネームを支援します。\n以下にいくつかの命名変数を簡単に紹介します：\n
+    パスは先頭に / がデフォルトで付与されるため、手動で追加する必要はありません。\n命名ルール：ダウンロードされたファイルのサブディレクトリまたはファイルの命名スキームを表します。いくつかの変数を用意しましたので、名前を変更するのに役立つでしょう。\n以下にいくつかの変数を紹介します：\n
     AV番号：{AV}\n
     BV番号：{BV}\n
     CID番号：{CID}\n
-    動画名：{TITLE}\n
-    分P名：{P_TITLE}\n
+    動画タイトル：{TITLE}\n
+    分Pタイトル：{P_TITLE}\n
     ファイルタイプ：{FILE_TYPE}\n
-    動画がav10086の場合、カスタム命名ルールは次のとおりです\n{BV}/{TITLE}.{FILE_TYPE}\n
-    ダウンロードパスとファイル名は次のとおりです\nダウンロードパス/BV1bx411c7u3/搞笑漫画日和之贴纸.mp4
-    \n\n【注意】：ファイルのダウンロードに失敗した場合は、CIDなどを名前に直接使用するか、システムがこのようなファイル名を制御している可能性があります。\n
-    音声と動画が同じフォルダに存在しないようにしてください。テストによると、これはファイルのダウンロード失敗を引き起こす可能性があります。
-</string>
+    動画のエピソード：{P}\n
+    例えば、動画がav10086の場合、カスタムの命名ルールは以下の通りです。\n{BV}/{P}_{TITLE}.{FILE_TYPE}\n
+    すると、ダウンロードのパスとファイル名は以下の通りになります。\nダウンロードパス/BV1bx411c7u3/1_おもしろ漫画ステッカー.mp4
+    \n\n【注意】：命名ルールを変更した後、ファイルのダウンロードに失敗した場合は、CIDを直接名前に使用してみてください。システムがこのようなファイル名を遮断する可能性があります。\n
+    また、テストの結果、音声ファイルと動画ファイルを同じフォルダに置くと、ファイルのダウンロードに失敗する可能性がありますので、できるだけ別々のフォルダに置いてください。
+    </string>
 
     <string name="user_download_save_path_title">キャッシュファイルの保存パス</string>
     <string name="user_download_file_name">キャッシュファイルの命名ルール</string>
@@ -63,7 +64,7 @@
     <string name="app_fragment_home_donate">寄付</string>
     <string name="app_fragment_home_salute">敬意を表する</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.0.47</string>
+    <string name="app_fragment_home_version">V2.0.47-天玑-Beta</string>
     <string name="app_fragment_home_salute_text">すべてのBILIBILIASユーザーに敬意を表する</string>
     <string name="app_fragment_home_salute_doc">趣味と追求は年齢に関係なく、いつでも生活に情熱があれば、それが最も楽しいことで、人生をカラフルにできる！ —— BILIBILIASユーザー</string>
     <string name="app_fragment_home_donate_text">BILIBILIASの開発を支援する</string>
