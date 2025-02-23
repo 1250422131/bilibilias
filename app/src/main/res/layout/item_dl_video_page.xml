@@ -29,7 +29,7 @@
             android:layout_height="60dp"
             android:background="@{DataBean.selected == 0 ? `#ffd2e0`  : `#fb7299`}"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:text="@{DataBean.part}"
+            android:text="@{DataBean.page +`-`+ DataBean.part}"
             android:textColor="@{DataBean.selected == 0 ? @color/black  : @color/white}"
             android:textSize="15sp"
 

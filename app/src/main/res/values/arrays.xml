@@ -28,6 +28,7 @@
         <item>简体中文 (中国)</item>
         <item>English (US)</item>
         <item>繁體中文 (中國台灣)</item>
+        <item>Japanese</item>
     </string-array>
 
     <string-array name="app_theme">
@@ -51,6 +52,7 @@
         <item>English</item>
         <item>Chinese(Simplified)</item>
         <item>Chinese-Taiwan(Traditional)</item>
+        <item>Japanese</item>
     </string-array>
 
     <string-array name="app_language_value">
@@ -58,6 +60,7 @@
         <item>en-US</item>
         <item>zh-CN</item>
         <item>zh-TW</item>
+        <item>ja</item>
     </string-array>
 
 </resources>
