@@ -162,8 +162,9 @@
 
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/textView"
 
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
@@ -181,8 +182,10 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_gravity="right"
-                        android:layout_marginStart="20dp"
+                        android:gravity="end"
+                        android:layout_marginStart="10dp"
                         android:layout_toStartOf="@id/as_video_diversity_right"
+                        android:layout_toEndOf="@+id/textView"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="P1"
