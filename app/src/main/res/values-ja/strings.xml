@@ -202,4 +202,7 @@
     <string name="app_download_queue_merge_error">マージエラー</string>
     <string name="app_download_queue_merge_finish">マージが完了しました</string>
     <string name="app_download_shortcut_label">クイックダウンロード</string>
+    <string name="user_dl_task_file_name_cover_switch_off">デフォルトの動画/アニメのタイトルを使用する</string>
+    <string name="user_dl_task_file_name_cover_switch_on">命名ルールを使用したファイル名を使用する</string>
+    <string name="user_dl_task_file_name_cover_switch_title">ダウンロードタスクのタイトル</string>
 </resources>
