@@ -334,4 +334,7 @@
     <string name="app_download_queue_merge_error">合并错误</string>
     <string name="app_download_queue_merge_finish">合并完成</string>
     <string name="app_download_shortcut_label">快速下载</string>
+    <string name="user_dl_task_file_name_cover_switch_off">使用默认的视频/番剧标题</string>
+    <string name="user_dl_task_file_name_cover_switch_on">使用命名规则的文件名称</string>
+    <string name="user_dl_task_file_name_cover_switch_title">下载任务标题</string>
 </resources>
