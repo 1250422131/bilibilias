@@ -138,7 +138,7 @@ class DownloadQueue @Inject constructor(
     data class Progress(
         val downloadedBytes: Long,
         val totalBytes: Long,
-        val progress: Double
+        val progress: Double,
     )
 
     // 创建进度更新通道,用于控制进度更新频率
@@ -215,16 +215,16 @@ class DownloadQueue @Inject constructor(
         url: String,
         file: File,
         headers: Map<String, String>,
-        task: DownloadTaskInfo
+        task: DownloadTaskInfo,
     ): Flow<Progress> = flow {
         val taskKey = getTaskKey(task)
         cancelFlags[taskKey] = false
-        
+
         var retryCount = 0
         val maxRetries = 3
         var lastDownloadedBytes = file.length()
         var isDownloadComplete = false
-        
+
         while (retryCount < maxRetries && !isDownloadComplete) {
             try {
                 client.prepareGet(url) {
@@ -240,18 +240,18 @@ class DownloadQueue @Inject constructor(
                     val totalBytes = response.contentLength()?.plus(lastDownloadedBytes) ?: 0L
 
                     file.parentFile?.mkdirs()
-                    
+
                     val randomAccessFile = RandomAccessFile(file, "rw")
                     if (lastDownloadedBytes > 0) {
                         randomAccessFile.seek(lastDownloadedBytes)
                     }
-                    
+
                     var downloadedBytes = lastDownloadedBytes
                     var lastEmitTime = 0L
-                    
+
                     try {
                         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                        
+
                         while (!channel.isClosedForRead) {
                             if (cancelFlags[taskKey] == true) {
                                 throw CancellationException("Download cancelled")
@@ -265,7 +265,7 @@ class DownloadQueue @Inject constructor(
 
                             randomAccessFile.write(buffer, 0, bytes)
                             downloadedBytes += bytes
-                            
+
                             val currentTime = System.currentTimeMillis()
                             if (currentTime - lastEmitTime >= 100) {
                                 val progress = if (totalBytes > 0) {
@@ -276,14 +276,14 @@ class DownloadQueue @Inject constructor(
                                 emit(Progress(downloadedBytes, totalBytes, progress))
                                 lastEmitTime = currentTime
                             }
-                            
+
                             yield()
                         }
-                        
+
                         if (!isDownloadComplete) {
                             isDownloadComplete = true
                         }
-                        
+
                     } finally {
                         withContext(Dispatchers.IO) {
                             try {
@@ -294,27 +294,27 @@ class DownloadQueue @Inject constructor(
                         }
                     }
                 }
-                
+
                 if (isDownloadComplete) {
                     // 下载完成，跳出循环
                     break
                 }
-                
+
             } catch (e: Exception) {
                 lastDownloadedBytes = file.length() // 保存已下载的大小
                 retryCount++
-                
+
                 if (retryCount >= maxRetries) {
                     throw e
                 }
-                
+
                 // 重试前等待一段时间
                 delay(2000L * retryCount)
-                
+
                 asLogD(context, "下载出错，正在进行第${retryCount}次重试: ${e.message}")
             }
         }
-        
+
         // 确保发送最终进度
         val finalBytes = file.length()
         emit(Progress(finalBytes, finalBytes, 100.0))
@@ -472,8 +472,10 @@ class DownloadQueue @Inject constructor(
                         val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
                         // 修改：检查组内所有任务是否都已下载完成,并且确保有音频和视频文件
                         val isGroupTasksCompleted = groupTasks?.let { tasks ->
-                            val hasVideo = tasks.any { it.fileType == 0 && it.state == STATE_DOWNLOAD_END }
-                            val hasAudio = tasks.any { it.fileType == 1 && it.state == STATE_DOWNLOAD_END }
+                            val hasVideo =
+                                tasks.any { it.fileType == 0 && it.state == STATE_DOWNLOAD_END }
+                            val hasAudio =
+                                tasks.any { it.fileType == 1 && it.state == STATE_DOWNLOAD_END }
                             hasVideo && hasAudio
                         } ?: false
 
@@ -507,7 +509,7 @@ class DownloadQueue @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                asLogD(context,"下载异常："+e.message)
+                asLogD(context, "下载异常：" + e.message)
                 withContext(Dispatchers.Main) {
                     when (e) {
                         is CancellationException -> {
@@ -593,9 +595,18 @@ class DownloadQueue @Inject constructor(
                 )
             }
 
+            val isCoverTaskName = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                "user_dl_task_file_name_cover_switch",
+                true,
+            )
+            val finishFileName = if (isCoverTaskName) {
+                task.savePath.split("/").last().replace(Regex("\\..{3}\$"), "")
+            } else {
+                videoPageTitle
+            }
             val downloadFinishTaskInfo = DownloadFinishTaskInfo(
                 videoTitle = videoTitle,
-                videoPageTitle = videoPageTitle,
+                videoPageTitle = finishFileName,
                 videoAvid = avid,
                 videoBvid = videoBvid,
                 videoCid = cid,
@@ -773,7 +784,7 @@ class DownloadQueue @Inject constructor(
     private fun updateVideoMergeOrImportTask(
         task: DownloadTaskInfo,
         state: Int,
-        downloadState: Boolean
+        downloadState: Boolean,
     ) {
         // 更新任务状态
         task.state = state
@@ -790,7 +801,7 @@ class DownloadQueue @Inject constructor(
     private suspend fun runFFmpegRxJavaVideoMerge(
         task: DownloadTaskInfo,
         videoPath: String,
-        audioPath: String
+        audioPath: String,
     ) {
         val userDLMergeCmd =
             PreferenceManager.getDefaultSharedPreferences(context).getString(

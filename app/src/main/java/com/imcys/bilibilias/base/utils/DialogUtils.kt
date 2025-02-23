@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
@@ -1770,7 +1769,17 @@ object DialogUtils {
             videoBaseBean.data.title,
             qn.toString(),
         )
-        val saveFileName = savePath.split("/").last()
+
+        val isCoverTaskName = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            "user_dl_task_file_name_cover_switch",
+            true,
+        )
+        val finishFileName = if (isCoverTaskName) {
+            savePath.split("/").last().replace(Regex("\\..{3}\$"), "")
+        } else {
+            dataBean.part
+        }
+
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -1779,7 +1788,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        saveFileName,
+                        finishFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         videoPlayBean = videoPlayBean,
@@ -1882,7 +1891,15 @@ object DialogUtils {
             videoBaseBean.data.title,
             qn.toString(),
         )
-        val saveFileName = savePath.split("/").last()
+        val isCoverTaskName = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            "user_dl_task_file_name_cover_switch",
+            true,
+        )
+        val finishFileName = if (isCoverTaskName) {
+            savePath.split("/").last().replace(Regex("\\..{3}\$"), "")
+        } else {
+            dataBean.long_title
+        }
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -1891,7 +1908,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        saveFileName,
+                        finishFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         bangumiPlayBean = bangumiPlayBean,
@@ -2009,7 +2026,15 @@ object DialogUtils {
             videoBaseBean.data.title,
             qn.toString(),
         )
-        val saveFileName = savePath.split("/").last()
+        val isCoverTaskName = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            "user_dl_task_file_name_cover_switch",
+            true,
+        )
+        val finishFileName = if (isCoverTaskName) {
+            savePath.split("/").last().replace(Regex("\\..{3}\$"), "")
+        } else {
+            dataBean.long_title
+        }
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -2018,7 +2043,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        saveFileName,
+                        finishFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         dashBangumiPlayBean = dashBangumiPlayBean,
@@ -2135,7 +2160,15 @@ object DialogUtils {
             videoBaseBean.data.title,
             qn.toString(),
         )
-        val saveFileName = savePath.split("/").last()
+        val isCoverTaskName = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            "user_dl_task_file_name_cover_switch",
+            true,
+        )
+        val finishFileName = if (isCoverTaskName) {
+            savePath.split("/").last().replace(Regex("\\..{3}\$"), "")
+        } else {
+            dataBean.part
+        }
         when (downloadTool) {
             APP_DOWNLOAD -> {
                 downloadQueue.addTask(
@@ -2144,7 +2177,7 @@ object DialogUtils {
                     intFileType,
                     DownloadTaskDataBean(
                         dataBean.cid,
-                        saveFileName,
+                        finishFileName,
                         videoBaseBean.data.bvid,
                         qn.toString(),
                         dashVideoPlayBean = dashVideoPlayBean,
