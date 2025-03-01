@@ -11,13 +11,9 @@
     <external-files-path
         name="ext_file"
         path="/" />
-    />
     <external-cache-path
         name="ext_path"
         path="/" />
-
-    />
-
     <external-path
         name="beta_external_path"
         path="Download/" />

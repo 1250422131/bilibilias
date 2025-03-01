@@ -13,6 +13,7 @@ import androidx.preference.*
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.constant.DOWNLOAD_DEFAULT_PATH
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
@@ -675,7 +676,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                     )!!
 
                     val docList = oldPath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        "$DOWNLOAD_DEFAULT_PATH/",
                         ""
                     ).split("/")
 

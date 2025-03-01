@@ -18,6 +18,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
 import com.imcys.bilibilias.common.base.constant.COOKIES
+import com.imcys.bilibilias.common.base.constant.DOWNLOAD_DEFAULT_PATH
 import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchIO
@@ -581,7 +582,7 @@ class DownloadQueue @Inject constructor(
                     DocumentFile.fromSingleUri(context, Uri.parse(value))!!
                 safPath = (documentFile.uri.toString() + Uri.encode(
                     task.savePath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                        DOWNLOAD_DEFAULT_PATH,
                         ""
                     )
                 ))
@@ -590,7 +591,7 @@ class DownloadQueue @Inject constructor(
                     Regex("/tree/.*:"),
                     ""
                 )!! + task.savePath.replace(
-                    "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download",
+                    DOWNLOAD_DEFAULT_PATH,
                     ""
                 )
             }
@@ -1366,7 +1367,7 @@ class DownloadQueue @Inject constructor(
                     )!!
 
                     val docList = oldPath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        "$DOWNLOAD_DEFAULT_PATH/",
                         ""
                     ).split("/")
 

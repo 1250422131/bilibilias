@@ -17,7 +17,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
-import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
@@ -93,7 +92,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     )
                         .apply()
                     userDownloadSavePathEditText.summary =
-                        "手机根目录：Android/data/com.imcys.bilibilias/files/download"
+                        "手机根目录：download/BILIBILIAS"
                 },
                 negativeButtonClickListener = {
                 },
@@ -200,7 +199,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         )
 
 
-
                     },
                     negativeButtonClickListener = {
                     },
@@ -219,7 +217,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 //                SAVE_FILE_PATH_CODE,
 //            )
             Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
-                requireActivity().startActivityForResult(it,SAVE_FILE_PATH_CODE)
+                requireActivity().startActivityForResult(it, SAVE_FILE_PATH_CODE)
             }
             true
         }
@@ -246,7 +244,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (value == null) {
             userDownloadSavePathEditText.summary =
-                "手机根目录:Android/data/com.imcys.bilibilias/files/download"
+                "手机根目录:download/BILIBILIAS"
         } else {
             val documentFile = DocumentFile.fromSingleUri(requireContext(), Uri.parse(value))
 
