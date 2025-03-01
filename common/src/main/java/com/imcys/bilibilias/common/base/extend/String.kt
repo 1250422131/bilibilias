@@ -6,6 +6,7 @@ import android.os.Build
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
 import androidx.preference.PreferenceManager
+import com.imcys.bilibilias.common.base.constant.DOWNLOAD_DEFAULT_PATH
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 
 /**
@@ -64,7 +65,7 @@ fun String.extract(startString: String, endString: String): String {
     type: String = "",
 ): String {
 
-    val savePath = "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download"
+    val savePath = DOWNLOAD_DEFAULT_PATH
 
     var downloadName =
         this.replace("{AV}", avid)
