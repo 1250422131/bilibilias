@@ -114,6 +114,7 @@ class HomeFragment : BaseFragment() {
     private fun loadServiceData() {
         loadAppData()
         loadBannerData()
+        loadFeedbackConfig()
     }
 
     /**
@@ -224,6 +225,16 @@ class HomeFragment : BaseFragment() {
                 negativeButtonClickListener = {
                 },
             ).show()
+        }
+    }
+
+    /**
+     * 加载反馈配置
+     */
+    private fun loadFeedbackConfig(){
+        launchUI {
+            val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
+            fragmentHomeBinding.feedbackConfig = feedbackConfig
         }
     }
 
