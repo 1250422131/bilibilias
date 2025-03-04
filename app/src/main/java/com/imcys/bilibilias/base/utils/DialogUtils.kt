@@ -17,8 +17,11 @@ import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.baidu.mobstat.StatService
 import com.bumptech.glide.Glide
+import com.drake.brv.utils.linear
+import com.drake.brv.utils.setup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
@@ -761,7 +764,7 @@ object DialogUtils {
         context: Context,
         videoBaseBean: VideoBaseBean,
         bangumiSeasonBean: BangumiSeasonBean,
-        clickEvent: (binding: DialogDownloadDmBinding,videoPageMutableList: List<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
+        clickEvent: (binding: DialogDownloadDmBinding, videoPageMutableList: List<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogDownloadDmBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
@@ -790,7 +793,7 @@ object DialogUtils {
                 }.show()
             }
             dialogDlDmButton.setOnClickListener {
-                clickEvent.invoke(this,videoPageMutableList)
+                clickEvent.invoke(this, videoPageMutableList)
             }
         }
         return bottomSheetDialog
@@ -810,47 +813,130 @@ object DialogUtils {
     }
 
     /**
-     * 下载字幕文件
+     * 解析字幕文件对话框
      */
     fun downloadCCAssDialog(
         context: Context,
-        videoInfoV2: VideoInfoV2,
-        block: (selectCC: VideoInfoV2.Subtitle.MSubtitle) -> Unit,
+        videoPageListData: VideoPageListData,
+        block: (selectVideo: MutableList<VideoPageListData.DataBean>) -> Unit,
     ): BottomSheetDialog {
         val binding = DialogDownloadCcAssBinding.inflate(LayoutInflater.from(context))
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
             setOnShowListener { setDynamicGaussianBlurEffect() }
+        }
+        // 设置布局
+        bottomSheetDialog.setContentView(binding.root)
+        initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
+        binding.apply {
+            var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
+            // 子集选择 默认选中1集
+            videoPageMutableList.add(videoPageListData.data[0])
+            videoPageListData.data[0].selected = 1
+            dialogDlVideoDiversityLy.setOnClickListener {
+                loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
+                    videoPageMutableList = it1
+                    var videoPageMsg = ""
+                    if (videoPageMutableList.size != 1) {
+                        videoPageMutableList.forEach {
+                            videoPageMsg = "${it.page}-$videoPageMsg${it.part} "
+                        }
+                        dialogDlVideoDiversityTx.text = videoPageMsg
+                    }
+                }.show()
+            }
+            dialogDlCcButton.setOnClickListener {
+                block.invoke(videoPageMutableList)
+                bottomSheetDialog.cancel()
+            }
+            dialogDlCcCloseButton.setOnClickListener { bottomSheetDialog.cancel() }
+        }
+
+        return bottomSheetDialog
+    }
+
+
+    /**
+     * 选择要下载的字幕文件
+     */
+    fun selectVideoCCAssDialog(
+        context: Context,
+        videoInfoV2List: List<VideoInfoV2>,
+        videoPageDataList: List<VideoPageListData.DataBean>,
+        finishSelect: (selectCCInfo: List<SelectCCUrlAndVideoPageInfo>) -> Unit,
+    ): BottomSheetDialog {
+        val binding = DialogSelectVideoCcAssBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog).apply {
+            setOnShowListener { setDynamicGaussianBlurEffect() }
+        }
+        val selectCCInfo = mutableListOf<SelectCCUrlAndVideoPageInfo>()
+        videoInfoV2List.forEachIndexed { index, videoInfoV2 ->
+            selectCCInfo.add(
+                SelectCCUrlAndVideoPageInfo(
+                    videoInfoV2.subtitle.subtitles[0].subtitleUrl,
+                    videoPageDataList[index]
+                )
+            )
         }
 
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
         binding.apply {
-            var selectIndex = 0
-            val ccAssAdapter = CCAssAdapter {
-                // 获取选中的值
-                selectIndex = it
-            }
-
-            dialogDownloadCcAssRv.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            dialogDownloadCcAssRv.adapter = ccAssAdapter
-
-            ccAssAdapter.submitList(videoInfoV2.subtitle.subtitles)
+            ccListRv.linear().setup {
+                addType<VideoInfoV2>(R.layout.item_select_cc_ass)
+                onBind {
+                    val model = getModel<VideoInfoV2>()
+                    getBinding<ItemSelectCcAssBinding>().apply {
+                        setCCList(model, videoPageDataList[layoutPosition], selectCCInfo){
+                            selectCCInfo[layoutPosition] = SelectCCUrlAndVideoPageInfo(it.subtitleUrl,videoPageDataList[layoutPosition])
+                            notifyItemChanged(layoutPosition)
+                        }
+                    }
+                }
+            }.models = videoInfoV2List
 
             dialogDlCcButton.setOnClickListener {
-                block.invoke(videoInfoV2.subtitle.subtitles[selectIndex])
-                bottomSheetDialog.cancel()
-            }
-
-            dialogDlCcCloseButton.setOnClickListener { bottomSheetDialog.cancel() }
-
-            if (videoInfoV2.subtitle.subtitles.isEmpty()) {
-                dialogDlCcButton.visibility = View.GONE
+                finishSelect.invoke(selectCCInfo.distinct())
             }
         }
-
         return bottomSheetDialog
+    }
+
+    private fun ItemSelectCcAssBinding.setCCList(
+        model: VideoInfoV2,
+        dataBean: VideoPageListData.DataBean,
+        selectCCInfo: MutableList<SelectCCUrlAndVideoPageInfo>,
+        onClickItem: (model: VideoInfoV2.Subtitle.MSubtitle) -> Unit,
+    ) {
+        tvTitle.text = dataBean.part
+        ccRv.linear(RecyclerView.HORIZONTAL).setup {
+            addType<VideoInfoV2.Subtitle.MSubtitle>(R.layout.item_cc_ass_lang)
+            onBind {
+                val itemModel = getModel<VideoInfoV2.Subtitle.MSubtitle>()
+                getBinding<ItemCcAssLangBinding>().apply {
+                    setCcAssLang(itemModel, selectCCInfo) {
+                        onClickItem.invoke(it)
+
+                    }
+                }
+            }
+        }.models = model.subtitle.subtitles
+    }
+
+    private fun ItemCcAssLangBinding.setCcAssLang(
+        model: VideoInfoV2.Subtitle.MSubtitle,
+        selectCCInfo: MutableList<SelectCCUrlAndVideoPageInfo>,
+        onClickItem: (model: VideoInfoV2.Subtitle.MSubtitle) -> Unit,
+    ) {
+        tvTitle.text = model.lanDoc
+        if (selectCCInfo.any { it.ccUrl == model.subtitleUrl }) {
+            itemCcAssLy.setBackgroundResource(R.drawable.subsection_bg)
+        } else {
+            itemCcAssLy.setBackgroundResource(R.drawable.subsection_false_bg)
+        }
+        root.setOnClickListener {
+            onClickItem.invoke(model)
+        }
     }
 
 
@@ -2341,7 +2427,7 @@ object DialogUtils {
             // 设置完成选中的子集
             dialogCollectionFinishBt.setOnClickListener {
                 bottomSheetDialog.cancel()
-                finished(videoPageMutableList)
+                finished(videoPageMutableList.distinct().toMutableList())
             }
 
             dialogCollectionAllSelectBt.apply {
