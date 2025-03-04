@@ -25,3 +25,8 @@ data class VideoPageListData(
         )
     }
 }
+
+data class SelectCCUrlAndVideoPageInfo(
+    val ccUrl: String,
+    val videoPageInfo: VideoPageListData.DataBean,
+)
