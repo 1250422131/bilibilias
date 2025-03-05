@@ -10,9 +10,11 @@ import android.widget.*
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.*
 import androidx.preference.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.constant.DOWNLOAD_DEFAULT_PATH
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
@@ -22,6 +24,7 @@ import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.FileUtils
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
+import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.common.network.danmaku.*
 import com.imcys.bilibilias.danmaku.change.*
 import com.imcys.bilibilias.home.ui.activity.*
@@ -308,69 +311,143 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         }.show()
     }
 
-    private val _danmakuState = MutableStateFlow(AsVideoState())
-    val danmakuState = _danmakuState.asStateFlow()
-    fun downloadCCAss(view: View, avid: Long, cid: Long) {
+
+    /**
+     * 下载字幕
+     */
+    fun downloadCCAss(
+        view: View, avid: Long, bvid: String,
+        videoBaseBean: VideoBaseBean,
+        videoPageListData: VideoPageListData,
+    ) {
         val context = view.context
-        val dialogLoad = DialogUtils.loadDialog(context)
-        dialogLoad.show()
-        viewModelScope.launchIO {
-            val bvId = NewVideoNumConversionUtils.av2bv(avid)
-            danmakuRepository.getCideoInfoV2(avid, cid).collect { result ->
-                when (result) {
-                    is Result.Error -> TODO()
-                    Result.Loading -> {}
-                    is Result.Success -> {
-                        _danmakuState.update {
-                            it.copy(videoInfoV2 = result.data.data)
-                        }
-                        launchUI {
-                            dialogLoad.cancel()
-                            DialogUtils.downloadCCAssDialog(context, result.data.data) {
-                                saveCCAss(
-                                    bvId,
-                                    cid,
-                                    result.data.data.name,
-                                    it.lan,
-                                    it.subtitleUrl,
-                                    context
-                                )
-                            }.show()
+        DialogUtils.downloadCCAssDialog(
+            context,
+            videoPageListData
+        ) { selectVideos ->
+
+            val loadDialog = DialogUtils.loadProgressDialog(context)
+            loadDialog.show()
+            val titleView = loadDialog.findViewById<TextView>(R.id.dialog_load_tip)
+            val progressBar = loadDialog.findViewById<ProgressBar>(R.id.dialog_load_progressBar)
+            titleView?.text = "正在加载"
+            progressBar?.max = selectVideos.size
+            progressBar?.progress = 0
+
+            launchIO {
+                val assFlowList = mutableListOf<Flow<Result<ResBean<VideoInfoV2>>>>()
+                selectVideos.forEach {
+                    assFlowList.add(danmakuRepository.getCideoInfoV2(avid, it.cid))
+                }
+                val videoInfoList = mutableListOf<VideoInfoV2>()
+                val videoPageDataList = mutableListOf<VideoPageListData.DataBean>()
+                assFlowList.forEachIndexed { index, flow ->
+                    flow.collect { value ->
+                        when (value) {
+                            is Result.Success -> {
+                                if (value.data.data.subtitle.subtitles.isNotEmpty()) {
+                                    videoInfoList.add(value.data.data)
+                                    videoPageDataList.add(selectVideos[index])
+                                }
+                                launchUI { progressBar?.progress = index + 1 }
+                            }
+
+                            is Result.Error -> {}
+                            Result.Loading -> {}
                         }
                     }
                 }
+                launchUI { showSelectVideoCCAssDialog(
+                    context,
+                    videoBaseBean,
+                    videoInfoList,
+                    videoPageDataList,
+                    loadDialog
+                ) }
             }
-        }
+        }.show()
+    }
+
+    private fun showSelectVideoCCAssDialog(
+        context: Context,
+        videoBaseBean: VideoBaseBean,
+        videoInfoList: MutableList<VideoInfoV2>,
+        videoPageDataList: MutableList<VideoPageListData.DataBean>,
+        loadDialog: BottomSheetDialog,
+    ) {
+        loadDialog.dismiss()
+        DialogUtils.selectVideoCCAssDialog(
+            context,
+            videoInfoList,
+            videoPageDataList
+        ) {
+            val loadDialog = DialogUtils.loadProgressDialog(context)
+            loadDialog.show()
+            val titleView = loadDialog.findViewById<TextView>(R.id.dialog_load_tip)
+            val progressBar = loadDialog.findViewById<ProgressBar>(R.id.dialog_load_progressBar)
+            titleView?.text = "正在加载"
+            progressBar?.max = it.size
+            progressBar?.progress = 0
+
+            launchIO {
+                it.forEachIndexed { index,selectCCInfo->
+                    launchUI { progressBar?.progress = index +1 }
+                    val sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                    val inputString =
+                        sharedPreferences.getString(
+                            "user_download_file_name_editText",
+                            "{BV}/{FILE_TYPE}/{P}_{P_TITLE}_{CID}.{FILE_TYPE}",
+                        )
+                            .toString()
+                    val savePath = inputString.toAsDownloadSavePath(
+                        context,
+                        videoBaseBean.data.aid.toString(),
+                        videoBaseBean.data.bvid,
+                        selectCCInfo.videoPageInfo.part,
+                        selectCCInfo.videoPageInfo.cid.toString(),
+                        "ass",
+                        selectCCInfo.videoPageInfo.page.toString(),
+                        videoBaseBean.data.title,
+                        "ass",
+                    )
+                    saveCCAss(selectCCInfo.videoPageInfo.part,videoBaseBean,selectCCInfo.ccUrl,context, savePath)
+                }
+                launchUI {
+                    loadDialog.dismiss()
+                    asToast(context,"下载完成")
+                }
+            }
+
+        }.show()
     }
 
     /**
      * 保存CC字幕文件
      */
-    private fun saveCCAss(
-        bvId: String,
-        cid: Long,
+    private suspend fun saveCCAss(
         title: String,
-        lang: String,
+        videoBaseBean: VideoBaseBean,
         subtitleUrl: String,
         context: Context,
-    ) {
-        val dialogLoad = DialogUtils.loadDialog(context)
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        savePath: String,
+    ) = withContext(Dispatchers.IO) {
 
-        val savePath = sharedPreferences.getString(
-            "user_download_save_path",
-            context.getExternalFilesDir("download").toString(),
-        )
-        val fileName = "$savePath/$bvId/${cid}_cc_$lang.ass"
-        val assFile = File(fileName)
+        val assFile = File(savePath)
 
-        val folderFile = File("$savePath/$bvId")
-        // 检查是否存在文件夹
-        if (!folderFile.exists()) folderFile.mkdirs()
+        // 确保父目录存在（递归创建所有必要的目录）
+        if (assFile.parentFile?.exists() != true) {
+            assFile.parentFile?.mkdirs() // 递归创建所有缺失的父目录
+        }
 
-        if (!FileUtils.isFileExists(assFile)) assFile.createNewFile()
+        // 清空文件内容或创建文件
+        if (assFile.exists()) {
+            assFile.writeText("") // 清空文件内容
+        } else {
+            assFile.createNewFile() // 创建文件
+        }
 
-        viewModelScope.launchIO {
+        launchIO {
             val videoCCInfo = http.get(subtitleUrl).body<VideoCCInfo>()
 
             assFile.writeText(
@@ -382,15 +459,13 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                     context,
                 ),
             )
-            moveFileToDlUriPath("$savePath/$bvId/${cid}_cc_$lang.ass")
+            moveFileToDlUriPath(savePath)
 
             launchUI {
-                dialogLoad.cancel()
-                asToast(context, "下载字幕储存于：存储目录/$bvId/${cid}_cc_$lang.ass")
-                // 通知下载成功
                 Analytics.trackEvent(context.getString(R.string.download_barrage))
             }
         }
+
     }
 
     private suspend fun saveAssDanmaku(
@@ -675,7 +750,7 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                     )!!
 
                     val docList = oldPath.replace(
-                        "/storage/emulated/0/Android/data/com.imcys.bilibilias/files/download/",
+                        "$DOWNLOAD_DEFAULT_PATH/",
                         ""
                     ).split("/")
 

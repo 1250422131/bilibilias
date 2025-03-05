@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.flowWithLifecycle
@@ -32,6 +33,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -211,45 +213,22 @@ class DownloadFragment : BaseFragment() {
      */
     private fun deleteSelectTaskAndFile() {
         downloadFinishTaskAd.currentList.filter { it.selectState }
-            .forEach {
-                it.fileType
-                val sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(OkDownloadProvider.context)
-                val saveUriPath = sharedPreferences.getString(
-                    "user_download_save_uri_path",
-                    null,
+            .forEach {task->
+                val downloadFile = File(task.savePath)
+                val uri = FileProvider.getUriForFile(
+                    OkDownloadProvider.context,
+                    "com.imcys.bilibilias.fileProvider",
+                    downloadFile
                 )
-                if (saveUriPath != null) {
-                    // 走SAF
-                    var dlFileDocument = DocumentFile.fromTreeUri(
-                        OkDownloadProvider.context,
-                        Uri.parse(saveUriPath)
-                    )
-                    launchIO {
-                        // 无需等待
-                        val mPath = it.savePath.replace("/storage/emulated/0/", "")
-                        val docList = mPath.split("/")
-                        docList.forEachIndexed { index, name ->
-                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                            if (index == docList.size - 1) {
-                                if (dlFileDocument?.isFile == true && dlFileDocument?.isDirectory != true && dlFileDocument?.name == docList.last()) {
-                                    dlFileDocument?.delete()
-                                } else {
-                                    launchUI {
-                                        asToast(
-                                            OkDownloadProvider.context,
-                                            it.videoTitle + "删除失败，请自行手动删除，这可能与修改存储路径有关系。"
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                try {
+                    val deleted = OkDownloadProvider.context.contentResolver.delete(uri, null, null) > 0
+                    if (deleted) {
+                        asToast(OkDownloadProvider.context, "删除成功")
+                    } else {
+                        asToast(OkDownloadProvider.context, "删除失败")
                     }
-                } else {
-                    // 走普通删除
-                    launchIO {
-                        FileUtils.delete(it.savePath)
-                    }
+                } catch ( e:Exception) {
+                    asToast(OkDownloadProvider.context, "没有权限删除文件: ${e.message}")
                 }
             }
 

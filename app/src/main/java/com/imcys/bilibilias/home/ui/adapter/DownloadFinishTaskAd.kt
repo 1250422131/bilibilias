@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import com.liulishuo.okdownload.OkDownloadProvider.context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileNotFoundException
 import javax.inject.Inject
 
 
@@ -141,7 +143,6 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                                 "com.imcys.bilibilias.fileProvider",
                                 File(task.savePath),
                             )
-
                             val intent = Intent()
                             intent.apply {
                                 action = Intent.ACTION_VIEW
@@ -180,43 +181,22 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                 deleteTaskRecords(task.id)
                 it.cancel()
             }.setNeutralButton("删除记录和文件") {
-                deleteTaskRecords(task.id)
-                val sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(context)
-
-                val saveUriPath = sharedPreferences.getString(
-                    "user_download_save_uri_path",
-                    null,
+                val downloadFile = File(task.savePath)
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    "com.imcys.bilibilias.fileProvider",
+                    downloadFile
                 )
-                if (saveUriPath != null) {
-                    // 走SAF
-                    var dlFileDocument = DocumentFile.fromTreeUri(
-                        context,
-                        Uri.parse(saveUriPath)
-                    )
-                    launchIO {
-                        // 无需等待
-                        val mPath = task.savePath.replace("/storage/emulated/0/", "")
-                        val docList = mPath.split("/")
-                        docList.forEachIndexed { index, name ->
-                            dlFileDocument = dlFileDocument?.findFile(name) ?: dlFileDocument
-                            if (index == docList.size - 1) {
-                                if (dlFileDocument?.isFile == true && dlFileDocument?.isDirectory != true && dlFileDocument?.name == docList.last()) {
-                                    dlFileDocument?.delete()
-                                } else {
-                                    launchUI {
-                                        asToast(
-                                            context,
-                                            task.videoTitle + "删除失败，请自行手动删除，这可能与修改存储路径有关系。"
-                                        )
-                                    }
-                                }
-
-                            }
-                        }
+                deleteTaskRecords(task.id)
+                try {
+                    val deleted = context.contentResolver.delete(uri, null, null) > 0
+                    if (deleted) {
+                        asToast(context, "删除成功")
+                    } else {
+                        asToast(context, "删除失败，请尝试手动删除")
                     }
-                } else {
-                    FileUtils.delete(task.savePath)
+                } catch ( e:Exception) {
+                    asToast(context, "没有权限删除: ${e.message}")
                 }
                 it.cancel()
             }
