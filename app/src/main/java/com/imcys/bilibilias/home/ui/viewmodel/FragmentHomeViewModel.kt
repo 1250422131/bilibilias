@@ -38,8 +38,8 @@ class FragmentHomeViewModel : ViewModel() {
         view.context.startActivity(intent)
     }
 
-    fun goToCommunity(view: View) {
-        val uri = Uri.parse("https://support.qq.com/product/337496")
+    fun goToCommunity(view: View,url:String) {
+        val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }

@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.common.base.constant
 
+import android.os.Environment
+import java.io.File
+
 const val BROWSER_USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76"
 
@@ -16,3 +19,9 @@ const val COOKIE = "cookie"
 const val COOKIES = "cookies"
 
 const val REFERER = "Referer"
+
+val DOWNLOAD_DEFAULT_PATH by lazy {
+    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + File.separator + "BILIBILIAS"
+}
+
+const val FILE_PROVIDER = "com.imcys.bilibilias.fileprovider"

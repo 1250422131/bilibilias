@@ -23,6 +23,7 @@ import com.imcys.bilibilias.home.ui.model.DashVideoPlayBean
 import com.imcys.bilibilias.home.ui.model.OldDonateBean
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldHomeBannerDataBean
+import com.imcys.bilibilias.home.ui.model.OldHomeFeedbackConfigBean
 import com.imcys.bilibilias.home.ui.model.OldToolItemBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
@@ -288,6 +289,12 @@ class NetworkService @Inject constructor(
     suspend fun getOldHomeBannerData(): OldHomeBannerDataBean = runCatchingOnWithContextIo {
         httpClient.get(BiliBiliAsApi.updateDataPath) {
             parameter("type", "banner")
+        }.body()
+    }
+
+    suspend fun getOldHomeFeedbackConfigData(): OldHomeFeedbackConfigBean = runCatchingOnWithContextIo {
+        httpClient.get(BiliBiliAsApi.updateDataPath) {
+            parameter("type", "feedback")
         }.body()
     }
 
