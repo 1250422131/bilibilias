@@ -1664,14 +1664,18 @@ object DialogUtils {
         )
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+        val noDashList = mutableListOf<VideoPageListData.DataBean>()
 
         launchUI {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
                         networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
-
-                    emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
+                    if (dashVideoPlayBean.data.dash.video.isNotEmpty()){
+                        emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
+                    }else{
+                        noDashList.add(it)
+                    }
                 }
             }.collect {
                 when (downloadCondition) {
@@ -1730,6 +1734,18 @@ object DialogUtils {
                         )
                     }
                 }
+            }
+
+            if(noDashList.isNotEmpty()){
+                addFlvDownloadTask(
+                    context,
+                    videoBaseBean,
+                    qn,
+                    80,
+                    downloadTool,
+                    noDashList,
+                    networkService
+                )
             }
         }
     }
