@@ -1560,11 +1560,16 @@ object DialogUtils {
             Toast.LENGTH_SHORT
         ).show()
 
+        val noDashList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         launchUI {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
-                    emit(VideoData(dashBangumiPlayBean, it))
+                    if(dashBangumiPlayBean.result.dash.video.isNotEmpty()){
+                        emit(VideoData(dashBangumiPlayBean, it))
+                    }else{
+                        noDashList.add(it)
+                    }
                 }
             }.collect {
                 when (downloadCondition) {
@@ -1624,6 +1629,21 @@ object DialogUtils {
                     }
                 }
             }
+
+
+            // 下载失败的番剧走FLV渠道
+            if (noDashList.isNotEmpty()){
+                addFlvBangumiDownloadTask(
+                    context,
+                    videoBaseBean,
+                    qn,
+                    80,
+                    downloadTool,
+                    noDashList,
+                    networkService
+                )
+            }
+
         }
     }
 
