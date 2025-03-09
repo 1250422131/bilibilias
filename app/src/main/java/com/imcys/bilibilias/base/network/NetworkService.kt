@@ -78,6 +78,16 @@ class NetworkService @Inject constructor(
             }.body()
         }
 
+    suspend fun getDashBangumiPlayInfo(epid: String, qn: Int): DashBangumiPlayBean =
+        runCatchingOnWithContextIo {
+            httpClient.get("pgc/player/web/playurl") {
+                refererBILIHarder()
+                parameterEpID(epid)
+                parameter("qn", qn)
+                parameter("fnval", 4048)
+                parameter("fourk", 1)
+            }.body()
+        }
     private suspend inline fun <reified T> viewPlayUrl(
         bvid: String,
         cid: String,
