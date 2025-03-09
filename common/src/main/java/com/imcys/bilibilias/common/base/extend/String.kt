@@ -83,6 +83,9 @@ fun String.extract(startString: String, endString: String): String {
     downloadName = downloadName.replace("""\s""".toRegex(),"_")
     downloadName = downloadName.replace("""\n""".toRegex(),"_")
     downloadName = downloadName.replace("""\\""".toRegex(),"_")
+    downloadName = downloadName.replace("""\|""".toRegex(),"_")
+    downloadName = downloadName.replace("""-""".toRegex(),"_")
+    downloadName = downloadName.replace(Regex("\""),"_")
 
     return "${savePath}/$downloadName"
 }

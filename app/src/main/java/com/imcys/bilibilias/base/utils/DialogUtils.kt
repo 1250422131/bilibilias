@@ -1174,6 +1174,12 @@ object DialogUtils {
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
         binding.apply {
+
+            val isNotEmptyAudio =  dashVideoPlayBean.data.dash.audio.isNotEmpty()
+            dialogDlVideoAndAudio.isEnabled = isNotEmptyAudio
+            dialogDlOnlyAudio.isEnabled = isNotEmptyAudio
+            dialogDlAudioTypeLy.visibility = if(isNotEmptyAudio) View.VISIBLE else View.GONE
+            dialogDlVideoRadioGroup
             // 子集选择 默认选中1集
             videoPageListData.data[0].selected = 1
             dialogDlVideoDiversityLy.setOnClickListener {
@@ -1249,8 +1255,8 @@ object DialogUtils {
                         }
                     }
 
-                    downloadCondition = getInt("user_download_condition", 1)
-                    when (getInt("user_download_condition", 1)) {
+                    downloadCondition = if(isNotEmptyAudio) getInt("user_download_condition", 1) else 3
+                    when (downloadCondition) {
                         1 -> {
                             dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
                         }
@@ -1554,11 +1560,16 @@ object DialogUtils {
             Toast.LENGTH_SHORT
         ).show()
 
+        val noDashList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
         launchUI {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
-                    emit(VideoData(dashBangumiPlayBean, it))
+                    if(dashBangumiPlayBean.result.dash.video.isNotEmpty()){
+                        emit(VideoData(dashBangumiPlayBean, it))
+                    }else{
+                        noDashList.add(it)
+                    }
                 }
             }.collect {
                 when (downloadCondition) {
@@ -1618,6 +1629,21 @@ object DialogUtils {
                     }
                 }
             }
+
+
+            // 下载失败的番剧走FLV渠道
+            if (noDashList.isNotEmpty()){
+                addFlvBangumiDownloadTask(
+                    context,
+                    videoBaseBean,
+                    qn,
+                    80,
+                    downloadTool,
+                    noDashList,
+                    networkService
+                )
+            }
+
         }
     }
 

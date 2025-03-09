@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.home.ui.model
 
+import com.imcys.bilibilias.home.ui.model.serializer.AudioBeanNullSerializer
 import com.imcys.deeprecopy.an.EnhancedData
 import kotlinx.serialization.Serializable
 
@@ -31,6 +32,7 @@ data class DashVideoPlayBean(
         data class DashBean(
             val duration: Int = 0,
             val video: List<VideoBean> = emptyList(),
+            @Serializable(with = AudioBeanNullSerializer::class)
             val audio: List<AudioBean> = emptyList(),
         ) {
             @Serializable
