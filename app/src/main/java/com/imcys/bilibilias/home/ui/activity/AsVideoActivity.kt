@@ -171,9 +171,9 @@ class AsVideoActivity : BaseActivity() {
                     if (videoPlayBean.code != 0) {
                         // 弹出通知弹窗
                         AsDialog.init(this@AsVideoActivity).build {
-                            title =
-                                getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_title)
                             config = {
+                                title =
+                                    getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_title)
                                 content =
                                     getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_content)
                                 positiveButtonText =
@@ -185,6 +185,17 @@ class AsVideoActivity : BaseActivity() {
                         }.show()
                     } else {
                         val dashVideoPlayBean = networkService.n10(bvid, cid)
+                        if (dashVideoPlayBean.data.dash.audio.isEmpty()) {
+                            AsDialog.init(this@AsVideoActivity).build {
+                                config = {
+                                    title = "提示"
+                                    content = "当前视频无音频，请选择仅视频或者MP4模式下载"
+                                    positiveButtonText =
+                                        getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_button_text)
+                                    positiveButton = { it.cancel() }
+                                }
+                            }.show()
+                        }
                         if (dashVideoPlayBean.code != 0) {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
                         }
@@ -412,7 +423,8 @@ class AsVideoActivity : BaseActivity() {
 
         val userVipState = userBaseBean.data.vip.status
         bangumiSeasonBean.result.episodes.forEach {
-            if (it.cid == cid && it.badge == getString(R.string.app_asvideoactivity_ismember_badge) && userVipState != 1) memberType = true
+            if (it.cid == cid && it.badge == getString(R.string.app_asvideoactivity_ismember_badge) && userVipState != 1) memberType =
+                true
         }
         if (memberType) {
             DialogUtils.dialog(
@@ -450,7 +462,7 @@ class AsVideoActivity : BaseActivity() {
 
                     binding.videoPageListData = videoPlayListData
                     asVideoSubsectionRv.adapter =
-                        // 将子集切换后的逻辑交给activity完成
+                            // 将子集切换后的逻辑交给activity完成
                         SubsectionAdapter(videoPlayListData.data.toMutableList()) { data, _ ->
                             // 更新CID刷新播放页面
                             cid = data.cid
