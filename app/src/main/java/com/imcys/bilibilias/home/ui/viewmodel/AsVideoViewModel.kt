@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.*
 import androidx.preference.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior.State
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
@@ -47,8 +48,11 @@ import javax.inject.*
  */
 
 @HiltViewModel
-class AsVideoViewModel @Inject constructor(private val danmakuRepository: DanmakuRepository) :
+class AsVideoViewModel @Inject constructor() :
     ViewModel() {
+
+    @Inject
+    lateinit var danmakuRepository: DanmakuRepository
 
     @Inject
     lateinit var http: HttpClient
@@ -73,13 +77,22 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
         val context = view.context
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
+        val bvid: String
+        val cid: Long
+        if (context is AsVideoActivity){
+            bvid = context.bvid
+            cid = context.cid
+        }else{
+            bvid = videoBaseBean.data.bvid
+            cid = videoBaseBean.data.cid
+        }
+
         viewModelScope.launchUI {
-            (context as AsVideoActivity)
             // 并发
             val dashVideoPlayDeferred =
-                async { networkService.viewDash(context.bvid, context.cid, 64) }
+                async { networkService.viewDash(bvid, cid, 64) }
             val dashBangumiPlayDeferred =
-                async { networkService.pgcPlayUrl(context.cid, 64) }
+                async { networkService.pgcPlayUrl(cid, 64) }
 
             // 等待两个请求的结果
             val dashVideoPlayBean = dashVideoPlayDeferred.await()
@@ -122,13 +135,21 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
 
         val loadDialog = DialogUtils.loadDialog(context).apply { show() }
 
+        val bvid: String
+        val cid: Long
+        if (context is AsVideoActivity){
+            bvid = context.bvid
+            cid = context.cid
+        }else{
+            bvid = videoBaseBean.data.bvid
+            cid = videoBaseBean.data.cid
+        }
         viewModelScope.launchUI {
-            context as AsVideoActivity
             // 并发
             val dashVideoPlayDeferred =
-                async { networkService.viewDash(context.bvid, context.cid, 94) }
+                async { networkService.viewDash(bvid, cid, 94) }
             val dashBangumiPlayDeferred =
-                async { networkService.pgcPlayUrl(context.cid, 64) }
+                async { networkService.pgcPlayUrl(cid, 64) }
 
             // 等待两个请求的结果
             val dashVideoPlayBean = dashVideoPlayDeferred.await()
@@ -357,13 +378,15 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                         }
                     }
                 }
-                launchUI { showSelectVideoCCAssDialog(
-                    context,
-                    videoBaseBean,
-                    videoInfoList,
-                    videoPageDataList,
-                    loadDialog
-                ) }
+                launchUI {
+                    showSelectVideoCCAssDialog(
+                        context,
+                        videoBaseBean,
+                        videoInfoList,
+                        videoPageDataList,
+                        loadDialog
+                    )
+                }
             }
         }.show()
     }
@@ -390,8 +413,8 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
             progressBar?.progress = 0
 
             launchIO {
-                it.forEachIndexed { index,selectCCInfo->
-                    launchUI { progressBar?.progress = index +1 }
+                it.forEachIndexed { index, selectCCInfo ->
+                    launchUI { progressBar?.progress = index + 1 }
                     val sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(context)
                     val inputString =
@@ -411,11 +434,17 @@ class AsVideoViewModel @Inject constructor(private val danmakuRepository: Danmak
                         videoBaseBean.data.title,
                         "ass",
                     )
-                    saveCCAss(selectCCInfo.videoPageInfo.part,videoBaseBean,selectCCInfo.ccUrl,context, savePath)
+                    saveCCAss(
+                        selectCCInfo.videoPageInfo.part,
+                        videoBaseBean,
+                        selectCCInfo.ccUrl,
+                        context,
+                        savePath
+                    )
                 }
                 launchUI {
                     loadDialog.dismiss()
-                    asToast(context,"下载完成")
+                    asToast(context, "下载完成")
                 }
             }
 
