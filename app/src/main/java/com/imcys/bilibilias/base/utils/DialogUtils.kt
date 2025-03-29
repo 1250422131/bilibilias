@@ -887,8 +887,11 @@ object DialogUtils {
                 onBind {
                     val model = getModel<VideoInfoV2>()
                     getBinding<ItemSelectCcAssBinding>().apply {
-                        setCCList(model, videoPageDataList[layoutPosition], selectCCInfo){
-                            selectCCInfo[layoutPosition] = SelectCCUrlAndVideoPageInfo(it.subtitleUrl,videoPageDataList[layoutPosition])
+                        setCCList(model, videoPageDataList[layoutPosition], selectCCInfo) {
+                            selectCCInfo[layoutPosition] = SelectCCUrlAndVideoPageInfo(
+                                it.subtitleUrl,
+                                videoPageDataList[layoutPosition]
+                            )
                             notifyItemChanged(layoutPosition)
                         }
                     }
@@ -1175,10 +1178,10 @@ object DialogUtils {
         // mDialogBehavior.peekHeight = 600
         binding.apply {
 
-            val isNotEmptyAudio =  dashVideoPlayBean.data.dash.audio.isNotEmpty()
+            val isNotEmptyAudio = dashVideoPlayBean.data.dash.audio.isNotEmpty()
             dialogDlVideoAndAudio.isEnabled = isNotEmptyAudio
             dialogDlOnlyAudio.isEnabled = isNotEmptyAudio
-            dialogDlAudioTypeLy.visibility = if(isNotEmptyAudio) View.VISIBLE else View.GONE
+            dialogDlAudioTypeLy.visibility = if (isNotEmptyAudio) View.VISIBLE else View.GONE
             dialogDlVideoRadioGroup
             // 子集选择 默认选中1集
             videoPageListData.data[0].selected = 1
@@ -1255,7 +1258,8 @@ object DialogUtils {
                         }
                     }
 
-                    downloadCondition = if(isNotEmptyAudio) getInt("user_download_condition", 1) else 3
+                    downloadCondition =
+                        if (isNotEmptyAudio) getInt("user_download_condition", 1) else 3
                     when (downloadCondition) {
                         1 -> {
                             dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
@@ -1565,9 +1569,9 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
-                    if(dashBangumiPlayBean.result.dash.video.isNotEmpty()){
+                    if (dashBangumiPlayBean.result.dash.video.isNotEmpty()) {
                         emit(VideoData(dashBangumiPlayBean, it))
-                    }else{
+                    } else {
                         noDashList.add(it)
                     }
                 }
@@ -1632,7 +1636,7 @@ object DialogUtils {
 
 
             // 下载失败的番剧走FLV渠道
-            if (noDashList.isNotEmpty()){
+            if (noDashList.isNotEmpty()) {
                 addFlvBangumiDownloadTask(
                     context,
                     videoBaseBean,
@@ -1671,9 +1675,9 @@ object DialogUtils {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
                         networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
-                    if (dashVideoPlayBean.data.dash.video.isNotEmpty()){
+                    if (dashVideoPlayBean.data.dash.video.isNotEmpty()) {
                         emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
-                    }else{
+                    } else {
                         noDashList.add(it)
                     }
                 }
@@ -1736,7 +1740,7 @@ object DialogUtils {
                 }
             }
 
-            if(noDashList.isNotEmpty()){
+            if (noDashList.isNotEmpty()) {
                 addFlvDownloadTask(
                     context,
                     videoBaseBean,
@@ -2517,7 +2521,12 @@ object DialogUtils {
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
-            val userVipState = (context as AsVideoActivity).userBaseBean.data.vip.status
+            val userVipState = if (context is AsVideoActivity) {
+                context.userBaseBean.data.vip.status
+            } else {
+                val userBaseBean = getUserBaseInfo()
+                userBaseBean?.data?.vip?.status ?: 1
+            }
             // 会员判断
             val epData =
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
