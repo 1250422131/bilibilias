@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
@@ -18,7 +17,6 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
@@ -33,25 +31,21 @@ import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -59,8 +53,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.annotation.Detainted
 import javax.inject.Inject
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
@@ -160,12 +152,15 @@ class HomeFragment : BaseFragment() {
             }
 
             // 新增BannerLifecycleObserver
-            fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                OldHomeBeanAdapter(
-                    oldHomeBannerDataBean.textList,
-                    oldHomeBannerDataBean,
-                ),
-            ).setIndicator(CircleIndicator(requireContext()))
+            fragmentHomeBinding.fragmentHomeBanner.apply {
+                setAdapter(
+                    OldHomeBeanAdapter(
+                        oldHomeBannerDataBean.textList,
+                        oldHomeBannerDataBean,
+                    ),
+                )
+                indicator = CircleIndicator(requireContext())
+            }
         }
     }
 

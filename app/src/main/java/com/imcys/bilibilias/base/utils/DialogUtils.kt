@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewParent
 import android.view.WindowManager
 import android.widget.Toast
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.baidu.mobstat.StatService
 import com.bumptech.glide.Glide
 import com.drake.brv.utils.linear
@@ -44,6 +46,7 @@ import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.asLogE
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -73,6 +76,25 @@ object DialogUtils {
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
 
+    private fun BottomSheetDialog.setPad(){
+       if(isPad(context)){
+           // 动态设置宽度为屏幕宽度的四分之一
+           // 在显示之前设置宽度为屏幕宽度的四分之一
+           val displayMetrics = context.resources.displayMetrics
+           val screenWidth = displayMetrics.widthPixels // 获取屏幕宽度
+           val quarterScreenWidth = screenWidth / 3 // 计算屏幕宽度的四分之一
+
+
+           // 设置 BottomSheetDialog 的宽度
+           val bottomSheet = findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+           bottomSheet?.let {
+               val behavior = BottomSheetBehavior.from(it)
+               behavior.state = BottomSheetBehavior.STATE_EXPANDED  // 设置展开状态
+               it.layoutParams.width = quarterScreenWidth
+               it.requestLayout()
+           }
+       }
+    }
     /**
      * 登录对话框
      * @param context Context
@@ -104,6 +126,7 @@ object DialogUtils {
 
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setPad()
 
         // 用户行为val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -136,6 +159,7 @@ object DialogUtils {
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setPad()
         binding.dataBean = loginQrcodeBean.data
         asLogE(context, "loginQRDialog: ${loginQrcodeBean.data.qrcode_key}")
 
@@ -261,6 +285,7 @@ object DialogUtils {
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(cancelable)
+        bottomSheetDialog.setPad()
 
         initDialogBehaviorBinding(binding.dialogBottomSheetBar, context, binding.root.parent)
 
@@ -311,6 +336,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         binding.dataBean = userInfoBean
         // 用户行为 val mDialogBehavior =
@@ -338,6 +364,7 @@ object DialogUtils {
         val bottomSheetDialog = initBottomSheetDialog(context, view)
         // 用户行为val mDialogBehavior =
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        bottomSheetDialog.setPad()
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
         return bottomSheetDialog
@@ -358,6 +385,7 @@ object DialogUtils {
         val bottomSheetDialog = initBottomSheetDialog(context, view)
         // 用户行为val mDialogBehavior =
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        bottomSheetDialog.setPad()
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
 
@@ -379,6 +407,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         // val mDialogBehavior =
         initDialogBehaviorBinding(
             binding.dialogDlTypeTopBar,
@@ -423,6 +452,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -696,6 +726,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         initDialogBehaviorBinding(binding.dialogToneQualityBar, context, binding.root.parent)
 
@@ -731,6 +762,7 @@ object DialogUtils {
 
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
         binding.apply {
             // 子集选择 默认选中1集
@@ -774,6 +806,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
         binding.apply {
             var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
@@ -826,6 +859,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
         binding.apply {
             var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
@@ -880,6 +914,7 @@ object DialogUtils {
 
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
         binding.apply {
             ccListRv.linear().setup {
@@ -967,7 +1002,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
 
         binding.apply {
@@ -1172,7 +1207,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
@@ -1375,7 +1410,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
 
         // 自定义方案
@@ -2427,6 +2462,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -2510,6 +2546,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -2607,6 +2644,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
