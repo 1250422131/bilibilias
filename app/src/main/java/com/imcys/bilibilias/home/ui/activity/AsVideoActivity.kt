@@ -223,7 +223,7 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-                    val bangumiPlayBean = networkService.n16(epid)
+                    val bangumiPlayBean = networkService.getBangumiPlayBean(epid)
 
                     launchUI {
                         // 设置布局视频播放数据

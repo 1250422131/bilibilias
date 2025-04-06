@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewParent
 import android.view.WindowManager
 import android.widget.Toast
@@ -19,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.baidu.mobstat.StatService
 import com.bumptech.glide.Glide
 import com.drake.brv.utils.linear
@@ -29,12 +27,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.base.model.login.TvLoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.config.TvUserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -76,25 +76,27 @@ object DialogUtils {
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
 
-    private fun BottomSheetDialog.setPad(){
-       if(isPad(context)){
-           // 动态设置宽度为屏幕宽度的四分之一
-           // 在显示之前设置宽度为屏幕宽度的四分之一
-           val displayMetrics = context.resources.displayMetrics
-           val screenWidth = displayMetrics.widthPixels // 获取屏幕宽度
-           val quarterScreenWidth = screenWidth / 3 // 计算屏幕宽度的四分之一
+    private fun BottomSheetDialog.setPad() {
+        if (isPad(context)) {
+            // 动态设置宽度为屏幕宽度的四分之一
+            // 在显示之前设置宽度为屏幕宽度的四分之一
+            val displayMetrics = context.resources.displayMetrics
+            val screenWidth = displayMetrics.widthPixels // 获取屏幕宽度
+            val quarterScreenWidth = screenWidth / 3 // 计算屏幕宽度的四分之一
 
 
-           // 设置 BottomSheetDialog 的宽度
-           val bottomSheet = findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-           bottomSheet?.let {
-               val behavior = BottomSheetBehavior.from(it)
-               behavior.state = BottomSheetBehavior.STATE_EXPANDED  // 设置展开状态
-               it.layoutParams.width = quarterScreenWidth
-               it.requestLayout()
-           }
-       }
+            // 设置 BottomSheetDialog 的宽度
+            val bottomSheet =
+                findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED  // 设置展开状态
+                it.layoutParams.width = quarterScreenWidth
+                it.requestLayout()
+            }
+        }
     }
+
     /**
      * 登录对话框
      * @param context Context
@@ -139,6 +141,80 @@ object DialogUtils {
 
         return bottomSheetDialog
     }
+
+
+    /**
+     * TV接口登录对话框
+     * @param context Context
+     */
+    @SuppressLint("InflateParams")
+    fun tvLoginQRDialog(
+        context: Context,
+        tvLoginQrcodeBean: TvLoginQrcodeBean,
+        networkService: NetworkService,
+        loginResult: (success: Boolean) -> Unit = {}
+    ): BottomSheetDialog {
+        val binding = DialogTvLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+        // 设置布局
+        binding.apply {
+            Glide.with(dialogLoginQrImage)
+                .load("https://pan.misakamoe.com/qrcode/?url=" + tvLoginQrcodeBean.data.url)
+                .into(dialogLoginQrImage)
+
+            btGoToQr.setOnClickListener {
+                val packName = "tv.danmaku.bili"
+                if (AppFilePathUtils.isInstallApp(context, packName)) {
+                    Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan")).also {
+                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(it)
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.app_LoginQRModel_goToQR),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+            tvFinishLogin.setOnClickListener {
+                val loadingDialog = loadDialog(context)
+                launchUI {
+                    loadingDialog.show()
+                    val loginInfo = networkService.tvUserLogin(tvLoginQrcodeBean.data.auth_code)
+                    if (loginInfo.code == 0 && loginInfo.data != null) {
+                        TvUserInfoRepository.mid = loginInfo.data.mid
+                        TvUserInfoRepository.refreshToken = loginInfo.data.refresh_token
+                        TvUserInfoRepository.accessToken = loginInfo.data.access_token
+                        bottomSheetDialog.dismiss()
+                        asToast(context, "漫游登录完成")
+                        loginResult.invoke(true)
+                    } else {
+                        tvTip.visibility = View.VISIBLE
+                        tvTip.text = loginInfo.message
+                        loginResult.invoke(false)
+                    }
+                    loadingDialog.dismiss()
+                }
+
+            }
+        }
+
+        bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setCancelable(true)
+        bottomSheetDialog.setPad()
+
+        // 用户行为val mDialogBehavior =
+        initDialogBehaviorBinding(
+            binding.dialogLoginQrTipBar,
+            context,
+            binding.root.parent,
+        )
+
+
+        return bottomSheetDialog
+    }
+
 
     /**
      * 本地/AS绑定 B站账号登录弹窗
@@ -1816,7 +1892,8 @@ object DialogUtils {
         launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
+                    val videoPlayBean =
+                        networkService.videoPlayPath(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1863,7 +1940,7 @@ object DialogUtils {
         launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = networkService.n4(it.cid, qn)
+                    val bangumiPlayBean = networkService.getBangumiPlayBean(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -2660,6 +2737,10 @@ object DialogUtils {
                 VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
                     selectDefinition = dashVideoPlayBean.data.accept_quality[position]
                 }
+//            val collectionList = dashVideoPlayBean.data.dash.video.map {
+//                dashVideoPlayBean.data.support_formats.firstOrNull { item -> item.quality == it.id }?.new_description+"\n" + it.codecs
+//            }
+
 
             // 设置布局加载器
             dialogCollectionRv.layoutManager =
