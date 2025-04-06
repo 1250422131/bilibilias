@@ -189,7 +189,7 @@ class AsVideoActivity : BaseActivity() {
                             AsDialog.init(this@AsVideoActivity).build {
                                 config = {
                                     title = "提示"
-                                    content = "当前视频无音频，请选择仅视频或者MP4模式下载"
+                                    content = "当前视频无音频，请选择仅视频或者MP4模式下载，注意MP4最高画质为1080P/720P。"
                                     positiveButtonText =
                                         getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_button_text)
                                     positiveButton = { it.cancel() }
@@ -223,7 +223,7 @@ class AsVideoActivity : BaseActivity() {
 
             "bangumi" -> {
                 launchIO {
-                    val bangumiPlayBean = networkService.n16(epid)
+                    val bangumiPlayBean = networkService.getBangumiPlayBean(epid)
 
                     launchUI {
                         // 设置布局视频播放数据

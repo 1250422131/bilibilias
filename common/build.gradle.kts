@@ -12,6 +12,9 @@ android {
 }
 
 dependencies {
+
+    api(libs.androidx.fragment.ktx)
+
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)

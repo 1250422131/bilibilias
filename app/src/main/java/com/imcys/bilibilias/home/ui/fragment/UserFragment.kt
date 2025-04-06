@@ -13,6 +13,7 @@ import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.TokenUtils
+import com.imcys.bilibilias.base.utils.saveUserBaseInfo
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -230,6 +231,8 @@ class UserFragment : BaseFragment() {
      * @return UserBaseBean
      */
     private suspend fun getUserData(): UserBaseBean {
+        val userBaseInfo = networkService.n11(mid)
+        saveUserBaseInfo(userBaseInfo)
         return networkService.n11(mid)
     }
 

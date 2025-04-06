@@ -10,6 +10,23 @@ object BilibiliApi {
 
     const val spacePath = "https://space.bilibili.com/"
 
+    const val tvLoginApi = "https://passport.bilibili.com/"
+
+    const val biliApi = "https://app.bilibili.com/"
+
+    /**
+     * 漫游地址
+     */
+    const val roamingApi = "https://bili-api.misakamoe.com/"
+
+    const val getTvLoginInfo = biliApi + "/x/v2/account/myinfo"
+
+    // TV 二维码登录
+    const val getTvLoginQRPath = tvLoginApi + "x/passport-tv-login/qrcode/auth_code"
+
+    const val getTvLoginStatePath = tvLoginApi + "x/passport-tv-login/qrcode/poll"
+
+
     const val getLoginQRPath = loginApi + "x/passport-login/web/qrcode/generate"
 
     // 需要登陆密钥
