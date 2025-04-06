@@ -27,12 +27,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.base.model.login.TvLoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.view.LoginQRModel
 import com.imcys.bilibilias.base.model.login.view.LoginViewModel
 import com.imcys.bilibilias.base.model.user.DownloadTaskDataBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
+import com.imcys.bilibilias.common.base.config.TvUserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.COOKIE
@@ -44,6 +46,7 @@ import com.imcys.bilibilias.common.base.utils.AsVideoNumUtils
 import com.imcys.bilibilias.common.base.utils.asLogE
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.network.danmaku.VideoInfoV2
 import com.imcys.bilibilias.databinding.*
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
@@ -72,6 +75,27 @@ object DialogUtils {
     const val VIDEOANDAUDIO = 1
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
+
+    private fun BottomSheetDialog.setPad() {
+        if (isPad(context)) {
+            // 动态设置宽度为屏幕宽度的四分之一
+            // 在显示之前设置宽度为屏幕宽度的四分之一
+            val displayMetrics = context.resources.displayMetrics
+            val screenWidth = displayMetrics.widthPixels // 获取屏幕宽度
+            val quarterScreenWidth = screenWidth / 3 // 计算屏幕宽度的四分之一
+
+
+            // 设置 BottomSheetDialog 的宽度
+            val bottomSheet =
+                findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED  // 设置展开状态
+                it.layoutParams.width = quarterScreenWidth
+                it.requestLayout()
+            }
+        }
+    }
 
     /**
      * 登录对话框
@@ -104,6 +128,7 @@ object DialogUtils {
 
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setPad()
 
         // 用户行为val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -116,6 +141,80 @@ object DialogUtils {
 
         return bottomSheetDialog
     }
+
+
+    /**
+     * TV接口登录对话框
+     * @param context Context
+     */
+    @SuppressLint("InflateParams")
+    fun tvLoginQRDialog(
+        context: Context,
+        tvLoginQrcodeBean: TvLoginQrcodeBean,
+        networkService: NetworkService,
+        loginResult: (success: Boolean) -> Unit = {}
+    ): BottomSheetDialog {
+        val binding = DialogTvLoginQrBottomsheetBinding.inflate(LayoutInflater.from(context))
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
+        // 设置布局
+        binding.apply {
+            Glide.with(dialogLoginQrImage)
+                .load("https://pan.misakamoe.com/qrcode/?url=" + tvLoginQrcodeBean.data.url)
+                .into(dialogLoginQrImage)
+
+            btGoToQr.setOnClickListener {
+                val packName = "tv.danmaku.bili"
+                if (AppFilePathUtils.isInstallApp(context, packName)) {
+                    Intent(Intent.ACTION_VIEW, Uri.parse("bilibili://qrscan")).also {
+                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(it)
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.app_LoginQRModel_goToQR),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+            tvFinishLogin.setOnClickListener {
+                val loadingDialog = loadDialog(context)
+                launchUI {
+                    loadingDialog.show()
+                    val loginInfo = networkService.tvUserLogin(tvLoginQrcodeBean.data.auth_code)
+                    if (loginInfo.code == 0 && loginInfo.data != null) {
+                        TvUserInfoRepository.mid = loginInfo.data.mid
+                        TvUserInfoRepository.refreshToken = loginInfo.data.refresh_token
+                        TvUserInfoRepository.accessToken = loginInfo.data.access_token
+                        bottomSheetDialog.dismiss()
+                        asToast(context, "漫游登录完成")
+                        loginResult.invoke(true)
+                    } else {
+                        tvTip.visibility = View.VISIBLE
+                        tvTip.text = loginInfo.message
+                        loginResult.invoke(false)
+                    }
+                    loadingDialog.dismiss()
+                }
+
+            }
+        }
+
+        bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setCancelable(true)
+        bottomSheetDialog.setPad()
+
+        // 用户行为val mDialogBehavior =
+        initDialogBehaviorBinding(
+            binding.dialogLoginQrTipBar,
+            context,
+            binding.root.parent,
+        )
+
+
+        return bottomSheetDialog
+    }
+
 
     /**
      * 本地/AS绑定 B站账号登录弹窗
@@ -136,6 +235,7 @@ object DialogUtils {
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setPad()
         binding.dataBean = loginQrcodeBean.data
         asLogE(context, "loginQRDialog: ${loginQrcodeBean.data.qrcode_key}")
 
@@ -261,6 +361,7 @@ object DialogUtils {
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.setCancelable(cancelable)
+        bottomSheetDialog.setPad()
 
         initDialogBehaviorBinding(binding.dialogBottomSheetBar, context, binding.root.parent)
 
@@ -311,6 +412,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         binding.dataBean = userInfoBean
         // 用户行为 val mDialogBehavior =
@@ -338,6 +440,7 @@ object DialogUtils {
         val bottomSheetDialog = initBottomSheetDialog(context, view)
         // 用户行为val mDialogBehavior =
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        bottomSheetDialog.setPad()
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
         return bottomSheetDialog
@@ -358,6 +461,7 @@ object DialogUtils {
         val bottomSheetDialog = initBottomSheetDialog(context, view)
         // 用户行为val mDialogBehavior =
         initDialogBehavior(R.id.dialog_load_tip_bar, context, view)
+        bottomSheetDialog.setPad()
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
 
@@ -379,6 +483,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         // val mDialogBehavior =
         initDialogBehaviorBinding(
             binding.dialogDlTypeTopBar,
@@ -423,6 +528,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -696,6 +802,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         initDialogBehaviorBinding(binding.dialogToneQualityBar, context, binding.root.parent)
 
@@ -731,6 +838,7 @@ object DialogUtils {
 
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
         binding.apply {
             // 子集选择 默认选中1集
@@ -774,6 +882,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlDmBar, context, binding.root.parent)
         binding.apply {
             var videoPageMutableList = mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>()
@@ -826,6 +935,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
         binding.apply {
             var videoPageMutableList = mutableListOf<VideoPageListData.DataBean>()
@@ -880,6 +990,7 @@ object DialogUtils {
 
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlCcAssBar, context, binding.root.parent)
         binding.apply {
             ccListRv.linear().setup {
@@ -887,8 +998,11 @@ object DialogUtils {
                 onBind {
                     val model = getModel<VideoInfoV2>()
                     getBinding<ItemSelectCcAssBinding>().apply {
-                        setCCList(model, videoPageDataList[layoutPosition], selectCCInfo){
-                            selectCCInfo[layoutPosition] = SelectCCUrlAndVideoPageInfo(it.subtitleUrl,videoPageDataList[layoutPosition])
+                        setCCList(model, videoPageDataList[layoutPosition], selectCCInfo) {
+                            selectCCInfo[layoutPosition] = SelectCCUrlAndVideoPageInfo(
+                                it.subtitleUrl,
+                                videoPageDataList[layoutPosition]
+                            )
                             notifyItemChanged(layoutPosition)
                         }
                     }
@@ -964,7 +1078,7 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
 
         binding.apply {
@@ -1169,16 +1283,16 @@ object DialogUtils {
         }
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
         // 自定义方案
         // mDialogBehavior.peekHeight = 600
         binding.apply {
 
-            val isNotEmptyAudio =  dashVideoPlayBean.data.dash.audio.isNotEmpty()
+            val isNotEmptyAudio = dashVideoPlayBean.data.dash.audio.isNotEmpty()
             dialogDlVideoAndAudio.isEnabled = isNotEmptyAudio
             dialogDlOnlyAudio.isEnabled = isNotEmptyAudio
-            dialogDlAudioTypeLy.visibility = if(isNotEmptyAudio) View.VISIBLE else View.GONE
+            dialogDlAudioTypeLy.visibility = if (isNotEmptyAudio) View.VISIBLE else View.GONE
             dialogDlVideoRadioGroup
             // 子集选择 默认选中1集
             videoPageListData.data[0].selected = 1
@@ -1255,7 +1369,8 @@ object DialogUtils {
                         }
                     }
 
-                    downloadCondition = if(isNotEmptyAudio) getInt("user_download_condition", 1) else 3
+                    downloadCondition =
+                        if (isNotEmptyAudio) getInt("user_download_condition", 1) else 3
                     when (downloadCondition) {
                         1 -> {
                             dialogDlConditionRadioGroup.check(R.id.dialog_dl_video_and_audio)
@@ -1371,7 +1486,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 设置布局
         bottomSheetDialog.setContentView(binding.root)
-
+        bottomSheetDialog.setPad()
         initDialogBehaviorBinding(binding.dialogDlVideoBar, context, binding.root.parent)
 
         // 自定义方案
@@ -1565,9 +1680,9 @@ object DialogUtils {
             flow {
                 bangumiPageMutableList.forEach {
                     val dashBangumiPlayBean = networkService.getDashBangumiPlayInfo(it.cid, qn)
-                    if(dashBangumiPlayBean.result.dash.video.isNotEmpty()){
+                    if (dashBangumiPlayBean.result.dash.video.isNotEmpty()) {
                         emit(VideoData(dashBangumiPlayBean, it))
-                    }else{
+                    } else {
                         noDashList.add(it)
                     }
                 }
@@ -1632,7 +1747,7 @@ object DialogUtils {
 
 
             // 下载失败的番剧走FLV渠道
-            if (noDashList.isNotEmpty()){
+            if (noDashList.isNotEmpty()) {
                 addFlvBangumiDownloadTask(
                     context,
                     videoBaseBean,
@@ -1664,14 +1779,18 @@ object DialogUtils {
         )
 
         Toast.makeText(context, "已添加到下载队列", Toast.LENGTH_SHORT).show()
+        val noDashList = mutableListOf<VideoPageListData.DataBean>()
 
         launchUI {
             flow {
                 videoPageMutableList.forEach {
                     val dashVideoPlayBean =
                         networkService.getDashVideoPlayInfo(videoBaseBean.data.bvid, it.cid, qn)
-
-                    emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
+                    if (dashVideoPlayBean.data.dash.video.isNotEmpty()) {
+                        emit(VideoData(dashVideoPlayBean, it)) // 生产者发送数据
+                    } else {
+                        noDashList.add(it)
+                    }
                 }
             }.collect {
                 when (downloadCondition) {
@@ -1731,6 +1850,18 @@ object DialogUtils {
                     }
                 }
             }
+
+            if (noDashList.isNotEmpty()) {
+                addFlvDownloadTask(
+                    context,
+                    videoBaseBean,
+                    qn,
+                    80,
+                    downloadTool,
+                    noDashList,
+                    networkService
+                )
+            }
         }
     }
 
@@ -1761,7 +1892,8 @@ object DialogUtils {
         launchUI {
             flow {
                 videoPageMutableList.forEach {
-                    val videoPlayBean = networkService.n3(videoBaseBean.data.bvid, it.cid, qn)
+                    val videoPlayBean =
+                        networkService.videoPlayPath(videoBaseBean.data.bvid, it.cid, qn)
                     emit(VideoData(videoPlayBean, it))
                 }
             }.collect {
@@ -1808,7 +1940,7 @@ object DialogUtils {
         launchUI {
             flow {
                 bangumiPageMutableList.forEach {
-                    val bangumiPlayBean = networkService.n4(it.cid, qn)
+                    val bangumiPlayBean = networkService.getBangumiPlayBean(it.cid, qn)
                     emit(VideoData(bangumiPlayBean, it))
                 }
             }.collect {
@@ -2407,6 +2539,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -2490,6 +2623,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -2501,7 +2635,12 @@ object DialogUtils {
         binding.apply {
             dialogCollectionTitle.text = "请选择视频子集"
 
-            val userVipState = (context as AsVideoActivity).userBaseBean.data.vip.status
+            val userVipState = if (context is AsVideoActivity) {
+                context.userBaseBean.data.vip.status
+            } else {
+                val userBaseBean = getUserBaseInfo()
+                userBaseBean?.data?.vip?.status ?: 1
+            }
             // 会员判断
             val epData =
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
@@ -2582,6 +2721,7 @@ object DialogUtils {
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
         // 创建设置布局
         bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.setPad()
 
         // val mDialogBehavior =
         initDialogBehaviorBinding(
@@ -2597,6 +2737,10 @@ object DialogUtils {
                 VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
                     selectDefinition = dashVideoPlayBean.data.accept_quality[position]
                 }
+//            val collectionList = dashVideoPlayBean.data.dash.video.map {
+//                dashVideoPlayBean.data.support_formats.firstOrNull { item -> item.quality == it.id }?.new_description+"\n" + it.codecs
+//            }
+
 
             // 设置布局加载器
             dialogCollectionRv.layoutManager =

@@ -80,7 +80,8 @@ class HomeActivity : BaseActivity() {
             if ("text/plain" == type) {
                 activityHomeBinding.apply {
                     homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
+                    homeBottomNavigationView?.menu?.getItem(1)?.isChecked = true
+                    homeRailNavigationView?.menu?.getItem(1)?.isChecked = true
                     toolFragment.parseShare(intent)
                 }
             }
@@ -88,7 +89,8 @@ class HomeActivity : BaseActivity() {
         if (Intent.ACTION_CREATE_SHORTCUT == intent?.action) {
             activityHomeBinding.apply {
                 homeViewPage.currentItem = 1
-                homeBottomNavigationView.menu.getItem(1).isChecked = true
+                homeBottomNavigationView?.menu?.getItem(1)?.isChecked = true
+                homeRailNavigationView?.menu?.getItem(1)?.isChecked = true
                 toolFragment.parseShare(intent)
             }
         }
@@ -103,7 +105,9 @@ class HomeActivity : BaseActivity() {
             if ("text/plain" == type) {
                 activityHomeBinding.apply {
                     homeViewPage.currentItem = 1
-                    homeBottomNavigationView.menu.getItem(1).isChecked = true
+                    homeBottomNavigationView?.menu?.getItem(1)?.isChecked = true
+                    homeRailNavigationView?.menu?.getItem(1)?.isChecked = true
+
                     toolFragment.parseShare(intent)
                 }
             }
@@ -112,7 +116,9 @@ class HomeActivity : BaseActivity() {
         if (asUrl != null) {
             activityHomeBinding.apply {
                 homeViewPage.currentItem = 1
-                homeBottomNavigationView.menu.getItem(1).isChecked = true
+                homeBottomNavigationView?.menu?.getItem(1)?.isChecked = true
+                homeRailNavigationView?.menu?.getItem(1)?.isChecked = true
+
                 toolFragment.parseShare(intent)
             }
         }
@@ -137,14 +143,15 @@ class HomeActivity : BaseActivity() {
                 // 滚动监听选择
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    it.homeBottomNavigationView.menu.getItem(position).isChecked = true
+                    it.homeBottomNavigationView?.menu?.getItem(position)?.isChecked = true
+                    it.homeRailNavigationView?.menu?.getItem(position)?.isChecked = true
                 }
             })
 
             it.homeViewPage.isUserInputEnabled = false
 
             // 点击监听
-            it.homeBottomNavigationView.setOnItemSelectedListener { item ->
+            it.homeBottomNavigationView?.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.home_bottom_menu_black_room -> {
                         it.homeViewPage.currentItem = 0
@@ -164,6 +171,32 @@ class HomeActivity : BaseActivity() {
                     R.id.home_bottom_menu_statistics -> {
                         it.homeViewPage.currentItem = 3
                         it.homeBottomNavigationView.menu.getItem(3).isChecked = true
+                    }
+                }
+                false
+            }
+            // 平板
+            it.homeRailNavigationView?.setOnItemSelectedListener {
+                    item ->
+                when (item.itemId) {
+                    R.id.home_bottom_menu_black_room -> {
+                        it.homeViewPage.currentItem = 0
+                        it.homeRailNavigationView.menu.getItem(0).isChecked = true
+                    }
+
+                    R.id.home_bottom_menu_discipline_admin -> {
+                        it.homeViewPage.currentItem = 1
+                        it.homeRailNavigationView.menu.getItem(1).isChecked = true
+                    }
+
+                    R.id.home_bottom_menu_operation_log -> {
+                        it.homeViewPage.currentItem = 2
+                        it.homeRailNavigationView.menu.getItem(2).isChecked = true
+                    }
+
+                    R.id.home_bottom_menu_statistics -> {
+                        it.homeViewPage.currentItem = 3
+                        it.homeRailNavigationView.menu.getItem(3).isChecked = true
                     }
                 }
                 false

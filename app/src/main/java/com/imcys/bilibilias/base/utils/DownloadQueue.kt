@@ -810,7 +810,7 @@ class DownloadQueue @Inject constructor(
                 "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}",
             )
 
-        val mergeFilePath = videoPath + "_merge.mp4"
+        val mergeFilePath = videoPath.replace(".mp4","") + "_merge.mp4"
         File(mergeFilePath)
 
         val commands = userDLMergeCmd?.toAsFFmpeg(
