@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.common.base.app
 
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import com.imcys.bilibilias.common.base.constant.COOKIES
 import com.imcys.bilibilias.common.base.model.user.AsUser
@@ -14,7 +15,7 @@ open class BaseApplication : Application() {
         super.onCreate()
 
         handler = Handler(mainLooper)
-
+        context = this
         initMMKV()
         initNapier()
     }
@@ -29,6 +30,7 @@ open class BaseApplication : Application() {
     }
 
     companion object {
+        lateinit var context :Context
         const val appSecret = "3c7c5174-a6be-4093-a0df-c6fbf7371480"
 
         // 全局应用数据的MMKV

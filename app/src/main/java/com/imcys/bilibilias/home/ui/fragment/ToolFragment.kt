@@ -291,7 +291,7 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchUI {
-                val videoBaseBean = networkService.n26(bvid)
+                val videoBaseBean = networkService.getVideoBaseInfoByBvid(bvid)
 
                 (mAdapter).apply {
                     // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。

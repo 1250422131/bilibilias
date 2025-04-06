@@ -17,15 +17,24 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.preference.SwitchPreferenceCompat
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.common.base.config.TvUserInfoRepository
+import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.base.utils.file.AppFilePathUtils
 import com.imcys.bilibilias.common.base.utils.file.fileUriUtils
 import com.imcys.bilibilias.common.base.utils.file.isUriAuthorized
 import com.imcys.bilibilias.home.ui.activity.SettingActivity
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
+
+    @Inject
+    lateinit var networkService: NetworkService
+
 
     private lateinit var userDownloadSaveSDPathSwitch: SwitchPreferenceCompat
     private lateinit var renameUserDownloadFileNameEditText: Preference
@@ -35,6 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var userDlFinishAutomaticImportSwitch: SwitchPreferenceCompat
     private lateinit var appThemeListPreference: ListPreference
     private lateinit var appLanguageListPreference: ListPreference
+    private lateinit var useBiliRoaming: SwitchPreferenceCompat
 
     private lateinit var renameUserDownloadSavePath: Preference
     private val SAVE_FILE_PATH_CODE = 1
@@ -132,6 +142,41 @@ class SettingsFragment : PreferenceFragmentCompat() {
         // bindingSaveSDPathSwitchEvent()
         bindingAppThemeListPreferenceEvent()
         bindingAppLanguageListPreferenceEvent()
+        bindingUseBiliRoaming()
+    }
+
+    private fun bindingUseBiliRoaming() {
+        useBiliRoaming.isChecked = TvUserInfoRepository.enabledRoaming
+        launchUI {
+            if (TvUserInfoRepository.accessToken.isNotEmpty() && TvUserInfoRepository.enabledRoaming) {
+                val myUserData = networkService.getTvLoginQRData()
+                useBiliRoaming.isChecked = myUserData.code == 0
+                TvUserInfoRepository.enabledRoaming = myUserData.code == 0
+            }
+        }
+
+        useBiliRoaming.setOnPreferenceClickListener {
+            launchUI {
+                if (!TvUserInfoRepository.enabledRoaming) {
+                    val tvLoginQrcodeBean = networkService.getTvLoginQRData()
+                    DialogUtils.tvLoginQRDialog(
+                        requireContext(),
+                        tvLoginQrcodeBean,
+                        networkService
+                    ) {
+                        useBiliRoaming.isChecked = it
+                        TvUserInfoRepository.enabledRoaming = it
+                    }.show()
+                } else {
+                    TvUserInfoRepository.enabledRoaming = false
+                    useBiliRoaming.isChecked = false
+                }
+
+            }
+
+            true
+        }
+
     }
 
     private fun bindingAppLanguageListPreferenceEvent() {
@@ -257,6 +302,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         renameUserDownloadSavePath = findPreference("rename_user_download_save_path")!!
         renameUserDownloadFileNameEditText =
             findPreference("rename_user_download_file_name_editText")!!
+
+        useBiliRoaming = findPreference("use_bili_roaming")!!
         // 暂停SD卡方案
         //        userDownloadSaveSDPathSwitch = findPreference("user_download_save_sd_path_switch")!!
         //

@@ -1,15 +1,21 @@
 package com.imcys.bilibilias.base.network
 
+import androidx.preference.PreferenceManager
 import com.imcys.bilibilias.base.model.login.LoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.LoginStateBean
+import com.imcys.bilibilias.base.model.login.TvLoginQrcodeBean
+import com.imcys.bilibilias.base.model.login.TvLoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.common.utils.BiliAppSigner
 import com.imcys.bilibilias.base.utils.TokenUtils.encWbi
 import com.imcys.bilibilias.base.utils.TokenUtils.key
 import com.imcys.bilibilias.base.utils.TokenUtils.setKey
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.context
+import com.imcys.bilibilias.common.base.config.TvUserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.model.user.MyUserData
@@ -69,7 +75,7 @@ class NetworkService @Inject constructor(
     private val ioDispatcher = Dispatchers.IO
     suspend fun getDashBangumiPlayInfo(cid: Long, qn: Int): DashBangumiPlayBean =
         runCatchingOnWithContextIo {
-            httpClient.get("pgc/player/web/playurl") {
+            httpClient.get(BilibiliApi.bangumiPlayPath) {
                 refererBILIHarder()
                 parameter("cid", cid)
                 parameter("qn", qn)
@@ -80,7 +86,7 @@ class NetworkService @Inject constructor(
 
     suspend fun getDashBangumiPlayInfo(epid: String, qn: Int): DashBangumiPlayBean =
         runCatchingOnWithContextIo {
-            httpClient.get("pgc/player/web/playurl") {
+            httpClient.get(BilibiliApi.bangumiPlayPath) {
                 refererBILIHarder()
                 parameterEpID(epid)
                 parameter("qn", qn)
@@ -88,6 +94,7 @@ class NetworkService @Inject constructor(
                 parameter("fourk", 1)
             }.body()
         }
+
     private suspend inline fun <reified T> viewPlayUrl(
         bvid: String,
         cid: String,
@@ -178,9 +185,10 @@ class NetworkService @Inject constructor(
         url.parameters.append("ep_id", epid)
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n3(bvid: String, cid: Long, qn: Int): VideoPlayBean = runCatchingOnWithContextIo {
-        videoPlayPath(bvid, cid.toString(), qn, fnval = 0)
-    }
+    suspend fun videoPlayPath(bvid: String, cid: Long, qn: Int): VideoPlayBean =
+        runCatchingOnWithContextIo {
+            videoPlayPath(bvid, cid.toString(), qn, fnval = 0)
+        }
 
     suspend fun getVideoPlayInfo(bvid: String, cid: Long): VideoPlayBean =
         runCatchingOnWithContextIo {
@@ -188,18 +196,19 @@ class NetworkService @Inject constructor(
         }
 
     // ---------------------------------------------------------------------------------------------
-    suspend fun n4(cid: Long, qn: Int): BangumiPlayBean = runCatchingOnWithContextIo {
-        httpClient.get("pgc/player/web/playurl") {
-            refererBILIHarder()
-            parameter("cid", cid)
-            parameter("qn", qn)
-            parameter("fnval", 0)
-            parameter("fourk", 1)
-        }.body()
-    }
+    suspend fun getBangumiPlayBean(cid: Long, qn: Int): BangumiPlayBean =
+        runCatchingOnWithContextIo {
+            httpClient.get(BilibiliApi.bangumiPlayPath) {
+                refererBILIHarder()
+                parameter("cid", cid)
+                parameter("qn", qn)
+                parameter("fnval", 0)
+                parameter("fourk", 1)
+            }.body()
+        }
 
-    suspend fun n16(epid: Long): BangumiPlayBean = runCatchingOnWithContextIo {
-        httpClient.get("pgc/player/web/playurl") {
+    suspend fun getBangumiPlayBean(epid: Long): BangumiPlayBean = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.bangumiPlayPath) {
             refererBILIHarder()
             parameter("ep_id", epid)
             parameter("qn", 64)
@@ -214,16 +223,28 @@ class NetworkService @Inject constructor(
     }
 
     suspend fun getVideoBaseInfoByBvid(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getVideoDataPath) { parameterBVID(bvid) }.body()
+        val result = httpClient.get(BilibiliApi.getVideoDataPath) { parameterBVID(bvid) }
+            .body<VideoBaseBean>()
+        if (useBiliRoaming()) {
+            if (result.code != 0) {
+                httpClient.get(BilibiliApi.roamingApi + BilibiliApi.getVideoDataPath) {
+                    parameterBVID(
+                        bvid
+                    )
+                }
+                    .body<VideoBaseBean>()
+            } else {
+                result
+            }
+        } else {
+            result
+        }
     }
 
     suspend fun getVideoBaseInfoByAid(aid: String): VideoBaseBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getVideoDataPath) { parameterAID(aid) }.body()
     }
 
-    suspend fun n26(bvid: String): VideoBaseBean = runCatchingOnWithContextIo {
-        getVideoBaseInfoByBvid(bvid)
-    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -237,8 +258,54 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
+    suspend fun tvUserLogin(authCode: String): TvLoginStateBean = runCatchingOnWithContextIo {
+        httpClient.post(BilibiliApi.getTvLoginStatePath) {
+            val paramsMap = mapOf(
+                "appkey" to BiliAppSigner.APP_KEY,
+                "ts" to (System.currentTimeMillis() / 1000).toString(),
+                "local_id" to "0",
+                "auth_code" to authCode
+            )
+            paramsMap.forEach { (key, value) ->
+                parameter(key, value)
+            }
+            parameter("sign", BiliAppSigner.appSign(paramsMap))
+        }.body()
+    }
+
     suspend fun getLoginQRData(): LoginQrcodeBean = runCatchingOnWithContextIo {
         httpClient.get(BilibiliApi.getLoginQRPath).body()
+    }
+
+    suspend fun getTvLoginQRData(): TvLoginQrcodeBean = runCatchingOnWithContextIo {
+        httpClient.post(BilibiliApi.getTvLoginQRPath) {
+            val paramsMap = mapOf(
+                "appkey" to BiliAppSigner.APP_KEY,
+                "ts" to (System.currentTimeMillis() / 1000).toString(),
+                "local_id" to "0"
+            )
+            paramsMap.forEach { (key, value) ->
+                parameter(key, value)
+            }
+            parameter("sign", BiliAppSigner.appSign(paramsMap))
+
+        }.body()
+    }
+
+    suspend fun getTvLoginInfo() : MyUserData = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.getTvLoginInfo){
+            val paramsMap = mapOf(
+                "appkey" to BiliAppSigner.APP_KEY,
+                "ts" to (System.currentTimeMillis() / 1000).toString(),
+                "local_id" to "0",
+                "access_key" to TvUserInfoRepository.accessToken
+            )
+            paramsMap.forEach { (key, value) ->
+                parameter(key, value)
+            }
+            parameter("sign", BiliAppSigner.appSign(paramsMap))
+
+        }.body()
     }
 
     suspend fun getMyUserData(): MyUserData = runCatchingOnWithContextIo {
@@ -302,11 +369,12 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun getOldHomeFeedbackConfigData(): OldHomeFeedbackConfigBean = runCatchingOnWithContextIo {
-        httpClient.get(BiliBiliAsApi.updateDataPath) {
-            parameter("type", "feedback")
-        }.body()
-    }
+    suspend fun getOldHomeFeedbackConfigData(): OldHomeFeedbackConfigBean =
+        runCatchingOnWithContextIo {
+            httpClient.get(BiliBiliAsApi.updateDataPath) {
+                parameter("type", "feedback")
+            }.body()
+        }
 
     suspend fun getBangumiFollow(vmid: Long, type: Int, pn: Int, ps: Int): BangumiFollowList =
         runCatchingOnWithContextIo {
@@ -512,5 +580,12 @@ class NetworkService @Inject constructor(
             val userNavDataModel = getUserNavInfo()
             setKey(userNavDataModel)
         }
+    }
+
+    private fun useBiliRoaming(): Boolean {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            "use_bili_roaming",
+            true,
+        )
     }
 }
