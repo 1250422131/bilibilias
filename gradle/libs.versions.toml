@@ -45,7 +45,7 @@ work-runtime-ktx = "2.10.0"
 activity-compose = "1.10.1"
 androidxComposeBom = "2025.03.00"
 activity = "1.10.1"
-fragmentKtx="1.6.2"
+fragmentKtx="1.8.6"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
