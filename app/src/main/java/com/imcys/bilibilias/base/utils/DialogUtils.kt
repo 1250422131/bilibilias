@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -12,8 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewParent
 import android.view.WindowManager
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.content.edit
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -671,6 +674,7 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
+        codeTypeName:String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -696,6 +700,7 @@ object DialogUtils {
             DASH_TYPE -> {
                 addDownloadTask(
                     context,
+                    codeTypeName,
                     videoBaseBean,
                     qn,
                     80,
@@ -738,6 +743,7 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
+        codeTypeName:String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -763,6 +769,7 @@ object DialogUtils {
             DASH_TYPE -> {
                 addBangumiDownloadTask(
                     context,
+                    codeTypeName,
                     videoBaseBean,
                     qn,
                     80,
@@ -1231,6 +1238,7 @@ object DialogUtils {
                             downloadTool,
                             downloadCondition,
                             toneQuality,
+                            "",
                             videoBaseBean,
                             selectDefinition,
                             80,
@@ -1293,9 +1301,29 @@ object DialogUtils {
             dialogDlVideoAndAudio.isEnabled = isNotEmptyAudio
             dialogDlOnlyAudio.isEnabled = isNotEmptyAudio
             dialogDlAudioTypeLy.visibility = if (isNotEmptyAudio) View.VISIBLE else View.GONE
-            dialogDlVideoRadioGroup
+
             // 子集选择 默认选中1集
             videoPageListData.data[0].selected = 1
+
+            var selectCodeType = ""
+            dialogDlCodeTypeRadioGroup.apply {
+                dashVideoPlayBean.data.support_formats[0].codecs.reversed().forEachIndexed { index, s ->
+                    if (!(s.split(".")[0].contains("av01") && index != 0)){
+                        val radioButton = RadioButton(context).apply {
+                            id = View.generateViewId() // 为每个按钮生成唯一的id
+                            buttonTintList =
+                                ColorStateList.valueOf(context.getColor(R.color.color_primary))
+                            text = "${s.split(".")[0]}"
+                        }
+                        addView(radioButton)
+                    }
+                }
+            }
+            dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
+            dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                selectCodeType = radioGroup.findViewById<RadioButton>(i).text.toString()
+            }
+
             dialogDlVideoDiversityLy.setOnClickListener {
                 loadVideoPageDialog(context, videoPageListData, videoPageMutableList) { it1 ->
                     videoPageMutableList = it1
@@ -1328,6 +1356,7 @@ object DialogUtils {
                 loadDownloadTypeDialog(context) { selects, typeName ->
                     downloadType = selects
                     dialogDlVideoTypeTx.text = typeName
+                    dialogDlCodeTypeRadioGroup.isEnabled = downloadType == 1
                 }.show()
             }
 
@@ -1359,7 +1388,9 @@ object DialogUtils {
                     }
 
                     downloadType = getInt("user_download_type", 1)
-                    when (getInt("user_download_type", 1)) {
+                    dialogDlCodeTypeRadioGroup.isEnabled = downloadType == 1
+
+                        when (getInt("user_download_type", 1)) {
                         1 -> {
                             dialogDlVideoTypeTx.text = "Dash"
                         }
@@ -1440,6 +1471,7 @@ object DialogUtils {
                     downloadTool,
                     downloadCondition,
                     toneQuality,
+                    selectCodeType,
                     videoBaseBean,
                     selectDefinition,
                     80,
@@ -1529,6 +1561,7 @@ object DialogUtils {
                 loadDownloadTypeDialog(context) { selects, typeName ->
                     downloadType = selects
                     dialogDlVideoTypeTx.text = typeName
+                    dialogDlCodeTypeRadioGroup.isEnabled = downloadType == 1
                 }.show()
             }
 
@@ -1539,6 +1572,27 @@ object DialogUtils {
                     dialogDlAudioTypeTx.text = AsVideoNumUtils.getQualityName(toneQuality)
                 }.show()
             }
+
+
+            var selectCodeType = ""
+            dialogDlCodeTypeRadioGroup.apply {
+                dashVideoPlayBean.data.support_formats[0].codecs.reversed().forEachIndexed { index, s ->
+                    if (!(s.split(".")[0].contains("av01") && index != 0)){
+                        val radioButton = RadioButton(context).apply {
+                            id = View.generateViewId() // 为每个按钮生成唯一的id
+                            buttonTintList =
+                                ColorStateList.valueOf(context.getColor(R.color.color_primary))
+                            text = "${s.split(".")[0]}"
+                        }
+                        addView(radioButton)
+                    }
+                }
+            }
+            dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
+            dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                selectCodeType = radioGroup.findViewById<RadioButton>(i).text.toString()
+            }
+
 
             val sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context).apply {
@@ -1558,7 +1612,7 @@ object DialogUtils {
 
                     downloadTool = getInt("user_download_tool_list", 1)
                     downloadType = getInt("user_download_type", 1)
-
+                    dialogDlCodeTypeRadioGroup.isEnabled = downloadType == 1
                     when (getInt("user_download_type", 1)) {
                         1 -> {
                             dialogDlVideoTypeTx.text = "Dash"
@@ -1639,6 +1693,7 @@ object DialogUtils {
                     downloadTool,
                     downloadCondition,
                     toneQuality,
+                    selectCodeType,
                     videoBaseBean,
                     selectDefinition,
                     80,
@@ -1655,6 +1710,7 @@ object DialogUtils {
 
     private fun addBangumiDownloadTask(
         context: Context,
+        codeTypeName:String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -1698,6 +1754,7 @@ object DialogUtils {
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
+                            codeTypeName,
                             "video",
                         )
                         addTask(
@@ -1709,6 +1766,7 @@ object DialogUtils {
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
+                            codeTypeName,
                             "audio",
                         )
                     }
@@ -1724,6 +1782,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "audio",
+                            codeTypeName,
                             false,
                         )
                     }
@@ -1739,6 +1798,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "video",
+                            codeTypeName,
                             false,
                         )
                     }
@@ -1764,6 +1824,7 @@ object DialogUtils {
 
     private fun addDownloadTask(
         context: Context,
+        codeTypeName:String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -1805,6 +1866,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "video",
+                            codeTypeName
                         )
                         addTask(
                             context,
@@ -1816,6 +1878,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "audio",
+                            codeTypeName
                         )
                     }
 
@@ -1830,6 +1893,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "audio",
+                            codeTypeName,
                             false,
                         )
                     }
@@ -1845,6 +1909,7 @@ object DialogUtils {
                             downloadTool,
                             toneQuality,
                             "video",
+                            codeTypeName,
                             false,
                         )
                     }
@@ -2213,19 +2278,12 @@ object DialogUtils {
         downloadTool: Int,
         toneQuality: Int,
         type: String,
+        codeTypeName:String,
         isGroupTask: Boolean = true,
     ) {
         val bangumiPlayData = dashBangumiPlayBean.result
-        var urlIndex = 0
         // 获取视频/音频的索引
-        dashBangumiPlayBean.result.dash.video.run {
-            forEachIndexed fe@{ index, i ->
-                if (i.id == qn) {
-                    urlIndex = index
-                    return@run
-                }
-            }
-        }
+        val urlIndex = dashBangumiPlayBean.result.dash.video.filter { it.id == qn }.indexOfFirst { it.codecs.contains(codeTypeName) }
 
         val intFileType: Int
         val fileType: String
@@ -2348,18 +2406,13 @@ object DialogUtils {
         downloadTool: Int,
         toneQuality: Int,
         type: String,
+        codeTypeName:String,
         isGroupTask: Boolean = true,
     ) {
         val videoPlayData = dashVideoPlayBean.data
-        var urlIndex = 0
         // 获取视频/音频的索引
-        dashVideoPlayBean.data.dash.video.run {
-            forEachIndexed fe@{ index, i ->
-                if (i.id == qn) {
-                    urlIndex = index
-                    return@run
-                }
-            }
+        val urlIndex = dashVideoPlayBean.data.dash.video.filter { it.id == qn  }.indexOfFirst {
+            it.codecs.contains(codeTypeName)
         }
 
         val intFileType: Int

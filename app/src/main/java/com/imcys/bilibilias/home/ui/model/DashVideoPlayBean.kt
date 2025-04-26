@@ -60,6 +60,7 @@ data class DashVideoPlayBean(
             val new_description: String = "",
             val display_desc: String = "",
             val description:String = "",
+            val codecs:List<String> = emptyList()
         )
     }
 }
