@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".home.ui.fragment.UserFragment">
+
+
+        <LinearLayout
+            android:id="@+id/fragment_user_top_linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_fragment_user_title"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_user_data_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:padding="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout" />
+
+
+        <LinearLayout
+
+            android:id="@+id/linearLayoutCompat4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/user_works_background"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.1"
+                android:text="@string/app_fragment_user_works_title"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp"
+                    tools:ignore="RtlHardcoded">
+
+                    <androidx.constraintlayout.utils.widget.ImageFilterView
+                        android:id="@+id/uv_download_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/uv_download_four" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
+                android:id="@+id/fragment_user_works_csr"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:sr_enableLoadMore="true"
+                app:sr_enableRefresh="false">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_user_works_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+            </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

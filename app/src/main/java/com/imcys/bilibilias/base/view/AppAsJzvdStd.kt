@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+import cn.jzvd.JZUtils
 import cn.jzvd.Jzvd
 import com.bumptech.glide.Glide
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.base.view.AsJzvdStd
 
 class AppAsJzvdStd : AsJzvdStd {
