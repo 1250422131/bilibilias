@@ -79,7 +79,7 @@ object DialogUtils {
     const val ONLY_AUDIO = 2
     const val ONLY_VIDEO = 3
 
-    private fun BottomSheetDialog.setPad() {
+    fun BottomSheetDialog.setPad(): BottomSheetDialog {
         if (isPad(context)) {
             // 动态设置宽度为屏幕宽度的四分之一
             // 在显示之前设置宽度为屏幕宽度的四分之一
@@ -98,6 +98,7 @@ object DialogUtils {
                 it.requestLayout()
             }
         }
+        return this
     }
 
     /**
@@ -674,7 +675,7 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        codeTypeName:String,
+        codeTypeName: String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -743,7 +744,7 @@ object DialogUtils {
         downloadTool: Int,
         downloadCondition: Int,
         toneQuality: Int,
-        codeTypeName:String,
+        codeTypeName: String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -896,7 +897,7 @@ object DialogUtils {
             videoPageMutableList.add(bangumiSeasonBean.result.episodes[0])
             bangumiSeasonBean.result.episodes[0].selected = 1
             dialogDlVideoDiversityLy.setOnClickListener {
-                loadVideoPageDialog(context, bangumiSeasonBean, videoPageMutableList) { it1 ->
+                loadVideoPageDialog(context, bangumiSeasonBean, videoPageMutableList,false) { it1 ->
                     videoPageMutableList = it1
                     var videoPageMsg = ""
 
@@ -1307,17 +1308,18 @@ object DialogUtils {
 
             var selectCodeType = ""
             dialogDlCodeTypeRadioGroup.apply {
-                dashVideoPlayBean.data.support_formats[0].codecs.reversed().forEachIndexed { index, s ->
-                    if (!(s.split(".")[0].contains("av01") && index != 0)){
-                        val radioButton = RadioButton(context).apply {
-                            id = View.generateViewId() // 为每个按钮生成唯一的id
-                            buttonTintList =
-                                ColorStateList.valueOf(context.getColor(R.color.color_primary))
-                            text = "${s.split(".")[0]}"
+                dashVideoPlayBean.data.support_formats[0].codecs.reversed()
+                    .forEachIndexed { index, s ->
+                        if (!(s.split(".")[0].contains("av01") && index != 0)) {
+                            val radioButton = RadioButton(context).apply {
+                                id = View.generateViewId() // 为每个按钮生成唯一的id
+                                buttonTintList =
+                                    ColorStateList.valueOf(context.getColor(R.color.color_primary))
+                                text = "${s.split(".")[0]}"
+                            }
+                            addView(radioButton)
                         }
-                        addView(radioButton)
                     }
-                }
             }
             dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
             dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
@@ -1390,7 +1392,7 @@ object DialogUtils {
                     downloadType = getInt("user_download_type", 1)
                     dialogDlCodeTypeRadioGroup.isEnabled = downloadType == 1
 
-                        when (getInt("user_download_type", 1)) {
+                    when (getInt("user_download_type", 1)) {
                         1 -> {
                             dialogDlVideoTypeTx.text = "Dash"
                         }
@@ -1576,17 +1578,18 @@ object DialogUtils {
 
             var selectCodeType = ""
             dialogDlCodeTypeRadioGroup.apply {
-                dashVideoPlayBean.data.support_formats[0].codecs.reversed().forEachIndexed { index, s ->
-                    if (!(s.split(".")[0].contains("av01") && index != 0)){
-                        val radioButton = RadioButton(context).apply {
-                            id = View.generateViewId() // 为每个按钮生成唯一的id
-                            buttonTintList =
-                                ColorStateList.valueOf(context.getColor(R.color.color_primary))
-                            text = "${s.split(".")[0]}"
+                dashVideoPlayBean.data.support_formats[0].codecs.reversed()
+                    .forEachIndexed { index, s ->
+                        if (!(s.split(".")[0].contains("av01") && index != 0)) {
+                            val radioButton = RadioButton(context).apply {
+                                id = View.generateViewId() // 为每个按钮生成唯一的id
+                                buttonTintList =
+                                    ColorStateList.valueOf(context.getColor(R.color.color_primary))
+                                text = "${s.split(".")[0]}"
+                            }
+                            addView(radioButton)
                         }
-                        addView(radioButton)
                     }
-                }
             }
             dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
             dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
@@ -1710,7 +1713,7 @@ object DialogUtils {
 
     private fun addBangumiDownloadTask(
         context: Context,
-        codeTypeName:String,
+        codeTypeName: String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -1754,8 +1757,8 @@ object DialogUtils {
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            codeTypeName,
                             "video",
+                            codeTypeName,
                         )
                         addTask(
                             context,
@@ -1766,8 +1769,8 @@ object DialogUtils {
                             videoBaseBean,
                             downloadTool,
                             toneQuality,
-                            codeTypeName,
                             "audio",
+                            codeTypeName,
                         )
                     }
 
@@ -1824,7 +1827,7 @@ object DialogUtils {
 
     private fun addDownloadTask(
         context: Context,
-        codeTypeName:String,
+        codeTypeName: String,
         videoBaseBean: VideoBaseBean,
         qn: Int,
         fnval: Int,
@@ -2278,12 +2281,13 @@ object DialogUtils {
         downloadTool: Int,
         toneQuality: Int,
         type: String,
-        codeTypeName:String,
+        codeTypeName: String,
         isGroupTask: Boolean = true,
     ) {
         val bangumiPlayData = dashBangumiPlayBean.result
         // 获取视频/音频的索引
-        val urlIndex = dashBangumiPlayBean.result.dash.video.filter { it.id == qn }.indexOfFirst { it.codecs.contains(codeTypeName) }
+        val urlIndex = dashBangumiPlayBean.result.dash.video.filter { it.id == qn }
+            .indexOfFirst { it.codecs.contains(codeTypeName) }
 
         val intFileType: Int
         val fileType: String
@@ -2406,12 +2410,12 @@ object DialogUtils {
         downloadTool: Int,
         toneQuality: Int,
         type: String,
-        codeTypeName:String,
+        codeTypeName: String,
         isGroupTask: Boolean = true,
     ) {
         val videoPlayData = dashVideoPlayBean.data
         // 获取视频/音频的索引
-        val urlIndex = dashVideoPlayBean.data.dash.video.filter { it.id == qn  }.indexOfFirst {
+        val urlIndex = dashVideoPlayBean.data.dash.video.filter { it.id == qn }.indexOfFirst {
             it.codecs.contains(codeTypeName)
         }
 
@@ -2669,8 +2673,9 @@ object DialogUtils {
         context: Context,
         bangumiSeasonBean: BangumiSeasonBean,
         videoPageMutableList: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>,
+        checkVip:Boolean = true,
         finished: (selects: MutableList<BangumiSeasonBean.ResultBean.EpisodesBean>) -> Unit,
-    ): BottomSheetDialog {
+        ): BottomSheetDialog {
         val binding = DialogCollectionBinding.inflate(LayoutInflater.from(context))
 
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialog)
@@ -2697,14 +2702,14 @@ object DialogUtils {
             // 会员判断
             val epData =
                 mutableListOf<BangumiSeasonBean.ResultBean.EpisodesBean>() + bangumiSeasonBean.result.episodes.filter {
-                    !(userVipState != 1 && it.badge == "会员")
+                    !(userVipState != 1 && it.badge == "会员") || !checkVip
                 }
 
             dialogCollectionRv.adapter =
                 BangumiPageAdapter(
                     bangumiSeasonBean.result.episodes.filter {
                         // 没会员直接不展示
-                        !(userVipState != 1 && it.badge == "会员")
+                        !(userVipState != 1 && it.badge == "会员") || !checkVip
                     }.toMutableList(),
                 ) { position, itemBinding ->
 

@@ -2,6 +2,7 @@ package com.imcys.bilibilias.home.ui.adapter
 
 import android.app.Activity
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -64,7 +65,8 @@ class UserDataAdapter : ListAdapter<UserViewItemBean, ViewHolder>(object :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val binding = when (getItem(position).type) {
+        Log.d("UserDataAdapter","")
+            val binding = when (getItem(position).type) {
             1 -> {
                 DataBindingUtil.getBinding<ItemFgUserFaceBinding>(holder.itemView)?.apply {
                     userBaseBean = getItem(position).userBaseBean

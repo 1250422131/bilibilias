@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.utils.DialogUtils.setPad
 import com.imcys.bilibilias.common.base.extend.launchIO
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.asToast
@@ -111,8 +112,8 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                 )?.exists() == true
 
                 if (FileUtils.isFileExists(File(task.savePath)) || safExist) {
-                    AsDialog.init(holder.itemView.context)
-                        .setTitle("文件操作")
+                    val asDialog = AsDialog.init(holder.itemView.context)
+                    asDialog.setTitle("文件操作")
                         .setContent("请选择下面的按钮")
                         .setPositiveButton("分享文件") {
                             val fileType: String = if (task.fileType == 0) {
@@ -155,7 +156,8 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
                         }
                         .setNegativeButton("取消") {
                             it.cancel()
-                        }.build().show()
+                        }.build()
+                    asDialog.bottomSheetDialog().setPad().show()
                 } else {
                     asToast(
                         holder.itemView.context,
@@ -174,8 +176,8 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
         itemDlFinishTaskDelete: ImageView,
         task: DownloadFinishTaskInfo,
     ) {
-        AsDialog.init(itemDlFinishTaskDelete.context)
-            .setTitle("删除警告")
+        val asDialog = AsDialog.init(itemDlFinishTaskDelete.context)
+        asDialog.setTitle("删除警告")
             .setContent("确定删除这条记录吗？")
             .setPositiveButton("删除记录") {
                 deleteTaskRecords(task.id)
@@ -203,7 +205,8 @@ class DownloadFinishTaskAd @Inject constructor() : ListAdapter<DownloadFinishTas
             .setNegativeButton("点错了") {
                 it.cancel()
             }
-            .build().show()
+            .build()
+        asDialog.bottomSheetDialog().setPad().show()
     }
 
     private fun deleteTaskRecords(taskId: Int) {

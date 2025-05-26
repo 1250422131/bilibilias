@@ -5,13 +5,6 @@
 
     <data>
 
-        <import type="com.imcys.bilibilias.common.base.utils.NumberUtils" />
-
-        <variable
-            name="VlistBean"
-            type="com.imcys.bilibilias.home.ui.model.UserWorksBean.DataBean.ListBean.VlistBean" />
-
-        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,10 +31,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <androidx.constraintlayout.utils.widget.ImageFilterView
+                    <ImageView
+                        android:id="@+id/ivCover"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:imageUrl="@{VlistBean.pic}"
                         android:scaleType="fitXY" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -61,10 +54,10 @@
                             app:tint="@color/white" />
 
                         <TextView
+                            android:id="@+id/tvPlayNum"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.play)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
 
@@ -76,10 +69,10 @@
                             app:tint="@color/white" />
 
                         <TextView
+                            android:id="@+id/tvVideoReview"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="3dp"
-                            android:text="@{NumberUtils.digitalConversion(VlistBean.video_review)}"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
                     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -93,11 +86,11 @@
                     android:padding="5dp">
 
                     <TextView
+                        android:id="@+id/tvTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="@{VlistBean.title}"
                         android:textSize="14dp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
