@@ -35,6 +35,7 @@ import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
 import com.imcys.bilibilias.home.ui.model.UserViewItemBean
 import com.imcys.bilibilias.home.ui.model.UserWorksBean
+import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
@@ -70,7 +71,7 @@ class UserFragment : BaseFragment() {
         fragmentUserBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false)
 
-        //  fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
+          fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
         // 刷新登录数据
         mid = asUser.mid

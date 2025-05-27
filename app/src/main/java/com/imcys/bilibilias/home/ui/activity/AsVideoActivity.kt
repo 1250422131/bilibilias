@@ -222,7 +222,8 @@ class AsVideoActivity : BaseActivity() {
                     }
 
                     binding.asVideoCd.visibility = View.VISIBLE
-                    binding.asVideoBangumiCd.visibility = View.INVISIBLE
+                    binding.asVideoBangumiCd.visibility =
+                        if (isPad(this@AsVideoActivity)) View.INVISIBLE else View.GONE
                 }
             }
 
@@ -359,7 +360,8 @@ class AsVideoActivity : BaseActivity() {
 
                     // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
                     asVideoBangumiCd.visibility = View.VISIBLE
-                    asVideoCd.visibility = View.INVISIBLE
+                    asVideoCd.visibility =
+                        if (isPad(this@AsVideoActivity)) View.INVISIBLE else View.GONE
                     this.bangumiSeasonBean = bangumiSeasonBean
 
                     asVideoSubsectionRv.adapter =
