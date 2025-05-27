@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
 import com.imcys.bilibilias.home.ui.adapter.MyFragmentPageAdapter
@@ -132,7 +133,11 @@ class HomeActivity : BaseActivity() {
         fragmentArrayList.add(toolFragment)
         fragmentArrayList.add(downloadFragment)
         fragmentArrayList.add(userFragment)
-
+        if (isPad(this)){
+            // 设置滚动方向为垂直
+            activityHomeBinding.homeViewPage.orientation = ViewPager2.ORIENTATION_VERTICAL
+        }
+        activityHomeBinding.homeViewPage.offscreenPageLimit = 1
         val myFragmentPageAdapter =
             MyFragmentPageAdapter(supportFragmentManager, lifecycle, fragmentArrayList)
         activityHomeBinding.let {
