@@ -16,68 +16,10 @@ data class UserNavDataModel(
 ) {
     @Serializable
     data class Data(
-//        @SerialName("allowance_count")
-//        val allowanceCount: Int, // 0
-        @SerialName("answer_status")
-        val answerStatus: Int, // 0
-        @SerialName("email_verified")
-        val emailVerified: Int, // 1
         @SerialName("face")
-        val face: String, // https://i1.hdslb.com/bfs/face/6323fa4fdbd8cfa9d448cc9a3a0c32394bf34426.jpg
-        @SerialName("face_nft")
-        val faceNft: Int, // 1
-        @SerialName("face_nft_type")
-        val faceNftType: Int, // 1
-        @SerialName("has_shop")
-        val hasShop: Boolean, // false
-        @SerialName("is_jury")
-        val isJury: Boolean, // false
-        @SerialName("isLogin")
-        val isLogin: Boolean, // true
-        @SerialName("is_senior_member")
-        val isSeniorMember: Int, // 1
-        @SerialName("level_info")
-        val levelInfo: LevelInfo,
-        @SerialName("mid")
-        val mid: Long, // 351201307
-        @SerialName("mobile_verified")
-        val mobileVerified: Int, // 1
-        @SerialName("money")
-        val money: Double, // 3563.6
-        @SerialName("moral")
-        val moral: Int, // 70
-        @SerialName("official")
-        val official: Official,
-        @SerialName("officialVerify")
-        val officialVerify: OfficialVerify,
-        @SerialName("pendant")
-        val pendant: Pendant,
-        @SerialName("scores")
-        val scores: Int, // 0
-        @SerialName("shop_url")
-        val shopUrl: String,
+        val face: String? = null, // https://i1.hdslb.com/bfs/face/6323fa4fdbd8cfa9d448cc9a3a0c32394bf34426.jpg
         @SerialName("uname")
-        val uname: String, // 萌新杰少
-        @SerialName("vip")
-        val vip: Vip,
-        @SerialName("vip_avatar_subscript")
-        val vipAvatarSubscript: Int, // 0
-        @SerialName("vipDueDate")
-        val vipDueDate: Long, // 1637769600000
-        @SerialName("vip_label")
-        val vipLabel: VipLabel,
-        @SerialName("vip_nickname_color")
-        val vipNicknameColor: String,
-        @SerialName("vip_pay_type")
-        val vipPayType: Int, // 0
-        @SerialName("vipStatus")
-        val vipStatus: Int, // 0
-        @SerialName("vip_theme_type")
-        val vipThemeType: Int, // 0
-        @SerialName("vipType")
-        val vipType: Int, // 1
-        @SerialName("wallet")
-        val wallet: Wallet,
+        val uname: String? = null, // 萌新杰少
         @SerialName("wbi_img")
         val wbiImg: WbiImg,
     ) {

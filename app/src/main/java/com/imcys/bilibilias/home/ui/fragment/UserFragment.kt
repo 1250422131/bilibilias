@@ -269,7 +269,7 @@ class UserFragment : BaseFragment() {
     private suspend fun getUserData(): UserBaseBean {
         val userBaseInfo = networkService.n11(mid)
         saveUserBaseInfo(userBaseInfo)
-        return networkService.n11(mid)
+        return userBaseInfo
     }
 
     override fun onDestroy() {

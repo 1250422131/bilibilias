@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/app_default_bg"
@@ -21,25 +21,30 @@
             <com.google.android.material.navigationrail.NavigationRailView
                 android:id="@+id/home_railNavigationView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:background="@color/white"
                 app:itemIconTint="@color/home_bottom_nav_seletor"
                 app:itemTextColor="@color/home_bottom_nav_seletor"
-                app:menu="@menu/home_menu_bottom_navigation">
-            </com.google.android.material.navigationrail.NavigationRailView>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:menu="@menu/home_menu_bottom_navigation" />
 
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/home_viewPage"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/home_railNavigationView"
+                app:layout_constraintTop_toTopOf="parent">
 
             </androidx.viewpager2.widget.ViewPager2>
 
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.imcys.bilibilias.base.view.GrayFrameLayout>
 </layout>
