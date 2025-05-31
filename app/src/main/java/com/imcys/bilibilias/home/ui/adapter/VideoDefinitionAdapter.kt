@@ -38,19 +38,20 @@ class VideoDefinitionAdapter(
         binding?.apply {
             itemCollectionButton.text = datas[position]
 
-            binding.itemCollectionButton.setOnClickListener {
-
-                if (selectItem != -1) {
-                    selectBinding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
-                }
+            if (selectItem != holder.layoutPosition) {
+                binding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
+            } else {
                 binding.itemCollectionButton.setBackgroundResource(R.color.color_primary)
+            }
 
+            binding.itemCollectionButton.setOnClickListener {
                 //先向外传递
                 selectedResult(position, selectItem)
                 //再改变记录
                 selectBinding = binding
+                notifyItemChanged(selectItem)
                 selectItem = position
-
+                notifyItemChanged(selectItem)
             }
         }
 
