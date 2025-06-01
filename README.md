@@ -17,7 +17,7 @@
 
 - [English (United States)](./README-en_US.md)
 - 简体中文
-- [繁体中文(中国台湾省)](./README-zh_TW.md)
+- [繁体中文](./README-zh_Hant.md)
 
 ## 简介
 
