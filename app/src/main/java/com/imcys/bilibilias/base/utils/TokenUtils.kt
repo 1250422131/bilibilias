@@ -55,7 +55,6 @@ object TokenUtils {
 
     // 生成加密后的参数
     suspend fun NetworkService.encWbi(params: Map<String, String>): Map<String, String> {
-        if (params["mid"] == "0") return params
         checkToken()
         // 初始化参数并加入时间戳
         val parameters = mutableMapOf<String, String>().apply {

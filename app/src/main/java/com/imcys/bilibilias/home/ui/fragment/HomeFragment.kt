@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.event.LoginFinishEvent
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
@@ -41,6 +42,9 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -307,9 +311,9 @@ class HomeFragment : BaseFragment() {
         // 加载推荐视频
         // loadRCMDVideoData()
         // 检测用户是否登陆
-        detectUserLogin()
+         detectUserLogin()
 
-        // loadRoamData()
+        startStatistics()
 
         initSmoothRefreshLayout()
         initLogoutLoginButton()
@@ -375,7 +379,7 @@ class HomeFragment : BaseFragment() {
     /**
      * 启动统计
      */
-    internal fun startStatistics() {
+    private fun startStatistics() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sharedPreferences.edit()
             .putBoolean("microsoft_app_center_type", true)
@@ -418,8 +422,8 @@ class HomeFragment : BaseFragment() {
             val myUserData = networkService.getMyUserData()
 
             if (myUserData.code != 0) {
-                DialogUtils.loginDialog(requireActivity())
-                    .show()
+//                DialogUtils.loginDialog(requireActivity())
+//                    .show()
             } else {
                 // 解除风控
                 networkService.getBILIHome()
