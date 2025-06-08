@@ -301,9 +301,11 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun archiveHasLikeTriple() {
         launchIO {
-            archiveHasLike()
-            archiveCoins()
-            archiveFavoured()
+           runCatching {
+               archiveHasLike()
+               archiveCoins()
+               archiveFavoured()
+           }
         }
     }
 

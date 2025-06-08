@@ -15,6 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.LoginUtils
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.constant.DOWNLOAD_DEFAULT_PATH
 import com.imcys.bilibilias.common.base.extend.Result
 import com.imcys.bilibilias.common.base.extend.launchIO
@@ -59,6 +61,9 @@ class AsVideoViewModel @Inject constructor() :
 
     @Inject
     lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var userLoginUtils: LoginUtils
 
     fun toUserPage(view: View, mid: String) {
         UserInfoActivity.actionStart(view.context, mid.toLong())
@@ -587,7 +592,10 @@ class AsVideoViewModel @Inject constructor() :
      */
     fun likeVideo(view: View, bvid: String) {
         val context = view.context
-
+        if (asUser.mid == 0L) {
+            userLoginUtils.loginDialogCommonPage(view.context as AsVideoActivity)
+            return
+        }
         viewModelScope.launchUI {
             val likeVideoBean = networkService.videoLike(bvid)
 
@@ -649,7 +657,10 @@ class AsVideoViewModel @Inject constructor() :
      */
     fun videoCoinAdd(view: View, bvid: String) {
         val context = view.context
-
+        if (asUser.mid == 0L) {
+            userLoginUtils.loginDialogCommonPage(view.context as AsVideoActivity)
+            return
+        }
         viewModelScope.launchIO {
             networkService.n33(bvid)
 
@@ -666,6 +677,10 @@ class AsVideoViewModel @Inject constructor() :
     @SuppressLint("NotifyDataSetChanged")
     fun loadCollectionView(view: View, avid: Long) {
         val context = view.context
+        if (asUser.mid == 0L) {
+            userLoginUtils.loginDialogCommonPage(view.context as AsVideoActivity)
+            return
+        }
         (context as AsVideoActivity).binding.apply {
             viewModelScope.launchIO {
                 val userCreateCollectionBean = networkService.n34()
