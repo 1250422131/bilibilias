@@ -13,6 +13,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.common.base.api.BilibiliApi
+import com.imcys.bilibilias.common.base.constant.ROAM_API
 import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.di.AsCookiesStorage
 import com.imcys.bilibilias.databinding.ActivityHomeBinding
@@ -23,6 +26,7 @@ import com.imcys.bilibilias.home.ui.fragment.ToolFragment
 import com.imcys.bilibilias.home.ui.fragment.UserFragment
 
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.http.Url
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,6 +42,8 @@ class HomeActivity : BaseActivity() {
     @Inject
     lateinit var asCookiesStorage: AsCookiesStorage
 
+    @Inject
+    lateinit var networkService: NetworkService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         /*
@@ -60,6 +66,7 @@ class HomeActivity : BaseActivity() {
         // 启动百度统计
         startBaiDuService()
     }
+
 
     /**
      * 初始化fragment
@@ -133,7 +140,7 @@ class HomeActivity : BaseActivity() {
         fragmentArrayList.add(toolFragment)
         fragmentArrayList.add(downloadFragment)
         fragmentArrayList.add(userFragment)
-        if (isPad(this)){
+        if (isPad(this)) {
             // 设置滚动方向为垂直
             activityHomeBinding.homeViewPage.orientation = ViewPager2.ORIENTATION_VERTICAL
         }
@@ -181,8 +188,7 @@ class HomeActivity : BaseActivity() {
                 false
             }
             // 平板
-            it.homeRailNavigationView?.setOnItemSelectedListener {
-                    item ->
+            it.homeRailNavigationView?.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.home_bottom_menu_black_room -> {
                         it.homeViewPage.currentItem = 0
@@ -235,6 +241,15 @@ class HomeActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        runCatching {
+            launchUI {
+                val webSpi = networkService.getWebSpiData()
+                if (webSpi.code == 0) {
+                    asCookiesStorage.addCookieByUrl(Url(ROAM_API), "buvid3", webSpi.data.b3)
+                    asCookiesStorage.addCookieByUrl(Url(ROAM_API), "buvid4", webSpi.data.b4)
+                }
+            }
+        }
         StatService.onResume(this)
     }
 

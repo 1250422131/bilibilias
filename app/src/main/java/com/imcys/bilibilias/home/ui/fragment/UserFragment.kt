@@ -17,7 +17,9 @@ import com.drake.brv.utils.grid
 import com.drake.brv.utils.setup
 import com.drake.brv.utils.staggered
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.event.LoginFinishEvent
 import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.base.utils.LoginUtils
 import com.imcys.bilibilias.base.utils.saveUserBaseInfo
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -39,6 +41,9 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.math.ceil
 
@@ -58,6 +63,9 @@ class UserFragment : BaseFragment() {
     @Inject
     lateinit var networkService: NetworkService
 
+    @Inject
+    lateinit var userLoginUtils: LoginUtils
+
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(context, "UserFragment")
@@ -71,7 +79,7 @@ class UserFragment : BaseFragment() {
         fragmentUserBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_user, container, false)
 
-          fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
+        fragmentUserBinding.fragmentUserTopLinearLayout.addStatusBarTopPadding()
 
         // 刷新登录数据
         mid = asUser.mid
@@ -85,7 +93,56 @@ class UserFragment : BaseFragment() {
         return fragmentUserBinding.root
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReloadLoginFinishEvent(event: LoginFinishEvent?) {
+        event?.let {
+            mid = it.mid
+            initView()
+        }
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+    }
+
     private fun initView() {
+        launchUI {
+            when {
+                mid != 0L && arguments != null -> loginFinishInit()
+                mid != 0L && userLoginUtils.checkLoginState() -> loginFinishInit()
+                else -> notLoginInit()
+            }
+        }
+    }
+
+
+    private fun notLoginInit() {
+        fragmentUserBinding.apply {
+            lyUser.visibility = View.GONE
+            clNoLogin.visibility = View.VISIBLE
+
+            btLogin.setOnClickListener {
+                userLoginUtils.loginDialogCommonPage(requireActivity()).show()
+            }
+        }
+    }
+
+    private fun loginFinishInit() {
+        fragmentUserBinding.apply {
+            lyUser.visibility = View.VISIBLE
+            clNoLogin.visibility = View.GONE
+        }
         initUserDataRv()
 
         initUserData()
@@ -94,8 +151,6 @@ class UserFragment : BaseFragment() {
         initSmoothRefreshLayout()
 
         initUserVideoDownloadButton()
-
-
     }
 
     private fun initUserVideoDownloadButton() {
@@ -140,8 +195,12 @@ class UserFragment : BaseFragment() {
 
     private fun initUserWorks() {
         launchIO {
-            val userWorksBean = networkService.getUserWorkData(mid, 1)
-
+            var index = 1
+            var userWorksBean = networkService.getUserWorkData(mid, 1)
+            while (userWorksBean.code != 0 && index <= 3) {
+                index++
+                userWorksBean = networkService.getUserWorkData(mid, 1)
+            }
             // userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
 
@@ -159,11 +218,6 @@ class UserFragment : BaseFragment() {
                         addType<UserWorksBean.DataBean.ListBean.VlistBean>(R.layout.item_user_works)
                         onBind {
                             val model = getModel<UserWorksBean.DataBean.ListBean.VlistBean>()
-                            Log.d(
-                                "UserWorksAdapter",
-                                "Binding position: $layoutPosition, aid: ${model.aid}, title: ${model.title}"
-                            )
-
                             getBinding<ItemUserWorksBinding>().apply {
 
                                 Glide.with(requireContext())
@@ -172,7 +226,8 @@ class UserFragment : BaseFragment() {
                                     .into(ivCover)
 
                                 tvTitle.text = model.title
-                                tvVideoReview.text = NumberUtils.digitalConversion(model.video_review)
+                                tvVideoReview.text =
+                                    NumberUtils.digitalConversion(model.video_review)
                                 tvPlayNum.text = NumberUtils.digitalConversion(model.play)
                                 itemView.setOnClickListener {
                                     AsVideoActivity.actionStart(root.context, model.bvid)
@@ -266,9 +321,17 @@ class UserFragment : BaseFragment() {
      * 获取用户基础信息
      * @return UserBaseBean
      */
-    private suspend fun getUserData(): UserBaseBean {
+    private suspend fun getUserData(index: Int = 1): UserBaseBean {
         val userBaseInfo = networkService.n11(mid)
-        saveUserBaseInfo(userBaseInfo)
+        if (userBaseInfo.code != 0) {
+            if (index > 3) {
+                return userBaseInfo
+            }
+            return getUserData(index + 1)
+        }
+        if (arguments == null) {
+            saveUserBaseInfo(userBaseInfo)
+        }
         return userBaseInfo
     }
 

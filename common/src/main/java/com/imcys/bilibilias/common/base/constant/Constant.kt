@@ -25,3 +25,13 @@ val DOWNLOAD_DEFAULT_PATH by lazy {
 }
 
 const val FILE_PROVIDER = "com.imcys.bilibilias.fileprovider"
+
+val BROWSER_FINGERPRINT = mapOf(
+    "web_location" to "1550101",
+    "platform" to "web",
+    "token" to "",
+    "dm_img_list" to "[]",
+    "dm_img_str" to "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
+    "dm_img_inter" to "{\"ds\":[],\"wh\":[3428,1836,80],\"of\":[72,144,72]}",
+    "dm_cover_img_str" to "QU5HTEUgKE5WSURJQSwgTlZJRElBIEdlRm9yY2UgR1RYIDEwODAgKDB4MDAwMDFCODApIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpR29vZ2xlIEluYy4gKE5WSURJQS",
+)

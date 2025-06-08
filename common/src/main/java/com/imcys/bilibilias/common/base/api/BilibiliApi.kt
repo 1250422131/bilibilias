@@ -103,4 +103,8 @@ object BilibiliApi {
 
     // 追番剧列表
     const val bangumiFollowPath = "x/space/bangumi/follow/list"
+
+    // 风控
+    const val getWebSpi = "x/frontend/finger/spi"
+
 }

@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.databinding.ItemVideoDefinitionBinding
 
 class VideoDefinitionAdapter(
-    private val datas: List<String>,
+    private val datas: MutableList<DialogUtils.VideoClarityInfo>,
     val selectedResult: (position: Int, beforeChangePosition: Int) -> Unit,
 ) :
     RecyclerView.Adapter<VideoDefinitionAdapter.ViewHolder>() {
@@ -36,7 +37,7 @@ class VideoDefinitionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = DataBindingUtil.getBinding<ItemVideoDefinitionBinding>(holder.itemView)
         binding?.apply {
-            itemCollectionButton.text = datas[position]
+            itemCollectionButton.text = datas[position].desc
 
             if (selectItem != holder.layoutPosition) {
                 binding.itemCollectionButton.setBackgroundResource(R.color.color_primary_variant)
