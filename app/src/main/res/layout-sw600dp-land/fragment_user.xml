@@ -9,114 +9,180 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
         tools:context=".home.ui.fragment.UserFragment">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            tools:visibility="visible"
+            android:visibility="gone"
+            android:id="@+id/lyUser"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/fragment_user_top_linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:baselineAligned="false"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_fragment_user_title"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_user_data_rv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            android:padding="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout" />
-
-
-        <LinearLayout
-
-            android:id="@+id/linearLayoutCompat4"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/user_works_background"
-            android:orientation="vertical"
-            android:padding="20dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.1"
-                android:text="@string/app_fragment_user_works_title"
-                android:textSize="20sp"
-                android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/fragment_user_top_linearLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginStart="20dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_fragment_user_title"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_user_data_rv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/white"
+                android:padding="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout" />
+
+
+            <LinearLayout
+
+                android:id="@+id/linearLayoutCompat4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/user_works_background"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_user_top_linearLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.1"
+                    android:text="@string/app_fragment_user_works_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:orientation="horizontal"
-                    android:paddingBottom="4dp"
-                    tools:ignore="RtlHardcoded">
+                    android:orientation="vertical">
 
-                    <androidx.constraintlayout.utils.widget.ImageFilterView
-                        android:id="@+id/uv_download_image"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/uv_download_four" />
+                        android:gravity="right"
+                        android:orientation="horizontal"
+                        android:paddingBottom="4dp"
+                        tools:ignore="RtlHardcoded">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:id="@+id/uv_download_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/uv_download_four" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
+                <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
+                    android:id="@+id/fragment_user_works_csr"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:sr_enableLoadMore="true"
+                    app:sr_enableRefresh="false">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragment_user_works_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+
+                </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
             </LinearLayout>
 
-            <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
-                android:id="@+id/fragment_user_works_csr"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:sr_enableLoadMore="true"
-                app:sr_enableRefresh="false">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/fragment_user_works_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.35" />
 
 
-            </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.35" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
+            android:id="@+id/clNoLogin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_no_account"
+                app:layout_constraintBottom_toTopOf="@+id/textView5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_percent="0.2"
+                app:tint="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="当前未登录账户"
+                android:textSize="60dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/btLogin"
+                app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
+            <Button
+                android:id="@+id/btLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_common_btn_bg"
+                android:text="点击登录"
+                android:padding="30dp"
+                android:textSize="40dp"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageView4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
 </layout>

@@ -7,6 +7,7 @@ import com.imcys.bilibilias.base.model.login.TvLoginQrcodeBean
 import com.imcys.bilibilias.base.model.login.TvLoginStateBean
 import com.imcys.bilibilias.base.model.user.LikeVideoBean
 import com.imcys.bilibilias.base.model.user.UserInfoBean
+import com.imcys.bilibilias.base.model.webi.WebSpiBean
 import com.imcys.bilibilias.common.utils.BiliAppSigner
 import com.imcys.bilibilias.base.utils.TokenUtils.encWbi
 import com.imcys.bilibilias.base.utils.TokenUtils.key
@@ -17,6 +18,7 @@ import com.imcys.bilibilias.common.base.app.BaseApplication
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.context
 import com.imcys.bilibilias.common.base.config.TvUserInfoRepository
 import com.imcys.bilibilias.common.base.constant.BILIBILI_URL
+import com.imcys.bilibilias.common.base.constant.BROWSER_FINGERPRINT
 import com.imcys.bilibilias.common.base.model.common.BangumiFollowList
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.di.AsCookiesStorage
@@ -292,8 +294,8 @@ class NetworkService @Inject constructor(
         }.body()
     }
 
-    suspend fun getTvLoginInfo() : MyUserData = runCatchingOnWithContextIo {
-        httpClient.get(BilibiliApi.getTvLoginInfo){
+    suspend fun getTvLoginInfo(): MyUserData = runCatchingOnWithContextIo {
+        httpClient.get(BilibiliApi.getTvLoginInfo) {
             val paramsMap = mapOf(
                 "appkey" to BiliAppSigner.APP_KEY,
                 "ts" to (System.currentTimeMillis() / 1000).toString(),
@@ -417,8 +419,11 @@ class NetworkService @Inject constructor(
     // ---------------------------------------------------------------------------------------------
     suspend fun n11(mid: Long): UserBaseBean =
         runCatchingOnWithContextIo {
-            val newMap = mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
+            val newMap = mapOf(
+                "mid" to mid.toString(),
+            ) + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
             httpClient.get(BilibiliApi.userBaseDataPath) {
+                refererBILIHarder()
                 encWbi(newMap).forEach { (k, v) ->
                     parameter(k, v)
                 }
@@ -459,8 +464,8 @@ class NetworkService @Inject constructor(
                 mapOf(
                     "mid" to mid.toString(),
                     "pn" to page.toString(),
-                    "ps" to "30"
-                )
+                    "ps" to "30",
+                    )+ BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
             ).forEach { (k, v) ->
                 parameter(k, v)
             }
@@ -478,12 +483,20 @@ class NetworkService @Inject constructor(
         runCatchingOnWithContextIo {
             httpClient.get(BilibiliApi.getUserInfoPath) {
                 encWbi(
-                    mapOf("mid" to mid.toString()) + accessUserSpaceGetRenderData(mid)
+                    mapOf(
+                        "mid" to mid.toString(),
+                    ) + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
                 )
                     .forEach { (k, v) ->
                         parameter(k, v)
                     }
+
             }.body()
+        }
+
+    suspend fun getWebSpiData(): WebSpiBean =
+        runCatchingOnWithContextIo {
+            httpClient.get(BilibiliApi.getWebSpi) {}.body()
         }
 
     private suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> {

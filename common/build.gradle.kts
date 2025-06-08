@@ -15,6 +15,8 @@ dependencies {
 
     api(libs.androidx.fragment.ktx)
 
+    api(libs.eventbus)
+
     // 深拷贝
     api(libs.deeprecopy.core)
     ksp(libs.deeprecopy.compiler)

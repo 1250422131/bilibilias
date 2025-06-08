@@ -17,8 +17,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.view.get
-import androidx.core.view.isEmpty
-import androidx.core.view.isNotEmpty
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -229,7 +228,7 @@ object DialogUtils {
      * @return BottomSheetDialog
      */
     fun loginQRDialog(
-        context: Context,
+        context: FragmentActivity,
         loginQrcodeBean: LoginQrcodeBean,
         responseResult: (Int, LoginStateBean) -> Unit,
     ): BottomSheetDialog {
@@ -247,7 +246,7 @@ object DialogUtils {
 
         binding.loginQRModel =
             ViewModelProvider(
-                context as HomeActivity,
+                context,
             )[LoginQRModel::class.java]
         binding.loginQRModel?.responseResult = responseResult
         // 传导binding过去
@@ -1106,9 +1105,11 @@ object DialogUtils {
                     baseVideoBaseBean.data.cid,
                     80
                 )
+                val allSupportCodeList = getVideoClarityList(baseVideo)
+                dialogDlVideoDefinitionTx.text = allSupportCodeList.firstOrNull { it.unconditional }?.desc ?: ""
 
                 dialogDlVideoDefinitionLy.setOnClickListener {
-                    loadVideoDefinition(context, baseVideo, 80) {
+                    loadVideoDefinition(context, allSupportCodeList, 80) {
                         // 这里返回的是清晰度的数值代码
                         selectDefinition = it
 
@@ -1373,10 +1374,11 @@ object DialogUtils {
                         selectDefinition = quality
                         new_description
                     }
-            dialogDlVideoDefinitionTx.text = defaultDefinition ?: "未知"
+            val allSupportCodeList = getVideoClarityList(dashVideoPlayBean)
+            dialogDlVideoDefinitionTx.text = allSupportCodeList.firstOrNull { it.unconditional }?.desc ?: "未知"
 
             dialogDlVideoDefinitionLy.setOnClickListener {
-                loadVideoDefinition(context, dashVideoPlayBean, selectDefinition) {
+                loadVideoDefinition(context, allSupportCodeList, selectDefinition) {
                     // 这里返回的是清晰度的数值代码
                     selectDefinition = it
 
@@ -1502,12 +1504,12 @@ object DialogUtils {
                 }
             }
 
-            if (dialogDlCodeTypeRadioGroup.childCount != 0){
+            if (dialogDlCodeTypeRadioGroup.childCount != 0) {
                 dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
                 dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
                     selectCodeType = radioGroup.findViewById<RadioButton>(i).text.toString()
                 }
-            }else{
+            } else {
                 downloadType = MP4_TYPE
                 downloadCondition = VIDEOANDAUDIO
                 dialogDlVideoTypeTx.text = "MP4"
@@ -1602,11 +1604,12 @@ object DialogUtils {
                         selectDefinition = quality
                         new_description
                     }
-            dialogDlVideoDefinitionTx.text = defaultDefinition ?: "未知"
-
+            val allSupportCodeList = getVideoClarityList(dashVideoPlayBean)
+            dialogDlVideoDefinitionTx.text = allSupportCodeList.firstOrNull { it.unconditional }?.desc ?: "未知"
             // 清晰度选择
             dialogDlVideoDefinitionLy.setOnClickListener {
-                loadVideoDefinition(context, dashVideoPlayBean, selectDefinition) {
+
+                loadVideoDefinition(context, allSupportCodeList, selectDefinition) {
                     // 这里返回的是清晰度的数值代码
                     selectDefinition = it
 
@@ -1789,12 +1792,12 @@ object DialogUtils {
             }
 
 
-            if (dialogDlCodeTypeRadioGroup.childCount != 0){
+            if (dialogDlCodeTypeRadioGroup.childCount != 0) {
                 dialogDlCodeTypeRadioGroup.check(dialogDlCodeTypeRadioGroup[0].id)
                 dialogDlCodeTypeRadioGroup.setOnCheckedChangeListener { radioGroup, i ->
                     selectCodeType = radioGroup.findViewById<RadioButton>(i).text.toString()
                 }
-            }else{
+            } else {
                 downloadType = MP4_TYPE
                 downloadCondition = VIDEOANDAUDIO
                 dialogDlVideoTypeTx.text = "MP4"
@@ -2862,6 +2865,59 @@ object DialogUtils {
         return bottomSheetDialog
     }
 
+    data class VideoClarityInfo(
+        val quality: Int,
+        val desc: String,
+        val unconditional:Boolean,
+    )
+
+    private fun getVideoClarityList(
+        dashVideoPlayBean: DashVideoPlayBean,
+    ): MutableList<VideoClarityInfo> {
+        val isAcceptQualityEmpty = dashVideoPlayBean.data.accept_quality.isEmpty()
+        val allSupportCodeList = mutableListOf<VideoClarityInfo>()
+        if (isAcceptQualityEmpty) {
+            dashVideoPlayBean.data.support_formats.map { item ->
+                val tipExist =
+                    dashVideoPlayBean.data.dash.video.firstOrNull { it.id == item.quality }
+                        ?.let { "" } ?: run {
+                        if (asUser.mid == 0L) {
+                            "登录享受-"
+                        } else {
+                            ""
+                        }
+                    }
+                allSupportCodeList.add(
+                    VideoClarityInfo(
+                        item.quality,
+                        tipExist + item.description.ifEmpty { item.new_description },
+                        tipExist.isEmpty()
+                    )
+                )
+            }
+        } else {
+            dashVideoPlayBean.data.accept_quality.forEachIndexed { index, i ->
+                val tipExist =
+                    dashVideoPlayBean.data.dash.video.firstOrNull { it.id == i }
+                        ?.let { "" } ?: run {
+                        if (asUser.mid == 0L) {
+                            "登录享受-"
+                        } else {
+                            ""
+                        }
+                    }
+                allSupportCodeList.add(
+                    VideoClarityInfo(
+                        i,
+                        tipExist + dashVideoPlayBean.data.accept_description[index],
+                        tipExist.isEmpty()
+                    )
+                )
+            }
+        }
+        return allSupportCodeList
+    }
+
     /**
      * 加载视频清晰度
      * @param context Context
@@ -2870,7 +2926,7 @@ object DialogUtils {
      */
     private fun loadVideoDefinition(
         context: Context,
-        dashVideoPlayBean: DashVideoPlayBean,
+        allSupportCodeList: List<VideoClarityInfo>,
         defaultSelectDefinition: Int,
         finished: (selects: Int) -> Unit,
     ): BottomSheetDialog {
@@ -2891,21 +2947,11 @@ object DialogUtils {
 
         binding.apply {
             dialogCollectionTitle.text = "请选择缓存清晰度"
-
-            val isAcceptQualityEmpty = dashVideoPlayBean.data.accept_quality.isEmpty()
             dialogCollectionRv.adapter =
-                VideoDefinitionAdapter(dashVideoPlayBean.data.accept_description) { position, _ ->
-                    selectDefinition = if (isAcceptQualityEmpty) {
-                        dashVideoPlayBean.data.support_formats[position].quality
-                    } else {
-                        dashVideoPlayBean.data.accept_quality[position]
-                    }
+                VideoDefinitionAdapter(allSupportCodeList.toMutableList()) { position, _ ->
+                    selectDefinition = allSupportCodeList[position].quality
                 }.apply {
-                    selectItem = if (isAcceptQualityEmpty) {
-                        dashVideoPlayBean.data.support_formats.indexOfFirst { it.quality == defaultSelectDefinition }
-                    } else {
-                        dashVideoPlayBean.data.accept_quality.indexOfFirst { it == defaultSelectDefinition }
-                    }
+                    selectItem = allSupportCodeList.indexOfFirst { it.unconditional }
                 }
 //            val collectionList = dashVideoPlayBean.data.dash.video.map {
 //                dashVideoPlayBean.data.support_formats.firstOrNull { item -> item.quality == it.id }?.new_description+"\n" + it.codecs
