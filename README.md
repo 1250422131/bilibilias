@@ -102,7 +102,7 @@ UP主可以下载一些剪辑素材，来做视频
 
 哔哩哔哩：[萌新杰少](https://space.bilibili.com/351201307)
 
-反馈社区：[兔小巢](https://support.qq.com/product/337496)
+反馈频道：[QQ频道](https://pd.qq.com/s/ecbbiumzr)
 
 ## 特别感谢
 
