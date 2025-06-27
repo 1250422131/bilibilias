@@ -1,0 +1,35 @@
+:root {
+  /* hero标题渐变色 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    90deg,
+    #ff4a7d,
+    #ff80a4
+  );
+
+  /*hero logo背景渐变色 */
+  --vp-home-hero-image-background-image: linear-gradient(#ff80a4, #ff4a7d);
+  --vp-home-hero-image-filter: blur(40px);
+}
+
+:root {
+  --vp-c-brand-1: #ff4a7d;
+  --vp-c-brand-2: #ff75a3;
+  --vp-c-brand-3: #ff8ca6;
+}
+
+.dark {
+  --vp-c-brand-1: #ff4a7d;
+  --vp-c-brand-2: #ff6b94;
+  --vp-c-brand-3: #ff8ca6;
+}
+
+.VPBadge.tip {
+  border-color: var(--vp-badge-tip-border);
+  color: var(--vp-badge-tip-text);
+  background-color: #ff8ca64D;
+}
+
+img {
+  border-radius: 8px;
+}
