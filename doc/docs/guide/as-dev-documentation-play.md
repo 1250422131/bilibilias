@@ -210,7 +210,7 @@ public class AsJzvdStdAdapter {
 ```
 
 ::: warning SharedPreferences即将被迁移
-BILIBILIAS正在逐步过渡至使用[MMKV]()，因此这里很可能在后面发送变动。
+BILIBILIAS正在逐步过渡至使用MMKV，因此这里很可能在后面发送变动。
 :::
 
 
