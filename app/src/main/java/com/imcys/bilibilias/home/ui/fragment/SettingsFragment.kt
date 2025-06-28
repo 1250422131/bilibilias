@@ -261,9 +261,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
 //                context as Activity,
 //                SAVE_FILE_PATH_CODE,
 //            )
-            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
-                requireActivity().startActivityForResult(it, SAVE_FILE_PATH_CODE)
-            }
+            DialogUtils.dialog(
+                requireContext(),
+                "警告",
+                "华为设备对存储权限进行了一些调整，导致BILIBILIAS无法在华为设备上进行自定义存储路径，否则会造成无法删除的问题，是否继续修改？",
+                "是",
+                "否",
+                true,
+                positiveButtonClickListener = {
+                    Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).also {
+                        requireActivity().startActivityForResult(it, SAVE_FILE_PATH_CODE)
+                    }
+                }, negativeButtonClickListener = {}).show()
             true
         }
     }
