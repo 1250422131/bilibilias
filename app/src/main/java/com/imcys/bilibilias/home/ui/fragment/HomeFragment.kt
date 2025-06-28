@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.app.App
 import com.imcys.bilibilias.base.event.LoginFinishEvent
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
@@ -21,6 +22,7 @@ import com.imcys.bilibilias.base.utils.DialogUtils
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.asToast
@@ -102,6 +104,7 @@ class HomeFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(requireActivity(), "HomeFragment")
+        initLogoutLoginButton()
     }
 
     /**
@@ -230,7 +233,7 @@ class HomeFragment : BaseFragment() {
     /**
      * 加载反馈配置
      */
-    private fun loadFeedbackConfig(){
+    private fun loadFeedbackConfig() {
         launchUI {
             val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
             fragmentHomeBinding.feedbackConfig = feedbackConfig
@@ -311,15 +314,21 @@ class HomeFragment : BaseFragment() {
         // 加载推荐视频
         // loadRCMDVideoData()
         // 检测用户是否登陆
-         detectUserLogin()
+        detectUserLogin()
 
         startStatistics()
 
         initSmoothRefreshLayout()
-        initLogoutLoginButton()
     }
 
     private fun initLogoutLoginButton() {
+
+        fragmentHomeBinding.fragmentHomeLoginout.visibility = if (asUser.mid == 0L) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+
         fragmentHomeBinding.fragmentHomeLoginout.setOnClickListener {
             DialogUtils.dialog(
                 requireContext(),
