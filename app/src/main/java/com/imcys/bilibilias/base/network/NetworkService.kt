@@ -81,7 +81,7 @@ class NetworkService @Inject constructor(
                 refererBILIHarder()
                 parameter("cid", cid)
                 parameter("qn", qn)
-                parameter("fnval", 4048)
+                parameter("fnval", 12240)
                 parameter("fourk", 1)
             }.body()
         }
@@ -92,7 +92,7 @@ class NetworkService @Inject constructor(
                 refererBILIHarder()
                 parameterEpID(epid)
                 parameter("qn", qn)
-                parameter("fnval", 4048)
+                parameter("fnval", 12240)
                 parameter("fourk", 1)
             }.body()
         }
@@ -115,7 +115,7 @@ class NetworkService @Inject constructor(
         httpClient.get(BilibiliApi.bangumiPlayPath) {
             parameterCID(cId.toString())
             parameter("qn", qn)
-            parameter("fnval", "4048")
+            parameter("fnval", "12240")
             parameter("fourk", "1")
         }.body()
     }

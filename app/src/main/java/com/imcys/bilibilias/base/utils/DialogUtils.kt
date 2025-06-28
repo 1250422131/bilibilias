@@ -1367,16 +1367,11 @@ object DialogUtils {
                 }.show()
             }
 
-            val defaultDefinition =
-                dashVideoPlayBean.data.support_formats.firstOrNull { it.quality == selectDefinition }
-                    ?.run { new_description.ifEmpty { description } }
-                    ?: dashVideoPlayBean.data.support_formats.firstOrNull()?.run {
-                        selectDefinition = quality
-                        new_description
-                    }
-            val allSupportCodeList = getVideoClarityList(dashVideoPlayBean)
-            dialogDlVideoDefinitionTx.text = allSupportCodeList.firstOrNull { it.unconditional }?.desc ?: "未知"
 
+            val allSupportCodeList = getVideoClarityList(dashVideoPlayBean)
+            val defaultInfo = allSupportCodeList.firstOrNull { it.unconditional }
+            dialogDlVideoDefinitionTx.text = defaultInfo?.desc ?: "未知"
+            selectDefinition = defaultInfo?.quality ?: 80
             dialogDlVideoDefinitionLy.setOnClickListener {
                 loadVideoDefinition(context, allSupportCodeList, selectDefinition) {
                     // 这里返回的是清晰度的数值代码
@@ -1597,15 +1592,11 @@ object DialogUtils {
                 }.show()
             }
 
-            val defaultDefinition =
-                dashVideoPlayBean.data.support_formats.firstOrNull { it.quality == selectDefinition }
-                    ?.run { new_description.ifEmpty { description } }
-                    ?: dashVideoPlayBean.data.support_formats.firstOrNull()?.run {
-                        selectDefinition = quality
-                        new_description
-                    }
+
             val allSupportCodeList = getVideoClarityList(dashVideoPlayBean)
-            dialogDlVideoDefinitionTx.text = allSupportCodeList.firstOrNull { it.unconditional }?.desc ?: "未知"
+            val defaultInfo = allSupportCodeList.firstOrNull { it.unconditional }
+            dialogDlVideoDefinitionTx.text = defaultInfo?.desc ?: "未知"
+            selectDefinition = defaultInfo?.quality ?: 80
             // 清晰度选择
             dialogDlVideoDefinitionLy.setOnClickListener {
 
