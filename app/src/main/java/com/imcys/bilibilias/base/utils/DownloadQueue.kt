@@ -521,12 +521,17 @@ class DownloadQueue @Inject constructor(
                             if (mTask.isGroupTask) {
                                 val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
                                 groupTasks?.forEach {
+                                    val currentUrl = it.url
                                     currentTasks.remove(it)
+                                    queue.removeAll {item-> item.url == currentUrl }
                                     it.state = STATE_DOWNLOAD_ERROR
                                     it.onComplete(false)
                                 }
+                                groupTasksMap.remove(mTask.downloadTaskDataBean.cid)
                             } else {
+                                val currentUrl = mTask.url
                                 currentTasks.remove(mTask)
+                                queue.removeAll { it.url == currentUrl }
                                 mTask.state = STATE_DOWNLOAD_ERROR
                                 mTask.onComplete(false)
                             }
