@@ -106,11 +106,13 @@ UP主可以下载一些剪辑素材，来做视频
 
 ## 特别感谢
 
-感谢 **[JetBrains](https://www.jetbrains.com/)** 对本项目的支持，此项目在 **[OSS许可证](https://sales.jetbrains.com/hc/zh-cn/articles/360016581839-%E4%BB%80%E4%B9%88%E6%98%AF-OSS-%E5%BC%80%E5%8F%91%E8%AE%B8%E5%8F%AF%E8%AF%81-%E8%B0%81%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%BE%97)** 下开发，并且遵守相关政策。
+感谢 **[JetBrains](https://www.jetbrains.com/)** 对本项目的支持，本项目的CDN加速和安全防护由腾讯 **[EdgeOne](https://edgeone.ai/?from=github)** 赞助，此项目在 **[OSS许可证](https://sales.jetbrains.com/hc/zh-cn/articles/360016581839-%E4%BB%80%E4%B9%88%E6%98%AF-OSS-%E5%BC%80%E5%8F%91%E8%AE%B8%E5%8F%AF%E8%AF%81-%E8%B0%81%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%BE%97)** 下开发，并且遵守相关政策。
 
 
 此项目的Kotlin技术采用IDEA开发和学习，再次感谢Jetbrains带来无与伦比的开发体验。
 
 ![Toolbox App logo](https://resources.jetbrains.com/storage/products/company/brand/logos/Toolbox.svg)
 ![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
-
+[<img src="https://edgeone.ai/_next/static/media/headLogo.daeb48ad.png?auto=format&fit=max&w=64"
+    alt="EdgeOne"
+    height="60">](https://edgeone.ai/?from=github)
