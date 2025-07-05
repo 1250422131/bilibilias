@@ -2,6 +2,7 @@ package com.imcys.bilibilias.base.utils
 
 import androidx.collection.mutableScatterMapOf
 import com.imcys.bilibilias.base.network.NetworkService
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.home.ui.model.UserNavDataModel
 import io.ktor.http.encodeURLParameter
 import java.net.URLEncoder

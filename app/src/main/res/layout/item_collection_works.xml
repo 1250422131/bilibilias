@@ -75,6 +75,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="2"
+                        android:minLines="2"
                         android:text="@{MediasBean.title}"
                         android:textSize="14dp" />
 

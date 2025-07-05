@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.home.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,17 +11,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
+import com.bumptech.glide.Glide
+import com.drake.brv.BindingAdapter
+import com.drake.brv.utils.grid
+import com.drake.brv.utils.setup
+import com.drake.brv.utils.staggered
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.event.LoginFinishEvent
 import com.imcys.bilibilias.base.network.NetworkService
-import com.imcys.bilibilias.base.utils.TokenUtils
-import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.base.utils.LoginUtils
+import com.imcys.bilibilias.base.utils.saveUserBaseInfo
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
+import com.imcys.bilibilias.common.base.utils.NumberUtils
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.databinding.FragmentUserBinding
+import com.imcys.bilibilias.databinding.ItemUserWorksBinding
+import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.activity.user.UserVideoDownloadActivity
 import com.imcys.bilibilias.home.ui.adapter.UserDataAdapter
-import com.imcys.bilibilias.home.ui.adapter.UserWorksAdapter
 import com.imcys.bilibilias.home.ui.model.UpStatBeam
 import com.imcys.bilibilias.home.ui.model.UserBaseBean
 import com.imcys.bilibilias.home.ui.model.UserCardBean
@@ -30,13 +41,16 @@ import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import me.dkzwm.widget.srl.RefreshingListenerAdapter
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 import kotlin.math.ceil
 
 @AndroidEntryPoint
 class UserFragment : BaseFragment() {
 
-    private lateinit var userWorksAd: UserWorksAdapter
+    private lateinit var userWorksAd: BindingAdapter
     private lateinit var userDataRvAd: UserDataAdapter
     private lateinit var userDataRv: RecyclerView
     private var userDataMutableList = mutableListOf<UserViewItemBean>()
@@ -44,11 +58,13 @@ class UserFragment : BaseFragment() {
     private val userWorkList = mutableListOf<UserWorksBean.DataBean.ListBean.VlistBean>()
     private var mid: Long = asUser.mid
 
-
     lateinit var fragmentUserBinding: FragmentUserBinding
 
     @Inject
     lateinit var networkService: NetworkService
+
+    @Inject
+    lateinit var userLoginUtils: LoginUtils
 
     override fun onResume() {
         super.onResume()
@@ -77,7 +93,56 @@ class UserFragment : BaseFragment() {
         return fragmentUserBinding.root
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReloadLoginFinishEvent(event: LoginFinishEvent?) {
+        event?.let {
+            mid = it.mid
+            initView()
+        }
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+    }
+
     private fun initView() {
+        launchUI {
+            when {
+                mid != 0L && arguments != null -> loginFinishInit()
+                mid != 0L && userLoginUtils.checkLoginState() -> loginFinishInit()
+                else -> notLoginInit()
+            }
+        }
+    }
+
+
+    private fun notLoginInit() {
+        fragmentUserBinding.apply {
+            lyUser.visibility = View.GONE
+            clNoLogin.visibility = View.VISIBLE
+
+            btLogin.setOnClickListener {
+                userLoginUtils.loginDialogCommonPage(requireActivity()).show()
+            }
+        }
+    }
+
+    private fun loginFinishInit() {
+        fragmentUserBinding.apply {
+            lyUser.visibility = View.VISIBLE
+            clNoLogin.visibility = View.GONE
+        }
         initUserDataRv()
 
         initUserData()
@@ -86,8 +151,6 @@ class UserFragment : BaseFragment() {
         initSmoothRefreshLayout()
 
         initUserVideoDownloadButton()
-
-
     }
 
     private fun initUserVideoDownloadButton() {
@@ -102,15 +165,15 @@ class UserFragment : BaseFragment() {
         fragmentUserBinding.fragmentUserWorksCsr.apply {
             setOnRefreshListener(object : RefreshingListenerAdapter() {
                 override fun onLoadingMore() {
-                    if (ceil((userWorksBean.data.page.count / 20).toDouble()) >= userWorksBean.data.page.pn) {
+                    if (ceil((userWorksBean.data.page.count / 30).toDouble()) >= userWorksBean.data.page.pn) {
                         launchIO {
-                            val userWorksBean = networkService.getUserWorkData(mid, userWorksBean.data.page.pn + 1)
+                            val userWorksBean =
+                                networkService.getUserWorkData(mid, userWorksBean.data.page.pn + 1)
 
                             this@UserFragment.userWorksBean = userWorksBean
 
                             launchUI {
-                                userWorkList.addAll(userWorksBean.data.list.vlist)
-                                userWorksAd.submitList(userWorkList + mutableListOf())
+                                userWorksAd.addModels(userWorksBean.data.list.vlist)
                                 // 更新数据 -> fragmentUserWorksCsr 支持
                                 refreshComplete()
                             }
@@ -132,21 +195,49 @@ class UserFragment : BaseFragment() {
 
     private fun initUserWorks() {
         launchIO {
-            val userWorksBean = networkService.getUserWorkData(mid,1)
-
-            userWorksAd = UserWorksAdapter()
+            var index = 1
+            var userWorksBean = networkService.getUserWorkData(mid, 1)
+            while (userWorksBean.code != 0 && index <= 3) {
+                index++
+                userWorksBean = networkService.getUserWorkData(mid, 1)
+            }
+            // userWorksAd = UserWorksAdapter()
             this@UserFragment.userWorksBean = userWorksBean
 
             if (userWorksBean.code == 0) {
                 launchUI {
-                    // 设置用户主页的作品的adapter
-                    fragmentUserBinding.fragmentUserWorksRv.adapter = userWorksAd
-                    // 设置布局管理器，让作品呈瀑布流的形式展示。
-                    fragmentUserBinding.fragmentUserWorksRv.layoutManager =
-                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    // 刷新刚刚请求的代码
+                    Log.d("UserWorksPage", "页面遭遇刷新")
+
+                    userWorksAd = fragmentUserBinding.fragmentUserWorksRv.run {
+                        if (isPad(requireContext())) {
+                            grid(3)
+                        } else {
+                            staggered(2, StaggeredGridLayoutManager.VERTICAL)
+                        }
+                    }.setup {
+                        addType<UserWorksBean.DataBean.ListBean.VlistBean>(R.layout.item_user_works)
+                        onBind {
+                            val model = getModel<UserWorksBean.DataBean.ListBean.VlistBean>()
+                            getBinding<ItemUserWorksBinding>().apply {
+
+                                Glide.with(requireContext())
+                                    .load(model.pic)
+                                    .override(300)
+                                    .into(ivCover)
+
+                                tvTitle.text = model.title
+                                tvVideoReview.text =
+                                    NumberUtils.digitalConversion(model.video_review)
+                                tvPlayNum.text = NumberUtils.digitalConversion(model.play)
+                                itemView.setOnClickListener {
+                                    AsVideoActivity.actionStart(root.context, model.bvid)
+                                }
+                            }
+                        }
+                    }
+
                     userWorkList.addAll(userWorksBean.data.list.vlist)
-                    userWorksAd.submitList(userWorkList + mutableListOf())
+                    userWorksAd.models = (ArrayList(userWorkList))
                 }
             } else {
                 launchUI {
@@ -199,10 +290,11 @@ class UserFragment : BaseFragment() {
                 )
             }
 
-            userDataRvAd.submitList(userDataMutableList + mutableListOf())
-
             if (userBaseBean.await().data.mid == asUser.mid) {
-                initUserTool()
+                fragmentUserBinding.fragmentUserDataRv.post {
+                    userDataRvAd.submitList(userDataMutableList + mutableListOf())
+                    initUserTool()
+                }
             }
 
         }
@@ -229,8 +321,18 @@ class UserFragment : BaseFragment() {
      * 获取用户基础信息
      * @return UserBaseBean
      */
-    private suspend fun getUserData(): UserBaseBean {
-        return networkService.n11(mid)
+    private suspend fun getUserData(index: Int = 1): UserBaseBean {
+        val userBaseInfo = networkService.n11(mid)
+        if (userBaseInfo.code != 0) {
+            if (index > 3) {
+                return userBaseInfo
+            }
+            return getUserData(index + 1)
+        }
+        if (arguments == null) {
+            saveUserBaseInfo(userBaseInfo)
+        }
+        return userBaseInfo
     }
 
     override fun onDestroy() {

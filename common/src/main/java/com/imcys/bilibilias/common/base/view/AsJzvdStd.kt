@@ -16,8 +16,9 @@ import cn.jzvd.JzvdStd
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.imcys.bilibilias.common.base.utils.asToast
 import com.imcys.bilibilias.common.R
+import com.imcys.bilibilias.common.base.utils.asToast
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.microsoft.appcenter.analytics.Analytics
 import master.flame.danmaku.controller.IDanmakuView
 import java.io.File
@@ -232,6 +233,43 @@ open class AsJzvdStd : JzvdStd {
         }
         JZUtils.hideSystemUI(jzvdContext) //华为手机和有虚拟键的手机全屏时可隐藏虚拟键 issue:1326
 
+    }
+
+    override fun gotoNormalScreen() {
+        //goback本质上是goto
+        gobakFullscreenTime = System.currentTimeMillis() //退出全屏
+        val vg = (JZUtils.scanForActivity(jzvdContext)).window.decorView as ViewGroup
+        vg.removeView(this)
+
+        //        CONTAINER_LIST.getLast().removeAllViews();
+        CONTAINER_LIST.last.removeViewAt(blockIndex) //remove block
+        CONTAINER_LIST.last.addView(this, blockIndex, blockLayoutParams)
+        CONTAINER_LIST.pop()
+
+        setScreenNormal() //这块可以放到jzvd中
+        JZUtils.showStatusBar(jzvdContext)
+        if (isHorizontalAsVideo()) {
+            JZUtils.setRequestedOrientation(jzvdContext, FULLSCREEN_ORIENTATION)
+        } else {
+            JZUtils.setRequestedOrientation(jzvdContext, NORMAL_ORIENTATION)
+        }
+        JZUtils.showSystemUI(jzvdContext)
+    }
+
+    override fun clearFloatScreen() {
+        // super.clearFloatScreen()
+        JZUtils.showStatusBar(context)
+        if (isPad(context)){
+            JZUtils.setRequestedOrientation(context, FULLSCREEN_ORIENTATION)
+        }else{
+            JZUtils.setRequestedOrientation(context, NORMAL_ORIENTATION)
+        }
+        JZUtils.showSystemUI(context)
+
+        val vg = (JZUtils.scanForActivity(context)).window.decorView as ViewGroup
+        vg.removeView(this)
+        if (mediaInterface != null) mediaInterface.release()
+        CURRENT_JZVD = null
     }
 
     private fun isHorizontalAsVideo(): Boolean {

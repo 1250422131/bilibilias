@@ -17,7 +17,8 @@ class FragmentHomeViewModel : ViewModel() {
     }
 
     fun goToNewVersionDoc(view: View) {
-        val uri = Uri.parse("https://docs.qq.com/doc/p/3f995a45e0beb636caded8a294765393ffdd3708?u=1d3c4bb00b04452ca23e45fb683db0bc")
+        val uri =
+            Uri.parse("https://docs.qq.com/doc/p/3f995a45e0beb636caded8a294765393ffdd3708?u=1d3c4bb00b04452ca23e45fb683db0bc")
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)
     }
@@ -38,7 +39,8 @@ class FragmentHomeViewModel : ViewModel() {
         view.context.startActivity(intent)
     }
 
-    fun goToCommunity(view: View,url:String) {
+    fun goToCommunity(view: View, url: String?) {
+        if (url == null) return
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         view.context.startActivity(intent)

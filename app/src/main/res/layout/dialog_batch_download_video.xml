@@ -322,6 +322,23 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioGroup
+                        android:id="@+id/dialog_dl_code_type_radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                    </RadioGroup>
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
             </LinearLayout>
 
             <androidx.cardview.widget.CardView

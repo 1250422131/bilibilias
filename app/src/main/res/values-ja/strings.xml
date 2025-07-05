@@ -20,7 +20,7 @@
     <string name="user_download_save_path_title">キャッシュファイルの保存パス</string>
     <string name="user_download_file_name">キャッシュファイルの命名ルール</string>
 
-    <string name="new_version_doc">V2.1.0に大幅な変更があります。古いユーザーは更新の詳細を確認してください。</string>
+    <string name="new_version_doc">V2.1.5に大幅な変更があります。古いユーザーは更新の詳細を確認してください。</string>
     <string name="user_dl_merge_cmd">
     FFmpegコマンドが不明な場合は変更しないでください\n
     BILIBILIASは簡単なコマンドパラメーターを提供しています\n
@@ -64,7 +64,7 @@
     <string name="app_fragment_home_donate">寄付</string>
     <string name="app_fragment_home_salute">敬意を表する</string>
     <string name="app_fragment_home_update_content">更新内容</string>
-    <string name="app_fragment_home_version">V2.1.0</string>
+    <string name="app_fragment_home_version">V2.1.5</string>
     <string name="app_fragment_home_salute_text">すべてのBILIBILIASユーザーに敬意を表する</string>
     <string name="app_fragment_home_salute_doc">趣味と追求は年齢に関係なく、いつでも生活に情熱があれば、それが最も楽しいことで、人生をカラフルにできる！ —— BILIBILIASユーザー</string>
     <string name="app_fragment_home_donate_text">BILIBILIASの開発を支援する</string>

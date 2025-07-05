@@ -33,6 +33,7 @@ data class DashBangumiPlayBean(
         ) {
             @Serializable
             data class VideoBean(
+                val codecs:String = "",
                 val baseUrl: String = "",
                 val size: Long = 0,
                 val width: Int = 0,
