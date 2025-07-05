@@ -145,7 +145,7 @@
             }
         }
     </string>
-    <string name="new_version_doc">V2.1.5-天权-Beta has significant changes. Please check the update details for existing users.</string>
+    <string name="new_version_doc">V2.1.5 has significant changes. Please check the update details for existing users.</string>
     <string name="user_dl_merge_cmd">"If you do not know the FFmpeg command, please do not modify it. \nBILIBILIAS provides you with simple command parameters. \n{VIDEO_PATH} video download path. \n{AUDIO_PATH} audio storage path. \n{VIDEO_MERGE_PATH} Storage path after merging. "</string>
     <string name="app_activity_bangumi_follow_title">Follow Series</string>
     <string name="app_activity_collection_title">Stars</string>
@@ -176,7 +176,7 @@
     <string name="app_fragment_home_donate">Donate</string>
     <string name="app_fragment_home_salute">Salute List</string>
     <string name="app_fragment_home_update_content">Update_content</string>
-    <string name="app_fragment_home_version">V2.1.5-天权-Beta</string>
+    <string name="app_fragment_home_version">V2.1.5</string>
     <string name="app_fragment_home_salute_text">Salute to all BILIBILIAS users</string>
     <string name="app_fragment_home_salute_doc">Hobbies and pursuits, regardless of age, have a love for life, is the happiest thing, life can be colorful—— BILIBILIAS user</string>
     <string name="app_fragment_home_donate_text">Support the development</string>
