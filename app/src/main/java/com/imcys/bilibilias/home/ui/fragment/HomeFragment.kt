@@ -153,20 +153,22 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        launchUI {
-            val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
-                networkService.getOldHomeBannerData()
-            }
+        runCatching {
+            launchUI {
+                val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
+                    networkService.getOldHomeBannerData()
+                }
 
-            // 新增BannerLifecycleObserver
-            fragmentHomeBinding.fragmentHomeBanner.apply {
-                setAdapter(
-                    OldHomeBeanAdapter(
-                        oldHomeBannerDataBean.textList,
-                        oldHomeBannerDataBean,
-                    ),
-                )
-                indicator = CircleIndicator(requireContext())
+                // 新增BannerLifecycleObserver
+                fragmentHomeBinding.fragmentHomeBanner.apply {
+                    setAdapter(
+                        OldHomeBeanAdapter(
+                            oldHomeBannerDataBean.textList,
+                            oldHomeBannerDataBean,
+                        ),
+                    )
+                    indicator = CircleIndicator(requireContext())
+                }
             }
         }
     }
@@ -177,32 +179,35 @@ class HomeFragment : BaseFragment() {
     private fun loadAppData() {
 //        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
-        launchUI {
-            val oldUpdateDataBean = withContext(Dispatchers.IO) {
-                networkService.getUpdateData()
-            }
 
-            // 确定是否灰度
-            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
-                isGrayType = oldUpdateDataBean.gray
-                invalidate() // 通知 View 重新绘制，以显示灰度效果
-            }
+        runCatching {
+            launchUI {
+                val oldUpdateDataBean = withContext(Dispatchers.IO) {
+                    networkService.getUpdateData()
+                }
 
-            if (oldUpdateDataBean.notice != "") {
-                loadNotice(oldUpdateDataBean.notice.toString())
-            }
-            // 送出签名信息
-            val sha = apkVerifyWithSHA(requireContext(), "")
-            val md5 = apkVerifyWithMD5(requireContext(), "")
-            val crc = apkVerifyWithCRC(requireContext(), "")
+                // 确定是否灰度
+                (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+                    isGrayType = oldUpdateDataBean.gray
+                    invalidate() // 通知 View 重新绘制，以显示灰度效果
+                }
 
-            when (oldUpdateDataBean.id) {
-                "0" -> postAppData(sha, md5, crc)
-                "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
-            }
+                if (oldUpdateDataBean.notice != "") {
+                    loadNotice(oldUpdateDataBean.notice.toString())
+                }
+                // 送出签名信息
+                val sha = apkVerifyWithSHA(requireContext(), "")
+                val md5 = apkVerifyWithMD5(requireContext(), "")
+                val crc = apkVerifyWithCRC(requireContext(), "")
 
-            // 检测更新
-            loadVersionData(oldUpdateDataBean)
+                when (oldUpdateDataBean.id) {
+                    "0" -> postAppData(sha, md5, crc)
+                    "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
+                }
+
+                // 检测更新
+                loadVersionData(oldUpdateDataBean)
+            }
         }
     }
 
@@ -234,9 +239,11 @@ class HomeFragment : BaseFragment() {
      * 加载反馈配置
      */
     private fun loadFeedbackConfig() {
-        launchUI {
-            val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
-            fragmentHomeBinding.feedbackConfig = feedbackConfig
+        runCatching {
+            launchUI {
+                val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
+                fragmentHomeBinding.feedbackConfig = feedbackConfig
+            }
         }
     }
 
