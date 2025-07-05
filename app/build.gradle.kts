@@ -1,77 +1,67 @@
 plugins {
     alias(libs.plugins.bilibilias.android.application)
-    alias(libs.plugins.bilibilias.compose)
-    alias(libs.plugins.bilibilias.hilt)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.bilibilias.android.koin)
+    alias(libs.plugins.gms.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.kotlin.plugin.serialization)
+
 }
 
 android {
     namespace = "com.imcys.bilibilias"
-    defaultConfig {
-        applicationId = "com.imcys.bilibilias"
-        versionCode = 210
-        versionName = "2.1.5-天权-Beta"
-        ndk {
-            abiFilters += listOf("arm64-v8a","armeabi-v7a", "x86_64")
-        }
 
+    defaultConfig {
+        targetSdk = 36
+        applicationId = "com.imcys.bilibilias"
+        versionCode = 300
+        versionName = "3.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        flavorDimensions += project.name
+
     }
 
     buildTypes {
-        debug {
-            resValue("string", "app_name", "BILIBILIAS_DEBUG")
-            resValue("string", "app_channel", "Official Channel Debug")
-        }
-
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
-            resValue("string", "app_name", "BILIBILIAS")
-            resValue("string", "app_channel", "Official Channel")
-            signingConfig = signingConfigs["BilibiliAsSigningConfig"]
         }
     }
     buildFeatures {
         compose = true
-        dataBinding = true
-        viewBinding = true
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            isUniversalApk = false
-        }
     }
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(libs.androidx.activity)
 
-    ksp(libs.deeprecopy.compiler)
 
-    implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
+    implementation(project(":core:common"))
+    implementation(project(":core:data"))
+    implementation(project(":core:ffmpeg"))
 
-    implementation(libs.work.runtime.ktx)
-    ksp(libs.hilt.compiler)
 
-    implementation(libs.material)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.inappmessaging.display)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.config.ktx)
+    implementation(libs.firebase.perf)
+
+    // 彩带
+    implementation(libs.konfetti.compose)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

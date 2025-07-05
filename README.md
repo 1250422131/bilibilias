@@ -1,102 +1,43 @@
 <div align="center">
 
-
 # BILIBILIAS
 
 ![bilibilias](https://socialify.git.ci/1250422131/bilibilias/image?description=1&descriptionEditable=%E4%BE%BF%E6%8D%B7%E7%9A%84%E7%BC%93%E5%AD%98B%E7%AB%99%E8%A7%86%E9%A2%91%E5%92%8C%E7%95%AA%E5%89%A7&font=Inter&forks=1&language=1&logo=https%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fim_new%2F18b70b81972a79923f179106c406910a351201307.png&name=1&owner=1&pattern=Circuit%20Board&stargazers=1&theme=Auto)
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/1250422131/bilibilias?label=version)
-![Android Sdk Require](https://img.shields.io/badge/android-5.0%2B-informational)
-![GitHub](https://img.shields.io/github/license/1250422131/bilibilias)
-[![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 </div>
 
 ---
+> [!CAUTION]
+> 这是 BILIBILIAS 3.x 重构版本的分支，请不要使用这个分支进行构建，它仍然在开发中！！！
 
-**Languages:**
+BILIBILIAS 近两年来，积攒的功能是非常多的，但由于早期架构薄弱，导致2.x在功能稳定性的维护上变得非常困难。
+因此，我们准备启动3.x的重构计划，在保障稳定性的前提下，将2.x的功能和更多功能加入到3.x版本。
 
-- [English (United States)](./README-en_US.md)
-- 简体中文
-- [繁体中文](./README-zh_Hant.md)
+为了确保新版本架构茁壮，我们进行分阶段开发，详细见下面的进展
 
-## 简介
+## 进展
 
-**BILIBILIAS**是一款B站，哔哩哔哩视频缓存的辅助工具，一键解析缓存
+- []账户管理模块
+- []视频解析模块
+- []视频缓存模块
+- []ffmpeg业务模块
+- []设置模块
+- []CI/CD
+- []DOC
 
-使用它来帮助你缓存视频，目前我们也支持了相当多的功能，使用它帮助你完成工作
 
-UP主可以下载一些剪辑素材，来做视频
+## 目前阶段
+当前正在进行对APP的整体架构设计和登录账户管理等功能进行开发，也就是第一阶段，BILIBILIAS3.x尚处早期，有兴趣参与维护的用户可以关注进展和设计。
 
-项目特殊性，随时可能停止运维。
 
-## 支持的功能
+## BILIBILIAS-FFmpeg
 
-- 完成的功能
-- [x] 扫码登录
-- [x] 缓存视频/大陆支持播放的番剧
-- [x] 个人中心 -> 帮助缓存自己的视频
-- [x] 批量下载
-- [x] 后台下载功能
-- [x] 支持ffmpeg
-- [x] 支持下载列表操作
+仓库待定
 
-## 感谢国际化支持
+## 技术路线
+技术路线待定
 
-[xiwangly：提供en_US，zh_TW语言支持](https://github.com/xiwangly2)
-
-## 感谢开源项目
-
-[Ktor：协程中高效网络请求](https://ktor.io/)
-
-[bilibili-API-collect：API接口参考](https://github.com/SocialSisterYi/bilibili-API-collect)
-
-[flexbox：伸缩布局](https://github.com/google/flexbox-layout)
-
-[jxl：直接生成excel文件时采用](https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl/2.6.12)
-
-[BRV：实现RV的动画效果](https://github.com/liangjingkanji/BRV)
-
-[RxFFmpeg：支持视频合并等操作](https://github.com/microshow/RxFFmpeg)
-
-[KComponent：组件化路由库](https://github.com/xiaojinzi123/KComponent)
-
-[HighLightPro：开屏引导](https://github.com/hyy920109/HighLightPro)
-
-[Appcenter：分发以及用户数据统计](https://appcenter.ms/)
-
-[百度统计：APP使用数据统计](https://mtj.baidu.com/web/welcome/login)
-
-[xutils：下载实现](https://github.com/wyouflf/xUtils3)
-
-[DanmakuFlameMaster：烈焰弹幕使](https://github.com/bilibili/DanmakuFlameMaster)
-
-[饺子播放器](https://github.com/Jzvd/JZVideo)
-
-[lottie：部分动画实现](https://github.com/airbnb/lottie-android)
-
-[UltimateBarX：沉浸式布局](https://github.com/Zackratos/UltimateBarX)
-
-## 下载
-
-|   系统    |                            GitHub                            |                  官网                  |
-|:-------:|:------------------------------------------------------------:|:------------------------------------:|
-| Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png"
-    alt="下载应用，请到 F-Droid"
-    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
-
-## 🔭最近关注
-
-这里展示的是最近Star了**BILIBILIAS**项目的用户
-
-[![Stargazers repo roster for @1250422131/1250422131](https://reporoster.com/stars/1250422131/bilibilias)](https://github.com/1250422131/bilibilias/stargazers)
-
-## 🎢Star进展
-
-![](https://api.star-history.com/svg?repos=1250422131/bilibilias&type=Date)
-
-## 问题反馈
+## 反馈渠道
 
 企鹅群：812128563
 

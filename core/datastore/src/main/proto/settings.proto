@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.imcys.bilibilias.datastore";
+option java_multiple_files = true;
+
+message AppSettings {
+  AgreePrivacyPolicyState agree_privacy_policy = 1;
+
+  enum AgreePrivacyPolicyState {
+    Default = 0;
+    NotAgreed = 1;
+    Agreed = 2;
+    Refuse = 3;
+  }
+
+}
