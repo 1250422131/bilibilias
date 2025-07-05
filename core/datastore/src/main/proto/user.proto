@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.imcys.bilibilias.datastore";
+option java_multiple_files = true;
+
+message User{
+  int64 current_user_id = 1;
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "353498354213",
+    "project_id": "bilibilias-gp",
+    "storage_bucket": "bilibilias-gp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353498354213:android:2fbf376b6554b0fee7a5cc",
+        "android_client_info": {
+          "package_name": "com.imcys.bilibilias"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ3PLO_XCvt05yJ7rbR_qkgdpIcIusiB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

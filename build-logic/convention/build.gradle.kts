@@ -23,9 +23,6 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.android.tools.common)
     compileOnly(libs.compose.gradlePlugin)
-    compileOnly(libs.kotlin.gradlePlugin)
-    compileOnly(libs.ksp.gradlePlugin)
-    compileOnly(libs.room.gradlePlugin)
 }
 
 tasks {
@@ -38,28 +35,18 @@ tasks {
 gradlePlugin {
     plugins {
         register("androidApplication") {
-            id = "bilibilias.android.application"
+            id = libs.plugins.bilibilias.android.application.get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibrary") {
-            id = "bilibilias.android.library"
+            id = libs.plugins.bilibilias.android.library.get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("Compose") {
-            id = "bilibilias.compose"
-            implementationClass = "AndroidComposeConventionPlugin"
-        }
-        register("androidFeature") {
-            id = "bilibilias.android.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
-        }
-        register("hilt") {
-            id = "bilibilias.hilt"
-            implementationClass = "HiltConventionPlugin"
-        }
-        register("androidRoom") {
-            id = "bilibilias.android.room"
-            implementationClass = "AndroidRoomConventionPlugin"
+
+        register("koin") {
+            id = libs.plugins.bilibilias.android.koin.get().pluginId
+            implementationClass = "KoinConventionPlugin"
+            version = "unspecified"
         }
     }
 }
