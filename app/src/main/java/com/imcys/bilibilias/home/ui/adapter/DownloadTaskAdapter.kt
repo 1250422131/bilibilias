@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.model.task.DownloadTaskInfo
+import com.imcys.bilibilias.base.utils.DialogUtils.setPad
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOADING
 import com.imcys.bilibilias.base.utils.STATE_DOWNLOAD_END
@@ -96,7 +97,7 @@ class DownloadTaskAdapter @Inject constructor() :
                             it.cancel()
                         }
                     }
-                }.show()
+                }.setPad().show()
             }
         }
     }

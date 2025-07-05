@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout
 import com.imcys.asbottomdialog.bottomdialog.AsDialog
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.DialogUtils.setPad
 import com.imcys.bilibilias.base.utils.DownloadQueue
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.extend.launchUI
@@ -205,7 +206,7 @@ class DownloadFragment : BaseFragment() {
                     it.cancel()
                 }
             }
-        }.show()
+        }.setPad().show()
     }
 
     /**

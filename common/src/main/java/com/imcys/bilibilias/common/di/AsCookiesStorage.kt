@@ -46,6 +46,27 @@ class AsCookiesStorage @Inject constructor(
         cookies.add(cookie)
     }
 
+    fun addCookieByUrl(url: Url, key: String, value: String) {
+        val existingCookie = cookies.find { it.name == key && it.domain == url.host }
+
+        // 如果存在，则移除旧的 Cookie
+        if (existingCookie != null) {
+            cookies.remove(existingCookie)
+        }
+        val cookie = Cookie(
+            name = key,
+            value = value,
+            domain = url.host, // 假设 cookie 的域名与 URL 的域名一致
+            path = "/", // 假设路径为根路径
+            expires = null, // 不设置过期时间
+            maxAge = null,
+            httpOnly = true, // 假设是 HttpOnly 的 cookie
+            secure = true, // 如果 URL 是 HTTPS，则设置为 Secure
+        )
+        cookies.add(cookie)
+    }
+
+
     fun saveCookies() {
         UserInfoRepository.asCookies = cbor.encodeToByteArray(cookies.map { it.toAsCookie() })
     }

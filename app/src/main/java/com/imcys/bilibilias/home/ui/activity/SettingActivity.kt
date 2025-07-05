@@ -10,13 +10,19 @@ import androidx.documentfile.provider.DocumentFile
 import com.baidu.mobstat.StatService
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
+import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.utils.file.hasSubDirectory
 import com.imcys.bilibilias.databinding.ActivitySttingBinding
 import com.imcys.bilibilias.home.ui.fragment.SettingsFragment
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class SettingActivity : BaseActivity() {
-    private lateinit var settingsFragment: SettingsFragment
+
+    lateinit var settingsFragment: SettingsFragment
     lateinit var binding: ActivitySttingBinding
     private val SAVE_FILE_PATH_CODE = 1
     private val IMPORT_FILE_PATH_CODE = 2

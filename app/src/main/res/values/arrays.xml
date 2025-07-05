@@ -27,7 +27,7 @@
         <item>Auto</item>
         <item>简体中文 (中国)</item>
         <item>English (US)</item>
-        <item>繁體中文 (中國台灣)</item>
+        <item>繁體中文</item>
         <item>Japanese</item>
     </string-array>
 
@@ -48,10 +48,10 @@
     </string-array>
 
     <string-array name="app_language">
-        <item>System</item>
+        <item>System(Auto)</item>
         <item>English</item>
         <item>Chinese(Simplified)</item>
-        <item>Chinese-TaiwanProvince(Traditional)</item>
+        <item>Chinese(Traditional)</item>
         <item>Japanese</item>
     </string-array>
 
@@ -59,7 +59,7 @@
         <item>System</item>
         <item>en-US</item>
         <item>zh-CN</item>
-        <item>zh-TW</item>
+        <item>zh</item>
         <item>ja</item>
     </string-array>
 

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -34,7 +35,8 @@ import com.imcys.bilibilias.home.ui.activity.tool.MergeVideoActivity
 import com.imcys.bilibilias.home.ui.activity.tool.WebAsActivity
 import com.imcys.bilibilias.home.ui.adapter.ToolItemAdapter
 import com.imcys.bilibilias.home.ui.adapter.ViewHolder
-import com.imcys.bilibilias.home.ui.model.*
+import com.imcys.bilibilias.home.ui.model.ToolItemBean
+import com.imcys.bilibilias.home.ui.viewmodel.AsVideoViewModel
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,6 +68,8 @@ class ToolFragment : BaseFragment() {
 
     @Inject
     lateinit var downloadQueue: DownloadQueue
+
+    private val asVideoViewModel: AsVideoViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -144,13 +148,23 @@ class ToolFragment : BaseFragment() {
     /**
      * 对输入的视频ID进行解析
      */
-    fun asVideoId(text: String) {
+    fun asVideoId(text: String, isQuickAs: Boolean = false) {
         // 判断是否有搜到
         when (val result = AsRegexUtil.parse(text)) {
-            is TextType.AV -> getVideoCardData(NewVideoNumConversionUtils.av2bv(result.text))
-            is TextType.BV -> getVideoCardData(result.text)
-            is TextType.EP -> loadEpVideoCard(result.text)
-            is TextType.ShortLink -> loadShareData(result.text)
+            is TextType.AV -> {
+                val bvId = NewVideoNumConversionUtils.av2bv(result.text)
+                if (isQuickAs) quickAsVideo(bvId)
+                getVideoCardData(bvId)
+            }
+            is TextType.BV -> {
+                if (isQuickAs) quickAsVideo(result.text)
+                getVideoCardData(result.text)
+            }
+            is TextType.EP -> {
+                loadEpVideoCard(result.text)
+                if (isQuickAs) quickAsEpVideo(result.text)
+            }
+            is TextType.ShortLink -> loadShareData(result.text,isQuickAs)
             is TextType.UserSpace -> loadUserCardData(result.text)
             null -> {
                 lifecycleScope.launch {
@@ -166,6 +180,56 @@ class ToolFragment : BaseFragment() {
             }
         }
     }
+
+
+    /**
+     * 快速解析视频
+     */
+    private fun quickAsVideo(bvId: String) {
+        lifecycleScope.launch {
+            var videoBaseBean = networkService.getVideoBaseInfoByBvid(bvId)
+
+            if (videoBaseBean.code != 0) {
+                videoBaseBean = networkService.getVideoBaseInfoByAid(
+                    NewVideoNumConversionUtils.bv2av(bvId).toString()
+                )
+            }
+
+            videoBaseBean.data.redirect_url.apply {
+                if (this.isNotEmpty()) {
+                    // 通过正则表达式检查该视频是不是番剧
+                    val epRegex = Regex("""(?<=ep)(\d*)""")
+                    if (epRegex.containsMatchIn(this)) {
+                        // 加载番剧视频列表
+                        val epId = epRegex.find(this)?.value?.toLong() ?: 0L
+                        val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epId)
+                        asVideoViewModel.downloadBangumiVideo(fragmentToolBinding.root,videoBaseBean,bangumiSeasonBean)
+                    }
+                } else {
+                    // 加载视频播放信息
+                    val videoPlayListData = networkService.getVideoPageListData(bvId)
+                    asVideoViewModel.downloadVideo(fragmentToolBinding.root,videoBaseBean,videoPlayListData)
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 快速解析番剧
+     */
+    private fun quickAsEpVideo(epId: Long){
+        launchIO {
+            val bangumiSeasonBean = networkService.getBangumiSeasonBeanByEpid(epId)
+
+            if (bangumiSeasonBean.code == 0) {
+                bangumiSeasonBean.result.episodes.forEach { it1 ->
+                    if (it1.id == epId) quickAsVideo(it1.bvid)
+                }
+            }
+        }
+    }
+
 
     private fun loadUserCardData(inputString: String) {
         launchUI {
@@ -193,11 +257,11 @@ class ToolFragment : BaseFragment() {
     /**
      * 加载APP端分享视频
      */
-    private fun loadShareData(url: String) {
-        asLogD("调试",url)
+    private fun loadShareData(url: String,isQuickAs:Boolean) {
+        asLogD("调试", url)
         lifecycleScope.launch {
             runCatching { networkService.shortLink(url) }
-                .onSuccess { asVideoId(it) }
+                .onSuccess { asVideoId(it,isQuickAs) }
                 .onFailure {
                     Toast.makeText(
                         context,
@@ -227,7 +291,7 @@ class ToolFragment : BaseFragment() {
     private fun getVideoCardData(bvid: String) {
         fragmentToolBinding.apply {
             launchUI {
-                val videoBaseBean = networkService.n26(bvid)
+                val videoBaseBean = networkService.getVideoBaseInfoByBvid(bvid)
 
                 (mAdapter).apply {
                     // 这里的理解，filter过滤掉之前的特殊item，只留下功能模块，这里条件可以叠加。
@@ -354,7 +418,7 @@ class ToolFragment : BaseFragment() {
         }
         clipData.getItemAt(0).text?.let {
             // fragmentToolBinding.fragmentToolEditText.setText(it)
-            asVideoId(it.toString())
+            asVideoId(it.toString(), true)
         }
     }
 
@@ -367,6 +431,7 @@ class ToolFragment : BaseFragment() {
         super.onResume()
         StatService.onPageStart(context, getString(R.string.app_ToolFragment_onDestroy))
     }
+
     // 构建输入框文字变化流
     private fun TextInputLayout.textChangeFlow(): Flow<String> = callbackFlow {
         val textWatcher = TextInputLayout.OnEditTextAttachedListener {

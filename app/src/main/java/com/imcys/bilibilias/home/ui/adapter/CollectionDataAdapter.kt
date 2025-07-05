@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.asLogD
 import com.imcys.bilibilias.databinding.ItemCollectionWorksBinding
 import com.imcys.bilibilias.home.ui.activity.AsVideoActivity
 import com.imcys.bilibilias.home.ui.model.CollectionDataBean
@@ -41,6 +42,7 @@ class CollectionDataAdapter @Inject constructor() :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        asLogD("CollectionDataAdapter","${position}")
         val binding =
             DataBindingUtil.getBinding<ItemCollectionWorksBinding>(holder.itemView)?.apply {
                 mediasBean = getItem(position)

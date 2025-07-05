@@ -38,6 +38,7 @@ data class DashVideoPlayBean(
             @Serializable
             data class VideoBean(
                 val id: Int = 0,
+                val codecs:String = "",
                 val baseUrl: String = "",
                 val width: Int = 0,
                 val height: Int = 0,
@@ -58,6 +59,8 @@ data class DashVideoPlayBean(
             val quality: Int = 0,
             val new_description: String = "",
             val display_desc: String = "",
+            val description:String = "",
+            val codecs:List<String> = emptyList()
         )
     }
 }

@@ -13,11 +13,18 @@
 
 ---
 
+> [!NOTE]  
+> 你当前正在观看BILIBILIAS v2.x 的分支代码，v3.x 重构版本正在进行，v2.x会继续更新和维护，直到未来V3.x完全替代。
+> 可通过 [Compose](https://github.com/1250422131/bilibilias/tree/compose) 分支查看开发进展。
+> 对v2.x提交的代码会被逐步迁移到v3.x，因此可以放心继续参与贡献。
+
+
 **Languages:**
 
 - [English (United States)](./README-en_US.md)
 - 简体中文
-- [繁体中文(中国台湾省)](./README-zh_TW.md)
+- [繁体中文](./README-zh_Hant.md)
+
 
 ## 简介
 
@@ -83,8 +90,8 @@ UP主可以下载一些剪辑素材，来做视频
 | Android | [Release](https://github.com/1250422131/bilibilias/releases) | [官网](https://api.misakamoe.com/app/) |
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-zh-hans.png"
-    alt="下载应用，请到 F-Droid"
-    height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
+alt="下载应用，请到 F-Droid"
+height="80">](https://f-droid.org/packages/com.imcys.bilibilias)
 
 ## 🔭最近关注
 
@@ -114,5 +121,5 @@ UP主可以下载一些剪辑素材，来做视频
 ![Toolbox App logo](https://resources.jetbrains.com/storage/products/company/brand/logos/Toolbox.svg)
 ![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
 [<img src="https://edgeone.ai/_next/static/media/headLogo.daeb48ad.png?auto=format&fit=max&w=64"
-    alt="EdgeOne"
-    height="60">](https://edgeone.ai/?from=github)
+alt="EdgeOne"
+height="60">](https://edgeone.ai/?from=github)

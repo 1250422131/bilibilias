@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jzvd.JZDataSource
 import cn.jzvd.Jzvd
@@ -23,6 +24,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
+import com.imcys.bilibilias.base.utils.DialogUtils.setPad
 import com.imcys.bilibilias.base.view.AppAsJzvdStd
 import com.imcys.bilibilias.common.base.api.BilibiliApi
 import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
@@ -33,6 +35,7 @@ import com.imcys.bilibilias.common.base.constant.REFERER
 import com.imcys.bilibilias.common.base.constant.USER_AGENT
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.utils.NewVideoNumConversionUtils
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.common.base.view.JzbdStdInfo
 import com.imcys.bilibilias.common.network.base.ResBean
 import com.imcys.bilibilias.danmaku.BiliDanmukuParser
@@ -110,7 +113,9 @@ class AsVideoActivity : BaseActivity() {
         // 加载控件
         initView()
 
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        if (!isPad(this)){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
 
 //    override fun attachBaseContext(newBase: Context?) {
@@ -182,7 +187,7 @@ class AsVideoActivity : BaseActivity() {
                                     it.cancel()
                                 }
                             }
-                        }.show()
+                        }.setPad().show()
                     } else {
                         val dashVideoPlayBean = networkService.n10(bvid, cid)
                         if (dashVideoPlayBean.data.dash.audio.isEmpty()) {
@@ -194,7 +199,7 @@ class AsVideoActivity : BaseActivity() {
                                         getString(R.string.app_asvideoactivity_loadvideoplay_asdialog_button_text)
                                     positiveButton = { it.cancel() }
                                 }
-                            }.show()
+                            }.setPad().show()
                         }
                         if (dashVideoPlayBean.code != 0) {
                             setAsJzvdConfig(videoPlayBean.data.durl[0].url, "")
@@ -205,7 +210,7 @@ class AsVideoActivity : BaseActivity() {
                             dashVideoPlayBean.data.dash.video[0].also {
                                 if (it.width < it.height) {
                                     // 竖屏
-                                    binding.asVideoAppbar.updateLayoutParams<ViewGroup.LayoutParams> {
+                                    binding.asVideoAppbar?.updateLayoutParams<ViewGroup.LayoutParams> {
                                         height = windowManager.defaultDisplay.height / 4 * 3
                                     }
                                 }
@@ -217,13 +222,14 @@ class AsVideoActivity : BaseActivity() {
                     }
 
                     binding.asVideoCd.visibility = View.VISIBLE
-                    binding.asVideoBangumiCd.visibility = View.GONE
+                    binding.asVideoBangumiCd.visibility =
+                        if (isPad(this@AsVideoActivity)) View.INVISIBLE else View.GONE
                 }
             }
 
             "bangumi" -> {
                 launchIO {
-                    val bangumiPlayBean = networkService.n16(epid)
+                    val bangumiPlayBean = networkService.getBangumiPlayBean(epid)
 
                     launchUI {
                         // 设置布局视频播放数据
@@ -295,9 +301,11 @@ class AsVideoActivity : BaseActivity() {
      */
     private fun archiveHasLikeTriple() {
         launchIO {
-            archiveHasLike()
-            archiveCoins()
-            archiveFavoured()
+           runCatching {
+               archiveHasLike()
+               archiveCoins()
+               archiveFavoured()
+           }
         }
     }
 
@@ -354,7 +362,8 @@ class AsVideoActivity : BaseActivity() {
 
                     // 到这里就毋庸置疑的说，是番剧，要单独加载番剧缓存。
                     asVideoBangumiCd.visibility = View.VISIBLE
-                    asVideoCd.visibility = View.GONE
+                    asVideoCd.visibility =
+                        if (isPad(this@AsVideoActivity)) View.INVISIBLE else View.GONE
                     this.bangumiSeasonBean = bangumiSeasonBean
 
                     asVideoSubsectionRv.adapter =
@@ -366,12 +375,18 @@ class AsVideoActivity : BaseActivity() {
                             updateBangumiInformation(data)
                         }
 
-                    asVideoSubsectionRv.layoutManager =
+                    asVideoSubsectionRv.layoutManager = if (isPad(this@AsVideoActivity)){
+                        GridLayoutManager(
+                            this@AsVideoActivity,
+                           2
+                        )
+                    }else{
                         LinearLayoutManager(
                             this@AsVideoActivity,
                             LinearLayoutManager.HORIZONTAL,
                             false,
                         )
+                    }
                 }
             }
         }
