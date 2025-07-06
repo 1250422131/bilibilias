@@ -1,9 +1,8 @@
 package com.imcys.bilibilias.network
 
-import android.util.Log
 import com.imcys.bilibilias.common.event.sendLoginErrorEvent
-import com.imcys.bilibilias.network.model.BiliApiResponse
 import com.imcys.bilibilias.network.config.APP_KEY
+import com.imcys.bilibilias.network.model.BiliApiResponse
 import com.imcys.bilibilias.network.utils.BiliAppSigner
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

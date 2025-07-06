@@ -11,7 +11,7 @@ import org.koin.dsl.module
 val appModule = module {
     single { androidContext().assets }
     single { androidContext().contentResolver }
-    viewModel { HomeViewModel(get(),get()) }
+    viewModel { HomeViewModel(get(),get(),get()) }
     viewModel { QRCodeLoginViewModel(get(),get(),get(),get()) }
 
     viewModel { BILIBILIASAppViewModel(get()) }

@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.login
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,12 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.imcys.bilibilias.database.entity.LoginPlatform
+import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.QRCodeInfo
+import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import org.koin.androidx.compose.koinViewModel
@@ -67,6 +70,16 @@ internal fun QRCodeLoginRoute(
     QRCodeLoginScreen(onToBack, onBackHomePage)
 }
 
+
+@Preview
+@Composable
+fun QRCodeLoginScreenPreview(){
+    ProvideKoinApplication {
+        QRCodeLoginScreen({},{})
+    }
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QRCodeLoginScreen(
@@ -74,7 +87,7 @@ fun QRCodeLoginScreen(
     onBackHomePage: () -> Unit,
 ) {
     val vm = koinViewModel<QRCodeLoginViewModel>()
-    val uiState = remember { vm.uiState }
+    val uiState = vm.uiState
     val qrCodeInfoState by vm.qrCodeInfoState.collectAsState()
     val qrCodeScanInfoState by vm.qrCodeScanInfoState.collectAsState()
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
@@ -196,6 +209,7 @@ private fun ActionButton(
                 .defaultMinSize(minHeight = 48.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
             shape = CardDefaults.shape,
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
             onClick = { saveQRCodeImage() }
         ) {
             Icon(
@@ -203,7 +217,7 @@ private fun ActionButton(
                 contentDescription = "下载二维码",
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            Spacer(Modifier.width(14.dp))
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text(
                 "下载二维码",
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -217,14 +231,15 @@ private fun ActionButton(
                 .defaultMinSize(minHeight = 48.dp),
             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),
             shape = CardDefaults.shape,
-            onClick = { goScanQR() }
+            onClick = { goScanQR() },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {
             Icon(
                 Icons.AutoMirrored.Outlined.OpenInNew,
                 contentDescription = "去扫描",
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
             )
-            Spacer(Modifier.width(14.dp))
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text(
                 "去扫描",
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -249,45 +264,11 @@ private fun ColumnScope.QRCodeContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
-        ) {
-            FilterChip(
-                onClick = { updateLoginPlatform(LoginPlatform.WEB) },
-                label = {
-                    Text("Web")
-                },
-                selected = selectedLoginPlatform == LoginPlatform.WEB,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.WebAsset,
-                        contentDescription = "Web扫码",
-                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                    )
-                },
-            )
-
-            FilterChip(
-                onClick = { updateLoginPlatform(LoginPlatform.TV) },
-                label = {
-                    Text("TV")
-                },
-                selected = selectedLoginPlatform == LoginPlatform.TV,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Tv,
-                        contentDescription = "TV扫码",
-                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                    )
-                },
-            )
-        }
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.6f)
                 .aspectRatio(1f),
-            contentColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             color = MaterialTheme.colorScheme.surfaceContainer,
             shape = CardDefaults.shape,
             border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary),
@@ -315,7 +296,7 @@ private fun ColumnScope.QRCodeContent(
                     }
 
                     is NetWorkResult.Success<*> -> {
-                        AsyncImage(
+                        ASAsyncImage(
                             "https://pan.misakamoe.com/qrcode/?url=" + URLEncoder.encode(
                                 qrCodeInfoState.data?.url,
                                 "UTF-8"
@@ -330,6 +311,43 @@ private fun ColumnScope.QRCodeContent(
                 }
             }
 
+        }
+        Spacer(Modifier.height(4.dp))
+        Row(
+
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        ) {
+            ToggleButton(
+                checked = selectedLoginPlatform == LoginPlatform.WEB,
+                onCheckedChange = {
+                    updateLoginPlatform(LoginPlatform.WEB)
+                },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.WebAsset,
+                    contentDescription = "Web扫码",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Web")
+            }
+
+            ToggleButton(
+                checked = selectedLoginPlatform == LoginPlatform.TV,
+                onCheckedChange = {
+                    updateLoginPlatform(LoginPlatform.TV)
+                },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.WebAsset,
+                    contentDescription = "TV扫码",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("TV")
+            }
         }
 
     }

@@ -28,17 +28,13 @@ fun NavController.navigateToHome(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.homeScreen(
-    goToLogin: () -> Unit
+    goToLogin: () -> Unit,
+    goToUserPage:()-> Unit,
 ) {
     composable<HomeRoute> { navBackStackEntry ->
         // 从 navBackStackEntry 获取参数
         val homeRoute = navBackStackEntry.toRoute<HomeRoute>()
 
-        HomeRoute(homeRoute, goToLogin)
-
-        LaunchedEffect(Unit) {
-            // 部分参数销毁
-            navBackStackEntry.savedStateHandle["isFormLogin"] = false
-        }
+        HomeRoute(homeRoute, goToLogin,goToUserPage)
     }
 }

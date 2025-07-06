@@ -53,6 +53,7 @@ import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -62,13 +63,13 @@ import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun HomeRoute(homeRoute: HomeRoute, goToLogin: () -> Unit) {
-    HomeScreen(homeRoute, goToLogin)
+internal fun HomeRoute(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: () -> Unit) {
+    HomeScreen(homeRoute, goToLogin, goToUserPage)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit) {
+internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
     val uiState by vm.uiState.collectAsState()
@@ -76,6 +77,9 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit) {
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        vm.updateWebSpi()
+    }
 
     LaunchedEffect(homeRoute.isFormLogin) {
         if (homeRoute.isFormLogin && !uiState.fromLoginEventConsumed) {
@@ -85,10 +89,12 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit) {
     }
 
 
+
     HomeScaffold(
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
-        goToLogin = goToLogin
+        goToLogin = goToLogin,
+        goToUserPage = goToUserPage
     ) { p ->
         Column(Modifier.padding(p)) {
             LazyColumn(
@@ -128,6 +134,7 @@ private fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     loginUserInfoState: NetWorkResult<BILILoginUserModel?>,
     goToLogin: () -> Unit,
+    goToUserPage: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -167,7 +174,11 @@ private fun HomeScaffold(
                             Modifier
                                 .size(40.dp)
                                 .clickable {
-                                    goToLogin()
+                                    if (loginUserInfoState.status == ApiStatus.SUCCESS) {
+                                        goToUserPage()
+                                    } else {
+                                        goToLogin()
+                                    }
                                 },
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primary
