@@ -16,4 +16,7 @@ dependencies {
     api(libs.bundles.compose)
     api(libs.androidx.ui.graphics)
     api(libs.androidx.ui.tooling.preview)
+
+    api(libs.coil.compose)
+    api(libs.coil.network.okhttp)
 }

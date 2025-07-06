@@ -25,8 +25,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.di.ProvideKoinApplication
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 
@@ -38,6 +40,15 @@ internal fun LoginRoute(
 ) {
     LoginScreen(onToBack, goToQRCodeLogin)
 }
+
+@Preview
+@Composable
+fun PreviewLoginScreen(){
+    ProvideKoinApplication {
+        LoginScreen({}, {})
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

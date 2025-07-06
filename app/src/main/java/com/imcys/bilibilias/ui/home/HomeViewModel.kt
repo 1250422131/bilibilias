@@ -7,17 +7,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
+import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.source.UsersDataSource
+import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.AsCookiesStorage
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
-    private val usersDataSource: UsersDataSource
+    private val usersDataSource: UsersDataSource,
+    private val riskManagementRepository: RiskManagementRepository
 ) : ViewModel() {
 
     data class UIState(
@@ -49,9 +54,21 @@ class HomeViewModel(
 
     fun onNavigatedFromLogin() {
         viewModelScope.launch {
-            _uiState.emit(uiState.value.copy(fromLoginEventConsumed = true))
+            if (loginUserInfoState.value.status != ApiStatus.SUCCESS) {
+                showBILIUserInfo()
+                _uiState.emit(uiState.value.copy(fromLoginEventConsumed = true))
+            }
         }
     }
+
+
+    fun updateWebSpi() {
+        // 更新校验
+        viewModelScope.launch(Dispatchers.IO) {
+            riskManagementRepository.updateWebSpiCookie()
+        }
+    }
+
 
     suspend fun initCurrentUserInfo() {
         if (!usersDataSource.isLogin()) return

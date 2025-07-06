@@ -23,6 +23,8 @@ import com.imcys.bilibilias.ui.login.navigation.loginScreen
 import com.imcys.bilibilias.ui.login.navigation.navigateToLogin
 import com.imcys.bilibilias.ui.login.navigation.navigateToQRCodeLogin
 import com.imcys.bilibilias.ui.login.navigation.qrCodeLoginScreen
+import com.imcys.bilibilias.ui.user.navigation.navigateToUser
+import com.imcys.bilibilias.ui.user.navigation.userScreen
 
 
 /**
@@ -87,7 +89,11 @@ fun BILIBILIASNavHost(
                 )
             },
         ) {
-            homeScreen(goToLogin = navController::navigateToLogin)
+
+            homeScreen(
+                goToLogin = navController::navigateToLogin,
+                goToUserPage = navController::navigateToUser
+            )
 
             loginScreen(
                 onToBack = navController::popBackStack,
@@ -105,6 +111,8 @@ fun BILIBILIASNavHost(
                     }
                 }
             )
+
+            userScreen(onToBack = navController::popBackStack)
         }
     }
 }

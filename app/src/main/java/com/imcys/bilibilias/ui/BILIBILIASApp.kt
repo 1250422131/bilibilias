@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,6 +52,7 @@ import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.DEFAULT
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.ACCOUNTCHECK
 
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
+import com.imcys.bilibilias.weight.Konfetti
 import com.imcys.bilibilias.weight.rememberKonfettiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -91,28 +93,32 @@ private fun MainScaffold() {
     }
 
     // 页面注册区域
-    AnimatedContent(
-        targetState = uiState,
-        transitionSpec = {
-            // 进入动画：淡入
-            fadeIn(
-                animationSpec = tween(durationMillis = 300)
-            ) togetherWith fadeOut(
-                animationSpec = tween(durationMillis = 300)
-            )
-        },
-    ) { targetUiState ->
-        when (targetUiState) {
-            DEFAULT -> {
-                BILIBILIASNavHost(
-                    navController = navigatorController
+    Box{
+        AnimatedContent(
+            targetState = uiState,
+            transitionSpec = {
+                // 进入动画：淡入
+                fadeIn(
+                    animationSpec = tween(durationMillis = 300)
+                ) togetherWith fadeOut(
+                    animationSpec = tween(durationMillis = 300)
                 )
-            }
+            },
+        ) { targetUiState ->
+            when (targetUiState) {
+                DEFAULT -> {
+                    BILIBILIASNavHost(
+                        navController = navigatorController
+                    )
+                }
 
-            is ACCOUNTCHECK -> {
-                AccountCheckPage()
+                is ACCOUNTCHECK -> {
+                    AccountCheckPage()
+                }
             }
         }
+
+        Konfetti(konfettiState)
     }
 
     // Dialog注册区域

@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.network
 
 
+import android.util.Log
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import io.ktor.client.plugins.cookies.CookiesStorage
@@ -38,7 +39,6 @@ class AsCookiesStorage(
      * 同步数据库的Cookie
      */
     suspend fun syncDataBaseCookies() {
-        cookies.clear()
         if (!isLogin()) {
             // 未来登录走其他的操作
         } else {
@@ -46,6 +46,7 @@ class AsCookiesStorage(
             val dataBaseCookies =
                 biliUserCookiesDao.getBILIUserCookiesByUid(usersDataSource.getUserId())
             dataBaseCookies.forEach {
+                cookies.removeAll { cookie -> cookie.name ==  it.name}
                 val cookie = Cookie(
                     name = it.name,
                     value = it.value,
@@ -70,7 +71,11 @@ class AsCookiesStorage(
     override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
         val timestamp = cookie.expires?.timestamp ?: 0
         if (timestamp < System.currentTimeMillis()) return
-        cookies.add(cookie)
+
+        val mCookie = cookie.copy(domain = requestUrl.host)
+        cookies.removeAll { it -> it.name ==  mCookie.name}
+        Log.d("TAG", "addCookie: ${mCookie}")
+        cookies.add(mCookie)
     }
 
 
