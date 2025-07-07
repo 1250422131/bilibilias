@@ -36,6 +36,8 @@ internal fun Project.configureKotlinMultiplatform() {
         compilerOptions {
             freeCompilerArgs.add("-Xexpect-actual-classes")
             freeCompilerArgs.add("-Xannotation-target-all")
+            freeCompilerArgs.add("-Xcontext-sensitive-resolution")
+            freeCompilerArgs.add("-Xcontext-parameters")
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
         }
 
