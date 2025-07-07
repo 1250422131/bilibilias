@@ -36,6 +36,7 @@ rootProject.name = "bilibilias"
 
 include(":composeApp")
 include(":core:common")
+include(":core:datasource")
 include(":core:ui-preview")
 include(":logic")
 include(":ui")
