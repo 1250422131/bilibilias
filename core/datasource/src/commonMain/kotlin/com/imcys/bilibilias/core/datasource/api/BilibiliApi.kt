@@ -4,11 +4,13 @@ import com.imcys.bilibilias.core.datasource.createHttpClient
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datasource.model.BilibiliNavigationData
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
+import com.imcys.bilibilias.core.datasource.persistent.CookiesStorageImpl
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.json.HttpClientJson
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
@@ -27,6 +29,9 @@ object BilibiliApi {
             url("https://api.bilibili.com")
             header(HttpHeaders.Origin, "https://m.bilibili.com")
             header(HttpHeaders.Referrer, "https://m.bilibili.com")
+        }
+        install(HttpCookies) {
+            storage = CookiesStorageImpl
         }
         install(ApiResponseUnwrapper)
         install(ContentNegotiation) {
