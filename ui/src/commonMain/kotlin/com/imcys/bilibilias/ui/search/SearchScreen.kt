@@ -1,28 +1,33 @@
 package com.imcys.bilibilias.ui.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.VerifiedUser
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SearchScreen(component: SearchComponent) {
@@ -54,6 +60,7 @@ fun SearchScreen(component: SearchComponent) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchContent(
     searchQuery: String,
@@ -61,7 +68,22 @@ fun SearchContent(
     onSearchQueryChanged: (String) -> Unit,
 //    openVideoDownloadSheet: (List<Page>) -> Unit
 ) {
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    // todo user avatar
+                    IconButton({}) {
+                        Icon(Icons.Rounded.VerifiedUser, "Avatar")
+                    }
+                    IconButton({}) {
+                        Icon(Icons.Rounded.Settings, "Settings")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             SearchTextField(
                 searchQuery = searchQuery,
@@ -77,45 +99,36 @@ fun SearchContent(
                 is SearchResultUiState.Success -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ListItem(
-                        leadingContent = {
-                            Box(modifier = Modifier.size(120.dp, 70.dp)) {
-//                                DynamicAsyncImage(
-//                                    searchResultUiState.cover,
-//                                    searchResultUiState.title,
-//                                )
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Box(modifier = Modifier.background(Color.Red).weight(3f)) {
+
                             }
-                        },
-                        headlineContent = {
-                            Text(searchResultUiState.title, maxLines = 2)
-                        },
-                        supportingContent = {
-                            Text(searchResultUiState.ownerName, maxLines = 1)
-                        },
-                        trailingContent = {
-                            Column(
-                                modifier = Modifier.height(IntrinsicSize.Max),
-                                verticalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                TextButton(
-                                    { searchResultUiState.bvid },
-                                    modifier = Modifier.weight(1f)
+                            Box(modifier = Modifier.weight(1f)) {
+                                Column(
+                                    modifier = Modifier.padding(8.dp).height(IntrinsicSize.Max),
+                                    verticalArrangement = Arrangement.SpaceEvenly,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    Text("看视频")
-                                }
-                                TextButton(
-                                    { searchResultUiState.ownerId },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text("去主页")
+                                    TextButton(
+                                        { searchResultUiState.bvid },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("看视频")
+                                    }
+                                    TextButton(
+                                        { searchResultUiState.ownerId },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("去主页")
+                                    }
                                 }
                             }
                         }
-                    )
-//                    Button(onClick = { openVideoDownloadSheet(searchResultUiState.pages) }) {
-//                        Icon(Icons.Rounded.Download, "download")
-//                        Text("下载")
-//                    }
+                        Button({}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            Text("下载")
+                        }
+                    }
                 }
             }
         }
@@ -192,5 +205,24 @@ private fun SearchTextField(
         ),
         maxLines = 1,
         singleLine = true,
+    )
+}
+
+@Preview
+@Composable
+fun PreviewContent() {
+    SearchContent(
+        "haha",
+        SearchResultUiState.Success(
+            aid = 0,
+            bvid = "",
+            desc = "",
+            cover = "",
+            title = "title",
+            ownerId = 0,
+            ownerFace = "",
+            ownerName = "name"
+        ),
+        onSearchQueryChanged = {}
     )
 }
