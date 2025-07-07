@@ -30,8 +30,8 @@ fun createHttpClient(
         install(HttpRedirect) {
             allowHttpsDowngrade = true
         }
-        expectSuccess =
-            true // All clients actually expect success by default in clientConfig, so we move them here
+        // All clients actually expect success by default in clientConfig, so we move them here
+        expectSuccess = true
         block()
     }
 }
