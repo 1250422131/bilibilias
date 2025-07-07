@@ -35,3 +35,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "bilibilias"
 
 include(":composeApp")
+include(":core:ui-preview")
