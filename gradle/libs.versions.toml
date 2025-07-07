@@ -1,39 +1,78 @@
 [versions]
-agp = "8.7.3"
+androidGradlePlugin = "8.10.1"
+androidTools = "31.10.1"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
 androidx-activity = "1.10.1"
-androidx-appcompat = "1.7.1"
-androidx-constraintlayout = "2.2.1"
-androidx-core = "1.16.0"
-androidx-espresso = "3.6.1"
-androidx-lifecycle = "2.9.1"
-androidx-testExt = "1.2.1"
+androidx-annotation = "1.9.1"
+androidx-datastore = "1.1.7"
+androidx-room = "2.7.2"
+androidx-sqlite = "2.5.2"
+buildkonfig = "0.17.1"
 composeHotReload = "1.0.0-beta01"
 composeMultiplatform = "1.8.2"
-junit = "4.13.2"
+coil = "3.2.0"
+decompose = "3.3.0"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
+ksp = "2.2.0-2.0.2"
+kotlinx-datetime = "0.7.0"
+kotlinx-io = "0.8.0"
+kotlinx-serialization = "1.9.0"
+ktor = "3.2.1"
 
 [libraries]
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
+
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
+
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-junit = { module = "junit:junit", version.ref = "junit" }
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
-androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
-androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
-androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
-androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
+compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "androidx-room" }
 
 [plugins]
-androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+androidLibrary = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "androidx-room" }
+
+bilibilias-android-room = { id = "bilibilias.android.room" }
+bilibilias-compose = { id = "bilibilias.compose" }
+bilibilias-kmp-library = { id = "bilibilias.kmp.library" }

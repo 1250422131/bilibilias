@@ -34,15 +34,12 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
         }
     }
 }
