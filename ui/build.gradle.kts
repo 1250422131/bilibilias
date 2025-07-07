@@ -8,6 +8,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.logic)
 
+            api(projects.core.uiPreview)
+
             implementation(compose.ui)
             implementation(compose.material3)
             implementation(compose.material3AdaptiveNavigationSuite)
