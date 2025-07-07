@@ -22,6 +22,6 @@ class UsersDataSource(
         return dataStore.data.first().currentUserId
     }
 
-    suspend fun isLogin() =  getUserId() != 0L
+    suspend fun isLogin() = getUserId() != 0L
 
 }

@@ -12,16 +12,16 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
-import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
-import io.ktor.client.plugins.logging.*
-import io.ktor.http.HttpHeaders
 
 
 val netWorkModule = module {
@@ -50,12 +50,12 @@ val netWorkModule = module {
 
     @OptIn(ExperimentalSerializationApi::class)
     single {
-        AsCookiesStorage(get(),get())
+        AsCookiesStorage(get(), get())
     }
 
     single {
         HttpClient(OkHttp.create {
-            preconfigured  = get<OkHttpClient>()
+            preconfigured = get<OkHttpClient>()
         }) {
             install(HttpTimeout) {
                 requestTimeoutMillis = 10000
@@ -64,7 +64,7 @@ val netWorkModule = module {
                 json(get())
             }
             install(HttpRequestRetry) {
-                retryOnServerErrors(maxRetries = 5)
+                retryOnServerErrors(maxRetries = 3)
                 exponentialDelay()
             }
             install(HttpCookies) {
@@ -72,12 +72,37 @@ val netWorkModule = module {
             }
             install(Logging) {
                 logger = object : Logger {
+                    private val json: Json = get()
+
                     override fun log(message: String) {
-                        Log.d("Ktor", "$message")
+                        val formattedMessage = try {
+                            if (message.contains("{") && message.contains("}")) {
+                                val jsonStart = message.indexOf("{")
+                                val jsonEnd = message.lastIndexOf("}") + 1
+                                val prefix = message.substring(0, jsonStart)
+                                val jsonBody = message.substring(jsonStart, jsonEnd)
+                                val suffix = message.substring(jsonEnd)
+
+                                // 解析并重新格式化 JSON
+                                val jsonElement = json.parseToJsonElement(jsonBody)
+                                val formattedJson =
+                                    json.encodeToString(JsonElement.serializer(), jsonElement)
+
+                                "$prefix\n$formattedJson$suffix"
+                            } else {
+                                message
+                            }
+                        } catch (e: Exception) {
+                            message
+                        }
+
+                        Log.d("Ktor", formattedMessage)
                     }
                 }
                 level = LogLevel.ALL
             }
+
+
         }
     }
 

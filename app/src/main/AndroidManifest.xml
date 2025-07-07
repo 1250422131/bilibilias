@@ -15,6 +15,11 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.BILIBILIAS">
+
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -29,7 +29,7 @@ fun NavController.navigateToHome(
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.homeScreen(
     goToLogin: () -> Unit,
-    goToUserPage:()-> Unit,
+    goToUserPage:(mid: Long)-> Unit,
 ) {
     composable<HomeRoute> { navBackStackEntry ->
         // 从 navBackStackEntry 获取参数

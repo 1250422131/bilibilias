@@ -30,5 +30,17 @@ object API {
         // v3、v4签名：仅Web有需要
         val WEB_SPI_URL = WEB_API_BASE_URL + "x/frontend/finger/spi"
 
+        // 个人主页信息：仅Web有，TV共用
+        val WEB_WEBI_ACC_INFO_URL = WEB_API_BASE_URL + "x/space/wbi/acc/info"
+
+        // 稿件播放量和获赞信息，预计仅Web有
+        val WEB_SPACE_UPSTAT_URL = WEB_API_BASE_URL + "x/space/upstat"
+
+        // 粉丝数量，关注数量，预计仅Web有
+        val WEB_RELATION_STAT_URL = WEB_API_BASE_URL + "x/relation/stat"
+
+
+        // 投稿列表，仅Web有，TV共用
+        val WEB_SPACE_ARC_SEARCH = WEB_API_BASE_URL + "x/space/wbi/arc/search"
     }
 }

@@ -2,6 +2,7 @@ package com.imcys.bilibilias.data.repository
 
 import android.util.Log
 import com.imcys.bilibilias.data.model.BILILoginUserModel
+import com.imcys.bilibilias.network.utils.WebiTokenUtils
 import com.imcys.bilibilias.database.dao.BILIUserCookiesDao
 import com.imcys.bilibilias.database.dao.BILIUsersDao
 import com.imcys.bilibilias.database.entity.BILIUserCookiesEntity
@@ -80,6 +81,10 @@ class QRCodeLoginRepository(
         return when (loginPlatform) {
             LoginPlatform.WEB -> webApiService.getLoginUserInfo().map { networkResult ->
                 networkResult.mapData { loginInfo, apiResponse ->
+                    if (WebiTokenUtils.key == null) {
+                        // 检测Webi
+                        loginInfo?.wbiImg?.let { WebiTokenUtils.setKey(it) }
+                    }
                     BILILoginUserModel(
                         face = loginInfo?.face,
                         level = loginInfo?.levelInfo?.currentLevel,

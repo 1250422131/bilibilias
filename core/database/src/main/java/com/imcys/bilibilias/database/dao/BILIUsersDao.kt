@@ -28,4 +28,9 @@ interface BILIUsersDao {
         uid: Long
     ): List<BILIUsersEntity>
 
+    @Query("select * from bili_users where id = :uid")
+    suspend fun getBILIUserByUid(
+        uid: Long
+    ): BILIUsersEntity?
+
 }
