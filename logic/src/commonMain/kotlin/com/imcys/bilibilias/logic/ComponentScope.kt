@@ -18,4 +18,4 @@ internal fun ComponentContext.launch(block: suspend () -> Unit) {
 }
 
 internal val ComponentContext.scope: CoroutineScope
-    get() = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    get() = CoroutineScope(Dispatchers.Default + SupervisorJob())
