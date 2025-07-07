@@ -1,18 +1,196 @@
 package com.imcys.bilibilias.ui.search
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.logic.search.SearchComponent
+import com.imcys.bilibilias.logic.search.SearchResultUiState
 
 @Composable
 fun SearchScreen(component: SearchComponent) {
+    val searchQuery by component.searchQuery.collectAsState()
+    val searchResultUiState by component.searchResultUiState.collectAsState()
+//    val dialogSlot by component.dialogSlot.subscribeAsState()
+//    dialogSlot.child?.instance?.let {
+//        VideoDownloadBottomSheet(it, component::hide)
+//    }
+    SearchContent(
+        searchQuery = searchQuery,
+        searchResultUiState = searchResultUiState,
+        onSearchQueryChanged = component::onSearchQueryChanged,
+    )
+}
+
+@Composable
+fun SearchContent(
+    searchQuery: String,
+    searchResultUiState: SearchResultUiState,
+    onSearchQueryChanged: (String) -> Unit,
+//    openVideoDownloadSheet: (List<Page>) -> Unit
+) {
     Scaffold { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Text(text = "SearchScreen")
+            SearchTextField(
+                searchQuery = searchQuery,
+                onSearchQueryChanged = onSearchQueryChanged
+            ) {
+
+            }
+            when (searchResultUiState) {
+                SearchResultUiState.EmptyQuery -> Text("EmptyQuery")
+                SearchResultUiState.LoadFailed -> Text("LoadFailed")
+                SearchResultUiState.Loading -> Text("Loading")
+                is SearchResultUiState.Error -> Text(searchResultUiState.message)
+                is SearchResultUiState.Success -> Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    ListItem(
+                        leadingContent = {
+                            Box(modifier = Modifier.size(120.dp, 70.dp)) {
+//                                DynamicAsyncImage(
+//                                    searchResultUiState.cover,
+//                                    searchResultUiState.title,
+//                                )
+                            }
+                        },
+                        headlineContent = {
+                            Text(searchResultUiState.title, maxLines = 2)
+                        },
+                        supportingContent = {
+                            Text(searchResultUiState.ownerName, maxLines = 1)
+                        },
+                        trailingContent = {
+                            Column(
+                                modifier = Modifier.height(IntrinsicSize.Max),
+                                verticalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                TextButton(
+                                    { searchResultUiState.bvid },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("看视频")
+                                }
+                                TextButton(
+                                    { searchResultUiState.ownerId },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text("去主页")
+                                }
+                            }
+                        }
+                    )
+//                    Button(onClick = { openVideoDownloadSheet(searchResultUiState.pages) }) {
+//                        Icon(Icons.Rounded.Download, "download")
+//                        Text("下载")
+//                    }
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun SearchTextField(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    onSearchTriggered: (String) -> Unit,
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val onSearchExplicitlyTriggered = {
+        keyboardController?.hide()
+        onSearchTriggered(searchQuery)
+    }
+
+    TextField(
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = "search",
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = {
+                        onSearchQueryChanged("")
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "close",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+        },
+        onValueChange = {
+            if ("\n" !in it) onSearchQueryChanged(it)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .onKeyEvent {
+                if (it.key == Key.Enter) {
+                    if (searchQuery.isBlank()) return@onKeyEvent false
+                    onSearchExplicitlyTriggered()
+                    true
+                } else {
+                    false
+                }
+            }
+            .testTag("searchTextField"),
+        shape = RoundedCornerShape(32.dp),
+        value = searchQuery,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                if (searchQuery.isBlank()) return@KeyboardActions
+                onSearchExplicitlyTriggered()
+            },
+        ),
+        maxLines = 1,
+        singleLine = true,
+    )
 }

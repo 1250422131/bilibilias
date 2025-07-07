@@ -11,6 +11,7 @@ kotlin {
             api(projects.core.uiPreview)
 
             implementation(compose.ui)
+            implementation(compose.runtime)
             implementation(compose.material3)
             implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.materialIconsExtended)

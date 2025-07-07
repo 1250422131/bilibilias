@@ -1,6 +1,15 @@
 package com.imcys.bilibilias.logic.search
 
-interface SearchComponent {
+import kotlinx.coroutines.flow.StateFlow
 
+interface SearchComponent {
+    val searchQuery: StateFlow<String>
+    val searchResultUiState: StateFlow<SearchResultUiState>
+    fun onSearchTriggered(query: String)
+    fun onSearchQueryChanged(query: String)
+
+//    fun show(pages: List<Page>)
+//    fun hide()
+//    val dialogSlot: Value<ChildSlot<*, VideoDownloadSheetComponent>>
 }
 
