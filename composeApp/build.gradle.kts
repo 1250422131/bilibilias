@@ -29,6 +29,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.ui)
+            implementation(projects.core.datasource)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -36,6 +37,9 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.coil)
+            implementation(libs.coil.network.ktor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

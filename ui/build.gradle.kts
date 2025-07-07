@@ -17,6 +17,8 @@ kotlin {
             implementation(compose.materialIconsExtended)
 
             implementation(libs.decompose.compose)
+
+            implementation(libs.coil.compose)
         }
     }
 }
