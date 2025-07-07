@@ -7,11 +7,5 @@ import com.imcys.bilibilias.core.io.inSystem
 import kotlinx.io.files.Path
 
 actual fun resolveDataStoreFile(name: String): SystemPath {
-    return Path(
-        KmpContext.get()
-            .applicationContext
-            .dataStoreFile(name)
-            .absolutePath
-    )
-        .inSystem
+    return Path(KmpContext.get().dataStoreFile(name).absolutePath).inSystem
 }

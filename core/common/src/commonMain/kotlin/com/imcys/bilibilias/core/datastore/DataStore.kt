@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-
 expect interface DataStoreSerializer<T>
 
 expect fun <T> KSerializer<T>.asDataStoreSerializer(
@@ -39,7 +38,13 @@ fun <T> DataStoreFactory.create(
         produceFile = produceFile,
     )
 }
-
+expect fun <T> DataStoreFactory.new(
+    serializer: DataStoreSerializer<T>,
+    corruptionHandler: ReplaceFileCorruptionHandler<T>?,
+    migrations: List<DataMigration<T>> = listOf(),
+    scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+    produceFile: () -> SystemPath
+): DataStore<T>
 expect fun <T> DataStoreFactory.create(
     serializer: DataStoreSerializer<T>,
     corruptionHandler: ReplaceFileCorruptionHandler<T>?,

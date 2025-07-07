@@ -58,3 +58,17 @@ actual fun <T> DataStoreFactory.create(
 )
 
 actual typealias DataStoreSerializer<T> = Serializer<T>
+
+actual fun <T> DataStoreFactory.new(
+    serializer: DataStoreSerializer<T>,
+    corruptionHandler: ReplaceFileCorruptionHandler<T>?,
+    migrations: List<DataMigration<T>>,
+    scope: CoroutineScope,
+    produceFile: () -> SystemPath
+): DataStore<T> = create(
+    serializer = serializer,
+    corruptionHandler = corruptionHandler,
+    migrations = migrations,
+    scope = scope,
+    produceFile = { produceFile().toFile() },
+)
