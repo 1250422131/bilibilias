@@ -14,7 +14,8 @@ object NumberUtils {
      * @param number The number to format.
      * @return A formatted string. For example, 12345 becomes "1.2万", 123456789 becomes "1.2亿".
      */
-    fun formatLargeNumber(number: Long): String {
+    fun formatLargeNumber(number: Long?): String {
+        if (number == null) return "0"
         if (number < WAN) {
             return number.toString()
         }

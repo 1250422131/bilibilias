@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.user
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -46,6 +48,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -57,12 +64,22 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.utils.NumberUtils
+import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
+import com.imcys.bilibilias.data.model.BILIUserStatModel
+import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.user.BILIUserAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.AsCardGroups
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
+import com.imcys.bilibilias.ui.weight.shimmer.shimmer
+import com.imcys.bilibilias.weight.AsAutoError
+import org.koin.androidx.compose.koinViewModel
 
 
 @Preview
@@ -74,6 +91,19 @@ fun UserScreenPreview() {
 
 @Composable
 internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
+
+    val vm = koinViewModel<UserViewModel>()
+    val pageInfoState by vm.userPageInfoState.collectAsState()
+    val userStatInfoState by vm.userStatInfoState.collectAsState()
+    val spaceArchiveInfoState by vm.spaceArchiveInfoState.collectAsState()
+    val uiState by vm.uiState.collectAsState()
+
+    LaunchedEffect(userRoute.mid) {
+        vm.getUserPageIno(userRoute.mid)
+    }
+
+
+
     UserScaffold(onToBack) {
         LazyVerticalGrid(
             GridCells.Fixed(2),
@@ -83,34 +113,47 @@ internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp)
         ) {
-            fullWidthItem { TopUserInfo() }
             fullWidthItem {
-                PlatformList()
+                TopUserInfo(pageInfoState, userStatInfoState) {
+                    vm.getUserPageIno(userRoute.mid)
+                }
             }
+
+            fullWidthItem {
+                PlatformList(uiState.biliUsersEntity)
+            }
+
             fullWidthItem { ActionRow() }
-            fullWidthItem { VideoHeader() }
+
+            fullWidthItem {
+                VideoHeader(spaceArchiveInfoState) {
+                    vm.getUserPageIno(userRoute.mid)
+                }
+            }
 
         }
     }
+
+
 }
 
 @Composable
-private fun VideoCard() {
+private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
     Row(
         Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-
     ) {
         Surface(
             Modifier
                 .weight(0.4f)
-                .aspectRatio(16f / 9f),
-            color = MaterialTheme.colorScheme.primary,
+                .aspectRatio(16f / 9f)
+                .shimmer(item == null),
             shape = CardDefaults.shape
         ) {
             ASAsyncImage(
-                "",
+                "${item?.pic?.replace("http:", "https:")}@672w_378h_1c.avif",
+                modifier = Modifier.fillMaxSize(),
                 contentDescription = "视频封面"
             )
         }
@@ -123,22 +166,37 @@ private fun VideoCard() {
                 .weight(0.6f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("视频标题",
+            Text(
+                item?.title ?: "",
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
+                fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .animateContentSize()
+                    .shimmer(item == null),
+            )
             Row {
-                Text("1.6万次播放", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
+                Text(
+                    "${NumberUtils.formatLargeNumber(item?.play)}次播放",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.shimmer(item == null),
+                )
             }
         }
     }
 }
 
 @Composable
-private fun VideoHeader() {
+private fun VideoHeader(
+    spaceArchiveInfoState: NetWorkResult<BILISpaceArchiveModel?>,
+    onRetry: () -> Unit = {},
+) {
     SurfaceColorCard {
         Column(
-            Modifier.padding(vertical = 12.dp, horizontal = 16.dp)
+            Modifier
+                .padding(vertical = 12.dp, horizontal = 16.dp)
+                .animateContentSize()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -162,16 +220,32 @@ private fun VideoHeader() {
             }
             Spacer(Modifier.height(24.dp))
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                VideoCard()
-                VideoCard()
+                AsAutoError(
+                    netWorkResult = spaceArchiveInfoState,
+                    onSuccessContent = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            spaceArchiveInfoState.data?.list?.forEach {
+                                VideoCard(it)
+                            }
+                        }
+                    },
+                    onLoadingContent = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            VideoCard(null)
+                        }
+                    },
+                    onRetry = onRetry
+                )
             }
+
 
         }
     }
-}
+
 
 
 private fun LazyGridScope.fullWidthItem(
@@ -270,7 +344,7 @@ fun ActionRow() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PlatformList() {
+fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
     Column {
         Spacer(Modifier.height(16.dp))
         SurfaceColorCard(
@@ -304,16 +378,21 @@ fun PlatformList() {
                     )
                     Spacer(Modifier.weight(1f))
                     Text(
-                        "萌新杰少",
+                        "${biliUsersEntity?.name}",
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.animateContentSize()
                     )
                     Spacer(Modifier.width(8.dp))
-                    ASAsyncImage(
-                        "",
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = "关联账户头像"
-                    )
+                    Surface(
+                        shape = MaterialShapes.Circle.toShape(),
+                    ) {
+                        ASAsyncImage(
+                            "${biliUsersEntity?.face}",
+                            modifier = Modifier.size(24.dp),
+                            contentDescription = "关联账户头像",
+                        )
+                    }
                 }
 
                 HorizontalDivider(
@@ -352,7 +431,7 @@ fun PlatformList() {
 }
 
 @Composable
-fun UserDataInfo() {
+fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
     AsCardGroups(
         Modifier
             .fillMaxWidth(),
@@ -364,9 +443,12 @@ fun UserDataInfo() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "0",
+                    NumberUtils.formatLargeNumber(userStatInfoState.biliUserRelationStatInfo.data?.following),
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.shimmer(
+                        userStatInfoState.biliUserRelationStatInfo.status == ApiStatus.LOADING
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 Text("关注", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
@@ -380,9 +462,12 @@ fun UserDataInfo() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "0",
+                    NumberUtils.formatLargeNumber(userStatInfoState.biliUserRelationStatInfo.data?.follower),
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.shimmer(
+                        userStatInfoState.biliUserRelationStatInfo.status == ApiStatus.LOADING
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 Text("粉丝", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
@@ -396,9 +481,12 @@ fun UserDataInfo() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "0",
+                    NumberUtils.formatLargeNumber(userStatInfoState.biliUserSpaceUpStat.data?.likes),
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.shimmer(
+                        userStatInfoState.biliUserSpaceUpStat.status == ApiStatus.LOADING
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 Text("获赞", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
@@ -411,9 +499,12 @@ fun UserDataInfo() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "0",
+                    NumberUtils.formatLargeNumber(userStatInfoState.biliUserSpaceUpStat.data?.archive?.view),
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.shimmer(
+                        userStatInfoState.biliUserSpaceUpStat.status == ApiStatus.LOADING
+                    )
                 )
                 Spacer(Modifier.height(4.dp))
                 Text("播放", fontSize = 14.sp, color = MaterialTheme.colorScheme.outline)
@@ -424,55 +515,84 @@ fun UserDataInfo() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TopUserInfo() {
+fun TopUserInfo(
+    pageInfoState: NetWorkResult<BILIUserAccInfo?>,
+    userStatInfoState: BILIUserStatModel,
+    onRetry: () -> Unit = {},
+) {
     Column {
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(shape = MaterialShapes.Circle.toShape()) {
-                ASAsyncImage(
-                    "",
-                    contentDescription = "头像",
-                    modifier = Modifier.size(64.dp)
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Column {
+        AsAutoError(
+            pageInfoState,
+            onSuccessContent = {
                 Row(
+                    Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "萌新杰少",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 20.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                    Spacer(Modifier.width(8.dp))
                     Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = MaterialShapes.Circle.toShape(),
+                        modifier = Modifier.shimmer(
+                            visible = pageInfoState.status == ApiStatus.LOADING
+                        )
                     ) {
+                        ASAsyncImage(
+                            pageInfoState.data?.face ?: "",
+                            contentDescription = "头像",
+                            modifier = Modifier.size(64.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                pageInfoState.data?.name ?: "用户名",
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 20.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .shimmer(
+                                        visible = pageInfoState.status == ApiStatus.LOADING
+                                    )
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                                modifier = Modifier.shimmer(
+                                    visible = pageInfoState.status == ApiStatus.LOADING
+                                )
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+                                    text = "LV ${pageInfoState.data?.level}",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.W400,
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(4.dp))
                         Text(
-                            modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
-                            text = "Lv.3",
+                            pageInfoState.data?.sign ?: "个性签名",
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.W400,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .animateContentSize()
+                                .shimmer(
+                                    visible = pageInfoState.status == ApiStatus.LOADING
+                                )
                         )
                     }
                 }
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    "个性签名",
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontSize = 14.sp
-                )
-            }
-        }
+            },
+            onRetry = onRetry
+        )
         Spacer(Modifier.height(32.dp))
-        UserDataInfo()
+        UserDataInfo(userStatInfoState)
     }
 }
 

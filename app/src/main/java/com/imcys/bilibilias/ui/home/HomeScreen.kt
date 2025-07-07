@@ -63,13 +63,13 @@ import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun HomeRoute(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: () -> Unit) {
+internal fun HomeRoute(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: (mid: Long) -> Unit) {
     HomeScreen(homeRoute, goToLogin, goToUserPage)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: () -> Unit) {
+internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: (mid: Long) -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
     val uiState by vm.uiState.collectAsState()
@@ -94,7 +94,7 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPag
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
         goToLogin = goToLogin,
-        goToUserPage = goToUserPage
+        goToUserPage = { goToUserPage.invoke(loginUserInfoState?.data?.mid ?: 0L) }
     ) { p ->
         Column(Modifier.padding(p)) {
             LazyColumn(

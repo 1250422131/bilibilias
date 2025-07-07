@@ -23,6 +23,7 @@ import com.imcys.bilibilias.ui.login.navigation.loginScreen
 import com.imcys.bilibilias.ui.login.navigation.navigateToLogin
 import com.imcys.bilibilias.ui.login.navigation.navigateToQRCodeLogin
 import com.imcys.bilibilias.ui.login.navigation.qrCodeLoginScreen
+import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.user.navigation.navigateToUser
 import com.imcys.bilibilias.ui.user.navigation.userScreen
 
@@ -92,7 +93,14 @@ fun BILIBILIASNavHost(
 
             homeScreen(
                 goToLogin = navController::navigateToLogin,
-                goToUserPage = navController::navigateToUser
+                goToUserPage = {
+                    navController.navigateToUser(
+                        userRoute = UserRoute(mid = it),
+                    ){
+                        popUpTo<HomeRoute>()
+                        launchSingleTop = true
+                    }
+                }
             )
 
             loginScreen(

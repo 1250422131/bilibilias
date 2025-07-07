@@ -136,4 +136,3 @@ inline fun <T, R> NetWorkResult<T>.mapData(transform: (T?, BiliApiResponse<T?>?)
 
 fun HttpRequestBuilder.parameterAppKey(): Unit =
     url.parameters.append(APP_KEY, BiliAppSigner.APP_KEY)
-
