@@ -47,3 +47,5 @@ expect fun <T> DataStoreFactory.create(
     scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
     produceFile: () -> SystemPath
 ): DataStore<T>
+
+expect fun resolveDataStoreFile(name: String): SystemPath
