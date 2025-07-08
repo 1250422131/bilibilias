@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.core.datasource.api
 
-import com.imcys.bilibilias.core.datasource.createHttpClient
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datasource.model.BilibiliNavigationData
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
@@ -8,6 +7,7 @@ import com.imcys.bilibilias.core.datasource.persistent.CookiesStorageImpl
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.json.HttpClientJson
+import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
@@ -66,24 +66,13 @@ object BilibiliApi {
 
     suspend fun getPlayUrl(bvid: String, cid: Long): VideoPlaybackInfo {
         val queryParams = mapOf(
-            PlayUrlConstants.PARAM_FNVER to PlayUrlConstants.FNVER_VALUE,
-            PlayUrlConstants.PARAM_FNVAL to PlayUrlConstants.FNVAL_VALUE,
-            PlayUrlConstants.PARAM_FOURK to PlayUrlConstants.FOURK_VALUE,
-            PlayUrlConstants.PARAM_BVID to bvid,
-            PlayUrlConstants.PARAM_CID to cid,
+            "fnver" to 0,
+            "fnval" to 4048,
+            "fourk" to 1,
+            "bvid" to bvid,
+            "cid" to cid,
         )
         val signedQuery = WbiSign.enc(queryParams)
         return client.get("/x/player/wbi/playurl?$signedQuery").body<VideoPlaybackInfo>()
-    }
-
-    private object PlayUrlConstants {
-        const val FNVER_VALUE = 0
-        const val FNVAL_VALUE = 4048
-        const val FOURK_VALUE = 1
-        const val PARAM_FNVER = "fnver"
-        const val PARAM_FNVAL = "fnval"
-        const val PARAM_FOURK = "fourk"
-        const val PARAM_BVID = "bvid"
-        const val PARAM_CID = "cid"
     }
 }
