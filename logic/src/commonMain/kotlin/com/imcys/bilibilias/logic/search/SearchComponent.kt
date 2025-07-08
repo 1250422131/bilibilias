@@ -7,9 +7,5 @@ interface SearchComponent {
     val searchResultUiState: StateFlow<SearchResultUiState>
     fun onSearchTriggered(query: String)
     fun onSearchQueryChanged(query: String)
-
-//    fun show(pages: List<Page>)
-//    fun hide()
-//    val dialogSlot: Value<ChildSlot<*, VideoDownloadSheetComponent>>
 }
 

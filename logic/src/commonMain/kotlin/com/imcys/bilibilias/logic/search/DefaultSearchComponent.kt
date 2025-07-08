@@ -18,7 +18,6 @@ import kotlinx.serialization.Serializable
 class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
-
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
 
@@ -67,4 +66,11 @@ class DefaultSearchComponent(
 
     @Serializable
     private data class State(val searchQuery: String = "")
+
+    @Serializable
+    sealed class BottomSheetChild {
+        @Serializable
+        data object Sheet : BottomSheetChild()
+
+    }
 }
