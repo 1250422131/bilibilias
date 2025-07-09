@@ -15,7 +15,6 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -42,7 +41,11 @@ object BilibiliApi {
         }
         Logging {
             level = LogLevel.BODY
-            logger = Logger.SIMPLE
+            logger = object : Logger {
+                override fun log(message: String) {
+                    co.touchlab.kermit.Logger.i("BilibiliApi") { message }
+                }
+            }
         }
     }
 
