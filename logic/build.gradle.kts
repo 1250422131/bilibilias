@@ -6,10 +6,12 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.core.common)
-            api(projects.core.datasource)
+            implementation(projects.core.common)
+            implementation(projects.core.httpDownloader)
 
-            api(libs.decompose)
+            implementation(projects.core.datasource)
+
+            implementation(libs.decompose)
         }
     }
 }

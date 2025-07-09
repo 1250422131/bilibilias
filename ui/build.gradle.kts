@@ -6,9 +6,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.logic)
+            implementation(projects.logic)
 
-            api(projects.core.uiPreview)
+            implementation(projects.core.uiPreview)
 
             implementation(compose.ui)
             implementation(compose.runtime)
