@@ -43,13 +43,12 @@ import com.google.firebase.ktx.app
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.event.loginErrorChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
-import com.imcys.bilibilias.database.entity.LoginPlatform
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.navigation.BILIBILIASNavHost
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.DEFAULT
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.ACCOUNTCHECK
+import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.Default
+import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.AccountCheck
 
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.weight.Konfetti
@@ -93,7 +92,7 @@ private fun MainScaffold() {
     }
 
     // 页面注册区域
-    Box{
+    Box {
         AnimatedContent(
             targetState = uiState,
             transitionSpec = {
@@ -106,14 +105,14 @@ private fun MainScaffold() {
             },
         ) { targetUiState ->
             when (targetUiState) {
-                DEFAULT -> {
+                Default -> {
                     BILIBILIASNavHost(
                         navController = navigatorController
                     )
                 }
 
-                is ACCOUNTCHECK -> {
-                    AccountCheckPage()
+                is AccountCheck -> {
+                    AccountCheckPage(targetUiState)
                 }
             }
         }
@@ -146,7 +145,7 @@ private fun MainScaffold() {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AccountCheckPage() {
+fun AccountCheckPage(targetUiState: AccountCheck) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -154,9 +153,15 @@ fun AccountCheckPage() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ContainedLoadingIndicator()
-        Spacer(Modifier.height(5.dp))
-        Text("登录状态失效，正在为你检查剩余可用登录。")
+        if (targetUiState.isCheckLoading) {
+            ContainedLoadingIndicator()
+            Spacer(Modifier.height(5.dp))
+            Text("登录状态失效，正在为你检查剩余可用登录。")
+        } else {
+            if (targetUiState.newCurrentUser == null) {
+                Text("所有账户已失效，请重新登录。")
+            }
+        }
     }
 }
 

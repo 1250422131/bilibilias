@@ -86,8 +86,10 @@ object WebiTokenUtils {
     /**
      * 更新Webi的Key
      */
-    suspend fun BILIBILIWebAPIService.updateWebiKey(){
-        getLoginUserInfo().collect {
+    suspend fun BILIBILIWebAPIService.updateWebiKey() {
+        runCatching {
+            getWebIInfoNoCheckLogin()
+        }.onSuccess {
             it.data?.wbiImg?.let { wbiImg -> setKey(wbiImg) }
         }
     }

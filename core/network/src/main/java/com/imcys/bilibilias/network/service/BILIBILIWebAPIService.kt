@@ -2,6 +2,7 @@ package com.imcys.bilibilias.network.service
 
 import com.imcys.bilibilias.network.FlowNetWorkResult
 import com.imcys.bilibilias.network.config.ACCESS_ID
+import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.SPACE_BASE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
@@ -11,23 +12,31 @@ import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_ARC_SEARCH
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_UPSTAT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPI_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_ACC_INFO_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
 import com.imcys.bilibilias.network.config.BROWSER_FINGERPRINT
+import com.imcys.bilibilias.network.config.BVID
 import com.imcys.bilibilias.network.config.MID
+import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.config.W_WEBID
 import com.imcys.bilibilias.network.httpRequest
 import com.imcys.bilibilias.network.model.BILILoginUserInfo
+import com.imcys.bilibilias.network.model.BiliApiResponse
 import com.imcys.bilibilias.network.model.QRCodeInfo
 import com.imcys.bilibilias.network.model.QRCodePollInfo
 import com.imcys.bilibilias.network.model.WebSpiInfo
 import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
-import com.imcys.bilibilias.network.model.user.BILIUserAccInfo
+import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
+import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import io.ktor.http.decodeURLPart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -67,6 +76,12 @@ class BILIBILIWebAPIService(
             get(WEB_LOGIN_INFO_URL)
         }
 
+    /**
+     * 获取WebI签名信息
+     */
+    suspend fun getWebIInfoNoCheckLogin(): BiliApiResponse<BILILoginUserInfo> =
+        httpClient.get(WEB_LOGIN_INFO_URL).body()
+
 
     /**
      * 获取签名:仅Web有
@@ -80,12 +95,13 @@ class BILIBILIWebAPIService(
     /**
      * 获取签名:仅Web有，TV共用
      */
-    suspend fun getUserAccInfo(mid: Long): FlowNetWorkResult<BILIUserAccInfo> =
+    suspend fun getUserAccInfo(mid: Long): FlowNetWorkResult<BILIUserSpaceAccInfo> =
         httpClient.httpRequest {
             val newMap = mapOf(
                 MID to mid.toString(),
             ) + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
             get(WEB_WEBI_ACC_INFO_URL) {
+                header(REFERER,"${SPACE_BASE_URL}${mid}")
                 encWbi(newMap).forEach { (k, v) ->
                     parameter(k, v)
                 }
@@ -132,6 +148,31 @@ class BILIBILIWebAPIService(
             }
         }
 
+    /**
+     * 获取视频详情：通用接口
+     */
+    suspend fun getVideoView(
+        bvId: String?,
+        aid: String?
+    ): FlowNetWorkResult<BILIVideoViewInfo> = httpClient.httpRequest {
+        val newMap = mutableMapOf<String, String>().apply {
+            bvId?.let { put(BVID, it) }
+            aid?.let { put(AID, it) }
+        } + BROWSER_FINGERPRINT
+        get(WEB_WEBI_VIDEO_VIEW) {
+            encWbi(newMap).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+    /**
+     * 用来解析正确的地址
+     */
+    suspend fun shortLink(url: String): String = httpClient.get(url)
+        .request
+        .url
+        .toString()
 
     private suspend fun accessUserSpaceGetRenderData(mid: Long): Map<String, String> = withContext(
         Dispatchers.IO

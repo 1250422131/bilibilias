@@ -40,8 +40,11 @@ class UserInfoRepository(
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getBILIUserByUid() = biliUsersDao.getBILIUserByUid(usersDataSource.getUserId())
+    suspend fun getBILIUserByUid(userId: Long? = null) = biliUsersDao.getBILIUserByUid(userId ?: usersDataSource.getUserId())
 
+    suspend fun deleteBILIUserByUid(userId: Long) = biliUsersDao.deleteBILIUserByUid(userId)
+
+    suspend fun getBILIUserListByMid(mid: Long)  = biliUsersDao.getBILIUserListByMid(mid)
     suspend fun getSpaceArchiveInfo(
         mid: Long,
         pn: Int = 1,

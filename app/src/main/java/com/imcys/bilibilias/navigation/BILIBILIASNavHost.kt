@@ -13,9 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
-import com.imcys.bilibilias.R
+import com.imcys.bilibilias.ui.analysis.navigation.analysisScreen
+import com.imcys.bilibilias.ui.analysis.navigation.navigateToAnalysis
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.home.navigation.homeScreen
 import com.imcys.bilibilias.ui.home.navigation.navigateToHome
@@ -92,15 +92,17 @@ fun BILIBILIASNavHost(
         ) {
 
             homeScreen(
+                this@SharedTransitionLayout,
                 goToLogin = navController::navigateToLogin,
                 goToUserPage = {
                     navController.navigateToUser(
                         userRoute = UserRoute(mid = it),
-                    ){
+                    ) {
                         popUpTo<HomeRoute>()
                         launchSingleTop = true
                     }
-                }
+                },
+                goToAnalysis = navController::navigateToAnalysis
             )
 
             loginScreen(
@@ -113,7 +115,7 @@ fun BILIBILIASNavHost(
                 onBackHomePage = {
                     navController.navigateToHome(
                         homeRoute = HomeRoute(isFormLogin = true),
-                    ){
+                    ) {
                         popUpTo<HomeRoute>()
                         launchSingleTop = true
                     }
@@ -121,6 +123,17 @@ fun BILIBILIASNavHost(
             )
 
             userScreen(onToBack = navController::popBackStack)
+
+            analysisScreen(
+                this@SharedTransitionLayout,
+                onToBack = navController::popBackStack,
+                goToUser = {
+                    navController.navigateToUser(UserRoute(
+                        mid = it,
+                        isAnalysisUser = true
+                    ))
+                }
+            )
         }
     }
 }

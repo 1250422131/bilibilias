@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
  * 用户主页数据：仅Web接口，TV共用这个接口
  */
 @Serializable
-data class BILIUserAccInfo(
+data class BILIUserSpaceAccInfo(
     @SerialName("birthday")
     val birthday: String,
     @SerialName("coins")

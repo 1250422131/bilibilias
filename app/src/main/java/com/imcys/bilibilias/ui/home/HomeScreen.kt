@@ -1,7 +1,12 @@
 package com.imcys.bilibilias.ui.home
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,13 +16,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Login
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.Login
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,10 +50,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,20 +68,46 @@ import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
+import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
+import com.imcys.bilibilias.ui.weight.AsCardTextField
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
+import com.imcys.bilibilias.weight.AsAutoError
+import com.imcys.bilibilias.weight.AsErrorCopyIconButton
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-internal fun HomeRoute(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: (mid: Long) -> Unit) {
-    HomeScreen(homeRoute, goToLogin, goToUserPage)
+internal fun HomeRoute(
+    homeRoute: HomeRoute,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    goToLogin: () -> Unit,
+    goToUserPage: (mid: Long) -> Unit,
+    goToAnalysis: () -> Unit,
+) {
+    HomeScreen(
+        homeRoute,
+        sharedTransitionScope,
+        animatedContentScope,
+        goToLogin,
+        goToUserPage,
+        goToAnalysis
+    )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPage: (mid: Long) -> Unit) {
+internal fun HomeScreen(
+    homeRoute: HomeRoute,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    goToLogin: () -> Unit,
+    goToUserPage: (mid: Long) -> Unit,
+    goToAnalysis: () -> Unit,
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
     val uiState by vm.uiState.collectAsState()
@@ -94,16 +132,22 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPag
         snackbarHostState = snackbarHostState,
         loginUserInfoState,
         goToLogin = goToLogin,
-        goToUserPage = { goToUserPage.invoke(loginUserInfoState?.data?.mid ?: 0L) }
+        goToUserPage = { goToUserPage.invoke(loginUserInfoState.data?.mid ?: 0L) },
+        goToAnalysis = goToAnalysis
     ) { p ->
-        Column(Modifier.padding(p)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(p)
+        ) {
+            // 内容区
             LazyColumn(
                 Modifier
+                    .weight(1f) // 占满除去底部输入框的空间
                     .padding(horizontal = 15.dp)
                     .padding(top = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // 公告
                 item {
                     CommonInfoCard(
                         R.drawable.ic_brand_awareness_24px,
@@ -118,7 +162,27 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPag
                         "这是一段更新内容"
                     )
                 }
+            }
 
+            // 底部输入区
+            with(sharedTransitionScope) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp)
+                ) {
+                    Surface(onClick = goToAnalysis, shape = CardDefaults.shape) {
+                        AsCardTextField(
+                            modifier = Modifier.sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "card-input-analysis"),
+                                animatedVisibilityScope = animatedContentScope
+                            ),
+                            value = "", onValueChange = {},
+                            enabled = false, readOnly = true
+                        )
+                    }
+                    Spacer(Modifier.height(20.dp))
+                }
             }
         }
     }
@@ -128,13 +192,14 @@ internal fun HomeScreen(homeRoute: HomeRoute, goToLogin: () -> Unit, goToUserPag
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun HomeScaffold(
     snackbarHostState: SnackbarHostState,
     loginUserInfoState: NetWorkResult<BILILoginUserModel?>,
     goToLogin: () -> Unit,
     goToUserPage: () -> Unit,
+    goToAnalysis: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -170,29 +235,34 @@ private fun HomeScaffold(
                     ),
                     navigationIcon = {},
                     actions = {
-                        Surface(
-                            Modifier
-                                .size(40.dp)
-                                .clickable {
-                                    if (loginUserInfoState.status == ApiStatus.SUCCESS) {
-                                        goToUserPage()
-                                    } else {
-                                        goToLogin()
-                                    }
-                                },
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primary
-                        ) {
-                            when (loginUserInfoState) {
-                                is NetWorkResult.Success<*> -> AsyncImage(
-                                    loginUserInfoState.data?.face,
+                        AsAutoError(
+                            loginUserInfoState, onSuccessContent = {
+                                ASAsyncImage(
+                                    model = loginUserInfoState.data?.face,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .size(40.dp),
+                                    shape = CircleShape,
                                     contentDescription = "头像",
-                                    modifier = Modifier.fillMaxSize()
+                                    onClick = { goToUserPage() }
                                 )
-
-                                else -> {}
-                            }
-                        }
+                            },
+                            onLoadingContent = {
+                                ContainedLoadingIndicator()
+                            },
+                            onDefaultContent = {
+                                IconButton(onClick = {
+                                    goToLogin()
+                                }) {
+                                    Icon(
+                                        Icons.AutoMirrored.Outlined.Login,
+                                        contentDescription = "登录"
+                                    )
+                                }
+                            },
+                            onErrorContent = { errorMsg, response ->
+                                AsErrorCopyIconButton(errorMsg ?: "未知错误")
+                            })
                         Spacer(Modifier.width(15.dp))
                     }
                 )
@@ -275,29 +345,23 @@ private fun LoginInfoBottomDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                when (loginUserInfoState) {
-                    is NetWorkResult.Success<*> -> {
-                        Surface(
-                            shape = MaterialShapes.Square.toShape()
-                        ) {
-                            AsyncImage(
-                                loginUserInfoState.data?.face,
-                                contentDescription = "头像",
-                                modifier = Modifier.size(100.dp),
-                            )
-                        }
-                        Spacer(Modifier.height(5.dp))
-                        Text(loginUserInfoState.data?.name ?: "", fontSize = 20.sp)
-                        ASLoginPlatformFilterChipRow(userLoginPlatformList.map { it.loginPlatform })
+                AsAutoError(loginUserInfoState, onSuccessContent = {
+                    Surface(
+                        shape = MaterialShapes.Square.toShape()
+                    ) {
+                        AsyncImage(
+                            loginUserInfoState.data?.face,
+                            contentDescription = "头像",
+                            modifier = Modifier.size(100.dp),
+                        )
                     }
-
-                    is NetWorkResult.Loading<*> -> {
-                        ContainedLoadingIndicator(Modifier.size(100.dp))
-                        Text("正在加载...")
-                    }
-
-                    else -> {}
-                }
+                    Spacer(Modifier.height(5.dp))
+                    Text(loginUserInfoState.data?.name ?: "", fontSize = 20.sp)
+                    ASLoginPlatformFilterChipRow(userLoginPlatformList.map { it.loginPlatform })
+                }, onLoadingContent = {
+                    ContainedLoadingIndicator(Modifier.size(100.dp))
+                    Text("正在加载...")
+                })
             }
         }
     }

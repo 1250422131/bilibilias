@@ -42,5 +42,8 @@ object API {
 
         // 投稿列表，仅Web有，TV共用
         val WEB_SPACE_ARC_SEARCH = WEB_API_BASE_URL + "x/space/wbi/arc/search"
+
+        // 视频详情，通用接口，Webi鉴权
+        val WEB_WEBI_VIDEO_VIEW = WEB_API_BASE_URL + "x/web-interface/wbi/view"
     }
 }

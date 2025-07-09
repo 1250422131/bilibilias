@@ -2,7 +2,9 @@ package com.imcys.bilibilias.network.di
 
 import android.util.Log
 import com.imcys.bilibilias.network.AsCookiesStorage
+import com.imcys.bilibilias.network.config.BILIBILI_URL
 import com.imcys.bilibilias.network.config.BROWSER_USER_AGENT
+import com.imcys.bilibilias.network.config.REFERER
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
 import io.ktor.client.HttpClient
@@ -41,6 +43,11 @@ val netWorkModule = module {
             .pingInterval(1, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
+                    .apply {
+                        if (!chain.request().headers("Referer").isNotEmpty()) {
+                            header(REFERER, BILIBILI_URL)
+                        }
+                    }
                     .header(HttpHeaders.UserAgent, BROWSER_USER_AGENT)
                     .build()
                 chain.proceed(request)

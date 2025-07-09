@@ -9,7 +9,10 @@ import com.imcys.bilibilias.ui.user.UserScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserRoute(val mid: Long = 0)
+data class UserRoute(
+    val mid: Long = 0,
+    val isAnalysisUser: Boolean = false
+)
 
 fun NavController.navigateToUser(
     userRoute: UserRoute = UserRoute(),
@@ -22,6 +25,6 @@ fun NavGraphBuilder.userScreen(
 ) {
     composable<UserRoute> { navBackStackEntry ->
         val userRoute = navBackStackEntry.toRoute<UserRoute>()
-        UserScreen(userRoute,onToBack)
+        UserScreen(userRoute, onToBack)
     }
 }
