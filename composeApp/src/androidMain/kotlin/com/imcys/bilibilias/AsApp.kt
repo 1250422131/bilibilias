@@ -7,7 +7,7 @@ import coil3.SingletonImageLoader
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.datasource.createHttpClient
+import com.imcys.bilibilias.core.ktor.client.createHttpClient
 
 class AsApp : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {

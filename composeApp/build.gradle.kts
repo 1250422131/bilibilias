@@ -29,7 +29,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.ui)
-            implementation(projects.core.datasource)
+            implementation(projects.core.ktorClient)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
