@@ -245,6 +245,7 @@ fun PreviewContent() {
             ownerFace = "",
             ownerName = "name"
         ),
-        onSearchQueryChanged = {}
+        onSearchQueryChanged = {},
+        onDownloadItemClick = { _, _, _ -> }
     )
 }
