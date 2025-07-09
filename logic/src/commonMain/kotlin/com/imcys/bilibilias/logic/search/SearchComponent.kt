@@ -7,5 +7,6 @@ interface SearchComponent {
     val searchResultUiState: StateFlow<SearchResultUiState>
     fun onSearchTriggered(query: String)
     fun onSearchQueryChanged(query: String)
+    fun downloadItem(quality: EpisodeQuality, bvid: String, cid: Long)
 }
 

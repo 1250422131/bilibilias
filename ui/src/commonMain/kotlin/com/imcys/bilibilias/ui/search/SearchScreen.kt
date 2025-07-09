@@ -31,6 +31,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,22 +46,21 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.imcys.bilibilias.logic.search.EpisodeQuality
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
+import com.imcys.bilibilias.ui.VideoDownloadDialog
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SearchScreen(component: SearchComponent) {
     val searchQuery by component.searchQuery.collectAsState()
     val searchResultUiState by component.searchResultUiState.collectAsState()
-//    val dialogSlot by component.dialogSlot.subscribeAsState()
-//    dialogSlot.child?.instance?.let {
-//        VideoDownloadBottomSheet(it, component::hide)
-//    }
     SearchContent(
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState,
         onSearchQueryChanged = component::onSearchQueryChanged,
+        onDownloadItemClick = component::downloadItem
     )
 }
 
@@ -68,7 +70,7 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-//    openVideoDownloadSheet: (List<Page>) -> Unit
+    onDownloadItemClick: (EpisodeQuality, String, Long) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -86,6 +88,7 @@ fun SearchContent(
             )
         }
     ) { innerPadding ->
+        var dialog by rememberSaveable { mutableStateOf(false) }
         Column(modifier = Modifier.padding(innerPadding)) {
             SearchTextField(
                 searchQuery = searchQuery,
@@ -133,9 +136,21 @@ fun SearchContent(
                             }
                         }
                     }
-                    Button({}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Button(
+                        { dialog = true },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
                         Text("下载")
                     }
+                    VideoDownloadDialog(
+                        dialog,
+                        searchResultUiState.episodes,
+                        searchResultUiState.availableQualities,
+                        onDismiss = { dialog = false },
+                        onClick = { quality, cid ->
+                            onDownloadItemClick(quality, searchResultUiState.bvid, cid)
+                        }
+                    )
                 }
             }
         }

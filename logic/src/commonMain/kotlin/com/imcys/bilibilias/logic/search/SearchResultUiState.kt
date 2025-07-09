@@ -21,6 +21,8 @@ sealed interface SearchResultUiState {
         val ownerId: Long,
         val ownerFace: String,
         val ownerName: String,
+        val episodes: List<Episode> = emptyList(),
+        val availableQualities: List<EpisodeQuality> = emptyList()
     ) : SearchResultUiState
 
     data class Error(val message: String) : SearchResultUiState

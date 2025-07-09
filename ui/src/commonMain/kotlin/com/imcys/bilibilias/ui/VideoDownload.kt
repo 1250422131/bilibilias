@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,53 +34,63 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.logic.search.Episode
+import com.imcys.bilibilias.logic.search.EpisodeQuality
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VideoDownloadDialog() {
+fun VideoDownloadDialog(
+    showSheet: Boolean,
+    episodes: List<Episode>,
+    episodeQualities: List<EpisodeQuality>,
+    onDismiss: () -> Unit,
+    onClick: (EpisodeQuality, Long) -> Unit,
+) {
     val listState = rememberLazyListState()
     var openDialog by remember { mutableStateOf(false) }
+    var selectedQuality by remember { mutableStateOf(episodeQualities.first()) }
     AsModalBottomSheet(
-        true,
-        onDismiss = { openDialog = false },
+        showSheet,
+        onDismiss = onDismiss,
     ) {
         Column(
             modifier = Modifier
                 .padding(20.dp, 0.dp, 20.dp, 20.dp)
         ) {
             Row(
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { openDialog = true },
-                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { openDialog = true },
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("1018P")
+                Text(selectedQuality.description)
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
             }
             Box(modifier = Modifier.fillMaxHeight(0.7f)) {
                 LazyColumn(state = listState) {
-                    items(20, contentType = {}) {
-                        Text(
-                            it.toString(),
+                    items(episodes, key = { it.index }) { item ->
+                        VerticallyCenteredSingleLineText(
+                            item.part,
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
                                 .height(50.dp)
                                 .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
                                 .border(
                                     1.dp,
                                     MaterialTheme.colorScheme.primary,
                                     RoundedCornerShape(8.dp)
                                 )
-                                .wrapContentHeight()
+                                .clickable { onClick(selectedQuality, item.cid) }
                                 .padding(start = 8.dp),
-                            textAlign = TextAlign.Start,
-                            maxLines = 1
                         )
                     }
                 }
@@ -89,39 +100,54 @@ fun VideoDownloadDialog() {
             }
         }
     }
-    FormatsDialog(openDialog)
+    FormatsDialog(
+        openDialog,
+        episodeQualities,
+        onDismiss = { openDialog = false },
+        onClick = { selectedQuality = it }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormatsDialog(openDialog: Boolean) {
+fun FormatsDialog(
+    openDialog: Boolean,
+    episodeQualities: List<EpisodeQuality>,
+    onDismiss: () -> Unit,
+    onClick: (EpisodeQuality) -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
     AsModalBottomSheet(
         openDialog,
-        onDismiss = { },
+        sheetState = sheetState,
+        onDismiss = onDismiss,
     ) {
-        LazyColumn(state = listState) {
-            items(6) {
-                Text(
-                    it.toString(),
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.padding(20.dp)
+        ) {
+            items(episodeQualities, key = { it.quality }) { item ->
+                VerticallyCenteredSingleLineText(
+                    item.description,
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .height(50.dp)
                         .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
                         .border(
                             1.dp,
                             MaterialTheme.colorScheme.primary,
                             RoundedCornerShape(8.dp)
                         )
-                        .wrapContentHeight()
+                        .clickable {
+                            onClick(item)
+                        }
                         .padding(start = 8.dp),
-                    textAlign = TextAlign.Start,
-                    maxLines = 1
                 )
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -176,5 +202,5 @@ fun VerticallyCenteredSingleLineTextPreview() {
 @Preview
 @Composable
 fun PreviewVideoDownloadDialog() {
-    VideoDownloadDialog()
+//    VideoDownloadDialog()
 }
