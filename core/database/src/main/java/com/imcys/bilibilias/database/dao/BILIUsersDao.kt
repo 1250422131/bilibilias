@@ -28,9 +28,18 @@ interface BILIUsersDao {
         uid: Long
     ): List<BILIUsersEntity>
 
+
+    @Query("select * from bili_users where mid = :mid")
+    suspend fun getBILIUserListByMid(
+        mid: Long,
+    ): List<BILIUsersEntity>
+
+
     @Query("select * from bili_users where id = :uid")
     suspend fun getBILIUserByUid(
         uid: Long
     ): BILIUsersEntity?
 
+    @Query("delete from bili_users WHERE id = :userId")
+    suspend fun deleteBILIUserByUid(userId: Long): Int
 }

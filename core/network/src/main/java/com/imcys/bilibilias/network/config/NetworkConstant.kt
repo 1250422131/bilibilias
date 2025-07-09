@@ -26,6 +26,10 @@ const val W_WEBID = "w_webid"
 
 const val ACCESS_ID = "access_id"
 
+const val AID = "aid"
+
+const val BVID = "bvid"
+
 const val BROWSER_USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76"
 
@@ -49,6 +53,6 @@ val BROWSER_FINGERPRINT = mapOf(
     "token" to "",
     "dm_img_list" to "[]",
     "dm_img_str" to "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
-    "dm_img_inter" to "{\"ds\":[],\"wh\":[3428,1836,80],\"of\":[72,144,72]}",
+    "dm_img_inter" to "{\"ds\":[{\"t\":0,\"c\":\"\",\"p\":[291,97,97],\"s\":[137,2011,2346]}],\"wh\":[3309,1503,99],\"of\":[249,498,249]}",
     "dm_cover_img_str" to "QU5HTEUgKE5WSURJQSwgTlZJRElBIEdlRm9yY2UgR1RYIDEwODAgKDB4MDAwMDFCODApIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpR29vZ2xlIEluYy4gKE5WSURJQS",
 )

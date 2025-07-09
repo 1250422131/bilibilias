@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.ui.user
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,10 +47,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,7 +67,7 @@ import com.imcys.bilibilias.data.model.BILIUserStatModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
-import com.imcys.bilibilias.network.model.user.BILIUserAccInfo
+import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.ui.user.navigation.UserRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
@@ -119,11 +116,14 @@ internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
                 }
             }
 
-            fullWidthItem {
-                PlatformList(uiState.biliUsersEntity)
+            if (!userRoute.isAnalysisUser){
+                fullWidthItem {
+                    PlatformList(uiState.biliUsersEntity)
+                }
+                fullWidthItem {
+                    ActionRow()
+                }
             }
-
-            fullWidthItem { ActionRow() }
 
             fullWidthItem {
                 VideoHeader(spaceArchiveInfoState) {
@@ -516,7 +516,7 @@ fun UserDataInfo(userStatInfoState: BILIUserStatModel) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TopUserInfo(
-    pageInfoState: NetWorkResult<BILIUserAccInfo?>,
+    pageInfoState: NetWorkResult<BILIUserSpaceAccInfo?>,
     userStatInfoState: BILIUserStatModel,
     onRetry: () -> Unit = {},
 ) {

@@ -8,8 +8,7 @@ import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
-import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
-import com.imcys.bilibilias.network.model.user.BILIUserAccInfo
+import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class UserViewModel(
     val uiState = _uiState.asStateFlow()
 
     private val _userPageInfoState =
-        MutableStateFlow<NetWorkResult<BILIUserAccInfo?>>(emptyNetWorkResult())
+        MutableStateFlow<NetWorkResult<BILIUserSpaceAccInfo?>>(emptyNetWorkResult())
     val userPageInfoState = _userPageInfoState.asStateFlow()
 
     private val _userStatInfoState =
