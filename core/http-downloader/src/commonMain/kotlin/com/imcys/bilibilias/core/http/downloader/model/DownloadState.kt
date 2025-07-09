@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.core.http.downloader.model
 
-import com.imcys.bilibilias.core.http.downloader.MediaType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,5 +17,4 @@ data class DownloadState(
     val error: DownloadError? = null,
     @SerialName("segmentCacheDir")
     val relativeSegmentCacheDir: String,
-    val mediaType: MediaType,
 )

@@ -113,28 +113,12 @@ open class KtorHttpDownloader(
         return downloadWithId(downloadId, url, options)?.downloadId ?: downloadId
     }
 
-    protected fun getMediaTypeFromUrl(url: String): MediaType? {
-        val parsed = io.ktor.http.Url(url)
-        val path = parsed.encodedPath // without query
-        fun guessFromValue(value: String): MediaType? {
-            return when {
-                value.endsWith(".m3u8", ignoreCase = true) -> MediaType.M3U8
-                value.endsWith(".mp4", ignoreCase = true) -> MediaType.MP4
-                value.endsWith(".mkv", ignoreCase = true) -> MediaType.MKV
-                else -> null
-            }
-        }
-        return guessFromValue(path) // https://foo.com/bar.m3u8
-            ?: guessFromValue(url) // https://foo.com/index.php?key=video.m3u8
-    }
-
     override suspend fun downloadWithId(
         downloadId: DownloadId,
         url: String,
         options: DownloadOptions,
     ): DownloadState? {
-        val mediaType = getMediaTypeFromUrl(url) ?: MediaType.MP4
-        logger.i { "Preparing to download with id=$downloadId, url=$url, mediaType=$mediaType" }
+        logger.i { "Preparing to download with id=$downloadId, url=$url" }
 
         // 1) Set initial state if not present
         stateMutex.withLock {
@@ -157,7 +141,6 @@ open class KtorHttpDownloader(
                 timestamp = clock.now().toEpochMilliseconds(),
                 status = DownloadStatus.INITIALIZING,
                 relativeSegmentCacheDir = segmentCacheDir,
-                mediaType = mediaType,
             )
             currentMap[downloadId] = DownloadEntry(job = null, state = initialState)
             _downloadStatesFlow.value = currentMap
@@ -166,7 +149,7 @@ open class KtorHttpDownloader(
         emitProgress(downloadId)
 
         // 2) Create segments
-        if (!createSegments(downloadId, url, mediaType, options)) {
+        if (!createSegments(downloadId, url, options)) {
             // If creation failed, the state is set to FAILED. We stop here.
             return null
         }
@@ -258,7 +241,7 @@ open class KtorHttpDownloader(
 
         // If we have no segments, it means we failed during segment creation
         if (st.segments.isEmpty()) {
-            if (!createSegments(downloadId, st.url, st.mediaType, DownloadOptions())) {
+            if (!createSegments(downloadId, st.url, DownloadOptions())) {
                 return false // Already marked as FAILED
             }
         }
@@ -477,20 +460,10 @@ open class KtorHttpDownloader(
     private suspend fun createSegments(
         downloadId: DownloadId,
         url: String,
-        mediaType: MediaType,
         options: DownloadOptions,
     ): Boolean {
         try {
-            val newSegments = when (mediaType) {
-                MediaType.M3U8 -> {
-                    emptyList()
-                }
-
-                MediaType.MP4, MediaType.MKV -> {
-                    logger.i { "Creating range segments for $downloadId" }
-                    createRangeSegments(downloadId, url, options)
-                }
-            }
+            val newSegments = createRangeSegments(downloadId, url, options)
 
             updateState(downloadId) {
                 it.copy(
