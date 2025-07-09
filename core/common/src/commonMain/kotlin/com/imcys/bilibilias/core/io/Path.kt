@@ -40,3 +40,5 @@ fun SystemPath.resolve(part: String) = path.resolve(part).inSystem
  * @see Path.resolve
  */
 fun SystemPath.resolve(vararg parts: String) = path.resolve(*parts).inSystem
+
+expect val SystemPath.absolutePath: String

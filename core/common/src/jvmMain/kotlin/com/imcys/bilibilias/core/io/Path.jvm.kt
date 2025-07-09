@@ -5,3 +5,7 @@ import java.io.File
 
 fun Path.toFile(): File = File(this.toString())
 fun SystemPath.toFile(): File = path.toFile()
+
+actual val SystemPath.absolutePath: String
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    get() = path.file.absolutePath
