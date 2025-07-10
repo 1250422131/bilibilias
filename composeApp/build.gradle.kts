@@ -28,8 +28,10 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation(projects.ui)
+            implementation(projects.core.common)
             implementation(projects.core.ktorClient)
+            implementation(projects.logic)
+            implementation(projects.ui)
 
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -40,6 +42,8 @@ kotlin {
 
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)
+
+            implementation(libs.decompose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -75,10 +79,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {

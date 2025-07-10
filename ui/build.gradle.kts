@@ -16,6 +16,7 @@ kotlin {
             implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.materialIconsExtended)
 
+            implementation(libs.decompose)
             implementation(libs.decompose.compose)
 
             implementation(libs.coil.compose)
