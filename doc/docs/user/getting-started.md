@@ -19,7 +19,8 @@
 ::: tip
 目前 BILIBILIAS 有计划在 Google Play 上架，上架后的版本可能不存在这个权限，当然，大概率到时间也没办法自定义存储路径。
 :::
-如果你的版本在 Android13 以下的版本那么可能会收到一个申请存储权限的通知，正常放行即可。
+
+如果你目前的安卓版本需要所有文件访问权限，那么会自动收到一个申请存储权限的通知，正常放行即可。
 
 <AsImage  width="40%"  src="/images/user/getting-started/app-start-request-permission.jpg"></AsImage>
 
