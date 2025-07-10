@@ -5,7 +5,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
-import com.imcys.bilibilias.core.http.downloader.createKtorPersistentHttpDownloader
+import com.imcys.bilibilias.logic.utils.createKtorPersistentHttpDownloader
 import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
