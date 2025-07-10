@@ -6,8 +6,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.core.common)
-            implementation(projects.core.ktorClient)
+            api(projects.core.common)
+            api(projects.core.ktorClient)
         }
     }
 }
