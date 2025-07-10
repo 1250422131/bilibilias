@@ -16,6 +16,7 @@ kotlin {
             api(libs.androidx.datastore)
             implementation(compose.runtime)
             api(libs.kermit)
+            api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
             api(libs.kotlinx.coroutines.core)
 
