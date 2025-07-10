@@ -33,7 +33,7 @@ class DefaultSearchComponent(
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
                 extractBvid(query)?.let { bvid ->
-                    val detail = BilibiliApi.getVideoDetail(bvid)
+                    val detail = BilibiliApi.getVideoInfoDetail(bvid)
                     val playInfo = BilibiliApi.getPlayUrl(detail.bvid, detail.cid)
 
                     val realQualities = playInfo.dash.video.map { it.id }.toSet()
