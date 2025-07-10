@@ -58,7 +58,7 @@ object BilibiliApi {
         }
     }
 
-    suspend fun getVideoDetail(bvid: String): BiliVideoData {
+    suspend fun getVideoInfoDetail(bvid: String): BiliVideoData {
         return client.get("/x/web-interface/view") {
             parameter("bvid", bvid)
         }.body<BiliVideoData>()
@@ -85,7 +85,7 @@ object BilibiliApi {
     }
 
     suspend fun getVideoDetailAndPlayInfo(bvid: String): Pair<BiliVideoData, VideoPlaybackInfo> {
-        val detail = getVideoDetail(bvid)
+        val detail = getVideoInfoDetail(bvid)
         val playInfo = getPlayUrl(detail.bvid, detail.cid)
         return detail to playInfo
     }
