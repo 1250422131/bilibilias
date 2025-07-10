@@ -19,6 +19,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
+import io.ktor.http.parseQueryString
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +77,16 @@ object BilibiliApi {
             "cid" to cid,
         )
         val signedQuery = WbiSign.enc(queryParams)
-        return client.get("/x/player/wbi/playurl?$signedQuery").body<VideoPlaybackInfo>()
+        return client.get("/x/player/wbi/playurl") {
+            url {
+                encodedParameters.appendAll(parseQueryString(signedQuery))
+            }
+        }.body<VideoPlaybackInfo>()
+    }
+
+    suspend fun getVideoDetailAndPlayInfo(bvid: String): Pair<BiliVideoData, VideoPlaybackInfo> {
+        val detail = getVideoDetail(bvid)
+        val playInfo = getPlayUrl(detail.bvid, detail.cid)
+        return detail to playInfo
     }
 }
