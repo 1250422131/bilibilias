@@ -1,17 +1,10 @@
 package com.imcys.bilibilias.core.http.downloader
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import co.touchlab.kermit.Logger
-import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
-import com.imcys.bilibilias.core.datastore.new
-import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
-import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineStart
@@ -23,32 +16,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
 import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
-import kotlinx.serialization.builtins.ListSerializer
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-
-@OptIn(ExperimentalTime::class)
-fun createKtorPersistentHttpDownloader() {
-    val context = KmpContext
-    context.dataDir
-    with(KmpContext) {
-        dataDir
-    }
-    KtorPersistentHttpDownloader(
-        dataStore = DataStoreFactory.new(
-            ListSerializer(DownloadState.serializer()).asDataStoreSerializer { emptyList() },
-            produceFile = { resolveDataStoreFile("ktor_persistent_http_downloader") },
-            corruptionHandler = ReplaceFileCorruptionHandler {
-                emptyList()
-            },
-        ),
-        client = createHttpClient { },
-        fileSystem = SystemFileSystem,
-        baseSaveDir = Path("")
-    )
-}
 
 /**
  * A persistent version of [KtorHttpDownloader] that automatically:
