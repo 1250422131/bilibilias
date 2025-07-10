@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.logic
+package com.imcys.bilibilias.logic.utils
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy

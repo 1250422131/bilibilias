@@ -142,6 +142,7 @@ fun FormatsDialog(
                         )
                         .clickable {
                             onClick(item)
+                            onDismiss()
                         }
                         .padding(start = 8.dp),
                 )

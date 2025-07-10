@@ -2,11 +2,11 @@ package com.imcys.bilibilias.logic.search
 
 import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
-import com.imcys.bilibilias.logic.scope
+import com.imcys.bilibilias.core.http.downloader.createKtorPersistentHttpDownloader
+import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,12 +19,14 @@ import kotlinx.serialization.Serializable
 class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
-    private val dialogNavigation = SlotNavigation<DialogConfig>()
+    private val httpDownloader = createKtorPersistentHttpDownloader()
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
 
     override val searchQuery = MutableStateFlow(state.searchQuery)
+
+    // use case
     override val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
             if (query.isEmpty()) {
@@ -95,14 +97,3 @@ class DefaultSearchComponent(
     @Serializable
     private data object DialogConfig
 }
-
-data class EpisodeQuality(
-    val description: String,
-    val quality: Int,
-)
-
-data class Episode(
-    val cid: Long,
-    val index: Int,
-    val part: String,
-)
