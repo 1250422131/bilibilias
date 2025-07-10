@@ -10,6 +10,9 @@ import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.builtins.ListSerializer
@@ -25,7 +28,14 @@ fun createKtorPersistentHttpDownloader(): HttpDownloader {
                 emptyList()
             },
         ),
-        client = createHttpClient { },
+        client = createHttpClient {
+            defaultRequest {
+                header(HttpHeaders.Accept, "*/*")
+                header(HttpHeaders.Referrer, "https://www.bilibili.com")
+                header(HttpHeaders.Origin, "https://www.bilibili.com")
+                header(HttpHeaders.Connection, "keep-alive")
+            }
+        },
         fileSystem = SystemFileSystem,
         baseSaveDir = Path(KmpContext.dataDir, "Download")
     )
