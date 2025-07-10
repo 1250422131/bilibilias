@@ -4,15 +4,18 @@ import kotlinx.io.files.Path
 
 expect object KmpContext {
     val isDebug: Boolean
+
+    val cacheDir: Path
+    val dataDir: Path
+    val dataStoreDir: Path
+    val logsDir: Path
+
     val platform: Platform
 }
 
-expect val KmpContext.cacheDir: Path
-expect val KmpContext.dataDir: Path
-expect val KmpContext.dataStoreDir: Path
-expect val KmpContext.logsDir: Path
-
 enum class Platform {
     ANDROID,
-    DESKTOP,
+    DESKTOP;
+
+    companion object
 }

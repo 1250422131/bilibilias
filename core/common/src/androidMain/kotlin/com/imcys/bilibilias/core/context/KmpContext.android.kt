@@ -17,14 +17,15 @@ actual object KmpContext {
     }
 
     actual val isDebug: Boolean = true
+    actual val cacheDir: Path
+        get() = Path(get().cacheDir.absolutePath)
+    actual val dataDir: Path
+        get() = Path(get().dataDir.absolutePath)
+    actual val dataStoreDir: Path
+        get() = Path(get().filesDir.absolutePath, "datastore")
+    actual val logsDir: Path
+        get() = Path(get().filesDir.absolutePath, "logs")
+
     actual val platform: Platform = Platform.ANDROID
 }
 
-actual val KmpContext.cacheDir: Path
-    get() = Path(get().cacheDir.absolutePath)
-actual val KmpContext.dataDir: Path
-    get() = Path(get().dataDir.absolutePath)
-actual val KmpContext.dataStoreDir: Path
-    get() = Path(get().filesDir.absolutePath, "datastore")
-actual val KmpContext.logsDir: Path
-    get() = Path(get().filesDir.absolutePath, "logs")
