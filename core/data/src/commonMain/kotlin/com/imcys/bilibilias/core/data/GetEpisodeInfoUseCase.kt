@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.flowOf
 
 class GetEpisodeInfoUseCase {
     operator fun invoke(query: String): Flow<Episode?> {
-
         return when (val result = textExtract(query)) {
             is TextExtraction.MatchResult.BV -> {
                 flow {
