@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.logic.search
 
+import com.imcys.bilibilias.core.data.model.Episode
+
 sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState
 
@@ -13,16 +15,7 @@ sealed interface SearchResultUiState {
     data object LoadFailed : SearchResultUiState
 
     data class Success(
-        val aid: Long,
-        val bvid: String,
-        val desc: String,
-        val cover: String,
-        val title: String,
-        val ownerId: Long,
-        val ownerFace: String,
-        val ownerName: String,
-        val episodes: List<Episode> = emptyList(),
-        val availableQualities: List<EpisodeQuality> = emptyList()
+        val episode: Episode,
     ) : SearchResultUiState
 
     data class Error(val message: String) : SearchResultUiState

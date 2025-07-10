@@ -4,7 +4,12 @@ import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
-import com.imcys.bilibilias.core.datasource.api.BilibiliApi
+import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
+import com.imcys.bilibilias.core.data.model.Quality
+import com.imcys.bilibilias.core.result.Result.Error
+import com.imcys.bilibilias.core.result.Result.Loading
+import com.imcys.bilibilias.core.result.Result.Success
+import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.utils.createKtorPersistentHttpDownloader
 import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.Serializable
@@ -20,6 +26,7 @@ class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
     private val httpDownloader = createKtorPersistentHttpDownloader()
+    private val useCase = GetEpisodeInfoUseCase()
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
@@ -32,37 +39,24 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                extractBvid(query)?.let { bvid ->
-                    val detail = BilibiliApi.getVideoInfoDetail(bvid)
-                    val playInfo = BilibiliApi.getPlayUrl(detail.bvid, detail.cid)
-
-                    val realQualities = playInfo.dash.video.map { it.id }.toSet()
-
-                    val episodeQualities =
-                        playInfo.acceptDescription.zip(playInfo.acceptQuality) { description, quality ->
-                            EpisodeQuality(
-                                description = description,
-                                quality = quality,
-                            )
+                useCase(query).asResult().map { result ->
+                    when (result) {
+                        is Success -> {
+                            val data = result.data
+                            if (data != null) {
+                                SearchResultUiState.Success(data)
+                            } else {
+                                SearchResultUiState.Error("No data")
+                            }
                         }
 
-                    val availableQualities =
-                        episodeQualities.filterNot { it.quality !in realQualities }
-                    flowOf(
-                        SearchResultUiState.Success(
-                            detail.aid,
-                            bvid = detail.bvid,
-                            desc = detail.desc,
-                            cover = detail.pic,
-                            title = detail.title,
-                            ownerId = detail.owner.mid,
-                            ownerFace = detail.owner.face,
-                            ownerName = detail.owner.name,
-                            episodes = detail.pages.map { Episode(it.cid, it.page, it.part) },
-                            availableQualities = availableQualities,
+                        is Error -> SearchResultUiState.Error(
+                            result.exception.message ?: "Unknown error"
                         )
-                    )
-                } ?: flowOf(SearchResultUiState.LoadFailed)
+
+                        is Loading -> SearchResultUiState.Loading
+                    }
+                }
             }
         }.stateIn(
             scope,
@@ -87,7 +81,7 @@ class DefaultSearchComponent(
         searchQuery.update { query }
     }
 
-    override fun downloadItem(quality: EpisodeQuality, bvid: String, cid: Long) {
+    override fun downloadItem(quality: Quality, bvid: String, cid: Long) {
         Logger.i { "downloadItem: $quality, $bvid, $cid" }
     }
 
