@@ -7,7 +7,12 @@ export default defineConfig({
   description: "BILIBILIAS的使用文档与开发文档。",
   lastUpdated: true,
   head: [
-    ['link', { rel: "icon", href: "/favicon.ico" }]
+    ['link', { rel: "icon", href: "/favicon.ico" }],
+    ['script', {
+      async: 'async',
+      src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5517951218257829',
+      crossorigin: 'anonymous',
+    }],
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
