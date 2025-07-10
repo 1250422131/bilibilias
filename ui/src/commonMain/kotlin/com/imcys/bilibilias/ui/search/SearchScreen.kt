@@ -46,7 +46,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.imcys.bilibilias.logic.search.EpisodeQuality
+import com.imcys.bilibilias.core.data.model.Quality
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.ui.VideoDownloadDialog
@@ -70,7 +70,7 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onDownloadItemClick: (EpisodeQuality, String, Long) -> Unit
+    onDownloadItemClick: (Quality, String, Long) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +108,7 @@ fun SearchContent(
                         Row {
                             Box(modifier = Modifier.weight(3f)) {
                                 AsyncImage(
-                                    searchResultUiState.cover,
+                                    searchResultUiState.episode.cover,
                                     "VideoCover",
                                     modifier = Modifier.fillMaxWidth(),
                                     contentScale = ContentScale.Inside,
@@ -122,13 +122,13 @@ fun SearchContent(
                                 verticalArrangement = Arrangement.SpaceEvenly,
                             ) {
                                 TextButton(
-                                    { searchResultUiState.bvid },
+                                    { searchResultUiState.episode.bvid },
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Text("看视频")
                                 }
                                 TextButton(
-                                    { searchResultUiState.ownerId },
+                                    { searchResultUiState.episode.owner.id },
                                     modifier = Modifier.weight(1f)
                                 ) {
                                     Text("去主页")
@@ -144,11 +144,11 @@ fun SearchContent(
                     }
                     VideoDownloadDialog(
                         dialog,
-                        searchResultUiState.episodes,
-                        searchResultUiState.availableQualities,
+                        searchResultUiState.episode.series,
+                        searchResultUiState.episode.qualities,
                         onDismiss = { dialog = false },
                         onClick = { quality, cid ->
-                            onDownloadItemClick(quality, searchResultUiState.bvid, cid)
+                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
                         }
                     )
                 }
@@ -233,19 +233,19 @@ private fun SearchTextField(
 @Preview
 @Composable
 fun PreviewContent() {
-    SearchContent(
-        "haha",
-        SearchResultUiState.Success(
-            aid = 0,
-            bvid = "",
-            desc = "",
-            cover = "",
-            title = "title",
-            ownerId = 0,
-            ownerFace = "",
-            ownerName = "name"
-        ),
-        onSearchQueryChanged = {},
-        onDownloadItemClick = { _, _, _ -> }
-    )
+//    SearchContent(
+//        "haha",
+//        SearchResultUiState.Success(
+//            aid = 0,
+//            bvid = "",
+//            desc = "",
+//            cover = "",
+//            title = "title",
+//            ownerId = 0,
+//            ownerFace = "",
+//            ownerName = "name"
+//        ),
+//        onSearchQueryChanged = {},
+//        onDownloadItemClick = { _, _, _ -> }
+//    )
 }

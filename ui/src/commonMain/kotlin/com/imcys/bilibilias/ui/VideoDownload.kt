@@ -39,22 +39,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.imcys.bilibilias.logic.search.Episode
-import com.imcys.bilibilias.logic.search.EpisodeQuality
+import com.imcys.bilibilias.core.data.model.EpisodeItem
+import com.imcys.bilibilias.core.data.model.Quality
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoDownloadDialog(
     showSheet: Boolean,
-    episodes: List<Episode>,
-    episodeQualities: List<EpisodeQuality>,
+    episodes: List<EpisodeItem>,
+    qualities: List<Quality>,
     onDismiss: () -> Unit,
-    onClick: (EpisodeQuality, Long) -> Unit,
+    onClick: (Quality, Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
     var openDialog by remember { mutableStateOf(false) }
-    var selectedQuality by remember { mutableStateOf(episodeQualities.first()) }
+    var selectedQuality by remember { mutableStateOf(qualities.first()) }
     AsModalBottomSheet(
         showSheet,
         onDismiss = onDismiss,
@@ -78,7 +78,7 @@ fun VideoDownloadDialog(
                 LazyColumn(state = listState) {
                     items(episodes, key = { it.index }) { item ->
                         VerticallyCenteredSingleLineText(
-                            item.part,
+                            item.title,
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
                                 .height(50.dp)
@@ -102,7 +102,7 @@ fun VideoDownloadDialog(
     }
     FormatsDialog(
         openDialog,
-        episodeQualities,
+        qualities,
         onDismiss = { openDialog = false },
         onClick = { selectedQuality = it }
     )
@@ -112,9 +112,9 @@ fun VideoDownloadDialog(
 @Composable
 fun FormatsDialog(
     openDialog: Boolean,
-    episodeQualities: List<EpisodeQuality>,
+    qualities: List<Quality>,
     onDismiss: () -> Unit,
-    onClick: (EpisodeQuality) -> Unit,
+    onClick: (Quality) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
@@ -127,7 +127,7 @@ fun FormatsDialog(
             state = listState,
             modifier = Modifier.padding(20.dp)
         ) {
-            items(episodeQualities, key = { it.quality }) { item ->
+            items(qualities, key = { it.numeric }) { item ->
                 VerticallyCenteredSingleLineText(
                     item.description,
                     modifier = Modifier
