@@ -7,14 +7,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.data)
-            implementation(projects.core.httpCache)
-            implementation(projects.core.httpDownloader)
-
-            implementation(libs.decompose)
         }
     }
 }
 
 android {
-    namespace = "com.imcys.bilibilias.logic"
+    namespace = "com.imcys.bilibilias.core.http.cache"
 }
