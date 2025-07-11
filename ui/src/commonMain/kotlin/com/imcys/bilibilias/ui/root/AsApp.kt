@@ -28,7 +28,6 @@ import com.imcys.bilibilias.ui.component.AsNavigationSuiteScaffold
 import com.imcys.bilibilias.ui.navigation.TopLevelDestination
 import com.imcys.bilibilias.ui.search.SearchScreen
 import com.imcys.bilibilias.ui.theme.AsTheme
-import com.imcys.bilibilias.ui.theme.DarkGreenGray95
 import com.imcys.bilibilias.ui.theme.GradientColors
 import com.imcys.bilibilias.ui.theme.LocalGradientColors
 
