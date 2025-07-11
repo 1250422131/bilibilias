@@ -20,6 +20,8 @@ kotlin {
             implementation(libs.decompose.compose)
 
             implementation(libs.coil.compose)
+
+            implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.2")
         }
     }
 }
