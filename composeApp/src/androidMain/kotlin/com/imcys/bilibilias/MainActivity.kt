@@ -11,7 +11,7 @@ import com.arkivanov.decompose.defaultComponentContext
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
-import com.imcys.bilibilias.ui.root.RootContent
+import com.imcys.bilibilias.ui.root.AsApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalKmpContext provides KmpContext
             ) {
-                RootContent(root)
+                AsApp(root)
             }
         }
     }
