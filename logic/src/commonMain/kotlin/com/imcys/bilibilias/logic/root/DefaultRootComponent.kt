@@ -29,7 +29,7 @@ class DefaultRootComponent(
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
             Config.Search -> RootComponent.Child.SearchChild(DefaultSearchComponent(componentContext))
-            Config.Cache -> RootComponent.Child.SearchChild(DefaultCacheComponent(componentContext))
+            Config.Cache -> RootComponent.Child.CacheChild(DefaultCacheComponent(componentContext))
         }
 
     override fun onBackClicked() {
