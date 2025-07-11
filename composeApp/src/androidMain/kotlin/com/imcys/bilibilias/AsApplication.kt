@@ -9,10 +9,9 @@ import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 
-class AsApp : Application(), SingletonImageLoader.Factory {
+class AsApplication : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
-
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
