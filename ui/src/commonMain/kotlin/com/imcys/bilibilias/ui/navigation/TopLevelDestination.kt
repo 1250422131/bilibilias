@@ -1,7 +1,7 @@
 package com.imcys.bilibilias.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Cached
+import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -14,7 +14,7 @@ enum class TopLevelDestination(
         iconText = "搜索",
     ),
     CACHE(
-        selectedIcon = Icons.Rounded.Cached,
+        selectedIcon = Icons.Rounded.FileDownload,
         iconText = "缓存",
     ),
 }
