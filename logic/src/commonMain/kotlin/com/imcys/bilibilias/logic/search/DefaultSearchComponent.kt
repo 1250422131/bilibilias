@@ -5,7 +5,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
+import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.data.model.Quality
+import com.imcys.bilibilias.core.http.cache.CacheRecord
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
@@ -20,13 +22,16 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
     private val httpDownloader = createKtorPersistentHttpDownloader()
-    private val useCase = GetEpisodeInfoUseCase()
+    private val cacheRecord = CacheRecord()
+    private val episodeInfoUseCase = GetEpisodeInfoUseCase()
+    private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
@@ -39,7 +44,7 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                useCase(query).asResult().map { result ->
+                episodeInfoUseCase(query).asResult().map { result ->
                     when (result) {
                         is Success -> {
                             val data = result.data
@@ -83,7 +88,14 @@ class DefaultSearchComponent(
 
     override fun downloadItem(quality: Quality, bvid: String, cid: Long) {
         Logger.i { "downloadItem: $quality, $bvid, $cid" }
+        scope.launch {
+            val data = mediaSourceSelectedUseCase(quality.numeric, bvid, cid)
+            val videoDownloadId = httpDownloader.download(data.videos.url)
+            val audioDownloadId = httpDownloader.download(data.audios.url)
+            cacheRecord.cache(data, videoDownloadId.value, audioDownloadId.value)
+        }
     }
+
 
     @Serializable
     private data class State(val searchQuery: String = "")
