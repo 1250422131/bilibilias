@@ -109,7 +109,7 @@ open class KtorHttpDownloader(
         url: String,
         options: DownloadOptions,
     ): DownloadId {
-        val downloadId = DownloadId(value = Uuid.toString())
+        val downloadId = DownloadId(value = Uuid.random().toString())
         return downloadWithId(downloadId, url, options)?.downloadId ?: downloadId
     }
 
@@ -556,7 +556,7 @@ open class KtorHttpDownloader(
         }
 
         logger.i { "Range supported for $downloadId, total file size: $contentLength" }
-        val segmentSize = 5 * 1024 * 1024L // 5MB
+        val segmentSize = 32 * 1024 * 1024L // 32MB
         if (contentLength <= segmentSize) {
             logger.i { "File is smaller than $segmentSize for $downloadId, single segment." }
             return listOf(
