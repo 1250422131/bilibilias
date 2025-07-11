@@ -6,14 +6,14 @@ data class CacheData(
     val title: String,
     val cover: String,
     val pub: Long,
-    val videos: List<MediaSources>,
-    val audios: List<MediaSources>
+    val videos: MediaSources,
+    val audios: MediaSources
 )
 
 data class MediaSources(
     val url: String,
     val id: Int,
-    val codecs: Int,
+    val codecs: Int = 0,
     val height: Int = 0,
     val width: Int = 0
 )
