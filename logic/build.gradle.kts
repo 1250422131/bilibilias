@@ -7,7 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.data)
-            implementation(projects.core.httpCache)
+            implementation(projects.core.mediaCache)
             implementation(projects.core.httpDownloader)
 
             implementation(libs.decompose)

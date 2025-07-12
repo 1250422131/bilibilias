@@ -6,7 +6,6 @@ import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
-import com.imcys.bilibilias.core.http.cache.CacheRecord
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
@@ -28,7 +27,6 @@ class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
     private val httpDownloader = createKtorPersistentHttpDownloader()
-    private val cacheRecord = CacheRecord()
     private val episodeInfoUseCase = GetEpisodeInfoUseCase()
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
@@ -89,9 +87,6 @@ class DefaultSearchComponent(
         Logger.i { "downloadItem: $qn, $bvid, $cid" }
         scope.launch {
             val data = mediaSourceSelectedUseCase(qn, bvid, cid)
-            val videoDownloadId = httpDownloader.download(data.videos.url)
-            val audioDownloadId = httpDownloader.download(data.audios.url)
-            cacheRecord.cache(data, videoDownloadId.value, audioDownloadId.value)
         }
     }
 
