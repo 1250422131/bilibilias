@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.common)
             api(projects.core.datasource)
+            api(projects.core.model)
         }
     }
 }
