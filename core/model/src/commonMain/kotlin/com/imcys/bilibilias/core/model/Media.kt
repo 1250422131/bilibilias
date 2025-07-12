@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.data.model
+package com.imcys.bilibilias.core.model
 
 data class CacheData(
     val bvid: String,

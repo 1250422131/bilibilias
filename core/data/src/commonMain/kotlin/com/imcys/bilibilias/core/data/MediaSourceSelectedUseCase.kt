@@ -1,9 +1,9 @@
 package com.imcys.bilibilias.core.data
 
-import com.imcys.bilibilias.core.data.model.CacheData
-import com.imcys.bilibilias.core.data.model.MediaSources
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
+import com.imcys.bilibilias.core.model.CacheData
+import com.imcys.bilibilias.core.model.MediaSources
 
 class MediaSourceSelectedUseCase {
     suspend operator fun invoke(qualityLevel: Int, bvid: String, cid: Long): CacheData {
