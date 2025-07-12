@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.logic.cache.CacheComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -25,6 +26,7 @@ fun CacheScreen(component: CacheComponent) {
 
 }
 
+// todo 点击事件 在下载时是 暂停/恢复 下载完成后是播放
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchContent() {
@@ -32,13 +34,15 @@ fun SearchContent() {
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             items(10) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(modifier = Modifier.weight(1f)) {
                         Text(
                             "[3Dio Binaural] Immersive Ear Licking ASMR｜Instant Sleep Trigger｜No Talking Brain Tingles｜晓美ASMR",
-                            style = MaterialTheme.typography.titleMedium
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleSmall
                         )
                     }
                     Row {
