@@ -39,22 +39,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.imcys.bilibilias.core.data.model.EpisodeItem
-import com.imcys.bilibilias.core.data.model.Quality
+import com.imcys.bilibilias.core.model.EpisodePartInfo
+import com.imcys.bilibilias.core.model.StreamData
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoDownloadDialog(
     showSheet: Boolean,
-    episodes: List<EpisodeItem>,
-    qualities: List<Quality>,
+    episodes: List<EpisodePartInfo>,
+    streamData: List<StreamData>,
     onDismiss: () -> Unit,
-    onClick: (Quality, Long) -> Unit,
+    onClick: (Int, Long) -> Unit,
 ) {
     val listState = rememberLazyListState()
     var openDialog by remember { mutableStateOf(false) }
-    var selectedQuality by remember { mutableStateOf(qualities.first()) }
+    var selected by remember { mutableStateOf(streamData.first()) }
     AsModalBottomSheet(
         showSheet,
         onDismiss = onDismiss,
@@ -71,7 +71,7 @@ fun VideoDownloadDialog(
                     ) { openDialog = true },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(selectedQuality.description)
+                Text(selected.description)
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
             }
             Box(modifier = Modifier.fillMaxHeight(0.7f)) {
@@ -89,7 +89,7 @@ fun VideoDownloadDialog(
                                     MaterialTheme.colorScheme.primary,
                                     RoundedCornerShape(8.dp)
                                 )
-                                .clickable { onClick(selectedQuality, item.cid) }
+                                .clickable { onClick(selected.id, item.cid) }
                                 .padding(start = 8.dp),
                         )
                     }
@@ -102,9 +102,9 @@ fun VideoDownloadDialog(
     }
     FormatsDialog(
         openDialog,
-        qualities,
+        streamData,
         onDismiss = { openDialog = false },
-        onClick = { selectedQuality = it }
+        onClick = { selected = it }
     )
 }
 
@@ -112,9 +112,9 @@ fun VideoDownloadDialog(
 @Composable
 fun FormatsDialog(
     openDialog: Boolean,
-    qualities: List<Quality>,
+    qualities: List<StreamData>,
     onDismiss: () -> Unit,
-    onClick: (Quality) -> Unit,
+    onClick: (StreamData) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
@@ -127,7 +127,7 @@ fun FormatsDialog(
             state = listState,
             modifier = Modifier.padding(20.dp)
         ) {
-            items(qualities, key = { it.numeric }) { item ->
+            items(qualities, key = { it.id }) { item ->
                 VerticallyCenteredSingleLineText(
                     item.description,
                     modifier = Modifier

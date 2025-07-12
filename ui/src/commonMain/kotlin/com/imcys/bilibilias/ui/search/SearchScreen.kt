@@ -46,7 +46,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.imcys.bilibilias.core.data.model.Quality
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.ui.VideoDownloadDialog
@@ -70,7 +69,7 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onDownloadItemClick: (Quality, String, Long) -> Unit
+    onDownloadItemClick: (Int, String, Long) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -144,8 +143,8 @@ fun SearchContent(
                     }
                     VideoDownloadDialog(
                         dialog,
-                        searchResultUiState.episode.series,
-                        searchResultUiState.episode.qualities,
+                        searchResultUiState.episode.parts,
+                        searchResultUiState.episode.video,
                         onDismiss = { dialog = false },
                         onClick = { quality, cid ->
                             onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
