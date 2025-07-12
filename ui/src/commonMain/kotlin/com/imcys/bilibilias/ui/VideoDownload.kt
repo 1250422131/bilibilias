@@ -112,12 +112,13 @@ fun VideoDownloadDialog(
 @Composable
 fun FormatsDialog(
     openDialog: Boolean,
-    qualities: List<StreamData>,
+    streamData: List<StreamData>,
     onDismiss: () -> Unit,
     onClick: (StreamData) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val listState = rememberLazyListState()
+    val uniqueStreamData = remember(streamData) { streamData.distinctBy { it.id } }
     AsModalBottomSheet(
         openDialog,
         sheetState = sheetState,
@@ -127,7 +128,7 @@ fun FormatsDialog(
             state = listState,
             modifier = Modifier.padding(20.dp)
         ) {
-            items(qualities, key = { it.id }) { item ->
+            items(uniqueStreamData, key = { it.id }) { item ->
                 VerticallyCenteredSingleLineText(
                     item.description,
                     modifier = Modifier

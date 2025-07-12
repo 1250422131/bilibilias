@@ -6,7 +6,6 @@ import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
-import com.imcys.bilibilias.core.data.model.Quality
 import com.imcys.bilibilias.core.http.cache.CacheRecord
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
@@ -86,10 +85,10 @@ class DefaultSearchComponent(
         searchQuery.update { query }
     }
 
-    override fun downloadItem(quality: Quality, bvid: String, cid: Long) {
-        Logger.i { "downloadItem: $quality, $bvid, $cid" }
+    override fun downloadItem(qn: Int, bvid: String, cid: Long) {
+        Logger.i { "downloadItem: $qn, $bvid, $cid" }
         scope.launch {
-            val data = mediaSourceSelectedUseCase(quality.numeric, bvid, cid)
+            val data = mediaSourceSelectedUseCase(qn, bvid, cid)
             val videoDownloadId = httpDownloader.download(data.videos.url)
             val audioDownloadId = httpDownloader.download(data.audios.url)
             cacheRecord.cache(data, videoDownloadId.value, audioDownloadId.value)

@@ -13,6 +13,7 @@ data class MediaCacheMetadata(
     fun withExtra(other: Map<MetadataKey, String>): MediaCacheMetadata {
         return MediaCacheMetadata(
             episodeId = episodeId,
+            title = title,
             extra = extra + other,
         )
     }
