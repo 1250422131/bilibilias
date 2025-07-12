@@ -3,10 +3,10 @@ package com.imcys.bilibilias.core.http.cache
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import com.imcys.bilibilias.core.data.model.CacheData
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
+import com.imcys.bilibilias.core.model.CacheData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
@@ -38,9 +38,6 @@ data class MediaFileMetadata(
     }
 }
 
-@Serializable
-@JvmInline
-value class MetadataKey(val value: String)
 
 @Serializable
 data class MediaPart(
