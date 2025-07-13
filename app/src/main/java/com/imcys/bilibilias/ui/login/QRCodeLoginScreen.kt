@@ -24,6 +24,8 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.Tv
 import androidx.compose.material.icons.outlined.WebAsset
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -73,9 +75,9 @@ internal fun QRCodeLoginRoute(
 
 @Preview
 @Composable
-fun QRCodeLoginScreenPreview(){
+fun QRCodeLoginScreenPreview() {
     ProvideKoinApplication {
-        QRCodeLoginScreen({},{})
+        QRCodeLoginScreen({}, {})
     }
 }
 
@@ -333,21 +335,31 @@ private fun ColumnScope.QRCodeContent(
                 Text("Web")
             }
 
-            ToggleButton(
-                checked = selectedLoginPlatform == LoginPlatform.TV,
-                onCheckedChange = {
-                    updateLoginPlatform(LoginPlatform.TV)
-                },
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            BadgedBox(
+                badge = {
+                    Badge {
+                        Text("申请")
+                    }
+                }
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.WebAsset,
-                    contentDescription = "TV扫码",
-                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("TV")
+                ToggleButton(
+                    enabled = false,
+                    checked = selectedLoginPlatform == LoginPlatform.TV,
+                    onCheckedChange = {
+                        updateLoginPlatform(LoginPlatform.TV)
+                    },
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.WebAsset,
+                        contentDescription = "TV扫码",
+                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                    )
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text("TV")
+                }
             }
+
         }
 
     }

@@ -26,9 +26,23 @@ const val W_WEBID = "w_webid"
 
 const val ACCESS_ID = "access_id"
 
+const val CID = "cid"
+
 const val AID = "aid"
 
 const val BVID = "bvid"
+
+const val EP_ID = "ep_id"
+
+const val SEASON_ID = "season_id"
+
+const val QN = "qn"
+
+const val FNVAL = "fnval"
+
+const val FOURK = "fourk"
+
+const val TRY_LOOK = "try_look"
 
 const val BROWSER_USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76"

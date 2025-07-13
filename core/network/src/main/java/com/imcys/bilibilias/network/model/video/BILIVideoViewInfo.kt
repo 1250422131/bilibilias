@@ -17,7 +17,7 @@ data class BILIVideoViewInfo(
     @SerialName("copyright")
     val copyright: Long,
     @SerialName("ctime")
-    val ctime: Long,
+    val ctime: Long?,
     @SerialName("desc")
     val desc: String,
     @SerialName("dimension")
@@ -53,7 +53,7 @@ data class BILIVideoViewInfo(
     @SerialName("like_icon")
     val likeIcon: String,
     @SerialName("mission_id")
-    val missionId: Long,
+    val missionId: Long = 0,
     @SerialName("need_jump_bv")
     val needJumpBv: Boolean,
     @SerialName("no_cache")
@@ -69,7 +69,7 @@ data class BILIVideoViewInfo(
     @SerialName("rights")
     val rights: Rights?,
     @SerialName("season_id")
-    val seasonId: Long? = 0,
+    val seasonId: Long = 0,
     @SerialName("stat")
     val stat: Stat?,
     @SerialName("state")
@@ -137,13 +137,13 @@ data class BILIVideoViewInfo(
         @SerialName("cid")
         val cid: Long,
         @SerialName("ctime")
-        val ctime: Long,
+        val ctime: Long?,
         @SerialName("dimension")
         val dimension: Dimension,
         @SerialName("duration")
         val duration: Long,
         @SerialName("first_frame")
-        val firstFrame: String,
+        val firstFrame: String?,
         @SerialName("from")
         val from: String,
         @SerialName("page")
@@ -269,27 +269,27 @@ data class BILIVideoViewInfo(
             @Serializable
             data class Author(
                 @SerialName("birthday")
-                val birthday: Long,
+                val birthday: Long?,
                 @SerialName("face")
                 val face: String,
                 @SerialName("in_reg_audit")
-                val inRegAudit: Long,
+                val inRegAudit: Long?,
                 @SerialName("is_deleted")
-                val isDeleted: Long,
+                val isDeleted: Long?,
                 @SerialName("is_fake_account")
-                val isFakeAccount: Long,
+                val isFakeAccount: Long?,
                 @SerialName("is_senior_member")
-                val isSeniorMember: Long,
+                val isSeniorMember: Long?,
                 @SerialName("mid")
                 val mid: Long,
                 @SerialName("name")
                 val name: String,
                 @SerialName("rank")
-                val rank: Long,
+                val rank: Long?,
                 @SerialName("sex")
-                val sex: String,
+                val sex: String?,
                 @SerialName("sign")
-                val sign: String
+                val sign: String?
             )
         }
     }
@@ -306,8 +306,6 @@ data class BILIVideoViewInfo(
         val epCount: Long,
         @SerialName("id")
         val id: Long,
-        @SerialName("Longro")
-        val Longro: String,
         @SerialName("is_pay_season")
         val isPaySeason: Boolean,
         @SerialName("mid")
@@ -370,7 +368,7 @@ data class BILIVideoViewInfo(
                     @SerialName("copyright")
                     val copyright: Long,
                     @SerialName("ctime")
-                    val ctime: Long,
+                    val ctime: Long?,
                     @SerialName("desc")
                     val desc: String,
                     @SerialName("dimension")

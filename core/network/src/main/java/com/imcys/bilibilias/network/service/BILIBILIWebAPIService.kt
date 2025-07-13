@@ -5,18 +5,28 @@ import com.imcys.bilibilias.network.config.ACCESS_ID
 import com.imcys.bilibilias.network.config.AID
 import com.imcys.bilibilias.network.config.API.BILIBILI.SPACE_BASE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_LOGIN_INFO_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_PGC_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_GENERATE_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_QRCODE_POLL_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_RELATION_STAT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_ARC_SEARCH
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPACE_UPSTAT_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_SPI_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_VIDEO_PLAYER_URL
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_ACC_INFO_URL
+import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_PGC_SEASON_VIEW
 import com.imcys.bilibilias.network.config.API.BILIBILI.WEB_WEBI_VIDEO_VIEW
 import com.imcys.bilibilias.network.config.BROWSER_FINGERPRINT
 import com.imcys.bilibilias.network.config.BVID
+import com.imcys.bilibilias.network.config.CID
+import com.imcys.bilibilias.network.config.EP_ID
+import com.imcys.bilibilias.network.config.FNVAL
+import com.imcys.bilibilias.network.config.FOURK
 import com.imcys.bilibilias.network.config.MID
+import com.imcys.bilibilias.network.config.QN
 import com.imcys.bilibilias.network.config.REFERER
+import com.imcys.bilibilias.network.config.SEASON_ID
+import com.imcys.bilibilias.network.config.TRY_LOOK
 import com.imcys.bilibilias.network.config.W_WEBID
 import com.imcys.bilibilias.network.httpRequest
 import com.imcys.bilibilias.network.model.BILILoginUserInfo
@@ -28,6 +38,9 @@ import com.imcys.bilibilias.network.model.user.BILISpaceArchiveInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.user.BILIUserRelationStatInfo
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceUpStat
+import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
+import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.utils.WebiTokenUtils.encWbi
 import io.ktor.client.HttpClient
@@ -101,7 +114,7 @@ class BILIBILIWebAPIService(
                 MID to mid.toString(),
             ) + BROWSER_FINGERPRINT + accessUserSpaceGetRenderData(mid)
             get(WEB_WEBI_ACC_INFO_URL) {
-                header(REFERER,"${SPACE_BASE_URL}${mid}")
+                header(REFERER, "${SPACE_BASE_URL}${mid}")
                 encWbi(newMap).forEach { (k, v) ->
                     parameter(k, v)
                 }
@@ -160,6 +173,68 @@ class BILIBILIWebAPIService(
             aid?.let { put(AID, it) }
         } + BROWSER_FINGERPRINT
         get(WEB_WEBI_VIDEO_VIEW) {
+            encWbi(newMap).forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+
+    suspend fun getDonghuaSeasonViewInfo(
+        epId: Long?,
+        seasonId: Long?
+    ): FlowNetWorkResult<BILIDonghuaSeasonInfo> = httpClient.httpRequest {
+        val newMap = mutableMapOf<String, String>().apply {
+            epId?.let { put(EP_ID, it.toString()) }
+            seasonId?.let { put(SEASON_ID, it.toString()) }
+        }
+        get(WEB_WEBI_PGC_SEASON_VIEW) {
+            newMap.forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+    suspend fun getDonghuaPlayerInfo(
+        epId: Long?,
+        seasonId: Long?,
+        fnval: Int = 30280,
+        qn: Int = 116,
+    ): FlowNetWorkResult<BILIDonghuaPlayerInfo> = httpClient.httpRequest {
+
+        val newMap = mutableMapOf<String, String>().apply {
+            epId?.let { put(EP_ID, it.toString()) }
+            seasonId?.let { put(SEASON_ID, it.toString()) }
+            put(QN, qn.toString())
+            put(FNVAL, fnval.toString())
+            put(FOURK, "1")
+        }
+
+        get(WEB_PGC_PLAYER_URL) {
+            newMap.forEach { (k, v) ->
+                parameter(k, v)
+            }
+        }
+    }
+
+    suspend fun getVideoPlayerInfo(
+        cid: Long,
+        bvId: String?,
+        aid: Long? = null,
+        fnval: Int = 4048,
+        qn: Int = 116,
+    ): FlowNetWorkResult<BILIVideoPlayerInfo> = httpClient.httpRequest {
+        val newMap = mutableMapOf<String, String>().apply {
+            bvId?.let { put(BVID, it) }
+            aid?.let { put(AID, it.toString()) }
+            put(CID, cid.toString())
+            put(QN, qn.toString())
+            put(FNVAL, fnval.toString())
+            put(FOURK, "1")
+            put(TRY_LOOK,"1")
+        } + BROWSER_FINGERPRINT
+
+        get(WEB_VIDEO_PLAYER_URL) {
             encWbi(newMap).forEach { (k, v) ->
                 parameter(k, v)
             }

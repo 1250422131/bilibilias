@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.NumberUtils
+import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILISpaceArchiveModel
 import com.imcys.bilibilias.data.model.BILIUserStatModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
@@ -152,7 +153,7 @@ private fun VideoCard(item: BILISpaceArchiveModel.Item?) {
             shape = CardDefaults.shape
         ) {
             ASAsyncImage(
-                "${item?.pic?.replace("http:", "https:")}@672w_378h_1c.avif",
+                "${item?.pic?.toHttps()}@672w_378h_1c.avif",
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = "视频封面"
             )
