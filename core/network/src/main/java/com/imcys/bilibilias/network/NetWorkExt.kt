@@ -85,22 +85,19 @@ suspend inline fun <reified Data> HttpClient.httpRequest(
                     responseHeader = response.headers.entries()
                 }
             }.onSuccess {
+                // 异形JSON
+                val mData = it.data ?: it.result
                 when (it.code) {
                     0 -> {
-                        emit(NetWorkResult.Success(it.data, it))
+                        emit(NetWorkResult.Success(mData, it))
                     }
                     -101 -> {
                         sendLoginErrorEvent()
-                        emit(NetWorkResult.Error(it.data, it, exception = it.message ?: ""))
+                        emit(NetWorkResult.Error(mData, it, exception = it.message ?: ""))
                     }
                     else -> {
-                        emit(NetWorkResult.Error(it.data, it, exception = it.message ?: ""))
+                        emit(NetWorkResult.Error(mData, it, exception = it.message ?: ""))
                     }
-                }
-                if (it.code == 0) {
-                    emit(NetWorkResult.Success(it.data, it))
-                } else {
-                    emit(NetWorkResult.Error(it.data, it, exception = it.message ?: ""))
                 }
             }.onFailure {
                 emit(NetWorkResult.Error(null, null, it.message ?: ""))
@@ -118,6 +115,7 @@ inline fun <T, R> NetWorkResult<T>.mapData(transform: (T?, BiliApiResponse<T?>?)
                     code = code,
                     message = message,
                     data = transformedData,
+                    result = transformedData,
                     ttl = ttl,
                     responseHeader = responseHeader
                 )

@@ -45,5 +45,14 @@ object API {
 
         // 视频详情，通用接口，Webi鉴权
         val WEB_WEBI_VIDEO_VIEW = WEB_API_BASE_URL + "x/web-interface/wbi/view"
+
+        // 番剧详情，通用接口
+        val WEB_WEBI_PGC_SEASON_VIEW = WEB_API_BASE_URL + "pgc/view/web/season"
+
+        // 番剧播放信息接口，通用接口
+        val WEB_PGC_PLAYER_URL = WEB_API_BASE_URL + "pgc/player/web/playurl"
+
+        // 视频播放信息接口，通用接口
+        val WEB_VIDEO_PLAYER_URL = WEB_API_BASE_URL + "x/player/wbi/playurl"
     }
 }

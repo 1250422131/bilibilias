@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class BiliApiResponse<out T>(
     val code: Int,
     val data: T?,
+    val result: T?,
     val message: String?,
     val ttl: Int = 0,
     @Transient

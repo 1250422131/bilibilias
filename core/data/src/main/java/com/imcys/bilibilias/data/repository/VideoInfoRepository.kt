@@ -18,4 +18,25 @@ class VideoInfoRepository(
     suspend fun shortLink(
         url: String
     ) = webApiService.shortLink(url)
+
+    suspend fun getDonghuaSeasonViewInfo(
+        epId: Long? = null,
+        seasonId: Long? = null,
+    ) = webApiService.getDonghuaSeasonViewInfo(epId, seasonId)
+
+    suspend fun getDonghuaPlayerInfo(
+        epId: Long?,
+        seasonId: Long?,
+        qn: Int = 30280,
+        fnval: Int = 80,
+    ) = webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
+
+
+    suspend fun getVideoPlayerInfo(
+        cid: Long,
+        bvId: String?,
+        aid: Long? = null,
+        fnval: Int = 4048,
+        qn: Int = 116,
+    ) = webApiService.getVideoPlayerInfo(cid, bvId, aid, fnval, qn)
 }
