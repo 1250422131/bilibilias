@@ -27,7 +27,7 @@ class VideoInfoRepository(
     suspend fun getDonghuaPlayerInfo(
         epId: Long?,
         seasonId: Long?,
-        qn: Int = 30280,
+        qn: Int = 12240,
         fnval: Int = 80,
     ) = webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
 

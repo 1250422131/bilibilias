@@ -198,7 +198,7 @@ class BILIBILIWebAPIService(
     suspend fun getDonghuaPlayerInfo(
         epId: Long?,
         seasonId: Long?,
-        fnval: Int = 30280,
+        fnval: Int = 12240,
         qn: Int = 116,
     ): FlowNetWorkResult<BILIDonghuaPlayerInfo> = httpClient.httpRequest {
 
