@@ -12,6 +12,7 @@ class MediaSourceSelectedUseCase {
         val playUrl = BilibiliApi.getPlayUrl(bvid, cid)
         return EpisodeInfo(
             bvid = bvid,
+            cid = cid,
             desc = detail.desc,
             cover = detail.pic,
             title = detail.title,

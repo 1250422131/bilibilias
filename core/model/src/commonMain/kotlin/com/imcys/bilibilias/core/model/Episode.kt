@@ -2,6 +2,7 @@ package com.imcys.bilibilias.core.model
 
 data class EpisodeInfo(
     val bvid: String,
+    val cid: Long,
     val desc: String,
     val cover: String,
     val title: String,

@@ -24,6 +24,7 @@ class GetEpisodeInfoUseCase {
                     val playerControlQuality = playUrl.dash.video.map { it.id }.toSet()
                     val episodeInfo = EpisodeInfo(
                         bvid = detail.bvid,
+                        cid = detail.cid,
                         desc = detail.desc,
                         cover = detail.pic,
                         title = detail.title,
