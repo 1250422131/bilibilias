@@ -18,6 +18,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
+import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import kotlin.collections.forEach
 
@@ -40,12 +42,13 @@ fun AudioQualitySelectScreen(
     modifier: Modifier,
     downloadInfo: AnalysisViewModel.DownloadViewInfo?,
     audioList: List<BILIVideoDash.Audio>?,
+    onAudioQualityChange: (Long?) -> Unit = {}
 ) {
     var modelExpanded by remember { mutableStateOf(false) }
-    var selectValue: String by remember { mutableStateOf("") }
+    var selectValue: Long by remember { mutableLongStateOf(0) }
 
     LaunchedEffect(downloadInfo?.selectAudioQualityId) {
-        selectValue = downloadInfo?.selectAudioQualityId?.toString() ?: ""
+        selectValue = downloadInfo?.selectAudioQualityId ?: 0
     }
 
     if (audioList != null) {
@@ -63,7 +66,7 @@ fun AudioQualitySelectScreen(
                 textStyle = LocalTextStyle.current.copy(
                     fontSize = 12.sp
                 ),
-                value = selectValue,
+                value = convertAudioQualityIdValue(selectValue),
                 onValueChange = {},
                 readOnly = true,
                 singleLine = false,
@@ -86,19 +89,19 @@ fun AudioQualitySelectScreen(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                it.id.toString(),
+                                convertAudioQualityIdValue(it.id),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                         },
                         onClick = {
                             modelExpanded = false
-                            selectValue = it.id.toString()
+                            selectValue = it.id
+                            onAudioQualityChange(it.id)
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     )
                 }
             }
-
         }
     }
 }
@@ -114,6 +117,8 @@ fun VideoSupportFormatsSelectScreen(
     mSupportFormats: List<BILIVideoSupportFormat>?,
     dashVideoList: List<BILIVideoDash.Video>?,
     durlVideoList: List<BILIVideoDurls>?,
+    onVideoQualityChange: (Long?) -> Unit = {},
+    onVideoCodeChange: (String) -> Unit = {}
 ) {
     var videoModelExpanded by remember { mutableStateOf(false) }
     var videoCodeModelExpanded by remember { mutableStateOf(false) }
@@ -204,6 +209,7 @@ fun VideoSupportFormatsSelectScreen(
                         onClick = {
                             videoModelExpanded = false
                             selectVideoFormatValue = it.description.ifBlank { it.newDescription }
+                            onVideoQualityChange(it.quality)
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                     )
@@ -258,8 +264,9 @@ fun VideoSupportFormatsSelectScreen(
                                 )
                             },
                             onClick = {
-                                videoModelExpanded = false
-                                selectVideoFormatValue = it
+                                videoCodeModelExpanded = false
+                                selectVideoCodeValue = it
+                                onVideoCodeChange(it)
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         )

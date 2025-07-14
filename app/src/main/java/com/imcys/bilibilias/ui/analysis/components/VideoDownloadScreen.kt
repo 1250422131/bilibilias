@@ -49,7 +49,10 @@ fun VideoDownloadScreen(
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
-    onUpdateSelectedCid:(Long?)-> Unit
+    onUpdateSelectedCid: (Long?) -> Unit,
+    onVideoQualityChange: (Long?) -> Unit = {},
+    onVideoCodeChange: (String) -> Unit = {},
+    onAudioQualityChange: (Long?) -> Unit = {}
 ) {
 
     var selectSectionId by remember { mutableStateOf<Long?>(null) }
@@ -87,13 +90,16 @@ fun VideoDownloadScreen(
                         videoPlayerInfo.data?.supportFormats,
                         videoPlayerInfo.data?.dash?.video,
                         videoPlayerInfo.data?.durls,
+                        onVideoQualityChange = onVideoQualityChange,
+                        onVideoCodeChange = onVideoCodeChange
                     )
 
                     Spacer(Modifier.height(6.dp))
                     AudioQualitySelectScreen(
                         Modifier.fillMaxWidth(),
                         downloadInfo,
-                        videoPlayerInfo.data?.dash?.audio
+                        videoPlayerInfo.data?.dash?.audio,
+                        onAudioQualityChange = onAudioQualityChange
                     )
                 }
             })
@@ -167,17 +173,10 @@ fun VideoDownloadScreen(
                             ) {
                                 Surface(
                                     shape = CardDefaults.shape,
-                                    color = when (downloadInfo) {
-                                        is AnalysisViewModel.DownloadViewInfo.Video -> {
-                                            if (downloadInfo.selectedCid.contains(it.cid)) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.primaryContainer
-                                            }
-                                        }
-                                        else -> {
-                                            MaterialTheme.colorScheme.primaryContainer
-                                        }
+                                    color = if (downloadInfo?.selectedCid?.contains(it.cid) == true) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.primaryContainer
                                     },
                                     onClick = {
                                         onUpdateSelectedCid.invoke(it.cid)
@@ -248,18 +247,10 @@ fun VideoDownloadScreen(
                             ) {
                                 Surface(
                                     shape = CardDefaults.shape,
-                                    color = when (downloadInfo) {
-                                        is AnalysisViewModel.DownloadViewInfo.Video -> {
-                                            if (downloadInfo.selectedCid.contains(it.cid)) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.primaryContainer
-                                            }
-                                        }
-
-                                        else -> {
-                                            MaterialTheme.colorScheme.primaryContainer
-                                        }
+                                    color = if (downloadInfo?.selectedCid?.contains(it.cid) == true) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.primaryContainer
                                     },
                                     onClick = {
                                         onUpdateSelectedCid.invoke(it.cid)

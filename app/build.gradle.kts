@@ -13,16 +13,17 @@ android {
 
     defaultConfig {
         targetSdk = 36
-        applicationId = "com.imcys.bilibilias"
+        applicationId = "com.imcys.bilibilias.gp"
         versionCode = 300
-        versionName = "3.0.0"
+        versionName = "3.0.0-PlumBlossom-Alpha-1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -39,7 +40,7 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:data"))
-    implementation(project(":core:ffmpeg"))
+//    implementation(project(":core:ffmpeg"))
 
 
     implementation(platform(libs.firebase.bom))

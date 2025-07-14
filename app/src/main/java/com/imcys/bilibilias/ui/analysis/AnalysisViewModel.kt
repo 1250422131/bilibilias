@@ -34,24 +34,67 @@ class AnalysisViewModel(
     private val userInfoRepository: UserInfoRepository
 ) : ViewModel() {
 
-    sealed class DownloadViewInfo(
-        open val selectVideoQualityId: Long?,
-        open val selectVideoCode: String,
-        open val selectAudioQualityId: Long?,
+    data class DownloadViewInfo(
+        val selectVideoQualityId: Long? = null,
+        val selectVideoCode: String = "",
+        val selectAudioQualityId: Long? = null,
+        val selectedCid: Set<Long> = setOf(),
+        val selectedEpId: Set<Long> = setOf(),
     ) {
-        data class Video(
-            override val selectVideoQualityId: Long?,
-            override val selectVideoCode: String,
-            override val selectAudioQualityId: Long?,
-            val selectedCid: Set<Long?> = setOf(),
-        ) : DownloadViewInfo(selectVideoQualityId, selectVideoCode, selectAudioQualityId)
+        fun toggleCid(cid: Long): DownloadViewInfo = copy(
+            selectedCid = if (selectedCid.contains(cid)) {
+                selectedCid - cid
+            } else {
+                selectedCid + cid
+            }
+        )
 
-        data class Donghua(
-            override val selectVideoQualityId: Long?,
-            override val selectVideoCode: String,
-            override val selectAudioQualityId: Long?,
-            val selectedEpId: Set<Long?> = setOf(),
-        ) : DownloadViewInfo(selectVideoQualityId, selectVideoCode, selectAudioQualityId)
+        fun toggleEpId(epId: Long): DownloadViewInfo = copy(
+            selectedEpId = if (selectedEpId.contains(epId)) {
+                selectedEpId - epId
+            } else {
+                selectedEpId + epId
+            }
+        )
+
+        fun updateVideoQuality(qualityId: Long?, code: String): DownloadViewInfo = copy(
+            selectVideoQualityId = qualityId,
+            selectVideoCode = code
+        )
+
+        fun updateAudioQuality(qualityId: Long?): DownloadViewInfo = copy(
+            selectAudioQualityId = qualityId
+        )
+
+        /**
+         * 根据媒体类型智能更新配置，确保只保留相关选中项
+         */
+        fun updateForMediaType(
+            mediaType: ASLinkResultType,
+            qualityId: Long?,
+            code: String,
+            audioQualityId: Long?,
+            defaultCid: Long? = null,
+            defaultEpId: Long? = null
+        ): DownloadViewInfo = when (mediaType) {
+            is ASLinkResultType.BILI.Video -> copy(
+                selectVideoQualityId = qualityId,
+                selectVideoCode = code,
+                selectAudioQualityId = audioQualityId,
+                selectedCid = if (defaultCid != null) selectedCid + defaultCid else selectedCid,
+                selectedEpId = emptySet() // 清空番剧选择
+            )
+
+            is ASLinkResultType.BILI.Donghua -> copy(
+                selectVideoQualityId = qualityId,
+                selectVideoCode = code,
+                selectAudioQualityId = audioQualityId,
+                selectedEpId = if (defaultEpId != null) selectedEpId + defaultEpId else selectedEpId,
+                selectedCid = emptySet() // 清空视频选择
+            )
+
+            is ASLinkResultType.BILI.User -> this // 用户页面不需要下载配置
+        }
     }
 
     data class UIState(
@@ -111,44 +154,22 @@ class AnalysisViewModel(
 
     fun updateSelectedCidList(cid: Long?) {
         cid?.let {
-            when (val downloadInfo = _uiState.value.downloadInfo) {
-                is DownloadViewInfo.Video -> {
-                    _uiState.value = _uiState.value.copy(
-                        downloadInfo = if (downloadInfo.selectedCid.contains(cid)) {
-                            downloadInfo.copy(
-                                selectedCid = downloadInfo.selectedCid.filter { item -> item != cid }
-                                    .toSet()
-                            )
-                        } else {
-                            downloadInfo.copy(
-                                selectedCid = (downloadInfo.selectedCid + setOf(it))
-                            )
-                        }
-                    )
-                }
-
-                else -> {}
+            // 只有当前解析类型是视频时才允许更新CID
+            if (_uiState.value.asLinkResultType is ASLinkResultType.BILI.Video) {
+                _uiState.value = _uiState.value.copy(
+                    downloadInfo = _uiState.value.downloadInfo?.toggleCid(it)
+                )
             }
         }
     }
 
-
     fun updateSelectedEpIdList(epId: Long?) {
         epId?.let {
-            when (val downloadInfo = _uiState.value.downloadInfo) {
-                is DownloadViewInfo.Donghua -> {
-                    _uiState.value = _uiState.value.copy(
-                        downloadInfo = downloadInfo.copy(
-                            selectedEpId = if (downloadInfo.selectedEpId.contains(epId)) {
-                                downloadInfo.selectedEpId.filter { item -> item != epId }.toSet()
-                            } else {
-                                (downloadInfo.selectedEpId + setOf(it))
-                            }
-                        )
-                    )
-                }
-
-                else -> {}
+            // 只有当前解析类型是动画时才允许更新EpID
+            if (_uiState.value.asLinkResultType is ASLinkResultType.BILI.Donghua) {
+                _uiState.value = _uiState.value.copy(
+                    downloadInfo = _uiState.value.downloadInfo?.toggleEpId(it)
+                )
             }
         }
     }
@@ -228,22 +249,24 @@ class AnalysisViewModel(
                     val defaultEpId = if (epId == null || epId == 0L) {
                         viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
                     } else epId
-                    _uiState.value = _uiState.value.copy(
-                        downloadInfo = DownloadViewInfo.Donghua(
-                            selectVideoCode = selectVideoCode,
-                            selectVideoQualityId = selectVideoQualityId,
-                            selectAudioQualityId = selectAudioQualityId,
-                            selectedEpId = when (val value = _uiState.value.downloadInfo) {
-                                is DownloadViewInfo.Donghua -> {
-                                    (value.selectedEpId + setOf(defaultEpId))
-                                }
 
-                                else -> {
-                                    setOf(defaultEpId)
-                                }
-                            }
+                    val currentMediaType = _uiState.value.asLinkResultType
+                    if (currentMediaType is ASLinkResultType.BILI.Donghua) {
+                        _uiState.value = _uiState.value.copy(
+                            downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
+                                mediaType = currentMediaType,
+                                qualityId = selectVideoQualityId,
+                                code = selectVideoCode,
+                                audioQualityId = selectAudioQualityId,
+                                defaultEpId = defaultEpId
+                            ) ?: DownloadViewInfo(
+                                selectVideoCode = selectVideoCode,
+                                selectVideoQualityId = selectVideoQualityId,
+                                selectAudioQualityId = selectAudioQualityId,
+                                selectedEpId = setOf(defaultEpId)
+                            )
                         )
-                    )
+                    }
                 }
 
             }
@@ -295,6 +318,24 @@ class AnalysisViewModel(
     ) {
         viewModelScope.launch {
             videoInfoRepository.getVideoPlayerInfo(cid, bvId, aid).collect {
+
+                when(it.status){
+                    ApiStatus.SUCCESS -> {
+                        // 杜比
+                        it.data?.dash?.dolby?.audio?.let { dolbyList ->
+                            if (dolbyList.isNotEmpty()) {
+                                it.data?.dash?.audio?.add(0, dolbyList[0])
+                            }
+                        }
+
+                        // Hi—Res
+                        it.data?.dash?.flac?.audio?.let { flac ->
+                            it.data?.dash?.audio?.add(0, flac)
+                        }
+                    }
+                    else -> {}
+                }
+
                 _videoPlayerInfo.value = it
 
                 getDefaultDownloadInfoConfig(
@@ -303,22 +344,23 @@ class AnalysisViewModel(
                     it.data?.durls,
                     it.data?.supportFormats
                 ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
-                    _uiState.value = _uiState.value.copy(
-                        downloadInfo = DownloadViewInfo.Video(
-                            selectVideoCode = selectVideoCode,
-                            selectVideoQualityId = selectVideoQualityId,
-                            selectAudioQualityId = selectAudioQualityId,
-                            selectedCid = when (val value = _uiState.value.downloadInfo) {
-                                is DownloadViewInfo.Video -> {
-                                    (value.selectedCid + setOf(cid))
-                                }
-
-                                else -> {
-                                    setOf(cid)
-                                }
-                            }
+                    val currentMediaType = _uiState.value.asLinkResultType
+                    if (currentMediaType is ASLinkResultType.BILI.Video) {
+                        _uiState.value = _uiState.value.copy(
+                            downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
+                                mediaType = currentMediaType,
+                                qualityId = selectVideoQualityId,
+                                code = selectVideoCode,
+                                audioQualityId = selectAudioQualityId,
+                                defaultCid = cid
+                            ) ?: DownloadViewInfo(
+                                selectVideoCode = selectVideoCode,
+                                selectVideoQualityId = selectVideoQualityId,
+                                selectAudioQualityId = selectAudioQualityId,
+                                selectedCid = setOf(cid)
+                            )
                         )
-                    )
+                    }
                 }
 
             }
@@ -364,4 +406,81 @@ class AnalysisViewModel(
         }
     }
 
+    /**
+     * 便捷的扩展属性，简化UI中的类型判断
+     */
+    val UIState.isVideoType: Boolean
+        get() = asLinkResultType is ASLinkResultType.BILI.Video
+
+    val UIState.isDonghuaType: Boolean
+        get() = asLinkResultType is ASLinkResultType.BILI.Donghua
+
+    val UIState.isUserType: Boolean
+        get() = asLinkResultType is ASLinkResultType.BILI.User
+
+    val UIState.canDownload: Boolean
+        get() = isVideoType || isDonghuaType
+
+    /**
+     * 获取当前选中的项目数量
+     */
+    val UIState.selectedItemCount: Int
+        get() = when {
+            isVideoType -> downloadInfo?.selectedCid?.size ?: 0
+            isDonghuaType -> downloadInfo?.selectedEpId?.size ?: 0
+            else -> 0
+        }
+
+    /**
+     * 获取当前内容的类型描述
+     */
+    val UIState.contentTypeDescription: String
+        get() = when {
+            isVideoType -> "视频"
+            isDonghuaType -> "动画"
+            isUserType -> "用户"
+            else -> "未知"
+        }
+
+    /**
+     * 清空所有选中项
+     */
+    fun clearAllSelections() {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(
+                selectedCid = emptySet(),
+                selectedEpId = emptySet()
+            )
+        )
+    }
+
+    fun updateVideoQuality(qualityId: Long?, code: String) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.updateVideoQuality(qualityId, code)
+        )
+    }
+
+    fun updateAudioQuality(qualityId: Long?) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.updateAudioQuality(qualityId)
+        )
+    }
+
+    fun updateVideoCode(code: String) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(selectVideoCode = code)
+        )
+    }
+
+    fun updateVideoQualityId(qualityId: Long?) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(selectVideoQualityId = qualityId)
+        )
+    }
+
+    fun updateAudioQualityId(qualityId: Long?) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioQualityId = qualityId)
+        )
+    }
 }

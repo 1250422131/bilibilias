@@ -240,7 +240,6 @@ private fun HomeScaffold(
                                 ASAsyncImage(
                                     model = loginUserInfoState.data?.face,
                                     modifier = Modifier
-                                        .fillMaxSize()
                                         .size(40.dp),
                                     shape = CircleShape,
                                     contentDescription = "头像",
@@ -342,25 +341,35 @@ private fun LoginInfoBottomDialog(
                     .fillMaxWidth()
                     .animateContentSize()
                     .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
+
+                ) {
                 AsAutoError(loginUserInfoState, onSuccessContent = {
-                    Surface(
-                        shape = MaterialShapes.Square.toShape()
+                    Column(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        AsyncImage(
-                            loginUserInfoState.data?.face,
+                        ASAsyncImage(
+                            model = loginUserInfoState.data?.face,
                             contentDescription = "头像",
                             modifier = Modifier.size(100.dp),
+                            shape = MaterialShapes.Square.toShape()
                         )
+                        Spacer(Modifier.height(5.dp))
+                        Text(loginUserInfoState.data?.name ?: "", fontSize = 20.sp)
+                        ASLoginPlatformFilterChipRow(userLoginPlatformList.map { it.loginPlatform })
                     }
-                    Spacer(Modifier.height(5.dp))
-                    Text(loginUserInfoState.data?.name ?: "", fontSize = 20.sp)
-                    ASLoginPlatformFilterChipRow(userLoginPlatformList.map { it.loginPlatform })
                 }, onLoadingContent = {
-                    ContainedLoadingIndicator(Modifier.size(100.dp))
-                    Text("正在加载...")
+                    Column(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ContainedLoadingIndicator(Modifier.size(100.dp))
+                        Text("正在加载...")
+                    }
                 })
             }
         }

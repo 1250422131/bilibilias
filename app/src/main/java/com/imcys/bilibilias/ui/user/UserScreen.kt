@@ -60,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.NumberUtils
 import com.imcys.bilibilias.common.utils.toHttps
@@ -117,7 +118,7 @@ internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
                 }
             }
 
-            if (!userRoute.isAnalysisUser){
+            if (!userRoute.isAnalysisUser) {
                 fullWidthItem {
                     PlatformList(uiState.biliUsersEntity)
                 }
@@ -221,32 +222,31 @@ private fun VideoHeader(
             }
             Spacer(Modifier.height(24.dp))
 
-                AsAutoError(
-                    netWorkResult = spaceArchiveInfoState,
-                    onSuccessContent = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            spaceArchiveInfoState.data?.list?.forEach {
-                                VideoCard(it)
-                            }
+            AsAutoError(
+                netWorkResult = spaceArchiveInfoState,
+                onSuccessContent = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        spaceArchiveInfoState.data?.list?.forEach {
+                            VideoCard(it)
                         }
-                    },
-                    onLoadingContent = {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            VideoCard(null)
-                        }
-                    },
-                    onRetry = onRetry
-                )
-            }
-
-
+                    }
+                },
+                onLoadingContent = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        VideoCard(null)
+                    }
+                },
+                onRetry = onRetry
+            )
         }
-    }
 
+
+    }
+}
 
 
 private fun LazyGridScope.fullWidthItem(
@@ -371,7 +371,9 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                 }
                 Spacer(Modifier.height(24.dp))
 
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         painterResource(R.drawable.ic_mini_bili_logo_24px),
                         contentDescription = "B站Logo",
@@ -386,9 +388,11 @@ fun PlatformList(biliUsersEntity: BILIUsersEntity?) {
                     )
                     Spacer(Modifier.width(8.dp))
                     Surface(
+                        Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         shape = MaterialShapes.Circle.toShape(),
                     ) {
-                        ASAsyncImage(
+                        AsyncImage(
                             "${biliUsersEntity?.face}",
                             modifier = Modifier.size(24.dp),
                             contentDescription = "关联账户头像",
