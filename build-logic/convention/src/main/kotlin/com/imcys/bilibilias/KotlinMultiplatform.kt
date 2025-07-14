@@ -39,6 +39,7 @@ internal fun Project.configureKotlinMultiplatform() {
             freeCompilerArgs.add("-Xcontext-sensitive-resolution")
             freeCompilerArgs.add("-Xcontext-parameters")
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+            freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
         }
 
         // Fixes Cannot locate tasks that match ':core:model:testClasses' as task 'testClasses'

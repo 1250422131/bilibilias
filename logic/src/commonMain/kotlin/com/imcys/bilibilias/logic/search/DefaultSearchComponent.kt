@@ -6,10 +6,16 @@ import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
+import com.imcys.bilibilias.core.http.downloader.model.DownloadId
+import com.imcys.bilibilias.core.http.downloader.model.DownloadState
+import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
+import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
+import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
+import com.imcys.bilibilias.logic.utils.createDataStoreMediaCacheStorage
 import com.imcys.bilibilias.logic.utils.createKtorPersistentHttpDownloader
 import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +28,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
     private val httpDownloader = createKtorPersistentHttpDownloader()
+    private val mediaCacheStorage = createDataStoreMediaCacheStorage()
     private val episodeInfoUseCase = GetEpisodeInfoUseCase()
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
@@ -66,17 +75,7 @@ class DefaultSearchComponent(
             SearchResultUiState.Loading
         )
 
-    private fun extractBvid(query: String): String? {
-        val index = query.indexOf("BV1", ignoreCase = true)
-        Logger.d { "query: $query" }
-        return if (index != -1 && index + 12 <= query.length) {
-            query.substring(index, index + 12)
-        } else null
-    }
-
-    override fun onSearchTriggered(query: String) {
-
-    }
+    override fun onSearchTriggered(query: String) {}
 
     override fun onSearchQueryChanged(query: String) {
         state = State(query)
@@ -86,10 +85,40 @@ class DefaultSearchComponent(
     override fun downloadItem(qn: Int, bvid: String, cid: Long) {
         Logger.i { "downloadItem: $qn, $bvid, $cid" }
         scope.launch {
-            val data = mediaSourceSelectedUseCase(qn, bvid, cid)
+            val episodeInfo = mediaSourceSelectedUseCase(qn, bvid, cid)
+            val state1 = download(episodeInfo.video.first().baseUrl)
+            val state2 = download(episodeInfo.audio.first().baseUrl)
+            if (state1 != null && state2 != null) {
+                mediaCacheStorage.cache(
+                    episodeInfo.asEpisodeMetadata(),
+                    MediaCacheMetadata(
+                        downloadId1 = state1.downloadId.value,
+                        downloadId2 = state2.downloadId.value,
+                        outputPath1 = state1.relativeOutputPath,
+                        outputPath2 = state2.relativeOutputPath,
+                    )
+                )
+            } else {
+
+            }
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
+    private suspend fun download(downloadUrl: String): DownloadState? {
+        val downloadId = DownloadId(Uuid.random().toString())
+        Logger.i { "Creating download recorder - URL: $downloadUrl, ID: $downloadId" }
+        val downloadState = httpDownloader.downloadWithId(downloadId, downloadUrl)
+        return downloadState
+    }
+
+    fun EpisodeInfo.asEpisodeMetadata(): EpisodeMetadata {
+        return EpisodeMetadata(
+            bvid = bvid,
+            cid = cid,
+            title = title
+        )
+    }
 
     @Serializable
     private data class State(val searchQuery: String = "")
