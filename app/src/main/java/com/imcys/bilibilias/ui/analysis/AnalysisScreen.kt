@@ -19,12 +19,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.NorthEast
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +44,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,6 +60,8 @@ import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
+import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
+import com.imcys.bilibilias.network.model.video.convertVideoQualityIdValue
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -83,7 +90,11 @@ fun AnalysisScreen(
     val uiState by vm.uiState.collectAsState()
 
 
-    AnalysisScaffold(uiState.asLinkResultType, onToBack) {
+    AnalysisScaffold(
+        uiState.asLinkResultType,
+        uiState.downloadInfo,
+        onToBack
+    ) {
         Column(Modifier.padding(it)) {
             with(sharedTransitionScope) {
                 Column(
@@ -111,7 +122,8 @@ fun AnalysisScreen(
                     uiState.downloadInfo,
                     type,
                     uiState.isBILILogin,
-                    vm, goToUser)
+                    vm, goToUser
+                )
             }
 
         }
@@ -154,6 +166,15 @@ fun ColumnScope.AnalysisVideoCardList(
                         },
                         onUpdateSelectedEpId = {
                             viewModel.updateSelectedEpIdList(it)
+                        },
+                        onVideoQualityChange = {
+                            viewModel.updateVideoQualityId(it)
+                        },
+                        onVideoCodeChange = {
+                            viewModel.updateVideoCode(it)
+                        },
+                        onAudioQualityChange = {
+                            viewModel.updateAudioQualityId(it)
                         }
                     )
                 }
@@ -166,12 +187,25 @@ fun ColumnScope.AnalysisVideoCardList(
                         asLinkResultType.viewInfo,
                         onUpdateSelectedCid = {
                             viewModel.updateSelectedCidList(it)
+                        },
+                        onVideoQualityChange = {
+                            viewModel.updateVideoQualityId(it)
+                        },
+                        onVideoCodeChange = {
+                            viewModel.updateVideoCode(it)
+                        },
+                        onAudioQualityChange = {
+                            viewModel.updateAudioQualityId(it)
                         }
                     )
                 }
 
                 else -> {}
             }
+        }
+
+        item {
+            Spacer(Modifier.height(15.dp))
         }
     }
 
@@ -408,9 +442,13 @@ fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boo
 @Composable
 fun AnalysisScaffold(
     asResultType: ASLinkResultType?,
+    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
     onToBack: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+
+    var showDownloadInfo by remember { mutableStateOf(false) }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
@@ -438,15 +476,16 @@ fun AnalysisScaffold(
             }
         },
         floatingActionButton = {
-            val visible = asResultType != null && when (asResultType) {
+            val visible = when (asResultType) {
                 is ASLinkResultType.BILI.Donghua -> {
                     asResultType.donghuaViewInfo.status == ApiStatus.SUCCESS
                 }
 
-                is ASLinkResultType.BILI.User -> false
                 is ASLinkResultType.BILI.Video -> {
                     asResultType.viewInfo.status == ApiStatus.SUCCESS
                 }
+
+                is ASLinkResultType.BILI.User, null -> false
             }
 
             AnimatedVisibility(
@@ -455,7 +494,7 @@ fun AnalysisScaffold(
                 FloatingActionButton(
                     modifier = Modifier.imePadding(),
                     onClick = {
-
+                        showDownloadInfo = true
                     },
                 ) {
                     Icon(Icons.Outlined.Download, "下载视频")
@@ -465,6 +504,68 @@ fun AnalysisScaffold(
     ) {
         content.invoke(it)
     }
+
+    // 内测代码，后期移除
+    if (showDownloadInfo) {
+        AlertDialog(
+            onDismissRequest = { showDownloadInfo = false },
+            title = { Text(text = "下载预览") },
+            text = {
+                LazyColumn(
+                    Modifier
+                        .sizeIn(maxHeight = 300.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    item {
+                        Text("优先视频质量：${convertVideoQualityIdValue(downloadInfo?.selectVideoQualityId ?: 0)}")
+                    }
+                    item {
+                        Text("优先视频编码：${downloadInfo?.selectVideoCode}")
+                    }
+                    item {
+                        Text("优先音频质量：${convertAudioQualityIdValue(downloadInfo?.selectAudioQualityId ?: 0)}")
+                    }
+                    item {
+                        Text(
+                            "总选择缓存数量：${
+                                when (asResultType) {
+                                    is ASLinkResultType.BILI.Donghua -> downloadInfo?.selectedEpId?.size
+                                    is ASLinkResultType.BILI.Video -> downloadInfo?.selectedCid?.size
+                                    else -> {}
+                                }
+                            }"
+                        )
+                    }
+                    item {
+                        Text("选择缓存剧集ID：")
+                    }
+
+                    when (asResultType) {
+                        is ASLinkResultType.BILI.Donghua -> downloadInfo?.selectedEpId?.forEach {
+                            item {
+                                Text("$it")
+                            }
+                        }
+
+                        is ASLinkResultType.BILI.Video -> downloadInfo?.selectedCid?.forEach {
+                            item {
+                                Text("$it")
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showDownloadInfo = false }) {
+                    Text(text = "确认")
+                }
+            }
+        )
+    }
+
 }
 
 @Preview

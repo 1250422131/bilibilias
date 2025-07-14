@@ -1,5 +1,7 @@
 package com.imcys.bilibilias.ui.analysis.components
 
+import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,12 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
@@ -50,8 +50,12 @@ fun DongmhuaDownloadScreen(
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
     onSelectSeason: (Long) -> Unit,
-    onUpdateSelectedEpId: (Long) -> Unit,
+    onUpdateSelectedEpId: (Long?) -> Unit,
+    onVideoQualityChange: (Long?) -> Unit = {},
+    onVideoCodeChange: (String) -> Unit = {},
+    onAudioQualityChange: (Long?) -> Unit = {}
 ) {
+
     var selectSeasonsId by remember {
         mutableStateOf<Long?>(null)
     }
@@ -99,12 +103,15 @@ fun DongmhuaDownloadScreen(
                         donghuaPlayerInfo.data?.supportFormats,
                         donghuaPlayerInfo.data?.dash?.video,
                         donghuaPlayerInfo.data?.durls,
+                        onVideoQualityChange = onVideoQualityChange,
+                        onVideoCodeChange = onVideoCodeChange
                     )
                     Spacer(Modifier.height(6.dp))
                     AudioQualitySelectScreen(
                         Modifier.fillMaxWidth(),
                         downloadInfo,
-                        donghuaPlayerInfo.data?.dash?.audio
+                        donghuaPlayerInfo.data?.dash?.audio,
+                        onAudioQualityChange = onAudioQualityChange
                     )
                 }
             })
@@ -180,13 +187,10 @@ fun DongmhuaDownloadScreen(
                                 items(episodeList.subList(startIndex, endIndex)) {
                                     Surface(
                                         shape = CardDefaults.shape,
-                                        color = when (downloadInfo) {
-                                            is AnalysisViewModel.DownloadViewInfo.Donghua ->
-                                                if (downloadInfo.selectedEpId.contains(it.epId))
-                                                    MaterialTheme.colorScheme.primary
-                                                else
-                                                    MaterialTheme.colorScheme.primaryContainer
-                                            else -> MaterialTheme.colorScheme.primaryContainer
+                                        color = if (downloadInfo?.selectedEpId?.contains(it.epId) == true) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.primaryContainer
                                         },
                                         onClick = { onUpdateSelectedEpId.invoke(it.epId) }
                                     ) {
@@ -246,18 +250,10 @@ fun DongmhuaDownloadScreen(
                                 ) {
                                     Surface(
                                         shape = CardDefaults.shape,
-                                        color = when (downloadInfo) {
-                                            is AnalysisViewModel.DownloadViewInfo.Donghua -> {
-                                                if (downloadInfo.selectedEpId.contains(it.epId)) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.primaryContainer
-                                                }
-                                            }
-
-                                            else -> {
-                                                MaterialTheme.colorScheme.primaryContainer
-                                            }
+                                        color = if (downloadInfo?.selectedEpId?.contains(it.epId) == true) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.primaryContainer
                                         },
                                         onClick = {
                                             onUpdateSelectedEpId.invoke(it.epId)

@@ -63,9 +63,11 @@ data class BILIVideoSupportFormat(
 @Serializable
 data class BILIVideoDash(
     @SerialName("audio")
-    val audio: List<Audio>,
+    val audio: MutableList<Audio>,
     @SerialName("dolby")
-    val dolby: Dolby,
+    val dolby: Dolby?,
+    @SerialName("flac")
+    val flac: Flac?,
     @SerialName("duration")
     val duration: Long,
     @SerialName("minBufferTime")
@@ -119,12 +121,21 @@ data class BILIVideoDash(
         val width: Long
     )
 
+
+    @Serializable
+    data class Flac(
+        @SerialName("audio")
+        val audio: Audio?,
+        @SerialName("display")
+        val display: Boolean
+    )
+
     @Serializable
     data class Dolby(
         @SerialName("audio")
-        val audio: List<String>? = null,
+        val audio: List<Audio>?,
         @SerialName("type")
-        val type: Long
+        val type: Long = 0
     )
 
     @Serializable
@@ -181,3 +192,30 @@ data class BILIVideoDash(
         val initialization: String?
     )
 }
+
+fun convertAudioQualityIdValue(id: Long): String =
+    mapOf(
+        30216L to "64K",
+        30232L to "132K",
+        30280L to "192K",
+        30250L to "杜比全景声",
+        30251L to "Hi-Res无损"
+    )[id] ?: id.toString()
+
+
+fun convertVideoQualityIdValue(id: Long): String =
+    mapOf(
+        6L   to "240P 极速",
+        16L  to "360P 流畅",
+        32L  to "480P 清晰",
+        64L  to "720P 高清",
+        74L  to "720P60 高帧率",
+        80L  to "1080P 高清",
+        100L to "智能修复",
+        112L to "1080P+ 高码率",
+        116L to "1080P60 高帧率",
+        120L to "4K 超清",
+        125L to "HDR 真彩色",
+        126L to "杜比视界",
+        127L to "8K 超高清"
+    )[id] ?: id.toString()
