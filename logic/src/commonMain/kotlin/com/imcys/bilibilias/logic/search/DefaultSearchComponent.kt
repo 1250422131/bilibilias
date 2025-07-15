@@ -2,6 +2,12 @@ package com.imcys.bilibilias.logic.search
 
 import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
@@ -15,6 +21,7 @@ import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
+import com.imcys.bilibilias.logic.login.DefaultLoginComponent
 import com.imcys.bilibilias.logic.utils.createDataStoreMediaCacheStorage
 import com.imcys.bilibilias.logic.utils.createKtorPersistentHttpDownloader
 import com.imcys.bilibilias.logic.utils.scope
@@ -38,6 +45,27 @@ class DefaultSearchComponent(
     private val mediaCacheStorage = createDataStoreMediaCacheStorage()
     private val episodeInfoUseCase = GetEpisodeInfoUseCase()
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
+    private val navigation = StackNavigation<Config>()
+    override val stack: Value<ChildStack<*, SearchComponent.SearchChild>> =
+        childStack(
+            source = navigation,
+            serializer = Config.serializer(),
+            initialConfiguration = Config.Main,
+            childFactory = ::child,
+        )
+
+    private fun child(
+        config: Config,
+        componentContext: ComponentContext
+    ): SearchComponent.SearchChild =
+        when (config) {
+            is Config.Main -> SearchComponent.SearchChild.Main
+            is Config.Login -> SearchComponent.SearchChild.Login(
+                DefaultLoginComponent(
+                    componentContext
+                )
+            )
+        }
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
@@ -110,6 +138,14 @@ class DefaultSearchComponent(
         }
     }
 
+    override fun onLoginClicked() {
+        navigation.pushNew(Config.Login)
+    }
+
+    override fun onBackClicked() {
+        navigation.pop()
+    }
+
     @OptIn(ExperimentalUuidApi::class)
     private suspend fun download(downloadUrl: String): DownloadState? {
         val downloadId = DownloadId(Uuid.random().toString())
@@ -130,5 +166,11 @@ class DefaultSearchComponent(
     private data class State(val searchQuery: String = "")
 
     @Serializable
-    private data object DialogConfig
+    private sealed interface Config {
+        @Serializable
+        data object Main : Config
+
+        @Serializable
+        data object Login : Config
+    }
 }
