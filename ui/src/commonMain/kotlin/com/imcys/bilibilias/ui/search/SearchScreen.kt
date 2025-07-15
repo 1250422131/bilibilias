@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,21 +48,41 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
+import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.ui.VideoDownloadDialog
+import com.imcys.bilibilias.ui.login.LoginScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun SearchScreen(component: SearchComponent) {
     val searchQuery by component.searchQuery.collectAsState()
     val searchResultUiState by component.searchResultUiState.collectAsState()
-    SearchContent(
-        searchQuery = searchQuery,
-        searchResultUiState = searchResultUiState,
-        onSearchQueryChanged = component::onSearchQueryChanged,
-        onDownloadItemClick = component::downloadItem
-    )
+    Children(
+        stack = component.stack,
+        animation = predictiveBackAnimation(
+            backHandler = component.backHandler,
+            fallbackAnimation = stackAnimation(slide()),
+            onBack = component::onBackClicked,
+        ),
+    ) {
+        when (val child = it.instance) {
+            is SearchComponent.SearchChild.Login -> LoginScreen(child.component)
+            is SearchComponent.SearchChild.Main -> SearchContent(
+                searchQuery = searchQuery,
+                searchResultUiState = searchResultUiState,
+                onSearchQueryChanged = component::onSearchQueryChanged,
+                onDownloadItemClick = component::downloadItem,
+                navigationToLogin = component::onLoginClicked,
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,19 +91,20 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onDownloadItemClick: (Int, String, Long) -> Unit
+    onDownloadItemClick: (Int, String, Long) -> Unit,
+    navigationToLogin: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 actions = {
-                    // todo user avatar
-                    IconButton({}) {
-                        Icon(Icons.AutoMirrored.Rounded.Login, "Avatar")
-                    }
                     IconButton({}) {
                         Icon(Icons.Rounded.Settings, "Settings")
+                    }
+                    OutlinedButton(navigationToLogin) {
+                        Icon(Icons.AutoMirrored.Rounded.Login, null)
+                        Text("登录", Modifier.padding(start = 8.dp))
                     }
                 }
             )
