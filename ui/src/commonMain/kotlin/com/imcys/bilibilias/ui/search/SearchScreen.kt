@@ -49,40 +49,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
-import com.arkivanov.decompose.extensions.compose.stack.animation.slide
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import com.imcys.bilibilias.ui.VideoDownloadDialog
-import com.imcys.bilibilias.ui.login.LoginScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun SearchScreen(component: SearchComponent) {
+fun SearchScreen(component: SearchComponent, navigationToLogin: () -> Unit) {
     val searchQuery by component.searchQuery.collectAsState()
     val searchResultUiState by component.searchResultUiState.collectAsState()
-    Children(
-        stack = component.stack,
-        animation = predictiveBackAnimation(
-            backHandler = component.backHandler,
-            fallbackAnimation = stackAnimation(slide()),
-            onBack = component::onBackClicked,
-        ),
-    ) {
-        when (val child = it.instance) {
-            is SearchComponent.SearchChild.Login -> LoginScreen(child.component)
-            is SearchComponent.SearchChild.Main -> SearchContent(
-                searchQuery = searchQuery,
-                searchResultUiState = searchResultUiState,
-                onSearchQueryChanged = component::onSearchQueryChanged,
-                onDownloadItemClick = component::downloadItem,
-                navigationToLogin = component::onLoginClicked,
-            )
-        }
-    }
+    SearchContent(
+        searchQuery = searchQuery,
+        searchResultUiState = searchResultUiState,
+        onSearchQueryChanged = component::onSearchQueryChanged,
+        onDownloadItemClick = component::downloadItem,
+        navigationToLogin = navigationToLogin,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
