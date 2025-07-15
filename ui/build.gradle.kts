@@ -21,7 +21,9 @@ kotlin {
 
             implementation(libs.coil.compose)
 
-            implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.1.2")
+            implementation(libs.compose.material3.adaptive)
+
+            implementation(libs.qr.kit)
         }
     }
 }
