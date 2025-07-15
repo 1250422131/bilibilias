@@ -20,23 +20,26 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 fun createKtorPersistentHttpDownloader(): HttpDownloader {
-    return KtorPersistentHttpDownloader(
-        dataStore = DataStoreFactory.new(
-            ListSerializer(DownloadState.serializer()).asDataStoreSerializer { emptyList() },
-            produceFile = { resolveDataStoreFile("ktor_persistent_http_downloader") },
-            corruptionHandler = ReplaceFileCorruptionHandler {
-                emptyList()
+    val httpDownloader by lazy {
+        KtorPersistentHttpDownloader(
+            dataStore = DataStoreFactory.new(
+                ListSerializer(DownloadState.serializer()).asDataStoreSerializer { emptyList() },
+                produceFile = { resolveDataStoreFile("ktor_persistent_http_downloader") },
+                corruptionHandler = ReplaceFileCorruptionHandler {
+                    emptyList()
+                },
+            ),
+            client = createHttpClient {
+                defaultRequest {
+                    header(HttpHeaders.Accept, "*/*")
+                    header(HttpHeaders.Referrer, "https://www.bilibili.com")
+                    header(HttpHeaders.Origin, "https://www.bilibili.com")
+                    header(HttpHeaders.Connection, "keep-alive")
+                }
             },
-        ),
-        client = createHttpClient {
-            defaultRequest {
-                header(HttpHeaders.Accept, "*/*")
-                header(HttpHeaders.Referrer, "https://www.bilibili.com")
-                header(HttpHeaders.Origin, "https://www.bilibili.com")
-                header(HttpHeaders.Connection, "keep-alive")
-            }
-        },
-        fileSystem = SystemFileSystem,
-        baseSaveDir = Path(KmpContext.dataDir, "Download")
-    )
+            fileSystem = SystemFileSystem,
+            baseSaveDir = Path(KmpContext.dataDir, "Download")
+        )
+    }
+    return httpDownloader
 }

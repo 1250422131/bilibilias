@@ -13,11 +13,14 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 fun createDataStoreMediaCacheStorage(): MediaCacheStorage {
-    return DataStoreMediaCacheStorage(
-        store = DataStoreFactory.new(
-            serializer = ListSerializer(MediaCacheSave.serializer()).asDataStoreSerializer { emptyList() },
-            corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
-            produceFile = { resolveDataStoreFile("media_cache_storage") },
+    val store by lazy {
+        DataStoreMediaCacheStorage(
+            store = DataStoreFactory.new(
+                serializer = ListSerializer(MediaCacheSave.serializer()).asDataStoreSerializer { emptyList() },
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
+                produceFile = { resolveDataStoreFile("media_cache_storage") },
+            )
         )
-    )
+    }
+    return store
 }
