@@ -2,7 +2,6 @@ package com.imcys.bilibilias.ui.root
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -85,23 +84,21 @@ fun AsApp(
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
 private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
-    MaterialTheme {
-        Children(
-            stack = component.stack,
-            modifier = modifier,
-            animation = predictiveBackAnimation(
-                backHandler = component.backHandler,
-                fallbackAnimation = stackAnimation(fade() + scale()),
-                onBack = component::onBackClicked,
-            ),
+    Children(
+        stack = component.stack,
+        modifier = modifier,
+        animation = predictiveBackAnimation(
+            backHandler = component.backHandler,
+            fallbackAnimation = stackAnimation(fade() + scale()),
+            onBack = component::onBackClicked,
+        ),
+    ) {
+        CompositionLocalProvider(
+            LocalGradientColors provides GradientColors(DarkGreenGray95)
         ) {
-            CompositionLocalProvider(
-                LocalGradientColors provides GradientColors(DarkGreenGray95)
-            ) {
-                when (val child = it.instance) {
-                    is RootComponent.Child.SearchChild -> SearchScreen(child.component)
-                    is RootComponent.Child.CacheChild -> CacheScreen(child.component)
-                }
+            when (val child = it.instance) {
+                is RootComponent.Child.SearchChild -> SearchScreen(child.component)
+                is RootComponent.Child.CacheChild -> CacheScreen(child.component)
             }
         }
     }
