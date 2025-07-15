@@ -16,6 +16,4 @@ expect object KmpContext {
 enum class Platform {
     ANDROID,
     DESKTOP;
-
-    companion object
 }
