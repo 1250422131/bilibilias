@@ -41,7 +41,7 @@ actual suspend fun savePainterToGallery(
                 .addWhiteBorder(200)
             val imageUri = createImageUri(
                 context,
-                System.currentTimeMillis().toString(),
+                displayName,
                 mimeType,
                 "${Environment.DIRECTORY_PICTURES}/bilibilias/"
             )
