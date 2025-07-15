@@ -8,8 +8,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.logic)
 
+            implementation(projects.core.mediaCache)
             implementation(projects.core.uiPreview)
-
             implementation(compose.ui)
             implementation(compose.runtime)
             implementation(compose.material3)
