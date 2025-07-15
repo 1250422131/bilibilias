@@ -4,12 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 interface MediaCacheStorage : AutoCloseable {
-    val listFlow: Flow<List<MediaCache>>
+    val listFlow: Flow<List<MediaCacheSave>>
     suspend fun cache(
         episodeMetadata: EpisodeMetadata,
         metadata: MediaCacheMetadata,
         resume: Boolean = false,
-    ): MediaCache
+    )
 }
 
 @Serializable
