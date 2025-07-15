@@ -41,7 +41,7 @@ fun AsApp(
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
 
-    AsTheme {
+    AsTheme(false) {
         AsBackground {
             AsGradientBackground {
                 AsNavigationSuiteScaffold(
