@@ -9,6 +9,7 @@ import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
@@ -40,6 +41,7 @@ object BilibiliApi {
         install(ContentNegotiation) {
             json(HttpClientJson)
         }
+        BrowserUserAgent()
         Logging {
             level = LogLevel.BODY
             logger = object : Logger {
