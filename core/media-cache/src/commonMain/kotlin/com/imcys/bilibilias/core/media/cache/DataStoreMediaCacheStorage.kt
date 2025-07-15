@@ -39,13 +39,6 @@ class DataStoreMediaCacheStorage(
         return cache.origin == episodeMetadata
     }
 
-    private fun isSameMediaAndEpisode(
-        cache: MediaCache,
-        episodeMetadata: EpisodeMetadata
-    ): Boolean {
-        return cache.origin == episodeMetadata
-    }
-
 
     override fun close() {
 
