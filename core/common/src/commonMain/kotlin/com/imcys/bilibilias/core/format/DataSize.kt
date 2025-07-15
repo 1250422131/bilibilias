@@ -128,8 +128,12 @@ value class DataSize internal constructor(private val rawBytes: Long) : Comparab
             format(number) + unit.shortName
         }
     }
-
+    inline val isUnspecified: Boolean get() = this == Unspecified
     companion object {
+
+        val Zero = 0.bytes
+
+        val Unspecified = DataSize(Long.MIN_VALUE)
         fun Long.toDataSize(unit: DataUnit): DataSize {
             return DataSize(convertDataUnit(this, unit, DataUnit.BYTES))
         }
@@ -158,8 +162,5 @@ value class DataSize internal constructor(private val rawBytes: Long) : Comparab
         inline val Double.gb get() = this.toDataSize(DataUnit.GIGABYTES)
         inline val Double.tb get() = this.toDataSize(DataUnit.TERABYTES)
         inline val Double.pb get() = this.toDataSize(DataUnit.PETABYTES)
-
-        val Zero = 0.bytes
-        val Unspecified = DataSize(Long.MIN_VALUE)
     }
 }
