@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.bilibilias.kmp.library)
+    alias(libs.plugins.bilibilias.android.room)
     alias(libs.plugins.kotlinSerialization)
 }
 
