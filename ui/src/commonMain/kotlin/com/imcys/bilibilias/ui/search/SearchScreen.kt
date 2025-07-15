@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,10 +13,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Login
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -78,7 +79,7 @@ fun SearchContent(
                 actions = {
                     // todo user avatar
                     IconButton({}) {
-                        Icon(Icons.Rounded.VerifiedUser, "Avatar")
+                        Icon(Icons.AutoMirrored.Rounded.Login, "Avatar")
                     }
                     IconButton({}) {
                         Icon(Icons.Rounded.Settings, "Settings")
@@ -96,10 +97,25 @@ fun SearchContent(
 
             }
             when (searchResultUiState) {
-                SearchResultUiState.EmptyQuery -> Text("EmptyQuery")
-                SearchResultUiState.LoadFailed -> Text("LoadFailed")
-                SearchResultUiState.Loading -> Text("Loading")
-                is SearchResultUiState.Error -> Text(searchResultUiState.message)
+                SearchResultUiState.EmptyQuery -> {}
+                SearchResultUiState.LoadFailed -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("LoadFailed")
+                    }
+                }
+
+                SearchResultUiState.Loading -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("Loading")
+                    }
+                }
+
+                is SearchResultUiState.Error -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(searchResultUiState.message)
+                    }
+                }
+
                 is SearchResultUiState.Success -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
