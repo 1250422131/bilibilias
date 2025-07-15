@@ -15,6 +15,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.serialization.kotlinx.json.json
 
 object BilibiliLoginApi : AutoCloseable {
@@ -44,8 +45,10 @@ object BilibiliLoginApi : AutoCloseable {
         return client.get("/x/passport-login/web/qrcode/generate").body<QrCode>()
     }
 
-    suspend fun pollRequest(): PollResponse {
-        return client.get("/x/passport-login/web/qrcode/poll").body<PollResponse>()
+    suspend fun pollRequest(key: String): PollResponse {
+        return client.get("/x/passport-login/web/qrcode/poll") {
+            parameter("qrcode_key", key)
+        }.body<PollResponse>()
     }
 
     override fun close() {
