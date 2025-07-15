@@ -24,6 +24,7 @@ import com.imcys.bilibilias.ui.cache.CacheScreen
 import com.imcys.bilibilias.ui.component.AsBackground
 import com.imcys.bilibilias.ui.component.AsGradientBackground
 import com.imcys.bilibilias.ui.component.AsNavigationSuiteScaffold
+import com.imcys.bilibilias.ui.login.LoginScreen
 import com.imcys.bilibilias.ui.navigation.TopLevelDestination
 import com.imcys.bilibilias.ui.search.SearchScreen
 import com.imcys.bilibilias.ui.theme.AsTheme
@@ -39,6 +40,7 @@ fun AsApp(
 ) {
     val stack by component.stack.subscribeAsState()
     val activeComponent = stack.active.instance
+
     AsTheme {
         AsBackground {
             AsGradientBackground {
@@ -71,6 +73,7 @@ fun AsApp(
                                 .testTag("NavItem")
                         )
                     },
+                    shouldShowBottomBar = activeComponent.shouldDisplayBottomBar,
                     windowAdaptiveInfo = windowAdaptiveInfo,
                     modifier = modifier
                 ) {
@@ -97,11 +100,19 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
             LocalGradientColors provides GradientColors(DarkGreenGray95)
         ) {
             when (val child = it.instance) {
-                is RootComponent.Child.SearchChild -> SearchScreen(child.component)
+                is RootComponent.Child.SearchChild -> SearchScreen(
+                    child.component,
+                    component::onLoginClicked
+                )
+
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
+                is RootComponent.Child.LoginChild -> LoginScreen(child.component)
             }
         }
     }
 }
 
+private val RootComponent.Child.shouldDisplayBottomBar: Boolean
+    get() = this is RootComponent.Child.SearchChild ||
+            this is RootComponent.Child.CacheChild
 private val DarkGreenGray95 = Color(0xFFF0F1EC)

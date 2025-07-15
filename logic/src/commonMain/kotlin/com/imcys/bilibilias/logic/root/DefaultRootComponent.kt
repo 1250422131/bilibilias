@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.logic.cache.DefaultCacheComponent
+import com.imcys.bilibilias.logic.login.DefaultLoginComponent
 import com.imcys.bilibilias.logic.search.DefaultSearchComponent
 import kotlinx.serialization.Serializable
 
@@ -18,11 +19,11 @@ class DefaultRootComponent(
     private val nav = StackNavigation<Config>()
 
     private val _stack = childStack(
-            source = nav,
-            serializer = Config.serializer(),
-            childFactory = ::child,
-            initialConfiguration = Config.Search,
-        )
+        source = nav,
+        serializer = Config.serializer(),
+        childFactory = ::child,
+        initialConfiguration = Config.Search,
+    )
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
 
@@ -30,6 +31,7 @@ class DefaultRootComponent(
         when (config) {
             Config.Search -> RootComponent.Child.SearchChild(DefaultSearchComponent(componentContext))
             Config.Cache -> RootComponent.Child.CacheChild(DefaultCacheComponent(componentContext))
+            Config.Login -> RootComponent.Child.LoginChild(DefaultLoginComponent(componentContext))
         }
 
     override fun onBackClicked() {
@@ -44,6 +46,10 @@ class DefaultRootComponent(
         nav.bringToFront(Config.Cache)
     }
 
+    override fun onLoginClicked() {
+        nav.bringToFront(Config.Login)
+    }
+
     @Serializable
     private sealed interface Config {
         @Serializable
@@ -51,5 +57,8 @@ class DefaultRootComponent(
 
         @Serializable
         data object Cache : Config
+
+        @Serializable
+        data object Login : Config
     }
 }
