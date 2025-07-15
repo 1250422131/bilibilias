@@ -42,6 +42,12 @@ class DefaultSearchComponent(
     @OptIn(ExperimentalStateKeeperApi::class)
     private var state: State by saveable(serializer = State.serializer(), init = ::State)
 
+    init {
+        scope.launch {
+            httpDownloader.init()
+        }
+    }
+
     override val searchQuery = MutableStateFlow(state.searchQuery)
 
     // use case
