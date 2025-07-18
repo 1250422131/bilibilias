@@ -59,7 +59,7 @@ workflow(
         run(
             name = "Apk Sign",
             command = """
-                echo $GITHUB_WORKSPACE
+                echo "$GITHUB_WORKSPACE"
                 echo "${expr { GITHUB_WORKSPACE }}"
                 cp ${expr { github.workspace }}/.github/workflows/bilibilias.jks ${expr { github.workspace }}/bilibilias.jks
             """.trimIndent()

@@ -38,7 +38,7 @@ jobs:
     - id: 'step-5'
       name: 'Apk Sign'
       run: |-
-        echo $GITHUB_WORKSPACE
+        echo "$GITHUB_WORKSPACE"
         echo "${{ GITHUB_WORKSPACE }}"
         cp ${{ github.workspace }}/.github/workflows/bilibilias.jks ${{ github.workspace }}/bilibilias.jks
     - id: 'step-6'
