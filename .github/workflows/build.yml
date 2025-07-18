@@ -36,9 +36,17 @@ jobs:
       name: 'Check build-logic'
       run: './gradlew :build-logic:convention:check'
     - id: 'step-5'
+      name: 'Apk Sign'
+      run: |-
+        cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/app/bilibilias.jks
+        sed 'signing_release_storeFileFromRoot=./bilibilias.jks' $GITHUB_WORKSPACE/gradle.properties -i
+        sed 'signing_release_keyAlias=bilibilias'                $GITHUB_WORKSPACE/gradle.properties -i
+        sed 'signing_release_storePassword=bilibilias'           $GITHUB_WORKSPACE/gradle.properties -i
+        sed 'signing_release_storePassword=bilibilias'           $GITHUB_WORKSPACE/gradle.properties -i
+    - id: 'step-6'
       name: 'Build all build type and flavor permutations'
       run: './gradlew :app:assemble'
-    - id: 'step-6'
+    - id: 'step-7'
       name: 'Upload build outputs (APKs)'
       uses: 'actions/upload-artifact@v4'
       with:

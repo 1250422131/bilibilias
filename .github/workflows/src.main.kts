@@ -15,6 +15,7 @@ import io.github.typesafegithub.workflows.actions.gradle.ActionsSetupGradle
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Push
+import io.github.typesafegithub.workflows.dsl.expressions.contexts.EnvContext.GITHUB_WORKSPACE
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
@@ -55,6 +56,16 @@ workflow(
             )
         )
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")
+        run(
+            name = "Apk Sign",
+            command = """
+                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/app/bilibilias.jks
+                sed 'signing_release_storeFileFromRoot=./bilibilias.jks' $GITHUB_WORKSPACE/gradle.properties -i
+                sed 'signing_release_keyAlias=bilibilias'                $GITHUB_WORKSPACE/gradle.properties -i
+                sed 'signing_release_storePassword=bilibilias'           $GITHUB_WORKSPACE/gradle.properties -i
+                sed 'signing_release_storePassword=bilibilias'           $GITHUB_WORKSPACE/gradle.properties -i
+            """.trimIndent()
+        )
         run(
             name = "Build all build type and flavor permutations",
             command = "./gradlew :app:assemble"
