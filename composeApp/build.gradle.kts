@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.lang.System.getProperty
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -17,12 +18,12 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -59,11 +60,21 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.imcys.bilibilias"
+        applicationId = "com.imcys.bilibilias.mulltiplatform"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 30000
+        versionName = "3.0.1"
+    }
+    signingConfigs {
+        kotlin.runCatching { getProperty("signing_release_storeFileFromRoot") }.getOrNull()?.let {
+            create("release") {
+                storeFile = rootProject.file("it")
+                storePassword = getProperty("signing_release_storePassword")
+                keyAlias = getProperty("signing_release_keyAlias")
+                keyPassword = getProperty("signing_release_keyPassword")
+            }
+        }
     }
     packaging {
         resources {
@@ -71,7 +82,14 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
+        release {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.findByName("release")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "debug"
             isMinifyEnabled = false
         }
     }
