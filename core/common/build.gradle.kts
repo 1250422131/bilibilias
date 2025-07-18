@@ -13,8 +13,10 @@ kotlin {
             implementation(libs.androidx.startup)
         }
         commonMain.dependencies {
-            api(libs.androidx.datastore)
             api(compose.runtime)
+
+            api(libs.androidx.datastore)
+            
             api(libs.kermit)
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
