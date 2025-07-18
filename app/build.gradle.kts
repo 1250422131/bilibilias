@@ -69,7 +69,7 @@ android {
     signingConfigs {
         kotlin.runCatching { getProperty("signing_release_storeFileFromRoot") }.getOrNull()?.let {
             create("release") {
-                storeFile = rootProject.file("it")
+                storeFile = rootProject.file(it)
                 storePassword = getProperty("signing_release_storePassword")
                 keyAlias = getProperty("signing_release_keyAlias")
                 keyPassword = getProperty("signing_release_keyPassword")
