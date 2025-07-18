@@ -65,7 +65,6 @@ workflow(
                 echo 'signing_release_keyAlias=bilibilias'                >> $GITHUB_WORKSPACE/gradle.properties
                 echo 'signing_release_storePassword=bilibilias'           >> $GITHUB_WORKSPACE/gradle.properties
                 echo 'signing_release_keyPassword=bilibilias'             >> $GITHUB_WORKSPACE/gradle.properties
-                cat "$GITHUB_WORKSPACE/gradle.properties"
             """.trimIndent()
         )
         run(
