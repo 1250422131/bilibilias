@@ -15,7 +15,6 @@ import io.github.typesafegithub.workflows.actions.gradle.ActionsSetupGradle
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Push
-import io.github.typesafegithub.workflows.dsl.expressions.Contexts
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
@@ -49,11 +48,10 @@ workflow(
                 javaVersion = "21"
             )
         )
-        val GRADLE_ENCRYPTION_KEY by Contexts.secrets
         uses(
             name = "Setup Gradle",
             action = ActionsSetupGradle(
-                cacheEncryptionKey = expr { GRADLE_ENCRYPTION_KEY }
+                cacheDisabled = true,
             )
         )
         run(name = "Check build-logic", command = "./gradlew :build-logic:convention:check")

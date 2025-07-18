@@ -10,6 +10,7 @@ kotlin {
             api(libs.androidx.compose.ui.tooling)
         }
         commonMain.dependencies {
+            api(compose.runtime)
             api(libs.androidx.annotation)
         }
     }
