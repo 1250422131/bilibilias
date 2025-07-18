@@ -18,6 +18,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.expressions.Contexts
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
 
 workflow(
     name = "Build",
@@ -32,6 +33,7 @@ workflow(
         },
         cancelInProgress = true
     ),
+    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled
 ) {
     job(id = "BuildAndUpload", runsOn = UbuntuLatest, timeoutMinutes = 50) {
         uses(name = "Checkout", action = Checkout())
