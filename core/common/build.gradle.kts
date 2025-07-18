@@ -14,7 +14,7 @@ kotlin {
         }
         commonMain.dependencies {
             api(libs.androidx.datastore)
-            implementation(compose.runtime)
+            api(compose.runtime)
             api(libs.kermit)
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.io)
