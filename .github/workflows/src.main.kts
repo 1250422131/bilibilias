@@ -59,9 +59,9 @@ workflow(
         run(
             name = "Apk Sign",
             command = """
-                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks $GITHUB_WORKSPACE/bilibilias.jks
-                sed 'signing_release_storeFileFromRoot=./bilibilias.jks' $GITHUB_WORKSPACE/gradle.properties -i
-               
+                cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks    $GITHUB_WORKSPACE/bilibilias.jks
+                echo "signing_release_storeFileFromRoot=./bilibilias.jks" > $GITHUB_WORKSPACE/gradle.properties
+                echo "$GITHUB_WORKSPACE/gradle.properties"
             """.trimIndent()
         )
         run(
