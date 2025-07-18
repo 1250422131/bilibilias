@@ -37,10 +37,7 @@ jobs:
       run: './gradlew :build-logic:convention:check'
     - id: 'step-5'
       name: 'Apk Sign'
-      run: |-
-        echo "$GITHUB_WORKSPACE"
-        echo "${{ GITHUB_WORKSPACE }}"
-        cp ${{ github.workspace }}/.github/workflows/bilibilias.jks ${{ github.workspace }}/bilibilias.jks
+      run: 'cp $GITHUB_WORKSPACE/.github/workflows/bilibilias.jks ${{ github.workspace }}/bilibilias.jks'
     - id: 'step-6'
       name: 'Build all build type and flavor permutations'
       run: './gradlew :app:assemble'
