@@ -39,7 +39,7 @@ fun CacheScreen(component: CacheComponent) {
 fun CaCheContent(state: List<CacheEpisodeState>) {
     Scaffold { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(state, key = { it.episodeMetadata.bvid }) { item ->
+            items(state) { item ->
                 Card(modifier = Modifier.padding(8.dp)) {
                     Row(
                         modifier = Modifier.padding(8.dp).fillMaxWidth(),
