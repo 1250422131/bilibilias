@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.logic.cache
+package com.imcys.bilibilias.core.data.model
 
 import com.imcys.bilibilias.core.format.DataSize
 
@@ -12,7 +12,7 @@ data class FileStats(
     /**
      * 已完成比例.
      *
-     * @return `0f`..`1f`, 在未开始下载时, 该值为 [Progress.Unspecified].
+     * @return `0f`..`1f`, 在未开始下载时, 该值为 [com.imcys.bilibilias.logic.cache.Progress.Companion.Unspecified].
      */
     val downloadProgress: Progress = if (totalSize.isUnspecified || downloadedBytes.isUnspecified) {
         Progress.Unspecified
@@ -35,8 +35,8 @@ data class FileStats(
     companion object {
         val Unspecified =
             FileStats(
-                DataSize.Unspecified,
-                DataSize.Unspecified,
+                DataSize.Companion.Unspecified,
+                DataSize.Companion.Unspecified,
                 Progress.Unspecified,
             )
     }

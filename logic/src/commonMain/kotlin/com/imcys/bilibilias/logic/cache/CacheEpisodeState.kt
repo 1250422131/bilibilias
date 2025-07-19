@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.logic.cache
 
+import com.imcys.bilibilias.core.data.model.FileStats
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
 

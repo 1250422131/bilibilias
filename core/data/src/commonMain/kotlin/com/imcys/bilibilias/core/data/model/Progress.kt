@@ -1,6 +1,6 @@
-package com.imcys.bilibilias.logic.cache
+package com.imcys.bilibilias.core.data.model
 
-import com.imcys.bilibilias.logic.cache.Progress.Companion.Unspecified
+import com.imcys.bilibilias.core.data.model.Progress.Companion.Unspecified
 
 /**
  * 表示一个范围为 `0f..1f`, 且可能为未知 [Unspecified] 的进度数值.

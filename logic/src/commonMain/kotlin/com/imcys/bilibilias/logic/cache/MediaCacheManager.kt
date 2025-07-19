@@ -1,5 +1,8 @@
 package com.imcys.bilibilias.logic.cache
 
+import com.imcys.bilibilias.core.data.model.FileStats
+import com.imcys.bilibilias.core.data.model.Progress
+import com.imcys.bilibilias.core.data.model.toProgress
 import com.imcys.bilibilias.core.format.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadProgress
