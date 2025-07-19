@@ -23,23 +23,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.core.format.DataUnit
 import com.imcys.bilibilias.logic.cache.CacheComponent
-import com.imcys.bilibilias.logic.cache.EpisodeCacheState
+import com.imcys.bilibilias.logic.cache.CacheEpisodeState
 
 @Composable
 fun CacheScreen(component: CacheComponent) {
-    val state by component.uiState.collectAsState()
+    val state by component.stateFlow.collectAsState()
     CaCheContent(state)
-
 }
 
 // todo 点击事件 在下载时是 暂停/恢复 下载完成后是播放
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaCheContent(state: List<EpisodeCacheState>) {
+fun CaCheContent(state: List<CacheEpisodeState>) {
     Scaffold { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(state) { item ->
+            items(state, key = { it.episodeMetadata.bvid }) { item ->
                 Card(modifier = Modifier.padding(8.dp)) {
                     Row(
                         modifier = Modifier.padding(8.dp).fillMaxWidth(),
@@ -52,6 +52,7 @@ fun CaCheContent(state: List<EpisodeCacheState>) {
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.titleLarge
                             )
+                            Text(item.fileStats.downloadedBytes.toString(DataUnit.MEGABYTES))
                         }
                         Row {
                             IconButton({}) {
