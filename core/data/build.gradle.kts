@@ -9,6 +9,8 @@ kotlin {
             api(projects.core.common)
             api(projects.core.datasource)
             api(projects.core.model)
+
+            implementation(projects.core.mediaCache)
         }
     }
 }
