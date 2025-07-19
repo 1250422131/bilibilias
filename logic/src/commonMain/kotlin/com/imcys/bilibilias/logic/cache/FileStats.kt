@@ -1,13 +1,6 @@
 package com.imcys.bilibilias.logic.cache
 
 import com.imcys.bilibilias.core.format.DataSize
-import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
-
-data class EpisodeCacheState(
-    val episodeMetadata: EpisodeMetadata,
-//    val canPlay: Boolean,
-//    val fileStats: FileStats,
-)
 
 data class FileStats(
     val totalSize: DataSize,
