@@ -9,7 +9,8 @@ import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
-import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
+import com.imcys.bilibilias.core.media.cache.MediaCachePartMetadata
+import com.imcys.bilibilias.core.media.cache.mediaCacheMetadata
 import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
@@ -92,16 +93,14 @@ class DefaultSearchComponent(
         Logger.i { "downloadItem: $qn, $bvid, $cid" }
         scope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(qn, bvid, cid)
-            val state1 = download(episodeInfo.video.first().baseUrl)
-            val state2 = download(episodeInfo.audio.first().baseUrl)
-            if (state1 != null && state2 != null) {
+            val videoDownloadState = download(episodeInfo.video.first().baseUrl)
+            val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
+            if (videoDownloadState != null && audioDownloadState != null) {
                 mediaCacheStorage.cache(
                     episodeInfo.asEpisodeMetadata(),
-                    MediaCacheMetadata(
-                        downloadId1 = state1.downloadId.value,
-                        downloadId2 = state2.downloadId.value,
-                        outputPath1 = state1.relativeOutputPath,
-                        outputPath2 = state2.relativeOutputPath,
+                    mediaCacheMetadata(
+                        MediaCachePartMetadata(videoDownloadState.downloadId.value),
+                        MediaCachePartMetadata(audioDownloadState.downloadId.value)
                     )
                 )
             } else {
