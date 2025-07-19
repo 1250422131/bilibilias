@@ -1,7 +1,9 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.lang.System.getProperty
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.hasProperty
+import org.jetbrains.kotlin.konan.properties.loadProperties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -67,12 +69,15 @@ android {
         versionName = "3.0.1"
     }
     signingConfigs {
-        kotlin.runCatching { getProperty("signing_release_storeFileFromRoot") }.getOrNull()?.let {
-            create("release") {
-                storeFile = rootProject.file(it)
-                storePassword = getProperty("signing_release_storePassword")
-                keyAlias = getProperty("signing_release_keyAlias")
-                keyPassword = getProperty("signing_release_keyPassword")
+        create("release") {
+            val file = File(rootProject.file("gradle.properties").path)
+            val properties = file.loadProperties()
+            if (properties.hasProperty("signing_release_storeFileFromRoot")) {
+                storeFile =
+                    rootProject.file(properties.getProperty("signing_release_storeFileFromRoot"))
+                storePassword = properties.getProperty("signing_release_storePassword")
+                keyAlias = properties.getProperty("signing_release_keyAlias")
+                keyPassword = properties.getProperty("signing_release_keyPassword")
             }
         }
     }
