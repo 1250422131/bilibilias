@@ -16,7 +16,7 @@ class DefaultCacheComponent(
 ) : CacheComponent, ComponentContext by componentContext {
     private val httpDownloader = DataStoreProvider.httpDownloader
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
-    override val stateFlow = MediaCacheManager.cachedEpisodesFlow()
+    override val stateFlow = MediaCacheManager.observeCachedEpisodeStates()
         .stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(5000),
