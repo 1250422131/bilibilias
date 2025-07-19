@@ -16,8 +16,7 @@ import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
-import com.imcys.bilibilias.logic.utils.createDataStoreMediaCacheStorage
-import com.imcys.bilibilias.logic.utils.createKtorPersistentHttpDownloader
+import com.imcys.bilibilias.logic.utils.DataStoreProvider
 import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,8 +34,8 @@ import kotlin.uuid.Uuid
 class DefaultSearchComponent(
     componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
-    private val httpDownloader = createKtorPersistentHttpDownloader()
-    private val mediaCacheStorage = createDataStoreMediaCacheStorage()
+    private val httpDownloader = DataStoreProvider.httpDownloader
+    private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
     private val episodeInfoUseCase = GetEpisodeInfoUseCase()
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
