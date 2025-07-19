@@ -1,7 +1,9 @@
 package com.imcys.bilibilias.logic.cache
 
 import com.arkivanov.decompose.ComponentContext
-import com.imcys.bilibilias.logic.utils.DataStoreProvider
+import com.imcys.bilibilias.core.data.DataStoreProvider
+import com.imcys.bilibilias.core.data.MediaCacheManager
+import com.imcys.bilibilias.core.data.model.CacheEpisodeState
 import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

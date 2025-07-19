@@ -10,6 +10,7 @@ kotlin {
             api(projects.core.datasource)
             api(projects.core.model)
 
+            implementation(projects.core.httpDownloader)
             implementation(projects.core.mediaCache)
         }
     }

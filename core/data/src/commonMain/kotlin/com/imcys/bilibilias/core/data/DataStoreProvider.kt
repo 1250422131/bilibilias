@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.logic.utils
+package com.imcys.bilibilias.core.data
 
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
