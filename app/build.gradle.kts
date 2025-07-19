@@ -69,10 +69,10 @@ android {
         versionName = "3.0.1"
     }
     signingConfigs {
-        create("release") {
-            val file = File(rootProject.file("gradle.properties").path)
-            val properties = file.loadProperties()
-            if (properties.hasProperty("signing_release_storeFileFromRoot")) {
+        val file = File(rootProject.file("gradle.properties").path)
+        val properties = file.loadProperties()
+        if (properties.hasProperty("signing_release_storeFileFromRoot")) {
+            create("release") {
                 storeFile =
                     rootProject.file(properties.getProperty("signing_release_storeFileFromRoot"))
                 storePassword = properties.getProperty("signing_release_storePassword")
