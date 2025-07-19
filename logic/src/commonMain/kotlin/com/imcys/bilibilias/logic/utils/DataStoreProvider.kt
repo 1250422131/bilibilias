@@ -10,17 +10,17 @@ import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import com.imcys.bilibilias.core.media.cache.DataStoreMediaCacheStorage
+import com.imcys.bilibilias.core.media.cache.MediaCacheSave
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.builtins.ListSerializer
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
-fun createKtorPersistentHttpDownloader(): HttpDownloader {
-    val httpDownloader by lazy {
+object DataStoreProvider {
+    val httpDownloader: HttpDownloader by lazy {
         KtorPersistentHttpDownloader(
             dataStore = DataStoreFactory.new(
                 ListSerializer(DownloadState.serializer()).asDataStoreSerializer { emptyList() },
@@ -41,5 +41,14 @@ fun createKtorPersistentHttpDownloader(): HttpDownloader {
             baseSaveDir = Path(KmpContext.dataDir, "Download")
         )
     }
-    return httpDownloader
+
+    val mediaCacheStorage by lazy {
+        DataStoreMediaCacheStorage(
+            store = DataStoreFactory.new(
+                serializer = ListSerializer(MediaCacheSave.serializer()).asDataStoreSerializer { emptyList() },
+                corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
+                produceFile = { resolveDataStoreFile("media_cache_storage") },
+            )
+        )
+    }
 }
