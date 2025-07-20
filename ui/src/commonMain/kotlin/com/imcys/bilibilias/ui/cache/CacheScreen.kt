@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.cache
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,7 +46,7 @@ fun CaCheContent(state: List<CacheEpisodeState>) {
                         modifier = Modifier.padding(8.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Row(modifier = Modifier.weight(1f)) {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 item.episodeMetadata.title,
                                 maxLines = 2,
