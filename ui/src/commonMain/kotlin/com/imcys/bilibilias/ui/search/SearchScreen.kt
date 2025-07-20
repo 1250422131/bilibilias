@@ -49,9 +49,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.imcys.bilibilias.core.data.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
-import com.imcys.bilibilias.ui.VideoDownloadDialog
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -124,53 +124,58 @@ fun SearchContent(
                 is SearchResultUiState.Success -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    OutlinedCard(modifier = Modifier.padding(8.dp)) {
-                        Row {
-                            Box(modifier = Modifier.weight(3f)) {
-                                AsyncImage(
-                                    searchResultUiState.episode.cover,
-                                    "VideoCover",
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentScale = ContentScale.Inside,
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .weight(1f)
-                                    .height(IntrinsicSize.Min),
-                                verticalArrangement = Arrangement.SpaceEvenly,
-                            ) {
-                                TextButton(
-                                    { searchResultUiState.episode.bvid },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text("看视频")
-                                }
-                                TextButton(
-                                    { searchResultUiState.episode.owner.id },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text("去主页")
-                                }
-                            }
-                        }
-                    }
+                    EpisodeInfoCard(searchResultUiState.episodeCacheListState.episodeInfo)
                     Button(
                         { dialog = true },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("下载")
                     }
-                    VideoDownloadDialog(
-                        dialog,
-                        searchResultUiState.episode.parts,
-                        searchResultUiState.episode.video,
-                        onDismiss = { dialog = false },
-                        onClick = { quality, cid ->
-                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
-                        }
-                    )
+//                    VideoDownloadDialog(
+//                        dialog,
+//                        searchResultUiState.episode.parts,
+//                        searchResultUiState.episode.video,
+//                        onDismiss = { dialog = false },
+//                        onClick = { quality, cid ->
+//                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
+//                        }
+//                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2) {
+    OutlinedCard(modifier = Modifier.padding(8.dp)) {
+        Row {
+            Box(modifier = Modifier.weight(3f)) {
+                AsyncImage(
+                    episodeInfo.cover,
+                    "VideoCover",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Inside,
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(1f)
+                    .height(IntrinsicSize.Min),
+                verticalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                TextButton(
+                    { episodeInfo.episodeId },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("看视频")
+                }
+                TextButton(
+                    { /*searchResultUiState.episode.owner.id*/ },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("去主页")
                 }
             }
         }

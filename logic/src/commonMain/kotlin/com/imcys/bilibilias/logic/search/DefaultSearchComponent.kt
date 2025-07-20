@@ -21,9 +21,9 @@ import com.imcys.bilibilias.logic.utils.scope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,25 +56,24 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                episodeInfoUseCase(query).asResult()
-                    .combine(mediaCacheStorage.listFlow) { result, mediaCacheSaves ->
-                        when (result) {
-                            is Success -> {
-                                val data = result.data
-                                if (data != null) {
-                                    SearchResultUiState.Success(data)
-                                } else {
-                                    SearchResultUiState.Error("No data")
-                                }
+                episodeInfoUseCase.create(query).asResult().map { result ->
+                    when (result) {
+                        is Success -> {
+                            val data = result.data
+                            if (data != null) {
+                                SearchResultUiState.Success(data)
+                            } else {
+                                SearchResultUiState.Error("No data")
                             }
-
-                            is Error -> SearchResultUiState.Error(
-                                result.exception.message ?: "Unknown error"
-                            )
-
-                            is Loading -> SearchResultUiState.Loading
                         }
+
+                        is Error -> SearchResultUiState.Error(
+                            result.exception.message ?: "Unknown error"
+                        )
+
+                        is Loading -> SearchResultUiState.Loading
                     }
+                }
             }
         }.stateIn(
             scope,
