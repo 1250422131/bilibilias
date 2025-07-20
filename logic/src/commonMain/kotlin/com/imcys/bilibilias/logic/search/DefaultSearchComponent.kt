@@ -7,6 +7,7 @@ import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
+import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
@@ -36,11 +36,13 @@ class DefaultSearchComponent(
 ) : SearchComponent, ComponentContext by componentContext {
     private val httpDownloader = DataStoreProvider.httpDownloader
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
-    private val episodeInfoUseCase = GetEpisodeInfoUseCase()
+    private val episodeInfoUseCase = GetEpisodeInfoUseCase(mediaCacheStorage)
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
     @OptIn(ExperimentalStateKeeperApi::class)
-    private var state: State by saveable(serializer = State.serializer(), init = ::State)
+    private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
+
+    private var episodeId: String? = null
 
     init {
         scope.launch {
@@ -48,9 +50,9 @@ class DefaultSearchComponent(
         }
     }
 
-    override val searchQuery = MutableStateFlow(state.searchQuery)
+    override val searchQuery = MutableStateFlow(persistentState.searchQuery)
 
-    // use case
+
     override val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
             if (query.isEmpty()) {
@@ -61,6 +63,7 @@ class DefaultSearchComponent(
                         is Success -> {
                             val data = result.data
                             if (data != null) {
+                                episodeId = data.episodeInfo.episodeId
                                 SearchResultUiState.Success(data)
                             } else {
                                 SearchResultUiState.Error("No data")
@@ -84,14 +87,17 @@ class DefaultSearchComponent(
     override fun onSearchTriggered(query: String) {}
 
     override fun onSearchQueryChanged(query: String) {
-        state = State(query)
-        searchQuery.update { query }
+        persistentState = State(query)
+        searchQuery.value = query
     }
 
     override fun downloadItem(qn: Int, bvid: String, cid: Long) {
-        Logger.i { "downloadItem: $qn, $bvid, $cid" }
+
+    }
+
+    override fun requestCache(request: EpisodeCacheRequest) {
         scope.launch {
-            val episodeInfo = mediaSourceSelectedUseCase(qn, bvid, cid)
+            val episodeInfo = mediaSourceSelectedUseCase(episodeId!!, request)
             val videoDownloadState = download(episodeInfo.video.first().baseUrl)
             val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
             if (videoDownloadState != null && audioDownloadState != null) {
@@ -126,13 +132,4 @@ class DefaultSearchComponent(
 
     @Serializable
     private data class State(val searchQuery: String = "")
-
-    @Serializable
-    private sealed interface Config {
-        @Serializable
-        data object Main : Config
-
-        @Serializable
-        data object Login : Config
-    }
 }

@@ -49,9 +49,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.data.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
+import com.imcys.bilibilias.ui.EpisodeListGroup
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -63,7 +65,7 @@ fun SearchScreen(component: SearchComponent, navigationToLogin: () -> Unit) {
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState,
         onSearchQueryChanged = component::onSearchQueryChanged,
-        onDownloadItemClick = component::downloadItem,
+        onCacheRequest = component::requestCache,
         navigationToLogin = navigationToLogin,
     )
 }
@@ -74,7 +76,7 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onDownloadItemClick: (Int, String, Long) -> Unit,
+    onCacheRequest: (EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
 ) {
     Scaffold(
@@ -93,14 +95,12 @@ fun SearchContent(
             )
         }
     ) { innerPadding ->
-        var dialog by rememberSaveable { mutableStateOf(false) }
+        var showEpisodeListGroup by rememberSaveable { mutableStateOf(false) }
         Column(modifier = Modifier.padding(innerPadding)) {
             SearchTextField(
                 searchQuery = searchQuery,
                 onSearchQueryChanged = onSearchQueryChanged
-            ) {
-
-            }
+            )
             when (searchResultUiState) {
                 SearchResultUiState.EmptyQuery -> {}
                 SearchResultUiState.LoadFailed -> {
@@ -126,20 +126,21 @@ fun SearchContent(
                 ) {
                     EpisodeInfoCard(searchResultUiState.episodeCacheListState.episodeInfo)
                     Button(
-                        { dialog = true },
+                        { showEpisodeListGroup = true },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("下载")
                     }
-//                    VideoDownloadDialog(
-//                        dialog,
-//                        searchResultUiState.episode.parts,
-//                        searchResultUiState.episode.video,
-//                        onDismiss = { dialog = false },
+                    EpisodeListGroup(
+                        showEpisodeListGroup,
+                        searchResultUiState.episodeCacheListState.episodes,
+                        searchResultUiState.episodeCacheListState.videoStreams,
+                        onDismiss = { showEpisodeListGroup = false },
+                        onRequestCache = { onCacheRequest(it) }
 //                        onClick = { quality, cid ->
-//                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
+////                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
 //                        }
-//                    )
+                    )
                 }
             }
         }
@@ -186,7 +187,7 @@ private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2) {
 private fun SearchTextField(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
-    onSearchTriggered: (String) -> Unit,
+    onSearchTriggered: (String) -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 

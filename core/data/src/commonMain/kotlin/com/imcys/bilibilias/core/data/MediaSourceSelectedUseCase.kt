@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.data
 
+import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.model.EpisodeInfo
@@ -7,12 +8,15 @@ import com.imcys.bilibilias.core.model.Owner
 import com.imcys.bilibilias.core.model.StreamData
 
 class MediaSourceSelectedUseCase {
-    suspend operator fun invoke(qualityLevel: Int, bvid: String, cid: Long): EpisodeInfo {
-        val detail = BilibiliApi.getVideoInfoDetail(bvid)
-        val playUrl = BilibiliApi.getPlayUrl(bvid, cid)
+    suspend operator fun invoke(
+        episodeId: String,
+        request: EpisodeCacheRequest
+    ): EpisodeInfo {
+        val detail = BilibiliApi.getVideoInfoDetail(episodeId)
+        val playUrl = BilibiliApi.getPlayUrl(detail.bvid, detail.cid)
         return EpisodeInfo(
-            bvid = bvid,
-            cid = cid,
+            bvid = detail.bvid,
+            cid = detail.cid,
             desc = detail.desc,
             cover = detail.pic,
             title = detail.title,
@@ -20,13 +24,13 @@ class MediaSourceSelectedUseCase {
             parts = emptyList(),
             video = playUrl.dash.video.mediaSelect { list ->
                 list.filter {
-                    it.id == qualityLevel
+                    it.id == request.videoResolution
                 }.maxBy {
                     it.codecid
                 }
             },
             audio = playUrl.dash.audio.mediaSelect { list ->
-                list.maxByOrNull { Int.MAX_VALUE } ?: list.maxBy { it.id }
+                list.maxByOrNull { request.audioResolution } ?: list.maxBy { it.id }
             }
         )
     }
