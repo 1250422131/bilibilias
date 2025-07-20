@@ -31,6 +31,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -121,26 +122,29 @@ fun SearchContent(
                     }
                 }
 
-                is SearchResultUiState.Success -> Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    EpisodeInfoCard(searchResultUiState.episodeCacheListState.episodeInfo)
-                    Button(
-                        { showEpisodeListGroup = true },
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Text("下载")
+                is SearchResultUiState.Success -> {
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    LaunchedEffect(searchResultUiState) {
+                        keyboardController?.hide()
                     }
-                    EpisodeListGroup(
-                        showEpisodeListGroup,
-                        searchResultUiState.episodeCacheListState.episodes,
-                        searchResultUiState.episodeCacheListState.videoStreams,
-                        onDismiss = { showEpisodeListGroup = false },
-                        onRequestCache = { onCacheRequest(it) }
-//                        onClick = { quality, cid ->
-////                            onDownloadItemClick(quality, searchResultUiState.episode.bvid, cid)
-//                        }
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        EpisodeInfoCard(searchResultUiState.episodeCacheListState.episodeInfo)
+                        Button(
+                            { showEpisodeListGroup = true },
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text("下载")
+                        }
+                        EpisodeListGroup(
+                            showEpisodeListGroup,
+                            searchResultUiState.episodeCacheListState.episodes,
+                            searchResultUiState.episodeCacheListState.videoStreams,
+                            onDismiss = { showEpisodeListGroup = false },
+                            onRequestCache = { onCacheRequest(it) }
+                        )
+                    }
                 }
             }
         }
