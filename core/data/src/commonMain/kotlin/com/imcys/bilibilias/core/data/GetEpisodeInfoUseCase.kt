@@ -9,16 +9,17 @@ import com.imcys.bilibilias.core.data.model.EpisodeInfo2
 import com.imcys.bilibilias.core.data.model.MediaStream
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
+import com.imcys.bilibilias.core.flow.flowFromSuspend
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheStorage
 ) {
-    fun create(query: String): Flow<EpisodeCacheListState?> {
+    operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
         return when (val result = textExtract(query)) {
             is TextExtraction.MatchResult.BV -> bv(result.id)
 
@@ -27,8 +28,11 @@ class GetEpisodeInfoUseCase(
     }
 
     private fun bv(id: String): Flow<EpisodeCacheListState> {
-        return flow {
-            val detail = BilibiliApi.getVideoInfoDetail(id)
+        val detailFlow = flowFromSuspend {
+            BilibiliApi.getVideoInfoDetail(id)
+        }
+
+        return detailFlow.combine(mediaCacheStorage.listFlow) { detail, cachedItemsList ->
             val (videoStream, audioStream) = fetchMediaStreams(detail.bvid, detail.cid)
 
             val cachedItemsByCid = mediaCacheStorage.listFlow.first()
@@ -44,13 +48,12 @@ class GetEpisodeInfoUseCase(
                 }
                 EpisodeCacheState(cid, page.part, cacheStatus)
             }
-            val listState = EpisodeCacheListState(
+            EpisodeCacheListState(
                 episodeInfo = detail.toEpisodeInfo(),
                 episodes = states,
                 videoStreams = videoStream,
                 audioStreams = audioStream
             )
-            emit(listState)
         }
     }
 
@@ -86,7 +89,7 @@ class GetEpisodeInfoUseCase(
         return videoStreams to audioStreams
     }
 
-    private fun BiliVideoData.toEpisodeInfo(): EpisodeInfo2 { // Assuming EpisodeInfo is the final name
+    private fun BiliVideoData.toEpisodeInfo(): EpisodeInfo2 {
         return EpisodeInfo2(
             episodeId = bvid,
             episodeSubId = cid,
