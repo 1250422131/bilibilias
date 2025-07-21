@@ -24,6 +24,11 @@ dependencyResolutionManagement {
         }
         mavenCentral()
     }
+    versionCatalogs {
+        create("mediampLibs") {
+            from("org.openani.mediamp:catalog:0.0.29")
+        }
+    }
 }
 
 plugins {

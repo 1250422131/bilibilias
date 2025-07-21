@@ -20,9 +20,6 @@ dependencyResolutionManagement {
         create("libs") {
             from(files("../gradle/libs.versions.toml"))
         }
-        create("mediamp") {
-            from("org.openani.mediamp:catalog:0.0.29")
-        }
     }
 }
 
