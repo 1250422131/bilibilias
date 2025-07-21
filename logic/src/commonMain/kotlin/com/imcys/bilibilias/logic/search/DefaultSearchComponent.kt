@@ -58,7 +58,7 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                episodeInfoUseCase.create(query).asResult().map { result ->
+                episodeInfoUseCase(query).asResult().map { result ->
                     when (result) {
                         is Success -> {
                             val data = result.data
