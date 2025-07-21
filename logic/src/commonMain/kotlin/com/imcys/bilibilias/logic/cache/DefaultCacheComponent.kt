@@ -32,6 +32,7 @@ class DefaultCacheComponent(
     override fun deleteEpisodeCache(state: CacheEpisodeState) {
         scope.launch {
             try {
+                // todo 下载记录也要删除
                 Logger.d { "Attempting to delete media cache metadata for episode: ${state.episodeMetadata}" }
                 val metadataSuccess = state.mediaCacheMetadata.delete()
                 if (metadataSuccess) {
