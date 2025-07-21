@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -63,12 +64,12 @@ fun CaCheContent(
                 val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
                         when (it) {
-                            SwipeToDismissBoxValue.StartToEnd -> {
+                            SwipeToDismissBoxValue.EndToStart -> {
                                 onDelete(item)
                                 true
                             }
 
-                            SwipeToDismissBoxValue.EndToStart -> true
+                            SwipeToDismissBoxValue.StartToEnd -> true
                             SwipeToDismissBoxValue.Settled -> true
                         }
                     },
@@ -77,52 +78,7 @@ fun CaCheContent(
                 SwipeToDismissBox(
                     state = swipeToDismissBoxState,
                     backgroundContent = {
-                        // Cross-fade the background color as the drag gesture progresses.
-                        val color by animateColorAsState(
-                            when (swipeToDismissBoxState.targetValue) {
-                                SwipeToDismissBoxValue.Settled -> Color.Transparent
-                                SwipeToDismissBoxValue.StartToEnd ->
-                                    lerp(
-                                        Color.LightGray,
-                                        Color.Blue,
-                                        swipeToDismissBoxState.progress
-                                    )
-
-                                SwipeToDismissBoxValue.EndToStart ->
-                                    lerp(
-                                        Color.LightGray,
-                                        Color.Red,
-                                        swipeToDismissBoxState.progress
-                                    )
-                            },
-                            label = "swipeable card item background color"
-                        )
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clip(RoundedCornerShape(12.0.dp))
-                                .background(color)
-                                .fillMaxSize(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            when (swipeToDismissBoxState.dismissDirection) {
-                                SwipeToDismissBoxValue.EndToStart -> {
-                                    Spacer(modifier = Modifier)
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Remove item",
-                                        tint = Color.White,
-                                        modifier = Modifier
-                                            .padding(12.dp)
-                                    )
-                                }
-
-                                SwipeToDismissBoxValue.StartToEnd,
-                                SwipeToDismissBoxValue.Settled -> {
-                                }
-                            }
-                        }
+                        swipeToDismissBoxState.SwipeDismissBackground()
                     },
                     modifier = Modifier,
                     enableDismissFromStartToEnd = false,
@@ -132,6 +88,56 @@ fun CaCheContent(
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SwipeToDismissBoxState.SwipeDismissBackground() {
+    // Cross-fade the background color as the drag gesture progresses.
+    val color by animateColorAsState(
+        when (targetValue) {
+            SwipeToDismissBoxValue.Settled -> Color.LightGray
+            SwipeToDismissBoxValue.StartToEnd ->
+                lerp(
+                    Color.LightGray,
+                    Color.Blue,
+                    progress
+                )
+
+            SwipeToDismissBoxValue.EndToStart ->
+                lerp(
+                    Color.LightGray,
+                    Color.Red,
+                    progress
+                )
+        },
+        label = "swipeable card item background color"
+    )
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+            .clip(RoundedCornerShape(12.0.dp))
+            .background(color)
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        when (dismissDirection) {
+            SwipeToDismissBoxValue.EndToStart -> {
+                Spacer(modifier = Modifier)
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Remove item",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .padding(12.dp)
+                )
+            }
+
+            SwipeToDismissBoxValue.StartToEnd,
+            SwipeToDismissBoxValue.Settled -> {
             }
         }
     }
