@@ -83,6 +83,7 @@ fun EpisodeListGroup(
                         Int.MAX_VALUE
                     )
                 )
+                onDismiss()
             }
         }
     }
