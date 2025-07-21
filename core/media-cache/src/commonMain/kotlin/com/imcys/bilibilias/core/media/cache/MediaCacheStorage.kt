@@ -10,6 +10,8 @@ interface MediaCacheStorage : AutoCloseable {
         metadata: MediaCacheMetadata,
         resume: Boolean = false,
     )
+
+    suspend fun delete(episodeMetadata: EpisodeMetadata): Boolean
 }
 
 @Serializable

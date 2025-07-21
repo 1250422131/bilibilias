@@ -24,15 +24,32 @@ class DataStoreMediaCacheStorage(
         metadata: MediaCacheMetadata,
         resume: Boolean
     ) {
-        logger.i { "Creating cache for ${episodeMetadata.bvid}-${episodeMetadata.cid}" }
-        logger.i { "Cache metadata: $metadata" }
+        logger.i { "Caching ${episodeMetadata.bvid}-${episodeMetadata.cid}" }
 
         store.updateData { list ->
             list + MediaCacheSave(episodeMetadata, metadata)
         }
     }
 
-    private fun isSameMediaAndEpisode(
+    override suspend fun delete(episodeMetadata: EpisodeMetadata): Boolean {
+        var deleted = false
+        val key = "${episodeMetadata.bvid}-${episodeMetadata.cid}" // For logging
+        logger.d { "Attempting to delete $key" }
+        store.updateData { list ->
+            val originalSize = list.size
+            val newList = list.filterNot { isSameEpisode(it, episodeMetadata) }
+            deleted = newList.size < originalSize
+            if (deleted) {
+                logger.i { "Deleted $key from cache" } // Info if successful
+            } else {
+                logger.d { "$key not found in cache for deletion" }
+            }
+            newList
+        }
+        return deleted
+    }
+
+    private fun isSameEpisode(
         cache: MediaCacheSave,
         episodeMetadata: EpisodeMetadata
     ): Boolean {
