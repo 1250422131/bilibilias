@@ -6,9 +6,15 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.logic.cache.DefaultCacheComponent
 import com.imcys.bilibilias.logic.login.DefaultLoginComponent
+import com.imcys.bilibilias.logic.player.DefaultPlayerComponent
+import com.imcys.bilibilias.logic.root.RootComponent.Child.CacheChild
+import com.imcys.bilibilias.logic.root.RootComponent.Child.LoginChild
+import com.imcys.bilibilias.logic.root.RootComponent.Child.PlayerChild
+import com.imcys.bilibilias.logic.root.RootComponent.Child.SearchChild
 import com.imcys.bilibilias.logic.search.DefaultSearchComponent
 import kotlinx.serialization.Serializable
 
@@ -29,10 +35,15 @@ class DefaultRootComponent(
 
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
         when (config) {
-            Config.Search -> RootComponent.Child.SearchChild(DefaultSearchComponent(componentContext))
-            Config.Cache -> RootComponent.Child.CacheChild(DefaultCacheComponent(componentContext))
-            Config.Login -> RootComponent.Child.LoginChild(DefaultLoginComponent(componentContext))
+            Config.Search -> SearchChild(DefaultSearchComponent(componentContext))
+            Config.Cache -> CacheChild(DefaultCacheComponent(componentContext))
+            Config.Login -> LoginChild(DefaultLoginComponent(componentContext))
+            Config.Player -> PlayerChild(DefaultPlayerComponent(componentContext))
         }
+
+    override fun onPlayerClicked() {
+        nav.pushNew(Config.Player)
+    }
 
     override fun onBackClicked() {
         nav.pop()
@@ -60,5 +71,8 @@ class DefaultRootComponent(
 
         @Serializable
         data object Login : Config
+
+        @Serializable
+        data object Player : Config
     }
 }
