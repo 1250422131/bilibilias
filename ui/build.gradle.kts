@@ -5,6 +5,9 @@ plugins {
 
 kotlin {
     sourceSets {
+        androidMain.dependencies {
+            implementation(mediampLibs.mediamp.exoplayer)
+        }
         commonMain.dependencies {
             implementation(projects.logic)
 
@@ -24,6 +27,8 @@ kotlin {
             implementation(libs.compose.material3.adaptive)
 
             implementation(libs.qr.kit)
+
+            implementation(mediampLibs.mediamp.api)
         }
     }
 }
