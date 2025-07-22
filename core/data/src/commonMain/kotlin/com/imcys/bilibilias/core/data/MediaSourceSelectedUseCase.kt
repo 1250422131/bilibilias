@@ -23,11 +23,7 @@ class MediaSourceSelectedUseCase {
             owner = Owner(detail.owner.mid, detail.owner.face, detail.owner.name),
             parts = emptyList(),
             video = playUrl.dash.video.mediaSelect { list ->
-                list.filter {
-                    it.id == request.videoResolution
-                }.maxBy {
-                    it.codecid
-                }
+                list.maxByOrNull { it.id } ?: list.maxBy { it.codecid }
             },
             audio = playUrl.dash.audio.mediaSelect { list ->
                 list.maxByOrNull { request.audioResolution } ?: list.maxBy { it.id }
