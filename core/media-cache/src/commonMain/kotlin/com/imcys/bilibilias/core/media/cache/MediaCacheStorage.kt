@@ -5,13 +5,15 @@ import kotlinx.serialization.Serializable
 
 interface MediaCacheStorage : AutoCloseable {
     val listFlow: Flow<List<MediaCacheSave>>
-    suspend fun cache(
-        episodeMetadata: EpisodeMetadata,
-        metadata: MediaCacheMetadata,
-        resume: Boolean = false,
-    )
 
     suspend fun delete(episodeMetadata: EpisodeMetadata): Boolean
+
+    suspend fun cacheEpisodeMetadata(episodeMetadata: EpisodeMetadata)
+
+    suspend fun updateMediaCacheMetadata(
+        targetEpisodeKey: EpisodeMetadata,
+        newPartMetadata: MediaCachePartMetadata
+    )
 }
 
 @Serializable

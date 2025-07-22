@@ -19,15 +19,29 @@ class DataStoreMediaCacheStorage(
     override val listFlow = store.data
     private val logger = Logger.withTag("DataStoreMediaCacheStorage")
 
-    override suspend fun cache(
-        episodeMetadata: EpisodeMetadata,
-        metadata: MediaCacheMetadata,
-        resume: Boolean
-    ) {
-        logger.i { "Caching ${episodeMetadata.bvid}-${episodeMetadata.cid}" }
-
+    override suspend fun cacheEpisodeMetadata(episodeMetadata: EpisodeMetadata) {
         store.updateData { list ->
-            list + MediaCacheSave(episodeMetadata, metadata)
+            list + MediaCacheSave(episodeMetadata, MediaCacheMetadata(emptyList()))
+        }
+    }
+
+    override suspend fun updateMediaCacheMetadata(
+        targetEpisodeKey: EpisodeMetadata,
+        newPartMetadata: MediaCachePartMetadata
+    ) {
+        store.updateData { currentList ->
+            currentList.map { episode ->
+                if (isSameEpisode(episode, targetEpisodeKey)) {
+                    // This is the episode we want to update
+                    val updatedPartMetadataList = episode.metadata.metadata + newPartMetadata
+                    val updatedEpisodeMetadata =
+                        episode.metadata.copy(metadata = updatedPartMetadataList)
+                    episode.copy(metadata = updatedEpisodeMetadata)
+                } else {
+                    // This is not the episode we're looking for, return it as is
+                    episode
+                }
+            }
         }
     }
 
