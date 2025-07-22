@@ -13,10 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
-import com.arkivanov.decompose.extensions.compose.stack.animation.scale
+import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.imcys.bilibilias.logic.root.RootComponent
@@ -94,7 +92,7 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
         modifier = modifier,
         animation = predictiveBackAnimation(
             backHandler = component.backHandler,
-            fallbackAnimation = stackAnimation(fade() + scale()),
+            fallbackAnimation = stackAnimation(slide()),
             onBack = component::onBackClicked,
         ),
     ) {
