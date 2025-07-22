@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.logic.search
 
-import co.touchlab.kermit.Logger
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
@@ -20,12 +19,9 @@ import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.utils.scope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -45,8 +41,6 @@ class DefaultSearchComponent(
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
-
-    private var episodeId: String? = null
 
     init {
         scope.launch {
@@ -97,50 +91,29 @@ class DefaultSearchComponent(
         searchQuery.value = query
     }
 
-    override fun downloadItem(qn: Int, bvid: String, cid: Long) {
-
-    }
-
-    private val test = Channel<EpisodeCacheRequest> {}
-
-    init {
-        scope.launch {
-            test.consumeAsFlow().distinctUntilChangedBy { it.episodeSubId }
-                .collect {
-                    val episodeInfo = mediaSourceSelectedUseCase(it)
-                    val videoDownloadState = download(episodeInfo.video.first().baseUrl)
-                    val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
-                    if (videoDownloadState != null && audioDownloadState != null) {
-                        mediaCacheStorage.cache(
-                            episodeInfo.asEpisodeMetadata(),
-                            mediaCacheMetadata(
-                                MediaCachePartMetadata(videoDownloadState.downloadId.value),
-                                MediaCachePartMetadata(audioDownloadState.downloadId.value)
-                            )
-                        )
-                    } else {
-
-                    }
-                }
-        }
-    }
-
-    override fun requestCache(request: EpisodeCacheRequest) {
-        TODO("Not yet implemented")
-    }
-
     override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
         if (episode.actionTasker.isRunning) return
         episode.actionTasker.launch {
+            val episodeInfo = mediaSourceSelectedUseCase(request)
+            val videoDownloadState = download(episodeInfo.video.first().baseUrl)
+            val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
+            if (videoDownloadState != null && audioDownloadState != null) {
+                mediaCacheStorage.cache(
+                    episodeInfo.asEpisodeMetadata(),
+                    mediaCacheMetadata(
+                        MediaCachePartMetadata(videoDownloadState.downloadId.value),
+                        MediaCachePartMetadata(audioDownloadState.downloadId.value)
+                    )
+                )
+            } else {
 
+            }
         }
-        test.trySend(request)
     }
 
     @OptIn(ExperimentalUuidApi::class)
     private suspend fun download(downloadUrl: String): DownloadState? {
         val downloadId = DownloadId(Uuid.random().toString())
-        Logger.i { "Creating download recorder - URL: $downloadUrl, ID: $downloadId" }
         val downloadState = httpDownloader.downloadWithId(downloadId, downloadUrl)
         return downloadState
     }

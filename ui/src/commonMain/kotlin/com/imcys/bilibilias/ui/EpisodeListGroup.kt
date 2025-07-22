@@ -52,16 +52,17 @@ fun EpisodeListGroup(
     episodes: List<EpisodeCacheState>,
     mediaStreams: List<MediaStream>,
     onDismiss: () -> Unit,
-    onRequestCache: (EpisodeCacheRequest) -> Unit = { },
+    onRequestCache: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit = { _, _ -> },
 ) {
     var showMediaResolutionSelector by remember { mutableStateOf(false) }
     var currentResolution by remember { mutableStateOf(mediaStreams.first()) }
-    val requestCache: (episodeId: String, episodeSubId: Long) -> Unit = { episodeId, episodeSubId ->
+    val requestCache: (episode: EpisodeCacheState) -> Unit = { episodeCacheState ->
         onRequestCache(
+            episodeCacheState,
             EpisodeCacheRequest(
-                episodeId = episodeId,
-                episodeSubId = episodeSubId,
-                videoResolution = currentResolution.id,
+                episodeId = episodeCacheState.episodeId,
+                episodeSubId = episodeCacheState.episodeSubId,
+                videoResolution = Int.MAX_VALUE,
                 audioResolution = Int.MAX_VALUE
             )
         )
@@ -87,7 +88,7 @@ fun EpisodeListGroup(
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
             }
             EpisodeList(episodes) {
-
+                requestCache(it)
             }
         }
     }

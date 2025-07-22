@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.data.model
 
+@Deprecated("Use EpisodeCacheState")
 data class EpisodeCacheRequest(
     val episodeId: String,
     val episodeSubId: Long,

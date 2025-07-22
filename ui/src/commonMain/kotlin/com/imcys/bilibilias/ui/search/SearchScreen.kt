@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
+import com.imcys.bilibilias.core.data.model.EpisodeCacheState
 import com.imcys.bilibilias.core.data.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
@@ -82,7 +83,7 @@ fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
     onSearchQueryChanged: (String) -> Unit,
-    onCacheRequest: (EpisodeCacheRequest) -> Unit,
+    onCacheRequest: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
 ) {
@@ -102,7 +103,6 @@ fun SearchContent(
             )
         }
     ) { innerPadding ->
-        var showEpisodeListGroup by rememberSaveable { mutableStateOf(false) }
         Column(modifier = Modifier.padding(innerPadding)) {
             SearchTextField(
                 searchQuery = searchQuery,
@@ -129,6 +129,7 @@ fun SearchContent(
                 }
 
                 is SearchResultUiState.Success -> {
+                    var showEpisodeListGroup by rememberSaveable { mutableStateOf(false) }
                     val keyboardController = LocalSoftwareKeyboardController.current
                     LaunchedEffect(searchResultUiState) {
                         keyboardController?.hide()
