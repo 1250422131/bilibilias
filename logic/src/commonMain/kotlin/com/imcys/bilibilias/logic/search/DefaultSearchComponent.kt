@@ -8,6 +8,7 @@ import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
+import com.imcys.bilibilias.core.data.model.EpisodeCacheState
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
@@ -19,9 +20,12 @@ import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.utils.scope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -52,7 +56,6 @@ class DefaultSearchComponent(
 
     override val searchQuery = MutableStateFlow(persistentState.searchQuery)
 
-
     override val searchResultUiState: StateFlow<SearchResultUiState> =
         searchQuery.flatMapLatest { query ->
             if (query.isEmpty()) {
@@ -63,8 +66,11 @@ class DefaultSearchComponent(
                         is Success -> {
                             val data = result.data
                             if (data != null) {
-                                episodeId = data.episodeInfo.episodeId
-                                SearchResultUiState.Success(data)
+                                SearchResultUiState.Success(
+                                    episodeCacheListState = data,
+                                    episodeInfo = data.episodeInfo,
+                                    episodes = data.episodes
+                                )
                             } else {
                                 SearchResultUiState.Error("No data")
                             }
@@ -95,23 +101,40 @@ class DefaultSearchComponent(
 
     }
 
-    override fun requestCache(request: EpisodeCacheRequest) {
-        scope.launch {
-            val episodeInfo = mediaSourceSelectedUseCase(episodeId!!, request)
-            val videoDownloadState = download(episodeInfo.video.first().baseUrl)
-            val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
-            if (videoDownloadState != null && audioDownloadState != null) {
-                mediaCacheStorage.cache(
-                    episodeInfo.asEpisodeMetadata(),
-                    mediaCacheMetadata(
-                        MediaCachePartMetadata(videoDownloadState.downloadId.value),
-                        MediaCachePartMetadata(audioDownloadState.downloadId.value)
-                    )
-                )
-            } else {
+    private val test = Channel<EpisodeCacheRequest> {}
 
-            }
+    init {
+        scope.launch {
+            test.consumeAsFlow().distinctUntilChangedBy { it.episodeSubId }
+                .collect {
+                    val episodeInfo = mediaSourceSelectedUseCase(it)
+                    val videoDownloadState = download(episodeInfo.video.first().baseUrl)
+                    val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
+                    if (videoDownloadState != null && audioDownloadState != null) {
+                        mediaCacheStorage.cache(
+                            episodeInfo.asEpisodeMetadata(),
+                            mediaCacheMetadata(
+                                MediaCachePartMetadata(videoDownloadState.downloadId.value),
+                                MediaCachePartMetadata(audioDownloadState.downloadId.value)
+                            )
+                        )
+                    } else {
+
+                    }
+                }
         }
+    }
+
+    override fun requestCache(request: EpisodeCacheRequest) {
+        TODO("Not yet implemented")
+    }
+
+    override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
+        if (episode.actionTasker.isRunning) return
+        episode.actionTasker.launch {
+
+        }
+        test.trySend(request)
     }
 
     @OptIn(ExperimentalUuidApi::class)

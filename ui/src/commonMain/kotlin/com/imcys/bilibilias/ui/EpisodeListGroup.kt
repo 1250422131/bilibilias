@@ -56,6 +56,17 @@ fun EpisodeListGroup(
 ) {
     var showMediaResolutionSelector by remember { mutableStateOf(false) }
     var currentResolution by remember { mutableStateOf(mediaStreams.first()) }
+    val requestCache: (episodeId: String, episodeSubId: Long) -> Unit = { episodeId, episodeSubId ->
+        onRequestCache(
+            EpisodeCacheRequest(
+                episodeId = episodeId,
+                episodeSubId = episodeSubId,
+                videoResolution = currentResolution.id,
+                audioResolution = Int.MAX_VALUE
+            )
+        )
+        onDismiss()
+    }
     AsModalBottomSheet(
         visible,
         onDismiss = onDismiss,
@@ -75,15 +86,8 @@ fun EpisodeListGroup(
                 Text(currentResolution.description)
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
             }
-            EpisodeList(episodes) { episodeSubId ->
-                onRequestCache(
-                    EpisodeCacheRequest(
-                        episodeSubId,
-                        currentResolution.id,
-                        Int.MAX_VALUE
-                    )
-                )
-                onDismiss()
+            EpisodeList(episodes) {
+
             }
         }
     }
@@ -100,14 +104,14 @@ fun EpisodeListGroup(
 @Composable
 private fun EpisodeList(
     episodes: List<EpisodeCacheState>,
-    onSelectedEpisode: (Long) -> Unit
+    onSelectedEpisode: (EpisodeCacheState) -> Unit
 ) {
     val listState = rememberLazyListState()
     Box(modifier = Modifier.fillMaxHeight(0.7f)) {
         LazyColumn(state = listState) {
             items(episodes, key = { it.episodeSubId }) { item ->
                 EpisodeItem(item) {
-                    onSelectedEpisode(item.episodeSubId)
+                    onSelectedEpisode(item)
                 }
             }
         }

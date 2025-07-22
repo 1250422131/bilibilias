@@ -59,7 +59,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun SearchScreen(component: SearchComponent, navigationToLogin: () -> Unit) {
+fun SearchScreen(
+    component: SearchComponent,
+    navigationToLogin: () -> Unit,
+    navigationToPlayer: () -> Unit,
+) {
     val searchQuery by component.searchQuery.collectAsState()
     val searchResultUiState by component.searchResultUiState.collectAsState()
     SearchContent(
@@ -68,6 +72,7 @@ fun SearchScreen(component: SearchComponent, navigationToLogin: () -> Unit) {
         onSearchQueryChanged = component::onSearchQueryChanged,
         onCacheRequest = component::requestCache,
         navigationToLogin = navigationToLogin,
+        navigationToPlayer = navigationToPlayer
     )
 }
 
@@ -79,6 +84,7 @@ fun SearchContent(
     onSearchQueryChanged: (String) -> Unit,
     onCacheRequest: (EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
+    navigationToPlayer: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -130,7 +136,10 @@ fun SearchContent(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        EpisodeInfoCard(searchResultUiState.episodeCacheListState.episodeInfo)
+                        EpisodeInfoCard(
+                            searchResultUiState.episodeCacheListState.episodeInfo,
+                            navigationToPlayer
+                        )
                         Button(
                             { showEpisodeListGroup = true },
                             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -139,7 +148,7 @@ fun SearchContent(
                         }
                         EpisodeListGroup(
                             showEpisodeListGroup,
-                            searchResultUiState.episodeCacheListState.episodes,
+                            searchResultUiState.episodes,
                             searchResultUiState.episodeCacheListState.videoStreams,
                             onDismiss = { showEpisodeListGroup = false },
                             onRequestCache = { onCacheRequest(it) }
@@ -152,7 +161,7 @@ fun SearchContent(
 }
 
 @Composable
-private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2) {
+private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2, navigationToPlayer: () -> Unit) {
     OutlinedCard(modifier = Modifier.padding(8.dp)) {
         Row {
             Box(modifier = Modifier.weight(3f)) {
@@ -171,7 +180,7 @@ private fun EpisodeInfoCard(episodeInfo: EpisodeInfo2) {
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
                 TextButton(
-                    { episodeInfo.episodeId },
+                    { navigationToPlayer() },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("看视频")
