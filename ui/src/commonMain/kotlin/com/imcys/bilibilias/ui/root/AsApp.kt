@@ -102,8 +102,9 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
         ) {
             when (val child = it.instance) {
                 is RootComponent.Child.SearchChild -> SearchScreen(
-                    child.component,
-                    component::onLoginClicked
+                    component = child.component,
+                    navigationToLogin = component::onLoginClicked,
+                    navigationToPlayer = component::onPlayerClicked
                 )
 
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
