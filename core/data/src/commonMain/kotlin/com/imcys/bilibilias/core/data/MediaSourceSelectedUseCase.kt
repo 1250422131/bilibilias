@@ -7,13 +7,13 @@ import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.model.Owner
 import com.imcys.bilibilias.core.model.StreamData
 
+// TODO: 可以并行 
 class MediaSourceSelectedUseCase {
     suspend operator fun invoke(
-        episodeId: String,
         request: EpisodeCacheRequest
     ): EpisodeInfo {
-        val detail = BilibiliApi.getVideoInfoDetail(episodeId)
-        val playUrl = BilibiliApi.getPlayUrl(detail.bvid, detail.cid)
+        val detail = BilibiliApi.getVideoInfoDetail(request.episodeId)
+        val playUrl = BilibiliApi.getPlayUrl(request.episodeId, request.episodeSubId)
         return EpisodeInfo(
             bvid = detail.bvid,
             cid = detail.cid,
