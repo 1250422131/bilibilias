@@ -64,6 +64,7 @@ fun SearchScreen(
     component: SearchComponent,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
+    navigationToSettings: () -> Unit,
 ) {
     val searchQuery by component.searchQuery.collectAsState()
     val searchResultUiState by component.searchResultUiState.collectAsState()
@@ -73,7 +74,8 @@ fun SearchScreen(
         onSearchQueryChanged = component::onSearchQueryChanged,
         onCacheRequest = component::requestCache,
         navigationToLogin = navigationToLogin,
-        navigationToPlayer = navigationToPlayer
+        navigationToPlayer = navigationToPlayer,
+        navigationToSettings = navigationToSettings,
     )
 }
 
@@ -86,13 +88,14 @@ fun SearchContent(
     onCacheRequest: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
     navigationToPlayer: () -> Unit,
+    navigationToSettings: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 actions = {
-                    IconButton({}) {
+                    IconButton(navigationToSettings) {
                         Icon(Icons.Rounded.Settings, "Settings")
                     }
                     OutlinedButton(navigationToLogin) {

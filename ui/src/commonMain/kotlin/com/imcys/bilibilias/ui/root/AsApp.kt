@@ -105,7 +105,8 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
                 is RootComponent.Child.SearchChild -> SearchScreen(
                     component = child.component,
                     navigationToLogin = component::onLoginClicked,
-                    navigationToPlayer = component::onPlayerClicked
+                    navigationToPlayer = component::onPlayerClicked,
+                    navigationToSettings = component::onSettingsClicked
                 )
 
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
