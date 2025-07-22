@@ -152,7 +152,9 @@ fun SearchContent(
                             searchResultUiState.episodes,
                             searchResultUiState.episodeCacheListState.videoStreams,
                             onDismiss = { showEpisodeListGroup = false },
-                            onRequestCache = { onCacheRequest(it) }
+                            onRequestCache = { episode, request ->
+                                onCacheRequest(episode, request)
+                            }
                         )
                     }
                 }
