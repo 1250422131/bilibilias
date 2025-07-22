@@ -7,6 +7,7 @@ import com.imcys.bilibilias.logic.cache.CacheComponent
 import com.imcys.bilibilias.logic.login.LoginComponent
 import com.imcys.bilibilias.logic.player.PlayerComponent
 import com.imcys.bilibilias.logic.search.SearchComponent
+import com.imcys.bilibilias.logic.setting.SettingsComponent
 
 interface RootComponent : BackHandlerOwner {
 
@@ -15,6 +16,7 @@ interface RootComponent : BackHandlerOwner {
     fun onCacheClicked()
     fun onLoginClicked()
     fun onPlayerClicked()
+    fun onSettingsClicked()
     fun onBackClicked()
 
     sealed class Child {
@@ -22,5 +24,6 @@ interface RootComponent : BackHandlerOwner {
         data class CacheChild(val component: CacheComponent) : Child()
         data class LoginChild(val component: LoginComponent) : Child()
         data class PlayerChild(val component: PlayerComponent) : Child()
+        data class SettingsChild(val component: SettingsComponent) : Child()
     }
 }

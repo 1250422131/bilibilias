@@ -15,7 +15,9 @@ import com.imcys.bilibilias.logic.root.RootComponent.Child.CacheChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.LoginChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.PlayerChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.SearchChild
+import com.imcys.bilibilias.logic.root.RootComponent.Child.SettingsChild
 import com.imcys.bilibilias.logic.search.DefaultSearchComponent
+import com.imcys.bilibilias.logic.setting.DefaultSettingsComponent
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent(
@@ -39,7 +41,12 @@ class DefaultRootComponent(
             Config.Cache -> CacheChild(DefaultCacheComponent(componentContext))
             Config.Login -> LoginChild(DefaultLoginComponent(componentContext))
             Config.Player -> PlayerChild(DefaultPlayerComponent(componentContext))
+            Config.Settings -> SettingsChild(DefaultSettingsComponent(componentContext))
         }
+
+    override fun onSettingsClicked() {
+        nav.pushNew(Config.Settings)
+    }
 
     override fun onPlayerClicked() {
         nav.pushNew(Config.Player)
@@ -74,5 +81,8 @@ class DefaultRootComponent(
 
         @Serializable
         data object Player : Config
+
+        @Serializable
+        data object Settings : Config
     }
 }

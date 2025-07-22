@@ -28,6 +28,7 @@ import com.imcys.bilibilias.ui.login.LoginScreen
 import com.imcys.bilibilias.ui.navigation.TopLevelDestination
 import com.imcys.bilibilias.ui.player.PlayerScreen
 import com.imcys.bilibilias.ui.search.SearchScreen
+import com.imcys.bilibilias.ui.setting.SettingsScreen
 import com.imcys.bilibilias.ui.theme.AsTheme
 import com.imcys.bilibilias.ui.theme.GradientColors
 import com.imcys.bilibilias.ui.theme.LocalGradientColors
@@ -110,6 +111,7 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
                 is RootComponent.Child.LoginChild -> LoginScreen(child.component)
                 is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)
+                is RootComponent.Child.SettingsChild -> SettingsScreen(child.component)
             }
         }
     }
