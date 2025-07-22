@@ -2,7 +2,9 @@ package com.imcys.bilibilias.ui.player
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,15 +24,17 @@ fun PlayerScreen(component: PlayerComponent) {
 fun VideoSurface() {
     val player = rememberMediampPlayer()
     val scope = rememberCoroutineScope()
-    Column {
-        Button(onClick = {
-            scope.launch {
-                player.playUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4")
+    Scaffold { innerPadding ->
+        Column(Modifier.padding(innerPadding)) {
+            Button(onClick = {
+                scope.launch {
+                    player.playUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4")
+                }
+            }) {
+                Text("Play")
             }
-        }) {
-            Text("Play")
-        }
 
-        MediampPlayerSurface(player, Modifier.fillMaxSize())
+            MediampPlayerSurface(player, Modifier.fillMaxSize())
+        }
     }
 }
