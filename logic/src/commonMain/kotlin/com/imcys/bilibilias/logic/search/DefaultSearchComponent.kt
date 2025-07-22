@@ -12,7 +12,6 @@ import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCachePartMetadata
-import com.imcys.bilibilias.core.media.cache.mediaCacheMetadata
 import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
@@ -92,23 +91,32 @@ class DefaultSearchComponent(
     }
 
     override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
-        if (episode.actionTasker.isRunning) return
-        episode.actionTasker.launch {
+        scope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
-            val videoDownloadState = download(episodeInfo.video.first().baseUrl)
-            val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
-            if (videoDownloadState != null && audioDownloadState != null) {
-                mediaCacheStorage.cache(
-                    episodeInfo.asEpisodeMetadata(),
-                    mediaCacheMetadata(
-                        MediaCachePartMetadata(videoDownloadState.downloadId.value),
-                        MediaCachePartMetadata(audioDownloadState.downloadId.value)
-                    )
-                )
-            } else {
-
+            val metadata = episodeInfo.asEpisodeMetadata()
+            launch {
+                mediaCacheStorage.cacheEpisodeMetadata(metadata)
+            }
+            launch {
+                val videoDownloadState = download(episodeInfo.video.first().baseUrl)
+                if (videoDownloadState != null) {
+                    cachePartMetadata(metadata, videoDownloadState.downloadId)
+                }
+            }
+            launch {
+                val audioDownloadState = download(episodeInfo.audio.first().baseUrl)
+                if (audioDownloadState != null) {
+                    cachePartMetadata(metadata, audioDownloadState.downloadId)
+                }
             }
         }
+    }
+
+    suspend fun cachePartMetadata(metadata: EpisodeMetadata, downloadId: DownloadId) {
+        mediaCacheStorage.updateMediaCacheMetadata(
+            metadata,
+            MediaCachePartMetadata(downloadId.value)
+        )
     }
 
     @OptIn(ExperimentalUuidApi::class)
