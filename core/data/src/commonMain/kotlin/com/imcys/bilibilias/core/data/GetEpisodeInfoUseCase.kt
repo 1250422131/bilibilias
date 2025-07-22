@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.core.data
 
 import co.touchlab.kermit.Logger
+import com.imcys.bilibilias.core.coroutines.MonoTasker
 import com.imcys.bilibilias.core.data.TextExtraction.textExtract
 import com.imcys.bilibilias.core.data.model.EpisodeCacheListState
 import com.imcys.bilibilias.core.data.model.EpisodeCacheState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.supervisorScope
 
 class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheStorage
@@ -46,7 +48,16 @@ class GetEpisodeInfoUseCase(
                 } else {
                     EpisodeCacheStatus.NotCached
                 }
-                EpisodeCacheState(cid, page.part, cacheStatus)
+                supervisorScope {
+                    EpisodeCacheState(
+                        episodeId = detail.bvid,
+                        episodeSubId = cid,
+                        index = page.page,
+                        title = page.part,
+                        cacheStatus = cacheStatus,
+                        actionTasker = MonoTasker(this)
+                    )
+                }
             }
             EpisodeCacheListState(
                 episodeInfo = detail.toEpisodeInfo(),
@@ -91,8 +102,6 @@ class GetEpisodeInfoUseCase(
 
     private fun BiliVideoData.toEpisodeInfo(): EpisodeInfo2 {
         return EpisodeInfo2(
-            episodeId = bvid,
-            episodeSubId = cid,
             title = title,
             desc = desc,
             cover = pic
