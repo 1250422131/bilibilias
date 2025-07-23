@@ -29,6 +29,8 @@ kotlin {
             implementation(libs.qr.kit)
 
             implementation(mediampLibs.mediamp.api)
+
+            implementation("me.zhanghai.compose.preference:preference:2.1.0")
         }
     }
 }
