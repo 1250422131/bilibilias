@@ -14,8 +14,8 @@ import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
-import com.imcys.bilibilias.ui.LocalLifecycleOwner
 import com.imcys.bilibilias.ui.root.AsApp
+import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

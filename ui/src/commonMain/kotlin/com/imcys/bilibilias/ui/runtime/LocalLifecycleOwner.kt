@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui
+package com.imcys.bilibilias.ui.runtime
 
 import androidx.compose.runtime.compositionLocalOf
 import com.arkivanov.essenty.lifecycle.Lifecycle
