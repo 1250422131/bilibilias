@@ -1,11 +1,10 @@
 package com.imcys.bilibilias.logic.login
 
 import co.touchlab.kermit.Logger
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
-import com.imcys.bilibilias.logic.utils.scope
+import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
@@ -24,8 +23,8 @@ interface LoginComponent {
 }
 
 class DefaultLoginComponent(
-    componentContext: ComponentContext
-) : LoginComponent, ComponentContext by componentContext {
+    componentContext: AppComponentContext
+) : LoginComponent, AppComponentContext by componentContext {
     override val uiState = MutableStateFlow<LoginResultUiState>(LoginResultUiState.Loading)
     override val qrCodeUrl = MutableStateFlow("")
 
@@ -42,7 +41,7 @@ class DefaultLoginComponent(
     }
 
     private fun pollForLoginStatus(key: String) {
-        scope.launch(Dispatchers.IO) {
+        backgroundScope.launch(Dispatchers.IO) {
             try {
                 withTimeout(180.seconds) {
                     var loginSuccessful = false

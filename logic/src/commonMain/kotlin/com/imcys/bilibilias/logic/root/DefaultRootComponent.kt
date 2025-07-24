@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.logic.root
 
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.bringToFront
@@ -21,8 +20,8 @@ import com.imcys.bilibilias.logic.setting.DefaultSettingsComponent
 import kotlinx.serialization.Serializable
 
 class DefaultRootComponent(
-    componentContext: ComponentContext,
-) : RootComponent, ComponentContext by componentContext {
+    componentContext: AppComponentContext,
+) : RootComponent, AppComponentContext by componentContext {
 
     private val nav = StackNavigation<Config>()
 
@@ -35,7 +34,7 @@ class DefaultRootComponent(
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
 
-    private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child =
+    private fun child(config: Config, componentContext: AppComponentContext): RootComponent.Child =
         when (config) {
             Config.Search -> SearchChild(DefaultSearchComponent(componentContext))
             Config.Cache -> CacheChild(DefaultCacheComponent(componentContext))

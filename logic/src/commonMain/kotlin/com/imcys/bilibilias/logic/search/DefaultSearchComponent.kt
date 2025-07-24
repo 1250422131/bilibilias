@@ -1,6 +1,5 @@
 package com.imcys.bilibilias.logic.search
 
-import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.DataStoreProvider
@@ -17,7 +16,7 @@ import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
 import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
-import com.imcys.bilibilias.logic.utils.scope
+import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +30,8 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
-    componentContext: ComponentContext
-) : SearchComponent, ComponentContext by componentContext {
+    componentContext: AppComponentContext
+) : SearchComponent, AppComponentContext by componentContext {
     private val httpDownloader = DataStoreProvider.httpDownloader
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
     private val episodeInfoUseCase = GetEpisodeInfoUseCase(mediaCacheStorage)
@@ -42,7 +41,7 @@ class DefaultSearchComponent(
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
 
     init {
-        scope.launch {
+        backgroundScope.launch {
             httpDownloader.init()
         }
     }
@@ -78,7 +77,7 @@ class DefaultSearchComponent(
                 }
             }
         }.stateIn(
-            scope,
+            backgroundScope,
             SharingStarted.WhileSubscribed(5_000),
             SearchResultUiState.Loading
         )
@@ -91,7 +90,7 @@ class DefaultSearchComponent(
     }
 
     override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
-        scope.launch {
+        backgroundScope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
             val metadata = episodeInfo.asEpisodeMetadata()
             launch {

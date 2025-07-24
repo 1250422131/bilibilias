@@ -1,13 +1,13 @@
 package com.imcys.bilibilias.logic.player
 
-import com.arkivanov.decompose.ComponentContext
+import com.imcys.bilibilias.logic.root.AppComponentContext
 
 interface PlayerComponent {
 
 }
 
 class DefaultPlayerComponent(
-    componentContext: ComponentContext
-) : PlayerComponent, ComponentContext by componentContext {
+    componentContext: AppComponentContext
+) : PlayerComponent, AppComponentContext by componentContext {
 
 }

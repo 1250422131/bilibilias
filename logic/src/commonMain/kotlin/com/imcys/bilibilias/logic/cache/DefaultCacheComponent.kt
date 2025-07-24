@@ -1,11 +1,10 @@
 package com.imcys.bilibilias.logic.cache
 
 import co.touchlab.kermit.Logger
-import com.arkivanov.decompose.ComponentContext
 import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.data.MediaCacheManager
 import com.imcys.bilibilias.core.data.model.CacheEpisodeState
-import com.imcys.bilibilias.logic.utils.scope
+import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -18,19 +17,19 @@ interface CacheComponent {
 }
 
 class DefaultCacheComponent(
-    componentContext: ComponentContext
-) : CacheComponent, ComponentContext by componentContext {
+    componentContext: AppComponentContext
+) : CacheComponent, AppComponentContext by componentContext {
     private val httpDownloader = DataStoreProvider.httpDownloader
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
     override val stateFlow = MediaCacheManager.observeCachedEpisodeStates()
         .stateIn(
-            scope = scope,
+            scope = backgroundScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
     override fun deleteEpisodeCache(state: CacheEpisodeState) {
-        scope.launch {
+        backgroundScope.launch {
             try {
                 // todo 下载记录也要删除
                 Logger.d { "Attempting to delete media cache metadata for episode: ${state.episodeMetadata}" }
