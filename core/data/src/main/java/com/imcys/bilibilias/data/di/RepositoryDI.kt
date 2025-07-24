@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.data.di
 
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
+import com.imcys.bilibilias.data.repository.DownloadTaskRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
@@ -16,4 +17,5 @@ val repositoryModule = module {
     single { RiskManagementRepository(get(), get()) }
     single { UserInfoRepository(get(), get(),  get(), get()) }
     single { VideoInfoRepository(get(), get(),  get()) }
+    single { DownloadTaskRepository(get (),get (),get ()) }
 }

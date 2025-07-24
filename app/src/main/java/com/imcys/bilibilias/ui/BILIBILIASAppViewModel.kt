@@ -2,12 +2,15 @@ package com.imcys.bilibilias.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.source.UsersDataSource
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.AsCookiesStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +21,8 @@ class BILIBILIASAppViewModel(
     private val usersDataSource: UsersDataSource,
     private val userInfoRepository: UserInfoRepository,
     private val qrCodeLoginRepository: QRCodeLoginRepository,
-    private val asCookiesStorage: AsCookiesStorage
+    private val asCookiesStorage: AsCookiesStorage,
+    private val appSettingsRepository: AppSettingsRepository
 ) : ViewModel() {
 
     sealed class UIState {
@@ -27,6 +31,18 @@ class BILIBILIASAppViewModel(
             val isCheckLoading: Boolean = false,
             val newCurrentUser: BILIUsersEntity? = null
         ) : UIState() // 正在检测
+
+        data object KnowAboutApp : UIState()
+    }
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            appSettingsRepository.appSettingsFlow.collect {
+                if (it.knowAboutApp != AppSettings.KnowAboutApp.Know) {
+                    _uiState.value = UIState.KnowAboutApp
+                }
+            }
+        }
     }
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Default)
@@ -79,6 +95,15 @@ class BILIBILIASAppViewModel(
     fun updateUIState(uiState: UIState) {
         viewModelScope.launch {
             _uiState.emit(uiState)
+        }
+    }
+
+
+    fun onKnowAboutApp() {
+        viewModelScope.launch(Dispatchers.IO) {
+            appSettingsRepository.updateKnowAboutApp(AppSettings.KnowAboutApp.Know)
+            _uiState.value = UIState.Default
+
         }
     }
 }

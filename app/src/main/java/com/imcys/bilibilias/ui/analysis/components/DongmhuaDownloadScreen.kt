@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIDonghuaPlayerInfo
@@ -45,7 +46,7 @@ import kotlin.math.ceil
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DongmhuaDownloadScreen(
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     donghuaPlayerInfo: NetWorkResult<BILIDonghuaPlayerInfo?>,
     currentEpId: Long,
     donghuaViewInfo: NetWorkResult<BILIDonghuaSeasonInfo?>,
@@ -142,6 +143,7 @@ fun DongmhuaDownloadScreen(
                                             checked = info.seasonId == selectSeasonsId,
                                             onCheckedChange = {
                                                 if (it) {
+                                                    currentEpListIndex = 0
                                                     selectSeasonsId = info.seasonId
                                                     onSelectSeason(info.seasonId)
                                                 }
@@ -184,6 +186,7 @@ fun DongmhuaDownloadScreen(
                                 val episodeList = donghuaViewInfo.data?.episodes ?: emptyList()
                                 val startIndex = currentEpListIndex * 12
                                 val endIndex = minOf((currentEpListIndex + 1) * 12, episodeList.size)
+
                                 items(episodeList.subList(startIndex, endIndex)) {
                                     Surface(
                                         shape = CardDefaults.shape,

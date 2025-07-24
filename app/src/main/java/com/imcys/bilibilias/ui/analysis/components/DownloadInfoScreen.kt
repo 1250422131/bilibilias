@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
@@ -40,7 +41,7 @@ import kotlin.collections.forEach
 @Composable
 fun AudioQualitySelectScreen(
     modifier: Modifier,
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     audioList: List<BILIVideoDash.Audio>?,
     onAudioQualityChange: (Long?) -> Unit = {}
 ) {
@@ -113,7 +114,7 @@ fun AudioQualitySelectScreen(
 @Composable
 fun VideoSupportFormatsSelectScreen(
     modifier: Modifier,
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     mSupportFormats: List<BILIVideoSupportFormat>?,
     dashVideoList: List<BILIVideoDash.Video>?,
     durlVideoList: List<BILIVideoDurls>?,

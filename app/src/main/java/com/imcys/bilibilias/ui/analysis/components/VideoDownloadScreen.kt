@@ -32,11 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
-import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
 import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.weight.AsAutoError
@@ -45,7 +45,7 @@ import kotlin.math.ceil
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VideoDownloadScreen(
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     videoPlayerInfo: NetWorkResult<BILIVideoPlayerInfo?>,
     currentBvId: String,
     viewInfo: NetWorkResult<BILIVideoViewInfo?>,
@@ -124,6 +124,7 @@ fun VideoDownloadScreen(
                                         checked = info.id == selectSectionId,
                                         onCheckedChange = {
                                             if (it) {
+                                                currentSectionPageListIndex = 0
                                                 selectSectionId = info.id
                                             }
                                         },

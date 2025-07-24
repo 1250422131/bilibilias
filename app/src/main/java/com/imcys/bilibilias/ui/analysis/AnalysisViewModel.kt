@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.utils.AsRegexUtil
 import com.imcys.bilibilias.common.utils.TextType
+import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.data.repository.UserInfoRepository
 import com.imcys.bilibilias.data.repository.VideoInfoRepository
+import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.datastore.source.UsersDataSource
+import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
@@ -17,7 +20,6 @@ import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoDurls
 import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoSupportFormat
-import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,71 +33,10 @@ import kotlinx.coroutines.launch
 class AnalysisViewModel(
     usersDataSource: UsersDataSource,
     private val videoInfoRepository: VideoInfoRepository,
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
+    private val downloadManager: DownloadManager
 ) : ViewModel() {
 
-    data class DownloadViewInfo(
-        val selectVideoQualityId: Long? = null,
-        val selectVideoCode: String = "",
-        val selectAudioQualityId: Long? = null,
-        val selectedCid: Set<Long> = setOf(),
-        val selectedEpId: Set<Long> = setOf(),
-    ) {
-        fun toggleCid(cid: Long): DownloadViewInfo = copy(
-            selectedCid = if (selectedCid.contains(cid)) {
-                selectedCid - cid
-            } else {
-                selectedCid + cid
-            }
-        )
-
-        fun toggleEpId(epId: Long): DownloadViewInfo = copy(
-            selectedEpId = if (selectedEpId.contains(epId)) {
-                selectedEpId - epId
-            } else {
-                selectedEpId + epId
-            }
-        )
-
-        fun updateVideoQuality(qualityId: Long?, code: String): DownloadViewInfo = copy(
-            selectVideoQualityId = qualityId,
-            selectVideoCode = code
-        )
-
-        fun updateAudioQuality(qualityId: Long?): DownloadViewInfo = copy(
-            selectAudioQualityId = qualityId
-        )
-
-        /**
-         * 根据媒体类型智能更新配置，确保只保留相关选中项
-         */
-        fun updateForMediaType(
-            mediaType: ASLinkResultType,
-            qualityId: Long?,
-            code: String,
-            audioQualityId: Long?,
-            defaultCid: Long? = null,
-            defaultEpId: Long? = null
-        ): DownloadViewInfo = when (mediaType) {
-            is ASLinkResultType.BILI.Video -> copy(
-                selectVideoQualityId = qualityId,
-                selectVideoCode = code,
-                selectAudioQualityId = audioQualityId,
-                selectedCid = if (defaultCid != null) selectedCid + defaultCid else selectedCid,
-                selectedEpId = emptySet() // 清空番剧选择
-            )
-
-            is ASLinkResultType.BILI.Donghua -> copy(
-                selectVideoQualityId = qualityId,
-                selectVideoCode = code,
-                selectAudioQualityId = audioQualityId,
-                selectedEpId = if (defaultEpId != null) selectedEpId + defaultEpId else selectedEpId,
-                selectedCid = emptySet() // 清空视频选择
-            )
-
-            is ASLinkResultType.BILI.User -> this // 用户页面不需要下载配置
-        }
-    }
 
     data class UIState(
         val inputAsText: String = "",
@@ -212,14 +153,20 @@ class AnalysisViewModel(
         videoInfoRepository.getDonghuaSeasonViewInfo(seasonId = seasonId).collect {
             when (it.status) {
                 ApiStatus.SUCCESS -> {
+
+                    _uiState.value = _uiState.value.copy(
+                        asLinkResultType = ASLinkResultType.BILI.Donghua(
+                            (if (it.data?.episodes?.isEmpty() != true) it.data?.episodes[0]?.epId else
+                                if (it.data?.section?.isEmpty() != true) it.data?.section[0] else -1) as Long,
+                            it
+                        )
+                    )
+
                     asDonghuaPlayerInfo(it.data, it.data?.episodes?.firstOrNull()?.epId)
                 }
 
                 else -> {}
             }
-            _uiState.value = _uiState.value.copy(
-                asLinkResultType = ASLinkResultType.BILI.Donghua(-1, it)
-            )
         }
     }
 
@@ -240,35 +187,49 @@ class AnalysisViewModel(
         viewModelScope.launch {
             videoInfoRepository.getDonghuaPlayerInfo(epId, seasonId).collect {
                 _donghuaPlayerInfo.value = it
-                getDefaultDownloadInfoConfig(
-                    it.data?.dash?.video,
-                    it.data?.dash?.audio,
-                    it.data?.durls,
-                    it.data?.supportFormats
-                ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
-                    val defaultEpId = if (epId == null || epId == 0L) {
-                        viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
-                    } else epId
 
-                    val currentMediaType = _uiState.value.asLinkResultType
-                    if (currentMediaType is ASLinkResultType.BILI.Donghua) {
-                        _uiState.value = _uiState.value.copy(
-                            downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
-                                mediaType = currentMediaType,
-                                qualityId = selectVideoQualityId,
-                                code = selectVideoCode,
-                                audioQualityId = selectAudioQualityId,
-                                defaultEpId = defaultEpId
-                            ) ?: DownloadViewInfo(
-                                selectVideoCode = selectVideoCode,
-                                selectVideoQualityId = selectVideoQualityId,
-                                selectAudioQualityId = selectAudioQualityId,
-                                selectedEpId = setOf(defaultEpId)
+                if (it.status == ApiStatus.SUCCESS) {
+                    getDefaultDownloadInfoConfig(
+                        it.data?.dash?.video,
+                        it.data?.dash?.audio,
+                        it.data?.durls,
+                        it.data?.supportFormats
+                    ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
+                        val defaultEpId = if (epId == null || epId == 0L) {
+                            viewInfo?.episodes?.firstOrNull()?.epId ?: 0L
+                        } else epId
+
+                        val currentMediaType = _uiState.value.asLinkResultType
+                        if (currentMediaType is ASLinkResultType.BILI.Donghua) {
+                            _uiState.value = _uiState.value.copy(
+                                downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
+                                    mediaType = currentMediaType,
+                                    qualityId = selectVideoQualityId,
+                                    code = selectVideoCode,
+                                    audioQualityId = selectAudioQualityId,
+                                    defaultEpId = defaultEpId
+                                ) ?: DownloadViewInfo(
+                                    selectVideoCode = selectVideoCode,
+                                    selectVideoQualityId = selectVideoQualityId,
+                                    selectAudioQualityId = selectAudioQualityId,
+                                    selectedEpId = listOf(defaultEpId)
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
+            }
+        }
+    }
+
+    fun createDownloadTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (uiState.value.asLinkResultType != null && uiState.value.downloadInfo != null) {
+                downloadManager.addDownloadTask(
+                    uiState.value.asLinkResultType!!,
+                    uiState.value.downloadInfo!!
+                )
             }
         }
     }
@@ -319,7 +280,7 @@ class AnalysisViewModel(
         viewModelScope.launch {
             videoInfoRepository.getVideoPlayerInfo(cid, bvId, aid).collect {
 
-                when(it.status){
+                when (it.status) {
                     ApiStatus.SUCCESS -> {
                         // 杜比
                         it.data?.dash?.dolby?.audio?.let { dolbyList ->
@@ -333,36 +294,37 @@ class AnalysisViewModel(
                             it.data?.dash?.audio?.add(0, flac)
                         }
                     }
+
                     else -> {}
                 }
 
                 _videoPlayerInfo.value = it
-
-                getDefaultDownloadInfoConfig(
-                    it.data?.dash?.video,
-                    it.data?.dash?.audio,
-                    it.data?.durls,
-                    it.data?.supportFormats
-                ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
-                    val currentMediaType = _uiState.value.asLinkResultType
-                    if (currentMediaType is ASLinkResultType.BILI.Video) {
-                        _uiState.value = _uiState.value.copy(
-                            downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
-                                mediaType = currentMediaType,
-                                qualityId = selectVideoQualityId,
-                                code = selectVideoCode,
-                                audioQualityId = selectAudioQualityId,
-                                defaultCid = cid
-                            ) ?: DownloadViewInfo(
-                                selectVideoCode = selectVideoCode,
-                                selectVideoQualityId = selectVideoQualityId,
-                                selectAudioQualityId = selectAudioQualityId,
-                                selectedCid = setOf(cid)
+                if (it.status == ApiStatus.SUCCESS) {
+                    getDefaultDownloadInfoConfig(
+                        it.data?.dash?.video,
+                        it.data?.dash?.audio,
+                        it.data?.durls,
+                        it.data?.supportFormats
+                    ) { selectVideoQualityId, selectVideoCode, selectAudioQualityId ->
+                        val currentMediaType = _uiState.value.asLinkResultType
+                        if (currentMediaType is ASLinkResultType.BILI.Video) {
+                            _uiState.value = _uiState.value.copy(
+                                downloadInfo = _uiState.value.downloadInfo?.updateForMediaType(
+                                    mediaType = currentMediaType,
+                                    qualityId = selectVideoQualityId,
+                                    code = selectVideoCode,
+                                    audioQualityId = selectAudioQualityId,
+                                    defaultCid = cid
+                                ) ?: DownloadViewInfo(
+                                    selectVideoCode = selectVideoCode,
+                                    selectVideoQualityId = selectVideoQualityId,
+                                    selectAudioQualityId = selectAudioQualityId,
+                                    selectedCid = listOf(cid)
+                                )
                             )
-                        )
+                        }
                     }
                 }
-
             }
         }
     }
@@ -448,23 +410,12 @@ class AnalysisViewModel(
     fun clearAllSelections() {
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(
-                selectedCid = emptySet(),
-                selectedEpId = emptySet()
+                selectedCid = listOf(),
+                selectedEpId = listOf()
             )
         )
     }
 
-    fun updateVideoQuality(qualityId: Long?, code: String) {
-        _uiState.value = _uiState.value.copy(
-            downloadInfo = _uiState.value.downloadInfo?.updateVideoQuality(qualityId, code)
-        )
-    }
-
-    fun updateAudioQuality(qualityId: Long?) {
-        _uiState.value = _uiState.value.copy(
-            downloadInfo = _uiState.value.downloadInfo?.updateAudioQuality(qualityId)
-        )
-    }
 
     fun updateVideoCode(code: String) {
         _uiState.value = _uiState.value.copy(
@@ -481,6 +432,12 @@ class AnalysisViewModel(
     fun updateAudioQualityId(qualityId: Long?) {
         _uiState.value = _uiState.value.copy(
             downloadInfo = _uiState.value.downloadInfo?.copy(selectAudioQualityId = qualityId)
+        )
+    }
+
+    fun updateDownloadMode(downloadMode: DownloadMode) {
+        _uiState.value = _uiState.value.copy(
+            downloadInfo = _uiState.value.downloadInfo?.copy(downloadMode = downloadMode)
         )
     }
 }

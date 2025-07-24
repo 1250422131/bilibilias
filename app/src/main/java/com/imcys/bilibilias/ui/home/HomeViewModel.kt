@@ -7,6 +7,7 @@ import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.RiskManagementRepository
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
 import com.imcys.bilibilias.datastore.source.UsersDataSource
+import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.emptyNetWorkResult
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
     private val usersDataSource: UsersDataSource,
-    private val riskManagementRepository: RiskManagementRepository
+    private val riskManagementRepository: RiskManagementRepository,
+    private val downloadManager: DownloadManager
 ) : ViewModel() {
 
     data class UIState(
@@ -36,9 +38,17 @@ class HomeViewModel(
         MutableStateFlow<List<BILIUsersEntity>>(emptyList())
     val userLoginPlatformList = _userLoginPlatformList.asStateFlow()
 
+    val downloadListState =  downloadManager.getAllDownloadTasks()
 
     init {
         showBILIUserInfo()
+        initDownloadList()
+    }
+
+    private fun initDownloadList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            downloadManager.initDownloadList()
+        }
     }
 
     fun showBILIUserInfo() {
