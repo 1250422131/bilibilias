@@ -6,21 +6,25 @@ import com.arkivanov.decompose.ComponentContextFactory
 import com.arkivanov.decompose.GenericComponentContext
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.instancekeeper.InstanceKeeperOwner
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
-import com.arkivanov.essenty.lifecycle.subscribe
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
-import com.imcys.bilibilias.core.coroutines.AsDispatchers
+import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.coroutines.BackgroundScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 
-interface AppComponentContext : GenericComponentContext<AppComponentContext> {
+interface AppComponentContext : GenericComponentContext<AppComponentContext>, Lifecycle.Callbacks,
+    BackgroundScope {
+    val context: KmpContext
     val logger: Logger
-    val backgroundScope: CoroutineScope
     fun init()
 }
 
 class DefaultAppComponentContext(
     componentContext: ComponentContext,
+    override val context: KmpContext,
+    override val backgroundScope: CoroutineScope,
 ) : AppComponentContext,
     LifecycleOwner by componentContext,
     StateKeeperOwner by componentContext,
@@ -28,15 +32,18 @@ class DefaultAppComponentContext(
     BackHandlerOwner by componentContext {
 
     override val logger: Logger = Logger.withTag(this::class.simpleName!!)
-    override val backgroundScope: CoroutineScope = AsDispatchers.applicationScope
 
     init {
-        lifecycle.subscribe(
-            onCreate = ::init,
-            onDestroy = {
-                backgroundScope.cancel()
-            }
-        )
+        lifecycle.subscribe(this)
+    }
+
+    override fun onCreate() {
+        init()
+    }
+
+    override fun onDestroy() {
+        backgroundScope.cancel()
+        lifecycle.unsubscribe(this)
     }
 
     override fun init() {}
@@ -49,6 +56,6 @@ class DefaultAppComponentContext(
                 instanceKeeper,
                 backHandler
             )
-            DefaultAppComponentContext(ctx)
+            DefaultAppComponentContext(ctx, context, backgroundScope)
         }
 }

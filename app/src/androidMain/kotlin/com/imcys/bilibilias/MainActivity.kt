@@ -12,6 +12,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.essentyLifecycle
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
+import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
@@ -22,7 +23,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val root = DefaultRootComponent(DefaultAppComponentContext(defaultComponentContext()))
+        val root = DefaultRootComponent(
+            DefaultAppComponentContext(
+                defaultComponentContext(),
+                KmpContext,
+                AsDispatchers.applicationScope
+            ),
+        )
         val lifecycleOwner = object : LifecycleOwner {
             override val lifecycle get() = essentyLifecycle()
         }
