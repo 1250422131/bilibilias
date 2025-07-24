@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.ui
+package com.imcys.bilibilias.ui.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
