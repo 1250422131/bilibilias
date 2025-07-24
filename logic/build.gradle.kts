@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.data)
+            implementation(projects.core.ffmpeg)
             implementation(projects.core.mediaCache)
             implementation(projects.core.httpDownloader)
 
