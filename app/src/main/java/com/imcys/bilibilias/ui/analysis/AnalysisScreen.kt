@@ -30,16 +30,24 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -53,12 +61,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.common.utils.toHttps
+import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
+import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
 import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
 import com.imcys.bilibilias.network.model.video.convertVideoQualityIdValue
@@ -93,7 +104,10 @@ fun AnalysisScreen(
     AnalysisScaffold(
         uiState.asLinkResultType,
         uiState.downloadInfo,
-        onToBack
+        onDownload = {
+            vm.createDownloadTask()
+        },
+        onToBack = onToBack
     ) {
         Column(Modifier.padding(it)) {
             with(sharedTransitionScope) {
@@ -134,7 +148,7 @@ fun AnalysisScreen(
 
 @Composable
 fun ColumnScope.AnalysisVideoCardList(
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     asLinkResultType: ASLinkResultType,
     isBILILogin: Boolean,
     viewModel: AnalysisViewModel,
@@ -205,10 +219,137 @@ fun ColumnScope.AnalysisVideoCardList(
         }
 
         item {
+            when (asLinkResultType) {
+                is ASLinkResultType.BILI.Donghua -> {
+                    AdvancedSetting(
+                        donghuaPlayerInfo,
+                        donghuaPlayerInfo.data?.dash,
+                    ){
+                        viewModel.updateDownloadMode(it)
+                    }
+                }
+                is ASLinkResultType.BILI.Video ->
+                    AdvancedSetting(
+                        videoPlayerInfo,
+                        videoPlayerInfo.data?.dash,
+                    ){
+                        viewModel.updateDownloadMode(it)
+                    }
+                else -> {
+
+                }
+            }
+
+        }
+
+        item {
             Spacer(Modifier.height(15.dp))
         }
     }
 
+}
+
+/**
+ * 下载视频的高级设置
+ */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun AdvancedSetting(
+    playerInfo: NetWorkResult<Any?>,
+    dash: BILIVideoDash?,
+    onSelectDownloadMode: (DownloadMode)->Unit
+) {
+    var downloadModeExpanded by remember { mutableStateOf(false) }
+
+    var selectDownloadMode by remember { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
+
+
+    // 选择是否合并下载
+    AsAutoError(playerInfo, onSuccessContent = {
+        if (dash != null){
+            SurfaceColorCard {
+                Column(
+                    Modifier
+                        .shimmer(playerInfo.status != ApiStatus.SUCCESS)
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .animateContentSize(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text("缓存配置")
+                    ExposedDropdownMenuBox(
+                        expanded = downloadModeExpanded,
+                        onExpandedChange = {
+                            downloadModeExpanded = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                .fillMaxWidth(),
+                            textStyle = LocalTextStyle.current.copy(
+                                fontSize = 12.sp
+                            ),
+                            value = selectDownloadMode.title,
+                            onValueChange = {
+
+                            },
+                            readOnly = true,
+                            singleLine = false,
+                            label = { Text("选择缓存模式", fontSize = 12.sp) },
+                            trailingIcon = { TrailingIcon(expanded = false) },
+                            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                focusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            ),
+                            shape = CardDefaults.shape
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = downloadModeExpanded,
+                            onDismissRequest = { downloadModeExpanded = false },
+                        ) {
+                            DownloadMode.entries.forEach {
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            it.title,
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    onClick = {
+                                        downloadModeExpanded = false
+                                        selectDownloadMode = it
+                                        onSelectDownloadMode(it)
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                                )
+                            }
+                        }
+
+                    }
+                    AsWarringTip(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        enabledPadding = false
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "注意：如果选中的子集没有音视频分离资源，将无法单独进行下载。",
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    })
 }
 
 
@@ -442,8 +583,9 @@ fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boo
 @Composable
 fun AnalysisScaffold(
     asResultType: ASLinkResultType?,
-    downloadInfo: AnalysisViewModel.DownloadViewInfo?,
+    downloadInfo: DownloadViewInfo?,
     onToBack: () -> Unit,
+    onDownload:()->Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
 
@@ -494,7 +636,7 @@ fun AnalysisScaffold(
                 FloatingActionButton(
                     modifier = Modifier.imePadding(),
                     onClick = {
-                        showDownloadInfo = true
+                        onDownload()
                     },
                 ) {
                     Icon(Icons.Outlined.Download, "下载视频")

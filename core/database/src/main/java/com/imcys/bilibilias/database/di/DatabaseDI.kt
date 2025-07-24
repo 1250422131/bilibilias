@@ -20,6 +20,9 @@ val databaseModule = module {
     factory {
         get<BILIBILIASDatabase>().biliUserCookiesDao()
     }
+    factory {
+        get<BILIBILIASDatabase>().downloadTaskDao()
+    }
 }
 
 

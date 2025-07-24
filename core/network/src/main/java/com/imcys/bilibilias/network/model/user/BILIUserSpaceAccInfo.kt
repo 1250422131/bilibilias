@@ -34,7 +34,7 @@ data class BILIUserSpaceAccInfo(
     @SerialName("name")
     val name: String,
     @SerialName("pendant")
-    val pendant: Pendant,
+    val pendant: Pendant?,
     @SerialName("rank")
     val rank: Long,
     @SerialName("sex")
@@ -46,9 +46,9 @@ data class BILIUserSpaceAccInfo(
     @SerialName("top_photo")
     val topPhoto: String,
     @SerialName("top_photo_v2")
-    val topPhotoV2: TopPhotoV2,
+    val topPhotoV2: TopPhotoV2?,
     @SerialName("vip")
-    val vip: Vip
+    val vip: Vip?
 ) {
     @Serializable
     data class Pendant(
@@ -111,13 +111,9 @@ data class BILIUserSpaceAccInfo(
     ) {
         @Serializable
         data class AvatarIcon(
-            @SerialName("icon_resource")
-            val iconResource: IconResource,
             @SerialName("icon_type")
             val iconType: Long
         ) {
-            @Serializable
-            class IconResource
         }
 
         @Serializable
@@ -137,7 +133,7 @@ data class BILIUserSpaceAccInfo(
             @SerialName("img_label_uri_hant_static")
             val imgLabelUriHantStatic: String,
             @SerialName("label_goto")
-            val labelGoto: LabelGoto,
+            val labelGoto: LabelGoto?,
             @SerialName("label_id")
             val labelId: Long,
             @SerialName("label_theme")
@@ -154,9 +150,9 @@ data class BILIUserSpaceAccInfo(
             @Serializable
             data class LabelGoto(
                 @SerialName("mobile")
-                val mobile: String,
+                val mobile: String?,
                 @SerialName("pc_web")
-                val pcWeb: String
+                val pcWeb: String?
             )
         }
     }

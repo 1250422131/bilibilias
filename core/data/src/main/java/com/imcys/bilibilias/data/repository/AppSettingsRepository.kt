@@ -32,4 +32,14 @@ class AppSettingsRepository(
         }
     }
 
+
+    // 添加更新隐私政策同意状态的方法
+    suspend fun updateKnowAboutApp(knowAboutApp: AppSettings.KnowAboutApp) {
+        dataStore.updateData { currentSettings ->
+            currentSettings.toBuilder()
+                .setKnowAboutApp(knowAboutApp)
+                .build()
+        }
+    }
+
 }

@@ -61,7 +61,7 @@ data class BILIVideoViewInfo(
     @SerialName("owner")
     val owner: Owner,
     @SerialName("pages")
-    val pages: List<Page>,
+    val pages: List<Page>?,
     @SerialName("pic")
     val pic: String,
     @SerialName("pubdate")

@@ -11,7 +11,7 @@ data class BILIVideoPlayerInfo(
     @SerialName("accept_format")
     val acceptFormat: String,
     @SerialName("accept_quality")
-    val acceptQuality: List<Int>,
+    val acceptQuality: List<Long>,
     val dash: BILIVideoDash?,
     @SerialName("durl")
     val durl: List<BILIVideoDurl>?,
@@ -22,15 +22,15 @@ data class BILIVideoPlayerInfo(
     @SerialName("from")
     val from: String,
     @SerialName("last_play_cid")
-    val lastPlayCid: Int,
+    val lastPlayCid: Long,
     @SerialName("last_play_time")
-    val lastPlayTime: Int,
+    val lastPlayTime: Long,
     @SerialName("message")
     val message: String,
     @SerialName("play_conf")
     val playConf: PlayConf,
     @SerialName("quality")
-    val quality: Int,
+    val quality: Long,
     @SerialName("result")
     val result: String,
     @SerialName("seek_param")
@@ -40,9 +40,9 @@ data class BILIVideoPlayerInfo(
     @SerialName("support_formats")
     val supportFormats: List<BILIVideoSupportFormat>,
     @SerialName("timelength")
-    val timelength: Int,
+    val timelength: Long,
     @SerialName("video_codecid")
-    val videoCodecid: Int,
+    val videoCodecid: Long,
 ) {
     @Serializable
     data class PlayConf(

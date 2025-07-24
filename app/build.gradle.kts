@@ -54,6 +54,8 @@ dependencies {
 
     // 彩带
     implementation(libs.konfetti.compose)
+    // 高斯模糊
+    implementation(libs.compose.cloudy)
 
 
     testImplementation(libs.junit)

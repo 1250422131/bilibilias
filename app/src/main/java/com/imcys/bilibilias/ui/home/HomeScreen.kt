@@ -5,30 +5,33 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowRightAlt
 import androidx.compose.material.icons.automirrored.outlined.Login
-import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.ContentCopy
-import androidx.compose.material.icons.outlined.Login
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -50,22 +53,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
-import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.weight.ASAsyncImage
@@ -76,7 +78,10 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsErrorCopyIconButton
+import com.skydoves.cloudy.cloudy
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.min
+import kotlin.text.ifEmpty
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -114,6 +119,8 @@ internal fun HomeScreen(
     val loginUserInfoState by vm.loginUserInfoState.collectAsState()
     val userLoginPlatformList by vm.userLoginPlatformList.collectAsState()
     var popupUserInfoState by remember { mutableStateOf(false) }
+
+    val downloadListState by vm.downloadListState.collectAsState()
 
     LaunchedEffect(Unit) {
         vm.updateWebSpi()
@@ -155,12 +162,17 @@ internal fun HomeScreen(
                         "这是一段公告内容"
                     )
                 }
+
                 item {
                     CommonInfoCard(
                         R.drawable.ic_info_24px,
                         "更新内容",
                         "这是一段更新内容"
                     )
+                }
+
+                item {
+                    DownloadListCard(downloadListState)
                 }
             }
 
@@ -189,6 +201,136 @@ internal fun HomeScreen(
 
     LoginInfoBottomDialog(popupUserInfoState, loginUserInfoState, userLoginPlatformList) {
         popupUserInfoState = false
+    }
+}
+
+@Composable
+fun DownloadListCard(downloadListState: List<AppDownloadTask>) {
+    SurfaceColorCard {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Outlined.Download,
+                    contentDescription = "下载列表图标",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .alpha(0.72f),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "下载列表",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.W400,
+                    modifier = Modifier.alpha(0.72f),
+                )
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.ArrowRightAlt,
+                        contentDescription = "详情列表"
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (downloadListState.isNotEmpty()) {
+                    downloadListState.subList(0, min(3, downloadListState.size)).forEach { task ->
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = CardDefaults.shape,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                // 左侧图片
+                                Box(
+                                    modifier = Modifier
+                                        .weight(0.3f)
+                                        .aspectRatio(16f / 9f),
+                                ) {
+
+                                    ASAsyncImage(
+                                        "${
+                                            task.cover?.ifEmpty { task.downloadTask.cover }
+                                                ?.toHttps()
+                                        }@672w_378h_1c.avif",
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        shape = CardDefaults.shape,
+                                        contentDescription = "封面图片"
+                                    )
+
+
+//                                    CircularProgressIndicator(
+//                                        progress = { 0.5f },
+//                                        modifier = Modifier
+//                                            .align(Alignment.Center)
+//                                            .size(25.dp)
+//                                    )
+
+                                }
+
+                                Spacer(Modifier.width(10.dp))
+
+                                // 右侧内容
+                                Column(
+                                    modifier = Modifier
+                                        .weight(0.7f)
+                                        .fillMaxHeight()
+                                        .align(Alignment.CenterVertically), // 垂直居中
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = task.downloadSegment.title,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.W400
+                                    )
+
+                                    LazyRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        item {
+                                            Surface(
+                                                shape = RoundedCornerShape(percent = 50),
+                                                color = MaterialTheme.colorScheme.primary,
+                                            ) {
+                                                Text(
+                                                    modifier = Modifier.padding(
+                                                        horizontal = 8.dp,
+                                                        vertical = 0.dp
+                                                    ),
+                                                    text = task.downloadSegment.downloadMode.title,
+                                                    fontSize = 8.sp,
+                                                    fontWeight = FontWeight.W400,
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Text("暂无缓存任务")
+                }
+            }
+        }
     }
 }
 
@@ -292,13 +434,13 @@ private fun CommonInfoCard(
                         contentDescription = title,
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(24.dp)
                             .alpha(0.72f),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         title,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.W400,
                         modifier = Modifier.alpha(0.72f),
                     )
@@ -314,7 +456,7 @@ private fun CommonInfoCard(
 
                 Text(
                     text = connect,
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight(330),
                     modifier = Modifier.padding(top = 16.dp)
                 )
