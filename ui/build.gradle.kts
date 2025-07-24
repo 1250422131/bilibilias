@@ -33,6 +33,8 @@ kotlin {
             implementation(mediampLibs.mediamp.api)
 
             implementation("me.zhanghai.compose.preference:preference:2.1.0")
+
+            implementation("com.arkivanov.essenty:lifecycle-coroutines:2.5.0")
         }
     }
 }
