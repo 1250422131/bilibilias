@@ -48,7 +48,8 @@ fun CacheScreen(component: CacheComponent) {
     val state by component.stateFlow.collectAsState()
     CaCheContent(
         state,
-        onDelete = component::deleteEpisodeCache
+        onDelete = component::deleteEpisodeCache,
+        onCombine = component::onCombine
     )
 }
 
@@ -56,7 +57,8 @@ fun CacheScreen(component: CacheComponent) {
 @Composable
 fun CaCheContent(
     cacheEpisodeState: List<CacheEpisodeState>,
-    onDelete: (CacheEpisodeState) -> Unit = { true }
+    onDelete: (CacheEpisodeState) -> Unit = { },
+    onCombine: (CacheEpisodeState) -> Unit = { },
 ) {
     Scaffold { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
@@ -69,7 +71,11 @@ fun CaCheContent(
                                 true
                             }
 
-                            SwipeToDismissBoxValue.StartToEnd -> true
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                onCombine(item)
+                                true
+                            }
+
                             SwipeToDismissBoxValue.Settled -> true
                         }
                     },
