@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
+import com.imcys.bilibilias.common.utils.createDownloadNotificationChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.ui.BILIBILIASAppScreen
@@ -35,6 +36,8 @@ class MainActivity : ComponentActivity() {
 
         // 初始化设置
         initAppSetting()
+        // 初始化通知渠道
+        initNotificationChannel()
     }
 
     /**
@@ -54,6 +57,13 @@ class MainActivity : ComponentActivity() {
     private fun initFirebase(state: AppSettings.AgreePrivacyPolicyState) {
         Firebase.app.isDataCollectionDefaultEnabled = state == AppSettings.AgreePrivacyPolicyState.Agreed
     }
+
+
+    private fun initNotificationChannel() {
+        // 创建文件下载进度渠道
+        createDownloadNotificationChannel()
+    }
+
 }
 
 

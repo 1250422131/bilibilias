@@ -116,7 +116,7 @@ class DownloadTaskRepository(
             if (pages.isEmpty()) {
                 emptyList()
             } else {
-                listOf(buildVideoPageTree(task.taskId, data, pages, downloadMode))
+                listOf(buildVideoPageTree(task.taskId,task, data, pages, downloadMode))
             }
         }
 
@@ -207,6 +207,7 @@ class DownloadTaskRepository(
      */
     private suspend fun buildVideoPageTree(
         taskId: Long,
+        task: DownloadTask,
         data: BILIVideoViewInfo,
         pages: List<BILIVideoViewInfo.Page>,
         downloadMode: DownloadMode,
@@ -218,10 +219,10 @@ class DownloadTaskRepository(
             nodeType = DownloadTaskNodeType.BILI_VIDEO_PAGE,
             pic = data.pic
         )
-
         val segments = pages.map { page ->
             createSegment(
                 nodeId = node.nodeId,
+                cover = task.cover,
                 title = page.part,
                 platformId = page.cid.toString(),
                 segmentOrder = page.page.toLong(),
@@ -389,8 +390,10 @@ class DownloadTaskRepository(
         return downloadTaskDao.getSegmentByNodeIdAndPlatformId(nodeId, platformId)?.copy(
             title = title,
             cover = cover,
+            segmentOrder = segmentOrder,
             platformInfo = platformInfo,
             updateTime = Date(),
+            downloadMode = downloadMode,
             taskId = childTaskId  // 更新子任务关联
         )?.also {
             downloadTaskDao.updateSegment(it)

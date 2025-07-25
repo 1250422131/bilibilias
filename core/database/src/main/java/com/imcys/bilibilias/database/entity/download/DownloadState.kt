@@ -5,7 +5,10 @@ enum class DownloadStage {
     DOWNLOAD,
 
     /** 合并阶段 */
-    MERGE
+    MERGE,
+
+    /** 文件移动阶段 */
+    MOVE,
 }
 
 
@@ -18,6 +21,9 @@ enum class DownloadState {
 
     /** 下载中 */
     DOWNLOADING,
+
+    /** 合并中 */
+    MERGING,
 
     /** 下载完成 */
     COMPLETED,

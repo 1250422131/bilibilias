@@ -32,7 +32,7 @@ set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_lib_dir}/lib
 
 # 4、你的 native 库
 add_library(${CMAKE_PROJECT_NAME} SHARED
-        ffmpeg.cpp
+        ffmpeg_utils.cpp
 )
 
 

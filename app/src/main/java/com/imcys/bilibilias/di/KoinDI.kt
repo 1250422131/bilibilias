@@ -1,8 +1,10 @@
 package com.imcys.bilibilias.di
 
+import com.imcys.bilibilias.BILIBILIASApplication
 import com.imcys.bilibilias.dwonload.DownloadManager
 import com.imcys.bilibilias.ui.BILIBILIASAppViewModel
 import com.imcys.bilibilias.ui.analysis.AnalysisViewModel
+import com.imcys.bilibilias.ui.download.DownloadViewModel
 import com.imcys.bilibilias.ui.home.HomeViewModel
 import com.imcys.bilibilias.ui.login.QRCodeLoginViewModel
 import com.imcys.bilibilias.ui.user.UserViewModel
@@ -19,5 +21,6 @@ val appModule = module {
     viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(),get()) }
     viewModel { UserViewModel(get()) }
     viewModel { AnalysisViewModel(get(), get(), get(), get()) }
-    single { DownloadManager(get(),get(),get()) }
+    viewModel { DownloadViewModel(get()) }
+    single { DownloadManager(androidContext() as BILIBILIASApplication,get(),get(),get(),get()) }
 }

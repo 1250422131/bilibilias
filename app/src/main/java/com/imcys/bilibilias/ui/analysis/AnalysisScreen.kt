@@ -30,6 +30,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -141,8 +142,36 @@ fun AnalysisScreen(
             }
 
         }
+    }
 
+    CreateDownloadTaskLoadingDialog(
+        uiState.isCreateDownloadLoading,
+    )
+}
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun CreateDownloadTaskLoadingDialog(show: Boolean) {
+    if (show) {
+
+        // 创建一个中间显示加载进度的，不可关闭的对话框
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text(text = "创建下载任务") },
+            text = { Column (
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                // 显示一个加载动画
+                ContainedLoadingIndicator()
+                Text(text = "正在创建下载任务，请不要退出...")
+            } },
+            confirmButton = {},
+            dismissButton = {},
+        )
     }
 }
 
@@ -217,7 +246,6 @@ fun ColumnScope.AnalysisVideoCardList(
                 else -> {}
             }
         }
-
         item {
             when (asLinkResultType) {
                 is ASLinkResultType.BILI.Donghua -> {
@@ -241,7 +269,6 @@ fun ColumnScope.AnalysisVideoCardList(
             }
 
         }
-
         item {
             Spacer(Modifier.height(15.dp))
         }

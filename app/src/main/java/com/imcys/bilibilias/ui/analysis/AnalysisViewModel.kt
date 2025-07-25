@@ -43,7 +43,8 @@ class AnalysisViewModel(
         val linkType: TextType? = null,
         val asLinkResultType: ASLinkResultType? = null,
         val isBILILogin: Boolean = false,
-        val downloadInfo: DownloadViewInfo? = null
+        val downloadInfo: DownloadViewInfo? = null,
+        val isCreateDownloadLoading: Boolean = false,
     )
 
     private val _uiState = MutableStateFlow(UIState())
@@ -224,6 +225,7 @@ class AnalysisViewModel(
     }
 
     fun createDownloadTask() {
+        _uiState.value = _uiState.value.copy(isCreateDownloadLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
             if (uiState.value.asLinkResultType != null && uiState.value.downloadInfo != null) {
                 downloadManager.addDownloadTask(
@@ -231,6 +233,7 @@ class AnalysisViewModel(
                     uiState.value.downloadInfo!!
                 )
             }
+            _uiState.value = _uiState.value.copy(isCreateDownloadLoading = false)
         }
     }
 

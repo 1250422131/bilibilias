@@ -5,10 +5,13 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,17 +24,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowRightAlt
 import androidx.compose.material.icons.automirrored.outlined.Login
-import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -40,6 +42,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -58,8 +61,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +72,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.BILILoginUserModel
 import com.imcys.bilibilias.database.entity.BILIUsersEntity
+import com.imcys.bilibilias.database.entity.download.DownloadState
 import com.imcys.bilibilias.dwonload.AppDownloadTask
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
@@ -78,10 +84,10 @@ import com.imcys.bilibilias.ui.weight.SurfaceColorCard
 import com.imcys.bilibilias.weight.ASLoginPlatformFilterChipRow
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsErrorCopyIconButton
+import com.imcys.bilibilias.weight.DownloadTaskCard
 import com.skydoves.cloudy.cloudy
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
-import kotlin.text.ifEmpty
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -92,6 +98,7 @@ internal fun HomeRoute(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
+    goToDownloadPage:()->Unit
 ) {
     HomeScreen(
         homeRoute,
@@ -99,7 +106,8 @@ internal fun HomeRoute(
         animatedContentScope,
         goToLogin,
         goToUserPage,
-        goToAnalysis
+        goToAnalysis,
+        goToDownloadPage
     )
 }
 
@@ -112,6 +120,7 @@ internal fun HomeScreen(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
+    goToDownloadPage:()->Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val vm = koinViewModel<HomeViewModel>()
@@ -172,7 +181,18 @@ internal fun HomeScreen(
                 }
 
                 item {
-                    DownloadListCard(downloadListState)
+                    DownloadListCard(downloadListState, goToDownloadPage = goToDownloadPage)
+                }
+
+                item {
+                    Text("请在Download/BILIBILAIS目录下查看下载内容",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(330),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
 
@@ -204,8 +224,9 @@ internal fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DownloadListCard(downloadListState: List<AppDownloadTask>) {
+fun DownloadListCard(downloadListState: List<AppDownloadTask>,goToDownloadPage:()->Unit) {
     SurfaceColorCard {
         Column(
             modifier = Modifier
@@ -229,9 +250,11 @@ fun DownloadListCard(downloadListState: List<AppDownloadTask>) {
                     modifier = Modifier.alpha(0.72f),
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {}, modifier = Modifier.size(30.dp)) {
+                IconButton(onClick = {
+                    goToDownloadPage.invoke()
+                }, modifier = Modifier.size(30.dp)) {
                     Icon(
-                        Icons.AutoMirrored.Outlined.ArrowRightAlt,
+                        painter = painterResource(R.drawable.ic_arrow_forward_24px),
                         contentDescription = "详情列表"
                     )
                 }
@@ -240,99 +263,26 @@ fun DownloadListCard(downloadListState: List<AppDownloadTask>) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (downloadListState.isNotEmpty()) {
                     downloadListState.subList(0, min(3, downloadListState.size)).forEach { task ->
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = CardDefaults.shape,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth()
-                            ) {
-                                // 左侧图片
-                                Box(
-                                    modifier = Modifier
-                                        .weight(0.3f)
-                                        .aspectRatio(16f / 9f),
-                                ) {
-
-                                    ASAsyncImage(
-                                        "${
-                                            task.cover?.ifEmpty { task.downloadTask.cover }
-                                                ?.toHttps()
-                                        }@672w_378h_1c.avif",
-                                        modifier = Modifier
-                                            .fillMaxSize(),
-                                        shape = CardDefaults.shape,
-                                        contentDescription = "封面图片"
-                                    )
-
-
-//                                    CircularProgressIndicator(
-//                                        progress = { 0.5f },
-//                                        modifier = Modifier
-//                                            .align(Alignment.Center)
-//                                            .size(25.dp)
-//                                    )
-
-                                }
-
-                                Spacer(Modifier.width(10.dp))
-
-                                // 右侧内容
-                                Column(
-                                    modifier = Modifier
-                                        .weight(0.7f)
-                                        .fillMaxHeight()
-                                        .align(Alignment.CenterVertically), // 垂直居中
-                                    verticalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = task.downloadSegment.title,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.W400
-                                    )
-
-                                    LazyRow(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                    ) {
-                                        item {
-                                            Surface(
-                                                shape = RoundedCornerShape(percent = 50),
-                                                color = MaterialTheme.colorScheme.primary,
-                                            ) {
-                                                Text(
-                                                    modifier = Modifier.padding(
-                                                        horizontal = 8.dp,
-                                                        vertical = 0.dp
-                                                    ),
-                                                    text = task.downloadSegment.downloadMode.title,
-                                                    fontSize = 8.sp,
-                                                    fontWeight = FontWeight.W400,
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        DownloadTaskCard(task)
                     }
                 } else {
-                    Text("暂无缓存任务")
+                    Text(
+                        "暂无缓存任务",
+                        modifier = Modifier.alpha(0.72f),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(330),
+                    )
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
