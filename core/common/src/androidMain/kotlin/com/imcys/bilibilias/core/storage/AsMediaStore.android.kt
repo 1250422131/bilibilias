@@ -2,12 +2,14 @@ package com.imcys.bilibilias.core.storage
 
 import android.content.ContentValues
 import android.content.Context
+import android.os.Environment
 import android.provider.MediaStore
 import com.eygraber.uri.Uri
 import com.eygraber.uri.toAndroidUri
 import com.eygraber.uri.toKmpUri
 import com.eygraber.uri.toKmpUriOrNull
 import com.imcys.bilibilias.core.context.KmpContext
+import java.io.File
 import android.net.Uri as AndroidUri
 
 actual object AsMediaStore {
@@ -22,7 +24,7 @@ actual object AsMediaStore {
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toKmpUri(),
             displayName,
             mediaType,
-            relativePath
+            "${Environment.DIRECTORY_MOVIES}${File.separator}$relativePath"
         )
     }
 
