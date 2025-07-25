@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Merge
 import androidx.compose.material.icons.outlined.ArrowOutward
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
@@ -36,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.data.model.CacheEpisodeState
@@ -62,32 +62,31 @@ fun CaCheContent(
 ) {
     Scaffold { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(cacheEpisodeState) { item ->
+            items(cacheEpisodeState, key = { it.episodeMetadata.cid }) { item ->
                 val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
                         when (it) {
-                            SwipeToDismissBoxValue.EndToStart -> {
-                                onDelete(item)
-                                true
-                            }
-
                             SwipeToDismissBoxValue.StartToEnd -> {
                                 onCombine(item)
+                                false
+                            }
+
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                onDelete(item)
                                 true
                             }
 
                             SwipeToDismissBoxValue.Settled -> true
                         }
                     },
-                    positionalThreshold = with(LocalDensity.current) { { 100.dp.toPx() } }
+                    positionalThreshold = { totalDistance -> totalDistance * 0.3f }
                 )
                 SwipeToDismissBox(
                     state = swipeToDismissBoxState,
                     backgroundContent = {
                         swipeToDismissBoxState.SwipeDismissBackground()
                     },
-                    modifier = Modifier,
-                    enableDismissFromStartToEnd = false,
+                    modifier = Modifier.animateItem(),
                 ) {
                     CacheEpisodeItem(item)
                     if (cacheEpisodeState.last() != item) {
@@ -142,7 +141,16 @@ private fun SwipeToDismissBoxState.SwipeDismissBackground() {
                 )
             }
 
-            SwipeToDismissBoxValue.StartToEnd,
+            SwipeToDismissBoxValue.StartToEnd -> {
+                Icon(
+                    Icons.Default.Merge,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(12.dp),
+                    tint = Color.White
+                )
+            }
+
             SwipeToDismissBoxValue.Settled -> {
             }
         }
