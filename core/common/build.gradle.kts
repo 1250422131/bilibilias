@@ -23,6 +23,8 @@ kotlin {
             api(libs.kotlinx.coroutines.core)
 
             api(libs.kotlinx.serialization.json)
+
+            api("com.eygraber:uri-kmp:0.0.20")
         }
     }
 }
