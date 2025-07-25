@@ -12,6 +12,6 @@ data class AppDownloadTask(
     val downloadSubTasks: List<DownloadSubTask>,
     val downloadStage: DownloadStage = DownloadStage.DOWNLOAD,
     val cover: String?,
-    val progress: Double = 0.0,
+    val progress: Float = 0.0f,
     val downloadState: DownloadState = DownloadState.WAITING,
 )

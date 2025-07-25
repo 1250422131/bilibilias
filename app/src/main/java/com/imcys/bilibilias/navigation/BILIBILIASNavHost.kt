@@ -16,6 +16,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.ui.analysis.navigation.analysisScreen
 import com.imcys.bilibilias.ui.analysis.navigation.navigateToAnalysis
+import com.imcys.bilibilias.ui.download.navigation.downloadScreen
+import com.imcys.bilibilias.ui.download.navigation.navigateToDownload
 import com.imcys.bilibilias.ui.home.navigation.HomeRoute
 import com.imcys.bilibilias.ui.home.navigation.homeScreen
 import com.imcys.bilibilias.ui.home.navigation.navigateToHome
@@ -102,7 +104,8 @@ fun BILIBILIASNavHost(
                         launchSingleTop = true
                     }
                 },
-                goToAnalysis = navController::navigateToAnalysis
+                goToAnalysis = navController::navigateToAnalysis,
+                goToDownloadPage = navController::navigateToDownload
             )
 
             loginScreen(
@@ -128,12 +131,16 @@ fun BILIBILIASNavHost(
                 this@SharedTransitionLayout,
                 onToBack = navController::popBackStack,
                 goToUser = {
-                    navController.navigateToUser(UserRoute(
-                        mid = it,
-                        isAnalysisUser = true
-                    ))
+                    navController.navigateToUser(
+                        UserRoute(
+                            mid = it,
+                            isAnalysisUser = true
+                        )
+                    )
                 }
             )
+
+            downloadScreen(onToBack = navController::popBackStack)
         }
     }
 }

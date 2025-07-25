@@ -40,7 +40,7 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:data"))
-//    implementation(project(":core:ffmpeg"))
+    implementation(project(":core:ffmpeg"))
 
 
     implementation(platform(libs.firebase.bom))

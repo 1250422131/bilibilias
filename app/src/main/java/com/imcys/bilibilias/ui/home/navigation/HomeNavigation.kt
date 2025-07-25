@@ -31,6 +31,7 @@ fun NavGraphBuilder.homeScreen(
     goToLogin: () -> Unit,
     goToUserPage: (mid: Long) -> Unit,
     goToAnalysis: () -> Unit,
+    goToDownloadPage: () -> Unit,
     ) {
     composable<HomeRoute> { navBackStackEntry ->
         // 从 navBackStackEntry 获取参数
@@ -42,7 +43,8 @@ fun NavGraphBuilder.homeScreen(
             this@composable,
             goToLogin,
             goToUserPage,
-            goToAnalysis
+            goToAnalysis,
+            goToDownloadPage
         )
     }
 }

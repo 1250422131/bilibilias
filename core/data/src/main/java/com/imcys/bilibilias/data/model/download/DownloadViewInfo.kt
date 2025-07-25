@@ -52,7 +52,7 @@ data class DownloadViewInfo(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
-            selectedCid = if (defaultCid != null) selectedCid + defaultCid else selectedCid,
+            selectedCid = if (defaultCid != null && !selectedCid.contains(defaultCid)) selectedCid + defaultCid else selectedCid,
             selectedEpId = emptyList() // 清空番剧选择
         )
 
@@ -60,7 +60,7 @@ data class DownloadViewInfo(
             selectVideoQualityId = qualityId,
             selectVideoCode = code,
             selectAudioQualityId = audioQualityId,
-            selectedEpId = if (defaultEpId != null) selectedEpId + defaultEpId else selectedEpId,
+            selectedEpId = if (defaultEpId != null && !selectedEpId.contains(defaultEpId)) selectedEpId + defaultEpId else selectedEpId,
             selectedCid = emptyList() // 清空视频选择
         )
 
