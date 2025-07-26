@@ -67,9 +67,6 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 30000
         versionName = "3.0.1"
-        ndk {
-            abiFilters += "arm64-v8a"
-        }
     }
     signingConfigs {
         val file = File(rootProject.file("gradle.properties").path)
@@ -87,8 +84,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            excludes += "META-INF/native-image/*/jnijavacpp/jni-config.json"
-            excludes += "META-INF/native-image/*/jnijavacpp/reflect-config.json"
         }
     }
     buildTypes {
