@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.core.ffmpeg
 
+@Suppress("FunctionName")
 fun FfmpegCommandExecutor(): FfmpegCommand {
     return FfmpegCommandImpl()
 }
