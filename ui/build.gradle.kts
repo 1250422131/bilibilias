@@ -26,7 +26,7 @@ kotlin {
 
             implementation(libs.coil.compose)
 
-            implementation(libs.compose.material3.adaptive)
+            implementation(libs.androidx.compose.material3.adaptive)
 
             implementation(libs.qr.kit)
 
