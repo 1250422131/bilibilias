@@ -2,6 +2,7 @@ package com.imcys.bilibilias.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imcys.bilibilias.common.base.crash.AppException
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.data.repository.QRCodeLoginRepository
 import com.imcys.bilibilias.data.repository.UserInfoRepository
@@ -33,6 +34,8 @@ class BILIBILIASAppViewModel(
         ) : UIState() // 正在检测
 
         data object KnowAboutApp : UIState()
+
+        data class AppError(val appException: AppException?) : UIState()
     }
 
     init {
@@ -47,6 +50,12 @@ class BILIBILIASAppViewModel(
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Default)
     val uiState = _uiState.asStateFlow()
+
+
+    fun appError(appError: AppException?) {
+        _uiState.value = UIState.AppError(appError)
+
+    }
 
     fun accountLoginStateError() {
 

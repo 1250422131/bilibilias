@@ -58,15 +58,14 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.common.event.appErrorHandleChannel
 import com.imcys.bilibilias.common.event.loginErrorChannel
 import com.imcys.bilibilias.data.repository.AppSettingsRepository
 import com.imcys.bilibilias.datastore.AppSettings
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Agreed
 import com.imcys.bilibilias.datastore.AppSettings.AgreePrivacyPolicyState.Refuse
 import com.imcys.bilibilias.navigation.BILIBILIASNavHost
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.AccountCheck
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.Default
-import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.KnowAboutApp
+import com.imcys.bilibilias.ui.BILIBILIASAppViewModel.UIState.*
 import com.imcys.bilibilias.ui.weight.ASAlertDialog
 import com.imcys.bilibilias.ui.weight.ASTopAppBar
 import com.imcys.bilibilias.ui.weight.BILIBILIASTopAppBarStyle
@@ -75,6 +74,7 @@ import com.imcys.bilibilias.weight.rememberKonfettiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import kotlin.system.exitProcess
 
 
 @Composable
@@ -107,6 +107,12 @@ private fun MainScaffold() {
     LaunchedEffect(Unit) {
         loginErrorChannel.collect {
             vm.accountLoginStateError()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        appErrorHandleChannel.collect {
+            vm.appError(it)
         }
     }
 
@@ -161,6 +167,10 @@ private fun MainScaffold() {
                         vm.onKnowAboutApp()
                     })
                 }
+
+                is AppError -> {
+                    AppErrorPage(targetUiState)
+                }
             }
         }
 
@@ -169,6 +179,29 @@ private fun MainScaffold() {
 
 
 }
+
+@Composable
+fun AppErrorPage(appError: AppError) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "发生错误：${appError.appException?.message}",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error
+        )
+        Spacer(Modifier.height(10.dp))
+        Button(onClick = {
+            exitProcess(0)
+        }) {
+            Text("退出软件")
+        }
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -263,7 +296,12 @@ fun InstructionsPage(onClickKnowAbout: () -> Unit = {}) {
             Spacer(Modifier.weight(1f))
             Button(
                 onClick = {
-                   content.startActivity( Intent(Intent.ACTION_VIEW, "https://bilibili.com".toUri()))
+                    content.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            "https://bilibili.com".toUri()
+                        )
+                    )
                 },
                 Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),

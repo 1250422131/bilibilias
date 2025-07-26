@@ -1,5 +1,6 @@
 package com.imcys.bilibilias.common.event
 
+import com.imcys.bilibilias.common.base.crash.AppException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -11,4 +12,12 @@ val loginErrorChannel = _loginErrorChannel.receiveAsFlow()
 
 fun sendLoginErrorEvent() {
     _loginErrorChannel.trySend(LoginError)
+}
+
+
+private val _appErrorHandleChannel = Channel<AppException>(Channel.UNLIMITED)
+val appErrorHandleChannel = _appErrorHandleChannel.receiveAsFlow()
+
+fun sendAppErrorEvent(appException: AppException) {
+    _appErrorHandleChannel.trySend(appException)
 }

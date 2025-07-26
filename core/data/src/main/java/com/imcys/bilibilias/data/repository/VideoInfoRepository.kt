@@ -1,8 +1,14 @@
 package com.imcys.bilibilias.data.repository
 
 import com.imcys.bilibilias.datastore.source.UsersDataSource
+import com.imcys.bilibilias.network.ApiStatus
+import com.imcys.bilibilias.network.NetWorkResult
+import com.imcys.bilibilias.network.model.video.BILIVideoPlayerInfo
 import com.imcys.bilibilias.network.service.BILIBILITVAPIService
 import com.imcys.bilibilias.network.service.BILIBILIWebAPIService
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlin.collections.get
 
 class VideoInfoRepository(
     private val webApiService: BILIBILIWebAPIService,
@@ -28,7 +34,7 @@ class VideoInfoRepository(
         epId: Long?,
         seasonId: Long?,
         qn: Int = 12240,
-        fnval: Int = 80,
+        fnval: Int = 127,
     ) = webApiService.getDonghuaPlayerInfo(epId, seasonId, qn, fnval)
 
 
@@ -37,6 +43,24 @@ class VideoInfoRepository(
         bvId: String?,
         aid: Long? = null,
         fnval: Int = 4048,
-        qn: Int = 116,
-    ) = webApiService.getVideoPlayerInfo(cid, bvId, aid, fnval, qn)
+        qn: Int = 127,
+    ): Flow<NetWorkResult<BILIVideoPlayerInfo?>> {
+        val tryLook = if (usersDataSource.isLogin()) null else "1"
+        return webApiService.getVideoPlayerInfo(cid, bvId, aid, fnval, qn, tryLook).map {
+            if (it.status == ApiStatus.SUCCESS) {
+                // 杜比
+                it.data?.dash?.dolby?.audio?.let { dolbyList ->
+                    if (dolbyList.isNotEmpty()) {
+                        it.data?.dash?.audio?.add(0, dolbyList[0])
+                    }
+                }
+
+                // Hi—Res
+                it.data?.dash?.flac?.audio?.let { flac ->
+                    it.data?.dash?.audio?.add(0, flac)
+                }
+            }
+            it
+        }
+    }
 }

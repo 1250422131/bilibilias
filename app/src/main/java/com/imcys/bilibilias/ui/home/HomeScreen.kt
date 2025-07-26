@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowRightAlt
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.outlined.Close
@@ -185,7 +186,7 @@ internal fun HomeScreen(
                 }
 
                 item {
-                    Text("请在Download/BILIBILAIS目录下查看下载内容",
+                    Text("请在Download/BILIBILIAS目录下查看下载内容",
                         fontSize = 14.sp,
                         fontWeight = FontWeight(330),
                         modifier = Modifier
@@ -254,8 +255,8 @@ fun DownloadListCard(downloadListState: List<AppDownloadTask>,goToDownloadPage:(
                     goToDownloadPage.invoke()
                 }, modifier = Modifier.size(30.dp)) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_forward_24px),
-                        contentDescription = "详情列表"
+                        Icons.AutoMirrored.Outlined.ArrowForward,
+                        contentDescription = "下载详情列表"
                     )
                 }
             }

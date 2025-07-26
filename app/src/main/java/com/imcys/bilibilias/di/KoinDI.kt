@@ -16,11 +16,19 @@ import org.koin.dsl.module
 val appModule = module {
     single { androidContext().assets }
     single { androidContext().contentResolver }
-    viewModel { HomeViewModel(get(), get(), get(),get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { QRCodeLoginViewModel(get(), get(), get(), get()) }
-    viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(),get()) }
+    viewModel { BILIBILIASAppViewModel(get(), get(), get(), get(), get()) }
     viewModel { UserViewModel(get()) }
     viewModel { AnalysisViewModel(get(), get(), get(), get()) }
-    viewModel { DownloadViewModel(get()) }
-    single { DownloadManager(androidContext() as BILIBILIASApplication,get(),get(),get(),get()) }
+    viewModel { DownloadViewModel(get(), get(), get()) }
+    single {
+        DownloadManager(
+            androidContext() as BILIBILIASApplication,
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
 }

@@ -19,12 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NorthEast
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -62,18 +62,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
+import com.imcys.bilibilias.database.entity.download.DownloadMode
 import com.imcys.bilibilias.network.ApiStatus
 import com.imcys.bilibilias.network.NetWorkResult
 import com.imcys.bilibilias.network.model.user.BILIUserSpaceAccInfo
 import com.imcys.bilibilias.network.model.video.BILIDonghuaSeasonInfo
 import com.imcys.bilibilias.network.model.video.BILIVideoDash
 import com.imcys.bilibilias.network.model.video.BILIVideoViewInfo
-import com.imcys.bilibilias.network.model.video.convertAudioQualityIdValue
-import com.imcys.bilibilias.network.model.video.convertVideoQualityIdValue
 import com.imcys.bilibilias.ui.analysis.components.DongmhuaDownloadScreen
 import com.imcys.bilibilias.ui.analysis.components.VideoDownloadScreen
 import com.imcys.bilibilias.ui.analysis.navigation.AnalysisRoute
@@ -158,17 +156,19 @@ fun CreateDownloadTaskLoadingDialog(show: Boolean) {
         AlertDialog(
             onDismissRequest = { },
             title = { Text(text = "创建下载任务") },
-            text = { Column (
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                // 显示一个加载动画
-                ContainedLoadingIndicator()
-                Text(text = "正在创建下载任务，请不要退出...")
-            } },
+            text = {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // 显示一个加载动画
+                    ContainedLoadingIndicator()
+                    Text(text = "正在创建下载任务，请不要退出...")
+                }
+            },
             confirmButton = {},
             dismissButton = {},
         )
@@ -252,17 +252,19 @@ fun ColumnScope.AnalysisVideoCardList(
                     AdvancedSetting(
                         donghuaPlayerInfo,
                         donghuaPlayerInfo.data?.dash,
-                    ){
+                    ) {
                         viewModel.updateDownloadMode(it)
                     }
                 }
+
                 is ASLinkResultType.BILI.Video ->
                     AdvancedSetting(
                         videoPlayerInfo,
                         videoPlayerInfo.data?.dash,
-                    ){
+                    ) {
                         viewModel.updateDownloadMode(it)
                     }
+
                 else -> {
 
                 }
@@ -284,7 +286,7 @@ fun ColumnScope.AnalysisVideoCardList(
 fun AdvancedSetting(
     playerInfo: NetWorkResult<Any?>,
     dash: BILIVideoDash?,
-    onSelectDownloadMode: (DownloadMode)->Unit
+    onSelectDownloadMode: (DownloadMode) -> Unit
 ) {
     var downloadModeExpanded by remember { mutableStateOf(false) }
 
@@ -293,7 +295,7 @@ fun AdvancedSetting(
 
     // 选择是否合并下载
     AsAutoError(playerInfo, onSuccessContent = {
-        if (dash != null){
+        if (dash != null) {
             SurfaceColorCard {
                 Column(
                     Modifier
@@ -612,11 +614,11 @@ fun AnalysisScaffold(
     asResultType: ASLinkResultType?,
     downloadInfo: DownloadViewInfo?,
     onToBack: () -> Unit,
-    onDownload:()->Unit,
+    onDownload: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
 
-    var showDownloadInfo by remember { mutableStateOf(false) }
+    var showDownloadTip by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -640,7 +642,16 @@ fun AnalysisScaffold(
                             )
                         }
                     },
-                    actions = {}
+                    actions = {
+                        IconButton(onClick = {
+                            showDownloadTip = true
+                        }) {
+                            Icon(
+                                Icons.Outlined.Info,
+                                contentDescription = "问题提示"
+                            )
+                        }
+                    }
                 )
             }
         },
@@ -674,67 +685,37 @@ fun AnalysisScaffold(
         content.invoke(it)
     }
 
-    // 内测代码，后期移除
-    if (showDownloadInfo) {
-        AlertDialog(
-            onDismissRequest = { showDownloadInfo = false },
-            title = { Text(text = "下载预览") },
-            text = {
-                LazyColumn(
-                    Modifier
-                        .sizeIn(maxHeight = 300.dp)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    item {
-                        Text("优先视频质量：${convertVideoQualityIdValue(downloadInfo?.selectVideoQualityId ?: 0)}")
-                    }
-                    item {
-                        Text("优先视频编码：${downloadInfo?.selectVideoCode}")
-                    }
-                    item {
-                        Text("优先音频质量：${convertAudioQualityIdValue(downloadInfo?.selectAudioQualityId ?: 0)}")
-                    }
-                    item {
-                        Text(
-                            "总选择缓存数量：${
-                                when (asResultType) {
-                                    is ASLinkResultType.BILI.Donghua -> downloadInfo?.selectedEpId?.size
-                                    is ASLinkResultType.BILI.Video -> downloadInfo?.selectedCid?.size
-                                    else -> {}
-                                }
-                            }"
-                        )
-                    }
-                    item {
-                        Text("选择缓存剧集ID：")
-                    }
-
-                    when (asResultType) {
-                        is ASLinkResultType.BILI.Donghua -> downloadInfo?.selectedEpId?.forEach {
-                            item {
-                                Text("$it")
-                            }
-                        }
-
-                        is ASLinkResultType.BILI.Video -> downloadInfo?.selectedCid?.forEach {
-                            item {
-                                Text("$it")
-                            }
-                        }
-
-                        else -> {}
-                    }
-                }
-            },
-            confirmButton = {
-                Button(onClick = { showDownloadInfo = false }) {
-                    Text(text = "确认")
-                }
+    if (showDownloadTip) {
+        DownloadTipDialog(
+            onDismiss = { showDownloadTip = false },
+            onDownload = {
+                showDownloadTip = false
             }
         )
     }
 
+}
+
+@Composable
+fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("下载提示") },
+        text = {
+            Text(
+                """
+                    可以选择的分辨率取决于你当前B站账号的大会员状态和当前解析视频的实际可选分辨率。
+                    因此建议选择合集/分P内分辨率最高的视频进行解析，同时开通大会员可享受更高的分辨率缓存。
+                    充电视频、互动视频、课堂、直播等类型的视支持缓存。
+                """.trimIndent()
+            )
+        },
+        confirmButton = {
+            Button(onClick = onDownload) {
+                Text("了解")
+            }
+        },
+    )
 }
 
 @Preview

@@ -80,42 +80,33 @@ data class BILIUserSpaceAccInfo(
 
     @Serializable
     data class Vip(
-        @SerialName("avatar_icon")
-        val avatarIcon: AvatarIcon,
         @SerialName("avatar_subscript")
-        val avatarSubscript: Long,
+        val avatarSubscript: Long = -1,
         @SerialName("avatar_subscript_url")
         val avatarSubscriptUrl: String,
         @SerialName("due_date")
-        val dueDate: Long,
+        val dueDate: Long = -1,
         @SerialName("label")
         val label: Label,
         @SerialName("nickname_color")
         val nicknameColor: String,
         @SerialName("role")
-        val role: Long,
+        val role: Long = -1,
         @SerialName("status")
-        val status: Long,
+        val status: Long = -1,
         @SerialName("theme_type")
-        val themeType: Long,
+        val themeType: Long = -1,
         @SerialName("tv_due_date")
-        val tvDueDate: Long,
+        val tvDueDate: Long = -1,
         @SerialName("tv_vip_pay_type")
-        val tvVipPayType: Long,
+        val tvVipPayType: Long = -1,
         @SerialName("tv_vip_status")
-        val tvVipStatus: Long,
+        val tvVipStatus: Long = -1,
         @SerialName("type")
-        val type: Long,
+        val type: Long = -1,
         @SerialName("vip_pay_type")
-        val vipPayType: Long
+        val vipPayType: Long = -1,
     ) {
-        @Serializable
-        data class AvatarIcon(
-            @SerialName("icon_type")
-            val iconType: Long
-        ) {
-        }
-
         @Serializable
         data class Label(
             @SerialName("bg_color")

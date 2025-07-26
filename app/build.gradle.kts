@@ -15,7 +15,7 @@ android {
         targetSdk = 36
         applicationId = "com.imcys.bilibilias.gp"
         versionCode = 300
-        versionName = "3.0.0-PlumBlossom-Alpha-1"
+        versionName = "3.0.0-PlumBlossom-Alpha-3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     }

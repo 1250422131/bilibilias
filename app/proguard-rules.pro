@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# 防止混淆FFmpegManger下所有方法和属性
+# 保留 FFmpeg 相关类和接口
+-keep class com.imcys.bilibilias.ffmpeg.** { *; }
+
+# 保留 JNI 接口方法名
+-keep interface com.imcys.bilibilias.ffmpeg.FFmpegManger$FFmpegMergeListener {
+    void onProgress(int);
+    void onError(java.lang.String);
+    void onComplete();
+}
