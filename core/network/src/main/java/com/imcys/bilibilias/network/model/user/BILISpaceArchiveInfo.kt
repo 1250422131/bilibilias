@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BILISpaceArchiveInfo(
     @SerialName("episodic_button")
-    val episodicButton: EpisodicButton,
+    val episodicButton: EpisodicButton?,
     @SerialName("list")
     val list: MList,
     @SerialName("page")

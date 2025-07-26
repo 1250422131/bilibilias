@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.imcys.bilibilias.ui.analysis.navigation.analysisScreen
@@ -109,12 +110,12 @@ fun BILIBILIASNavHost(
             )
 
             loginScreen(
-                onToBack = navController::popBackStack,
+                onToBack = navController::popToRootAtMost,
                 goToQRCodeLogin = navController::navigateToQRCodeLogin
             )
 
             qrCodeLoginScreen(
-                onToBack = navController::popBackStack,
+                onToBack = navController::popToRootAtMost,
                 onBackHomePage = {
                     navController.navigateToHome(
                         homeRoute = HomeRoute(isFormLogin = true),
@@ -125,11 +126,11 @@ fun BILIBILIASNavHost(
                 }
             )
 
-            userScreen(onToBack = navController::popBackStack)
+            userScreen(onToBack = navController::popToRootAtMost)
 
             analysisScreen(
                 this@SharedTransitionLayout,
-                onToBack = navController::popBackStack,
+                onToBack = navController::popToRootAtMost,
                 goToUser = {
                     navController.navigateToUser(
                         UserRoute(
@@ -140,9 +141,17 @@ fun BILIBILIASNavHost(
                 }
             )
 
-            downloadScreen(onToBack = navController::popBackStack)
+            downloadScreen(onToBack = navController::popToRootAtMost)
         }
     }
 }
 
+/**
+ * 防止在没有上一个页面时调用 popBackStack 导致崩溃
+ * 参考：https://github.com/google/accompanist/issues/1396#issuecomment-1432694270
+ */
+fun NavController.popToRootAtMost() {
+    if (previousBackStackEntry == null) return
+    popBackStack()
+}
 

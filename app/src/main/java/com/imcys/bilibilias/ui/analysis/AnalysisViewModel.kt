@@ -283,24 +283,6 @@ class AnalysisViewModel(
         viewModelScope.launch {
             videoInfoRepository.getVideoPlayerInfo(cid, bvId, aid).collect {
 
-                when (it.status) {
-                    ApiStatus.SUCCESS -> {
-                        // 杜比
-                        it.data?.dash?.dolby?.audio?.let { dolbyList ->
-                            if (dolbyList.isNotEmpty()) {
-                                it.data?.dash?.audio?.add(0, dolbyList[0])
-                            }
-                        }
-
-                        // Hi—Res
-                        it.data?.dash?.flac?.audio?.let { flac ->
-                            it.data?.dash?.audio?.add(0, flac)
-                        }
-                    }
-
-                    else -> {}
-                }
-
                 _videoPlayerInfo.value = it
                 if (it.status == ApiStatus.SUCCESS) {
                     getDefaultDownloadInfoConfig(

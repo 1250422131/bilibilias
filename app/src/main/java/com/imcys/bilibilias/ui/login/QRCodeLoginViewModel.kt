@@ -5,6 +5,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
@@ -39,6 +43,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.graphics.createBitmap
+import java.net.URLEncoder
 
 class QRCodeLoginViewModel(
     private val qrCodeLoginRepository: QRCodeLoginRepository,
@@ -191,13 +197,23 @@ class QRCodeLoginViewModel(
      */
     fun saveQRCodeImageToGallery(context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
-            val imageUrl = qrCodeInfoState.value.data
-            if (imageUrl?.url == null) return@launch
+            val imageUrl = qrCodeInfoState.value.data?.url
+            if (imageUrl == null) {
+                Toast.makeText(context, "下载失败，请刷新QR查看", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
             runCatching {
                 // 使用 Coil 下载图片
                 withContext(Dispatchers.IO) {
                     val request = ImageRequest.Builder(context)
-                        .data("https://pan.misakamoe.com/qrcode/?url=$imageUrl")
+                        .data(
+                            "https://pan.misakamoe.com/qrcode/?url=${
+                                URLEncoder.encode(
+                                    imageUrl,
+                                    "UTF-8"
+                                )
+                            }"
+                        )
                         .build()
                     context.imageLoader.execute(request).image?.toBitmap()!!
                 }
@@ -211,28 +227,69 @@ class QRCodeLoginViewModel(
 
 
     private fun saveImageWithMediaStore(bitmap: Bitmap, context: Context) {
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "BILIBILIAS_LOGIN_QR.jpeg")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(
-                MediaStore.MediaColumns.RELATIVE_PATH,
-                "${Environment.DIRECTORY_PICTURES}/BILIBILIAS"
-            )
+
+        val borderWidth = 20 // 白色边框宽度
+        val bitmapWithBorder = addWhiteBorder(bitmap, borderWidth)
+
+        val fileName = "BILIBILIAS_LOGIN_QR.jpeg"
+        val relativePath = "${Environment.DIRECTORY_PICTURES}/BILIBILIAS"
+
+        // 查询是否已存在同名文件
+        val selection = "${MediaStore.MediaColumns.DISPLAY_NAME}=? AND ${MediaStore.MediaColumns.RELATIVE_PATH}=?"
+        val selectionArgs = arrayOf(fileName, relativePath)
+        val uriQuery = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val cursor = contentResolver.query(uriQuery, arrayOf(MediaStore.MediaColumns._ID), selection, selectionArgs, null)
+
+        val uri = if (cursor != null && cursor.moveToFirst()) {
+            // 已存在则获取其uri
+            val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+            cursor.close()
+            Uri.withAppendedPath(uriQuery, id.toString())
+        } else {
+            cursor?.close()
+            // 不存在则新建
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
+            }
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         }
 
-        val uri =
-            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
         if (uri != null) {
-            contentResolver.openOutputStream(uri)?.use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            contentResolver.openOutputStream(uri, "rwt")?.use { outputStream ->
+                bitmapWithBorder.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
             Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "保存失败", Toast.LENGTH_SHORT).show()
         }
-
     }
 
+    fun addWhiteBorder(originalBitmap: Bitmap, borderWidth: Int): Bitmap {
+        // 兼容所有 Android 版本，避免硬件位图问题
+        val safeBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (originalBitmap.config == Bitmap.Config.HARDWARE) {
+                originalBitmap.copy(Bitmap.Config.ARGB_8888, false)
+            } else {
+                originalBitmap
+            }
+        } else {
+            // 低版本直接复制为可变位图
+            if (!originalBitmap.isMutable) {
+                originalBitmap.copy(Bitmap.Config.ARGB_8888, false)
+            } else {
+                originalBitmap
+            }
+        }
+        val newWidth = safeBitmap.width + borderWidth * 2
+        val newHeight = safeBitmap.height + borderWidth * 2
+        val borderedBitmap = createBitmap(newWidth, newHeight)
+        val canvas = Canvas(borderedBitmap)
+        canvas.drawColor(Color.WHITE)
+        canvas.drawBitmap(safeBitmap, borderWidth.toFloat(), borderWidth.toFloat(), null)
+        return borderedBitmap
+    }
 
     fun goToScanQR(context: Context) {
         runCatching {

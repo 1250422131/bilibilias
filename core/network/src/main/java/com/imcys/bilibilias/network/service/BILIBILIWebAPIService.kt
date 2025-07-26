@@ -61,7 +61,7 @@ import kotlinx.serialization.json.jsonPrimitive
  * Web平台API
  */
 class BILIBILIWebAPIService(
-    val httpClient: HttpClient
+    val httpClient: HttpClient,
 ) {
 
     /**
@@ -222,7 +222,8 @@ class BILIBILIWebAPIService(
         bvId: String?,
         aid: Long? = null,
         fnval: Int = 4048,
-        qn: Int = 116,
+        qn: Int = 127,
+        tryLook: String? = null
     ): FlowNetWorkResult<BILIVideoPlayerInfo> = httpClient.httpRequest {
         val newMap = mutableMapOf<String, String>().apply {
             bvId?.let { put(BVID, it) }
@@ -231,7 +232,6 @@ class BILIBILIWebAPIService(
             put(QN, qn.toString())
             put(FNVAL, fnval.toString())
             put(FOURK, "1")
-            put(TRY_LOOK,"1")
         } + BROWSER_FINGERPRINT
 
         get(WEB_VIDEO_PLAYER_URL) {
