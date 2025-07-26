@@ -7,6 +7,7 @@ android-targetSdk = "35"
 androidx-activity = "1.10.1"
 androidx-annotation = "1.9.1"
 androidx-datastore = "1.1.7"
+androidx-media3 = "1.7.1"
 androidx-room = "2.7.2"
 androidx-sqlite = "2.5.2"
 androidx-startup = "1.2.0"
@@ -15,6 +16,7 @@ composeHotReload = "1.0.0-beta01"
 composeMultiplatform = "1.8.2"
 coil = "3.2.0"
 decompose = "3.3.0"
+ffmpegPlatform = "7.1-1.5.11"
 kermit = "2.0.6"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
@@ -23,15 +25,17 @@ kotlinx-datetime = "0.7.1"
 kotlinx-io = "0.8.0"
 kotlinx-serialization = "1.9.0"
 ktor = "3.2.2"
-material3-adaptive = "1.1.2"
+androidx-material3-adaptive = "1.1.2"
 qr = "1.0.1"
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+androidx-compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "androidx-material3-adaptive" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 
+androidx-media3-transformer = { module = "androidx.media3:media3-transformer", version.ref = "androidx-media3" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "androidx-sqlite" }
@@ -40,10 +44,10 @@ androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = 
 coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
-compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "material3-adaptive" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 
+ffmpeg-platform = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpegPlatform" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
