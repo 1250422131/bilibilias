@@ -1,5 +1,11 @@
 package com.imcys.bilibilias.ui.analysis
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -26,6 +32,7 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NorthEast
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -59,9 +66,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.imcys.bilibilias.common.utils.toHttps
 import com.imcys.bilibilias.data.model.download.DownloadViewInfo
 import com.imcys.bilibilias.data.model.video.ASLinkResultType
@@ -620,6 +629,23 @@ fun AnalysisScaffold(
 
     var showDownloadTip by remember { mutableStateOf(false) }
 
+    var showRequestPermissionTip by remember { mutableStateOf(false) }
+
+    val permissionsToRequest = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+
+    val context = LocalContext.current
+    var hasSavePermissions by remember {
+        // 在开始时检查权限状态
+        mutableStateOf(
+            permissionsToRequest.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+        )
+    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
@@ -674,7 +700,15 @@ fun AnalysisScaffold(
                 FloatingActionButton(
                     modifier = Modifier.imePadding(),
                     onClick = {
-                        onDownload()
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                            if (!hasSavePermissions) {
+                                showRequestPermissionTip = true
+                            } else {
+                                onDownload()
+                            }
+                        } else {
+                            onDownload()
+                        }
                     },
                 ) {
                     Icon(Icons.Outlined.Download, "下载视频")
@@ -694,6 +728,64 @@ fun AnalysisScaffold(
         )
     }
 
+    if (showRequestPermissionTip && !hasSavePermissions) {
+        WritePermissionRequestTipDialog(permissionsToRequest, onDismiss = {
+            showRequestPermissionTip = false
+        }, onDownload = {
+            hasSavePermissions = permissionsToRequest.all {
+                ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+            }
+            onDownload.invoke()
+        })
+    }
+
+}
+
+@Composable
+fun WritePermissionRequestTipDialog(
+    permissionsToRequest: Array<String>,
+    onDismiss: () -> Unit,
+    onDownload: () -> Unit
+) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        val allGranted = result.values.all { it }
+        if (allGranted) {
+            onDownload()
+        } else {
+            // 有权限未被授予
+            Toast.makeText(context, "权限未被授予", Toast.LENGTH_SHORT).show()
+        }
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Outlined.WarningAmber, contentDescription = "警告") },
+        title = { Text("权限请求") },
+        text = {
+            Text(
+                """
+                    为了我们可以将文件存储到Download文件夹中，接下来将向您申请存储和读取文件权限。
+                """.trimIndent()
+            )
+        },
+        confirmButton = {
+            Button(onClick = {
+                onDismiss()
+                launcher.launch(permissionsToRequest)
+            }) {
+                Text("继续")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text("取消")
+            }
+        }
+    )
 }
 
 @Composable

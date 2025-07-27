@@ -37,10 +37,12 @@ class DownloadViewModel(
         }
     }
 
+
     fun deleteDownloadSegment(context: Context, segment: DownloadSegment) {
         viewModelScope.launch(Dispatchers.IO) {
             var deleteSuccess = false
             var fileNotExist = false
+
             runCatching {
                 val savePath = segment.savePath
                 if (savePath.startsWith("content://")) {
