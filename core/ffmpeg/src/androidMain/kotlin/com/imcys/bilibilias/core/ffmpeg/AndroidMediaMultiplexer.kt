@@ -1,35 +1,40 @@
 package com.imcys.bilibilias.core.ffmpeg
 
+import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.transformer.Composition
-import androidx.media3.transformer.DefaultDecoderFactory
 import androidx.media3.transformer.EditedMediaItem
 import androidx.media3.transformer.EditedMediaItemSequence
 import androidx.media3.transformer.ExportException
 import androidx.media3.transformer.ExportResult
-import androidx.media3.transformer.TransformationRequest
+import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.Transformer
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.flow.interval
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.io.IOException
+import java.io.File
 
 @OptIn(UnstableApi::class)
-internal actual class FfmpegCommandImpl : FfmpegCommand {
-    private val logger = Logger.withTag("FfmpegCommandImpl")
-
-    actual override suspend fun execute(command: String) {
-    }
-
-    actual override suspend fun execute(command: List<String>) {
+internal class AndroidMediaMultiplexer : MediaMultiplexer {
+    private val logger = Logger.withTag("MediaMultiplexer")
+    private val _progress = MutableStateFlow(0)
+    override val progress = _progress.asStateFlow()
+    override var isRunning = false
+    override suspend fun muxMedia(inputPaths: List<String>, outputPath: String) {
         val context = KmpContext.get()
-        val sequences = command.take(2).map {
+        val tempFile = File(context.filesDir, "output.mp4")
+        val sequences = inputPaths.map {
             val editedMediaItem = EditedMediaItem.Builder(MediaItem.fromUri(it)).build()
             EditedMediaItemSequence.Builder(editedMediaItem).build()
         }
-        logger.i { "Size ${sequences.size}" }
         val composition = Composition.Builder(sequences)
             .setTransmuxVideo(true)
             .setTransmuxAudio(true)
@@ -42,7 +47,9 @@ internal actual class FfmpegCommandImpl : FfmpegCommand {
                         composition: Composition,
                         exportResult: ExportResult
                     ) {
+                        setRunState(false)
                         logger.i { "onCompleted" }
+                        copyFile(tempFile, Uri.parse(outputPath))
                     }
 
                     override fun onError(
@@ -51,21 +58,37 @@ internal actual class FfmpegCommandImpl : FfmpegCommand {
                         exportException: ExportException
                     ) {
                         logger.e(exportException) { "onError" }
-                    }
-
-                    override fun onFallbackApplied(
-                        composition: Composition,
-                        originalTransformationRequest: TransformationRequest,
-                        fallbackTransformationRequest: TransformationRequest
-                    ) {
-                        logger.i { "onFallbackApplied" }
+                        setRunState(false)
                     }
                 }
             )
             .build()
-        DefaultDecoderFactory.Builder(context).build()
         withContext(Dispatchers.Main) {
-            transformer.start(composition, command[2])
+            transformer.start(composition, tempFile.absolutePath)
+            setRunState(true)
+            val progressHolder = ProgressHolder()
+            launch {
+                interval(500).collect {
+                    val progressState = transformer.getProgress(progressHolder)
+                    _progress.value = progressState
+                }
+            }
         }
     }
+
+    private fun setRunState(state: Boolean) {
+        isRunning = state
+    }
+
+    private fun copyFile(sourcePath: File, destinationUri: Uri) {
+        val context = KmpContext.get()
+        val outputStream = context.contentResolver.openOutputStream(destinationUri, "rw")
+            ?: throw IOException("Failed to open output stream for URI: $destinationUri")
+        sourcePath.inputStream().buffered().use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+    }
+
 }
