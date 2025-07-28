@@ -8,6 +8,7 @@ import coil3.SingletonImageLoader
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 
 class AsApplication : Application(), SingletonImageLoader.Factory {
@@ -19,6 +20,7 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
             Logger.e("AsApplication", e, "!!! FATAL !!!")
             defaultUEH?.uncaughtException(t, e)
         }
+        StartupSet.create(AsDispatchers.applicationScope)
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
