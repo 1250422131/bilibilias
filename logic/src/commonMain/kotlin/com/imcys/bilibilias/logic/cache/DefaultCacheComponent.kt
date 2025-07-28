@@ -5,13 +5,14 @@ import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.data.MediaCacheManager
 import com.imcys.bilibilias.core.data.model.CacheEpisodeState
-import com.imcys.bilibilias.core.ffmpeg.FfmpegCommandExecutor
-import com.imcys.bilibilias.core.io.resolve
+import com.imcys.bilibilias.core.ffmpeg.createMediaMultiplexer
+import com.imcys.bilibilias.core.storage.AsMediaStore
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
 
 interface CacheComponent {
     val stateFlow: StateFlow<List<CacheEpisodeState>>
@@ -23,8 +24,7 @@ interface CacheComponent {
 class DefaultCacheComponent(
     componentContext: AppComponentContext
 ) : CacheComponent, AppComponentContext by componentContext {
-    private val httpDownloader = DataStoreProvider.httpDownloader
-    private val commandExecutor = FfmpegCommandExecutor()
+    private val multiplexer = createMediaMultiplexer()
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
     override val stateFlow = MediaCacheManager.observeCachedEpisodeStates()
         .stateIn(
@@ -34,12 +34,16 @@ class DefaultCacheComponent(
         )
 
     override fun onCombine(state: CacheEpisodeState) {
+        logger.d { "Attempting to combine media cache for episode: ${state.episodeMetadata}" }
         val uris = state.mediaCacheMetadata.metadata.map { it.filePath.toString() }
-        val uri = KmpContext.dataDir.resolve("output.mp4").toString()
-        val uris1 = uris + uri
+        val filename = Clock.System.now().toEpochMilliseconds()
+        val videoUri =
+            AsMediaStore.createVideo(KmpContext, filename.toString(), "video/mp4", "BilibiliAs")
+                ?: return
+        val uris1 = uris + videoUri.toString()
         logger.d { uris1.joinToString() }
         backgroundScope.launch {
-            commandExecutor.execute(uris1)
+            multiplexer.muxMedia(uris, videoUri.toString())
         }
     }
 
