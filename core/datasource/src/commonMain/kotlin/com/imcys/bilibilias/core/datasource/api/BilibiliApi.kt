@@ -22,10 +22,6 @@ import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parseQueryString
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 
 object BilibiliApi {
     private val client = createHttpClient {
@@ -49,14 +45,6 @@ object BilibiliApi {
                     co.touchlab.kermit.Logger.i("BilibiliApi") { message }
                 }
             }
-        }
-    }
-
-    init {
-        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-            val data = getNavigationData()
-            val wbiImg = data.wbiImg
-            WbiSign.initializeMixinKey(wbiImg.imgUrl, wbiImg.subUrl)
         }
     }
 
