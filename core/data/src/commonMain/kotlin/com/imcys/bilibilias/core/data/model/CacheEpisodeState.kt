@@ -8,4 +8,5 @@ data class CacheEpisodeState(
     val mediaCacheMetadata: MediaCacheMetadata,
     val fileStats: FileStats,
     val canPlay: Boolean,
+    val canMux: Boolean,
 )

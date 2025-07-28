@@ -18,18 +18,15 @@ import kotlinx.coroutines.flow.flowOf
 object MediaCacheManager {
     private val httpDownloader = DataStoreProvider.httpDownloader
     private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
-
-    fun observeCachedEpisodeStates(): Flow<List<CacheEpisodeState>> {
-        return mediaCacheStorage.listFlow.flatMapLatest { mediaCacheSaves ->
-            if (mediaCacheSaves.isEmpty()) {
-                flowOf(emptyList())
-            } else {
-                val episodeStateFlows = mediaCacheSaves.map { (episodeMetadata, cacheMetadata) ->
-                    createEpisodeStateFlow(episodeMetadata, cacheMetadata)
-                }
-                combine(episodeStateFlows) { statesArray ->
-                    statesArray.toList()
-                }
+    val cachedEpisodeStates = mediaCacheStorage.listFlow.flatMapLatest { mediaCacheSaves ->
+        if (mediaCacheSaves.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            val episodeStateFlows = mediaCacheSaves.map { (episodeMetadata, cacheMetadata) ->
+                createEpisodeStateFlow(episodeMetadata, cacheMetadata)
+            }
+            combine(episodeStateFlows) { statesArray ->
+                statesArray.toList()
             }
         }
     }
@@ -59,7 +56,8 @@ object MediaCacheManager {
             episodeMetadata = episodeMetadata,
             mediaCacheMetadata = mediaCacheMetadata,
             fileStats = FileStats.Unspecified,
-            canPlay = false
+            canPlay = false,
+            canMux = true,
         )
     }
 
@@ -88,7 +86,8 @@ object MediaCacheManager {
             episodeMetadata = episodeMetadata,
             mediaCacheMetadata = mediaCacheMetadata,
             fileStats = fileStats,
-            canPlay = allCompleted
+            canPlay = allCompleted,
+            canMux = true,
         )
     }
 }
