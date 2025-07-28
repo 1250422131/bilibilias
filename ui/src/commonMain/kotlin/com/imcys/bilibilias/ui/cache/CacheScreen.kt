@@ -30,7 +30,6 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,13 +41,18 @@ import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.data.model.CacheEpisodeState
 import com.imcys.bilibilias.core.format.DataUnit
 import com.imcys.bilibilias.logic.cache.CacheComponent
+import com.imcys.bilibilias.ui.runtime.collectAsStateWithLifecycle
 
 @Composable
 fun CacheScreen(component: CacheComponent) {
-    val state by component.stateFlow.collectAsState()
+    val state by component.stateFlow.collectAsStateWithLifecycle()
+
+    val canMux by component.canProcess.collectAsStateWithLifecycle()
+
     CaCheContent(
         state,
         onDelete = component::deleteEpisodeCache,
+        canMux = canMux,
         onCombine = component::onCombine
     )
 }
@@ -57,6 +61,7 @@ fun CacheScreen(component: CacheComponent) {
 @Composable
 fun CaCheContent(
     cacheEpisodeState: List<CacheEpisodeState>,
+    canMux: Boolean,
     onDelete: (CacheEpisodeState) -> Unit = { },
     onCombine: (CacheEpisodeState) -> Unit = { },
 ) {
@@ -86,6 +91,7 @@ fun CaCheContent(
                     backgroundContent = {
                         swipeToDismissBoxState.SwipeDismissBackground()
                     },
+                    enableDismissFromStartToEnd = canMux,
                     modifier = Modifier.animateItem(),
                 ) {
                     CacheEpisodeItem(item)
