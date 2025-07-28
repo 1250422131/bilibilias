@@ -16,7 +16,7 @@ import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.flow.interval
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
@@ -25,9 +25,9 @@ import java.io.File
 @OptIn(UnstableApi::class)
 internal class AndroidMediaMultiplexer : MediaMultiplexer {
     private val logger = Logger.withTag("MediaMultiplexer")
-    private val _progress = MutableStateFlow(0)
-    override val progress = _progress.asStateFlow()
-    override var isRunning = false
+
+    override val progress = MutableStateFlow(0)
+    override val isRunning = MutableStateFlow(false)
     override suspend fun muxMedia(inputPaths: List<String>, outputPath: String) {
         val context = KmpContext.get()
         val tempFile = File(context.filesDir, "output.mp4")
@@ -70,14 +70,14 @@ internal class AndroidMediaMultiplexer : MediaMultiplexer {
             launch {
                 interval(500).collect {
                     val progressState = transformer.getProgress(progressHolder)
-                    _progress.value = progressState
+                    progress.update { progressState }
                 }
             }
         }
     }
 
     private fun setRunState(state: Boolean) {
-        isRunning = state
+        isRunning.value = state
     }
 
     private fun copyFile(sourcePath: File, destinationUri: Uri) {
