@@ -31,6 +31,7 @@ object DataStoreProvider {
                 corruptionHandler = ReplaceFileCorruptionHandler {
                     emptyList()
                 },
+                scope = CoroutineScope(AsDispatchers.applicationScope.coroutineContext + AsDispatchers.IO),
             ),
             client = createHttpClient {
                 defaultRequest {
@@ -41,7 +42,7 @@ object DataStoreProvider {
                 }
             },
             fileSystem = SystemFileSystem,
-            baseSaveDir = Path(KmpContext.dataDir, "Download")
+            baseSaveDir = Path(KmpContext.dataDir, "Download"),
         )
     }
 
