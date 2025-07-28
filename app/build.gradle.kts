@@ -32,6 +32,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.core.common)
+            implementation(projects.core.httpDownloader)
             implementation(projects.core.ktorClient)
             implementation(projects.logic)
             implementation(projects.ui)
