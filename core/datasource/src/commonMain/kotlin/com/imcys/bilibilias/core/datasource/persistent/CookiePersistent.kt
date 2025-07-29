@@ -1,31 +1,27 @@
 package com.imcys.bilibilias.core.datasource.persistent
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import com.imcys.bilibilias.core.coroutines.AsDispatchers
-import com.imcys.bilibilias.core.datastore.ReplaceFileCorruptionHandler
-import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
-import com.imcys.bilibilias.core.datastore.new
-import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
+import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.http.Cookie
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.serialization.builtins.ListSerializer
+import io.ktor.http.Url
+import kotlinx.coroutines.flow.first
 
-internal object CookiePersistent {
-    private val cookieStore: DataStore<List<Cookie>> by lazy {
-        DataStoreFactory.new(
-            serializer = ListSerializer(Cookie.serializer()).asDataStoreSerializer { emptyList() },
-            produceFile = { resolveDataStoreFile("cookies") },
-            corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
-            scope = CoroutineScope(AsDispatchers.applicationScope.coroutineContext + AsDispatchers.IO)
-        )
-    }
+internal class CookiePersistent(
+    private val cookieStore: DataStore<List<Cookie>>,
+) : CookiesStorage {
     val cookieFlow = cookieStore.data
+    override suspend fun get(requestUrl: Url): List<Cookie> {
+        return cookieFlow.first()
+    }
+
+    override suspend fun addCookie(requestUrl: Url, cookie: Cookie) {
+        setCookie(cookie)
+    }
     suspend fun setCookie(cookie: Cookie) {
         cookieStore.updateData {
             it.filterNot { it.name == cookie.name }
                 .plus(cookie)
         }
     }
+    override fun close() {}
 }
-

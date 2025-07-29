@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.AsDispatchers.applicationScope
 import com.imcys.bilibilias.core.data.UseCaseModule
+import com.imcys.bilibilias.core.datasource.DataSourceModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
@@ -66,7 +67,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 }
 
 fun KoinApplication.commonModules() = module {
-    includes(otherModules(), UseCaseModule, CommonModule)
+    includes(otherModules(), UseCaseModule, CommonModule, DataSourceModule)
 }
 
 private fun KoinApplication.otherModules() = module {

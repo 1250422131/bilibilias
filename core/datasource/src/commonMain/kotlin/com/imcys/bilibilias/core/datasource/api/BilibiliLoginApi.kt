@@ -2,7 +2,6 @@ package com.imcys.bilibilias.core.datasource.api
 
 import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.model.QrCode
-import com.imcys.bilibilias.core.datasource.persistent.CookiesStorageImpl
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.json.HttpClientJson
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
@@ -17,8 +16,10 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.serialization.kotlinx.json.json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-object BilibiliLoginApi : AutoCloseable {
+object BilibiliLoginApi : AutoCloseable, KoinComponent {
     private val client = createHttpClient {
         defaultRequest {
             url("https://passport.bilibili.com")
@@ -28,7 +29,7 @@ object BilibiliLoginApi : AutoCloseable {
             json(HttpClientJson)
         }
         install(HttpCookies) {
-            storage = CookiesStorageImpl
+            storage = get()
         }
         BrowserUserAgent()
         Logging {

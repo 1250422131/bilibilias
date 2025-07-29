@@ -3,7 +3,6 @@ package com.imcys.bilibilias.core.datasource.api
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
 import com.imcys.bilibilias.core.datasource.model.BilibiliNavigationData
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
-import com.imcys.bilibilias.core.datasource.persistent.CookiesStorageImpl
 import com.imcys.bilibilias.core.datasource.utils.ApiResponseUnwrapper
 import com.imcys.bilibilias.core.datasource.utils.WbiSign
 import com.imcys.bilibilias.core.json.HttpClientJson
@@ -22,8 +21,10 @@ import io.ktor.client.request.parameter
 import io.ktor.http.HttpHeaders
 import io.ktor.http.parseQueryString
 import io.ktor.serialization.kotlinx.json.json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-object BilibiliApi {
+object BilibiliApi : KoinComponent {
     private val client = createHttpClient {
         defaultRequest {
             url("https://api.bilibili.com")
@@ -31,7 +32,7 @@ object BilibiliApi {
             header(HttpHeaders.Referrer, "https://m.bilibili.com")
         }
         install(HttpCookies) {
-            storage = CookiesStorageImpl
+            storage = get()
         }
         install(ApiResponseUnwrapper)
         install(ContentNegotiation) {
