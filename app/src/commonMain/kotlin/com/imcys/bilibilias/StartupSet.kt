@@ -1,9 +1,7 @@
 package com.imcys.bilibilias
 
-import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.datasource.utils.WbiInitializer
 import com.imcys.bilibilias.core.startup.Startup
-import com.imcys.bilibilias.startup.StartupHttpDownloader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -27,7 +25,6 @@ class StartupSet(
         fun create(applicationScope: CoroutineScope) {
             StartupSet(applicationScope)
                 .add(WbiInitializer())
-                .add(StartupHttpDownloader(DataStoreProvider.httpDownloader))
                 .start()
         }
     }
