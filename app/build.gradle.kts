@@ -30,6 +30,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("io.insert-koin:koin-android:4.1.0")
         }
         commonMain.dependencies {
             implementation(projects.core.common)
