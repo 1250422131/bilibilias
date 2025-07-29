@@ -5,31 +5,37 @@ import com.imcys.bilibilias.core.data.model.FileStats
 import com.imcys.bilibilias.core.data.model.Progress
 import com.imcys.bilibilias.core.data.model.toProgress
 import com.imcys.bilibilias.core.format.DataSize.Companion.bytes
+import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadProgress
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
+import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 
-object MediaCacheManager {
-    private val httpDownloader = DataStoreProvider.httpDownloader
-    private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
-    val cachedEpisodeStates = mediaCacheStorage.listFlow.flatMapLatest { mediaCacheSaves ->
-        if (mediaCacheSaves.isEmpty()) {
-            flowOf(emptyList())
-        } else {
-            val episodeStateFlows = mediaCacheSaves.map { (episodeMetadata, cacheMetadata) ->
-                createEpisodeStateFlow(episodeMetadata, cacheMetadata)
-            }
-            combine(episodeStateFlows) { statesArray ->
-                statesArray.toList()
+class GetCachedEpisodeStateUseCase(
+    private val httpDownloader: HttpDownloader,
+    private val mediaCacheStorage: MediaCacheStorage,
+) {
+    operator fun invoke(): Flow<List<CacheEpisodeState>> {
+        return mediaCacheStorage.listFlow.flatMapLatest { mediaCacheSaves ->
+            if (mediaCacheSaves.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                val episodeStateFlows = mediaCacheSaves.map { (episodeMetadata, cacheMetadata) ->
+                    createEpisodeStateFlow(episodeMetadata, cacheMetadata)
+                }
+                combine(episodeStateFlows) { statesArray ->
+                    statesArray.toList()
+                }
             }
         }
     }
+
 
     private fun createEpisodeStateFlow(
         episodeMetadata: EpisodeMetadata,
