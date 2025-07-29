@@ -5,6 +5,7 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.AsDispatchers.applicationScope
+import com.imcys.bilibilias.core.data.UseCaseModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
@@ -65,7 +66,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 }
 
 fun KoinApplication.commonModules() = module {
-    includes(otherModules())
+    includes(otherModules(), UseCaseModule, CommonModule)
 }
 
 private fun KoinApplication.otherModules() = module {
@@ -117,7 +118,6 @@ private fun KoinApplication.otherModules() = module {
             } + SupervisorJob() + IO,
         )
     }
-    includes(CommonModule)
 }
 
 fun KoinApplication.startCommonKoinModule(
