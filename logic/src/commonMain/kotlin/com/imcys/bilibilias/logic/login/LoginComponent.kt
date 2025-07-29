@@ -1,7 +1,5 @@
 package com.imcys.bilibilias.logic.login
 
-import co.touchlab.kermit.Logger
-import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
 import com.imcys.bilibilias.logic.root.AppComponentContext
@@ -23,16 +21,11 @@ interface LoginComponent {
 }
 
 class DefaultLoginComponent(
-    componentContext: AppComponentContext
+    componentContext: AppComponentContext,
+    private val tokenPersistent: TokenPersistent,
 ) : LoginComponent, AppComponentContext by componentContext {
     override val uiState = MutableStateFlow<LoginResultUiState>(LoginResultUiState.Loading)
     override val qrCodeUrl = MutableStateFlow("")
-
-    init {
-        lifecycle.doOnDestroy {
-            BilibiliLoginApi.close()
-        }
-    }
 
     override suspend fun initiateLogin() {
         val qrCode = BilibiliLoginApi.getQrcode()
@@ -50,25 +43,29 @@ class DefaultLoginComponent(
                         loginSuccessful = response.code == 0
                         if (loginSuccessful) {
                             uiState.update { LoginResultUiState.Success }
-                            TokenPersistent.setRefreshToken(response.refreshToken)
-                            Logger.i { "Login success" }
+                            tokenPersistent.setRefreshToken(response.refreshToken)
+                            logger.i { "Login success" }
                         } else {
                             delay(1.seconds)
                         }
                     }
 
                     if (!loginSuccessful && isActive) {
-                        Logger.i { "Login polling finished without success (not timed out)." }
+                        logger.i { "Login polling finished without success (not timed out)." }
                     }
                 }
             } catch (e: TimeoutCancellationException) {
                 uiState.update { LoginResultUiState.Error(e.message) }
-                Logger.i(e) { "Login timed out after 180 seconds." }
+                logger.i(e) { "Login timed out after 180 seconds." }
             } catch (e: Exception) {
                 uiState.update { LoginResultUiState.Error(e.message) }
-                Logger.i(e) { "An error occurred during login: ${e.message}" }
+                logger.i(e) { "An error occurred during login: ${e.message}" }
             }
         }
+    }
+
+    override fun onDestroy() {
+        BilibiliLoginApi.close()
     }
 }
 
