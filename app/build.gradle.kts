@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -48,6 +49,8 @@ kotlin {
             implementation(libs.coil.network.ktor)
 
             implementation(libs.decompose)
+
+            implementation(libs.koin.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -57,7 +60,10 @@ kotlin {
         }
     }
 }
-
+dependencies {
+    "kspAndroid"(libs.koin.ksp.compiler)
+    "kspDesktop"(libs.koin.ksp.compiler)
+}
 android {
     namespace = "com.imcys.bilibilias"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
