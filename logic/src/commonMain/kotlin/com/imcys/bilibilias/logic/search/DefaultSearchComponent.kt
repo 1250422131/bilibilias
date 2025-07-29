@@ -34,10 +34,9 @@ class DefaultSearchComponent(
     componentContext: AppComponentContext,
     private val httpDownloader: HttpDownloader,
     private val mediaCacheStorage: MediaCacheStorage,
+    private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
+    private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
 ) : SearchComponent, AppComponentContext by componentContext {
-    private val episodeInfoUseCase = GetEpisodeInfoUseCase(mediaCacheStorage)
-    private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
-
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
 
@@ -48,7 +47,7 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                episodeInfoUseCase(query).asResult().map { result ->
+                getEpisodeInfoUseCase(query).asResult().map { result ->
                     when (result) {
                         is Success -> {
                             val data = result.data
