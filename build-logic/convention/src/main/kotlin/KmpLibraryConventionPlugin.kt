@@ -14,6 +14,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "com.android.library")
             apply(plugin = "org.jetbrains.kotlin.multiplatform")
+            apply(plugin = "bilibilias.koin")
             configureKotlinMultiplatform()
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
