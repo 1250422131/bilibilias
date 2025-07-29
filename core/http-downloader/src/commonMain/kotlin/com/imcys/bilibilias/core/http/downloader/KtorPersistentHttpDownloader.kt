@@ -18,14 +18,12 @@ import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
 /**
  * A persistent version of [KtorHttpDownloader] that automatically:
  * - Loads saved download states from [dataStore] on construction.
  * - Saves new/updated states whenever [_downloadStatesFlow] changes.
  */
-@OptIn(ExperimentalTime::class)
 class KtorPersistentHttpDownloader(
     private val dataStore: DataStore<List<DownloadState>>,
     client: HttpClient,
