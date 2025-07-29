@@ -21,6 +21,8 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
             defaultUEH?.uncaughtException(t, e)
         }
         StartupSet.create(AsDispatchers.applicationScope)
+
+        initKoin()
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
