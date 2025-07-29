@@ -5,4 +5,5 @@ import org.koin.dsl.module
 
 val commonModule = module {
     single { KmpContext }
+    includes(coroutineDispatcherModule, coroutineScopeModule)
 }
