@@ -13,9 +13,13 @@ import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.BackgroundScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import org.koin.core.component.KoinComponent
 
-interface AppComponentContext : GenericComponentContext<AppComponentContext>, Lifecycle.Callbacks,
-    BackgroundScope {
+interface AppComponentContext :
+    GenericComponentContext<AppComponentContext>,
+    Lifecycle.Callbacks,
+    BackgroundScope,
+    KoinComponent {
     val context: KmpContext
     val logger: Logger
     fun init()
