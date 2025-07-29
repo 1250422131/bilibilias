@@ -3,7 +3,7 @@ package com.imcys.bilibilias.core.di
 import com.imcys.bilibilias.core.context.KmpContext
 import org.koin.dsl.module
 
-val commonModule = module {
+val CommonModule = module {
     single { KmpContext }
-    includes(coroutineDispatcherModule, coroutineScopeModule)
+    includes(coroutineDispatcherModule)
 }
