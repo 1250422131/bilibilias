@@ -22,7 +22,9 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
         }
         StartupSet.create(AsDispatchers.applicationScope)
 
-        initKoin()
+        initKoin {
+            modules(commonModules())
+        }
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
