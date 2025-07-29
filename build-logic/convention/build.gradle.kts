@@ -49,5 +49,9 @@ gradlePlugin {
             id = libs.plugins.bilibilias.android.room.get().pluginId
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("koin") {
+            id = libs.plugins.bilibilias.koin.get().pluginId
+            implementationClass = "KoinConventionPlugin"
+        }
     }
 }

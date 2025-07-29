@@ -18,6 +18,8 @@ coil = "3.3.0"
 decompose = "3.3.0"
 ffmpegPlatform = "7.1.1-1.5.12"
 kermit = "2.0.6"
+koin = "4.1.0"
+koin-annotations = "2.1.0"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
 ksp = "2.2.0-2.0.2"
@@ -27,6 +29,7 @@ kotlinx-serialization = "1.9.0"
 ktor = "3.2.2"
 androidx-material3-adaptive = "1.1.2"
 qr = "1.0.1"
+
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
@@ -48,7 +51,13 @@ decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decom
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 
 ffmpeg-platform = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpegPlatform" }
+
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
+koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
+
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
@@ -89,3 +98,4 @@ room = { id = "androidx.room", version.ref = "androidx-room" }
 bilibilias-android-room = { id = "bilibilias.android.room" }
 bilibilias-compose = { id = "bilibilias.compose" }
 bilibilias-kmp-library = { id = "bilibilias.kmp.library" }
+bilibilias-koin = { id = "bilibilias.koin" }
