@@ -2,15 +2,16 @@ package com.imcys.bilibilias.logic.search
 
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
-import com.imcys.bilibilias.core.data.DataStoreProvider
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.data.model.EpisodeCacheState
+import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCachePartMetadata
+import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
@@ -30,21 +31,15 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
-    componentContext: AppComponentContext
+    componentContext: AppComponentContext,
+    private val httpDownloader: HttpDownloader,
+    private val mediaCacheStorage: MediaCacheStorage,
 ) : SearchComponent, AppComponentContext by componentContext {
-    private val httpDownloader = DataStoreProvider.httpDownloader
-    private val mediaCacheStorage = DataStoreProvider.mediaCacheStorage
     private val episodeInfoUseCase = GetEpisodeInfoUseCase(mediaCacheStorage)
     private val mediaSourceSelectedUseCase = MediaSourceSelectedUseCase()
 
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
-
-    init {
-        backgroundScope.launch {
-            httpDownloader.init()
-        }
-    }
 
     override val searchQuery = MutableStateFlow(persistentState.searchQuery)
 
