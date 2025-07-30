@@ -8,12 +8,13 @@ import com.imcys.bilibilias.core.ffmpeg.createMediaMultiplexer
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.storage.AsMediaStore
 import com.imcys.bilibilias.logic.root.AppComponentContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 import kotlin.time.Clock
 
 interface CacheComponent {
@@ -29,7 +30,7 @@ class DefaultCacheComponent(
     getCachedEpisodeStateUseCase: GetCachedEpisodeStateUseCase,
     private val mediaCacheStorage: MediaCacheStorage
 ) : CacheComponent, AppComponentContext by componentContext {
-    private val muxMutex = Mutex()
+    private val lock = MutableStateFlow(false)
     private val multiplexer = createMediaMultiplexer()
     override val canProcess = multiplexer.isRunning.map { !it }.stateInBackground(true)
     override val stateFlow = getCachedEpisodeStateUseCase()
@@ -40,32 +41,31 @@ class DefaultCacheComponent(
         )
 
     override fun onCombine(state: CacheEpisodeState) {
-        if (muxMutex.tryLock()) {
+        if (lock.value) {
             logger.i { "Muxing task for ${state.episodeMetadata} rejected: Another muxing task is in progress." }
             return
         }
-
+        lock.update { true }
         try {
             logger.d { "Attempting to combine media cache for episode: ${state.episodeMetadata}" }
             val uris = state.mediaCacheMetadata.metadata.map { it.filePath.toString() }
             val filename = Clock.System.now().toEpochMilliseconds()
             val videoUri =
                 AsMediaStore.createVideo(KmpContext, filename.toString(), "video/mp4", "BilibiliAs")
-                    ?: run { // Use run for cleaner early return
+                    ?: run {
                         logger.w { "Failed to create video file for episode: ${state.episodeMetadata}" }
-                        muxMutex.unlock()
+                        lock.update { false }
                         return
                     }
             backgroundScope.launch {
                 multiplexer.muxMedia(uris, videoUri.toString())
             }.invokeOnCompletion {
-                muxMutex.unlock() // Pass no owner or the same dedicated owner
-                logger.d(it) { "Muxing task finished (or failed) for ${state.episodeMetadata}. Mutex released." }
+                lock.update { false }
+                logger.d(it) { "Muxing task finished (or failed) for ${state.episodeMetadata}. Lock released." }
             }
-        } catch (e: Exception) { // Catch potential exceptions outside the coroutine too
+        } catch (e: Exception) {
+            lock.update { false }
             logger.e(e) { "An unexpected error occurred before starting muxing for ${state.episodeMetadata}" }
-        } finally {
-            muxMutex.unlock()
         }
     }
 
