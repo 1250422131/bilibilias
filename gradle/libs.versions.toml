@@ -16,7 +16,7 @@ composeHotReload = "1.0.0-beta01"
 composeMultiplatform = "1.8.2"
 coil = "3.3.0"
 decompose = "3.3.0"
-ffmpegPlatform = "7.1.1-1.5.12"
+ffmpegKit = "1.0.1"
 flowredux = "2.0.0-alpha3"
 kermit = "2.0.6"
 koin = "4.1.0"
@@ -51,7 +51,7 @@ coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", v
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 
-ffmpeg-platform = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpegPlatform" }
+ffmpeg-kit-full-gpl = { module = "com.antonkarpenko:ffmpeg-kit-full-gpl", version.ref = "ffmpegKit" }
 
 flowredux = { module = "com.freeletics.flowredux2:flowredux", version.ref = "flowredux" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }

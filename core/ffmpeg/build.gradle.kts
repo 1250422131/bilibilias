@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.media3.transformer)
+            implementation(libs.ffmpeg.kit.full.gpl)
         }
         commonMain.dependencies {
             implementation(projects.core.common)
