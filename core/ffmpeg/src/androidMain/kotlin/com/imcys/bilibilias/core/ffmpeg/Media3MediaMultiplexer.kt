@@ -23,7 +23,7 @@ import kotlinx.io.IOException
 import java.io.File
 
 @OptIn(UnstableApi::class)
-internal class AndroidMediaMultiplexer : MediaMultiplexer {
+internal class Media3MediaMultiplexer : MediaMultiplexer {
     private val logger = Logger.withTag("MediaMultiplexer")
 
     override val progress = MutableStateFlow(0)
