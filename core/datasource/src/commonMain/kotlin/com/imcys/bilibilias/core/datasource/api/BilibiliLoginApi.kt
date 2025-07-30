@@ -8,6 +8,7 @@ import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.BrowserUserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -29,7 +30,7 @@ object BilibiliLoginApi : AutoCloseable, KoinComponent {
             json(HttpClientJson)
         }
         install(HttpCookies) {
-            storage = get()
+            storage = get<CookiesStorage>()
         }
         BrowserUserAgent()
         Logging {
