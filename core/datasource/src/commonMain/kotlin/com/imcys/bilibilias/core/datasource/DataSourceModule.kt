@@ -3,6 +3,7 @@ package com.imcys.bilibilias.core.datasource
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.imcys.bilibilias.core.datasource.persistent.CookiePersistent
+import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
 import com.imcys.bilibilias.core.datasource.persistent.TokenSave
 import com.imcys.bilibilias.core.datasource.persistent.TokenSave.Companion.INIT
 import com.imcys.bilibilias.core.datastore.ReplaceFileCorruptionHandler
@@ -16,12 +17,14 @@ import io.ktor.http.Cookie
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.builtins.ListSerializer
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val DataSourceModule = module {
     singleOf(::CookiePersistent) bind CookiesStorage::class
-    single<DataStore<List<Cookie>>> {
+    singleOf(::TokenPersistent)
+    single<DataStore<List<Cookie>>>(named("Cookie")) {
         DataStoreFactory.new(
             serializer = ListSerializer(Cookie.serializer()).asDataStoreSerializer { emptyList() },
             produceFile = { resolveDataStoreFile("cookies") },
@@ -29,7 +32,7 @@ val DataSourceModule = module {
             scope = CoroutineScope(applicationScope.coroutineContext + IO)
         )
     }
-    single<DataStore<TokenSave>> {
+    single<DataStore<TokenSave>>(named("TokenSave")) {
         DataStoreFactory.new(
             serializer = TokenSave.serializer().asDataStoreSerializer { INIT },
             corruptionHandler = ReplaceFileCorruptionHandler { INIT },
