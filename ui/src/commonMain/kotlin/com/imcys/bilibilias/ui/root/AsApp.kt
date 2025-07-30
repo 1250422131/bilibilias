@@ -108,7 +108,11 @@ private fun Children(component: RootComponent, modifier: Modifier = Modifier) {
                 )
 
                 is RootComponent.Child.CacheChild -> CacheScreen(child.component)
-                is RootComponent.Child.LoginChild -> LoginScreen(child.component)
+                is RootComponent.Child.LoginChild -> LoginScreen(
+                    child.component,
+                    onBack = component::onBackClicked
+                )
+
                 is RootComponent.Child.PlayerChild -> PlayerScreen(child.component)
                 is RootComponent.Child.SettingsChild -> SettingsScreen(child.component)
             }
