@@ -13,6 +13,8 @@ kotlin {
             implementation(projects.core.httpDownloader)
 
             implementation(libs.decompose)
+
+            implementation(libs.flowredux)
         }
     }
 }
