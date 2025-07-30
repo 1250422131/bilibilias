@@ -17,7 +17,7 @@ composeMultiplatform = "1.8.2"
 coil = "3.3.0"
 decompose = "3.3.0"
 ffmpegPlatform = "7.1.1-1.5.12"
-flowredux = "1.2.2"
+flowredux = "2.0.0-alpha3"
 kermit = "2.0.6"
 koin = "4.1.0"
 koin-annotations = "2.1.0"
@@ -53,7 +53,7 @@ decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", ver
 
 ffmpeg-platform = { module = "org.bytedeco:ffmpeg-platform", version.ref = "ffmpegPlatform" }
 
-flowredux = { module = "com.freeletics.flowredux:flowredux", version.ref = "flowredux" }
+flowredux = { module = "com.freeletics.flowredux2:flowredux", version.ref = "flowredux" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
