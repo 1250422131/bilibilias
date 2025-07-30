@@ -9,19 +9,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.baidu.mobstat.StatService
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.imcys.bilibilias.R
+import com.imcys.bilibilias.base.app.App
+import com.imcys.bilibilias.base.event.LoginFinishEvent
 import com.imcys.bilibilias.base.model.login.LoginStateBean
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.base.utils.DialogUtils
-import com.imcys.bilibilias.base.utils.TokenUtils
 import com.imcys.bilibilias.common.base.BaseFragment
 import com.imcys.bilibilias.common.base.api.BiliBiliAsApi
 import com.imcys.bilibilias.common.base.app.BaseApplication
+import com.imcys.bilibilias.common.base.app.BaseApplication.Companion.asUser
 import com.imcys.bilibilias.common.base.extend.launchUI
 import com.imcys.bilibilias.common.base.model.user.MyUserData
 import com.imcys.bilibilias.common.base.utils.asToast
@@ -33,25 +34,24 @@ import com.imcys.bilibilias.home.ui.adapter.OldHomeBeanAdapter
 import com.imcys.bilibilias.home.ui.model.OldHomeAdBean
 import com.imcys.bilibilias.home.ui.model.OldUpdateDataBean
 import com.imcys.bilibilias.home.ui.viewmodel.FragmentHomeViewModel
-
 import com.youth.banner.indicator.CircleIndicator
 import com.zackratos.ultimatebarx.ultimatebarx.addStatusBarTopPadding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.json.JSONObject
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.math.BigInteger
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -59,8 +59,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import javax.annotation.Detainted
 import javax.inject.Inject
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
 import kotlin.system.exitProcess
 
 @AndroidEntryPoint
@@ -106,6 +104,7 @@ class HomeFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         StatService.onPageStart(requireActivity(), "HomeFragment")
+        initLogoutLoginButton()
     }
 
     /**
@@ -154,18 +153,23 @@ class HomeFragment : BaseFragment() {
      * 加载轮播图信息
      */
     private fun loadBannerData() {
-        launchUI {
-            val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
-                networkService.getOldHomeBannerData()
-            }
+        runCatching {
+            launchUI {
+                val oldHomeBannerDataBean = withContext(Dispatchers.IO) {
+                    networkService.getOldHomeBannerData()
+                }
 
-            // 新增BannerLifecycleObserver
-            fragmentHomeBinding.fragmentHomeBanner.setAdapter(
-                OldHomeBeanAdapter(
-                    oldHomeBannerDataBean.textList,
-                    oldHomeBannerDataBean,
-                ),
-            ).setIndicator(CircleIndicator(requireContext()))
+                // 新增BannerLifecycleObserver
+                fragmentHomeBinding.fragmentHomeBanner.apply {
+                    setAdapter(
+                        OldHomeBeanAdapter(
+                            oldHomeBannerDataBean.textList,
+                            oldHomeBannerDataBean,
+                        ),
+                    )
+                    indicator = CircleIndicator(requireContext())
+                }
+            }
         }
     }
 
@@ -175,32 +179,35 @@ class HomeFragment : BaseFragment() {
     private fun loadAppData() {
 //        AppCenter.start(requireActivity().application, App.appSecret, Distribute::class.java)
 
-        launchUI {
-            val oldUpdateDataBean = withContext(Dispatchers.IO) {
-                networkService.getUpdateData()
-            }
 
-            // 确定是否灰度
-            (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
-                isGrayType = oldUpdateDataBean.gray
-                invalidate() // 通知 View 重新绘制，以显示灰度效果
-            }
+        runCatching {
+            launchUI {
+                val oldUpdateDataBean = withContext(Dispatchers.IO) {
+                    networkService.getUpdateData()
+                }
 
-            if (oldUpdateDataBean.notice != "") {
-                loadNotice(oldUpdateDataBean.notice.toString())
-            }
-            // 送出签名信息
-            val sha = apkVerifyWithSHA(requireContext(), "")
-            val md5 = apkVerifyWithMD5(requireContext(), "")
-            val crc = apkVerifyWithCRC(requireContext(), "")
+                // 确定是否灰度
+                (activity as HomeActivity).activityHomeBinding.homeGrayFrameLayout.apply {
+                    isGrayType = oldUpdateDataBean.gray
+                    invalidate() // 通知 View 重新绘制，以显示灰度效果
+                }
 
-            when (oldUpdateDataBean.id) {
-                "0" -> postAppData(sha, md5, crc)
-                "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
-            }
+                if (oldUpdateDataBean.notice != "") {
+                    loadNotice(oldUpdateDataBean.notice.toString())
+                }
+                // 送出签名信息
+                val sha = apkVerifyWithSHA(requireContext(), "")
+                val md5 = apkVerifyWithMD5(requireContext(), "")
+                val crc = apkVerifyWithCRC(requireContext(), "")
 
-            // 检测更新
-            loadVersionData(oldUpdateDataBean)
+                when (oldUpdateDataBean.id) {
+                    "0" -> postAppData(sha, md5, crc)
+                    "1" -> checkAppData(oldUpdateDataBean, sha, md5, crc)
+                }
+
+                // 检测更新
+                loadVersionData(oldUpdateDataBean)
+            }
         }
     }
 
@@ -231,10 +238,12 @@ class HomeFragment : BaseFragment() {
     /**
      * 加载反馈配置
      */
-    private fun loadFeedbackConfig(){
-        launchUI {
-            val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
-            fragmentHomeBinding.feedbackConfig = feedbackConfig
+    private fun loadFeedbackConfig() {
+        runCatching {
+            launchUI {
+                val feedbackConfig = networkService.getOldHomeFeedbackConfigData()
+                fragmentHomeBinding.feedbackConfig = feedbackConfig
+            }
         }
     }
 
@@ -314,13 +323,19 @@ class HomeFragment : BaseFragment() {
         // 检测用户是否登陆
         detectUserLogin()
 
-        // loadRoamData()
+        startStatistics()
 
         initSmoothRefreshLayout()
-        initLogoutLoginButton()
     }
 
     private fun initLogoutLoginButton() {
+
+        fragmentHomeBinding.fragmentHomeLoginout.visibility = if (asUser.mid == 0L) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+
         fragmentHomeBinding.fragmentHomeLoginout.setOnClickListener {
             DialogUtils.dialog(
                 requireContext(),
@@ -380,7 +395,7 @@ class HomeFragment : BaseFragment() {
     /**
      * 启动统计
      */
-    internal fun startStatistics() {
+    private fun startStatistics() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sharedPreferences.edit()
             .putBoolean("microsoft_app_center_type", true)
@@ -423,8 +438,8 @@ class HomeFragment : BaseFragment() {
             val myUserData = networkService.getMyUserData()
 
             if (myUserData.code != 0) {
-                DialogUtils.loginDialog(requireActivity())
-                    .show()
+//                DialogUtils.loginDialog(requireActivity())
+//                    .show()
             } else {
                 // 解除风控
                 networkService.getBILIHome()

@@ -2,6 +2,7 @@ package com.imcys.bilibilias.common.di
 
 import com.imcys.bilibilias.common.base.constant.BROWSER_USER_AGENT
 import com.imcys.bilibilias.common.base.constant.ROAM_API
+import com.imcys.bilibilias.common.network.RoamingInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +38,7 @@ class NetworkModule {
                 .build()
             chain.proceed(request)
         }
+        .addInterceptor(RoamingInterceptor())
         .addInterceptor(MonitorInterceptor())
         .build()
 

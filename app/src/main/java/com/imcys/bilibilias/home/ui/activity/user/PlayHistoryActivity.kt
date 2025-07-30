@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.baidu.mobstat.StatService
@@ -11,6 +12,7 @@ import com.imcys.bilibilias.R
 import com.imcys.bilibilias.base.BaseActivity
 import com.imcys.bilibilias.base.network.NetworkService
 import com.imcys.bilibilias.common.base.utils.RecyclerViewUtils
+import com.imcys.bilibilias.common.base.utils.isPad
 import com.imcys.bilibilias.databinding.ActivityPlayHistoryBinding
 import com.imcys.bilibilias.home.ui.adapter.PlayHistoryAdapter
 import com.imcys.bilibilias.home.ui.model.PlayHistoryBean
@@ -54,7 +56,8 @@ class PlayHistoryActivity : BaseActivity() {
         binding.apply {
             playHistoryTopRv.adapter = playHistoryAdapter
             playHistoryTopRv.layoutManager =
-                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                GridLayoutManager(this@PlayHistoryActivity, if(isPad(this@PlayHistoryActivity)) 4 else 2)
+
 
             launchUI {
                 networkService.getPlayHistory(0, 0).let {

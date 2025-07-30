@@ -521,12 +521,17 @@ class DownloadQueue @Inject constructor(
                             if (mTask.isGroupTask) {
                                 val groupTasks = groupTasksMap[mTask.downloadTaskDataBean.cid]
                                 groupTasks?.forEach {
+                                    val currentUrl = it.url
                                     currentTasks.remove(it)
+                                    queue.removeAll {item-> item.url == currentUrl }
                                     it.state = STATE_DOWNLOAD_ERROR
                                     it.onComplete(false)
                                 }
+                                groupTasksMap.remove(mTask.downloadTaskDataBean.cid)
                             } else {
+                                val currentUrl = mTask.url
                                 currentTasks.remove(mTask)
+                                queue.removeAll { it.url == currentUrl }
                                 mTask.state = STATE_DOWNLOAD_ERROR
                                 mTask.onComplete(false)
                             }
@@ -810,7 +815,7 @@ class DownloadQueue @Inject constructor(
                 "ffmpeg -i {VIDEO_PATH} -i {AUDIO_PATH} -c copy {VIDEO_MERGE_PATH}",
             )
 
-        val mergeFilePath = videoPath + "_merge.mp4"
+        val mergeFilePath = videoPath.replace(".mp4","") + "_merge.mp4"
         File(mergeFilePath)
 
         val commands = userDLMergeCmd?.toAsFFmpeg(

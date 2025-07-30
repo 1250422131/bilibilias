@@ -113,7 +113,7 @@ class SearchViewModel @Inject constructor(
         }
 
     private suspend fun video(bvid: String): Flow<SearchResultUiState> = flowOf(bvid)
-        .map { networkService.n26(bvid).data }
+        .map { networkService.getVideoBaseInfoByBvid(bvid).data }
         .asResult()
         .map { result ->
             when (result) {

@@ -47,7 +47,7 @@ class UserSpaceViewModel @Inject constructor(
     private fun getUserInfo(): Unit {
         viewModelScope.launch {
             val info = networkService.getUserNavInfo().data
-            userSpaceUiState.update { it.copy(name = info.uname, face = info.face) }
+            userSpaceUiState.update { it.copy(name = info.uname ?: "", face = info.face ?: "") }
         }
     }
 
