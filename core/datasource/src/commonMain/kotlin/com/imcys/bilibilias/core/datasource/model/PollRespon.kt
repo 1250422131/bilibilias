@@ -15,4 +15,6 @@ data class PollResponse(
     val timestamp: Long = 0,
     @SerialName("url")
     val url: String = ""
-)
+) {
+    val isSuccess: Boolean = code == 0
+}
