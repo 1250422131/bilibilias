@@ -8,6 +8,7 @@ import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.instancekeeper.InstanceKeeperOwner
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.coroutines.withLifecycle
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.BackgroundScope
@@ -19,6 +20,7 @@ interface AppComponentContext :
     Lifecycle.Callbacks,
     BackgroundScope,
     KoinComponent {
+    val logTag: String
     val context: KmpContext
     val logger: Logger
     fun init()
@@ -27,14 +29,17 @@ interface AppComponentContext :
 class DefaultAppComponentContext(
     componentContext: ComponentContext,
     override val context: KmpContext,
-    override val backgroundScope: CoroutineScope,
+    private val coroutineScope: CoroutineScope,
 ) : AppComponentContext,
     LifecycleOwner by componentContext,
     StateKeeperOwner by componentContext,
     InstanceKeeperOwner by componentContext,
     BackHandlerOwner by componentContext {
+    override val backgroundScope
+        get() = CoroutineScope(coroutineScope.coroutineContext).withLifecycle(lifecycle)
 
-    override val logger: Logger = Logger.withTag(this::class.simpleName!!)
+    override val logTag: String = "AppComponent"
+    override val logger: Logger = Logger.withTag(logTag)
 
     init {
         lifecycle.subscribe(this)

@@ -15,6 +15,7 @@ kotlin {
             implementation(projects.core.mediaCache)
             implementation(projects.core.uiPreview)
 
+            implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.runtime)
             implementation(compose.material3)
@@ -33,8 +34,6 @@ kotlin {
             implementation(mediampLibs.mediamp.api)
 
             implementation("me.zhanghai.compose.preference:preference:2.1.0")
-
-            implementation("com.arkivanov.essenty:lifecycle-coroutines:2.5.0")
         }
     }
 }

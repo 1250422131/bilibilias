@@ -15,6 +15,7 @@ kotlin {
             implementation(libs.decompose)
 
             implementation(libs.flowredux)
+            implementation("com.arkivanov.essenty:lifecycle-coroutines:2.5.0")
         }
     }
 }
