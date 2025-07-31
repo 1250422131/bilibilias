@@ -20,7 +20,7 @@ import io.ktor.serialization.kotlinx.json.json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-object BilibiliLoginApi : AutoCloseable, KoinComponent {
+class BilibiliLoginApi : AutoCloseable, KoinComponent {
     private val client = createHttpClient {
         defaultRequest {
             url("https://passport.bilibili.com")
