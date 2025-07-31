@@ -22,6 +22,8 @@ interface AppComponentContext :
     KoinComponent {
     val logTag: String
     val context: KmpContext
+
+    @Deprecated("Use com.imcys.bilibilias.core.logging.logger<Class>()")
     val logger: Logger
     fun init()
 }
@@ -39,6 +41,8 @@ class DefaultAppComponentContext(
         get() = CoroutineScope(coroutineScope.coroutineContext).withLifecycle(lifecycle)
 
     override val logTag: String = "AppComponent"
+
+    @Deprecated("Use com.imcys.bilibilias.core.logging.logger<Class>()")
     override val logger: Logger = Logger.withTag(logTag)
 
     init {
