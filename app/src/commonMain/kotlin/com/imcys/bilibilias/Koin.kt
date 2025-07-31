@@ -48,7 +48,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.includes
@@ -72,13 +72,13 @@ fun KoinApplication.commonModules() = module {
 }
 
 private fun KoinApplication.otherModules() = module {
-    singleOf(::DefaultAppComponentContext) bind AppComponentContext::class
-    singleOf(::DefaultRootComponent) bind RootComponent::class
-    singleOf(::DefaultSearchComponent) bind SearchComponent::class
-    singleOf(::DefaultCacheComponent) bind CacheComponent::class
-    singleOf(::DefaultLoginComponent) bind LoginComponent::class
-    singleOf(::DefaultPlayerComponent) bind PlayerComponent::class
-    singleOf(::DefaultSettingsComponent) bind SettingsComponent::class
+    factoryOf(::DefaultAppComponentContext) bind AppComponentContext::class
+    factoryOf(::DefaultRootComponent) bind RootComponent::class
+    factoryOf(::DefaultSearchComponent) bind SearchComponent::class
+    factoryOf(::DefaultCacheComponent) bind CacheComponent::class
+    factoryOf(::DefaultLoginComponent) bind LoginComponent::class
+    factoryOf(::DefaultPlayerComponent) bind PlayerComponent::class
+    factoryOf(::DefaultSettingsComponent) bind SettingsComponent::class
     @OptIn(ExperimentalTime::class)
     single<HttpDownloader> {
         KtorPersistentHttpDownloader(
