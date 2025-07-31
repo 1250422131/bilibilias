@@ -8,7 +8,6 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.logic.cache.CacheComponent
-import com.imcys.bilibilias.logic.login.LoginComponent
 import com.imcys.bilibilias.logic.player.PlayerComponent
 import com.imcys.bilibilias.logic.root.RootComponent.Child.CacheChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.LoginChild
@@ -18,6 +17,7 @@ import com.imcys.bilibilias.logic.root.RootComponent.Child.SettingsChild
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.setting.SettingsComponent
 import kotlinx.serialization.Serializable
+import org.koin.core.component.get
 import org.koin.core.component.inject
 
 class DefaultRootComponent(
@@ -25,7 +25,6 @@ class DefaultRootComponent(
 ) : RootComponent, AppComponentContext by componentContext {
     private val searchComponent by inject<SearchComponent>()
     private val cacheComponent by inject<CacheComponent>()
-    private val loginComponent by inject<LoginComponent>()
     private val playerComponent by inject<PlayerComponent>()
     private val settingsComponent by inject<SettingsComponent>()
     private val nav = StackNavigation<Config>()
@@ -43,7 +42,7 @@ class DefaultRootComponent(
         when (config) {
             Config.Search -> SearchChild(searchComponent)
             Config.Cache -> CacheChild(cacheComponent)
-            Config.Login -> LoginChild(loginComponent)
+            Config.Login -> LoginChild(get())
             Config.Player -> PlayerChild(playerComponent)
             Config.Settings -> SettingsChild(settingsComponent)
         }
@@ -69,7 +68,7 @@ class DefaultRootComponent(
     }
 
     override fun onLoginClicked() {
-        nav.bringToFront(Config.Login)
+        nav.pushNew(Config.Login)
     }
 
     @Serializable
