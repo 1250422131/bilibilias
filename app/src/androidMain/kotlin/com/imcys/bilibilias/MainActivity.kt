@@ -5,22 +5,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.essentyLifecycle
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.context.LocalKmpContext
-import com.imcys.bilibilias.logic.root.RootComponent
+import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
+import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
 import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
-import org.koin.android.scope.AndroidScopeComponent
-import org.koin.core.scope.Scope
+import org.koin.android.ext.android.get
+import org.koin.core.component.KoinComponent
 
-class MainActivity : ComponentActivity(), AndroidScopeComponent {
+class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        val root by activityScope.inject<RootComponent>()
+        val context = DefaultAppComponentContext(defaultComponentContext(), get(), get())
+        val component = DefaultRootComponent(context)
         val lifecycleOwner = object : LifecycleOwner {
             override val lifecycle get() = essentyLifecycle()
         }
@@ -30,10 +32,8 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
                 LocalKmpContext provides KmpContext,
                 LocalLifecycleOwner provides lifecycleOwner,
             ) {
-                AsApp(root)
+                AsApp(component)
             }
         }
     }
-
-    override val scope: Scope = activityScope
 }
