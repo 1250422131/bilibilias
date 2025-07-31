@@ -8,16 +8,20 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.Value
 import com.imcys.bilibilias.logic.cache.CacheComponent
+import com.imcys.bilibilias.logic.cache.DefaultCacheComponent
+import com.imcys.bilibilias.logic.login.DefaultLoginComponent
+import com.imcys.bilibilias.logic.player.DefaultPlayerComponent
 import com.imcys.bilibilias.logic.player.PlayerComponent
 import com.imcys.bilibilias.logic.root.RootComponent.Child.CacheChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.LoginChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.PlayerChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.SearchChild
 import com.imcys.bilibilias.logic.root.RootComponent.Child.SettingsChild
+import com.imcys.bilibilias.logic.search.DefaultSearchComponent
 import com.imcys.bilibilias.logic.search.SearchComponent
+import com.imcys.bilibilias.logic.setting.DefaultSettingsComponent
 import com.imcys.bilibilias.logic.setting.SettingsComponent
 import kotlinx.serialization.Serializable
-import org.koin.core.component.get
 import org.koin.core.component.inject
 
 class DefaultRootComponent(
@@ -38,13 +42,13 @@ class DefaultRootComponent(
 
     override val stack: Value<ChildStack<*, RootComponent.Child>> = _stack
 
-    private fun child(config: Config, componentContext: AppComponentContext): RootComponent.Child =
+    private fun child(config: Config, context: AppComponentContext): RootComponent.Child =
         when (config) {
-            Config.Search -> SearchChild(searchComponent)
-            Config.Cache -> CacheChild(cacheComponent)
-            Config.Login -> LoginChild(get())
-            Config.Player -> PlayerChild(playerComponent)
-            Config.Settings -> SettingsChild(settingsComponent)
+            Config.Search -> SearchChild(DefaultSearchComponent(context))
+            Config.Cache -> CacheChild(DefaultCacheComponent(context))
+            Config.Login -> LoginChild(DefaultLoginComponent(context))
+            Config.Player -> PlayerChild(DefaultPlayerComponent(context))
+            Config.Settings -> SettingsChild(DefaultSettingsComponent(context))
         }
 
     override fun onSettingsClicked() {

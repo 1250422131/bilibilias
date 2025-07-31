@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Duration.Companion.seconds
 
 interface BackgroundScope {
-    val backgroundScope: CoroutineScope
+    val applicationScope: CoroutineScope
     fun <T> Flow<T>.shareInBackground(
         started: SharingStarted = SharingStarted.WhileSubscribed(5.seconds),
         replay: Int = 1,
-    ): SharedFlow<T> = shareIn(backgroundScope, started, replay)
+    ): SharedFlow<T> = shareIn(applicationScope, started, replay)
 
     fun <T> Flow<T>.stateInBackground(
         initialValue: T,
         started: SharingStarted = SharingStarted.WhileSubscribed(5.seconds),
-    ): StateFlow<T> = stateIn(backgroundScope, started, initialValue)
+    ): StateFlow<T> = stateIn(applicationScope, started, initialValue)
 }

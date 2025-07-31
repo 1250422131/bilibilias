@@ -27,16 +27,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.core.component.inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
-    private val httpDownloader: HttpDownloader,
-    private val mediaCacheStorage: MediaCacheStorage,
-    private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
-    private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
 ) : SearchComponent, AppComponentContext by componentContext {
+    private val httpDownloader by inject<HttpDownloader>()
+    private val mediaCacheStorage by inject<MediaCacheStorage>()
+    private val getEpisodeInfoUseCase by inject<GetEpisodeInfoUseCase>()
+    private val mediaSourceSelectedUseCase by inject<MediaSourceSelectedUseCase>()
+
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
 
@@ -71,7 +73,7 @@ class DefaultSearchComponent(
                 }
             }
         }.stateIn(
-            backgroundScope,
+            applicationScope,
             SharingStarted.WhileSubscribed(5_000),
             SearchResultUiState.Loading
         )
@@ -84,7 +86,7 @@ class DefaultSearchComponent(
     }
 
     override fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest) {
-        backgroundScope.launch {
+        applicationScope.launch {
             val episodeInfo = mediaSourceSelectedUseCase(request)
             val metadata = episodeInfo.asEpisodeMetadata()
             launch {

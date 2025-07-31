@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 import kotlin.time.Clock
 
 interface CacheComponent {
@@ -27,15 +28,15 @@ interface CacheComponent {
 
 class DefaultCacheComponent(
     componentContext: AppComponentContext,
-    getCachedEpisodeStateUseCase: GetCachedEpisodeStateUseCase,
-    private val mediaCacheStorage: MediaCacheStorage
 ) : CacheComponent, AppComponentContext by componentContext {
+    private val getCachedEpisodeStateUseCase by inject<GetCachedEpisodeStateUseCase>()
+    private val mediaCacheStorage by inject<MediaCacheStorage>()
     private val lock = MutableStateFlow(false)
     private val multiplexer = createMediaMultiplexer()
     override val canProcess = multiplexer.isRunning.map { !it }.stateInBackground(true)
     override val stateFlow = getCachedEpisodeStateUseCase()
         .stateIn(
-            scope = backgroundScope,
+            scope = applicationScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
@@ -57,7 +58,7 @@ class DefaultCacheComponent(
                         lock.update { false }
                         return
                     }
-            backgroundScope.launch {
+            applicationScope.launch {
                 multiplexer.muxMedia(uris, videoUri.toString())
             }.invokeOnCompletion {
                 lock.update { false }
@@ -70,7 +71,7 @@ class DefaultCacheComponent(
     }
 
     override fun deleteEpisodeCache(state: CacheEpisodeState) {
-        backgroundScope.launch {
+        applicationScope.launch {
             try {
                 // todo 下载记录也要删除
                 Logger.d { "Attempting to delete media cache metadata for episode: ${state.episodeMetadata}" }

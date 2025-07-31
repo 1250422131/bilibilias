@@ -21,20 +21,8 @@ import com.imcys.bilibilias.core.media.cache.DataStoreMediaCacheStorage
 import com.imcys.bilibilias.core.media.cache.MediaCacheSave
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.logic.LogicModule
-import com.imcys.bilibilias.logic.cache.CacheComponent
-import com.imcys.bilibilias.logic.cache.DefaultCacheComponent
-import com.imcys.bilibilias.logic.login.DefaultLoginComponent
-import com.imcys.bilibilias.logic.login.LoginComponent
-import com.imcys.bilibilias.logic.player.DefaultPlayerComponent
-import com.imcys.bilibilias.logic.player.PlayerComponent
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
-import com.imcys.bilibilias.logic.root.DefaultRootComponent
-import com.imcys.bilibilias.logic.root.RootComponent
-import com.imcys.bilibilias.logic.search.DefaultSearchComponent
-import com.imcys.bilibilias.logic.search.SearchComponent
-import com.imcys.bilibilias.logic.setting.DefaultSettingsComponent
-import com.imcys.bilibilias.logic.setting.SettingsComponent
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
@@ -73,12 +61,6 @@ fun KoinApplication.commonModules() = module {
 
 private fun KoinApplication.otherModules() = module {
     factoryOf(::DefaultAppComponentContext) bind AppComponentContext::class
-    factoryOf(::DefaultRootComponent) bind RootComponent::class
-    factoryOf(::DefaultSearchComponent) bind SearchComponent::class
-    factoryOf(::DefaultCacheComponent) bind CacheComponent::class
-    factoryOf(::DefaultLoginComponent) bind LoginComponent::class
-    factoryOf(::DefaultPlayerComponent) bind PlayerComponent::class
-    factoryOf(::DefaultSettingsComponent) bind SettingsComponent::class
     @OptIn(ExperimentalTime::class)
     single<HttpDownloader> {
         KtorPersistentHttpDownloader(
