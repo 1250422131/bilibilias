@@ -20,6 +20,7 @@ import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.core.media.cache.DataStoreMediaCacheStorage
 import com.imcys.bilibilias.core.media.cache.MediaCacheSave
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
+import com.imcys.bilibilias.logic.LogicModule
 import com.imcys.bilibilias.logic.cache.CacheComponent
 import com.imcys.bilibilias.logic.cache.DefaultCacheComponent
 import com.imcys.bilibilias.logic.login.DefaultLoginComponent
@@ -67,7 +68,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 }
 
 fun KoinApplication.commonModules() = module {
-    includes(otherModules(), UseCaseModule, CommonModule, DataSourceModule)
+    includes(otherModules(), UseCaseModule, CommonModule, DataSourceModule, LogicModule)
 }
 
 private fun KoinApplication.otherModules() = module {
