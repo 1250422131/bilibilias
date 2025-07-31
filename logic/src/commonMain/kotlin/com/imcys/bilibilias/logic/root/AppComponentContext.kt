@@ -12,7 +12,6 @@ import com.arkivanov.essenty.statekeeper.StateKeeperOwner
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.BackgroundScope
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import org.koin.core.component.KoinComponent
 
 interface AppComponentContext :
@@ -46,7 +45,6 @@ class DefaultAppComponentContext(
     }
 
     override fun onDestroy() {
-        backgroundScope.cancel()
         lifecycle.unsubscribe(this)
     }
 
