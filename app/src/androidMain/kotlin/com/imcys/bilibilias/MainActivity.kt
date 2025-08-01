@@ -14,8 +14,8 @@ import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultRootComponent
 import com.imcys.bilibilias.ui.root.AsApp
 import com.imcys.bilibilias.ui.runtime.LocalLifecycleOwner
-import org.koin.android.ext.android.get
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
