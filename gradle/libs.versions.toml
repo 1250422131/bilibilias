@@ -20,7 +20,6 @@ ffmpegKit = "1.0.1"
 flowredux = "2.0.0-alpha3"
 kermit = "2.0.6"
 koin = "4.1.0"
-koin-annotations = "2.1.0"
 kotlin = "2.2.0"
 kotlinx-coroutines = "1.10.2"
 ksp = "2.2.0-2.0.2"
@@ -57,8 +56,7 @@ flowredux = { module = "com.freeletics.flowredux2:flowredux", version.ref = "flo
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin-annotations" }
-koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-annotations" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
 
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
