@@ -97,6 +97,7 @@ class LoginStateMachine(
 
     override fun onDestroy() {
         interrupt = true
+        loginApi.close()
     }
 
     private fun timerThatEmitsEverySecond(key: String): Flow<PollResponse> = flow {
