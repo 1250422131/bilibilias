@@ -20,7 +20,16 @@ sealed interface SearchResultUiState {
         val episodeInfo: EpisodeInfo2,
         val episodes: List<EpisodeCacheState>,
         val episodeCacheListState: EpisodeCacheListState,
+        val isGuestUser: Boolean,
     ) : SearchResultUiState
 
     data class Error(val message: String) : SearchResultUiState
+}
+
+sealed interface EpisodeListUiState {
+    data class Loading(val episodes: List<EpisodeCacheState> = emptyList()) :
+        EpisodeListUiState // Potentially show cached while loading new
+
+    data class Success(val episodes: List<EpisodeCacheState>) : EpisodeListUiState
+    data class Error(val message: String) : EpisodeListUiState
 }
