@@ -34,7 +34,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.core.common)
-            implementation(projects.core.mediaCache)
+            implementation(projects.core.datastore)
             implementation(projects.core.httpDownloader)
             implementation(projects.core.ktorClient)
             implementation(projects.logic)

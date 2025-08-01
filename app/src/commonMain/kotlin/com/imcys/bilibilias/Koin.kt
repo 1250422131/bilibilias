@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.AsDispatchers.applicationScope
 import com.imcys.bilibilias.core.datasource.DataSourceModule
+import com.imcys.bilibilias.core.datastore.DataStoreModule
 import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
@@ -17,9 +18,6 @@ import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
-import com.imcys.bilibilias.core.media.cache.DataStoreMediaCacheStorage
-import com.imcys.bilibilias.core.media.cache.MediaCacheSave
-import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.logic.LogicModule
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
@@ -56,7 +54,14 @@ fun initKoin(config: KoinAppDeclaration? = null) {
 }
 
 fun KoinApplication.commonModules() = module {
-    includes(otherModules(), UseCaseModule, CommonModule, DataSourceModule, LogicModule)
+    includes(
+        otherModules(),
+        UseCaseModule,
+        CommonModule,
+        DataSourceModule,
+        LogicModule,
+        DataStoreModule
+    )
 }
 
 private fun KoinApplication.otherModules() = module {
@@ -80,17 +85,6 @@ private fun KoinApplication.otherModules() = module {
             },
             fileSystem = SystemFileSystem,
             baseSaveDir = Path(KmpContext.dataDir, "Download"),
-        )
-    }
-    @OptIn(ExperimentalTime::class)
-    single<MediaCacheStorage> {
-        DataStoreMediaCacheStorage(
-            store = DataStoreFactory.new(
-                serializer = ListSerializer(MediaCacheSave.serializer()).asDataStoreSerializer { emptyList() },
-                corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
-                produceFile = { resolveDataStoreFile("media_cache_storage") },
-                scope = CoroutineScope(applicationScope.coroutineContext + IO),
-            )
         )
     }
     single<CoroutineScope> {

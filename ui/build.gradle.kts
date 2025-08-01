@@ -12,7 +12,7 @@ kotlin {
             implementation(projects.logic)
 
             implementation(projects.core.ffmpeg)
-            implementation(projects.core.mediaCache)
+            implementation(projects.core.datastore)
             implementation(projects.core.uiPreview)
 
             implementation(compose.foundation)

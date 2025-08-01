@@ -8,7 +8,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.domain)
             implementation(projects.core.ffmpeg)
-            implementation(projects.core.mediaCache)
+            implementation(projects.core.datastore)
             implementation(projects.core.httpDownloader)
 
             implementation(libs.decompose)

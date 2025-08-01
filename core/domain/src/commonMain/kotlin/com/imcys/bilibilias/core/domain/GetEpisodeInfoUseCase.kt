@@ -4,13 +4,13 @@ import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.coroutines.MonoTasker
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
+import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 import com.imcys.bilibilias.core.domain.model.MediaStream
 import com.imcys.bilibilias.core.flow.flowFromSuspend
-import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.supervisorScope
 
 class GetEpisodeInfoUseCase(
-    private val mediaCacheStorage: MediaCacheStorage
+    private val mediaCacheStorage: MediaCacheDataSource
 ) {
     operator fun invoke(query: String): Flow<EpisodeCacheListState> {
         return when (val result = TextExtraction.textExtract(query)) {

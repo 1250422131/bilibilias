@@ -2,10 +2,10 @@ package com.imcys.bilibilias.logic.cache
 
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
+import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.domain.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.ffmpeg.createMediaMultiplexer
-import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.storage.AsMediaStore
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +30,7 @@ class DefaultCacheComponent(
     componentContext: AppComponentContext,
 ) : CacheComponent, AppComponentContext by componentContext {
     private val getCachedEpisodeStateUseCase by inject<GetCachedEpisodeStateUseCase>()
-    private val mediaCacheStorage by inject<MediaCacheStorage>()
+    private val mediaCacheStorage by inject<MediaCacheDataSource>()
     private val lock = MutableStateFlow(false)
     private val multiplexer = createMediaMultiplexer()
     override val canProcess = multiplexer.isRunning.map { !it }.stateInBackground(true)

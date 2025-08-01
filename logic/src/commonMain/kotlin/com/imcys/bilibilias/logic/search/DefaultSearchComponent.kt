@@ -3,6 +3,9 @@ package com.imcys.bilibilias.logic.search
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
+import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
+import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
 import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState.Companion.Placeholder
@@ -11,9 +14,6 @@ import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
-import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
-import com.imcys.bilibilias.core.media.cache.MediaCachePartMetadata
-import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.result.Result.Error
 import com.imcys.bilibilias.core.result.Result.Loading
@@ -36,7 +36,7 @@ import kotlin.uuid.Uuid
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
     private val httpDownloader: HttpDownloader,
-    private val mediaCacheStorage: MediaCacheStorage,
+    private val mediaCacheStorage: MediaCacheDataSource,
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
     private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
     private val tokenPersistent: TokenPersistent,

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.media.cache
+package com.imcys.bilibilias.core.datastore.model
 
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
@@ -10,11 +10,36 @@ import kotlinx.serialization.Serializable
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-fun mediaCacheMetadata(
-    vararg partMetadata: MediaCachePartMetadata,
-    extra: Map<MetadataKey, String> = emptyMap()
-): MediaCacheMetadata =
-    MediaCacheMetadata(partMetadata.toList(), extra = extra)
+@Serializable
+data class MediaCacheSave(
+    val origin: EpisodeMetadata,
+    val metadata: MediaCacheMetadata,
+)
+
+@Serializable
+data class EpisodeMetadata(
+    val bvid: String,
+    val cid: Long,
+    val title: String,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EpisodeMetadata
+
+        if (cid != other.cid) return false
+        if (bvid != other.bvid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = cid.hashCode()
+        result = 31 * result + bvid.hashCode()
+        return result
+    }
+}
 
 @ConsistentCopyVisibility
 @Serializable

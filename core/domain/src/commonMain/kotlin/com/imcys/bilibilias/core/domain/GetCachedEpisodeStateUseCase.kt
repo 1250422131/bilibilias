@@ -1,13 +1,13 @@
 package com.imcys.bilibilias.core.domain
 
+import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
+import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
+import com.imcys.bilibilias.core.datastore.model.MediaCacheMetadata
 import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadProgress
 import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
-import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
-import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
-import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.model.DataSize.Companion.bytes
 import com.imcys.bilibilias.core.model.FileStats
 import com.imcys.bilibilias.core.model.Progress
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class GetCachedEpisodeStateUseCase(
     private val httpDownloader: HttpDownloader,
-    private val mediaCacheStorage: MediaCacheStorage,
+    private val mediaCacheStorage: MediaCacheDataSource,
 ) {
     operator fun invoke(): Flow<List<CacheEpisodeState>> {
         return mediaCacheStorage.listFlow.flatMapLatest { mediaCacheSaves ->

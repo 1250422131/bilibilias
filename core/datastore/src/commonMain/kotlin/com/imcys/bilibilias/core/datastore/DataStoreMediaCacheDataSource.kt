@@ -1,23 +1,19 @@
-package com.imcys.bilibilias.core.media.cache
+package com.imcys.bilibilias.core.datastore
 
 import androidx.datastore.core.DataStore
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
+import com.imcys.bilibilias.core.datastore.model.MediaCacheMetadata
+import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
+import com.imcys.bilibilias.core.datastore.model.MediaCacheSave
+import com.imcys.bilibilias.core.logging.logger
 import kotlin.time.Clock
 
-class DataStoreMediaCacheStorage(
+class DataStoreMediaCacheDataSource(
     private val store: DataStore<List<MediaCacheSave>>,
-    parentCoroutineContext: CoroutineContext = EmptyCoroutineContext,
     private val clock: Clock = Clock.System,
-) : MediaCacheStorage {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+) : MediaCacheDataSource {
 
     override val listFlow = store.data
-    private val logger = Logger.withTag("DataStoreMediaCacheStorage")
 
     override suspend fun cacheEpisodeMetadata(episodeMetadata: EpisodeMetadata) {
         store.updateData { list ->
@@ -71,7 +67,7 @@ class DataStoreMediaCacheStorage(
     }
 
 
-    override fun close() {
-
+    companion object {
+        private val logger = logger<DataStoreMediaCacheDataSource>()
     }
 }

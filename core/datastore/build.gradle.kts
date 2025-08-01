@@ -7,8 +7,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             commonMain.dependencies {
-                api(projects.core.data)
-                api(projects.core.model)
+                implementation(projects.core.model)
+                implementation(projects.core.common)
 
                 implementation(projects.core.httpDownloader)
             }
@@ -17,5 +17,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.imcys.bilibilias.core.domain"
+    namespace = "com.imcys.bilibilias.core.datastore"
 }
