@@ -1,6 +1,8 @@
 package com.imcys.bilibilias.ui.login
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imcys.bilibilias.core.context.LocalKmpContext
 import com.imcys.bilibilias.core.context.Platform
+import com.imcys.bilibilias.logic.login.LoginAction
 import com.imcys.bilibilias.logic.login.LoginComponent
 import com.imcys.bilibilias.logic.login.LoginResultUiState
 import com.imcys.bilibilias.ui.BackButton
@@ -35,15 +38,16 @@ fun LoginScreen(
 ) {
     val url by component.qrCodeUrl.collectAsState()
     val uiState by component.uiState.collectAsState()
-    LoginContent(uiState, url, onBack)
+    LoginContent(uiState, url, onBack, dispatch = component::dispatch)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun LoginContent(
     uiState: LoginResultUiState,
     url: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    dispatch: (LoginAction) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -62,7 +66,9 @@ fun LoginContent(
             Image(
                 painter = painter,
                 contentDescription = null,
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(150.dp).clickable(null, null) {
+                    dispatch(LoginAction.RequestNewQrCode)
+                }
             )
             val kmpContext = LocalKmpContext.current
             if (kmpContext.platform == Platform.ANDROID) {
