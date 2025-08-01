@@ -46,7 +46,8 @@ fun SelfAvatar(
                     model = selfInfo.avatarUrl,
                     contentDescription = "User Avatar",
                     modifier = Modifier
-                        .size(48.dp)
+                        .padding(end = 8.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
                         .clickable {
                             onAvatarClick(selfInfo)
