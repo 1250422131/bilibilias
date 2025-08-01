@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface SearchComponent : BackHandlerOwner {
     val searchQuery: StateFlow<String>
     val searchResultUiState: StateFlow<SearchResultUiState>
+    val selfInfoUiState: StateFlow<SelfInfoUiState>
     fun onSearchTriggered(query: String)
     fun onSearchQueryChanged(query: String)
     fun requestCache(episode: EpisodeCacheState, request: EpisodeCacheRequest)

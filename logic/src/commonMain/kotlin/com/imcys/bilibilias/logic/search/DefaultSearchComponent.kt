@@ -3,6 +3,7 @@ package com.imcys.bilibilias.logic.search
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
 import com.imcys.bilibilias.core.datastore.MediaCacheDataSource
 import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
 import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
@@ -21,13 +22,11 @@ import com.imcys.bilibilias.core.result.Result.Success
 import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.uuid.ExperimentalUuidApi
@@ -40,9 +39,15 @@ class DefaultSearchComponent(
     private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
     private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
     private val tokenPersistent: TokenPersistent,
+    private val preferences: AsPreferencesDataSource,
 ) : SearchComponent, AppComponentContext by componentContext {
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
+    override val selfInfoUiState = preferences.userData
+        .map { preferences ->
+            preferences.selfInfo?.let { SelfInfoUiState.Success(it) } ?: SelfInfoUiState.Guest
+        }
+        .stateInBackground(SelfInfoUiState.Loading)
     override val searchQuery = MutableStateFlow(persistentState.searchQuery)
 
     override val searchResultUiState: StateFlow<SearchResultUiState> =
@@ -53,7 +58,7 @@ class DefaultSearchComponent(
                 getEpisodeInfoUseCase(query)
                     .filter { it == Placeholder }
                     .asResult()
-                    .combine(tokenPersistent.refreshToken) { result, token ->
+                    .map { result ->
                         when (result) {
                             is Success -> {
                                 val data = result.data
@@ -61,7 +66,6 @@ class DefaultSearchComponent(
                                     episodeCacheListState = data,
                                     episodeInfo = data.episodeInfo,
                                     episodes = data.episodes,
-                                    isGuestUser = token != null,
                                 )
                             }
 
@@ -73,11 +77,7 @@ class DefaultSearchComponent(
                         }
                     }
             }
-        }.stateIn(
-            applicationScope,
-            SharingStarted.WhileSubscribed(5_000),
-            SearchResultUiState.Loading
-        )
+        }.stateInBackground(SearchResultUiState.Loading)
 
     override fun onSearchTriggered(query: String) {}
 

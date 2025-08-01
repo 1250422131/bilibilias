@@ -20,7 +20,6 @@ sealed interface SearchResultUiState {
         val episodeInfo: EpisodeInfo2,
         val episodes: List<EpisodeCacheState>,
         val episodeCacheListState: EpisodeCacheListState,
-        val isGuestUser: Boolean,
     ) : SearchResultUiState
 
     data class Error(val message: String) : SearchResultUiState
