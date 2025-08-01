@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.imcys.bilibilias.logic.setting.SettingsComponent
 import me.zhanghai.compose.preference.ListPreferenceType
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.checkboxPreference
 import me.zhanghai.compose.preference.footerPreference
 import me.zhanghai.compose.preference.listPreference
@@ -29,7 +30,9 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SettingsScreen(component: SettingsComponent) {
-    SettingsContent()
+    ProvidePreferenceLocals {
+        SettingsContent()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
