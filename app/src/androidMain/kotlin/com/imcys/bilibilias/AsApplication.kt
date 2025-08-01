@@ -1,6 +1,8 @@
 package com.imcys.bilibilias
 
 import android.app.Application
+import android.content.Intent
+import android.os.Build
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -24,6 +26,29 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
 
         initKoin {
             modules(commonModules())
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(
+                Intent(this, DownloadService::class.java).apply {
+                    putExtra("app_name", R.string.app_name)
+//                    putExtra("app_service_title_text_idle", R.string.app_service_title_text_idle)
+//                    putExtra("app_service_title_text_working", R.string.app_service_title_text_working)
+//                    putExtra("app_service_content_text", R.string.app_service_content_text)
+//                    putExtra("app_service_stop_text", R.string.app_service_stop_text)
+//                    putExtra("app_icon", R.mipmap.ic_launcher)
+                    putExtra(
+                        "open_activity_intent",
+                        Intent(this@AsApplication, MainActivity::class.java)
+                    )
+                }
+            )
+        } else {
+            startService(
+                Intent(this, DownloadService::class.java).apply {
+
+                }
+            )
         }
     }
 
