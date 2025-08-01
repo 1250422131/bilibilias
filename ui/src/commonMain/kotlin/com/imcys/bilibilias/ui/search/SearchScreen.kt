@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Login
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
@@ -22,7 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,7 +30,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +52,8 @@ import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
+import com.imcys.bilibilias.logic.search.SelfInfoUiState
+import com.imcys.bilibilias.ui.runtime.collectAsStateWithLifecycle
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -65,11 +64,13 @@ fun SearchScreen(
     navigationToPlayer: () -> Unit,
     navigationToSettings: () -> Unit,
 ) {
-    val searchQuery by component.searchQuery.collectAsState()
-    val searchResultUiState by component.searchResultUiState.collectAsState()
+    val searchQuery by component.searchQuery.collectAsStateWithLifecycle()
+    val searchResultUiState by component.searchResultUiState.collectAsStateWithLifecycle()
+    val selfInfoUiState by component.selfInfoUiState.collectAsStateWithLifecycle()
     SearchContent(
         searchQuery = searchQuery,
         searchResultUiState = searchResultUiState,
+        selfInfoUiState = selfInfoUiState,
         onSearchQueryChanged = component::onSearchQueryChanged,
         onCacheRequest = component::requestCache,
         navigationToLogin = navigationToLogin,
@@ -83,6 +84,7 @@ fun SearchScreen(
 fun SearchContent(
     searchQuery: String,
     searchResultUiState: SearchResultUiState,
+    selfInfoUiState: SelfInfoUiState,
     onSearchQueryChanged: (String) -> Unit,
     onCacheRequest: (episode: EpisodeCacheState, request: EpisodeCacheRequest) -> Unit,
     navigationToLogin: () -> Unit,
@@ -97,16 +99,12 @@ fun SearchContent(
                     IconButton(navigationToSettings) {
                         Icon(Icons.Rounded.Settings, "Settings")
                     }
-                    if (searchResultUiState is SearchResultUiState.Success) {
-                        if (searchResultUiState.isGuestUser) {
-                            OutlinedButton(navigationToLogin) {
-                                Icon(Icons.AutoMirrored.Rounded.Login, null)
-                                Text("登录", Modifier.padding(start = 8.dp))
-                            }
-                        } else {
-                            AsyncImage("", "avatar")
-                        }
-                    }
+                    SelfAvatar(
+                        selfInfoUiState,
+                        modifier = Modifier,
+                        onLoginClick = navigationToLogin,
+                        onAvatarClick = {}
+                    )
                 }
             )
         }
