@@ -21,11 +21,11 @@ import kotlinx.coroutines.supervisorScope
 class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheStorage
 ) {
-    operator fun invoke(query: String): Flow<EpisodeCacheListState?> {
+    operator fun invoke(query: String): Flow<EpisodeCacheListState> {
         return when (val result = textExtract(query)) {
             is TextExtraction.MatchResult.BV -> bv(result.id)
 
-            TextExtraction.MatchResult.Error -> flowOf(null)
+            TextExtraction.MatchResult.Emptry -> flowOf(EpisodeCacheListState.Placeholder)
         }
     }
 
