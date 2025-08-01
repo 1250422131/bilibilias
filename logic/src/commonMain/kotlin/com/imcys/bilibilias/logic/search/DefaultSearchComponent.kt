@@ -4,8 +4,10 @@ import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
 import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
+import com.imcys.bilibilias.core.data.model.EpisodeCacheListState.Companion.Placeholder
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.data.model.EpisodeCacheState
+import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
@@ -21,27 +23,26 @@ import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import org.koin.core.component.inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class DefaultSearchComponent(
     componentContext: AppComponentContext,
+    private val httpDownloader: HttpDownloader,
+    private val mediaCacheStorage: MediaCacheStorage,
+    private val getEpisodeInfoUseCase: GetEpisodeInfoUseCase,
+    private val mediaSourceSelectedUseCase: MediaSourceSelectedUseCase,
+    private val tokenPersistent: TokenPersistent,
 ) : SearchComponent, AppComponentContext by componentContext {
-    private val httpDownloader by inject<HttpDownloader>()
-    private val mediaCacheStorage by inject<MediaCacheStorage>()
-    private val getEpisodeInfoUseCase by inject<GetEpisodeInfoUseCase>()
-    private val mediaSourceSelectedUseCase by inject<MediaSourceSelectedUseCase>()
-
     @OptIn(ExperimentalStateKeeperApi::class)
     private var persistentState: State by saveable(serializer = State.serializer(), init = ::State)
-
     override val searchQuery = MutableStateFlow(persistentState.searchQuery)
 
     override val searchResultUiState: StateFlow<SearchResultUiState> =
@@ -49,28 +50,28 @@ class DefaultSearchComponent(
             if (query.isEmpty()) {
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
-                getEpisodeInfoUseCase(query).asResult().map { result ->
-                    when (result) {
-                        is Success -> {
-                            val data = result.data
-                            if (data != null) {
+                getEpisodeInfoUseCase(query)
+                    .filter { it == Placeholder }
+                    .asResult()
+                    .combine(tokenPersistent.refreshToken) { result, token ->
+                        when (result) {
+                            is Success -> {
+                                val data = result.data
                                 SearchResultUiState.Success(
                                     episodeCacheListState = data,
                                     episodeInfo = data.episodeInfo,
-                                    episodes = data.episodes
+                                    episodes = data.episodes,
+                                    isGuestUser = token != null,
                                 )
-                            } else {
-                                SearchResultUiState.Error("No data")
                             }
+
+                            is Error -> SearchResultUiState.Error(
+                                result.exception.message ?: "Unknown error"
+                            )
+
+                            is Loading -> SearchResultUiState.Loading
                         }
-
-                        is Error -> SearchResultUiState.Error(
-                            result.exception.message ?: "Unknown error"
-                        )
-
-                        is Loading -> SearchResultUiState.Loading
                     }
-                }
             }
         }.stateIn(
             applicationScope,
