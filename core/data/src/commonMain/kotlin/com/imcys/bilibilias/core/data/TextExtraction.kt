@@ -12,13 +12,13 @@ internal object TextExtraction {
         return if (result != null) {
             MatchResult.BV(result.value)
         } else {
-            MatchResult.Error
+            MatchResult.Emptry
         }
     }
 
     internal sealed interface MatchResult {
         data class BV(val id: String) : MatchResult
-        data object Error : MatchResult
+        data object Emptry : MatchResult
     }
 }
 
