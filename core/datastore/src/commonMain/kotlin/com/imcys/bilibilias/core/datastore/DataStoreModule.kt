@@ -3,6 +3,7 @@ package com.imcys.bilibilias.core.datastore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import com.imcys.bilibilias.core.datastore.model.MediaCacheSave
+import com.imcys.bilibilias.core.datastore.model.UserPreferences
 import com.imcys.bilibilias.core.di.applicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,17 @@ val DataStoreModule = module {
                 produceFile = { resolveDataStoreFile("media_cache_storage") },
                 scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
             )
+        )
+    }
+    single {
+        AsPreferencesDataSource(
+            DataStoreFactory.new(
+                serializer = UserPreferences.serializer()
+                    .asDataStoreSerializer { UserPreferences.INIT },
+                corruptionHandler = ReplaceFileCorruptionHandler { UserPreferences.INIT },
+                produceFile = { resolveDataStoreFile("user_preferences") },
+                scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
+            ),
         )
     }
 }
