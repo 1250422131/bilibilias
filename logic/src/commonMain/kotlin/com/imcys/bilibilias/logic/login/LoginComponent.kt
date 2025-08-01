@@ -1,74 +1,62 @@
 package com.imcys.bilibilias.logic.login
 
-import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
-import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.logging.logger
 import com.imcys.bilibilias.logic.root.AppComponentContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
+import com.imcys.bilibilias.logic.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
-import kotlin.time.Duration.Companion.seconds
 
 interface LoginComponent {
     val uiState: StateFlow<LoginResultUiState>
     val qrCodeUrl: StateFlow<String>
-    suspend fun initiateLogin()                  // Action to start the login process
+    fun dispatch(action: LoginAction)
 }
 
 class DefaultLoginComponent(
     componentContext: AppComponentContext,
-    private val tokenPersistent: TokenPersistent,
+    stateMachine: LoginStateMachine,
 ) : LoginComponent, AppComponentContext by componentContext {
+    private val machine = stateMachine.launchIn(viewModelScope)
     override val uiState = MutableStateFlow<LoginResultUiState>(LoginResultUiState.Loading)
     override val qrCodeUrl = MutableStateFlow("")
 
-    override suspend fun initiateLogin() {
-        val qrCode = BilibiliLoginApi.getQrcode()
-        pollForLoginStatus(qrCode.qrcodeKey)
-        qrCodeUrl.update { qrCode.url }
-    }
-
-    private fun pollForLoginStatus(key: String) {
-        backgroundScope.launch(Dispatchers.IO) {
-            try {
-                withTimeout(180.seconds) {
-                    var loginSuccessful = false
-                    while (!loginSuccessful && isActive) {
-                        val response = BilibiliLoginApi.pollRequest(key)
-                        loginSuccessful = response.code == 0
-                        if (loginSuccessful) {
-                            uiState.update { LoginResultUiState.Success }
-                            tokenPersistent.setRefreshToken(response.refreshToken)
-                            logger.i { "Login success" }
-                        } else {
-                            delay(1.seconds)
-                        }
+    init {
+        lifecycle.subscribe(stateMachine)
+        viewModelScope.launch {
+            machine.state.collect { state ->
+                when (state) {
+                    is LoginState.LoginFailed -> {
+                        uiState.update { LoginResultUiState.Error(state.message) }
                     }
 
-                    if (!loginSuccessful && isActive) {
-                        logger.i { "Login polling finished without success (not timed out)." }
+                    is LoginState.GeneratingQrCode -> {}
+                    is LoginState.LoginSuccessful -> {
+                        uiState.update { LoginResultUiState.Success }
+                    }
+
+                    is LoginState.AwaitingConfirmation -> {}
+                    is LoginState.QrCodeReady -> {
+                        qrCodeUrl.update { state.qrCodeUrl }
                     }
                 }
-            } catch (e: TimeoutCancellationException) {
-                uiState.update { LoginResultUiState.Error(e.message) }
-                logger.i(e) { "Login timed out after 180 seconds." }
-            } catch (e: Exception) {
-                uiState.update { LoginResultUiState.Error(e.message) }
-                logger.i(e) { "An error occurred during login: ${e.message}" }
             }
         }
     }
 
-    override fun onDestroy() {
-        BilibiliLoginApi.close()
+    override fun dispatch(action: LoginAction) {
+        viewModelScope.launch {
+            machine.dispatch(action)
+        }
+    }
+
+    companion object {
+        private val logger = logger<LoginComponent>()
     }
 }
 
+@Deprecated("Use LoginState")
 sealed interface LoginResultUiState {
     data class Error(val message: String? = null) : LoginResultUiState
     data object Loading : LoginResultUiState
