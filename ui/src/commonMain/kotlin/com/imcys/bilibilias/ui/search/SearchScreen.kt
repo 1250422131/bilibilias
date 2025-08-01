@@ -97,9 +97,15 @@ fun SearchContent(
                     IconButton(navigationToSettings) {
                         Icon(Icons.Rounded.Settings, "Settings")
                     }
-                    OutlinedButton(navigationToLogin) {
-                        Icon(Icons.AutoMirrored.Rounded.Login, null)
-                        Text("登录", Modifier.padding(start = 8.dp))
+                    if (searchResultUiState is SearchResultUiState.Success) {
+                        if (searchResultUiState.isGuestUser) {
+                            OutlinedButton(navigationToLogin) {
+                                Icon(Icons.AutoMirrored.Rounded.Login, null)
+                                Text("登录", Modifier.padding(start = 8.dp))
+                            }
+                        } else {
+                            AsyncImage("", "avatar")
+                        }
                     }
                 }
             )
