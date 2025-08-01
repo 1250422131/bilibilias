@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.freeletics.flowredux2.FlowReduxStateMachineFactory
 import com.freeletics.flowredux2.initializeWith
+import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.api.BilibiliLoginApi
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.Expired
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.Success
@@ -11,13 +12,19 @@ import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.WaitingCon
 import com.imcys.bilibilias.core.datasource.model.OauthCode.Companion.WaitingScanned
 import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.datastore.AsPreferencesDataSource
+import com.imcys.bilibilias.core.datastore.model.SelfInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class LoginStateMachine(
-    private val api: BilibiliLoginApi,
+    private val loginApi: BilibiliLoginApi,
     private val tokenPersistent: TokenPersistent,
+    private val preferences: AsPreferencesDataSource,
 ) : FlowReduxStateMachineFactory<LoginState, LoginAction>(), Lifecycle.Callbacks {
     private var interrupt = false
 
@@ -28,13 +35,18 @@ class LoginStateMachine(
                 onEnter {
                     try {
                         Logger.d("LoginStateMachine") { "LoginStateMachine Create" }
-                        val (key, url) = api.getQrcode()
+                        val (key, url) = loginApi.getQrcode()
                         override { LoginState.QrCodeReady(url, key) }
                     } catch (e: Exception) {
                         override {
                             LoginState.LoginFailed("Failed to generate QR code: ${e.message}")
                         }
                     }
+                }
+            }
+            inState<LoginState.QrCodeReady> {
+                onEnter {
+                    override { LoginState.AwaitingConfirmation(qrKey) }
                 }
             }
             inState<LoginState.AwaitingConfirmation> {
@@ -58,12 +70,19 @@ class LoginStateMachine(
                     override { LoginState.GeneratingQrCode }
                 }
             }
-            inState<LoginState.QrCodeReady> {
-                onEnter {
-                    override { LoginState.AwaitingConfirmation(qrKey) }
+            inState<LoginState.LoginSuccessful> {
+                onEnterEffect {
+                    val data = BilibiliApi.getNavigationData()
+                    preferences.setSelfInfo(
+                        SelfInfo(
+                            Uuid.random(),
+                            data.mid,
+                            data.uname,
+                            data.face
+                        )
+                    )
                 }
             }
-
             inState<LoginState.LoginFailed> {
                 on<LoginAction.RequestNewQrCode> {
                     override { LoginState.GeneratingQrCode }
@@ -82,7 +101,7 @@ class LoginStateMachine(
 
     private fun timerThatEmitsEverySecond(key: String): Flow<PollResponse> = flow {
         while (!interrupt) {
-            val response = api.pollRequest(key)
+            val response = loginApi.pollRequest(key)
             emit(response)
             delay(1_000)
         }
