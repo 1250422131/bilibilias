@@ -35,6 +35,7 @@ import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.runOnKoinStarted
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.includes
@@ -65,7 +66,6 @@ fun KoinApplication.commonModules() = module {
 }
 
 private fun KoinApplication.otherModules() = module {
-    factoryOf(::DefaultAppComponentContext) bind AppComponentContext::class
     @OptIn(ExperimentalTime::class)
     single<HttpDownloader> {
         KtorPersistentHttpDownloader(
