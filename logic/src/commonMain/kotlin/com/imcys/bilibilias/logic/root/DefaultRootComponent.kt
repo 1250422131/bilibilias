@@ -44,8 +44,10 @@ class DefaultRootComponent(
                     get(),
                     get(),
                     get(),
+                    get()
                 )
             )
+
             Config.Cache -> CacheChild(DefaultCacheComponent(context))
             Config.Login -> LoginChild(DefaultLoginComponent(context, get()))
             Config.Player -> PlayerChild(DefaultPlayerComponent(context))
