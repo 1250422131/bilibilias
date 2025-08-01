@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.core.domain
 
-import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.model.EpisodeInfo
 import com.imcys.bilibilias.core.model.Owner
 import com.imcys.bilibilias.core.model.StreamData

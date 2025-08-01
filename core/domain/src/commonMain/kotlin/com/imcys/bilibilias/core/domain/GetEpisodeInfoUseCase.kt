@@ -2,13 +2,13 @@ package com.imcys.bilibilias.core.domain
 
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.coroutines.MonoTasker
-import com.imcys.bilibilias.core.data.model.EpisodeCacheListState
-import com.imcys.bilibilias.core.data.model.EpisodeCacheState
-import com.imcys.bilibilias.core.data.model.EpisodeCacheStatus
-import com.imcys.bilibilias.core.data.model.EpisodeInfo2
-import com.imcys.bilibilias.core.data.model.MediaStream
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.BiliVideoData
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
+import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
+import com.imcys.bilibilias.core.domain.model.MediaStream
 import com.imcys.bilibilias.core.flow.flowFromSuspend
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import kotlinx.coroutines.flow.Flow

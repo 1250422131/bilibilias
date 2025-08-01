@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.imcys.bilibilias.core.data.model.MediaStream
+import com.imcys.bilibilias.core.domain.model.MediaStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

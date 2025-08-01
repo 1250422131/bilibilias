@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.logic.search
 
-import com.imcys.bilibilias.core.data.model.EpisodeCacheListState
-import com.imcys.bilibilias.core.data.model.EpisodeCacheState
-import com.imcys.bilibilias.core.data.model.EpisodeInfo2
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 
 sealed interface SearchResultUiState {
     data object Loading : SearchResultUiState

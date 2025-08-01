@@ -1,6 +1,5 @@
-package com.imcys.bilibilias.core.data.model
+package com.imcys.bilibilias.core.model
 
-import com.imcys.bilibilias.core.format.DataSize
 
 data class FileStats(
     val totalSize: DataSize,

@@ -50,9 +50,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.data.model.EpisodeCacheState
-import com.imcys.bilibilias.core.data.model.EpisodeInfo2
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeInfo2
 import com.imcys.bilibilias.logic.search.SearchComponent
 import com.imcys.bilibilias.logic.search.SearchResultUiState
 import org.jetbrains.compose.ui.tooling.preview.Preview

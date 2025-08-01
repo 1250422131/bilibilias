@@ -1,8 +1,8 @@
 package com.imcys.bilibilias.logic.search
 
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
-import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.data.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import kotlinx.coroutines.flow.StateFlow
 
 interface SearchComponent : BackHandlerOwner {

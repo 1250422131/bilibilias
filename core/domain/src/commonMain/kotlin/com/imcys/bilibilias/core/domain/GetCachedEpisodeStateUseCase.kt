@@ -1,10 +1,6 @@
 package com.imcys.bilibilias.core.domain
 
-import com.imcys.bilibilias.core.data.model.CacheEpisodeState
-import com.imcys.bilibilias.core.data.model.FileStats
-import com.imcys.bilibilias.core.data.model.Progress
-import com.imcys.bilibilias.core.data.model.toProgress
-import com.imcys.bilibilias.core.format.DataSize.Companion.bytes
+import com.imcys.bilibilias.core.domain.model.CacheEpisodeState
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadProgress
@@ -12,6 +8,10 @@ import com.imcys.bilibilias.core.http.downloader.model.DownloadStatus
 import com.imcys.bilibilias.core.media.cache.EpisodeMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCacheMetadata
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
+import com.imcys.bilibilias.core.model.DataSize.Companion.bytes
+import com.imcys.bilibilias.core.model.FileStats
+import com.imcys.bilibilias.core.model.Progress
+import com.imcys.bilibilias.core.model.toProgress
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest

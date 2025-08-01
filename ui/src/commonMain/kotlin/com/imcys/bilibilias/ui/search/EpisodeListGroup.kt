@@ -39,10 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
-import com.imcys.bilibilias.core.data.model.EpisodeCacheState
-import com.imcys.bilibilias.core.data.model.EpisodeCacheStatus
-import com.imcys.bilibilias.core.data.model.MediaStream
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
+import com.imcys.bilibilias.core.domain.model.EpisodeCacheStatus
+import com.imcys.bilibilias.core.domain.model.MediaStream
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)

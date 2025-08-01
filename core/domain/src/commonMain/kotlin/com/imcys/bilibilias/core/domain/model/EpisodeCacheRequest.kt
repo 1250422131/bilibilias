@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.data.model
+package com.imcys.bilibilias.core.domain.model
 
 @Deprecated("Use EpisodeCacheState")
 data class EpisodeCacheRequest(
