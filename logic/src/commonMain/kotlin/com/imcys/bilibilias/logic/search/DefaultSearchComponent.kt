@@ -2,12 +2,12 @@ package com.imcys.bilibilias.logic.search
 
 import com.arkivanov.essenty.statekeeper.ExperimentalStateKeeperApi
 import com.arkivanov.essenty.statekeeper.saveable
-import com.imcys.bilibilias.core.data.GetEpisodeInfoUseCase
-import com.imcys.bilibilias.core.data.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.data.model.EpisodeCacheListState.Companion.Placeholder
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.data.model.EpisodeCacheState
 import com.imcys.bilibilias.core.datasource.persistent.TokenPersistent
+import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
+import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadId
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.data
+package com.imcys.bilibilias.core.domain
 
 import co.touchlab.kermit.Logger
 

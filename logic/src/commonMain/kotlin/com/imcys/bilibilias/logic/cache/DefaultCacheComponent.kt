@@ -2,8 +2,8 @@ package com.imcys.bilibilias.logic.cache
 
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.context.KmpContext
-import com.imcys.bilibilias.core.data.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.data.model.CacheEpisodeState
+import com.imcys.bilibilias.core.domain.GetCachedEpisodeStateUseCase
 import com.imcys.bilibilias.core.ffmpeg.createMediaMultiplexer
 import com.imcys.bilibilias.core.media.cache.MediaCacheStorage
 import com.imcys.bilibilias.core.storage.AsMediaStore

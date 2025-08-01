@@ -1,8 +1,7 @@
-package com.imcys.bilibilias.core.data
+package com.imcys.bilibilias.core.domain
 
 import co.touchlab.kermit.Logger
 import com.imcys.bilibilias.core.coroutines.MonoTasker
-import com.imcys.bilibilias.core.data.TextExtraction.textExtract
 import com.imcys.bilibilias.core.data.model.EpisodeCacheListState
 import com.imcys.bilibilias.core.data.model.EpisodeCacheState
 import com.imcys.bilibilias.core.data.model.EpisodeCacheStatus
@@ -22,7 +21,7 @@ class GetEpisodeInfoUseCase(
     private val mediaCacheStorage: MediaCacheStorage
 ) {
     operator fun invoke(query: String): Flow<EpisodeCacheListState> {
-        return when (val result = textExtract(query)) {
+        return when (val result = TextExtraction.textExtract(query)) {
             is TextExtraction.MatchResult.BV -> bv(result.id)
 
             TextExtraction.MatchResult.Emptry -> flowOf(EpisodeCacheListState.Placeholder)

@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.data
+package com.imcys.bilibilias.core.domain
 
 import com.imcys.bilibilias.core.data.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.datasource.api.BilibiliApi

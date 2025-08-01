@@ -1,4 +1,4 @@
-package com.imcys.bilibilias.core.data
+package com.imcys.bilibilias.core.domain
 
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

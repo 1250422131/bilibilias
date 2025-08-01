@@ -42,7 +42,8 @@ class DefaultRootComponent(
                     get(),
                     get(),
                     get(),
-                    get()
+                    get(),
+                    get(),
                 )
             )
             Config.Cache -> CacheChild(DefaultCacheComponent(context))

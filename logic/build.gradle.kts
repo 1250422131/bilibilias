@@ -6,8 +6,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.core.common)
-            api(projects.core.data)
+            api(projects.core.domain)
             implementation(projects.core.ffmpeg)
             implementation(projects.core.mediaCache)
             implementation(projects.core.httpDownloader)
