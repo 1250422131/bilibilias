@@ -1,8 +1,6 @@
 package com.imcys.bilibilias
 
 import android.app.Application
-import android.content.Intent
-import android.os.Build
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -12,6 +10,8 @@ import coil3.util.DebugLogger
 import com.imcys.bilibilias.core.context.KmpContext
 import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
 
 class AsApplication : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
@@ -25,30 +25,9 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
         StartupSet.create(AsDispatchers.applicationScope)
 
         initKoin {
+            androidContext(this@AsApplication)
+            androidLogger()
             modules(commonModules())
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(
-                Intent(this, DownloadService::class.java).apply {
-                    putExtra("app_name", R.string.app_name)
-//                    putExtra("app_service_title_text_idle", R.string.app_service_title_text_idle)
-//                    putExtra("app_service_title_text_working", R.string.app_service_title_text_working)
-//                    putExtra("app_service_content_text", R.string.app_service_content_text)
-//                    putExtra("app_service_stop_text", R.string.app_service_stop_text)
-//                    putExtra("app_icon", R.mipmap.ic_launcher)
-                    putExtra(
-                        "open_activity_intent",
-                        Intent(this@AsApplication, MainActivity::class.java)
-                    )
-                }
-            )
-        } else {
-            startService(
-                Intent(this, DownloadService::class.java).apply {
-
-                }
-            )
         }
     }
 
