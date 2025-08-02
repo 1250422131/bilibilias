@@ -19,8 +19,6 @@ import com.imcys.bilibilias.core.http.downloader.KtorPersistentHttpDownloader
 import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.logic.LogicModule
-import com.imcys.bilibilias.logic.root.AppComponentContext
-import com.imcys.bilibilias.logic.root.DefaultAppComponentContext
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
@@ -34,10 +32,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.runOnKoinStarted
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.bind
 import org.koin.dsl.includes
 import org.koin.dsl.module
 import kotlin.time.ExperimentalTime
@@ -50,7 +45,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             printLogger()
         }
         startCommonKoinModule(applicationScope)
-        modules(PlatformModule)
+        modules(platformModule())
     }
 }
 
@@ -107,4 +102,4 @@ fun KoinApplication.startCommonKoinModule(
     return this
 }
 
-expect val PlatformModule: Module
+expect fun KoinApplication.platformModule(): Module
