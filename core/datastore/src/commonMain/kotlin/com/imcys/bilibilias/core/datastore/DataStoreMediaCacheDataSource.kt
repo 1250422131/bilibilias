@@ -8,7 +8,8 @@ import com.imcys.bilibilias.core.datastore.model.MediaCacheSave
 import com.imcys.bilibilias.core.logging.logger
 import kotlin.time.Clock
 
-class DataStoreMediaCacheDataSource(
+// TODO: 及时更新时间
+internal class DataStoreMediaCacheDataSource(
     private val store: DataStore<List<MediaCacheSave>>,
     private val clock: Clock = Clock.System,
 ) : MediaCacheDataSource {
