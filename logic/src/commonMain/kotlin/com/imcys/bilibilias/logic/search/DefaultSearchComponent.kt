@@ -9,7 +9,6 @@ import com.imcys.bilibilias.core.datastore.model.EpisodeMetadata
 import com.imcys.bilibilias.core.datastore.model.MediaCachePartMetadata
 import com.imcys.bilibilias.core.domain.GetEpisodeInfoUseCase
 import com.imcys.bilibilias.core.domain.MediaSourceSelectedUseCase
-import com.imcys.bilibilias.core.domain.model.EpisodeCacheListState.Companion.Placeholder
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheState
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
@@ -23,7 +22,6 @@ import com.imcys.bilibilias.core.result.asResult
 import com.imcys.bilibilias.logic.root.AppComponentContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -56,7 +54,6 @@ class DefaultSearchComponent(
                 flowOf(SearchResultUiState.EmptyQuery)
             } else {
                 getEpisodeInfoUseCase(query)
-                    .filterNot { it == Placeholder }
                     .asResult()
                     .map { result ->
                         when (result) {
