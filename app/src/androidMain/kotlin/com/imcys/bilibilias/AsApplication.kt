@@ -12,6 +12,7 @@ import com.imcys.bilibilias.core.coroutines.AsDispatchers
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 
 class AsApplication : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
@@ -28,7 +29,9 @@ class AsApplication : Application(), SingletonImageLoader.Factory {
             androidContext(this@AsApplication)
             androidLogger()
             modules(commonModules())
+            workManagerFactory()
         }
+        Sync.initialize(this)
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
