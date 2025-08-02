@@ -19,6 +19,8 @@ import com.imcys.bilibilias.core.http.downloader.model.DownloadState
 import com.imcys.bilibilias.core.ktor.client.createHttpClient
 import com.imcys.bilibilias.logic.LogicModule
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -72,10 +74,15 @@ private fun KoinApplication.otherModules() = module {
             ),
             client = createHttpClient {
                 defaultRequest {
-                    header(HttpHeaders.Accept, "*/*")
                     header(HttpHeaders.Referrer, "https://www.bilibili.com")
-                    header(HttpHeaders.Origin, "https://www.bilibili.com")
-                    header(HttpHeaders.Connection, "keep-alive")
+                }
+                Logging {
+                    level = LogLevel.HEADERS
+                    logger = object : io.ktor.client.plugins.logging.Logger {
+                        override fun log(message: String) {
+                            Logger.i("HttpDownloader") { message }
+                        }
+                    }
                 }
             },
             fileSystem = SystemFileSystem,
