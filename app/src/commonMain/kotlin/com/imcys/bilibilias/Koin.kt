@@ -11,7 +11,6 @@ import com.imcys.bilibilias.core.datastore.asDataStoreSerializer
 import com.imcys.bilibilias.core.datastore.new
 import com.imcys.bilibilias.core.datastore.resolveDataStoreFile
 import com.imcys.bilibilias.core.di.CommonModule
-import com.imcys.bilibilias.core.di.IO
 import com.imcys.bilibilias.core.di.applicationScope
 import com.imcys.bilibilias.core.domain.UseCaseModule
 import com.imcys.bilibilias.core.http.downloader.HttpDownloader
@@ -24,6 +23,7 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.io.files.Path
@@ -68,7 +68,7 @@ private fun KoinApplication.otherModules() = module {
                 ListSerializer(DownloadState.serializer()).asDataStoreSerializer { emptyList() },
                 produceFile = { resolveDataStoreFile("ktor_persistent_http_downloader") },
                 corruptionHandler = ReplaceFileCorruptionHandler { emptyList() },
-                scope = CoroutineScope(applicationScope.coroutineContext + IO),
+                scope = CoroutineScope(applicationScope.coroutineContext + Dispatchers.IO),
             ),
             client = createHttpClient {
                 defaultRequest {
@@ -88,7 +88,7 @@ private fun KoinApplication.otherModules() = module {
                 Logger.w("ApplicationScope", throwable) {
                     "Uncaught exception in coroutine $coroutineContext"
                 }
-            } + SupervisorJob() + IO,
+            } + SupervisorJob() + Dispatchers.IO,
         )
     }
 }
