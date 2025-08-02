@@ -20,6 +20,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.prepareGet
 import io.ktor.client.statement.HttpStatement
 import io.ktor.client.statement.bodyAsChannel
+import io.ktor.http.contentLength
 import io.ktor.util.appendAll
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.asSource
@@ -625,9 +626,7 @@ open class KtorHttpDownloader(
                     }
 
                     200 -> {
-                        val length =
-                            response.headers[io.ktor.http.HttpHeaders.ContentLength]?.toLongOrNull()
-                                ?: -1L
+                        val length = response.contentLength() ?: -1L
                         length to false
                     }
 
