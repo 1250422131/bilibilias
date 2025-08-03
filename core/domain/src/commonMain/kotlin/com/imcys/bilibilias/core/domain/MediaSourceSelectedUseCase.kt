@@ -5,8 +5,8 @@ import com.imcys.bilibilias.core.datasource.api.BilibiliApi
 import com.imcys.bilibilias.core.datasource.model.VideoPlaybackInfo
 import com.imcys.bilibilias.core.domain.model.EpisodeCacheRequest
 import com.imcys.bilibilias.core.domain.model.EpisodeInfo
+import com.imcys.bilibilias.core.domain.model.MediaStreamMetadata
 import com.imcys.bilibilias.core.domain.model.Owner
-import com.imcys.bilibilias.core.domain.model.StreamData
 
 // TODO: 可以并行
 class MediaSourceSelectedUseCase {
@@ -32,10 +32,10 @@ class MediaSourceSelectedUseCase {
         )
     }
 
-    private fun VideoPlaybackInfo.AudioOrVideo.asStreamData(): StreamData {
+    private fun VideoPlaybackInfo.AudioOrVideo.asStreamData(): MediaStreamMetadata {
         val full = backupUrl1 + backupUrl2
         val resources = full.mapNotNull { Cdn.parse(it) }
-        return StreamData(
+        return MediaStreamMetadata(
             id = id,
             backupUrl = resources,
         )
@@ -43,7 +43,7 @@ class MediaSourceSelectedUseCase {
 
     private fun List<VideoPlaybackInfo.AudioOrVideo>.mediaSelect(
         condition: (List<VideoPlaybackInfo.AudioOrVideo>) -> VideoPlaybackInfo.AudioOrVideo
-    ): List<StreamData> {
+    ): List<MediaStreamMetadata> {
         return listOf(condition(this).asStreamData())
     }
 }

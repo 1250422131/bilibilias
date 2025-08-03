@@ -10,14 +10,14 @@ data class EpisodeInfo(
     val title: String,
     val owner: Owner,
     val parts: List<EpisodePartInfo>,
-    val video: List<StreamData>,
-    val audio: List<StreamData>,
+    val video: List<MediaStreamMetadata>,
+    val audio: List<MediaStreamMetadata>,
 )
 
 /**
  * [codecId] audio always 0, video include 7/avc 12/hevc 13/av1
  */
-data class StreamData(
+data class MediaStreamMetadata(
     val id: Int,
     val backupUrl: List<CdnResource>,
     val codecId: Int = 0,
