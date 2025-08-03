@@ -69,12 +69,14 @@ data class VideoPlaybackInfo(
 
     @Serializable
     data class AudioOrVideo(
-        @SerialName("backup_url")
-        val backupUrl: List<String> = listOf(),
-        @SerialName("bandwidth")
-        val bandwidth: Int = 0,
         @SerialName("base_url")
         val baseUrl: String = "",
+        @SerialName("backup_url")
+        val backupUrl1: List<String> = listOf(),
+        @SerialName("backupUrl")
+        val backupUrl2: List<String> = listOf(),
+        @SerialName("bandwidth")
+        val bandwidth: Int = 0,
         @SerialName("codecid")
         val codecid: Int = 0,
         @SerialName("codecs")
