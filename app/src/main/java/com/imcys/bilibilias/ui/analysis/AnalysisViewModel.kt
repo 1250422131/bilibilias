@@ -1,6 +1,7 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.content.Context
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imcys.bilibilias.common.utils.AsRegexUtil
@@ -267,6 +268,9 @@ class AnalysisViewModel(
             // FLV模式
             mSupportFormats?.filter { supportFormat ->
                 durlVideoList?.any { item -> item.quality == supportFormat.quality } == true
+            }?.ifEmpty {
+                // 充电视频下有可能找不到对应的清晰度
+                mSupportFormats
             }
         }
         val selectVideoQualityId = supportFormats?.firstOrNull()?.run {
@@ -305,7 +309,7 @@ class AnalysisViewModel(
                                     selectVideoCode = selectVideoCode,
                                     selectVideoQualityId = selectVideoQualityId,
                                     selectAudioQualityId = selectAudioQualityId,
-                                    selectedCid = listOf(cid)
+                                    selectedCid = listOf(cid),
                                 )
                             )
                         }

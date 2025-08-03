@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun AsWarringTip(
+fun AsErrorTip(
     modifier: Modifier = Modifier,
     enabledPadding: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
@@ -22,13 +22,14 @@ fun AsWarringTip(
         modifier = Modifier
             .fillMaxWidth(),
         shape = CardDefaults.shape,
-        color = MaterialTheme.colorScheme.tertiaryContainer,
+        color = MaterialTheme.colorScheme.errorContainer,
     ) {
         Column(
             modifier
                 .fillMaxWidth()
                 .run {
-                    if (enabledPadding) padding(vertical = 12.dp, horizontal = 16.dp) else this
+                    if (enabledPadding) padding(vertical = 12.dp, horizontal = 16.dp)
+                    else this
                 }
         ) {
             content()

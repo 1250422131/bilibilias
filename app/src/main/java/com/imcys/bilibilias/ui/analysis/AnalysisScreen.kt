@@ -1,11 +1,13 @@
 package com.imcys.bilibilias.ui.analysis
 
 import android.Manifest
+import android.Manifest.permission
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -58,6 +60,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +96,7 @@ import com.imcys.bilibilias.ui.weight.shimmer.shimmer
 import com.imcys.bilibilias.ui.weight.tip.AsWarringTip
 import com.imcys.bilibilias.weight.AsAutoError
 import com.imcys.bilibilias.weight.AsUserInfoRow
+import com.imcys.bilibilias.weight.dialog.PermissionRequestTipDialog
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -301,6 +305,13 @@ fun AdvancedSetting(
 
     var selectDownloadMode by remember { mutableStateOf(DownloadMode.AUDIO_VIDEO) }
 
+    LaunchedEffect(dash?.audio) {
+        if (dash != null && dash.audio.isEmpty()) {
+            selectDownloadMode = DownloadMode.VIDEO_ONLY
+            onSelectDownloadMode(selectDownloadMode)
+        }
+    }
+
 
     // 选择是否合并下载
     AsAutoError(playerInfo, onSuccessContent = {
@@ -351,7 +362,12 @@ fun AdvancedSetting(
                             expanded = downloadModeExpanded,
                             onDismissRequest = { downloadModeExpanded = false },
                         ) {
-                            DownloadMode.entries.forEach {
+                            DownloadMode.entries.filter {
+                                // 如果没有音频资源，则不显示音视频分离选项
+                                if (dash.audio.isEmpty() && (it == DownloadMode.AUDIO_VIDEO || it == DownloadMode.AUDIO_ONLY)) {
+                                    false
+                                } else true
+                            }.forEach {
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -370,10 +386,7 @@ fun AdvancedSetting(
                         }
 
                     }
-                    AsWarringTip(
-                        modifier = Modifier.padding(horizontal = 12.dp),
-                        enabledPadding = false
-                    ) {
+                    AsWarringTip {
                         Row(
                             Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
@@ -399,7 +412,7 @@ fun AnalysisVideoCard(
 ) {
     when (asLinkResultType) {
         is ASLinkResultType.BILI.Video -> {
-            BILIVideoCard(asLinkResultType.viewInfo, isBILILogin)
+            BILIVideoCard(asLinkResultType, asLinkResultType.viewInfo, isBILILogin)
         }
 
         is ASLinkResultType.BILI.User -> {
@@ -477,7 +490,8 @@ fun BILIDonghuaCard(
                                     .padding(5.dp),
                                 onClick = {},
                                 elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                                containerColor = Color(0xffD8FFC0)
+                                containerColor = Color(0xffD8FFC0),
+                                contentColor = MaterialTheme.colorScheme.scrim
                             ) {
                                 Icon(Icons.Outlined.Image, contentDescription = "下载封面")
                                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -541,7 +555,11 @@ fun BILIUserSpaceCard(userInfo: NetWorkResult<BILIUserSpaceAccInfo?>, goToUser: 
 }
 
 @Composable
-fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boolean) {
+fun BILIVideoCard(
+    asLinkResultType: ASLinkResultType.BILI.Video,
+    videoInfo: NetWorkResult<BILIVideoViewInfo?>,
+    isBILILogin: Boolean
+) {
     AsAutoError(
         netWorkResult = videoInfo,
         onSuccessContent = {
@@ -561,7 +579,7 @@ fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boo
                             ASAsyncImage(
                                 "${
                                     videoInfo.data?.pic?.toHttps()
-                                }@672w_378h_1c.avif",
+                                }",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .shimmer(videoInfo.status == ApiStatus.LOADING),
@@ -569,13 +587,27 @@ fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boo
                                 shape = CardDefaults.shape
                             )
 
+                            if (videoInfo.data?.isUpowerExclusive == true) {
+                                Surface(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(5.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = CardDefaults.shape
+                                ) {
+                                    Text("充电视频", Modifier.padding(5.dp))
+                                }
+                            }
+
+
                             ExtendedFloatingActionButton(
                                 modifier = Modifier
                                     .align(Alignment.BottomEnd)
                                     .padding(5.dp),
                                 onClick = {},
                                 elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                                containerColor = Color(0xffD8FFC0)
+                                containerColor = Color(0xffD8FFC0),
+                                contentColor = MaterialTheme.colorScheme.scrim
                             ) {
                                 Icon(Icons.Outlined.Image, contentDescription = "下载封面")
                                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -592,6 +624,32 @@ fun BILIVideoCard(videoInfo: NetWorkResult<BILIVideoViewInfo?>, isBILILogin: Boo
                 }
 
                 Spacer(Modifier.height(16.dp))
+
+                // 如果是充电视频，提示用户充电
+                if (!asLinkResultType.isCanPlay()) {
+                    AsWarringTip(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        enabledPadding = false
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                "当前视频属充电视频，请充电后申请缓存。",
+                                fontSize = 14.sp,
+                            )
+                            Spacer(Modifier.weight(1f))
+                            IconButton(onClick = {}) {
+                                Icon(Icons.Outlined.NorthEast, contentDescription = "去登录")
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(11.dp))
+
+                // 如果未登录B站账号，提示用户登录
                 if (!isBILILogin) {
                     AsWarringTip(
                         modifier = Modifier.padding(horizontal = 12.dp),
@@ -632,8 +690,8 @@ fun AnalysisScaffold(
     var showRequestPermissionTip by remember { mutableStateOf(false) }
 
     val permissionsToRequest = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        permission.READ_EXTERNAL_STORAGE,
+        permission.WRITE_EXTERNAL_STORAGE
     )
 
 
@@ -641,7 +699,7 @@ fun AnalysisScaffold(
     var hasSavePermissions by remember {
         // 在开始时检查权限状态
         mutableStateOf(
-            permissionsToRequest.all {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P || permissionsToRequest.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
         )
@@ -688,7 +746,8 @@ fun AnalysisScaffold(
                 }
 
                 is ASLinkResultType.BILI.Video -> {
-                    asResultType.viewInfo.status == ApiStatus.SUCCESS
+                    val enabledPlay = asResultType.isCanPlay()
+                    asResultType.viewInfo.status == ApiStatus.SUCCESS && enabledPlay
                 }
 
                 is ASLinkResultType.BILI.User, null -> false
@@ -701,10 +760,13 @@ fun AnalysisScaffold(
                     modifier = Modifier.imePadding(),
                     onClick = {
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                            if (!hasSavePermissions) {
-                                showRequestPermissionTip = true
-                            } else {
-                                onDownload()
+                            when {
+                                !hasSavePermissions -> {
+                                    showRequestPermissionTip = true
+                                }
+                                else -> {
+                                    onDownload()
+                                }
                             }
                         } else {
                             onDownload()
@@ -731,21 +793,25 @@ fun AnalysisScaffold(
     if (showRequestPermissionTip && !hasSavePermissions) {
         WritePermissionRequestTipDialog(permissionsToRequest, onDismiss = {
             showRequestPermissionTip = false
-        }, onDownload = {
+        }, onRequest = {
             hasSavePermissions = permissionsToRequest.all {
                 ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
             }
-            onDownload.invoke()
+            // 存储权限
+            if (hasSavePermissions) {
+                onDownload.invoke()
+            }
         })
     }
 
 }
 
+
 @Composable
 fun WritePermissionRequestTipDialog(
     permissionsToRequest: Array<String>,
     onDismiss: () -> Unit,
-    onDownload: () -> Unit
+    onRequest: () -> Unit
 ) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -753,40 +819,24 @@ fun WritePermissionRequestTipDialog(
     ) { result ->
         val allGranted = result.values.all { it }
         if (allGranted) {
-            onDownload()
+            onRequest()
         } else {
-            // 有权限未被授予
             Toast.makeText(context, "权限未被授予", Toast.LENGTH_SHORT).show()
         }
     }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Outlined.WarningAmber, contentDescription = "警告") },
-        title = { Text("权限请求") },
-        text = {
-            Text(
-                """
-                    为了我们可以将文件存储到Download文件夹中，接下来将向您申请存储和读取文件权限。
-                """.trimIndent()
-            )
+    PermissionRequestTipDialog(
+        show = true,
+        message = "需要存储权限以保存下载内容，是否继续？",
+        onConfirm = {
+            launcher.launch(permissionsToRequest)
+            onRequest()
+            onDismiss()
         },
-        confirmButton = {
-            Button(onClick = {
-                onDismiss()
-                launcher.launch(permissionsToRequest)
-            }) {
-                Text("继续")
-            }
-        },
-        dismissButton = {
-            Button(onClick = {
-                onDismiss()
-            }) {
-                Text("取消")
-            }
-        }
+        onDismiss = onDismiss
     )
 }
+
+
 
 @Composable
 fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
@@ -810,8 +860,3 @@ fun DownloadTipDialog(onDismiss: () -> Unit, onDownload: () -> Unit) {
     )
 }
 
-@Preview
-@Composable
-fun AsDownloadVideoBottomDialog() {
-
-}

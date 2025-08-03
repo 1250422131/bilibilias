@@ -13,7 +13,7 @@ data class BILIVideoDurl(
     @SerialName("length")
     val length: Long,
     @SerialName("md5")
-    val md5: String,
+    val md5: String?,
     @SerialName("order")
     val order: Long,
     @SerialName("size")
@@ -36,7 +36,7 @@ data class BILIVideoSupportFormat(
     @SerialName("attribute")
     val attribute: Long = 0,
     @SerialName("codecs")
-    val codecs: List<String>,
+    val codecs: List<String> = emptyList(),
     @SerialName("description")
     val description: String = "",
     @SerialName("display_desc")
@@ -63,7 +63,7 @@ data class BILIVideoSupportFormat(
 @Serializable
 data class BILIVideoDash(
     @SerialName("audio")
-    val audio: MutableList<Audio>,
+    val audio: MutableList<Audio> = mutableListOf(),
     @SerialName("dolby")
     val dolby: Dolby?,
     @SerialName("flac")

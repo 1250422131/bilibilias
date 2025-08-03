@@ -85,11 +85,11 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 @PreviewScreenSizes
 fun UserScreenPreview() {
-    UserScreen(UserRoute(), {})
+    UserScreen(UserRoute(), {}, {})
 }
 
 @Composable
-internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
+internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit, onToSettings: () -> Unit) {
 
     val vm = koinViewModel<UserViewModel>()
     val pageInfoState by vm.userPageInfoState.collectAsState()
@@ -103,7 +103,7 @@ internal fun UserScreen(userRoute: UserRoute, onToBack: () -> Unit) {
 
 
 
-    UserScaffold(onToBack) {
+    UserScaffold(onToBack,onToSettings) {
         LazyVerticalGrid(
             GridCells.Fixed(2),
             Modifier
@@ -603,7 +603,11 @@ fun TopUserInfo(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserScaffold(onToBack: () -> Unit, content: @Composable (PaddingValues) -> Unit) {
+private fun UserScaffold(
+    onToBack: () -> Unit,
+    onToSettings: () -> Unit,
+    content: @Composable (PaddingValues) -> Unit
+) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
@@ -626,7 +630,7 @@ private fun UserScaffold(onToBack: () -> Unit, content: @Composable (PaddingValu
                     },
                     actions = {
                         IconButton(onClick = {
-                            onToBack.invoke()
+                            onToSettings.invoke()
                         }) {
                             Icon(
                                 Icons.Outlined.Settings,
