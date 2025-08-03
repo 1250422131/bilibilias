@@ -4,8 +4,14 @@ import com.imcys.bilibilias.core.datasource.model.PollResponse
 import com.imcys.bilibilias.core.datasource.model.QrCode
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.parametersOf
 
 class BilibiliLoginApi(
     private val client: HttpClient,
@@ -19,6 +25,18 @@ class BilibiliLoginApi(
         return client.get("/x/passport-login/web/qrcode/poll") {
             parameter("qrcode_key", key)
         }.body<PollResponse>()
+    }
+
+    suspend fun exit() {
+        client.post("/login/exit/v2") {
+            contentType(ContentType.Application.FormUrlEncoded)
+            TODO()
+            setBody(
+                FormDataContent(
+                    parametersOf("biliCSRF", "")
+                )
+            )
+        }
     }
 
     override fun close() {
